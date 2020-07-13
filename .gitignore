@@ -1,0 +1,88 @@
+### Project-Specific Paths
+!/Pyrado/data/perma/experiments
+/Pyrado/data/temp/*
+/Pyrado/pyrado/environments/mujoco/assets/meshes/barrett_wam/*.stl
+/RcsPySim/build/
+/RcsPySim/config/iiwa_description/meshes/iiwa14/*/*.stl
+/RcsPySim/config/schunk_description/meshes/sdh/*.stl
+
+### Third Party Libraries and Modules
+/thirdParty/*
+!/thirdParty/pybind11
+!/thirdParty/eigen3
+!/thirdParty/catch2
+!/thirdParty/mujoco-py
+
+### Python
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution & packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+### Emacs backup files
+*~
+
+### CLion / PyCharm
+# Settings files
+.idea/
+*.iws
+*.iml
+*.ipr
+modules.xml
+
+# CMake build folders
+cmake-build-*/
+
+### Sphinx Documentation
+.DS_Store
+Pyrado/docs/_build/
+
+# Ignore auto generated docs, but not index
+Pyrado/doc/source/*.rst
+!Pyrado/doc/source/_static
+!Pyrado/doc/source/index.rst
+
+### Docker
+x11docker
+run_docker.sh
+chrome.json
+
+### MuJoCo
+MUJOCO_LOG.*

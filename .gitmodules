@@ -1,0 +1,16 @@
+[submodule "Rcs"]
+	path = Rcs
+	url = https://github.com/HRI-EU/Rcs
+[submodule "thirdParty/pybind11"]
+	path = thirdParty/pybind11
+	url = https://github.com/pybind/pybind11.git
+[submodule "thirdParty/eigen3"]
+	path = thirdParty/eigen3
+	url = https://github.com/eigenteam/eigen-git-mirror.git
+[submodule "thirdParty/catch2"]
+	path = thirdParty/catch2
+	url = https://github.com/catchorg/Catch2.git
+[submodule "thirdParty/mujoco-py"]
+	path = thirdParty/mujoco-py
+	url = https://github.com/openai/mujoco-py.git
+
