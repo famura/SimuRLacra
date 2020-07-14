@@ -1,0 +1,101 @@
+<!--
+ Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and
+ Technical University of Darmstadt.
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,
+    or Technical University of Darmstadt, nor the names of its contributors may
+    be used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,
+ OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<Graph xmlns:xi="http://www.w3.org/2003/XInclude" resourcePath="/home/${USER}/Software/SimuRLacra/RcsPySim/config" name="BallInTube">
+
+  <Body name="GroundPlane" physics="kinematic">
+    <Shape type="BOX" graphics="true" physics="true" extents="5.0 5.0 0.01" transform="0 0 -0.005 0 0 0" color="PEWTER" textureFile="../textures/fMRT_brown_squares_2x2.png"/>
+    <Shape type="FRAME" scale="1"/>
+  </Body>
+
+  <Body name="ImetronPlatform" mass="100" cogVector="0 0 0.1">
+    <Shape type="SSR" extents="0.85 1.25 0.28" graphics="false" physics="false" distance="true" transform="0 0 0.14 0 0 0" color="DARKGRAY"/>
+    <Shape type="BOX" extents="0.85 1.25 0.2" graphics="true" physics="true" distance="false" transform="0 0 0.1 0 0 0" color="DARKGRAY"/>
+    <Joint name="DofBaseX" type="TransX" range="-4 -0 4" weightJL="0" weightMetric="0.01" constraint="false"/>
+    <Joint name="DofBaseY" type="TransY" range="-4 0 4" weightJL="0" weightMetric="0.01" constraint="false"/>
+    <Joint name="DofBaseThZ" type="RotZ" range="-361 0 361" weightJL="0" weightMetric="0.1" constraint="false"/>
+    <Shape type="FRAME" scale="0.8"/>
+  </Body>
+
+  <Group prev="ImetronPlatform" transform="0 0 0.2 0 0 0">
+    <xi:include href="TwoArmLBRHook_trqCtrl.xml"/>
+  </Group>
+
+  <Body name="Table" transform="1.5 0 0.76 0 0 0" physics="kinematic" color="ORANGE">
+    <Shape type="BOX" extents="1.2 1.6 0.04" graphics="true" physics="true" material="table_mat" textureFile="textures/white-hardwood-floor.jpg"/>
+    <Shape type="CYLINDER" length="0.74" radius="0.04" transform=" 0.34  0.48 -0.39 0 0 0" graphics="true" physics="true" distance="true" material="table_mat" textureFile="textures/wood-ikea-birch.jpg"/>
+    <Shape type="CYLINDER" length="0.74" radius="0.04" transform="-0.34  0.48 -0.39 0 0 0" graphics="true" physics="true" distance="true" material="table_mat" textureFile="textures/wood-ikea-birch.jpg"/>
+    <Shape type="CYLINDER" length="0.74" radius="0.04" transform=" 0.34 -0.48 -0.39 0 0 0" graphics="true" physics="true" distance="true" material="table_mat" textureFile="textures/wood-ikea-birch.jpg"/>
+    <Shape type="CYLINDER" length="0.74" radius="0.04" transform="-0.34 -0.48 -0.39 0 0 0" graphics="true" physics="true" distance="true" material="table_mat" textureFile="textures/wood-ikea-birch.jpg"/>
+    <Shape type="FRAME" scale="0.8"/>
+  </Body>
+
+  <Body name="Tube" rigid_body_joints="1.25 0 0.78 0 0 0" physics="dynamic" color="WHITE" mass="10.">
+    <Shape type="BOX" extents="0.02 0.54 0.1" transform="0.36  -0.10 0.05 0 0 0" graphics="true" physics="true" material="tube_mat" color="LIGHTGRAY_TRANS"/> <!-- top -->
+    <Shape type="BOX" extents="0.02 0.2 0.1" transform="0.06  -0.25 0.05 0 0 0" graphics="true" physics="true" material="tube_mat" color="LIGHTGRAY_TRANS"/> <!-- top short -->
+    <Shape type="BOX" extents="0.3 0.02 0.1" transform="0.20  -0.36 0.05 0 0 0" graphics="true" physics="true" material="tube_mat" color="LIGHTGRAY_TRANS"/> <!-- right top -->
+    <Shape type="BOX" extents="0.24 0.02 0.1" transform="-0.23 -0.16 0.05 0 0 0" graphics="true" physics="true" material="tube_mat" color="LIGHTGRAY_TRANS"/> <!-- right lower lower -->
+    <Shape type="BOX" extents="0.12 0.02 0.1" transform="-0.01 -0.16 0.05 0 0 0" graphics="true" physics="true" material="tube_mat" color="LIGHTGRAY_TRANS"/> <!-- right lower upper -->
+    <Shape type="BOX" extents="0.7 0.02 0.1" transform="0.0   +0.16 0.05 0 0 0" graphics="true" physics="true" material="tube_mat" color="LIGHTGRAY_TRANS"/> <!-- left -->
+  </Body>
+
+  <Body name="Slider" rigid_body_joints="1.07 -0.35 0.83 0 0 0" physics="dynamic" color="WHITE" mass="2.">
+    <Shape type="BOX" extents="0.02 0.48 0.1" transform="0.09 0.24 0 0 0 0" graphics="true" physics="true" material="tube_mat" color="LIGHTGRAY_TRANS"/>
+    <Shape type="BOX" extents="0.1 0.02 0.1" transform="0.05 -0.01 0 0 0 0" graphics="true" physics="true" material="tube_mat" color="LIGHTGRAY_TRANS"/>
+    <Shape type="FRAME" graphics="true" scale="0.2"/>
+  </Body>
+
+  <Body name="Ball" rigid_body_joints="1.45 -0.25 0.85 0 0 0" physics="dynamic" mass="0.3">
+    <Shape type="SPHERE" radius="0.04" color="RUBY_S" material="ball_mat" physics="true" graphics="true"/>
+    <Shape type="FRAME" graphics="true" scale="0.1"/>
+  </Body>
+
+  <model_state model="BallInTube" time_stamp="0">
+    <joint_state joint="lbr_joint_1_L" position="35"/>
+    <joint_state joint="lbr_joint_2_L" position="65"/>
+    <joint_state joint="lbr_joint_3_L" position="20"/>
+    <joint_state joint="lbr_joint_4_L" position="90"/>
+    <joint_state joint="lbr_joint_5_L" position="-20"/>
+    <joint_state joint="lbr_joint_6_L" position="-25"/>
+    <joint_state joint="lbr_joint_7_L" position="0"/>
+
+    <joint_state joint="lbr_joint_1_R" position="-35"/>
+    <joint_state joint="lbr_joint_2_R" position="-65"/>
+    <joint_state joint="lbr_joint_3_R" position="-20"/>
+    <joint_state joint="lbr_joint_4_R" position="-90"/>
+    <joint_state joint="lbr_joint_5_R" position="20"/>
+    <joint_state joint="lbr_joint_6_R" position="25"/>
+    <joint_state joint="lbr_joint_7_R" position="0"/>
+
+    <joint_state joint="DofBaseX" position="0.0"/>
+    <joint_state joint="DofChestZ" position="0.85"/>
+  </model_state>
+
+</Graph>

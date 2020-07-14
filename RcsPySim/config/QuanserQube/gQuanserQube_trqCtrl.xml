@@ -1,0 +1,65 @@
+<!--
+ Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and
+ Technical University of Darmstadt.
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,
+    or Technical University of Darmstadt, nor the names of its contributors may
+    be used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,
+ OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<Graph name="QuanserQube">
+
+  <Body name="GroundPlane" physics="kinematic">
+    <Shape type="BOX" graphics="true" physics="true" extents="2.0 2.0 0.01" transform="0 0 -0.005 0 0 0" color="PEWTER" textureFile="../textures/fMRT_brown_squares_2x2.png"/>
+  </Body>
+
+  <Body name="Qube" mass="1.2" physics="kinematic">
+    <Shape type="BOX" extents="0.117 0.102 0.108" transform="0 0 0.054 0 0 0" graphics="true" physics="true" color="DARKGRAY"/> <!-- z-extends = 0.102m + 6mm frubbber feet-->
+    <Shape type="FRAME" scale="0.12"/>
+  </Body>
+
+  <Body name="CableFlag" prev="Qube">
+    <Shape type="CYLINDER" radius="0.001" length="0.06" transform="-0.028 0 0.138 0 0 0" graphics="true" physics="false" color="DARKGRAY"/>
+    <Shape type="BOX" extents="0.03 0.001 0.02" transform="-0.043 0 0.158 0 0 0" graphics="true" physics="false" textureFile="../textures/fMRT_bavaria.png"/>
+  </Body>
+
+  <Body name="Arm" prev="Qube" mass="0.095" physics="dynamic" color="LIGHTGRAY">
+    <Joint name="ArmJoint" type="RotZ" range="-135 0 135" transform="0 0 0.130 0 0 0" ctrlType="Torque" torqueLimit="131.452"/>  <!-- 22mm offset in z-direction-->
+    <Shape type="CYLINDER" radius="0.003" length="0.085" transform="0.0425 0 0 0 90 0" graphics="true" physics="true"/>
+    <Shape type="FRAME" scale="0.12"/>
+  </Body>
+
+  <Body name="EncoderAndFlange" prev="Arm">
+    <Shape type="CYLINDER" radius="0.012" length="0.038" transform="0.004 0 0 0 90 0" graphics="true" physics="false" color="RUBY_S"/>
+    <Shape type="CYLINDER" radius="0.012" length="0.010" transform="0.028 0 0 0 90 0" graphics="true" physics="false" color="DARKGRAY"/>
+    <Shape type="CYLINDER" radius="0.01" length="0.012" transform=" 0 0 -0.016 0 0 0" graphics="true" physics="false" color="DARKGRAY"/>
+  </Body>
+
+  <Body name="Pendulum" prev="Arm" mass="0.024" physics="dynamic" cogVector="0 0 -0.061"> <!-- (0.129 - 0.007)/d2 in cogVector due to 7mm offset-->
+    <Joint name="PoleJoint" type="RotX" range="-3600 0 3600" transform="0.085 0 0 0 0 0" constraint="True" ctrlType="Torque" torqueLimit="0"/>
+    <Shape type="CYLINDER" radius="0.0045" length="0.129" transform="0 0 -0.0575 0 0 0" graphics="true" physics="true" color="RUBY_S"/> <!-- transform: -0.0645m + 7mm offset-->
+    <Shape type="FRAME" scale="0.12"/>
+  </Body>
+
+</Graph>

@@ -1,0 +1,21 @@
+/*! \mainpage RcsPySim Documentation
+  
+RcsPySim is a framework for accessing simulations powered by <a href="https://github.com/HRI-EU/Rcs"> Rcs</a> as a Python module unsing <a href="https://github.com/pybind/pybind11"> pybind11</a>.
+
+It is written for research purposes with the focus on learning robot control policies from (randomized) physics simulations.
+The use case in mind is to employ the C++ simulations as a black box and feed the resulting data to a reinforcement learning algorithm on the Python side of the framework called Pyrado.
+
+<h2> RcsPySim Structure </h2>
+RcsPySim can be divided in two parts.
+One part contains are C++ classes which construct the experiments, receive data from the the Python side, and connect to the <a href="https://github.com/HRI-EU/Rcs"> Rcs</a> framework.
+The second part uses <a href="https://github.com/pybind/pybind11"> pybind11</a> to bind all RcsPySim C++ classes and functions into a Python module called rcsenv. This module can then be imported (as done in Pyrado) in order to generate data from Rcs-based simulations.
+
+<h2> Installation </h2>
+Please follow the readme-file in the root project folder (one level above RcsPySim folder).
+
+<h2> Where to start </h2>
+Check out Rcs::ExperimentConfig where the simulation environments are specified and Rcs::RcsSimEnv which runs the simulations.
+
+*/
+
+

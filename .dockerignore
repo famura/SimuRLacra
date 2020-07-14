@@ -1,0 +1,6 @@
+**/__pycache__*
+**/.idea
+**/build
+Pyrado/data
+Dockerfile
+setup_docker.sh

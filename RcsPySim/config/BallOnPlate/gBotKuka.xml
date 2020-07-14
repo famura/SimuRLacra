@@ -1,0 +1,77 @@
+<!--
+ Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and
+ Technical University of Darmstadt.
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,
+    or Technical University of Darmstadt, nor the names of its contributors may
+    be used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,
+ OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<!-- Uses a KuKa IIWA LBR to hold the plate -->
+<Graph xmlns:xi="http://www.w3.org/2003/XInclude" name="BOPBot">
+
+  <Body name="GroundPlane" physics="kinematic">
+    <Shape type="BOX" graphics="true" physics="true" extents="5.0 5.0 0.01" transform="0 0 -0.005 0 0 0" color="PEWTER" textureFile="../textures/fMRT_brown_squares_2x2.png"/>
+    <!-- <Shape type="FRAME" graphics="true" scale="0.6"/> -->
+  </Body>
+
+  <Group name="_L"
+         transform="0 0 0 0 0 0">
+    <xi:include href="LBRWithoutLastLink.xml"/>
+  </Group>
+
+  <Body name="Plate" physics="dynamic" mass="5.3" prev="lbr_link_6_L"
+        transform="0 0 0 0 0 0"> <!-- added 300g from the "old" link 7 (see LBR_trqCtrl.xml)-->
+    <Joint name="lbr_joint_7_L" range="-170 0 170" weightJL="1.0" type="RotZ" transform="0 0.281 0.0 90 180 90" torqueLimit="300" speedLimit="135" ctrlType="Position"/> <!-- former transform="0 0.281 -0.2 -90 0 90"-->
+    <!-- Mesh of "old" link 7 -->
+    <Shape type="MESH" meshFile="iiwa_description/meshes/iiwa14/visual/link_7.stl" transform="0 0 -0.2 0 0 0" color="ORANGE"/>
+    <Shape type="MESH" physics="true" graphics="false" meshFile="iiwa_description/meshes/iiwa14/collision/link_7_hull.tri" transform="0 0 -0.2 0 0 0" color="ORANGE"/>
+    <!-- Purely visual and arbitrary cylinders (only somewhat related to the ones in LBR_trqCtrl.xml) -->
+    <Shape type="CYLINDER" radius="0.029" length="0.055" transform="0 0 -0.1275 0 0 0" graphics="true" distance="false" color="GRAY"/>
+    <Shape type="CYLINDER" radius="0.045" length="0.09" transform="0 0 -0.065 0 0 0" graphics="true" distance="false" color="GRAY"/>
+    <!-- Plate shape -->
+    <Shape type="BOX" extents="0.5 0.5 0.02" transform="0 0 -0.01 0 0 0" color="LIGHTGRAY" material="plate_mat" textureFile="../textures/fMRT_pattern_circular.png" physics="true" graphics="true"/>
+    <!-- <Shape type="MESH" physics="true" graphics="true" meshFile="plate_wave.obj" scale="0.25" transform="-0.5 0.2 0.05 90 0 0" color="LIGHTGRAY"/>-->
+    <Shape type="FRAME" graphics="true" scale="0.5"/>
+  </Body>
+
+  <Body name="Ball" physics="dynamic" rigid_body_joints="0.15 0.15 1.25 0 0 0" mass="0.3">
+    <Shape type="SPHERE" radius="0.05" color="RUBY_S" material="ball_mat" physics="true" graphics="true"/>
+    <Shape type="FRAME" graphics="true" scale="0.3"/>
+  </Body>
+
+  <!-- This is just a marker used by the action model -->
+  <Body name="PlateOriginMarker"/>
+
+  <model_state model="BOPBot" time_stamp="0">
+    <joint_state joint="lbr_joint_1_L" position="103.7053102110757550"/>
+    <joint_state joint="lbr_joint_2_L" position="45.5406941273107009"/>
+    <joint_state joint="lbr_joint_3_L" position="0.000000274"/>
+    <joint_state joint="lbr_joint_4_L" position="94.082196217"/>
+    <joint_state joint="lbr_joint_5_L" position="0.0000002880176453"/>
+    <joint_state joint="lbr_joint_6_L" position="48.5415020831913395"/>
+    <joint_state joint="lbr_joint_7_L" position="166.2946860661016331"/>
+  </model_state>
+
+</Graph>

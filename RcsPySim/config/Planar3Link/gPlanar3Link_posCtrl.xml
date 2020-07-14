@@ -1,0 +1,66 @@
+<!--
+ Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and
+ Technical University of Darmstadt.
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,
+    or Technical University of Darmstadt, nor the names of its contributors may
+    be used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,
+ OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<Graph xmlns:xi="http://www.w3.org/2003/XInclude">
+
+  <xi:include href="gPlanar3Link_common.xml"/>
+
+  <Body name="Base" transform="0 0 0.05 0 0 0" physics="kinematic" mass="10.0">
+    <Shape type="SPHERE" radius="0.05" physics="true" distance="true" graphics="true" color="LIGHTGRAY"/>
+    <Shape type="FRAME" scale="0.20" graphics="true"/>
+  </Body>
+
+  <Body name="Link1" prev="Base" physics="dynamic" mass="1.5">
+    <Joint name="Dof1" type="RotY" range="-90 30 90" transform="0 0 0.0 0 0 0" ctrlType="Position" speedLimit="90" torqueLimit="200"/>
+    <Shape type="SSL" radius="0.03" length="0.5" physics="true" distance="true" graphics="true" color="RED"/>
+    <!--<Shape type="FRAME" scale="0.20" graphics="true"/>-->
+  </Body>
+
+  <Body name="Link2" prev="Link1" physics="dynamic" mass="1.0">
+    <Joint name="Dof2" type="RotY" range="-165 -100 165" transform="0 0 0.5 0 0 0" ctrlType="Position" speedLimit="90" torqueLimit="100"/>
+    <Shape type="SSL" radius="0.03" length="0.4" physics="true" distance="true" graphics="true" color="ORANGE"/>
+    <Shape type="SPHERE" radius="0.035" physics="false" distance="false" graphics="true" color="LIGHTGRAY"/>
+    <!--<Shape type="FRAME" scale="0.20" graphics="true"/>-->
+  </Body>
+
+  <Body name="Link3" prev="Link2" physics="dynamic" mass="1.0">
+    <Joint name="Dof3" type="RotY" range="-165 100 165" transform="0 0 0.4 0 0 0" ctrlType="Position" speedLimit="90" torqueLimit="100"/>
+    <Shape type="SSL" radius="0.03" length="0.4" physics="true" distance="true" graphics="true" color="YELLOW"/>
+    <Shape type="SPHERE" radius="0.035" physics="false" distance="false" graphics="true" color="LIGHTGRAY"/>
+    <!--<Shape type="FRAME" scale="0.20" graphics="true"/>-->
+  </Body>
+
+  <Body name="Effector" prev="Link3" transform="0 0 0.4 0 0 0" physics="fixed" mass="0.5">
+    <Shape type="SPHERE" radius="0.05" physics="true" distance="true" graphics="true" color="COPPER"/>
+    <Sensor name="EffectorLoadCell" type="LOADCELL"/>
+    <Shape type="FRAME" scale="0.20" graphics="true"/>
+  </Body>
+
+</Graph>

@@ -1,0 +1,37 @@
+################################################################################
+#
+# Target to generate API documentation with Doxygen
+#
+################################################################################
+IF (UNIX)
+  
+  FIND_PACKAGE(Doxygen)
+
+ELSE ()
+  
+  SET(DOXYGEN_EXECUTABLE doxygen.exe)
+  SET(DOXYGEN_FOUND TRUE)
+
+ENDIF (UNIX)
+
+IF (DOXYGEN_FOUND)
+  
+  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/doc/Doxyfile @ONLY)
+  
+  FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html)
+  FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/images)
+  FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pdf)
+  IF (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/images)
+    FILE(COPY ${CMAKE_CURRENT_SOURCE_DIR}/images DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+  ENDIF ()
+  
+  ADD_CUSTOM_TARGET(doc
+      ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doc/Doxyfile
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMENT "Generating API documentation with Doxygen" VERBATIM)
+  
+  INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION doc)
+  INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/images DESTINATION doc)
+  INSTALL(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/pdf DESTINATION doc)
+
+ENDIF (DOXYGEN_FOUND)

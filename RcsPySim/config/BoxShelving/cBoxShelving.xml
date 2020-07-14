@@ -1,0 +1,57 @@
+<!--
+ Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and
+ Technical University of Darmstadt.
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,
+    or Technical University of Darmstadt, nor the names of its contributors may
+    be used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,
+ OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<Controller graph="gBoxShelving.xml">
+
+  <Task name="Hand XYZ" effector="Hand" controlVariable="XYZ" active="untrue"/>
+  <Task name="Hand ABC" effector="Hand" controlVariable="ABC" active="untrue"/>
+
+  <Task name="Spread" controlVariable="Joint" jnt="Finger1Joint1" active="untrue"/>
+  <Task name="Finger1" controlVariable="Joint" jnt="Finger1Joint2" active="untrue"/>
+  <Task name="Finger2" controlVariable="Joint" jnt="Finger2Joint2" active="untrue"/>
+  <Task name="Finger3" controlVariable="Joint" jnt="Finger3Joint2" active="untrue"/>
+
+  <Task name="Hand X" effector="Hand" controlVariable="X" active="untrue"/>
+  <Task name="Hand Y" effector="Hand" controlVariable="Y" active="untrue"/>
+  <Task name="Hand Z" effector="Hand" controlVariable="Z" active="untrue"/>
+  <Task name="Hand Force X" effector="Hand" controlVariable="ForceX" active="untrue"/>
+  <Task name="Hand Force Y" effector="Hand" controlVariable="ForceY" active="untrue"/>
+  <Task name="Hand Force Z" effector="Hand" controlVariable="ForceZ" active="untrue"/>
+
+  <Task name="FingerTip3 XYZ" effector="FingerTip3" controlVariable="XYZ" active="untrue"/>
+  <Task name="FingerTip3 ABC" effector="FingerTip3" controlVariable="ABC" active="untrue"/>
+  <Task name="FingerTip3 X" effector="FingerTip3" controlVariable="X" active="untrue"/>
+  <Task name="FingerTip3 Y" effector="FingerTip3" controlVariable="Y" active="untrue"/>
+  <Task name="FingerTip3 Z" effector="FingerTip3" controlVariable="Z" active="untrue"/>
+  <Task name="FingerTip3 Force X" effector="FingerTip3" controlVariable="ForceX" active="untrue"/>
+  <Task name="FingerTip3 Force Y" effector="FingerTip3" controlVariable="ForceY" active="untrue"/>
+  <Task name="FingerTip3 Force Z" effector="FingerTip3" controlVariable="ForceZ" active="untrue"/>
+
+</Controller>

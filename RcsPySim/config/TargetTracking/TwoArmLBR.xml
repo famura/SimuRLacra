@@ -1,0 +1,152 @@
+<!--
+ Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and
+ Technical University of Darmstadt.
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,
+    or Technical University of Darmstadt, nor the names of its contributors may
+    be used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,
+ OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<Graph xmlns:xi="http://www.w3.org/2003/XInclude" name="DexterousManipulation">
+
+  <Body name="Base" mass="80" cogVector="0.13 0 0.9" transform="0 0 0 0 0 180">
+    <Shape type="SSL" radius="0.08" length="0.2" distance="true" physics="false" color="BLUE" transform="-0.02 0 0.1 0 0 0"/>
+    <Shape type="SSL" radius="0.2" length="1.65" distance="true" physics="false" color="BLUE" transform="0.17 0 0 0 0 0"/>
+    <Shape type="SSL" radius="0.08" length="0.72" distance="true" physics="false" color="BLUE" transform="0.36 0.18 0.17 0 -90 0"/>
+    <Shape type="SSL" radius="0.08" length="0.72" distance="true" physics="false" color="BLUE" transform="0.36 -0.18 0.17 0 -90 0"/>
+    <Shape type="BOX" extents="0.16 0.32 1.7" transform="0.13 0 0.85 0 0 0" physics="true" distance="false" textureFile="textures/aluminium-profile.jpg"/>
+    <Shape type="BOX" extents="0.04 1.25 0.08" transform="-0.405 0 0.04 0 0 0" physics="true" distance="false" textureFile="textures/aluminium-profile.jpg"/>
+    <Shape type="BOX" extents="0.04 1.25 0.08" transform="0.405 0 0.04 0 0 0" physics="true" distance="false" textureFile="textures/aluminium-profile.jpg"/>
+    <Shape type="BOX" extents="0.77 0.04 0.24" transform="0 0.18 0.12 0 0 0" physics="true" distance="false" textureFile="textures/aluminium-profile.jpg"/>
+    <Shape type="BOX" extents="0.77 0.04 0.24" transform="0 -0.18 0.12 0 0 0" physics="true" distance="false" textureFile="textures/aluminium-profile.jpg"/>
+    <!-- <Shape type="FRAME" scale="0.75" /> -->
+  </Body>
+
+  <Body name="RailBase" prev="Base" mass="240" cogVector="0.15 0 0.8">
+    <Shape type="MESH" meshFile="DexBot/RoboFrame.stl" scale="0.001" graphics="true" distance="false" transform="0.501 -0.561 0.004 0 0 180"/>
+    <Shape type="MESH" meshFile="DexBot/LinearRail.stl" scale="0.001" graphics="true" distance="false" transform="0.210 0 0.8975 180 0 -90"/>
+    <xxShape type="BOX" extents="0.048 0.28 1.2" graphics="true" distance="false" transform="0.403 0 0.8 0 0 0" color="BLUE"/>
+  </Body>
+
+  <Body name="Screen" prev="RailBase" mass="20" transform="-0.09 0 1.275 0 -5 0">
+
+    <!-- Screen transform="-0.09 0 1.275 0 -5 0" -->
+    <!-- Screen dimensions:
+                            outer extents: 36.5cm x 55.0cm   x 10cm (?)
+                            inner extents: 52.0cm x 32.5cm
+    -->
+    <Shape type="SSR" extents="0.55 0.33 0.1" distance="true" color="BLACK_RUBBER" transform="0 0 0 0 90 0"/>
+    <Shape type="BOX" extents="0.07 0.36 0.55" graphics="true" distance="false" color="BLACK_RUBBER" transform="0 0 0 0 0 0"/>
+    <Shape type="BOX" extents="0.001 0.33 0.52" graphics="true" distance="false" color="PUREWHITE" transform="-0.0350 0 0 0 0 0"/>
+    <Shape type="BOX" extents="0.001 0.33 0.2" graphics="true" distance="false" transform="-0.0354 0 0 0 0 0" textureFile="textures/hri-eu-logoB.png"/>
+  </Body>
+
+  <Body name="RailBot" prev="RailBase" mass="20" transform="0.209 0 0 0 0 0" cogVector="-0.35 0 0">
+    <xShape type="FRAME"/>
+    <!-- TODO ask Michael about this. For now we make do without it. -->
+    <Joint name="DofChestZ" type="TransZ" range="0.6 0.8 1" weightJL="1.0" weightMetric="1.0" transform="0 0 0.375  0 0 0" constraint="false"/>
+    <Shape type="MESH" meshFile="DexBot/LinearSlide.stl" scale="0.001" graphics="true" distance="false" transform="0 0 0 180 0 -90"/>
+    <Shape type="MESH" meshFile="DexBot/Slide-Simple.stl" scale="0.001" graphics="true" distance="false" transform="0.085  0 -0.2 0 0 0"/>
+    <Shape type="MESH" meshFile="DexBot/Wing-Simple.stl" scale="0.001" graphics="true" distance="false" transform="0.203  0.101 -0.05 90 180 -15"/> <!-- Right -->
+    <Shape type="MESH" meshFile="DexBot/Wing-Simple.stl" scale="0.001" graphics="true" distance="false" transform="0.135 -0.101 0.2 -90 180 15"/> <!-- Left -->
+
+
+    <Shape type="BOX" extents="0.085 0.158 0.4" transform="-0.0725 0 0 0 0 0" physics="true" graphics="false" distance="false" textureFile="textures/StainedMetal.png"/>
+    <Shape type="BOX" extents="0.08 0.2 0.2" distance="false" graphics="false" physics="true" transform="0.01 0 0.1 0 0 0" textureFile="textures/aluminium-profile.jpg"/>
+    <Shape type="BOX" extents="0.04 0.75 0.2" transform="0.17 0 0.1 0 0 0" graphics="false" physics="true" distance="false" textureFile="textures/aluminium-profile.jpg"/>
+    <xShape type="FRAME" scale="0.5"/>
+  </Body>
+
+
+  <Group name="_L"
+         transform_tail_side="0.123729 -0.248635 0.075 -90 -105 0"
+         transformxxx="0.123729 -0.248635 0.075 -90 -105 90"
+         transformxyxxx="0.123729 -0.248635 0.075    135.00 -71.73 -46.48"
+         transformxddxx="0.123729 -0.248635 0.075    135.00 -71.73 -46.48"
+         xtransform="0.123729 -0.248635 0.075 134.01 -68.91 -44.01"
+         good_transform="0.158529 -0.247635 0.0675 134.01 -68.91 -44.01"
+         transform="0.125 -0.247635 0.0675 134.01 -68.91 -44.01"
+         prev="RailBot">
+    <xi:include href="LBR.xml"/>
+  </Group>
+
+  <Group name="_L" prev="lbr_link_7_L" transform="0 0 0.1707 0 0 75">
+    <xi:include href="sdh.xml" prev="Base"/>
+  </Group>
+
+  <Body name="PowerGrasp_L" prev="sdh-base_L" transform="0 0 0.1 90 0 90" oldtransform="0 0 0.125 90 0 90">
+    <Shape type="FRAME" scale="0.2"/>
+  </Body>
+
+
+  <Group name="_R"
+         transform_tail_side="0.123729 0.248635 0.075 90 -105 0"
+         transform_tail_up="0.123729 0.248635 0.075 -90 -75 90"
+         xtransform="0.123729 0.248635 0.075 90 -105 90"
+         good_transform="0.093629 0.247835 0.059 -134.01 -68.91 -135.99"
+         transform="0.125 0.247835 0.059 -134.01 -68.91 -135.99"
+         prev="RailBot">
+    <xi:include href="LBR.xml"/>
+  </Group>
+
+  <Group name="_R" prev="lbr_link_7_R" transform="0 0 0.1707 0 0 75">
+    <xi:include href="sdh.xml"/>
+  </Group>
+
+  <Body name="PowerGrasp_R" prev="sdh-base_R" transform="0 0 0.1 -90 0 -90" xxtransform="0 0 0.08 -90 0 -90" oldtransform="0 0 0.125 -90 0 -90">
+    <Shape type="FRAME" scale="0.2"/>
+  </Body>
+
+
+  <!-- <Body name="Screen" prev="RailBase" transform="-0.09 0 1.24 0 10 0" > -->
+  <!--   <Shape type="SSR" extents="0.33 0.42 0.07" distance="true" color="BLACK_RUBBER" transform="0 0 0 90 90 0" /> -->
+  <!--   <Shape type="BOX" extents="0.07 0.33 0.42" graphics="true" distance="false" color="BLACK_RUBBER" /> -->
+  <!--   <Shape type="BOX" extents="0.001 0.29 0.38" graphics="true" distance="false" color="PUREWHITE" transform="-0.035 0 0 0 0 0" /> -->
+  <!--   <Shape type="BOX" extents="0.001 0.29 0.2" graphics="true" distance="false" transform="-0.0351 0 0 0 0 0" textureFile="textures/hri-eu-logoB.png" /> -->
+  <!-- </Body> -->
+
+
+  <model_state model="DexterousManipulation" time_stamp="0">
+    <joint_state joint="lbr_joint_1_L" position="120"/>
+    <joint_state joint="lbr_joint_2_L" position="60"/>
+    <joint_state joint="lbr_joint_3_L" position="0"/>
+    <joint_state joint="lbr_joint_4_L" position="60"/>
+    <joint_state joint="lbr_joint_5_L" position="-90"/>
+    <joint_state joint="lbr_joint_6_L" position="-0"/>
+    <joint_state joint="lbr_joint_7_L" position="90"/>
+
+    <joint_state joint="lbr_joint_1_R" position="90"/>
+    <joint_state joint="lbr_joint_2_R" position="-90"/>
+    <joint_state joint="lbr_joint_3_R" position="-90"/>
+    <joint_state joint="lbr_joint_4_R" position="-90"/>
+    <joint_state joint="lbr_joint_5_R" position="0"/>
+    <joint_state joint="lbr_joint_6_R" position="0"/>
+    <joint_state joint="lbr_joint_7_R" position="15"/>
+
+    <joint_state joint="knuck1-base_L" position="0"/>
+    <joint_state joint="knuck1-base_R" position="0"/>
+  </model_state>
+
+
+</Graph>

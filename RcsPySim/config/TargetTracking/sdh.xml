@@ -1,0 +1,731 @@
+<!--
+ Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and
+ Technical University of Darmstadt.
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,
+    or Technical University of Darmstadt, nor the names of its contributors may
+    be used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,
+ OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<Graph>
+
+  <Body name="sdh-base" transform="0 0 0.0003 0 0 0" physics="fixed"
+        mass="1.054" inertia="0.001757 0 0   0 0.001757 0   0 0 0.001757">
+    <Shape type="MESH" distance="false" physics="false" graphics="true"
+           transform="0 0 0.049 0 0 0" meshFile="Schunk/SDH_Gehaeuse_x.tri"/>
+    <Shape type="MESH" distance="false" physics="true" graphics="false"
+           transform="0 0 0.049 0 0 0" meshFile="Schunk/SDH_Gehaeuse_x.tri"/>
+    <Shape type="SSL" radius="0.065" color="RED" graphics="false"
+           physics="false" distance="true" length="0.02"
+           transform="0 0 0.02 0 0 0"/>
+    <Sensor type="LOADCELL" name="WristLoadCellLBR"
+            transform="0 0 0 0 0 -165"/>
+    <Shape type="FRAME" scale="0.2" transform="0 0 0 0 0 -165"/>
+    <Shape type="MESH" distance="false" physics="false" graphics="true"
+           transform="-0.038105 0 0.072 90 -90 0"
+           meshFile="Schunk/SDH_Gelenk_Finger1_x.tri"/>
+  </Body>
+
+  <Body name="knuck3" prev="sdh-base" physics="dynamic" mass="0.04"
+        inertia="0.00000993 0 0 0 0.0000045 0 0 0 0.00000993">
+    <Joint name="knuck3-base" range="-90 45 90" xweightMetric="0.05"
+           type="RotZ" transform="0.019052 0.033 0.089 0 0 180"
+           speedLimit="210" coupledTo="knuck1-base" couplingFactor="1 "/>
+    <Shape type="MESH" distance="false" physics="false" graphics="true"
+           transform="0 0 -0.017 90 -90 0"
+           meshFile="Schunk/SDH_Gelenk_Finger1_x.tri"/>
+    <Shape type="CYLINDER" length="0.048" radius="0.000015" distance="false"
+           physics="true" graphics="false" transform="0 0.003 0 90 0 0"
+           color="RED"/>
+  </Body>
+
+  <Body name="fing3" prev="knuck3" physics="dynamic" mass="0.13"
+        inertia="0.00011233 0 -0.00000123 0 0.00011338 0 -0.00000123 0 0.00002386">
+    <Joint name="fing3-knuck3" range="-90 -90 90" xweightMetric="0.05"
+           type="RotY" torqueLimit="2.1" speedLimit="210"/>
+    <Shape type="MESH" distance="false" physics="false" graphics="true"
+           transform="0 0 -0.017 90 -90 0"
+           meshFile="Schunk/SDH_Mittelteil_Finger1_x.tri"/>
+    <Shape type="MESH" distance="false" physics="true" graphics="false"
+           transform="0 0 -0.017 90 -90 0"
+           meshFile="Schunk/SDH_Mittelteil_Finger1_x.tri"/>
+    <xShape type="SSR" extents="0.075 0.018 0.01" distance="false"
+            physics="true" graphics="false" color="RED"
+            transform="0.0105 0 0.045 0 90 0" material="soft_object"/>
+    <Shape type="SSL" length="0.07" radius="0.02" distance="true" color="RED"
+           physics="false" graphics="false" material="soft_object"/>
+    <Sensor name="SS3" type="PPS" dimensions="6 14"
+            extents="0.0034 0.0034 0.0005">
+      <Texel position="0.0155 -0.01 0.06755" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.06755" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.06755" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.06755" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.06755" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.06755" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.063907" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.063907" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.063907" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.063907" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.063907" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.063907" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.060264" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.060264" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.060264" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.060264" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.060264" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.060264" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.056622" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.056622" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.056622" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.056622" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.056622" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.056622" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.052979" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.052979" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.052979" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.052979" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.052979" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.052979" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.049336" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.049336" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.049336" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.049336" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.049336" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.049336" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.045693" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.045693" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.045693" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.045693" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.045693" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.045693" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.04205" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.04205" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.04205" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.04205" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.04205" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.04205" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.038408" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.038408" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.038408" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.038408" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.038408" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.038408" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.034765" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.034765" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.034765" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.034765" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.034765" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.034765" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.031122" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.031122" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.031122" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.031122" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.031122" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.031122" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.027479" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.027479" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.027479" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.027479" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.027479" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.027479" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.023836" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.023836" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.023836" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.023836" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.023836" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.023836" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.020194" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.020194" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.020194" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.020194" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.020194" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.020194" normal="1 0 0"/>
+    </Sensor>
+  </Body>
+
+  <Body name="tip3" prev="fing3" physics="dynamic" mass="0.13"
+        inertia="0.00007702 0 -0.0000007 0 0.00007745 0 -0.0000007 0 0.00002316">
+    <Joint name="tip3-fing3" range="-90 0 90" xweightMetric="0.05" type="RotY"
+           transform="0 0 0.0865 0 0 0" torqueLimit="1.4" speedLimit="210"/>
+    <Shape type="MESH" distance="false" physics="false" graphics="true"
+           transform="0 0 -0.1035 90 -90 0"
+           meshFile="Schunk/SDH_Kuppe_Finger1_x.tri"/>
+    <Shape type="MESH" distance="false" physics="true" graphics="false"
+           transform="0 0 -0.1035 90 -90 0"
+           meshFile="Schunk/SDH_Kuppe_Finger1_x.tri"/>
+    <Shape type="SSL" length="0.05" radius="0.02" distance="true" color="RED"
+           physics="false" graphics="false" material="soft_object"/>
+    <xShape type="SSR" extents="0.03 0.018 0.01" distance="false"
+            physics="true" graphics="false" color="RED"
+            transform="0.0095 0 0.03 0 88 0" material="soft_object"/>
+    <xShape type="SSR" extents="0.02 0.018 0.01" distance="false"
+            physics="true" graphics="false" transform="0.004 0 0.056 0 65 0"
+            color="RED" material="soft_object"/>
+    <Sensor name="SSFT3" type="PPS" dimensions="6 14"
+            extents="0.0034 0.0034 0.0005">
+      <Texel position="0.006 -0.01 0.066" normal="0 0 0"/>
+      <Texel position="0.006 -0.006 0.066" normal="0.848 0 0.5299"/>
+      <Texel position="0.006 -0.002 0.066" normal="0.848 0 0.5299"/>
+      <Texel position="0.006 0.002 0.066" normal="0.848 0 0.5299"/>
+      <Texel position="0.006 0.006 0.066" normal="0.848 0 0.5299"/>
+      <Texel position="0.006 0.01 0.066" normal="0 0 0"/>
+      <Texel position="0.0081 -0.01 0.0625" normal="0 0 0"/>
+      <Texel position="0.0081 -0.006 0.0625" normal="0.8829 0 0.4695"/>
+      <Texel position="0.0081 -0.002 0.0625" normal="0.8829 0 0.4695"/>
+      <Texel position="0.0081 0.002 0.0625" normal="0.8829 0 0.4695"/>
+      <Texel position="0.0081 0.006 0.0625" normal="0.8829 0 0.4695"/>
+      <Texel position="0.0081 0.01 0.0625" normal="0 0 0"/>
+      <Texel position="0.0098 -0.01 0.0589" normal="0 0 0"/>
+      <Texel position="0.0098 -0.006 0.0589" normal="0.9135 0 0.4067"/>
+      <Texel position="0.0098 -0.002 0.0589" normal="0.9135 0 0.4067"/>
+      <Texel position="0.0098 0.002 0.0589" normal="0.9135 0 0.4067"/>
+      <Texel position="0.0098 0.006 0.0589" normal="0.9135 0 0.4067"/>
+      <Texel position="0.0098 0.01 0.0589" normal="0 0 0"/>
+      <Texel position="0.0113 -0.01 0.0552" normal="0 0 0"/>
+      <Texel position="0.0113 -0.006 0.0552" normal="0.9396 0 0.342"/>
+      <Texel position="0.0113 -0.002 0.0552" normal="0.9396 0 0.342"/>
+      <Texel position="0.0113 0.002 0.0552" normal="0.9396 0 0.342"/>
+      <Texel position="0.0113 0.006 0.0552" normal="0.9396 0 0.342"/>
+      <Texel position="0.0113 0.01 0.0552" normal="0 0 0"/>
+      <Texel position="0.01255 -0.01 0.0516" normal="0 0 0"/>
+      <Texel position="0.01255 -0.006 0.0516" normal="0.9613 0 0.2756"/>
+      <Texel position="0.01255 -0.002 0.0516" normal="0.9613 0 0.2756"/>
+      <Texel position="0.01255 0.002 0.0516" normal="0.9613 0 0.2756"/>
+      <Texel position="0.01255 0.006 0.0516" normal="0.9613 0 0.2756"/>
+      <Texel position="0.01255 0.01 0.0516" normal="0 0 0"/>
+      <Texel position="0.0134 -0.01 0.0479" normal="0.9781 0 0.2079"/>
+      <Texel position="0.0134 -0.006 0.0479" normal="0.9781 0 0.2079"/>
+      <Texel position="0.0134 -0.002 0.0479" normal="0.9781 0 0.2079"/>
+      <Texel position="0.0134 0.002 0.0479" normal="0.9781 0 0.2079"/>
+      <Texel position="0.0134 0.006 0.0479" normal="0.9781 0 0.2079"/>
+      <Texel position="0.0134 0.01 0.0479" normal="0.9781 0 0.2079"/>
+      <Texel position="0.0142 -0.01 0.0443" normal="0.9877 0 0.1564"/>
+      <Texel position="0.0142 -0.006 0.0443" normal="0.9877 0 0.1564"/>
+      <Texel position="0.0142 -0.002 0.0443" normal="0.9877 0 0.1564"/>
+      <Texel position="0.0142 0.002 0.0443" normal="0.9877 0 0.1564"/>
+      <Texel position="0.0142 0.006 0.0443" normal="0.9877 0 0.1564"/>
+      <Texel position="0.0142 0.01 0.0443" normal="0.9877 0 0.1564"/>
+      <Texel position="0.0147 -0.01 0.0406" normal="0.9945 0 0.1045"/>
+      <Texel position="0.0147 -0.006 0.0406" normal="0.9945 0 0.1045"/>
+      <Texel position="0.0147 -0.002 0.0406" normal="0.9945 0 0.1045"/>
+      <Texel position="0.0147 0.002 0.0406" normal="0.9945 0 0.1045"/>
+      <Texel position="0.0147 0.006 0.0406" normal="0.9945 0 0.1045"/>
+      <Texel position="0.0147 0.01 0.0406" normal="0.9945 0 0.1045"/>
+      <Texel position="0.015 -0.01 0.037" normal="0.9994 0 0.0349"/>
+      <Texel position="0.015 -0.006 0.037" normal="0.9994 0 0.0349"/>
+      <Texel position="0.015 -0.002 0.037" normal="0.9994 0 0.0349"/>
+      <Texel position="0.015 0.002 0.037" normal="0.9994 0 0.0349"/>
+      <Texel position="0.015 0.006 0.037" normal="0.9994 0 0.0349"/>
+      <Texel position="0.015 0.01 0.037" normal="0.9994 0 0.0349"/>
+      <Texel position="0.015 -0.01 0.0334" normal="1 0 0"/>
+      <Texel position="0.015 -0.006 0.0334" normal="1 0 0"/>
+      <Texel position="0.015 -0.002 0.0334" normal="1 0 0"/>
+      <Texel position="0.015 0.002 0.0334" normal="1 0 0"/>
+      <Texel position="0.015 0.006 0.0334" normal="1 0 0"/>
+      <Texel position="0.015 0.01 0.0334" normal="1 0 0"/>
+      <Texel position="0.015 -0.01 0.0297" normal="1 0 0"/>
+      <Texel position="0.015 -0.006 0.0297" normal="1 0 0"/>
+      <Texel position="0.015 -0.002 0.0297" normal="1 0 0"/>
+      <Texel position="0.015 0.002 0.0297" normal="1 0 0"/>
+      <Texel position="0.015 0.006 0.0297" normal="1 0 0"/>
+      <Texel position="0.015 0.01 0.0297" normal="1 0 0"/>
+      <Texel position="0.015 -0.01 0.0261" normal="1 0 0"/>
+      <Texel position="0.015 -0.006 0.0261" normal="1 0 0"/>
+      <Texel position="0.015 -0.002 0.0261" normal="1 0 0"/>
+      <Texel position="0.015 0.002 0.0261" normal="1 0 0"/>
+      <Texel position="0.015 0.006 0.0261" normal="1 0 0"/>
+      <Texel position="0.015 0.01 0.0261" normal="1 0 0"/>
+      <Texel position="0.015 -0.01 0.0224" normal="1 0 0"/>
+      <Texel position="0.015 -0.006 0.0224" normal="1 0 0"/>
+      <Texel position="0.015 -0.002 0.0224" normal="1 0 0"/>
+      <Texel position="0.015 0.002 0.0224" normal="1 0 0"/>
+      <Texel position="0.015 0.006 0.0224" normal="1 0 0"/>
+      <Texel position="0.015 0.01 0.0224" normal="1 0 0"/>
+      <Texel position="0.015 -0.01 0.0188" normal="0 0 0"/>
+      <Texel position="0.015 -0.006 0.0188" normal="0 0 0"/>
+      <Texel position="0.015 -0.002 0.0188" normal="0 0 0"/>
+      <Texel position="0.015 0.002 0.0188" normal="0 0 0"/>
+      <Texel position="0.015 0.006 0.0188" normal="0 0 0"/>
+      <Texel position="0.015 0.01 0.0188" normal="0 0 0"/>
+    </Sensor>
+  </Body>
+
+
+  <Body name="DistalTouch3" prev="tip3" transform="0.015 0 0.04 0 0 0">
+    <Shape type="FRAME" distance="false" physics="false" graphics="true"
+           scale="0.05"/>
+  </Body>
+
+
+  <Body name="knuck1" prev="sdh-base" physics="dynamic" mass="0.04"
+        inertia="0.00000993 0 0 0 0.0000045 0 0 0 0.00000993">
+    <Joint name="knuck1-base" range="0 45 90" xweightMetric="0.05" type="RotZ"
+           transform="0.019052 -0.033 0.089 180 0 0" speedLimit="210"/>
+    <Shape type="MESH" distance="false" physics="false" graphics="true"
+           transform="0 0 0.017 -90 90 0"
+           meshFile="Schunk/SDH_Gelenk_Finger1_x.tri"/>
+    <Shape type="CYLINDER" length="0.048" radius="0.000015" distance="false"
+           physics="true" graphics="false" transform="0 0.003 0 90 0 0"
+           color="RED"/>
+  </Body>
+
+  <Body name="fing1" prev="knuck1" physics="dynamic" mass="0.13"
+        inertia="0.00011233 0 -0.00000123 0 0.00011338 0 -0.00000123 0 0.00002386">
+    <Joint name="fing1-knuck1" range="-90 -90 90" xweightMetric="0.05"
+           type="RotY" transform="0 0 0 -180 0 -180" torqueLimit="2.1"
+           speedLimit="210"/>
+    <Shape type="MESH" distance="false" physics="false" graphics="true"
+           transform="0 0 -0.017 90 -90 0"
+           meshFile="Schunk/SDH_Mittelteil_Finger1_x.tri"/>
+    <Shape type="MESH" distance="false" physics="true" graphics="false"
+           transform="0 0 -0.017 90 -90 0"
+           meshFile="Schunk/SDH_Mittelteil_Finger1_x.tri"/>
+    <xShape type="SSR" extents="0.075 0.018 0.01" distance="false"
+            physics="true" graphics="false" transform="0.0105 0 0.045 0 90 0"
+            color="RED" material="soft_object"/>
+    <Shape type="SSL" length="0.07" radius="0.02" distance="true" color="RED"
+           physics="false" graphics="false" material="soft_object"/>
+    <Sensor name="SS1" type="PPS" dimensions="6 14"
+            extents="0.0034 0.0034 0.0005">
+      <Texel position="0.0155 -0.01 0.06755" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.06755" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.06755" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.06755" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.06755" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.06755" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.063907" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.063907" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.063907" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.063907" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.063907" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.063907" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.060264" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.060264" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.060264" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.060264" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.060264" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.060264" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.056622" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.056622" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.056622" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.056622" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.056622" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.056622" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.052979" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.052979" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.052979" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.052979" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.052979" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.052979" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.049336" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.049336" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.049336" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.049336" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.049336" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.049336" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.045693" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.045693" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.045693" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.045693" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.045693" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.045693" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.04205" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.04205" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.04205" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.04205" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.04205" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.04205" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.038408" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.038408" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.038408" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.038408" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.038408" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.038408" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.034765" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.034765" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.034765" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.034765" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.034765" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.034765" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.031122" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.031122" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.031122" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.031122" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.031122" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.031122" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.027479" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.027479" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.027479" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.027479" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.027479" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.027479" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.023836" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.023836" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.023836" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.023836" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.023836" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.023836" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.020194" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.020194" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.020194" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.020194" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.020194" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.020194" normal="1 0 0"/>
+    </Sensor>
+  </Body>
+
+  <Body name="tip1" prev="fing1" physics="dynamic" mass="0.13"
+        inertia="0.00007702 0 -0.0000007 0 0.00007745 0 -0.0000007 0 0.00002316">
+    <Joint name="tip1-fing1" range="-90 0 90" xweightMetric="0.05" type="RotY"
+           transform="0 0 0.0865 0 0 0" torqueLimit="1.4" speedLimit="210"/>
+    <Shape type="MESH" distance="false" physics="false" graphics="true"
+           transform="0 0 -0.1035 90 -90 0"
+           meshFile="Schunk/SDH_Kuppe_Finger1_x.tri"/>
+    <Shape type="MESH" distance="false" physics="true" graphics="false"
+           transform="0 0 -0.1035 90 -90 0"
+           meshFile="Schunk/SDH_Kuppe_Finger1_x.tri"/>
+    <Shape type="SSL" length="0.05" radius="0.02" distance="true" color="RED"
+           physics="false" graphics="false" material="soft_object"/>
+    <xShape type="SSR" extents="0.03 0.018 0.01" distance="false"
+            physics="true" graphics="false" transform="0.0095 0 0.03 0 88 0"
+            color="RED" material="soft_object"/>
+    <xShape type="SSR" extents="0.02 0.018 0.01" distance="false"
+            physics="true" graphics="false" color="RED"
+            transform="0.004 0 0.056 0 65 0" material="soft_object"/>
+    <Sensor name="SSFT1" type="PPS" dimensions="6 14"
+            extents="0.0034 0.0034 0.0005">
+      <Texel position="0.006 -0.01 0.066" normal="0 0 0"/>
+      <Texel position="0.006 -0.006 0.066" normal="0.848 0 0.5299"/>
+      <Texel position="0.006 -0.002 0.066" normal="0.848 0 0.5299"/>
+      <Texel position="0.006 0.002 0.066" normal="0.848 0 0.5299"/>
+      <Texel position="0.006 0.006 0.066" normal="0.848 0 0.5299"/>
+      <Texel position="0.006 0.01 0.066" normal="0 0 0"/>
+      <Texel position="0.0081 -0.01 0.0625" normal="0 0 0"/>
+      <Texel position="0.0081 -0.006 0.0625" normal="0.8829 0 0.4695"/>
+      <Texel position="0.0081 -0.002 0.0625" normal="0.8829 0 0.4695"/>
+      <Texel position="0.0081 0.002 0.0625" normal="0.8829 0 0.4695"/>
+      <Texel position="0.0081 0.006 0.0625" normal="0.8829 0 0.4695"/>
+      <Texel position="0.0081 0.01 0.0625" normal="0 0 0"/>
+      <Texel position="0.0098 -0.01 0.0589" normal="0 0 0"/>
+      <Texel position="0.0098 -0.006 0.0589" normal="0.9135 0 0.4067"/>
+      <Texel position="0.0098 -0.002 0.0589" normal="0.9135 0 0.4067"/>
+      <Texel position="0.0098 0.002 0.0589" normal="0.9135 0 0.4067"/>
+      <Texel position="0.0098 0.006 0.0589" normal="0.9135 0 0.4067"/>
+      <Texel position="0.0098 0.01 0.0589" normal="0 0 0"/>
+      <Texel position="0.0113 -0.01 0.0552" normal="0 0 0"/>
+      <Texel position="0.0113 -0.006 0.0552" normal="0.9396 0 0.342"/>
+      <Texel position="0.0113 -0.002 0.0552" normal="0.9396 0 0.342"/>
+      <Texel position="0.0113 0.002 0.0552" normal="0.9396 0 0.342"/>
+      <Texel position="0.0113 0.006 0.0552" normal="0.9396 0 0.342"/>
+      <Texel position="0.0113 0.01 0.0552" normal="0 0 0"/>
+      <Texel position="0.01255 -0.01 0.0516" normal="0 0 0"/>
+      <Texel position="0.01255 -0.006 0.0516" normal="0.9613 0 0.2756"/>
+      <Texel position="0.01255 -0.002 0.0516" normal="0.9613 0 0.2756"/>
+      <Texel position="0.01255 0.002 0.0516" normal="0.9613 0 0.2756"/>
+      <Texel position="0.01255 0.006 0.0516" normal="0.9613 0 0.2756"/>
+      <Texel position="0.01255 0.01 0.0516" normal="0 0 0"/>
+      <Texel position="0.0134 -0.01 0.0479" normal="0.9781 0 0.2079"/>
+      <Texel position="0.0134 -0.006 0.0479" normal="0.9781 0 0.2079"/>
+      <Texel position="0.0134 -0.002 0.0479" normal="0.9781 0 0.2079"/>
+      <Texel position="0.0134 0.002 0.0479" normal="0.9781 0 0.2079"/>
+      <Texel position="0.0134 0.006 0.0479" normal="0.9781 0 0.2079"/>
+      <Texel position="0.0134 0.01 0.0479" normal="0.9781 0 0.2079"/>
+      <Texel position="0.0142 -0.01 0.0443" normal="0.9877 0 0.1564"/>
+      <Texel position="0.0142 -0.006 0.0443" normal="0.9877 0 0.1564"/>
+      <Texel position="0.0142 -0.002 0.0443" normal="0.9877 0 0.1564"/>
+      <Texel position="0.0142 0.002 0.0443" normal="0.9877 0 0.1564"/>
+      <Texel position="0.0142 0.006 0.0443" normal="0.9877 0 0.1564"/>
+      <Texel position="0.0142 0.01 0.0443" normal="0.9877 0 0.1564"/>
+      <Texel position="0.0147 -0.01 0.0406" normal="0.9945 0 0.1045"/>
+      <Texel position="0.0147 -0.006 0.0406" normal="0.9945 0 0.1045"/>
+      <Texel position="0.0147 -0.002 0.0406" normal="0.9945 0 0.1045"/>
+      <Texel position="0.0147 0.002 0.0406" normal="0.9945 0 0.1045"/>
+      <Texel position="0.0147 0.006 0.0406" normal="0.9945 0 0.1045"/>
+      <Texel position="0.0147 0.01 0.0406" normal="0.9945 0 0.1045"/>
+      <Texel position="0.015 -0.01 0.037" normal="0.9994 0 0.0349"/>
+      <Texel position="0.015 -0.006 0.037" normal="0.9994 0 0.0349"/>
+      <Texel position="0.015 -0.002 0.037" normal="0.9994 0 0.0349"/>
+      <Texel position="0.015 0.002 0.037" normal="0.9994 0 0.0349"/>
+      <Texel position="0.015 0.006 0.037" normal="0.9994 0 0.0349"/>
+      <Texel position="0.015 0.01 0.037" normal="0.9994 0 0.0349"/>
+      <Texel position="0.015 -0.01 0.0334" normal="1 0 0"/>
+      <Texel position="0.015 -0.006 0.0334" normal="1 0 0"/>
+      <Texel position="0.015 -0.002 0.0334" normal="1 0 0"/>
+      <Texel position="0.015 0.002 0.0334" normal="1 0 0"/>
+      <Texel position="0.015 0.006 0.0334" normal="1 0 0"/>
+      <Texel position="0.015 0.01 0.0334" normal="1 0 0"/>
+      <Texel position="0.015 -0.01 0.0297" normal="1 0 0"/>
+      <Texel position="0.015 -0.006 0.0297" normal="1 0 0"/>
+      <Texel position="0.015 -0.002 0.0297" normal="1 0 0"/>
+      <Texel position="0.015 0.002 0.0297" normal="1 0 0"/>
+      <Texel position="0.015 0.006 0.0297" normal="1 0 0"/>
+      <Texel position="0.015 0.01 0.0297" normal="1 0 0"/>
+      <Texel position="0.015 -0.01 0.0261" normal="1 0 0"/>
+      <Texel position="0.015 -0.006 0.0261" normal="1 0 0"/>
+      <Texel position="0.015 -0.002 0.0261" normal="1 0 0"/>
+      <Texel position="0.015 0.002 0.0261" normal="1 0 0"/>
+      <Texel position="0.015 0.006 0.0261" normal="1 0 0"/>
+      <Texel position="0.015 0.01 0.0261" normal="1 0 0"/>
+      <Texel position="0.015 -0.01 0.0224" normal="1 0 0"/>
+      <Texel position="0.015 -0.006 0.0224" normal="1 0 0"/>
+      <Texel position="0.015 -0.002 0.0224" normal="1 0 0"/>
+      <Texel position="0.015 0.002 0.0224" normal="1 0 0"/>
+      <Texel position="0.015 0.006 0.0224" normal="1 0 0"/>
+      <Texel position="0.015 0.01 0.0224" normal="1 0 0"/>
+      <Texel position="0.015 -0.01 0.0188" normal="0 0 0"/>
+      <Texel position="0.015 -0.006 0.0188" normal="0 0 0"/>
+      <Texel position="0.015 -0.002 0.0188" normal="0 0 0"/>
+      <Texel position="0.015 0.002 0.0188" normal="0 0 0"/>
+      <Texel position="0.015 0.006 0.0188" normal="0 0 0"/>
+      <Texel position="0.015 0.01 0.0188" normal="0 0 0"/>
+    </Sensor>
+  </Body>
+
+
+  <Body name="DistalTouch1" prev="tip1" transform="0.015 0 0.04 0 0 0">
+    <Shape type="FRAME" distance="false" physics="false" graphics="true"
+           scale="0.05"/>
+  </Body>
+
+
+  <Body name="fing2" prev="sdh-base" physics="dynamic" mass="0.13"
+        inertia="0.00011233 0 -0.00000123 0 0.00011338 0 -0.00000123 0 0.00002386">
+    <Joint name="fing2-knuck2" range="-90 -90 90" xweightMetric="0.05"
+           type="RotY" torqueLimit="2.1" speedLimit="210"
+           transform="-0.038105 0 0.089 0 0 0"/>
+    <Shape type="MESH" distance="false" physics="false" graphics="true"
+           transform="0 0 -0.017 90 -90 0"
+           meshFile="Schunk/SDH_Mittelteil_Finger1_x.tri"/>
+    <Shape type="MESH" distance="false" physics="true" graphics="false"
+           transform="0 0 -0.017 90 -90 0"
+           meshFile="Schunk/SDH_Mittelteil_Finger1_x.tri"/>
+    <xShape type="SSR" extents="0.075 0.018 0.01" distance="false"
+            physics="true" graphics="false" transform="0.0105 0 0.045 0 90 0"
+            color="RED" material="soft_object"/>
+    <Shape type="SSL" length="0.07" radius="0.02" distance="true" color="RED"
+           physics="false" graphics="false" material="soft_object"/>
+    <Sensor name="SS2" type="PPS" dimensions="6 14"
+            extents="0.0034 0.0034 0.0005">
+      <Texel position="0.0155 -0.01 0.06755" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.06755" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.06755" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.06755" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.06755" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.06755" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.063907" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.063907" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.063907" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.063907" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.063907" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.063907" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.060264" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.060264" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.060264" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.060264" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.060264" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.060264" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.056622" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.056622" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.056622" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.056622" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.056622" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.056622" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.052979" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.052979" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.052979" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.052979" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.052979" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.052979" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.049336" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.049336" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.049336" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.049336" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.049336" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.049336" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.045693" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.045693" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.045693" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.045693" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.045693" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.045693" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.04205" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.04205" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.04205" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.04205" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.04205" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.04205" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.038408" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.038408" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.038408" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.038408" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.038408" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.038408" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.034765" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.034765" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.034765" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.034765" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.034765" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.034765" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.031122" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.031122" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.031122" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.031122" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.031122" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.031122" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.027479" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.027479" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.027479" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.027479" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.027479" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.027479" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.023836" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.023836" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.023836" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.023836" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.023836" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.023836" normal="1 0 0"/>
+      <Texel position="0.0155 -0.01 0.020194" normal="1 0 0"/>
+      <Texel position="0.0155 -0.006 0.020194" normal="1 0 0"/>
+      <Texel position="0.0155 -0.002 0.020194" normal="1 0 0"/>
+      <Texel position="0.0155 0.002 0.020194" normal="1 0 0"/>
+      <Texel position="0.0155 0.006 0.020194" normal="1 0 0"/>
+      <Texel position="0.0155 0.01 0.020194" normal="1 0 0"/>
+    </Sensor>
+  </Body>
+
+  <Body name="tip2" prev="fing2" physics="dynamic" mass="0.13"
+        inertia="0.00007702 0 -0.0000007 0 0.00007745 0 -0.0000007 0 0.00002316">
+    <Joint name="tip2-fing2" range="-90 0 90" xweightMetric="0.05" type="RotY"
+           transform="0 0 0.0865 0 0 0" torqueLimit="1.4" speedLimit="210"/>
+    <Shape type="MESH" distance="false" physics="false" graphics="true"
+           transform="0 0 -0.1035 90 -90 0"
+           meshFile="Schunk/SDH_Kuppe_Finger1_x.tri"/>
+    <Shape type="MESH" distance="false" physics="true" graphics="false"
+           transform="0 0 -0.1035 90 -90 0"
+           meshFile="Schunk/SDH_Kuppe_Finger1_x.tri"/>
+    <Shape type="SSL" length="0.05" radius="0.02" distance="true" color="RED"
+           physics="false" graphics="false" material="soft_object"/>
+    <xShape type="SSR" extents="0.03 0.018 0.01" distance="false"
+            physics="true" graphics="false" color="RED"
+            transform="0.0095 0 0.03 0 88 0" material="soft_object"/>
+    <xShape type="SSR" extents="0.02 0.018 0.01" distance="false"
+            physics="true" graphics="false" transform="0.004 0 0.056 0 65 0"
+            color="RED" material="soft_object"/>
+    <Sensor name="SSFT2" type="PPS" dimensions="6 14"
+            extents="0.0034 0.0034 0.0005">
+      <Texel position="0.006 -0.01 0.066" normal="0 0 0"/>
+      <Texel position="0.006 -0.006 0.066" normal="0.848 0 0.5299"/>
+      <Texel position="0.006 -0.002 0.066" normal="0.848 0 0.5299"/>
+      <Texel position="0.006 0.002 0.066" normal="0.848 0 0.5299"/>
+      <Texel position="0.006 0.006 0.066" normal="0.848 0 0.5299"/>
+      <Texel position="0.006 0.01 0.066" normal="0 0 0"/>
+      <Texel position="0.0081 -0.01 0.0625" normal="0 0 0"/>
+      <Texel position="0.0081 -0.006 0.0625" normal="0.8829 0 0.4695"/>
+      <Texel position="0.0081 -0.002 0.0625" normal="0.8829 0 0.4695"/>
+      <Texel position="0.0081 0.002 0.0625" normal="0.8829 0 0.4695"/>
+      <Texel position="0.0081 0.006 0.0625" normal="0.8829 0 0.4695"/>
+      <Texel position="0.0081 0.01 0.0625" normal="0 0 0"/>
+      <Texel position="0.0098 -0.01 0.0589" normal="0 0 0"/>
+      <Texel position="0.0098 -0.006 0.0589" normal="0.9135 0 0.4067"/>
+      <Texel position="0.0098 -0.002 0.0589" normal="0.9135 0 0.4067"/>
+      <Texel position="0.0098 0.002 0.0589" normal="0.9135 0 0.4067"/>
+      <Texel position="0.0098 0.006 0.0589" normal="0.9135 0 0.4067"/>
+      <Texel position="0.0098 0.01 0.0589" normal="0 0 0"/>
+      <Texel position="0.0113 -0.01 0.0552" normal="0 0 0"/>
+      <Texel position="0.0113 -0.006 0.0552" normal="0.9396 0 0.342"/>
+      <Texel position="0.0113 -0.002 0.0552" normal="0.9396 0 0.342"/>
+      <Texel position="0.0113 0.002 0.0552" normal="0.9396 0 0.342"/>
+      <Texel position="0.0113 0.006 0.0552" normal="0.9396 0 0.342"/>
+      <Texel position="0.0113 0.01 0.0552" normal="0 0 0"/>
+      <Texel position="0.01255 -0.01 0.0516" normal="0 0 0"/>
+      <Texel position="0.01255 -0.006 0.0516" normal="0.9613 0 0.2756"/>
+      <Texel position="0.01255 -0.002 0.0516" normal="0.9613 0 0.2756"/>
+      <Texel position="0.01255 0.002 0.0516" normal="0.9613 0 0.2756"/>
+      <Texel position="0.01255 0.006 0.0516" normal="0.9613 0 0.2756"/>
+      <Texel position="0.01255 0.01 0.0516" normal="0 0 0"/>
+      <Texel position="0.0134 -0.01 0.0479" normal="0.9781 0 0.2079"/>
+      <Texel position="0.0134 -0.006 0.0479" normal="0.9781 0 0.2079"/>
+      <Texel position="0.0134 -0.002 0.0479" normal="0.9781 0 0.2079"/>
+      <Texel position="0.0134 0.002 0.0479" normal="0.9781 0 0.2079"/>
+      <Texel position="0.0134 0.006 0.0479" normal="0.9781 0 0.2079"/>
+      <Texel position="0.0134 0.01 0.0479" normal="0.9781 0 0.2079"/>
+      <Texel position="0.0142 -0.01 0.0443" normal="0.9877 0 0.1564"/>
+      <Texel position="0.0142 -0.006 0.0443" normal="0.9877 0 0.1564"/>
+      <Texel position="0.0142 -0.002 0.0443" normal="0.9877 0 0.1564"/>
+      <Texel position="0.0142 0.002 0.0443" normal="0.9877 0 0.1564"/>
+      <Texel position="0.0142 0.006 0.0443" normal="0.9877 0 0.1564"/>
+      <Texel position="0.0142 0.01 0.0443" normal="0.9877 0 0.1564"/>
+      <Texel position="0.0147 -0.01 0.0406" normal="0.9945 0 0.1045"/>
+      <Texel position="0.0147 -0.006 0.0406" normal="0.9945 0 0.1045"/>
+      <Texel position="0.0147 -0.002 0.0406" normal="0.9945 0 0.1045"/>
+      <Texel position="0.0147 0.002 0.0406" normal="0.9945 0 0.1045"/>
+      <Texel position="0.0147 0.006 0.0406" normal="0.9945 0 0.1045"/>
+      <Texel position="0.0147 0.01 0.0406" normal="0.9945 0 0.1045"/>
+      <Texel position="0.015 -0.01 0.037" normal="0.9994 0 0.0349"/>
+      <Texel position="0.015 -0.006 0.037" normal="0.9994 0 0.0349"/>
+      <Texel position="0.015 -0.002 0.037" normal="0.9994 0 0.0349"/>
+      <Texel position="0.015 0.002 0.037" normal="0.9994 0 0.0349"/>
+      <Texel position="0.015 0.006 0.037" normal="0.9994 0 0.0349"/>
+      <Texel position="0.015 0.01 0.037" normal="0.9994 0 0.0349"/>
+      <Texel position="0.015 -0.01 0.0334" normal="1 0 0"/>
+      <Texel position="0.015 -0.006 0.0334" normal="1 0 0"/>
+      <Texel position="0.015 -0.002 0.0334" normal="1 0 0"/>
+      <Texel position="0.015 0.002 0.0334" normal="1 0 0"/>
+      <Texel position="0.015 0.006 0.0334" normal="1 0 0"/>
+      <Texel position="0.015 0.01 0.0334" normal="1 0 0"/>
+      <Texel position="0.015 -0.01 0.0297" normal="1 0 0"/>
+      <Texel position="0.015 -0.006 0.0297" normal="1 0 0"/>
+      <Texel position="0.015 -0.002 0.0297" normal="1 0 0"/>
+      <Texel position="0.015 0.002 0.0297" normal="1 0 0"/>
+      <Texel position="0.015 0.006 0.0297" normal="1 0 0"/>
+      <Texel position="0.015 0.01 0.0297" normal="1 0 0"/>
+      <Texel position="0.015 -0.01 0.0261" normal="1 0 0"/>
+      <Texel position="0.015 -0.006 0.0261" normal="1 0 0"/>
+      <Texel position="0.015 -0.002 0.0261" normal="1 0 0"/>
+      <Texel position="0.015 0.002 0.0261" normal="1 0 0"/>
+      <Texel position="0.015 0.006 0.0261" normal="1 0 0"/>
+      <Texel position="0.015 0.01 0.0261" normal="1 0 0"/>
+      <Texel position="0.015 -0.01 0.0224" normal="1 0 0"/>
+      <Texel position="0.015 -0.006 0.0224" normal="1 0 0"/>
+      <Texel position="0.015 -0.002 0.0224" normal="1 0 0"/>
+      <Texel position="0.015 0.002 0.0224" normal="1 0 0"/>
+      <Texel position="0.015 0.006 0.0224" normal="1 0 0"/>
+      <Texel position="0.015 0.01 0.0224" normal="1 0 0"/>
+      <Texel position="0.015 -0.01 0.0188" normal="0 0 0"/>
+      <Texel position="0.015 -0.006 0.0188" normal="0 0 0"/>
+      <Texel position="0.015 -0.002 0.0188" normal="0 0 0"/>
+      <Texel position="0.015 0.002 0.0188" normal="0 0 0"/>
+      <Texel position="0.015 0.006 0.0188" normal="0 0 0"/>
+      <Texel position="0.015 0.01 0.0188" normal="0 0 0"/>
+    </Sensor>
+  </Body>
+
+
+  <Body name="DistalTouch2" prev="tip2" transform="0.015 0 0.04 0 0 0">
+    <Shape type="FRAME" distance="false" physics="false" graphics="true"
+           scale="0.05"/>
+  </Body>
+
+
+</Graph>
