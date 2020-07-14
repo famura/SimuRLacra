@@ -81,7 +81,7 @@ class ECPlanarInsert : public ExperimentConfig
 protected:
     virtual ActionModel* createActionModel()
     {
-        std::string actionModelType = "ds_activation";
+        std::string actionModelType = "unspecified";
         properties->getProperty(actionModelType, "actionModelType");
         
         // Common for the action models
@@ -123,6 +123,7 @@ protected:
             
             return amIK;
         }
+
         else if (actionModelType == "ds_activation") {
             // Obtain the inner action model
             std::unique_ptr<AMIKGeneric> innerAM(new AMIKGeneric(graph));
@@ -167,10 +168,10 @@ protected:
             // Create the action model
             return new AMDynamicalSystemActivation(innerAM.release(), taskRel, tcm);
         }
+
         else {
             std::ostringstream os;
-            os << "Unsupported action model type: ";
-            os << actionModelType;
+            os << "Unsupported action model type: " << actionModelType;
             throw std::invalid_argument(os.str());
         }
     }
@@ -190,10 +191,10 @@ protected:
         omAng->setMaxVelocity(20.); // [rad/s]
         fullState->addPart(OMPartial::fromMask(omAng, {false, true, false}));  // only y axis
         
-        std::string actionModelType = "ds_activation";
+        std::string actionModelType = "unspecified";
         properties->getProperty(actionModelType, "actionModelType");
         if (actionModelType == "ds_activation") {
-            if (properties->getPropertyBool("observeDSGoalDistance", false)) {
+            if (properties->getPropertyBool("observeDynamicalSystemGoalDistance", false)) {
                 // Add goal distances
                 auto castedAM = actionModel->unwrap<AMDynamicalSystemActivation>();
                 if (castedAM) {

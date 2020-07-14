@@ -133,8 +133,9 @@ AMIKControllerActivation::computeCommand(MatNd* q_des, MatNd* q_dot_des, MatNd* 
     
     // Compute the differences in task space and weight them
     getController()->computeDX(dx_des, x_des, a);
+    MatNd_destroy(x_des);
     MatNd_destroy(a);
-    
+
     // Compute IK from dx_des
     ActionModelIK::ikFromDX(q_des, q_dot_des, dt);
     

@@ -61,7 +61,7 @@ if __name__ == '__main__':
         observePredictedCollisionCost=False,
         observeManipulabilityIndex=False,
         observeCurrentManipulability=True,
-        observeDSGoalDistance=False,
+        observeDynamicalSystemGoalDistance=False,
         observeDynamicalSystemDiscrepancy=True,
         observeTaskSpaceDiscrepancy=True,
         usePhysicsNode=True,

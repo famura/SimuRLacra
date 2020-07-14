@@ -72,30 +72,35 @@ class ECBallOnPlate : public ExperimentConfig
 protected:
     virtual ActionModel* createActionModel()
     {
-        std::string actionModelType = "joint_pos";
+        std::string actionModelType = "unspecified";
         properties->getProperty(actionModelType, "actionModelType");
         
         if (actionModelType == "joint_pos") {
             return new AMJointControlPosition(graph);
         }
+
         else if (actionModelType == "joint_acc") {
             double maxAction = 120*M_PI/180; // [1/s^2]
             properties->getProperty(maxAction, "maxAction");
             return new AMIntegrate2ndOrder(new AMJointControlPosition(graph), maxAction);
         }
+
         else if (actionModelType == "plate_angpos") {
             return new AMPlateAngPos(graph);
         }
+
         else if (actionModelType == "plate_angvel") {
             double maxAction = 120*M_PI/180; // [1/s]
             properties->getProperty(maxAction, "maxAction");
             return new AMIntegrate1stOrder(new AMPlateAngPos(graph), maxAction);
         }
+
         else if (actionModelType == "plate_angacc") {
             double maxAction = 120*M_PI/180; // [1/s^2]
             properties->getProperty(maxAction, "maxAction");
             return new AMIntegrate2ndOrder(new AMPlateAngPos(graph), maxAction);
         }
+
         else if (actionModelType == "plate_acc5d") {
             MatNd* maxAction;
             MatNd_fromStack(maxAction, 5, 1);
@@ -111,6 +116,7 @@ protected:
             
             return new AMIntegrate2ndOrder(new AMPlatePos5D(graph), maxAction);
         }
+
         else {
             std::ostringstream os;
             os << "Unsupported action model type: " << actionModelType;

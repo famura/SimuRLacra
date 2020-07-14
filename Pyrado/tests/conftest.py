@@ -234,7 +234,7 @@ def default_p3l_ta_bt():
         observePredictedCollisionCost=True,
         observeManipulabilityIndex=True,
         observeCurrentManipulability=True,
-        observeDSGoalDistance=True,
+        observeDynamicalSystemGoalDistance=True,
         observeDynamicalSystemDiscrepancy=True,
     )
 
@@ -257,7 +257,7 @@ def default_p3l_ta_vx():
         observePredictedCollisionCost=True,
         observeManipulabilityIndex=True,
         observeCurrentManipulability=True,
-        observeDSGoalDistance=True,
+        observeDynamicalSystemGoalDistance=True,
         observeDynamicalSystemDiscrepancy=True,
     )
 
@@ -278,7 +278,7 @@ def default_pi_ik_6l_vx():
         observePredictedCollisionCost=True,
         observeManipulabilityIndex=True,
         observeCurrentManipulability=True,
-        observeDSGoalDistance=True,
+        observeDynamicalSystemGoalDistance=True,
         observeDynamicalSystemDiscrepancy=True,
         observeTaskSpaceDiscrepancy=True,
     )
@@ -300,7 +300,7 @@ def default_pi_ik_5l_bt():
         observePredictedCollisionCost=True,
         observeManipulabilityIndex=True,
         observeCurrentManipulability=True,
-        observeDSGoalDistance=True,
+        observeDynamicalSystemGoalDistance=True,
         observeDynamicalSystemDiscrepancy=True,
         observeTaskSpaceDiscrepancy=True,
     )
@@ -322,7 +322,7 @@ def default_pi_ta_6l_bt():
         observePredictedCollisionCost=True,
         observeManipulabilityIndex=True,
         observeCurrentManipulability=True,
-        observeDSGoalDistance=True,
+        observeDynamicalSystemGoalDistance=True,
         observeDynamicalSystemDiscrepancy=True,
         observeTaskSpaceDiscrepancy=True,
     )
@@ -344,7 +344,7 @@ def default_pi_ta_5l_vx():
         observePredictedCollisionCost=True,
         observeManipulabilityIndex=True,
         observeCurrentManipulability=True,
-        observeDSGoalDistance=True,
+        observeDynamicalSystemGoalDistance=True,
         observeDynamicalSystemDiscrepancy=True,
         observeTaskSpaceDiscrepancy=True,
     )
@@ -398,7 +398,7 @@ def default_bspos_bt():
         observeManipulabilityIndex=True,
         observeDynamicalSystemDiscrepancy=True,
         observeTaskSpaceDiscrepancy=True,
-        observeDSGoalDistance=True,
+        observeDynamicalSystemGoalDistance=True,
     )
 
 
@@ -425,7 +425,7 @@ def default_bspos_vx():
         observeManipulabilityIndex=True,
         observeDynamicalSystemDiscrepancy=True,
         observeTaskSpaceDiscrepancy=True,
-        observeDSGoalDistance=True,
+        observeDynamicalSystemGoalDistance=True,
     )
 
 

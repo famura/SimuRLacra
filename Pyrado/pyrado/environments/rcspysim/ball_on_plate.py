@@ -42,10 +42,10 @@ class BallOnPlateSim(RcsSim, Serializable):
 
         # Forward to the RcsSim's constructor
         RcsSim.__init__(self,
+                        task_args=task_args,
                         envType='BallOnPlate',
                         graphFileName='gBotKuka.xml',
                         physicsConfigFile='pBallOnPlate.xml',
-                        task_args=task_args,
                         **kwargs)
 
         # Store BallOnPlateSim specific vars
@@ -80,7 +80,7 @@ class BallOnPlateSim(RcsSim, Serializable):
             br = params.get('ball_radius', None)
             if br is None:
                 # If not set, get from the current simulation parameters
-                br = self._impl.domainParam['ball_radius']
+                br = self._sim.domainParam['ball_radius']
             return dict(params, ball_rolling_friction_coefficient=params['ball_rolling_friction_coefficient']*br)
 
         return params
@@ -100,7 +100,7 @@ class BallOnPlateSim(RcsSim, Serializable):
 
         # Apply a initial ball velocity if given
         if self._init_ball_vel is not None:
-            self._impl.applyBallVelocity(self._init_ball_vel)
+            self._sim.applyBallVelocity(self._init_ball_vel)
             # We could try to adapt obs here, but it's not really necessary
 
         return obs

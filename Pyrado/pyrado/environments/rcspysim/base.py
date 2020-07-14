@@ -40,7 +40,7 @@ class RcsSim(SimEnv, Serializable):
         Constructor
 
         .. note::
-            The joint type (i.e. position or torque control) is set in the config-xml file in Rcs.
+            The joint type (i.e. position or torque control) is set in the associated xml files in `RcsPySim/config`.
 
         :param envType: environment type name as defined on the C++ side
         :param task_args: arguments for the task construction
@@ -61,7 +61,7 @@ class RcsSim(SimEnv, Serializable):
         self._check_joint_limits = checkJointLimits
 
         # Create Rcs-based implementation (RcsSimEnv comes from the pybind11 module)
-        self._impl = RcsSimEnv(
+        self._sim = RcsSimEnv(
             dt=dt,
             envType=envType,
             checkJointLimits=self._check_joint_limits,
@@ -69,14 +69,14 @@ class RcsSim(SimEnv, Serializable):
         )
 
         # Setup the initial domain parameters
-        self._domain_param = self._unadapt_domain_param(self._impl.domainParam)
+        self._domain_param = self._unadapt_domain_param(self._sim.domainParam)
 
         if joint_limit_penalty > 0:
             raise pyrado.ValueErr(given=joint_limit_penalty, le_constraint='0')
         self._joint_limit_penalty = joint_limit_penalty
 
         # Initial init state space is taken from C++
-        self._init_space = to_pyrado_space(self._impl.initStateSpace)
+        self._init_space = to_pyrado_space(self._sim.initStateSpace)
 
         # By default, the state space is a subset of the observation space. Set this to customize in subclass.
         self.state_mask = None
@@ -101,7 +101,7 @@ class RcsSim(SimEnv, Serializable):
 
     @property
     def obs_space(self) -> Space:
-        return to_pyrado_space(self._impl.observationSpace)
+        return to_pyrado_space(self._sim.observationSpace)
 
     @property
     def init_space(self) -> Space:
@@ -109,12 +109,12 @@ class RcsSim(SimEnv, Serializable):
 
     @init_space.setter
     def init_space(self, space: Space):
-        assert to_pyrado_space(self._impl.initStateSpace).shape == space.shape
+        assert to_pyrado_space(self._sim.initStateSpace).shape == space.shape
         self._init_space = space
 
     @property
     def act_space(self) -> Space:
-        return to_pyrado_space(self._impl.actionSpace)
+        return to_pyrado_space(self._sim.actionSpace)
 
     @property
     def task(self) -> Task:
@@ -127,7 +127,7 @@ class RcsSim(SimEnv, Serializable):
 
     @property
     def domain_param(self) -> dict:
-        return self._unadapt_domain_param(self._impl.domainParam)
+        return self._unadapt_domain_param(self._sim.domainParam)
 
     @domain_param.setter
     def domain_param(self, param: dict):
@@ -218,7 +218,7 @@ class RcsSim(SimEnv, Serializable):
             domain_param = self._domain_param
 
         # Forward to C++ implementation
-        obs = self._impl.reset(domainParam=self._adapt_domain_param(domain_param), initState=init_state)
+        obs = self._sim.reset(domainParam=self._adapt_domain_param(domain_param), initState=init_state)
         self.state = self._state_from_obs(obs)
 
         return obs
@@ -236,10 +236,10 @@ class RcsSim(SimEnv, Serializable):
 
         # Dynamics are calculated in the Rcs simulation
         try:
-            obs = self._impl.step(act, disturbance)
+            obs = self._sim.step(act, disturbance)
         except JointLimitException:
             # Joint limits exceeded! Return (obs, rew, done, info) directly after this failure.
-            return self._impl.lastObservation, self._joint_limit_penalty, True, dict(t=self._curr_step*self._dt)
+            return self._sim.lastObservation, self._joint_limit_penalty, True, dict(t=self._curr_step*self._dt)
 
         self.state = self._state_from_obs(obs)  # only for the Python side
 
@@ -264,7 +264,7 @@ class RcsSim(SimEnv, Serializable):
 
             # Forward to Rcs GUI
             if mode.video:
-                self._impl.render()
+                self._sim.render()
 
     def save_config_xml(self, fileName: str):
         """
@@ -272,7 +272,7 @@ class RcsSim(SimEnv, Serializable):
 
         :param fileName: output file name
         """
-        self._impl.saveConfigXML(fileName)
+        self._sim.saveConfigXML(fileName)
 
     def get_body_position(self, bodyName: str, refFrameName: str, refBodyName: str) -> np.ndarray:
         """
@@ -284,7 +284,7 @@ class RcsSim(SimEnv, Serializable):
         :param refBodyName: name of the reference body, pass '' to use world coordinates
         :return: x,y,z positions in a reference frame coordinates relative to a reference bodies
         """
-        return self._impl.getBodyPosition(bodyName, refFrameName, refBodyName)
+        return self._sim.getBodyPosition(bodyName, refFrameName, refBodyName)
 
     def get_body_extents(self, bodyName: str, shapeIdx: int = 0) -> np.ndarray:
         """
@@ -298,4 +298,4 @@ class RcsSim(SimEnv, Serializable):
         :param shapeIdx: index of the shape in the `Body` node, defaults to the first shape of the body
         :return: x,y,z positions in a reference frame coordinates relative to a reference bodies
         """
-        return self._impl.getBodyExtents(bodyName, shapeIdx)
+        return self._sim.getBodyExtents(bodyName, shapeIdx)

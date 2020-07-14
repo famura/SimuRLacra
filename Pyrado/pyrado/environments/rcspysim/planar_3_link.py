@@ -34,7 +34,7 @@ class Planar3LinkSim(RcsSim, Serializable):
             This constructor should only be called via the subclasses.
 
         :param task_args: arguments for the task construction
-        :param max_dist_force: maximum disturbance force, set to None (default) for no disturbance
+        :param max_dist_force: maximum disturbance force, pass `None` for no disturbance
         :param kwargs: keyword arguments forwarded to `RcsSim`
                        collisionConfig: specification of the Rcs CollisionModel
         """
@@ -52,12 +52,12 @@ class Planar3LinkSim(RcsSim, Serializable):
         else:
             collision_config = kwargs.get('collisionConfig')
 
-        # Forward to the RcsSim's constructor, nothing more needs to be done here
+        # Forward to RcsSim's constructor
         RcsSim.__init__(
             self,
+            task_args=task_args,
             envType='Planar3Link',
             graphFileName='gPlanar3Link_trqCtrl.xml',
-            task_args=task_args,
             collisionConfig=collision_config,
             **kwargs
         )
@@ -196,7 +196,7 @@ class Planar3LinkIKSim(Planar3LinkSim, Serializable):
                        observePredictedCollisionCost: bool = False,
                        observeManipulabilityIndex: bool = False,
                        observeCurrentManipulability: bool = True,
-                       observeDSGoalDistance: bool = False,
+                       observeDynamicalSystemGoalDistance: bool = False,
         """
         Serializable._init(self, locals())
 
@@ -234,7 +234,7 @@ class Planar3LinkTASim(Planar3LinkSim, Serializable):
                        observePredictedCollisionCost: bool = False,
                        observeManipulabilityIndex: bool = False,
                        observeCurrentManipulability: bool = True,
-                       observeDSGoalDistance: bool = False,
+                       observeDynamicalSystemGoalDistance: bool = False,
                        observeDynamicalSystemDiscrepancy: bool = False,
 
         Example:

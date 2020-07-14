@@ -81,9 +81,14 @@ class ECPlanar3Link : public ExperimentConfig
 protected:
     virtual ActionModel* createActionModel()
     {
-        std::string actionModelType = "joint_pos";
+        std::string actionModelType = "unspecified";
         properties->getProperty(actionModelType, "actionModelType");
-        
+
+        // Get the method how to combine the movement primitives / tasks given their activation (not used in every case)
+        std::string taskCombinationMethod = "mean";
+        properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
+        TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(taskCombinationMethod);
+
         // Common for the action models
         RcsBody* effector = RcsGraph_getBodyByName(graph, "Effector");
         RCHECK(effector);
@@ -100,19 +105,12 @@ protected:
             return new AMIntegrate2ndOrder(new AMJointControlPosition(graph), max_action);
         }
         else if (actionModelType == "ik_activation") {
-            // Create the action model
+            // Create the base action model
             auto amIK = new AMIKGeneric(graph);
             std::vector<TaskGenericIK*> tasks;
             
             // Check if the tasks are defined on position or task level. Adapt their parameters if desired.
             if (properties->getPropertyBool("positionTasks", true)) {
-                
-                // Get the method how to combine the movement primitives / tasks given their activation
-                std::string taskCombinationMethod = "mean";
-                properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
-                TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(
-                    taskCombinationMethod);
-                
                 // Override the action model
                 amIK = new AMIKControllerActivation(graph, tcm);
                 
@@ -140,10 +138,10 @@ protected:
                     std::stringstream taskName;
                     taskName << "Position " << i++ << " [m]";
                     task->resetParameter(
-                        Task::Parameters(-0.9, 0.9, 1.0, static_cast<std::string>("X") + taskName.str()));
+                        Task::Parameters(-0.9, 0.9, 1.0, "X" + taskName.str()));
                     task->addParameter(
-                        Task::Parameters(-0.01, 0.01, 1.0, static_cast<std::string>("Y") + taskName.str()));
-                    task->addParameter(Task::Parameters(-0., 1.4, 1.0, static_cast<std::string>("Z") + taskName.str()));
+                        Task::Parameters(-0.01, 0.01, 1.0, "Y" + taskName.str()));
+                    task->addParameter(Task::Parameters(0., 1.4, 1.0, "Z" + taskName.str()));
                 }
             }
             else {
@@ -164,6 +162,7 @@ protected:
             
             return amIK;
         }
+
         else if (actionModelType == "ds_activation") {
             // Obtain the inner action model
             std::unique_ptr<AMIKGeneric> innerAM(new AMIKGeneric(graph));
@@ -203,14 +202,10 @@ protected:
                 taskRel.push_back(task.release());
             }
             
-            // Get the method how to combine the movement primitives / tasks given their activation
-            std::string taskCombinationMethod = "mean";
-            properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
-            TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(taskCombinationMethod);
-            
             // Create the action model
             return new AMDynamicalSystemActivation(innerAM.release(), taskRel, tcm);
         }
+
         else {
             std::ostringstream os;
             os << "Unsupported action model type: " << actionModelType;
@@ -235,44 +230,6 @@ protected:
             omLin->setMinState(-1.56); // [m]
             omLin->setMaxState(1.56); // [m]
             fullState->addPart(OMPartial::fromMask(omLin, {true, false, true}));
-        }
-        
-        std::string actionModelType = "joint_pos";
-        properties->getProperty(actionModelType, "actionModelType");
-        bool haveJointPos = actionModelType == "joint_pos";
-        if (haveJointPos) {
-            fullState->addPart(OMJointState::observeUnconstrainedJoints(graph));
-        }
-        else if (actionModelType == "ds_activation") {
-            if (properties->getPropertyBool("observeDSGoalDistance", false)) {
-                // Add goal distances
-                auto castedAM = actionModel->unwrap<AMDynamicalSystemActivation>();
-                if (castedAM) {
-                    auto omGoalDist = new OMDynamicalSystemGoalDistance(castedAM);
-                    fullState->addPart(omGoalDist);
-                }
-                else {
-                    delete fullState;
-                    std::ostringstream os;
-                    os << "The action model needs to be of type AMDynamicalSystemActivation but is: " << castedAM;
-                    throw std::invalid_argument(os.str());
-                }
-            }
-            
-            if (properties->getPropertyBool("observeDynamicalSystemDiscrepancy", false)) {
-                // Add the discrepancies between commanded and executed the task space changes
-                auto castedAM = dynamic_cast<AMDynamicalSystemActivation*>(actionModel);
-                if (castedAM) {
-                    auto omDescr = new OMDynamicalSystemDiscrepancy(castedAM);
-                    fullState->addPart(omDescr);
-                }
-                else {
-                    delete fullState;
-                    std::ostringstream os;
-                    os << "The action model needs to be of type AMDynamicalSystemActivation but is: " << castedAM;
-                    throw std::invalid_argument(os.str());
-                }
-            }
         }
         
         // Add force/torque measurements
@@ -318,6 +275,46 @@ protected:
             else {
                 delete fullState;
                 throw std::invalid_argument("The action model needs to be of type ActionModelIK!");
+            }
+        }
+
+        std::string actionModelType = "unspecified";
+        properties->getProperty(actionModelType, "actionModelType");
+        bool haveJointPos = actionModelType == "joint_pos";
+
+        if (haveJointPos) {
+            fullState->addPart(OMJointState::observeUnconstrainedJoints(graph));
+        }
+
+        else if (actionModelType == "ds_activation") {
+            if (properties->getPropertyBool("observeDynamicalSystemGoalDistance", false)) {
+                // Add goal distances
+                auto castedAM = actionModel->unwrap<AMDynamicalSystemActivation>();
+                if (castedAM) {
+                    auto omGoalDist = new OMDynamicalSystemGoalDistance(castedAM);
+                    fullState->addPart(omGoalDist);
+                }
+                else {
+                    delete fullState;
+                    std::ostringstream os;
+                    os << "The action model needs to be of type AMDynamicalSystemActivation but is: " << castedAM;
+                    throw std::invalid_argument(os.str());
+                }
+            }
+
+            if (properties->getPropertyBool("observeDynamicalSystemDiscrepancy", false)) {
+                // Add the discrepancies between commanded and executed the task space changes
+                auto castedAM = dynamic_cast<AMDynamicalSystemActivation*>(actionModel);
+                if (castedAM) {
+                    auto omDescr = new OMDynamicalSystemDiscrepancy(castedAM);
+                    fullState->addPart(omDescr);
+                }
+                else {
+                    delete fullState;
+                    std::ostringstream os;
+                    os << "The action model needs to be of type AMDynamicalSystemActivation but is: " << castedAM;
+                    throw std::invalid_argument(os.str());
+                }
             }
         }
         

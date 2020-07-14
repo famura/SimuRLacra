@@ -31,7 +31,7 @@ Script to test the bi-manual ball-in-tube task using a hard-coded time-based pol
 """
 import rcsenv
 import pyrado
-from pyrado.environments.rcspysim.ball_in_tube import BallInTubeVelMPsSim, BallInTubePosMPsSim
+from pyrado.environments.rcspysim.ball_in_tube import BallInTubeVelMPsSim, BallInTubePosMPsSim, BallInTubeIKSim
 from pyrado.policies.dummy import IdlePolicy
 from pyrado.policies.time import TimePolicy
 from pyrado.sampling.rollout import rollout, after_rollout_query
@@ -39,7 +39,7 @@ from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt
 
 
-rcsenv.setLogLevel(4)
+rcsenv.setLogLevel(1)
 
 
 def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
@@ -59,6 +59,37 @@ def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, ch
 
     # Set up policy
     policy = IdlePolicy(env.spec)  # don't move at all
+
+    return env, policy
+
+
+def create_ik_activation_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
+    def policy(t: float):
+        return [0.2]
+
+    # Set up environment
+    env = BallInTubeIKSim(
+        usePhysicsNode=True,
+        physicsEngine=physicsEngine,
+        graphFileName=graphFileName,
+        dt=dt,
+        max_steps=max_steps,
+        fixed_init_state=True,
+        ref_frame=ref_frame,
+        collisionConfig={'file': 'collisionModel.xml'},
+        taskCombinationMethod='sum',
+        checkJointLimits=checkJointLimits,
+        collisionAvoidanceIK=False,
+        observeVelocity=False,
+        observeCollisionCost=True,
+        observePredictedCollisionCost=False,
+        observeManipulabilityIndex=True,
+        observeCurrentManipulability=True,
+        observeTaskSpaceDiscrepancy=True,
+    )
+
+    # Set up policy
+    policy = TimePolicy(env.spec, policy, dt)
 
     return env, policy
 
@@ -90,7 +121,7 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         observeCurrentManipulability=True,
         observeDynamicalSystemDiscrepancy=True,
         observeTaskSpaceDiscrepancy=True,
-        observeDSGoalDistance=True,
+        observeDynamicalSystemGoalDistance=True,
     )
 
     # Set up policy
@@ -127,7 +158,7 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         observeDynamicalSystemDiscrepancy=False,
         observeTaskSpaceDiscrepancy=True,
         observeForceTorque=True,
-        observeDSGoalDistance=False,
+        observeDynamicalSystemGoalDistance=False,
     )
 
     # Set up policy
@@ -138,30 +169,32 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
 
 if __name__ == '__main__':
     # Choose setup
-    setup_type = 'pos'  # idle, pos, vel
-    physicsEngine = 'Bullet'  # Bullet or Vortex
-    graphFileName = 'gBallInTube_trqCtrl.xml'  # gBallInTube_trqCtrl or gBallInTube_posCtrl
-    dt = 1/100.
-    max_steps = int(20/dt)
-    ref_frame = 'table'  # world, table, or slider
-    checkJointLimits = False
-
+    setup_type = 'ik_activation'  # idle, ik_activation, ds_activation_pos, ds_activation_vel
+    common_hparam = dict(
+        physicsEngine='Bullet',  # Bullet or Vortex
+        graphFileName='gBallInTube_trqCtrl.xml',  # gBallInTube_trqCtrl
+        dt=1/100.,
+        max_steps=int(20*100),
+        ref_frame='table',  # world, table, or slider
+        checkJointLimits=False,
+    )
     if setup_type == 'idle':
-        env, policy = create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits)
-    elif setup_type == 'pos':
-        env, policy = create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame,
-                                                checkJointLimits)
-    elif setup_type == 'vel':
-        env, policy = create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame,
-                                                checkJointLimits)
+        env, policy = create_idle_setup(**common_hparam)
+    elif setup_type == 'ik_activation':
+        env, policy = create_ik_activation_setup(**common_hparam)
+    elif setup_type == 'ds_activation_pos':
+        env, policy = create_position_mps_setup(**common_hparam)
+    elif setup_type == 'ds_activation_vel':
+        env, policy = create_velocity_mps_setup(**common_hparam)
     else:
-        raise pyrado.ValueErr(given=setup_type, eq_constraint="'idle', 'pos', 'vel")
+        raise pyrado.ValueErr(given=setup_type, eq_constraint="'idle', 'ds_activation_pos', 'ds_activation_vel")
 
     # Simulate and plot
     print('observations:\n', env.obs_space.labels)
     done, param, state = False, None, None
     while not done:
-        ro = rollout(env, policy, render_mode=RenderMode(text=False, video=True), eval=True, max_steps=max_steps,
-                     reset_kwargs=dict(domain_param=param, init_state=state), stop_on_done=False)
+        ro = rollout(env, policy, render_mode=RenderMode(text=False, video=True), stop_on_done=False,
+                     eval=True, max_steps=common_hparam['max_steps'],
+                     reset_kwargs=dict(domain_param=param, init_state=state))
         print_cbt(f'Return: {ro.undiscounted_return()}', 'g', bright=True)
         done, state, param = after_rollout_query(env, policy, ro)

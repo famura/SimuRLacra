@@ -69,7 +69,7 @@ class ECQuanserQube : public ExperimentConfig
 protected:
     virtual ActionModel* createActionModel()
     {
-        std::string actionModelType = "joint_acc";
+        std::string actionModelType = "unspecified";
         properties->getProperty(actionModelType, "actionModelType");
         
         if (actionModelType == "joint_acc") {
@@ -83,6 +83,7 @@ protected:
             return new AMIntegrate2ndOrder(new AMJointControlPosition(graph), max_action);
             // return new AMJointControlAcceleration(graph); // not working
         }
+
         else {
             std::ostringstream os;
             os << "Unsupported action model type: " << actionModelType;

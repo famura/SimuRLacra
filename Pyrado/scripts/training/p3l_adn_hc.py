@@ -64,7 +64,7 @@ if __name__ == '__main__':
         observeCurrentManipulability=True,
         observeDynamicalSystemDiscrepancy=False,
         observeTaskSpaceDiscrepancy=True,
-        observeDSGoalDistance=False,
+        observeDynamicalSystemGoalDistance=False,
     )
     # env = Planar3LinkTASim(**env_hparams)
     env = Planar3LinkIKSim(**env_hparams)

@@ -89,7 +89,7 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         observeDynamicalSystemDiscrepancy=True,
         observeTaskSpaceDiscrepancy=True,
         observeForceTorque=True,
-        observeDSGoalDistance=True,
+        observeDynamicalSystemGoalDistance=True,
     )
     print(env.get_body_position('Box', '', ''))
     print(env.get_body_position('Box', 'GoalUpperShelve', ''))
@@ -175,7 +175,7 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         observeDynamicalSystemDiscrepancy=True,
         observeTaskSpaceDiscrepancy=True,
         observeForceTorque=True,
-        observeDSGoalDistance=True,
+        observeDynamicalSystemGoalDistance=True,
     )
 
     # Set up policy

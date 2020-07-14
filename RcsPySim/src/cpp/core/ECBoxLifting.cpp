@@ -166,8 +166,7 @@ protected:
                 i++;
             }
         }
-            
-            // Control effector velocity and orientation
+        // Control effector velocity and orientation
         else {
             // Left
             innerAM->addTask(new TaskVelocity1D("Xd", graph, leftGrasp, refBody, refFrame));
@@ -284,7 +283,7 @@ protected:
         fullState->addPart(omBoxAng);
         
         // Add goal distances
-        if (properties->getPropertyBool("observeDSGoalDistance", false)) {
+        if (properties->getPropertyBool("observeDynamicalSystemGoalDistance", false)) {
             auto amAct = actionModel->unwrap<AMDynamicalSystemActivation>();
             RCHECK(amAct);
             fullState->addPart(new OMDynamicalSystemGoalDistance(amAct));

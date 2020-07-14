@@ -58,9 +58,9 @@ unsigned int ISSBallInTube::getDim() const
 void ISSBallInTube::getMinMax(double* min, double* max) const
 {
     min[0] = -0.2;  // base_x
-    max[0] = -0.0;
+    max[0] = +0.2;
     min[1] = -0.05;  // base_y
-    max[1] = 0.05;
+    max[1] = +0.05;
     min[2] = RCS_DEG2RAD(-5.);  // base_theta
     max[2] = RCS_DEG2RAD(5.);
     min[3] = 0.8; // rail_z

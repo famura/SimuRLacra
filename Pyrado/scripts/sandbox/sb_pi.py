@@ -56,7 +56,7 @@ def ik_activation_variant(dt, max_steps, max_dist_force, physics_engine, graph_f
         observePredictedCollisionCost=False,
         observeManipulabilityIndex=False,
         observeCurrentManipulability=True,
-        observeDSGoalDistance=False,
+        observeDynamicalSystemGoalDistance=False,
         observeDynamicalSystemDiscrepancy=False,
         observeTaskSpaceDiscrepancy=True,
     )
@@ -88,7 +88,7 @@ def ds_activation_variant(dt, max_steps, max_dist_force, physics_engine, graph_f
         observePredictedCollisionCost=False,
         observeManipulabilityIndex=False,
         observeCurrentManipulability=True,
-        observeDSGoalDistance=False,
+        observeDynamicalSystemGoalDistance=False,
         observeDynamicalSystemDiscrepancy=False,
         observeTaskSpaceDiscrepancy=True,
     )
@@ -107,7 +107,7 @@ def ds_activation_variant(dt, max_steps, max_dist_force, physics_engine, graph_f
 
 if __name__ == '__main__':
     # Choose setup
-    setup_type = 'ik_activation'  # ik, or activation
+    setup_type = 'ds_activation'  # ik, or activation
     common_hparam = dict(
         dt=0.01,
         max_steps=1200,

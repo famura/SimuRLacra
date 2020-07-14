@@ -87,10 +87,10 @@ class BoxShelvingSim(RcsSim, Serializable):
         # Forward to the RcsSim's constructor
         RcsSim.__init__(
             self,
+            task_args=task_args,
             envType='BoxShelving',
             extraConfigDir=osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, 'BoxShelving'),
             hudColor='BLACK_RUBBER',
-            task_args=task_args,
             refFrame=ref_frame,
             positionTasks=position_mps,
             tasksLeft=mps_left,

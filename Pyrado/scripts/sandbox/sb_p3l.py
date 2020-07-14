@@ -38,7 +38,7 @@ import pyrado
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.environments.rcspysim.planar_3_link import Planar3LinkJointCtrlSim, Planar3LinkIKSim, Planar3LinkTASim
 from pyrado.domain_randomization.utils import print_domain_params
-from pyrado.plotting.rollout_based import plot_potentials, plot_rewards
+from pyrado.plotting.rollout_based import plot_potentials
 from pyrado.policies.adn import ADNPolicy, pd_cubic
 from pyrado.policies.time import TimePolicy
 from pyrado.sampling.rollout import rollout
@@ -49,7 +49,7 @@ from pyrado.utils.input_output import print_cbt
 rcsenv.setLogLevel(0)
 
 
-def joint_control_variant(dt, max_steps, max_dist_force, physics_engine):
+def create_joint_control_setup(dt, max_steps, max_dist_force, physics_engine):
     # Set up environment
     env = Planar3LinkJointCtrlSim(
         physicsEngine=physics_engine,
@@ -71,7 +71,7 @@ def joint_control_variant(dt, max_steps, max_dist_force, physics_engine):
     return rollout(env, policy, render_mode=RenderMode(video=True), stop_on_done=True)
 
 
-def ik_activation_variant(dt, max_steps, max_dist_force, physics_engine):
+def create_ik_activation_setup(dt, max_steps, max_dist_force, physics_engine):
     # Set up environment
     env = Planar3LinkIKSim(
         physicsEngine=physics_engine,
@@ -98,7 +98,7 @@ def ik_activation_variant(dt, max_steps, max_dist_force, physics_engine):
     return rollout(env, policy, render_mode=RenderMode(video=True), stop_on_done=True)
 
 
-def ds_activation_variant(dt, max_steps, max_dist_force, physics_engine):
+def create_ds_activation_setup(dt, max_steps, max_dist_force, physics_engine):
     # Set up environment
     env = Planar3LinkTASim(
         physicsEngine=physics_engine,
@@ -131,7 +131,7 @@ def ds_activation_variant(dt, max_steps, max_dist_force, physics_engine):
     return rollout(env, policy, render_mode=RenderMode(video=True), stop_on_done=False)
 
 
-def task_activation_manual(dt, max_steps, max_dist_force, physics_engine):
+def create_manual_activation_setup(dt, max_steps, max_dist_force, physics_engine):
     # Set up environment
     env = Planar3LinkTASim(
         physicsEngine=physics_engine,
@@ -152,7 +152,7 @@ def task_activation_manual(dt, max_steps, max_dist_force, physics_engine):
     return rollout(env, policy, render_mode=RenderMode(video=True), stop_on_done=True)
 
 
-def adn_variant(dt, max_steps, max_dist_force, physics_engine, normalize_obs=True, obsnorm_cpp=True):
+def create_adn_setup(dt, max_steps, max_dist_force, physics_engine, normalize_obs=True, obsnorm_cpp=True):
     pyrado.set_seed(1001)
 
     # Explicit normalization bounds
@@ -226,17 +226,15 @@ if __name__ == '__main__':
     )
 
     if setup_type == 'joint':
-        ro = joint_control_variant(**common_hparam)
+        ro = create_joint_control_setup(**common_hparam)
     elif setup_type == 'ik_activation':
-        ro = ik_activation_variant(**common_hparam)
+        ro = create_ik_activation_setup(**common_hparam)
     elif setup_type == 'ds_activation':
-        ro = ds_activation_variant(**common_hparam)
-        plot_rewards(ro)
-        # plt.show()
+        ro = create_ds_activation_setup(**common_hparam)
     elif setup_type == 'manual':
-        ro = task_activation_manual(**common_hparam)
+        ro = create_manual_activation_setup(**common_hparam)
     elif setup_type == 'adn':
-        ro = adn_variant(**common_hparam, normalize_obs=True, obsnorm_cpp=False)
+        ro = create_adn_setup(**common_hparam, normalize_obs=True, obsnorm_cpp=False)
     else:
         raise pyrado.ValueErr(given=setup_type,
                               eq_constraint="'joint', 'ik_activation', 'ds_activation', 'manual', 'adn'")

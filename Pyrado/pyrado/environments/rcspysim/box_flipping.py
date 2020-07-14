@@ -107,11 +107,11 @@ class BoxFlippingSim(RcsSim, Serializable):
         # Forward to the RcsSim's constructor
         RcsSim.__init__(
             self,
+            task_args=task_args,
             envType='BoxFlipping',
             physicsConfigFile='pBoxFlipping.xml',
             extraConfigDir=osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, 'BoxFlipping'),
             hudColor='BLACK_RUBBER',
-            task_args=task_args,
             refFrame=ref_frame,
             positionTasks=position_mps,
             taskCombinationMethod='sum',

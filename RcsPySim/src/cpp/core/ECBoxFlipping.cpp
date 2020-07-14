@@ -113,7 +113,7 @@ protected:
             throw std::invalid_argument(os.str());
         }
         
-        std::string actionModelType = "ds_activation";
+        std::string actionModelType = "unspecified";
         properties->getProperty(actionModelType, "actionModelType");
         
         if (actionModelType == "ik_activation") {
@@ -159,6 +159,7 @@ protected:
             
             return amIK;
         }
+
         else if (actionModelType == "ds_activation") {
             // Initialize action model and tasks
             std::unique_ptr<AMIKGeneric> innerAM(new AMIKGeneric(graph));
@@ -199,7 +200,7 @@ protected:
                     i++;
                 }
             }
-                // Control effector velocity and orientation
+            // Control effector velocity and orientation
             else {
                 // Left
                 innerAM->addTask(new TaskVelocity1D("Yd", graph, leftCP, refBody, refFrame));
@@ -258,10 +259,10 @@ protected:
             
             return new AMDynamicalSystemActivation(innerAM.release(), taskRel, tcm);
         }
+
         else {
             std::ostringstream os;
-            os << "Unsupported action model type: ";
-            os << actionModelType;
+            os << "Unsupported action model type: " << actionModelType;
             throw std::invalid_argument(os.str());
         }
     }
@@ -325,7 +326,7 @@ protected:
         }
         
         // Add goal distances
-        if (properties->getPropertyBool("observeDSGoalDistance", false)) {
+        if (properties->getPropertyBool("observeDynamicalSystemGoalDistance", false)) {
             auto amAct = actionModel->unwrap<AMDynamicalSystemActivation>();
             RCHECK(amAct);
             fullState->addPart(new OMDynamicalSystemGoalDistance(amAct));

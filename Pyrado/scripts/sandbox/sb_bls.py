@@ -95,7 +95,7 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         observeCurrentManipulability=True,
         observeDynamicalSystemDiscrepancy=True,
         observeTaskSpaceDiscrepancy=True,
-        observeDSGoalDistance=True,
+        observeDynamicalSystemGoalDistance=True,
     )
 
     # Set up policy

@@ -147,7 +147,7 @@ BoxSpace::~BoxSpace()
 bool BoxSpace::checkDimension(const MatNd* values, std::string* msg) const
 {
     if (values->m != min->m || values->n != min->n) {
-        // they don't
+        // They don't match
         if (msg) {
             std::ostringstream os;
             os << "mismatching dimensions: expected (" << min->m << ", "
@@ -162,16 +162,19 @@ bool BoxSpace::checkDimension(const MatNd* values, std::string* msg) const
 
 bool BoxSpace::contains(const MatNd* values, std::string* msg) const
 {
-    // check that the dimensions match
+    bool valid = true;
+
+    // Check if the dimensions match
     if (!checkDimension(values, msg)) {
-        return false;
+        valid = false;
     }
-    // check individual value bounds
+
+    // Check individual value bounds
     for (unsigned int i = 0; i < values->m*values->n; ++i) {
         bool less = values->ele[i] < min->ele[i];
         bool more = values->ele[i] > max->ele[i];
         if (less || more) {
-            // they don't match
+            // They don't match
             if (msg) {
                 std::ostringstream os;
                 os << "value out of bounds: val(" << (i/values->n) << ", "
@@ -184,11 +187,11 @@ bool BoxSpace::contains(const MatNd* values, std::string* msg) const
                 }
                 *msg = os.str();
             }
-            return false;
+            valid = false;
         }
     }
     
-    return true;
+    return valid;
 }
 
 MatNd* BoxSpace::createValueMatrix() const

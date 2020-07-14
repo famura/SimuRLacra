@@ -229,7 +229,7 @@ protected:
         }
         
         // Add goal distances
-        if (properties->getPropertyBool("observeDSGoalDistance", false)) {
+        if (properties->getPropertyBool("observeDynamicalSystemGoalDistance", false)) {
             auto amAct = actionModel->unwrap<AMDynamicalSystemActivation>();
             RCHECK(amAct);
             fullState->addPart(new OMDynamicalSystemGoalDistance(amAct));
