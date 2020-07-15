@@ -379,7 +379,7 @@ def test_time_policy_one_step(env, policy):
     assert isinstance(act, to.Tensor)
 
 
-@pytest.mark.recurrentpolicy
+@pytest.mark.recurrent_policy
 @pytest.mark.parametrize(
     'env', [
         lazy_fixture('default_bob'),
