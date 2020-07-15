@@ -32,22 +32,27 @@ from init_args_serializer import Serializable
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.base import Env
+from pyrado.utils.data_types import EnvSpec
 from pyrado.spaces.box import BoxSpace
 
 
 class StateAugmentationWrapper(EnvWrapper, Serializable):
-    """ TODO """
+    """
+    StateAugmentationWrapper
+
+    Augments the observation of the wrapped environment by its physics configuration
+    """
 
     def __init__(self,
                  wrapped_env: Env,
                  params=None,
                  fixed=False):
         """
-        Constructor TODO
+        Constructor
 
-        :param wrapped_env:
-        :param params:
-        :param fixed:
+        :param wrapped_env: The environment to be wrapped
+        :param params: The parameters to include in the observation
+        :param fixed: Fix the parameters
         """
         Serializable._init(self, locals())
 
@@ -57,7 +62,6 @@ class StateAugmentationWrapper(EnvWrapper, Serializable):
         else:
             self._params = list(inner_env(self.wrapped_env).domain_param.keys())
         self._nominal = inner_env(self.wrapped_env).get_nominal_domain_param()
-        self.nominal['dt'] = 1/100.  # TODO ATTENTION! THIS CAN BE DEADLY! @Robin, why are you doing this?
         self._nominal = np.array([self._nominal[k] for k in self._params])
         self.fixed = fixed
 
@@ -70,7 +74,7 @@ class StateAugmentationWrapper(EnvWrapper, Serializable):
     @property
     def obs_space(self):
         outer_space = self.wrapped_env.obs_space
-        augmented_space = BoxSpace(0.5*self._nominal, 1.5*self._nominal, [self._nominal.shape[0]], self._params)
+        augmented_space = BoxSpace(0.5 * self._nominal, 1.5 * self._nominal, [self._nominal.shape[0]], self._params)
         return BoxSpace.cat((outer_space, augmented_space))
 
     def step(self, act: np.ndarray):

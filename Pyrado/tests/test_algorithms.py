@@ -410,8 +410,69 @@ def test_soft_update(env, module):
 
     # Do one soft update
     SAC.soft_update(target, source, tau=0.8)
-    assert to.allclose(target.param_values, 0.2*to.ones_like(target.param_values))
+    assert to.allclose(target.param_values, 0.2 * to.ones_like(target.param_values))
 
     # Do a second soft update to see the exponential decay
     SAC.soft_update(target, source, tau=0.8)
-    assert to.allclose(target.param_values, 0.36*to.ones_like(target.param_values))
+    assert to.allclose(target.param_values, 0.36 * to.ones_like(target.param_values))
+
+
+@pytest.mark.algorithm
+@pytest.mark.parametrize(
+    'env', [
+        lazy_fixture('default_omo')
+    ], ids=['omo']
+)
+def test_arpl(env, ex_dir):
+    # Environment
+    from pyrado.environment_wrappers.action_normalization import ActNormWrapper
+    from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
+    from pyrado.algorithms.arpl import ARPL
+    env = ActNormWrapper(env)
+    env = StateAugmentationWrapper(env, params=None)
+
+    policy = FNNPolicy(env.spec, hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
+
+    # Critic
+    value_fcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)  # FNN
+    # value_fcn_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
+    value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
+    # value_fcn = GRUPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
+    critic_hparam = dict(
+        gamma=0.9844534412010116,
+        lamda=0.9710614403461155,
+        num_epoch=10,
+        batch_size=150,
+        standardize_adv=False,
+        lr=0.00016985313083236645,
+    )
+    critic = GAE(value_fcn, **critic_hparam)
+
+    # Algorithm
+    algo_hparam = dict(
+        max_iter=0,
+        min_steps=23 * env.max_steps,
+        min_rollouts=None,
+        num_sampler_envs=12,
+        num_epoch=5,
+        eps_clip=0.08588362499920563,
+        batch_size=150,
+        std_init=0.994955464909253,
+        lr=0.0001558850276649469,
+    )
+    arpl_hparam = dict(
+        max_iter=5,
+        steps_num=23 * env.max_steps,
+        halfspan=0.05,
+        dyn_eps=0.07,
+        dyn_phi=0.25,
+        obs_phi=0.1,
+        obs_eps=0.05,
+        proc_phi=0.1,
+        proc_eps=0.03,
+        torch_observation=True
+    )
+    ppo = PPO(ex_dir, env, policy, critic, **algo_hparam)
+    algo = ARPL(ex_dir, env, ppo, policy, ppo.expl_strat, **arpl_hparam)
+
+    algo.train(snapshot_mode='best')
