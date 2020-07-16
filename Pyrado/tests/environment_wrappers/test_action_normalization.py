@@ -34,7 +34,7 @@ from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from tests.environment_wrappers.mock_env import MockEnv
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 def test_space():
     # Use mock env
     mockenv = MockEnv(act_space=BoxSpace([-2, -1, 0], [2, 3, 1]))
@@ -47,7 +47,7 @@ def test_space():
     assert np.all(ub == 1)
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 def test_denormalization():
     # Use mock env
     mockenv = MockEnv(act_space=BoxSpace([-2, -1, 0], [2, 3, 1]))

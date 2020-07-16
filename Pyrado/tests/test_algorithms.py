@@ -97,7 +97,7 @@ def ex_dir(tmpdir):
         (PEPG, dict(expl_std_init=0.1)),
         (PoWER, dict(expl_std_init=0.1, pop_size=10, num_is_samples=5)),
         (CEM, dict(expl_std_init=0.1, pop_size=10, num_is_samples=5)),
-        (REPS, dict(eps=0.1, gamma=0.99, pop_size=100, expl_std_init=0.1)),
+        (REPS, dict(eps=0.1, pop_size=100, expl_std_init=0.1)),
     ],
     ids=['a2c', 'ppo', 'ppo2', 'hc_normal', 'hc_hyper', 'nes', 'pepg', 'power', 'cem', 'reps'])
 def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
@@ -153,7 +153,7 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
         (PoWER, dict(expl_std_init=0.1, pop_size=10, num_is_samples=5)),
         (CEM, dict(expl_std_init=0.1, pop_size=10, num_is_samples=5, full_cov=True)),
         (CEM, dict(expl_std_init=0.1, pop_size=10, num_is_samples=5, full_cov=True)),
-        (REPS, dict(eps=0.1, gamma=0.99, pop_size=100, expl_std_init=0.1)),
+        (REPS, dict(eps=0.1, pop_size=100, expl_std_init=0.1)),
     ],
     ids=['hc_normal', 'hc_hyper', 'nes', 'nes_tr', 'nes_symm', 'pepg', 'power', 'cem-fcov', 'cem-dcov', 'reps']
 )
@@ -271,7 +271,6 @@ def test_spota_ppo(env, spota_hparam, ex_dir):
     algo.train()
 
 
-@pytest.mark.algorithm
 @pytest.mark.parametrize(
     'env', [
         lazy_fixture('default_bob'),
@@ -357,7 +356,7 @@ def test_actor_critic(env, linear_policy, ex_dir, algo, algo_hparam, value_fcn_t
         (PEPG, dict(max_iter=10, pop_size=50, num_rollouts=8, expl_std_init=0.5, lr=1e-2, normalize_update=False)),
         (PoWER, dict(max_iter=10, pop_size=50, num_rollouts=8, num_is_samples=10, expl_std_init=0.5)),
         (CEM, dict(max_iter=10, pop_size=50, num_rollouts=8, num_is_samples=10, expl_std_init=0.5, full_cov=False)),
-        (REPS, dict(max_iter=10, pop_size=200, num_rollouts=8, eps=0.1, gamma=0.99, expl_std_init=0.5,
+        (REPS, dict(max_iter=10, pop_size=200, num_rollouts=8, eps=0.1, expl_std_init=0.5,
                     use_map=True, grad_free_optim=False)),
     ], ids=['hc_normal', 'nes', 'pepg', 'power', 'cem', 'reps']
 )
@@ -386,7 +385,6 @@ def test_training_parameter_exploring(env, algo, algo_hparam, ex_dir):
     assert all(rets_after > rets_before)
 
 
-@pytest.mark.algorithm
 @pytest.mark.parametrize(
     'env', [
         lazy_fixture('default_omo')
@@ -417,7 +415,6 @@ def test_soft_update(env, module):
     assert to.allclose(target.param_values, 0.36 * to.ones_like(target.param_values))
 
 
-@pytest.mark.algorithm
 @pytest.mark.parametrize(
     'env', [
         lazy_fixture('default_omo')

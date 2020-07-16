@@ -177,4 +177,4 @@ def test_setting_dp_vals(env):
             # Skip the parameters that are only available in Vortex but not in Bullet
             assert True
         else:
-            assert env.domain_param[dp_key] == pytest.approx(rand_val, abs=1e-5)
+            assert env.domain_param[dp_key] == pytest.approx(rand_val, abs=1e-4)

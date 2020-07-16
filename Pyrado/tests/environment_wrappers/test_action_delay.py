@@ -34,7 +34,7 @@ from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from tests.environment_wrappers.mock_env import MockEnv
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 def test_no_delay():
     mockenv = MockEnv(act_space=BoxSpace(-1, 1, shape=(2,)))
     wenv = ActDelayWrapper(mockenv, delay=0)
@@ -49,7 +49,7 @@ def test_no_delay():
     assert mockenv.last_act == [7, 5]
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 def test_act_delay():
     mockenv = MockEnv(act_space=BoxSpace(-1, 1, shape=(2,)))
     wenv = ActDelayWrapper(mockenv, delay=2)
@@ -68,7 +68,7 @@ def test_act_delay():
     assert mockenv.last_act == [2, 4]
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 def test_reset():
     mockenv = MockEnv(act_space=BoxSpace(-1, 1, shape=(2,)))
     wenv = ActDelayWrapper(mockenv, delay=1)
@@ -91,7 +91,7 @@ def test_reset():
     assert mockenv.last_act == [1, 2]
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 def test_domain_param():
     mockenv = MockEnv(act_space=BoxSpace(-1, 1, shape=(2,)))
     wenv = ActDelayWrapper(mockenv, delay=1)

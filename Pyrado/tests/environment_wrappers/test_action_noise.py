@@ -37,7 +37,7 @@ from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from tests.conftest import m_needs_bullet, m_needs_vortex
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 @pytest.mark.parametrize(
     'env', [
         lazy_fixture('default_bob'),
@@ -85,7 +85,7 @@ def test_act_noise_simple(env):
         assert not np.all(obs_nom == obs_wrapped)
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 @pytest.mark.parametrize(
     'env', [
         BallOnBeamSim(dt=0.05, max_steps=1),
