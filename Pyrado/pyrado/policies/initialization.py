@@ -29,11 +29,20 @@
 import torch as to
 import torch.nn as nn
 import torch.nn.init as init
-from math import sqrt
+from math import sqrt, ceil
 from warnings import warn
 
 import pyrado
 from pyrado.utils.nn_layers import ScaleLayer, PositiveScaleLayer, IndiNonlinLayer, MirrConv1d
+
+
+def _apply_weights_conf(m, ls, ks):
+    dim_ch_out, dim_ch_in = m.weight.data.shape[0], m.weight.data.shape[1]
+    amp = to.rand(dim_ch_out * dim_ch_in)
+    for i in range(dim_ch_out):
+        for j in range(dim_ch_in):
+            m.weight.data[i, j, :] = amp[i * dim_ch_in + j] * 2 * (
+                    to.exp(-to.pow(ls, 2) / (ks / 2) ** 2) - 0.5)
 
 
 def init_param(m, **kwargs):
@@ -62,7 +71,7 @@ def init_param(m, **kwargs):
 
         if m.bias is not None:
             if kwargs.get('uniform_bias', False):
-                init.uniform_(m.bias.data, a=-1./sqrt(m.bias.data.nelement()), b=1./sqrt(m.bias.data.nelement()))
+                init.uniform_(m.bias.data, a=-1. / sqrt(m.bias.data.nelement()), b=1. / sqrt(m.bias.data.nelement()))
             else:
                 # Most common case
                 init.normal_(m.bias.data)
@@ -105,32 +114,28 @@ def init_param(m, **kwargs):
                         raise pyrado.TypeErr(given=kwargs['t_max'], expected_type=[float, int, to.Tensor])
                     # Initialize all biases to 0, but the bias of the forget and input gate using the chrono init
                     nn.init.constant_(param.data, val=0)
-                    param.data[m.hidden_size:m.hidden_size*2] = to.log(nn.init.uniform_(  # forget gate
-                        param.data[m.hidden_size:m.hidden_size*2], 1, kwargs['t_max'] - 1
+                    param.data[m.hidden_size:m.hidden_size * 2] = to.log(nn.init.uniform_(  # forget gate
+                        param.data[m.hidden_size:m.hidden_size * 2], 1, kwargs['t_max'] - 1
                     ))
-                    param.data[0: m.hidden_size] = -param.data[m.hidden_size: 2*m.hidden_size]  # input gate
+                    param.data[0: m.hidden_size] = -param.data[m.hidden_size: 2 * m.hidden_size]  # input gate
                 else:
                     # Initialize all biases to 0, but the bias of the forget gate to 1
                     nn.init.constant_(param.data, val=0)
-                    param.data[m.hidden_size:m.hidden_size*2].fill_(1)
+                    param.data[m.hidden_size:m.hidden_size * 2].fill_(1)
 
     elif isinstance(m, nn.Conv1d):
         if kwargs.get('bell', False):
             # Initialize the kernel weights with a shifted of shape exp(-x^2 / sigma^2).
             # The biases are left unchanged.
-            if m.weight.data.shape[2]%2 == 0:
-                ks_half = m.weight.data.shape[2]//2
+            if m.weight.data.shape[2] % 2 == 0:
+                ks_half = m.weight.data.shape[2] // 2
                 ls_half = to.linspace(ks_half, 0, ks_half)  # descending
                 ls = to.cat([ls_half, reversed(ls_half)])
             else:
-                ks_half = ceil(m.weight.data.shape[2]/2)
+                ks_half = ceil(m.weight.data.shape[2] / 2)
                 ls_half = to.linspace(ks_half, 0, ks_half)  # descending
                 ls = to.cat([ls_half, reversed(ls_half[:-1])])
-            dim_ch_out, dim_ch_in = m.weight.data.shape[0], m.weight.data.shape[1]
-            amp = to.rand(dim_ch_out*dim_ch_in)
-            for i in range(dim_ch_out):
-                for j in range(dim_ch_in):
-                    m.weight.data[i, j, :] = amp[i*dim_ch_in + j]*2*(to.exp(-to.pow(ls, 2)/(ks_half/2)**2) - 0.5)
+            _apply_weights_conf(m, ls, ks_half)
 
     elif isinstance(m, MirrConv1d):
         if kwargs.get('bell', False):
@@ -138,11 +143,7 @@ def init_param(m, **kwargs):
             # The biases are left unchanged (does not exist by default).
             ks = m.weight.data.shape[2]  # ks_mirr = ceil(ks_conv1d / 2)
             ls = to.linspace(ks, 0, ks)  # descending
-            dim_ch_out, dim_ch_in = m.weight.data.shape[0], m.weight.data.shape[1]
-            amp = to.rand(dim_ch_out*dim_ch_in)
-            for i in range(dim_ch_out):
-                for j in range(dim_ch_in):
-                    m.weight.data[i, j, :] = amp[i*dim_ch_in + j]*2*(to.exp(-to.pow(ls, 2)/(ks/2)**2) - 0.5)
+            _apply_weights_conf(m, ls, ks)
 
     elif isinstance(m, ScaleLayer):
         # Initialize all weights to 1

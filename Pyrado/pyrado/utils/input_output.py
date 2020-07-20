@@ -63,17 +63,17 @@ def print_cbt(msg: str, color: str = '', bright: bool = False, tag: str = ''):
             tag = f'[{tag}] '
 
     color = color.lower()
-    if color == '' or color == 'w' or color == 'white':
+    if color in ['', 'w', 'white']:
         print(brgt + tag + msg + Style.RESET_ALL)
-    elif color == 'y' or color == 'yellow':
+    elif color in ['y', 'yellow']:
         print(Fore.YELLOW + brgt + tag + msg + Style.RESET_ALL)
-    elif color == 'b' or color == 'orange':
+    elif color in ['b', 'blue']:
         print(Fore.BLUE + brgt + tag + msg + Style.RESET_ALL)
-    elif color == 'g' or color == 'green':
+    elif color in ['g', 'green']:
         print(Fore.GREEN + brgt + tag + msg + Style.RESET_ALL)
-    elif color == 'r' or color == 'red':
+    elif color in ['r', 'red']:
         print(Fore.RED + brgt + tag + msg + Style.RESET_ALL)
-    elif color == 'c' or color == 'cyan':
+    elif color in ['c', 'cyan']:
         print(Fore.CYAN + brgt + tag + msg + Style.RESET_ALL)
     else:
         raise pyrado.ValueErr(given=color, eq_constraint="'y', 'b', 'g', 'r', or 'c'")
