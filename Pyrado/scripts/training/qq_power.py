@@ -31,7 +31,7 @@ Train an agent to solve the Quanser Qube environment using Policy learning by We
 """
 from pyrado.algorithms.power import PoWER
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.environments.pysim.quanser_qube import QQubeSim
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.policies.features import FeatureStack, identity_feat, sign_feat, abs_feat, squared_feat, qubic_feat, \
@@ -41,12 +41,12 @@ from pyrado.policies.linear import LinearPolicy
 
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
-    # ex_dir = setup_experiment(QQubeSim.name, f'{PoWER.name}_{LinearPolicy.name}', 'actnorm', seed=1001)
-    ex_dir = setup_experiment(QQubeSim.name, f'{PoWER.name}_{QQubeSwingUpAndBalanceCtrl.name}', seed=1001)
+    # ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{PoWER.name}_{LinearPolicy.name}', 'actnorm', seed=1001)
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{PoWER.name}_{QQubeSwingUpAndBalanceCtrl.name}', seed=1001)
 
     # Environment
     env_hparams = dict(dt=1/250., max_steps=1500)
-    env = QQubeSim(**env_hparams)
+    env = QQubeSwingUpSim(**env_hparams)
     env = ActNormWrapper(env)
 
     # Policy

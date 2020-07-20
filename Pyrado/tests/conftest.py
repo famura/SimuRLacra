@@ -38,7 +38,7 @@ from pyrado.environments.one_step.rosenbrock import RosenSim
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
-from pyrado.environments.pysim.quanser_qube import QQubeSim
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim, QQubeStabSim
 from pyrado.policies.adn import ADNPolicy, pd_cubic
 from pyrado.policies.dummy import DummyPolicy, IdlePolicy
 from pyrado.policies.features import *
@@ -148,8 +148,13 @@ def default_qcpsu():
 
 
 @pytest.fixture(scope='function')
-def default_qq():
-    return QQubeSim(dt=0.004, max_steps=4000)
+def default_qqst():
+    return QQubeStabSim(dt=0.01, max_steps=500)
+
+
+@pytest.fixture(scope='function')
+def default_qqsu():
+    return QQubeSwingUpSim(dt=0.004, max_steps=4000)
 
 
 @m_needs_bullet
@@ -431,7 +436,7 @@ def default_bspos_vx():
 
 @m_needs_bullet
 @pytest.fixture(scope='function')
-def default_qqrcs_bt():
+def default_qqsurcs_bt():
     return QQubeRcsSim(physicsEngine='Bullet', dt=1/250., max_steps=3000)
 
 

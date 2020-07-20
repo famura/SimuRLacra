@@ -269,7 +269,8 @@ def get_default_randomizer_qcp() -> DomainRandomizer:
     )
 
 
-@default_randomizer('pyrado.environments.pysim.quanser_qube', 'QQubeSim')
+@default_randomizer('pyrado.environments.pysim.quanser_qube', 'QQubeSwingUpSim')
+@default_randomizer('pyrado.environments.pysim.quanser_qube', 'QQubeStabSim')
 def get_default_randomizer_qq() -> DomainRandomizer:
     """
     Get the default randomizer for the `QQubeSim`.

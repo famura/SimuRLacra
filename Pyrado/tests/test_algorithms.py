@@ -198,8 +198,8 @@ def test_svpg(env, linear_policy, ex_dir, actor_hparam, value_fcn_hparam, critic
 @pytest.mark.metaalgorithm
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_qq')
-    ], ids=['qq']
+        lazy_fixture('default_qqsu')
+    ], ids=['qq-su']
 )
 @pytest.mark.parametrize(
     'subrtn_hparam', [dict(max_iter=3, min_rollouts=5, num_sampler_envs=1, num_epoch=4)], ids=['casual']

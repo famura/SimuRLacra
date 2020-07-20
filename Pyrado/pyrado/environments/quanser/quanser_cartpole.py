@@ -45,14 +45,18 @@ from pyrado.utils.input_output import print_cbt
 class QCartPoleReal(RealEnv, Serializable):
     """ Base class for the real Quanser Cart-Pole """
 
-    def __init__(self, dt: float, max_steps: int, ip: str, task_args: [dict, None]):
+    def __init__(self,
+                 dt: float,
+                 max_steps: int,
+                 task_args: [dict, None] = None,
+                 ip: str = '192.168.2.17'):
         """
         Constructor
 
         :param dt: time step size on the Quanser device [s]
         :param max_steps: maximum number of steps executed on the device
-        :param ip: IP address of the Cart-Pole platform
         :param task_args: arguments for the task construction
+        :param ip: IP address of the Cart-Pole platform
         """
         Serializable._init(self, locals())
 

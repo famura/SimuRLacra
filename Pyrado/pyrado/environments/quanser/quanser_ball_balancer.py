@@ -45,15 +45,15 @@ class QBallBalancerReal(RealEnv, Serializable):
     def __init__(self,
                  dt: float = 1/500.,
                  max_steps: int = pyrado.inf,
-                 ip: str = '192.168.2.5',
-                 task_args: [dict, None] = None):
+                 task_args: [dict, None] = None,
+                 ip: str = '192.168.2.5'):
         """
         Constructor
 
         :param dt: sampling frequency on the [Hz]
         :param max_steps: maximum number of steps executed on the device [-]
-        :param ip: IP address of the 2 DOF Ball-Balancer platform
         :param task_args: arguments for the task construction
+        :param ip: IP address of the 2 DOF Ball-Balancer platform
         """
         Serializable._init(self, locals())
 

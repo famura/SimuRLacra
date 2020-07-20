@@ -36,7 +36,7 @@ from pyrado.utils.data_types import EnvSpec
 from pyrado.environments.sim_base import SimEnv
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSim
-from pyrado.environments.pysim.quanser_qube import QQubeSim
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.policies.base import Policy
 from pyrado.policies.features import FeatureStack, identity_feat, RBFFeat
@@ -399,7 +399,7 @@ class QQubeEnergyCtrl(Policy):
         self._log_E_gain = nn.Parameter(to.log(to.tensor(energy_gain)), requires_grad=True)
         self._th_gain = nn.Parameter(to.tensor(th_gain), requires_grad=True)
         self.acc_max = to.tensor(acc_max)
-        self.dp_nom = QQubeSim.get_nominal_domain_param()
+        self.dp_nom = QQubeSwingUpSim.get_nominal_domain_param()
 
     @property
     def E_ref(self):

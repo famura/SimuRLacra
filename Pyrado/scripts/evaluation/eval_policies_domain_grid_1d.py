@@ -41,7 +41,7 @@ from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim, QCartPoleStabSim
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.utils import typed_env
-from pyrado.environments.pysim.quanser_qube import QQubeSim
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.sampling.parallel_evaluation import eval_domain_params, conditional_actnorm_wrapper
 from pyrado.sampling.sampler_pool import SamplerPool
@@ -131,8 +131,8 @@ if __name__ == '__main__':
             '',
         ]
 
-    elif args.env_name == QQubeSim.name:
-        env = QQubeSim(dt=args.dt, max_steps=args.max_steps)
+    elif args.env_name == QQubeSwingUpSim.name:
+        env = QQubeSwingUpSim(dt=args.dt, max_steps=args.max_steps)
 
         # param_spec['g'] = np.linspace(9.81*0.7, 9.81*1.3, num=11, endpoint=True)
         # param_spec['Rm'] = np.linspace(8.4*0.7, 8.4*1.3, num=11, endpoint=True)
@@ -157,7 +157,7 @@ if __name__ == '__main__':
 
     else:
         raise pyrado.ValueErr(given=args.env_name, eq_constraint=f'{QBallBalancerSim.name}, {QCartPoleStabSim.name},'
-                                                                 f'{QCartPoleSwingUpSim.name}, or {QQubeSim.name}')
+                                                                 f'{QCartPoleSwingUpSim.name}, or {QQubeSwingUpSim.name}')
 
         # Always add an action delay wrapper (with 0 delay by default)
     if typed_env(env, ActDelayWrapper) is None:

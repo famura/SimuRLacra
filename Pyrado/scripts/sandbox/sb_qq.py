@@ -31,7 +31,7 @@ Test predefined energy-based controller to make the Quanser Qube swing up.
 """
 import torch as to
 
-from pyrado.environments.pysim.quanser_qube import QQubeSim
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.domain_randomization.utils import print_domain_params
 from pyrado.policies.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.sampling.rollout import rollout, after_rollout_query
@@ -41,7 +41,7 @@ from pyrado.utils.input_output import print_cbt
 
 if __name__ == '__main__':
     # Set up environment
-    env = QQubeSim(dt=1/500., max_steps=4000)
+    env = QQubeSwingUpSim(dt=1/500., max_steps=4000)
 
     # Set up policy
     policy = QQubeSwingUpAndBalanceCtrl(env.spec)
