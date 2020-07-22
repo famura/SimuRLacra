@@ -58,7 +58,7 @@ if __name__ == '__main__':
     critic = GAE(valuefcn, **hparams['critic'])
 
     # Subroutine
-    algo_hparam = hparams['subroutine']
+    algo_hparam = hparams['subrtn']
     # algo_hparam.update({'num_sampler_envs': 1})
     ppo = PPO(ex_dir, env_sim, policy, critic, **algo_hparam)
 
@@ -66,7 +66,7 @@ if __name__ == '__main__':
     bounds = to.load(osp.join(ex_dir, 'bounds.pt'))
 
     # Algorithm
-    algo = BayRn(ex_dir, env_sim, env_real, subroutine=ppo, bounds=bounds, **hparams['algo'])
+    algo = BayRn(ex_dir, env_sim, env_real, subrtn=ppo, bounds=bounds, **hparams['algo'])
 
     # Jeeeha
     algo.train(snapshot_mode='latest', seed=hparams['seed'], load_dir=ex_dir)

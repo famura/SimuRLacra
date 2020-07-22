@@ -113,12 +113,12 @@ if __name__ == '__main__':
     save_list_of_dicts_to_yaml([
         dict(env=env_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
-        dict(subroutine=subroutine_hparam, subroutine_name=PoWER.name),
+        dict(subrtrn=subroutine_hparam, subrtrn_name=PoWER.name),
         dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map)],
         ex_dir
     )
 
-    algo = BayRn(ex_dir, env_sim, env_real, subroutine=power, bounds=bounds, **bayrn_hparam)
+    algo = BayRn(ex_dir, env_sim, env_real, subrtn=power, bounds=bounds, **bayrn_hparam)
 
     # Jeeeha
     algo.train(snapshot_mode='latest', seed=ex_dir.seed)

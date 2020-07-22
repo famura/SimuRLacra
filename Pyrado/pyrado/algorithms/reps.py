@@ -51,7 +51,8 @@ class REPS(ParameterExploring):
 
     .. seealso::
         [1] J. Peters, K. Mülling, Y. Altuen, "Relative Entropy Policy Search", AAAI, 2010
-        [2] A. Abdolmaleki, et al., "Relative Entropy Regularized Policy Iteration",
+        [2] A. Abdolmaleki, J.T. Springenberg, J. Degrave, S. Bohez, Y. Tassa, D. Belov, N. Heess, M. Riedmiller,
+            "Relative Entropy Regularized Policy Iteration", arXiv, 2018
         [3] This implementation is inspired by the work of H. Abdulsamad
             https://github.com/hanyas/rl/blob/master/rl/ereps/ereps.py
     """

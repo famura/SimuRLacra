@@ -53,7 +53,7 @@ class EPOpt(Algorithm):
 
     def __init__(self,
                  env: Env,
-                 subroutine: Algorithm,
+                 subrtn: Algorithm,
                  skip_iter: int,
                  epsilon: float,
                  gamma: float = 1.):
@@ -61,32 +61,32 @@ class EPOpt(Algorithm):
         Constructor
 
         :param env: same environment as the subroutine runs in. Only used for checking and saving the randomizer.
-        :param subroutine: algorithm which performs the policy / value-function optimization
+        :param subrtn: algorithm which performs the policy / value-function optimization
         :param skip_iter: number of iterations for which all rollouts will be used (see prefix full)
         :param epsilon: quantile of rollouts that will be kept
         :param gamma: discount factor to compute the discounted return, default is 1 (no discount)
         """
-        if not isinstance(subroutine, Algorithm):
-            raise pyrado.TypeErr(given=subroutine, expected_type=Algorithm)
+        if not isinstance(subrtn, Algorithm):
+            raise pyrado.TypeErr(given=subrtn, expected_type=Algorithm)
         if not typed_env(env, DomainRandWrapperLive):  # there is a domain randomization wrapper
             raise pyrado.TypeErr(given=env, expected_type=DomainRandWrapperLive)
 
         # Call Algorithm's constructor with the subroutine's properties
-        super().__init__(subroutine.save_dir, subroutine.max_iter, subroutine.policy, subroutine.logger)
+        super().__init__(subrtn.save_dir, subrtn.max_iter, subrtn.policy, subrtn.logger)
 
         # Store inputs
-        self._subroutine = subroutine
+        self._subtn = subrtn
         self.epsilon = epsilon
         self.gamma = gamma
         self.skip_iter = skip_iter
 
         # Override the subroutine's sampler
-        self._subroutine.sampler = CVaRSampler(
-            self._subroutine.sampler,
+        self._subtn.sampler = CVaRSampler(
+            self._subtn.sampler,
             epsilon=1.,  # keep all rollouts until curr_iter = skip_iter
             gamma=self.gamma,
-            min_rollouts=self._subroutine.sampler.min_rollouts,
-            min_steps=self._subroutine.sampler.min_steps,
+            min_rollouts=self._subtn.sampler.min_rollouts,
+            min_steps=self._subtn.sampler.min_steps,
         )
 
         # Save initial randomizer
@@ -94,24 +94,24 @@ class EPOpt(Algorithm):
 
     @property
     def subroutine(self) -> Algorithm:
-        return self._subroutine
+        return self._subtn
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
         # Activate the CVaR mechanism after skip_iter iterations
         if self.curr_iter == self.skip_iter:
-            self._subroutine.sampler.epsilon = self.epsilon
+            self._subtn.sampler.epsilon = self.epsilon
 
         # Call subroutine
-        self._subroutine.step(snapshot_mode, meta_info)
+        self._subtn.step(snapshot_mode, meta_info)
 
     def save_snapshot(self, meta_info: dict = None):
         if meta_info is None:
             # This algorithm instance is not a subroutine of a meta-algorithm
             if self.curr_iter == self.skip_iter:
                 # Save the last snapshot before applying the CVaR
-                self._subroutine.save_snapshot(meta_info=dict(prefix=f'iter_{self.skip_iter}'))
+                self._subtn.save_snapshot(meta_info=dict(prefix=f'iter_{self.skip_iter}'))
             else:
-                self._subroutine.save_snapshot(meta_info=None)
+                self._subtn.save_snapshot(meta_info=None)
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
 
@@ -121,6 +121,6 @@ class EPOpt(Algorithm):
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of a meta-algorithm
-            self._subroutine.load_snapshot(ld, meta_info)
+            self._subtn.load_snapshot(ld, meta_info)
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')

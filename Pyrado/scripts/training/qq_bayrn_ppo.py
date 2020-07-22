@@ -137,12 +137,12 @@ if __name__ == '__main__':
         dict(env=env_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
-        dict(subroutine=subroutine_hparam, subroutine_name=PPO.name),
+        dict(subrtrn=subroutine_hparam, subrtrn_name=PPO.name),
         dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map)],
         ex_dir
     )
 
-    algo = BayRn(ex_dir, env_sim, env_real, subroutine=ppo, bounds=bounds, **bayrn_hparam)
+    algo = BayRn(ex_dir, env_sim, env_real, subrtn=ppo, bounds=bounds, **bayrn_hparam)
 
     # Jeeeha
     algo.train(
