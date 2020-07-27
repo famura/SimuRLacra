@@ -35,7 +35,6 @@ import numpy as np
 import pyrado
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.barrett_wam.wam import WAMBallInCupReal
-from pyrado.environments.mujoco.wam import WAMBallInCupSim
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.sampling.rollout import rollout, after_rollout_query
 from pyrado.utils.experiments import wrap_like_other_env, load_experiment
@@ -54,13 +53,13 @@ if __name__ == '__main__':
     env_sim, policy, _ = load_experiment(ex_dir)
 
     # Detect the correct real-world counterpart and create it
-    if isinstance(inner_env(env_sim), WAMBallInCupSim):
+    if env_sim.name == 'wam-bic':  # use hard-coded name to avoid loading mujoco_py by loading WAMBallInCupSim
         # If `max_steps` (or `dt`) are not explicitly set using `args`, use the same as in the simulation
         max_steps = args.max_steps if args.max_steps < pyrado.inf else env_sim.max_steps
         dt = args.dt if args.dt is not None else env_sim.dt
-        env_real = WAMBallInCupReal(dt=dt, max_steps=max_steps)
+        env_real = WAMBallInCupReal(dt=dt, max_steps=max_steps, num_dof=inner_env(env_sim).num_dof)
     else:
-        raise pyrado.TypeErr(given=env_sim, expected_type=WAMBallInCupSim)
+        raise pyrado.ValueErr(given=env_sim.name, eq_constraint='wam-bic')
 
     # Finally wrap the env in the same as done during training
     env_real = wrap_like_other_env(env_real, env_sim)
