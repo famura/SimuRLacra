@@ -30,7 +30,7 @@ import numpy as np
 import time
 import torch as to
 import torch.nn as nn
-from numpy.random import binomial
+from typing import Callable
 from tabulate import tabulate
 
 import pyrado
@@ -53,7 +53,7 @@ from pyrado.utils.input_output import print_cbt, color_validity
 
 
 def rollout(env: Env,
-            policy: [nn.Module, Policy],
+            policy: [nn.Module, Policy, Callable],
             eval: bool = False,
             max_steps: int = None,
             reset_kwargs: dict = None,
@@ -97,19 +97,20 @@ def rollout(env: Env,
     act_hist = []
     rew_hist = []
     env_info_hist = []
-    if policy.is_recurrent:
-        hidden_hist = []
-    # If an ExplStrat is passed use the policy property, if a Policy is passed use it directly
-    if isinstance(getattr(policy, 'policy', policy), (ADNPolicy, NFPolicy)):
-        pot_hist = []
-        stim_ext_hist = []
-        stim_int_hist = []
-    elif isinstance(getattr(policy, 'policy', policy), TwoHeadedPolicy):
-        head_2_hist = []
-    if record_dts:
-        dt_policy_hist = []
-        dt_step_hist = []
-        dt_remainder_hist = []
+    if isinstance(policy, Policy):
+        if policy.is_recurrent:
+            hidden_hist = []
+        # If an ExplStrat is passed use the policy property, if a Policy is passed use it directly
+        if isinstance(getattr(policy, 'policy', policy), (ADNPolicy, NFPolicy)):
+            pot_hist = []
+            stim_ext_hist = []
+            stim_int_hist = []
+        elif isinstance(getattr(policy, 'policy', policy), TwoHeadedPolicy):
+            head_2_hist = []
+        if record_dts:
+            dt_policy_hist = []
+            dt_step_hist = []
+            dt_remainder_hist = []
 
     # Override the number of steps to execute
     if max_steps is not None:
@@ -133,10 +134,10 @@ def rollout(env: Env,
         else:
             policy.train()
 
-    # Check for recurrent policy, which requires special handling
-    if policy.is_recurrent:
-        # Initialize hidden state var
-        hidden = policy.init_hidden()
+        # Check for recurrent policy, which requires special handling
+        if policy.is_recurrent:
+            # Initialize hidden state var
+            hidden = policy.init_hidden()
 
     # Setup rollout information
     rollout_info = dict(env_spec=env.spec)
@@ -175,16 +176,21 @@ def rollout(env: Env,
         # Get the agent's action
         obs_to = to.from_numpy(obs).type(to.get_default_dtype())  # policy operates on PyTorch tensors
         with to.no_grad():
-            if policy.is_recurrent:
-                if isinstance(getattr(policy, 'policy', policy), TwoHeadedPolicy):
-                    act_to, head_2_to, hidden_next = policy(obs_to, hidden)
+            if isinstance(policy, Policy):
+                if policy.is_recurrent:
+                    if isinstance(getattr(policy, 'policy', policy), TwoHeadedPolicy):
+                        act_to, head_2_to, hidden_next = policy(obs_to, hidden)
+                    else:
+                        act_to, hidden_next = policy(obs_to, hidden)
                 else:
-                    act_to, hidden_next = policy(obs_to, hidden)
+                    if isinstance(getattr(policy, 'policy', policy), TwoHeadedPolicy):
+                        act_to, head_2_to = policy(obs_to)
+                    else:
+                        act_to = policy(obs_to)
             else:
-                if isinstance(getattr(policy, 'policy', policy), TwoHeadedPolicy):
-                    act_to, head_2_to = policy(obs_to)
-                else:
-                    act_to = policy(obs_to)
+                # If the policy ist not of type Policy, it should still operate on PyTorch tensors
+                act_to = policy(obs_to)
+
         act = act_to.detach().cpu().numpy()  # environment operates on numpy arrays
 
         # Check actions
@@ -218,16 +224,17 @@ def rollout(env: Env,
             dt_policy_hist.append(dt_policy)
             dt_step_hist.append(dt_step)
             dt_remainder_hist.append(dt_remainder)
-        if policy.is_recurrent:
-            hidden_hist.append(hidden)
-            hidden = hidden_next
-        # If an ExplStrat is passed use the policy property, if a Policy is passed use it directly
-        if isinstance(getattr(policy, 'policy', policy), (ADNPolicy, NFPolicy)):
-            pot_hist.append(getattr(policy, 'policy', policy).potentials.detach().numpy())
-            stim_ext_hist.append(getattr(policy, 'policy', policy).stimuli_external.detach().numpy())
-            stim_int_hist.append(getattr(policy, 'policy', policy).stimuli_internal.detach().numpy())
-        elif isinstance(getattr(policy, 'policy', policy), TwoHeadedPolicy):
-            head_2_hist.append(head_2_to)
+        if isinstance(policy, Policy):
+            if policy.is_recurrent:
+                hidden_hist.append(hidden)
+                hidden = hidden_next
+            # If an ExplStrat is passed use the policy property, if a Policy is passed use it directly
+            if isinstance(getattr(policy, 'policy', policy), (ADNPolicy, NFPolicy)):
+                pot_hist.append(getattr(policy, 'policy', policy).potentials.detach().numpy())
+                stim_ext_hist.append(getattr(policy, 'policy', policy).stimuli_external.detach().numpy())
+                stim_int_hist.append(getattr(policy, 'policy', policy).stimuli_internal.detach().numpy())
+            elif isinstance(getattr(policy, 'policy', policy), TwoHeadedPolicy):
+                head_2_hist.append(head_2_to)
 
         # Store the observation for next step (if done, this is the final observation)
         obs = obs_next
@@ -271,14 +278,15 @@ def rollout(env: Env,
     )
 
     # Add special entries to the resulting rollout
-    if policy.is_recurrent:
-        res.add_data('hidden_states', hidden_hist)
-    if isinstance(getattr(policy, 'policy', policy), (ADNPolicy, NFPolicy)):
-        res.add_data('potentials', pot_hist)
-        res.add_data('stimuli_external', stim_ext_hist)
-        res.add_data('stimuli_internal', stim_int_hist)
-    elif isinstance(getattr(policy, 'policy', policy), TwoHeadedPolicy):
-        res.add_data('head_2', head_2_hist)
+    if isinstance(policy, Policy):
+        if policy.is_recurrent:
+            res.add_data('hidden_states', hidden_hist)
+        if isinstance(getattr(policy, 'policy', policy), (ADNPolicy, NFPolicy)):
+            res.add_data('potentials', pot_hist)
+            res.add_data('stimuli_external', stim_ext_hist)
+            res.add_data('stimuli_internal', stim_int_hist)
+        elif isinstance(getattr(policy, 'policy', policy), TwoHeadedPolicy):
+            res.add_data('head_2', head_2_hist)
     if record_dts:
         res.add_data('dts_policy', dt_policy_hist)
         res.add_data('dts_step', dt_step_hist)

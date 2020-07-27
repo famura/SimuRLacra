@@ -29,6 +29,7 @@
 import pytest
 import random
 import time
+from pytest_lazyfixture import lazy_fixture
 from torch.distributions.multivariate_normal import MultivariateNormal
 
 from matplotlib import pyplot as plt
@@ -190,18 +191,27 @@ def test_sample_from_unit_sphere_surface(num_dim, method):
     assert 0.95 <= to.norm(s, p=2) <= 1.05
 
 
-@pytest.mark.sampling
 @pytest.mark.parametrize(
-    'env, policy', [
-        (BallOnBeamSim(dt=0.02, max_steps=100),
-         LinearPolicy(BallOnBeamSim(dt=0.02, max_steps=100).spec,
-                      FeatureStack([const_feat, identity_feat, squared_feat]))),
-        (QBallBalancerSim(dt=0.02, max_steps=100),
-         LinearPolicy(QBallBalancerSim(dt=0.02, max_steps=100).spec,
-                      FeatureStack([const_feat, identity_feat, squared_feat])))
+    'env', [
+        lazy_fixture('default_bob'),
+        lazy_fixture('default_qbb'),
     ], ids=['bob_linpol', 'qbb_linpol']
 )
-def test_rollout_wo_exploration(env, policy):
+def test_rollout_wo_exploration(env):
+    # Create an arbitrary policy of type Policy
+    policy = LinearPolicy(env.spec, FeatureStack([const_feat, identity_feat, squared_feat]))
+
+    ro = rollout(env, policy, render_mode=RenderMode())
+    assert isinstance(ro, StepSequence)
+    assert len(ro) <= env.max_steps
+
+
+@pytest.mark.parametrize('env', [lazy_fixture('default_qbb')], ids=['qbb'])
+def test_rollout_wo_policy(env):
+    def policy(obs):
+        # Callable must receive and return tensors
+        return to.from_numpy(env.spec.act_space.sample_uniform())
+
     ro = rollout(env, policy, render_mode=RenderMode())
     assert isinstance(ro, StepSequence)
     assert len(ro) <= env.max_steps
@@ -258,7 +268,7 @@ def test_sequences(sequence, x_init):
     for i in range(x_full.shape[1]):
         plt.stem(x_full[:, i], label=str(x_init[i]))
     plt.legend()
-    # plt.show()
+    plt.show()
 
 
 def test_bootsrapping():
