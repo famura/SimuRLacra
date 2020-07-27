@@ -1,0 +1,382 @@
+<!--
+ Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH,
+ Technical University of Darmstadt, Kai Plöger, Pascal Klink, and Christan Eilers
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+ 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,
+    or Technical University of Darmstadt, nor the names of its contributors may
+    be used to endorse or promote products derived from this software without
+    specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,
+ OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+ IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<mujoco model="wam_bic">
+  <option integrator="Euler" timestep="0.0005"/>
+  <compiler coordinate="local" angle="radian" meshdir="[ASSETS_DIR]/meshes/barrett_wam"/>
+  <!--size njmax="500" nconmax="100"/-->
+
+  <default>
+    <joint type="hinge" limited="true" pos="0 0 0" axis="0 0 1" frictionloss=".1" damping="[joint_damping]"/>
+    <default class="viz">
+      <geom type="mesh" contype="0" conaffinity="0" group="2" rgba="0.7 0.7 0.7 1" density="0"/>
+    </default>
+    <default class="col">
+      <geom type="mesh" contype="0" conaffinity="1" group="3" rgba="0.5 0.6 0.7 1" density="0"/>
+    </default>
+    <default class="x_axis">
+      <geom contype="0" conaffinity="0" group="1" rgba="1 0 0 1" type="cylinder" size=".01 0.15" pos="0.15 0 0" euler="0 1.57 0"/>
+    </default>
+    <default class="y_axis">
+      <geom contype="0" conaffinity="0" group="1" rgba="0 1 0 1" type="cylinder" size=".01 0.15" pos="0 0.15 0" euler="1.57 0 0"/>
+    </default>
+    <default class="z_axis">
+      <geom contype="0" conaffinity="0" group="1" rgba="0 0 1 1" type="cylinder" size=".01 0.15" pos="0 0 0.15" euler="0 0 0"/>
+    </default>
+    <default class="cup_geom">
+      <geom euler="-1.57 0 0" solref="0.001 1." pos="0 0.05 [pos_mesh]" type="mesh"/>
+    </default>
+    <default class="rope_geom">
+      <geom size="0.002 [size_capsule_geom]" solref="0.001 1." quat="0.707107 0 0.707107 0" type="capsule" rgba="0.8 0.2 0.1 1"/>
+    </default>
+    <default class="rope_joint_y">
+      <joint pos="[pos_capsule_joint] 0 0" axis="0 1 0" limited="false" damping="[rope_damping]" frictionloss="0"/>
+    </default>
+    <default class="rope_joint_z">
+      <joint pos="[pos_capsule_joint] 0 0" axis="0 0 1" limited="false" damping="[rope_damping]" frictionloss="0"/>
+    </default>
+  </default>
+
+  <asset>
+    <texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2" width="512" height="512" mark="cross" markrgb=".8 .8 .8"/>
+    <material name="matplane" reflectance="0.3" texture="texplane" texrepeat="1 1" texuniform="true"/>
+
+    <mesh name="base_link_fine" file="base_link_fine.stl"/>
+    <mesh name="base_link_convex" file="base_link_convex.stl"/>
+    <mesh name="shoulder_link_fine" file="shoulder_link_fine.stl"/>
+    <mesh name="shoulder_link_convex_decomposition_p1" file="shoulder_link_convex_decomposition_p1.stl"/>
+    <mesh name="shoulder_link_convex_decomposition_p2" file="shoulder_link_convex_decomposition_p2.stl"/>
+    <mesh name="shoulder_link_convex_decomposition_p3" file="shoulder_link_convex_decomposition_p3.stl"/>
+    <mesh name="shoulder_pitch_link_fine" file="shoulder_pitch_link_fine.stl"/>
+    <mesh name="shoulder_pitch_link_convex" file="shoulder_pitch_link_convex.stl"/>
+    <mesh name="upper_arm_link_fine" file="upper_arm_link_fine.stl"/>
+    <mesh name="upper_arm_link_convex_decomposition_p1" file="upper_arm_link_convex_decomposition_p1.stl"/>
+    <mesh name="upper_arm_link_convex_decomposition_p2" file="upper_arm_link_convex_decomposition_p2.stl"/>
+    <mesh name="elbow_link_fine" file="elbow_link_fine.stl"/>
+    <mesh name="elbow_link_convex" file="elbow_link_convex.stl"/>
+    <mesh name="forearm_link_fine" file="forearm_link_fine.stl" scale="1 1 1.35"/>
+    <mesh name="forearm_link_convex_decomposition_p1" file="forearm_link_convex_decomposition_p1.stl" scale="1 1 1.35"/>
+    <mesh name="forearm_link_convex_decomposition_p2" file="forearm_link_convex_decomposition_p2.stl" scale="1 1 1.35"/>
+    <mesh name="wrist_yaw_link_fine" file="wrist_yaw_link_fine.stl"/>
+    <mesh name="wrist_yaw_link_convex_decomposition_p1" file="wrist_yaw_link_convex_decomposition_p1.stl"/>
+    <mesh name="wrist_yaw_link_convex_decomposition_p2" file="wrist_yaw_link_convex_decomposition_p2.stl"/>
+    <mesh name="wrist_pitch_link_fine" file="wrist_pitch_link_fine.stl"/>
+    <mesh name="wrist_pitch_link_convex_decomposition_p1" file="wrist_pitch_link_convex_decomposition_p1.stl"/>
+    <mesh name="wrist_pitch_link_convex_decomposition_p2" file="wrist_pitch_link_convex_decomposition_p2.stl"/>
+    <mesh name="wrist_pitch_link_convex_decomposition_p3" file="wrist_pitch_link_convex_decomposition_p3.stl"/>
+    <mesh name="wrist_palm_link_fine" file="wrist_palm_link_fine.stl"/>
+    <mesh name="wrist_palm_link_convex" file="wrist_palm_link_convex.stl"/>
+    <mesh name="cup1" file="cup_split1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="cup2" file="cup_split2.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="cup3" file="cup_split3.stl" scale="[scale_mesh] [scale_mesh] 0.001"/>
+    <mesh name="cup4" file="cup_split4.stl" scale="[scale_mesh] [scale_mesh] 0.001"/>
+    <mesh name="cup5" file="cup_split5.stl" scale="[scale_mesh] [scale_mesh] 0.001"/>
+    <mesh name="cup6" file="cup_split6.stl" scale="[scale_mesh] [scale_mesh] 0.001"/>
+    <mesh name="cup7" file="cup_split7.stl" scale="[scale_mesh] [scale_mesh] 0.001"/>
+    <mesh name="cup8" file="cup_split8.stl" scale="[scale_mesh] [scale_mesh] 0.001"/>
+    <mesh name="cup9" file="cup_split9.stl" scale="[scale_mesh] [scale_mesh] 0.001"/>
+    <mesh name="cup10" file="cup_split10.stl" scale="[scale_mesh] [scale_mesh] 0.001"/>
+    <mesh name="cup11" file="cup_split11.stl" scale="[scale_mesh] [scale_mesh] 0.001"/>
+    <mesh name="cup12" file="cup_split12.stl" scale="[scale_mesh] [scale_mesh] 0.001"/>
+    <mesh name="cup13" file="cup_split13.stl" scale="[scale_mesh] [scale_mesh] 0.001"/>
+    <mesh name="cup14" file="cup_split14.stl" scale="[scale_mesh] [scale_mesh] 0.001"/>
+    <mesh name="cup15" file="cup_split15.stl" scale="[scale_mesh] [scale_mesh] 0.001"/>
+    <mesh name="cup16" file="cup_split16.stl" scale="[scale_mesh] [scale_mesh] 0.001"/>
+    <mesh name="cup17" file="cup_split17.stl" scale="[scale_mesh] [scale_mesh] 0.001"/>
+    <mesh name="cup18" file="cup_split18.stl" scale="[scale_mesh] [scale_mesh] 0.001"/>
+  </asset>
+
+  <worldbody>
+    <light directional="false" diffuse=".2 .2 .2" specular="0 0 0" pos="0 0 5" dir="0 0 -1" castshadow="false"/>
+    <light mode="targetbodycom" target="wam/base_link" directional="false" diffuse="2 2 2" specular="0.3 0.3 0.3" pos="0 0 4.0" dir="0 0 -1"/>
+    <geom name="floor" pos="0 0 0" size="2 2 .25" type="plane" material="matplane" condim="3" solref="0.001 1."/>
+    <!--<geom class="x_axis"/>-->
+    <!--<geom class="y_axis"/>-->
+    <!--<geom class="z_axis"/>-->
+
+    <body name="wam/base_link" pos="0 0 .84" euler="0 0 1.57">
+      <inertial pos="6.93764e-06 0.0542887 0.076438" quat="0.496481 0.503509 -0.503703 0.496255" mass="27.5544" diaginertia="0.432537 0.318732 0.219528"/>
+      <geom class="viz" mesh="base_link_fine" euler="0 0 -1.57"/>
+      <geom class="col" mesh="base_link_convex" euler="0 0 -1.57"/>
+      <!--<geom class="x_axis"/>-->
+      <!--<geom class="y_axis"/>-->
+      <!--<geom class="z_axis"/>-->
+
+      <body name="wam/shoulder_yaw_link" pos="0 0 0.160" euler="0 0 -1.57">
+        <inertial pos="-0.00443422 -0.00066489 -0.12189039" mass="10.76768767" fullinertia="0.50739925 0.46298222 0.11328369 0.00012485 -0.00213041 0.00068555"/>
+        <joint name="wam/base_yaw_joint" range="-2.6 2.6"/>
+        <geom class="viz" mesh="shoulder_link_fine" pos="0 0 0.186"/>
+        <geom class="col" mesh="shoulder_link_convex_decomposition_p1" pos="0 0 0.186"/>
+        <geom class="col" mesh="shoulder_link_convex_decomposition_p2" pos="0 0 0.186"/>
+        <geom class="col" mesh="shoulder_link_convex_decomposition_p3" pos="0 0 0.186"/>
+
+        <body name="wam/shoulder_pitch_link" pos="0 0 0.184" quat="0.707107 -0.707107 0 0">
+          <inertial pos="-0.00236983 -0.01542114 0.03105614" mass="3.87493756" fullinertia="0.02140958 0.01558906 0.01377875 0.00002461 -0.00027172 -0.00181920"/>
+          <joint name="wam/shoulder_pitch_joint" range="-1.985 1.985" frictionloss="[stiction_1]"/>
+          <geom class="viz" mesh="shoulder_pitch_link_fine"/>
+          <geom class="col" mesh="shoulder_pitch_link_convex"/>
+
+          <body name="wam/upper_arm_link" pos="0 -0.505 0" quat="0.707107 0.707107 0 0">
+            <inertial pos="0.03825858 0.00003309 -0.20750770" mass="1.80228141" fullinertia="0.06276039 0.06656967 0.00689512 -0.00000738 -0.00614574 -0.00001767"/>
+            <joint name="wam/shoulder_yaw_joint" range="-2.8 2.8"/>
+            <geom class="viz" mesh="upper_arm_link_fine" pos="0 0 -0.505"/>
+            <geom class="col" mesh="upper_arm_link_convex_decomposition_p1" pos="0 0 -0.505"/>
+            <geom class="col" mesh="upper_arm_link_convex_decomposition_p2" pos="0 0 -0.505"/>
+
+            <body name="wam/forearm_link" pos="0.045 0 0.045" quat="0.707107 -0.707107 0 0">
+              <!-- The inertial and mass changed compared to 7dof -->
+              <inertial pos="-0.03404529 -0.14053900 -0.00022942" mass="1.06513649" fullinertia="0.01848577 0.0045 0.01968956 -0.00150604 -0.00001741 -0.00002109"/>
+              <joint name="wam/elbow_pitch_joint" range="-0.9 3.14159" frictionloss="[stiction_3]"/>
+              <geom class="viz" mesh="elbow_link_fine"/>
+              <geom class="col" mesh="elbow_link_convex"/>
+              <geom class="viz" mesh="forearm_link_fine" pos="-.045 -0.0730 0" euler="1.57 0 0"/>
+              <geom class="col" mesh="forearm_link_convex_decomposition_p1" pos="-0.045 -0.0730 0" euler="1.57 0 0"/>
+              <geom class="col" mesh="forearm_link_convex_decomposition_p2" pos="-.045 -0.0730 0" euler="1.57 0 0"/>
+
+              <!-- This bodies pos and euler is adapted, however the rest from here on is identical to 7dof -->
+              <body name="cup" pos="-.045 -0.35 0" euler="1.57 0 1.57">
+                <inertial pos="-3.75236e-10 8.27811e-05 0.0947015" quat="0.999945 -0.0104888 0 0" mass="0.132" diaginertia="0.000285643 0.000270485 9.65696e-05"/>
+                <geom name="cup_geom1" class="cup_geom" pos="0 0.05 0.055" mesh="cup1"/>
+                <geom name="cup_geom2" class="cup_geom" pos="0 0.05 0.055" mesh="cup2"/>
+                <geom name="cup_geom3" class="cup_geom" mesh="cup3"/>
+                <geom name="cup_geom4" class="cup_geom" mesh="cup4"/>
+                <geom name="cup_geom5" class="cup_geom" mesh="cup5"/>
+                <geom name="cup_geom6" class="cup_geom" mesh="cup6"/>
+                <geom name="cup_geom7" class="cup_geom" mesh="cup7"/>
+                <geom name="cup_geom8" class="cup_geom" mesh="cup8"/>
+                <geom name="cup_geom9" class="cup_geom" mesh="cup9"/>
+                <geom name="cup_geom10" class="cup_geom" mesh="cup10"/>
+                <!--<geom name="cup_geom11" class="cup_geom" mesh="cup11"/>-->
+                <!--<geom name="cup_geom12" class="cup_geom" mesh="cup12"/>-->
+                <!--<geom name="cup_geom13" class="cup_geom" mesh="cup13"/>-->
+                <!--<geom name="cup_geom14" class="cup_geom" mesh="cup14" />-->
+                <geom name="cup_base" class="cup_geom" pos="0 -0.035 [pos_goal]" type="cylinder" size="[size_cup] 0.0045"/>
+                <geom name="cup_geom15" class="cup_geom" mesh="cup15"/>
+                <geom name="cup_geom16" class="cup_geom" mesh="cup16"/>
+                <geom name="cup_geom17" class="cup_geom" mesh="cup17"/>
+                <geom name="cup_geom18" class="cup_geom" mesh="cup18"/>
+                <!-- cup_inner defines the inner space of the cup;  gap: arbitrary large value to generate "inactive" contacts -->
+                <geom name="cup_inner" pos="0 0 [pos_goal]" euler="-1.57 0 0" type="cylinder" size="[size_cup_inner] 0.03" group="3" gap="1000" rgba="0.9 1 0 1"/>
+                <!-- This goal site defines the upper rim center of the cup -->
+                <!-- <site name="cup_goal" pos="0 0.05 [pos_goal]" size="1e-5"/> -->
+                <!-- This goal site defines the bottom center of the cup -->
+                <site name="cup_goal" pos="0 -0.01 [pos_goal]" size="1e-5"/>
+
+                <body name="B0" pos="0 -0.045 [pos_goal]" quat="0.707107 0 0 -0.707107">
+                  <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                  <joint name="J0_0" class="rope_joint_y"/>
+                  <joint name="J1_0" class="rope_joint_z"/>
+                  <geom name="G0" class="rope_geom"/>
+                  <body name="B1" pos="[pos_capsule] 0 0">
+                    <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                    <joint name="J0_1" class="rope_joint_y"/>
+                    <joint name="J1_1" class="rope_joint_z"/>
+                    <geom name="G1" class="rope_geom"/>
+                    <body name="B2" pos="[pos_capsule] 0 0">
+                      <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                      <joint name="J0_2" class="rope_joint_y"/>
+                      <joint name="J1_2" class="rope_joint_z"/>
+                      <geom name="G2" class="rope_geom"/>
+                      <body name="B3" pos="[pos_capsule] 0 0">
+                        <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                        <joint name="J0_3" class="rope_joint_y"/>
+                        <joint name="J1_3" class="rope_joint_z"/>
+                        <geom name="G3" class="rope_geom"/>
+                        <body name="B4" pos="[pos_capsule] 0 0">
+                          <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                          <joint name="J0_4" class="rope_joint_y"/>
+                          <joint name="J1_4" class="rope_joint_z"/>
+                          <geom name="G4" class="rope_geom"/>
+                          <body name="B5" pos="[pos_capsule] 0 0">
+                            <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                            <joint name="J0_5" class="rope_joint_y"/>
+                            <joint name="J1_5" class="rope_joint_z"/>
+                            <geom name="G5" class="rope_geom"/>
+                            <body name="B6" pos="[pos_capsule] 0 0">
+                              <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                              <joint name="J0_6" class="rope_joint_y"/>
+                              <joint name="J1_6" class="rope_joint_z"/>
+                              <geom name="G6" class="rope_geom"/>
+                              <body name="B7" pos="[pos_capsule] 0 0">
+                                <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                <joint name="J0_7" class="rope_joint_y"/>
+                                <joint name="J1_7" class="rope_joint_z"/>
+                                <geom name="G7" class="rope_geom"/>
+                                <body name="B8" pos="[pos_capsule] 0 0">
+                                  <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                  <joint name="J0_8" class="rope_joint_y"/>
+                                  <joint name="J1_8" class="rope_joint_z"/>
+                                  <geom name="G8" class="rope_geom"/>
+                                  <body name="B9" pos="[pos_capsule] 0 0">
+                                    <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                    <joint name="J0_9" class="rope_joint_y"/>
+                                    <joint name="J1_9" class="rope_joint_z"/>
+                                    <geom name="G9" class="rope_geom"/>
+                                    <body name="B10" pos="[pos_capsule] 0 0">
+                                      <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                      <joint name="J0_10" class="rope_joint_y"/>
+                                      <joint name="J1_10" class="rope_joint_z"/>
+                                      <geom name="G10" class="rope_geom"/>
+                                      <body name="B11" pos="[pos_capsule] 0 0">
+                                        <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                        <joint name="J0_11" class="rope_joint_y"/>
+                                        <joint name="J1_11" class="rope_joint_z"/>
+                                        <geom name="G11" class="rope_geom"/>
+                                        <body name="B12" pos="[pos_capsule] 0 0">
+                                          <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                          <joint name="J0_12" class="rope_joint_y"/>
+                                          <joint name="J1_12" class="rope_joint_z"/>
+                                          <geom name="G12" class="rope_geom"/>
+                                          <body name="B13" pos="[pos_capsule] 0 0">
+                                            <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                            <joint name="J0_13" class="rope_joint_y"/>
+                                            <joint name="J1_13" class="rope_joint_z"/>
+                                            <geom name="G13" class="rope_geom"/>
+                                            <body name="B14" pos="[pos_capsule] 0 0">
+                                              <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                              <joint name="J0_14" class="rope_joint_y"/>
+                                              <joint name="J1_14" class="rope_joint_z"/>
+                                              <geom name="G14" class="rope_geom"/>
+                                              <body name="B15" pos="[pos_capsule] 0 0">
+                                                <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                                <joint name="J0_15" class="rope_joint_y"/>
+                                                <joint name="J1_15" class="rope_joint_z"/>
+                                                <geom name="G15" class="rope_geom"/>
+                                                <body name="B16" pos="[pos_capsule] 0 0">
+                                                  <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                                  <joint name="J0_16" class="rope_joint_y"/>
+                                                  <joint name="J1_16" class="rope_joint_z"/>
+                                                  <geom name="G16" class="rope_geom"/>
+                                                  <body name="B17" pos="[pos_capsule] 0 0">
+                                                    <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                                    <joint name="J0_17" class="rope_joint_y"/>
+                                                    <joint name="J1_17" class="rope_joint_z"/>
+                                                    <geom name="G17" class="rope_geom"/>
+                                                    <body name="B18" pos="[pos_capsule] 0 0">
+                                                      <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                                      <joint name="J0_18" class="rope_joint_y"/>
+                                                      <joint name="J1_18" class="rope_joint_z"/>
+                                                      <geom name="G18" class="rope_geom"/>
+                                                      <body name="B19" pos="[pos_capsule] 0 0">
+                                                        <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                                        <joint name="J0_19" class="rope_joint_y"/>
+                                                        <joint name="J1_19" class="rope_joint_z"/>
+                                                        <geom name="G19" class="rope_geom"/>
+                                                        <body name="B20" pos="[pos_capsule] 0 0">
+                                                          <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                                          <joint name="J0_20" class="rope_joint_y"/>
+                                                          <joint name="J1_20" class="rope_joint_z"/>
+                                                          <geom name="G20" class="rope_geom"/>
+                                                          <body name="B21" pos="[pos_capsule] 0 0">
+                                                            <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                                            <joint name="J0_21" class="rope_joint_y"/>
+                                                            <joint name="J1_21" class="rope_joint_z"/>
+                                                            <geom name="G21" class="rope_geom"/>
+                                                            <body name="B22" pos="[pos_capsule] 0 0">
+                                                              <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                                              <joint name="J0_22" class="rope_joint_y"/>
+                                                              <joint name="J1_22" class="rope_joint_z"/>
+                                                              <geom name="G22" class="rope_geom"/>
+                                                              <body name="B23" pos="[pos_capsule] 0 0">
+                                                                <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                                                <joint name="J0_23" class="rope_joint_y"/>
+                                                                <joint name="J1_23" class="rope_joint_z"/>
+                                                                <geom name="G23" class="rope_geom"/>
+                                                                <body name="B24" pos="[pos_capsule] 0 0">
+                                                                  <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                                                  <joint name="J0_24" class="rope_joint_y"/>
+                                                                  <joint name="J1_24" class="rope_joint_z"/>
+                                                                  <geom name="G24" class="rope_geom"/>
+                                                                  <body name="B25" pos="[pos_capsule] 0 0">
+                                                                    <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                                                    <joint name="J0_25" class="rope_joint_y"/>
+                                                                    <joint name="J1_25" class="rope_joint_z"/>
+                                                                    <geom name="G25" class="rope_geom"/>
+                                                                    <body name="B26" pos="[pos_capsule] 0 0">
+                                                                      <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                                                      <joint name="J0_26" class="rope_joint_y"/>
+                                                                      <joint name="J1_26" class="rope_joint_z"/>
+                                                                      <geom name="G26" class="rope_geom"/>
+                                                                      <body name="B27" pos="[pos_capsule] 0 0">
+                                                                        <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                                                        <joint name="J0_27" class="rope_joint_y"/>
+                                                                        <joint name="J1_27" class="rope_joint_z"/>
+                                                                        <geom name="G27" class="rope_geom"/>
+                                                                        <body name="B28" pos="[pos_capsule] 0 0">
+                                                                          <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                                                          <joint name="J0_28" class="rope_joint_y"/>
+                                                                          <joint name="J1_28" class="rope_joint_z"/>
+                                                                          <geom name="G28" class="rope_geom"/>
+                                                                          <body name="B29" pos="[pos_capsule] 0 0">
+                                                                            <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.4927e-05" diaginertia="5.87e-10 5.87e-10 3.74635e-11"/>
+                                                                            <joint name="J0_29" class="rope_joint_y"/>
+                                                                            <joint name="J1_29" class="rope_joint_z"/>
+                                                                            <geom name="G29" class="rope_geom"/>
+                                                                            <body name="ball">
+                                                                              <geom name="ball_geom" type="sphere" size="0.02" mass="[ball_mass]" solref="0.005 1." rgba="0.8 0.2 0.1 1"/>
+                                                                            </body>
+                                                                          </body>
+                                                                        </body>
+                                                                      </body>
+                                                                    </body>
+                                                                  </body>
+                                                                </body>
+                                                              </body>
+                                                            </body>
+                                                          </body>
+                                                        </body>
+                                                      </body>
+                                                    </body>
+                                                  </body>
+                                                </body>
+                                              </body>
+                                            </body>
+                                          </body>
+                                        </body>
+                                      </body>
+                                    </body>
+                                  </body>
+                                </body>
+                              </body>
+                            </body>
+                          </body>
+                        </body>
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+</mujoco>

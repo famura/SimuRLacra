@@ -51,6 +51,7 @@ if __name__ == '__main__':
 
     # Environments
     env_hparams = dict(
+        num_dof=4,
         max_steps=1500,
         fixed_initial_state=False,
         task_args=dict(final_factor=0.05)
@@ -86,7 +87,7 @@ if __name__ == '__main__':
     policy = DualRBFLinearPolicy(env_sim.spec, **policy_hparam)
     # policy_init = to.load(osp.join(pyrado.EXP_DIR, WAMBallInCupSim.name, CEM.name,
     #                                # '2020-06-08_13-04-04--dr_cs_rl--swingfrombelow',
-    #                                # '2020-06-08_13-04-04--dr-cs-rl_firstupthendown',
+    #                                # '2020-06-08_13-04-04--rand-cs-rl_firstupthendown',
     #                                '2020-06-22_10-41-26--catchbelow', 'policy.pt'))
 
     # Subroutine

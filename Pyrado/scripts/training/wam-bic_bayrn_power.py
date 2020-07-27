@@ -33,7 +33,6 @@ import os.path as osp
 import torch as to
 
 import pyrado
-from pyrado.algorithms.cem import CEM
 from pyrado.algorithms.power import PoWER
 from pyrado.domain_randomization.default_randomizers import get_zero_var_randomizer, get_default_domain_param_map_wambic
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
@@ -49,6 +48,7 @@ if __name__ == '__main__':
 
     # Environments
     env_hparams = dict(
+        num_dof=4,
         max_steps=1500,
         task_args=dict(final_factor=0.05)
     )
@@ -81,10 +81,8 @@ if __name__ == '__main__':
         dim_mask=2
     )
     policy = DualRBFLinearPolicy(env_sim.spec, **policy_hparam)
-    policy_init = to.load(osp.join(pyrado.EXP_DIR, WAMBallInCupSim.name, CEM.name,
-                                   # '2020-06-08_13-04-04--dr_cs_rl--swingfrombelow',
-                                   # '2020-06-08_13-04-04--dr-cs-rl_firstupthendown',
-                                   '2020-06-22_10-41-26--catchbelow', 'policy.pt'))
+    # policy_init = to.load(osp.join(pyrado.EXP_DIR, WAMBallInCupSim.name, PoWER.name,
+    #                                'EXP_NAME', 'policy.pt'))
 
     # Subroutine
     subroutine_hparam = dict(
@@ -108,7 +106,7 @@ if __name__ == '__main__':
         warmstart=False,
         num_eval_rollouts_real=500 if isinstance(env_real, WAMBallInCupSim) else 5,
         num_eval_rollouts_sim=500,
-        policy_param_init=policy_init.param_values.data,
+        # policy_param_init=policy_init.param_values.data,
     )
 
     # Save the environments and the hyper-parameters (do it before the init routine of BDR)

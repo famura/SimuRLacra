@@ -48,6 +48,7 @@ if __name__ == '__main__':
 
     # Environment
     env_hparams = dict(
+        num_dof=7,
         max_steps=3000,
         task_args=dict(final_factor=0.01),
         fixed_initial_state=True,

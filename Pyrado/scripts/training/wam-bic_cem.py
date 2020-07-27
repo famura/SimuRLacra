@@ -44,12 +44,14 @@ from pyrado.policies.environment_specific import DualRBFLinearPolicy
 
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(WAMBallInCupSim.name, f'{CEM.name}_{DualRBFLinearPolicy.name}', 'rand', seed=1001)
+    ex_dir = setup_experiment(WAMBallInCupSim.name, f'{CEM.name}_{DualRBFLinearPolicy.name}', '4dof_rand', seed=1001)
+    # ex_dir = setup_experiment(WAMBallInCupSim.name, f'{CEM.name}_{DualRBFLinearPolicy.name}', 'rand', seed=1001)
 
     # Environment
     env_hparams = dict(
-        max_steps=2000,
-        task_args=dict(final_factor=0.05),
+        num_dof=4,
+        max_steps=1750,
+        task_args=dict(final_factor=0.5),
         fixed_initial_state=False
     )
     env = WAMBallInCupSim(**env_hparams)
@@ -66,7 +68,7 @@ if __name__ == '__main__':
 
     # Policy
     policy_hparam = dict(
-        rbf_hparam=dict(num_feat_per_dim=10, bounds=(0., 1.), scale=None),
+        rbf_hparam=dict(num_feat_per_dim=8, bounds=(0., 1.), scale=None),
         dim_mask=2
     )
     policy = DualRBFLinearPolicy(env.spec, **policy_hparam)
@@ -75,15 +77,15 @@ if __name__ == '__main__':
     algo_hparam = dict(
         max_iter=100,
         pop_size=200,
-        num_rollouts=200,
+        num_rollouts=1,
         num_is_samples=10,
-        expl_std_init=np.pi/4,
+        expl_std_init=np.pi/12,
         expl_std_min=0.02,
-        extra_expl_std_init=np.pi/4,
-        extra_expl_decay_iter=20,
+        extra_expl_std_init=np.pi/6,
+        extra_expl_decay_iter=10,
         full_cov=False,
         symm_sampling=False,
-        num_sampler_envs=16,
+        num_sampler_envs=8,
     )
     algo = CEM(ex_dir, env, policy, **algo_hparam)
 

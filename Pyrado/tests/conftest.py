@@ -455,7 +455,7 @@ def default_hop():
 @m_needs_mujoco
 @pytest.fixture(scope='function')
 def default_wambic():
-    return WAMBallInCupSim(max_steps=1750)
+    return WAMBallInCupSim(num_dof=7, max_steps=1750)
 
 
 # ---------------
