@@ -92,45 +92,6 @@ class QCartPoleReal(RealEnv, Serializable):
     def observe(self, state):
         return np.array([state[0], np.sin(state[1]), np.cos(state[1]), state[2], state[3]])
 
-    def reset(self, *args, **kwargs):
-        # Reset socket, task, and calibrate
-        super().reset(args, kwargs)
-
-    def step(self, act):
-        info = dict(t=self._curr_step*self._dt, act_raw=act)
-
-        # Current reward depending on the (measurable) state and the current (unlimited) action
-        remaining_steps = self._max_steps - (self._curr_step + 1) if self._max_steps is not pyrado.inf else 0
-        self._curr_rew = self._task.step_rew(self.state, act, remaining_steps)
-
-        # Apply actuator limits
-        act_lim = self.limit_act(act)
-        self._curr_act = act_lim
-
-        # Send actions and receive sensor measurements
-        meas = self._qsoc.snd_rcv(act_lim)
-
-        # Transform the relative cart position to [-0.4, +0.4]
-        if self._calibrated:
-            meas[0] = (meas[0] - self._norm_x_lim[0]) - 0.5*(self._norm_x_lim[1] - self._norm_x_lim[0])
-        # Normalize the angle from -pi to +pi:
-        meas[1] = np.mod(meas[1] + np.pi, 2*np.pi) - np.pi
-
-        # Construct the state from the measurements
-        self.state = meas
-        self._curr_step += 1
-
-        # Check if the task or the environment is done
-        done = self._task.is_done(self.state)
-        if self._curr_step >= self._max_steps:
-            done = True
-
-        # Add final reward if done
-        if done:
-            self._curr_rew += self._task.final_rew(self.state, remaining_steps)
-
-        return self.observe(self.state), self._curr_rew, done, info
-
     def calibrate(self):
         if self._calibrated:
             return
@@ -199,6 +160,16 @@ class QCartPoleReal(RealEnv, Serializable):
                 f'Centering of the cart failed: |x| = {np.abs(obs[0]):.2f} > {self._c_lim:.2f}')
 
         print('\u2713')
+
+    def _correct_sensor_offset(self, meas: np.ndarray) -> np.ndarray:
+        # Transform the relative cart position to [-0.4, +0.4]
+        if self._calibrated:
+            meas[0] = (meas[0] - self._norm_x_lim[0]) - 0.5*(self._norm_x_lim[1] - self._norm_x_lim[0])
+
+        # Normalize the angle from -pi to +pi:
+        meas[1] = np.mod(meas[1] + np.pi, 2*np.pi) - np.pi
+
+        return meas
 
 
 class QCartPoleStabReal(QCartPoleReal):
@@ -298,11 +269,12 @@ class QCartPoleStabReal(QCartPoleReal):
 
         # Start with a zero action and get the first sensor measurements
         meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
+        self.state = meas
 
         # Reset time counter
         self._curr_step = 0
 
-        return self.observe(meas)
+        return self.observe(self.state)
 
 
 class QCartPoleSwingUpReal(QCartPoleReal):
@@ -353,11 +325,12 @@ class QCartPoleSwingUpReal(QCartPoleReal):
 
         # Start with a zero action and get the first sensor measurements
         meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
+        self.state = meas
 
         # Reset time counter
         self._curr_step = 0
 
-        return self.observe(meas)
+        return self.observe(self.state)
 
 
 class GoToLimCtrl:
