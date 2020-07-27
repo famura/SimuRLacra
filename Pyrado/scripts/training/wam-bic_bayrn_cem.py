@@ -46,8 +46,8 @@ from pyrado.policies.environment_specific import DualRBFLinearPolicy
 
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
-    # ex_dir = setup_experiment(WAMBallInCupSim.name, f'{BayRn.name}_{CEM.name}', 'dr_rl_jd', seed=1001)
-    ex_dir = setup_experiment(WAMBallInCupSim.name, f'{BayRn.name}_{CEM.name}-sim2sim', 'dr_rl_jd', seed=1001)
+    # ex_dir = setup_experiment(WAMBallInCupSim.name, f'{BayRn.name}_{CEM.name}', 'rand-rl-jd', seed=1001)
+    ex_dir = setup_experiment(WAMBallInCupSim.name, f'{BayRn.name}_{CEM.name}_sim2sim', 'rand-rl-jd', seed=1001)
 
     # Environments
     env_hparams = dict(
@@ -86,9 +86,7 @@ if __name__ == '__main__':
     )
     policy = DualRBFLinearPolicy(env_sim.spec, **policy_hparam)
     # policy_init = to.load(osp.join(pyrado.EXP_DIR, WAMBallInCupSim.name, CEM.name,
-    #                                # '2020-06-08_13-04-04--dr_cs_rl--swingfrombelow',
-    #                                # '2020-06-08_13-04-04--rand-cs-rl_firstupthendown',
-    #                                '2020-06-22_10-41-26--catchbelow', 'policy.pt'))
+    #                                'EXP_NAME', 'policy.pt'))
 
     # Subroutine
     subroutine_hparam = dict(

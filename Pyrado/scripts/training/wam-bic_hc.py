@@ -44,7 +44,7 @@ if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(WAMBallInCupSim.name, HCNormal.name,
                               f'{DualRBFLinearPolicy.name}_nom', seed=1001)
-    # f'{DualRBFLinearPolicy.name}_dr-cs-rl-m-jd-js', seed=1001)
+    # f'{DualRBFLinearPolicy.name}_rand-cs-rl-m-jd-js', seed=1001)
 
     # Environment
     env_hparams = dict(

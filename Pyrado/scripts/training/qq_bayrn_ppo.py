@@ -53,7 +53,7 @@ from pyrado.utils.experiments import wrap_like_other_env
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{BayRn.name}-{PPO.name}_{FNNPolicy.name}',
-                              'actnorm_dr-Mp-Mr-Lp-Lr', seed=111)
+                              'rand-Mp-Mr-Lp-Lr', seed=111)
 
     # Environments
     env_hparams = dict(dt=1/100., max_steps=600)
@@ -94,13 +94,13 @@ if __name__ == '__main__':
     subroutine_hparam = dict(
         max_iter=300,
         min_steps=23*env_sim.max_steps,
-        num_sampler_envs=16,
         num_epoch=7,
         eps_clip=0.0744,
         batch_size=60,
         std_init=0.9074,
         lr=3.446e-04,
         max_grad_norm=1.,
+        num_sampler_envs=16,
     )
     ppo = PPO(ex_dir, env_sim, policy, critic, **subroutine_hparam)
 
