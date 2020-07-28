@@ -35,7 +35,7 @@ from pyrado.algorithms.cem import CEM
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
-from pyrado.environments.rcspysim.planar_3_link import Planar3LinkTASim, Planar3LinkIKSim
+from pyrado.environments.rcspysim.planar_3_link import Planar3LinkTASim, Planar3LinkIKActivationSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.adn import pd_cubic, ADNPolicy, pd_linear
 
@@ -65,7 +65,7 @@ if __name__ == '__main__':
         observeTaskSpaceDiscrepancy=True,
     )
     env = Planar3LinkTASim(**env_hparams)
-    # env = Planar3LinkIKSim(**env_hparams)
+    # env = Planar3LinkIKActivationSim(**env_hparams)
     # env = ActNormWrapper(env)
     # eub = {
     #     'GD_DS0': 2.,

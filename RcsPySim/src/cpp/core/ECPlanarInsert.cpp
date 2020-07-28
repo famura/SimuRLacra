@@ -96,7 +96,7 @@ protected:
             
             // Create the action model
             auto amIK = new AMIKControllerActivation(graph, tcm);
-            std::vector<TaskGenericIK*> tasks;
+            std::vector<Task*> tasks;
             
             // Check if the tasks are defined on position or task level. Adapt their parameters if desired.
             if (properties->getPropertyBool("positionTasks", false)) {
@@ -109,10 +109,14 @@ protected:
                 tasks[0]->resetParameter(Task::Parameters(-0.5, 0.5, 1.0, "X Velocity [m/s]"));
                 tasks[1]->resetParameter(Task::Parameters(-0.5, 0.5, 1.0, "Z Velocity [m/s]"));
             }
-            
+    
             // Add the tasks
             for (auto t : tasks) { amIK->addTask(t); }
-            
+    
+            // Set the tasks' desired states
+            std::vector<PropertySource*> taskSpec = properties->getChildList("taskSpecIK");
+            amIK->setXdesFromTaskSpec(taskSpec, tasks);
+    
             // Incorporate collision costs into IK
             if (properties->getPropertyBool("collisionAvoidanceIK", true)) {
                 REXEC(4) {
@@ -120,7 +124,7 @@ protected:
                 }
                 amIK->setupCollisionModel(collisionMdl);
             }
-            
+    
             return amIK;
         }
 

@@ -40,7 +40,7 @@
 namespace Rcs
 {
 
-// forward decl
+// Forward declaration
 class PropertySource;
 
 /*! Base class of all Dynamical Systems (DS)

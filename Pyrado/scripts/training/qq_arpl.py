@@ -14,6 +14,7 @@ from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yam
 from pyrado.policies.fnn import FNNPolicy
 from pyrado.utils.data_types import EnvSpec
 
+
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(QQubeSim.name, ARPL.name, 'fnn_actnorm', seed=1001)

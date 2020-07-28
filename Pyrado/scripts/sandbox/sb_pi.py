@@ -32,7 +32,7 @@ Script to test the Planar-Insert environment with the task activation action mod
 import math
 
 import rcsenv
-from pyrado.environments.rcspysim.planar_insert import PlanarInsertIKSim, PlanarInsertTASim
+from pyrado.environments.rcspysim.planar_insert import PlanarInsertIKActivationSim, PlanarInsertTASim
 from pyrado.plotting.rollout_based import plot_potentials
 from pyrado.policies.time import TimePolicy
 from pyrado.sampling.rollout import rollout
@@ -44,7 +44,7 @@ rcsenv.setLogLevel(4)
 
 def ik_activation_variant(dt, max_steps, max_dist_force, physics_engine, graph_file_name):
     # Set up environment
-    env = PlanarInsertIKSim(
+    env = PlanarInsertIKActivationSim(
         physicsEngine=physics_engine,
         graphFileName=graph_file_name,
         dt=dt,
@@ -107,7 +107,7 @@ def ds_activation_variant(dt, max_steps, max_dist_force, physics_engine, graph_f
 
 if __name__ == '__main__':
     # Choose setup
-    setup_type = 'ds_activation'  # ik, or activation
+    setup_type = 'ik_activation'  # ik, or activation
     common_hparam = dict(
         dt=0.01,
         max_steps=1200,

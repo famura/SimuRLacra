@@ -34,7 +34,7 @@ import pyrado
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
-from pyrado.environments.rcspysim.box_lifting import BoxLiftingSimpleVelMPsSim, BoxLiftingSimplePosMPsSim
+from pyrado.environments.rcspysim.box_lifting import BoxLiftingSimpleVelDSSim, BoxLiftingSimplePosDSSim
 from pyrado.policies.dummy import IdlePolicy
 from pyrado.policies.time import TimePolicy
 from pyrado.sampling.rollout import rollout, after_rollout_query
@@ -47,7 +47,7 @@ rcsenv.setLogLevel(1)
 
 def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     # Set up environment
-    env = BoxLiftingSimpleVelMPsSim(
+    env = BoxLiftingSimpleVelDSSim(
         usePhysicsNode=True,
         physicsEngine=physicsEngine,
         graphFileName=graphFileName,
@@ -76,7 +76,7 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
             return [0, 0, 0, 0]
 
     # Set up environment
-    env = BoxLiftingSimplePosMPsSim(
+    env = BoxLiftingSimplePosDSSim(
         usePhysicsNode=False,
         physicsEngine=physicsEngine,
         graphFileName=graphFileName,
@@ -114,7 +114,7 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
             return [0., 0.15, 0., 0.]
 
     # Set up environment
-    env = BoxLiftingSimpleVelMPsSim(
+    env = BoxLiftingSimpleVelDSSim(
         usePhysicsNode=True,
         physicsEngine=physicsEngine,
         graphFileName=graphFileName,

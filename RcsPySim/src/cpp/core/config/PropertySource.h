@@ -119,9 +119,8 @@ public:
     virtual PropertySource* getChild(const char* prefix) = 0;
     
     /**
-     * Obtain a list of child property sources.
-     *
-     * The exact meaning of this depends on the implementation. For an Xml document, it could be child elements with the same tag name.
+     * Obtain a list of child property sources. The exact meaning of this depends on the implementation.
+     * For an Xml document, it could be child elements with the same tag name.
      * For a python dict, it could be a list of dicts.
      *
      * The returned objects are owned by the parent.

@@ -36,7 +36,7 @@ from pyrado.algorithms.ppo import PPO
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
-from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKSim
+from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.fnn import FNNPolicy, FNN
 from pyrado.policies.neural_fields import NFPolicy
@@ -46,7 +46,7 @@ from pyrado.utils.data_types import EnvSpec
 
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(Planar3LinkIKSim.name, PPO.name, f'{FNNPolicy.name}_obsnorm', seed=101)
+    ex_dir = setup_experiment(Planar3LinkIKActivationSim.name, PPO.name, f'{FNNPolicy.name}_obsnorm', seed=101)
 
     # Environment
     env_hparams = dict(
@@ -67,7 +67,7 @@ if __name__ == '__main__':
         observeDynamicalSystemDiscrepancy=False,
         observeTaskSpaceDiscrepancy=True,
     )
-    env = Planar3LinkIKSim(**env_hparams)
+    env = Planar3LinkIKActivationSim(**env_hparams)
     env = ActNormWrapper(env)
     eub = {
         'GD_DS0': 2.,

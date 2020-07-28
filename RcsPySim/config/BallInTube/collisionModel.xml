@@ -66,8 +66,12 @@
   <CollisionPair body1="lbr_link_6_R" body2="Table" DistanceThreshold="0.15"/>
   <CollisionPair body1="lbr_link_7_R" body2="Table" DistanceThreshold="0.15"/>
 
-  <CollisionPair body1="Hook_L" body2="Table" DistanceThreshold="0.03"/>
-  <CollisionPair body1="Hook_R" body2="Table" DistanceThreshold="0.03"/>
+  <CollisionPair body1="Hook_L" body2="Hook_R" DistanceThreshold="0.15"/>
+  <CollisionPair body1="Hook_L" body2="Table" DistanceThreshold="0.08"/>
+  <CollisionPair body1="Hook_L" body2="Tube" DistanceThreshold="0.08"/>
+  <CollisionPair body1="Hook_L" body2="Slider" DistanceThreshold="0.15"/>
+  <CollisionPair body1="Hook_R" body2="Table" DistanceThreshold="0.08"/>
+  <CollisionPair body1="Hook_R" body2="Tube" DistanceThreshold="0.08"/>
 
   <CollisionPair body1="ImetronPlatform" body2="Table" DistanceThreshold="0.2"/>
 

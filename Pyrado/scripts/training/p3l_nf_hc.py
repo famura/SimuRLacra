@@ -27,23 +27,21 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Planar-3-Link task using Activation Dynamics Networks and Hill Climbing.
+Train an agent to solve the Planar-3-Link task using Neural Fields and Hill Climbing.
 """
 import torch as to
 
 from pyrado.algorithms.hc import HCNormal
-from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
-from pyrado.environments.rcspysim.planar_3_link import Planar3LinkTASim, Planar3LinkIKActivationSim
+from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.adn import pd_cubic, ADNPolicy, pd_linear
+from pyrado.policies.neural_fields import NFPolicy
 
 
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(Planar3LinkIKActivationSim.name, f'{HCNormal.name}_{ADNPolicy.name}', seed=1001)
-    # ex_dir = setup_experiment(Planar3LinkTASim.name, f'{HCNormal.name}_{ADNPolicy.name}', 'obsnorm', seed=1001)
+    ex_dir = setup_experiment(Planar3LinkIKActivationSim.name, f'{HCNormal.name}_{NFPolicy.name}', seed=101)
 
     # Environment
     env_hparams = dict(
@@ -52,8 +50,7 @@ if __name__ == '__main__':
         max_steps=1200,
         task_args=dict(consider_velocities=True),
         max_dist_force=None,
-        position_mps=True,
-        taskCombinationMethod='product',
+        taskCombinationMethod='sum',
         checkJointLimits=True,
         collisionAvoidanceIK=True,
         observeVelocities=True,
@@ -62,45 +59,46 @@ if __name__ == '__main__':
         observePredictedCollisionCost=False,
         observeManipulabilityIndex=False,
         observeCurrentManipulability=True,
+        observeDynamicalSystemGoalDistance=True,
         observeDynamicalSystemDiscrepancy=False,
         observeTaskSpaceDiscrepancy=True,
-        observeDynamicalSystemGoalDistance=False,
     )
-    # env = Planar3LinkTASim(**env_hparams)
-    env = Planar3LinkIKActivationSim(**env_hparams)
-    # env = ActNormWrapper(env)
+    env = Planar3LinkTASim(**env_hparams)
+    # env = Planar3LinkIKActivationSim(**env_hparams)
     # eub = {
     #     'GD_DS0': 2.,
     #     'GD_DS1': 2.,
     #     'GD_DS2': 2.,
     # }
     # env = ObsNormWrapper(env, explicit_ub=eub)
-    # env = ObsNormWrapper(env)
-    # env = ObsPartialWrapper(env, idcs=['Effector_Xd', 'Effector_Zd'])
     env = ObsPartialWrapper(env, idcs=['Effector_DiscrepTS_X', 'Effector_DiscrepTS_Z'])
     # env = ObsPartialWrapper(env, idcs=['Effector_DiscrepTS_X', 'Effector_DiscrepTS_Z', 'Effector_Xd', 'Effector_Zd'])
-    print(env)
 
     # Policy
     policy_hparam = dict(
-        tau_init=1e-1,
-        tau_learnable=False,
-        kappa_init=1e-2,
-        kappa_learnable=True,
+        hidden_size=3,
+        conv_out_channels=1,
+        mirrored_conv_weights=True,
+        conv_kernel_size=1,
+        conv_padding_mode='circular',
+        init_param_kwargs=dict(bell=True),
         activation_nonlin=to.sigmoid,
-        potentials_dyn_fcn=pd_cubic,
-        potential_init_learnable=False,
+        tau_init=1e-1,
+        tau_learnable=True,
+        kappa_init=None,
+        kappa_learnable=True,
+        potential_init_learnable=True,
     )
-    policy = ADNPolicy(spec=env.spec, dt=env.dt, **policy_hparam)
+    policy = NFPolicy(spec=env.spec, dt=env.dt, **policy_hparam)
+    print(policy)
 
-    # Algorithm
     algo_hparam = dict(
         max_iter=100,
         pop_size=5*policy.num_param,
-        num_rollouts=1,
         expl_factor=1.05,
+        num_rollouts=1,
         expl_std_init=1.0,
-        num_sampler_envs=8,
+        num_sampler_envs=6,
     )
     algo = HCNormal(ex_dir, env, policy, **algo_hparam)
 

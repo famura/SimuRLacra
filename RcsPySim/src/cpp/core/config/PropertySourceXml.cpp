@@ -205,19 +205,18 @@ PropertySource* PropertySourceXml::getChild(const char* prefix)
     return result;
 }
 
-const std::vector<PropertySource*>& PropertySourceXml::getChildList(
-    const char* prefix)
+const std::vector<PropertySource*>& PropertySourceXml::getChildList(const char* prefix)
 {
     std::string prefixStr = prefix;
-    // check if it exists already
+    // Check if it exists already
     auto iter = listChildren.find(prefixStr);
     if (iter != listChildren.end()) {
         return iter->second;
     }
-    // create new entry
+    // Create new entry
     auto& list = listChildren[prefixStr];
     
-    // find matching children
+    // Find matching children
     xmlNodePtr child = node->children;
     while (child) {
         if (STRCASEEQ((const char*) BAD_CAST child->name, prefix)) {

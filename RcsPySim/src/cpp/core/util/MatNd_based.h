@@ -33,6 +33,13 @@
 
 #include <Rcs_MatNd.h>
 
+/*! Check if the shapes of two matrices match by comparing the row and column size.
+ * If they dont't match, the program is exited with a failure.
+ * @param[in] m1 first matrix
+ * @param[in] m2 second matrix
+ */
+void MatNd_checkShapeEq(MatNd* m1, MatNd* m2);
+
 /*! Find all unique combinations of 0s and 1s for N binary events.
  * @param[out] allComb 2^N x N output matrix containing the combinations,
  *             with N being the number of events that could be 0 or 1

@@ -31,7 +31,7 @@ Script to test the bi-manual box shelving task using a hard-coded time-based pol
 """
 import rcsenv
 import pyrado
-from pyrado.environments.rcspysim.box_shelving import BoxShelvingPosMPsSim, BoxShelvingVelMPsSim
+from pyrado.environments.rcspysim.box_shelving import BoxShelvingPosDSSim, BoxShelvingVelDSSim
 from pyrado.policies.dummy import IdlePolicy
 from pyrado.policies.time import TimePolicy
 from pyrado.sampling.rollout import rollout, after_rollout_query
@@ -44,7 +44,7 @@ rcsenv.setLogLevel(0)
 
 def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     # Set up environment
-    env = BoxShelvingPosMPsSim(
+    env = BoxShelvingPosDSSim(
         physicsEngine=physicsEngine,
         graphFileName=graphFileName,
         dt=dt,
@@ -69,7 +69,7 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
                 0.01]  # hand joints
 
     # Set up environment
-    env = BoxShelvingPosMPsSim(
+    env = BoxShelvingPosDSSim(
         physicsEngine=physicsEngine,
         graphFileName=graphFileName,
         dt=dt,
@@ -155,7 +155,7 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
                 return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
     # Set up environment
-    env = BoxShelvingVelMPsSim(
+    env = BoxShelvingVelDSSim(
         physicsEngine=physicsEngine,
         graphFileName=graphFileName,
         dt=dt,

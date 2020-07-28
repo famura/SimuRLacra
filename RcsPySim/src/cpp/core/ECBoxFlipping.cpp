@@ -124,31 +124,35 @@ protected:
             
             // Create the action model
             auto amIK = new AMIKControllerActivation(graph, tcm);
-            std::vector<TaskGenericIK*> tasks;
+            std::vector<Task*> tasks;
             
             // Check if the tasks are defined on position or task level. Adapt their parameters if desired.
             if (properties->getPropertyBool("positionTasks", true)) {
                 // Left
-                amIK->addTask(new TaskPosition1D("Y", graph, leftCP, refBody, refFrame));
-                amIK->addTask(new TaskPosition1D("Z", graph, leftCP, refBody, refFrame));
-//                amIK->addTask(new TaskDistance1D(graph, leftCP, box, 1));  // Y
+                tasks.emplace_back(new TaskPosition1D("Y", graph, leftCP, refBody, refFrame));
+                tasks.emplace_back(new TaskPosition1D("Z", graph, leftCP, refBody, refFrame));
+//                tasks.emplace_back(new TaskDistance1D(graph, leftCP, box, 1));  // Y
                 // Right
-                amIK->addTask(new TaskPosition1D("Y", graph, rightCP, refBody, refFrame));
-                amIK->addTask(new TaskPosition1D("Z", graph, rightCP, refBody, refFrame));
-//                amIK->addTask(new TaskDistance1D(graph, rightCP, box, 1));  // Y
+                tasks.emplace_back(new TaskPosition1D("Y", graph, rightCP, refBody, refFrame));
+                tasks.emplace_back(new TaskPosition1D("Z", graph, rightCP, refBody, refFrame));
+//                tasks.emplace_back(new TaskDistance1D(graph, rightCP, box, 1));  // Y
             }
             else {
                 // Left
-                amIK->addTask(new TaskVelocity1D("Yd", graph, leftCP, refBody, refFrame));
-                amIK->addTask(new TaskVelocity1D("Zd", graph, leftCP, refBody, refFrame));
+                tasks.emplace_back(new TaskVelocity1D("Yd", graph, leftCP, refBody, refFrame));
+                tasks.emplace_back(new TaskVelocity1D("Zd", graph, leftCP, refBody, refFrame));
                 // Right
-                amIK->addTask(new TaskVelocity1D("Yd", graph, rightCP, refBody, refFrame));
-                amIK->addTask(new TaskVelocity1D("Zd", graph, rightCP, refBody, refFrame));
+                tasks.emplace_back(new TaskVelocity1D("Yd", graph, rightCP, refBody, refFrame));
+                tasks.emplace_back(new TaskVelocity1D("Zd", graph, rightCP, refBody, refFrame));
             }
-            
+    
             // Add the tasks
             for (auto t : tasks) { amIK->addTask(t); }
-            
+    
+            // Set the tasks' desired states
+            std::vector<PropertySource*> taskSpec = properties->getChildList("taskSpecIK");
+            amIK->setXdesFromTaskSpec(taskSpec, tasks);
+    
             // Incorporate collision costs into IK
             if (properties->getPropertyBool("collisionAvoidanceIK", true)) {
                 REXEC(4) {
@@ -156,7 +160,7 @@ protected:
                 }
                 amIK->setupCollisionModel(collisionMdl);
             }
-            
+    
             return amIK;
         }
 

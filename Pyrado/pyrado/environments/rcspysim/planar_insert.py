@@ -134,10 +134,10 @@ class PlanarInsertSim(RcsSim, Serializable):
         return np.array([force*np.sin(angle), 0, force*np.cos(angle)])
 
 
-class PlanarInsertIKSim(PlanarInsertSim, Serializable):
+class PlanarInsertIKActivationSim(PlanarInsertSim, Serializable):
     """ Planar 5- or 6-link robot environment controlled by  setting the input to an Rcs IK-based controller """
 
-    name: str = 'pi-ik'
+    name: str = 'pi-ika'
 
     def __init__(self, state_des: np.ndarray = None, **kwargs):
         """
@@ -157,8 +157,21 @@ class PlanarInsertIKSim(PlanarInsertSim, Serializable):
         """
         Serializable._init(self, locals())
 
+        dt = kwargs.get('dt', 0.01)  # 100 Hz is the default
+        task_spec_ik = [
+            dict(x_des=np.array([dt*0.1])),
+            dict(x_des=np.array([dt*0.1])),
+            dict(x_des=np.array([dt*5/180*np.pi])),
+        ]
+
         # Forward to the PlanarInsertSim's constructor, nothing more needs to be done here
-        PlanarInsertSim.__init__(self, task_args=dict(state_des=state_des), actionModelType='ik_activation', **kwargs)
+        PlanarInsertSim.__init__(
+            self,
+            task_args=dict(state_des=state_des),
+            actionModelType='ik_activation',
+            taskSpecIK=task_spec_ik,
+            **kwargs
+        )
 
 
 class PlanarInsertTASim(PlanarInsertSim, Serializable):

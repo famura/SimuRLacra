@@ -76,13 +76,14 @@
   <Group name="_L" transform="0.125 -0.247635 0.0675 134.01 -68.91 -44.01" prev="RailBot">
     <xi:include href="../common/LBR_trqCtrl.xml"/>
 
-    <Body name="Hook" prev="lbr_link_7_L" transform="0 0 0.1707 0 0 90" physics="dynamic" mass="2.">
-      <Shape type="CYLINDER" radius="0.02" length="0.6" transform="0 0 0.3 0 0 0" physics="true" graphics="true" distance="true" color="GRAY"/>
-      <Shape type="CYLINDER" radius="0.02" length="0.2" transform="-0.08 0 0.62 0 90 0" physics="true" graphics="true" distance="true" color="GRAY"/>
+    <Body name="Hook" prev="lbr_link_7_L" transform="0 0 0.1707 0 0 -90" physics="dynamic" mass="2.">
+      <Sensor type="LOADCELL" name="WristLoadCellLBR"/>
+      <Shape type="CYLINDER" radius="0.02" length="0.7" transform="0 0 0.35 0 0 0" physics="true" graphics="true" distance="true" color="GRAY"/>
+      <Shape type="CYLINDER" radius="0.02" length="0.2" transform="0.08 0 0.72 0 90 0" physics="true" graphics="true" distance="true" color="GRAY"/>
     </Body>
   </Group>
 
-  <Body name="Effector_L" prev="Hook_L" transform="-0.2 0 0.62 0 0 0">
+  <Body name="Effector_L" prev="Hook_L" transform="0.2 0 0.62 0 0 0">
     <Shape type="POINT" distance="true"/>
     <Shape type="FRAME" scale="0.2"/>
   </Body>
@@ -92,6 +93,7 @@
     <xi:include href="../common/LBR_trqCtrl.xml"/>
 
     <Body name="Hook" prev="lbr_link_7_R" transform="0 0 0.1707 0 0 90" physics="dynamic" mass="1.">
+      <Sensor type="LOADCELL" name="WristLoadCellLBR"/>
       <Shape type="CYLINDER" radius="0.02" length="0.26" transform="0 0 0.13 0 0 0" physics="true" graphics="true" distance="true" color="GRAY"/>
       <Shape type="CYLINDER" radius="0.02" length="0.1" transform="0.03 0 0.27 0 90 0" physics="true" graphics="true" distance="true" color="GRAY"/>
     </Body>

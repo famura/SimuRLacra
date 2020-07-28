@@ -47,9 +47,8 @@ AMPlateAngPos::AMPlateAngPos(RcsGraph* graph) : ActionModelIK(graph)
     addTask(new TaskPosition3D(desiredGraph, plate, NULL, NULL));
     addTask(new TaskGenericEuler3D(desiredGraph, "CABr", plate, NULL, NULL));
     
-    // create state matrix
+    // Create state matrix, and init with current
     x_des = MatNd_create(getController()->getTaskDim(), 1);
-    // init state with current
     getController()->computeX(x_des);
 }
 
@@ -92,7 +91,8 @@ void AMPlateAngPos::computeCommand(
 void AMPlateAngPos::reset()
 {
     ActionModelIK::reset();
-    // init state with current
+    
+    // Init the desired state
     getController()->computeX(x_des);
 }
 

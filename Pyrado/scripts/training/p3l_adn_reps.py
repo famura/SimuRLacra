@@ -35,21 +35,21 @@ from pyrado.algorithms.reps import REPS
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
-from pyrado.environments.rcspysim.planar_3_link import Planar3LinkTASim, Planar3LinkIKSim
+from pyrado.environments.rcspysim.planar_3_link import Planar3LinkTASim, Planar3LinkIKActivationSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.adn import pd_cubic, ADNPolicy, pd_linear
 
 
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(Planar3LinkIKSim.name, f'{REPS.name}_{ADNPolicy.name}', seed=1001)
+    ex_dir = setup_experiment(Planar3LinkIKActivationSim.name, f'{REPS.name}_{ADNPolicy.name}', seed=1001)
     # ex_dir = setup_experiment(Planar3LinkTASim.name, f'{HCNormal.name}_{ADNPolicy.name}', 'obsnorm', seed=1001)
 
     # Environment
     env_hparams = dict(
         physicsEngine='Bullet',  # Bullet or Vortex
-        dt=1/50.,
-        max_steps=1200,
+        dt=1/100.,
+        max_steps=1800,
         task_args=dict(consider_velocities=True),
         max_dist_force=None,
         position_mps=True,
@@ -66,7 +66,7 @@ if __name__ == '__main__':
         observeDynamicalSystemDiscrepancy=False,
         observeTaskSpaceDiscrepancy=True,
     )
-    env = Planar3LinkIKSim(**env_hparams)
+    env = Planar3LinkIKActivationSim(**env_hparams)
     # env = ActNormWrapper(env)
     # eub = {
     #     'GD_DS0': 2.,

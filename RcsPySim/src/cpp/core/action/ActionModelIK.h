@@ -121,7 +121,7 @@ protected:
     // Collision model used for collision gradient. Can't put it into the controller because that one has no setter.
     RcsCollisionMdl* collisionMdl;
     
-    // shared implementation of computeIK and computeIKVel. Takes input from dx_des.
+    // Shared implementation of computeIK and computeIKVel. Takes input from dx_des.
     void ikFromDX(MatNd* q_des, MatNd* q_dot_des, double dt) const;
     
     // Temporary data storage for the IK

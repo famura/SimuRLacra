@@ -104,7 +104,7 @@ class Planar3LinkSim(RcsSim, Serializable):
         state_des2 = np.array([p2[0], p2[2], 0, 0])
         state_des3 = np.array([p3[0], p3[2], 0, 0])
         if task_args.get('consider_velocities', False):
-            Q = np.diag([5e-1, 5e-1, 1e-1, 1e-1])
+            Q = np.diag([5e-1, 5e-1, 2e-1, 2e-1])
         else:
             Q = np.diag([1e0, 1e0])
             state_des1 = state_des1[:2]
@@ -142,18 +142,18 @@ class Planar3LinkSim(RcsSim, Serializable):
         task = FinalRewTask(
             SequentialTasks([subtask_1, subtask_2, subtask_3, subtask_4, subtask_5, subtask_6], hold_rew_when_done=True,
                             verbose=True),
-            mode=FinalRewMode(time_dependent=True),
+            mode=FinalRewMode(always_positive=True),
         )
         masked_task = MaskedTask(self.spec, task, idcs)
 
         # Additional tasks
         task_check_bounds = create_check_all_boundaries_task(self.spec, penalty=1e3)
-        # task_ts_discrepancy = create_task_space_discrepancy_task(
-        #     self.spec, AbsErrRewFcn(q=0.5*np.ones(2), r=np.zeros(self.act_space.shape))
-        # )
+        task_ts_discrepancy = create_task_space_discrepancy_task(
+            self.spec, AbsErrRewFcn(q=0.5*np.ones(2), r=np.zeros(self.act_space.shape))
+        )
 
         # Return the masked task and and additional task that ends the episode if the unmasked state is out of bound
-        return ParallelTasks([masked_task, task_check_bounds], easily_satisfied=True)
+        return ParallelTasks([masked_task, task_check_bounds, task_ts_discrepancy], easily_satisfied=True)
 
 
 class Planar3LinkJointCtrlSim(Planar3LinkSim, Serializable):
@@ -177,10 +177,10 @@ class Planar3LinkJointCtrlSim(Planar3LinkSim, Serializable):
         )
 
 
-class Planar3LinkIKSim(Planar3LinkSim, Serializable):
+class Planar3LinkIKActivationSim(Planar3LinkSim, Serializable):
     """ Planar 3-link robot environment controlled by setting the input to an Rcs IK-based controller """
 
-    name: str = 'p3l-ik'
+    name: str = 'p3l-ika'
 
     def __init__(self, task_args: dict = None, **kwargs):
         """
@@ -200,11 +200,18 @@ class Planar3LinkIKSim(Planar3LinkSim, Serializable):
         """
         Serializable._init(self, locals())
 
+        task_spec_ik = [
+            dict(x_des=np.array([0., 0., 0.])),
+            dict(x_des=np.array([0., 0., 0.])),
+            dict(x_des=np.array([0., 0., 0.]))
+        ]
+
         # Forward to the Planar3LinkSim's constructor, specifying the characteristic action model
         super().__init__(
             task_args=dict() if task_args is None else task_args,
             actionModelType='ik_activation',
             positionTasks=kwargs.pop('positionTasks', True),
+            taskSpecIK=task_spec_ik,
             **kwargs
         )
 

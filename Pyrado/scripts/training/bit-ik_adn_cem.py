@@ -27,14 +27,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Planar-3-Link task using Activation Dynamics Networks and Hill Climbing.
+Train an agent to solve the Ball-In-Tube environment using Activation Dynamics Networks and Hill Climbing.
 """
 import torch as to
 
+from pyrado.algorithms.cem import CEM
 from pyrado.algorithms.hc import HCNormal
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
+from pyrado.environments.rcspysim.ball_in_tube import BallInTubeIKActivationSim
 from pyrado.environments.rcspysim.planar_3_link import Planar3LinkTASim, Planar3LinkIKActivationSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.adn import pd_cubic, ADNPolicy, pd_linear
@@ -42,50 +44,39 @@ from pyrado.policies.adn import pd_cubic, ADNPolicy, pd_linear
 
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(Planar3LinkIKActivationSim.name, f'{HCNormal.name}_{ADNPolicy.name}', seed=1001)
-    # ex_dir = setup_experiment(Planar3LinkTASim.name, f'{HCNormal.name}_{ADNPolicy.name}', 'obsnorm', seed=1001)
+    # ex_dir = setup_experiment(BallInTubeIKSim.name, f'{HCNormal.name}_{ADNPolicy.name}', seed=1001)
+    ex_dir = setup_experiment(BallInTubeIKActivationSim.name, f'{HCNormal.name}_{ADNPolicy.name}', seed=1001)
 
     # Environment
     env_hparams = dict(
         physicsEngine='Bullet',  # Bullet or Vortex
-        dt=1/50.,
+        graphFileName='gBallInTube_trqCtrl.xml',
+        dt=1/100.,
         max_steps=1200,
-        task_args=dict(consider_velocities=True),
-        max_dist_force=None,
-        position_mps=True,
-        taskCombinationMethod='product',
+        ref_frame='table',  # world, table, or slider
+        fixed_init_state=True,
         checkJointLimits=True,
         collisionAvoidanceIK=True,
-        observeVelocities=True,
+        observeVelocities=False,
         observeForceTorque=True,
-        observeCollisionCost=False,
+        observeCollisionCost=True,
         observePredictedCollisionCost=False,
         observeManipulabilityIndex=False,
         observeCurrentManipulability=True,
-        observeDynamicalSystemDiscrepancy=False,
         observeTaskSpaceDiscrepancy=True,
-        observeDynamicalSystemGoalDistance=False,
     )
-    # env = Planar3LinkTASim(**env_hparams)
-    env = Planar3LinkIKActivationSim(**env_hparams)
-    # env = ActNormWrapper(env)
-    # eub = {
-    #     'GD_DS0': 2.,
-    #     'GD_DS1': 2.,
-    #     'GD_DS2': 2.,
-    # }
-    # env = ObsNormWrapper(env, explicit_ub=eub)
-    # env = ObsNormWrapper(env)
-    # env = ObsPartialWrapper(env, idcs=['Effector_Xd', 'Effector_Zd'])
-    env = ObsPartialWrapper(env, idcs=['Effector_DiscrepTS_X', 'Effector_DiscrepTS_Z'])
-    # env = ObsPartialWrapper(env, idcs=['Effector_DiscrepTS_X', 'Effector_DiscrepTS_Z', 'Effector_Xd', 'Effector_Zd'])
+    env = BallInTubeIKActivationSim(**env_hparams)
+    env = ObsPartialWrapper(env, idcs=['Effector_L_DiscrepTS_X', 'Effector_L_DiscrepTS_Y', 'Effector_L_DiscrepTS_Z',
+                                       'Effector_R_DiscrepTS_X', 'Effector_R_DiscrepTS_Y', 'Effector_R_DiscrepTS_Z',
+                                       'CollCost'])
+    env = ObsNormWrapper(env)
     print(env)
 
     # Policy
     policy_hparam = dict(
         tau_init=1e-1,
         tau_learnable=False,
-        kappa_init=1e-2,
+        kappa_init=1e-3,
         kappa_learnable=True,
         activation_nonlin=to.sigmoid,
         potentials_dyn_fcn=pd_cubic,
@@ -95,14 +86,19 @@ if __name__ == '__main__':
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=100,
-        pop_size=5*policy.num_param,
+        max_iter=50,
+        pop_size=2*policy.num_param,
         num_rollouts=1,
-        expl_factor=1.05,
+        num_is_samples=policy.num_param//10,
         expl_std_init=1.0,
+        expl_std_min=0.02,
+        extra_expl_std_init=0.5,
+        extra_expl_decay_iter=5,
+        full_cov=False,
+        symm_sampling=False,
         num_sampler_envs=8,
     )
-    algo = HCNormal(ex_dir, env, policy, **algo_hparam)
+    algo = CEM(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml([

@@ -354,8 +354,8 @@ def get_default_randomizer_pi() -> DomainRandomizer:
     )
 
 
-@default_randomizer('pyrado.environments.sim_rcs.box_shelving', 'BoxShelvingPosMPsSim')
-@default_randomizer('pyrado.environments.sim_rcs.box_shelving', 'BoxShelvingVelMPsSim')
+@default_randomizer('pyrado.environments.sim_rcs.box_shelving', 'BoxShelvingPosDSSim')
+@default_randomizer('pyrado.environments.sim_rcs.box_shelving', 'BoxShelvingVelDSSim')
 def get_default_randomizer_bs() -> DomainRandomizer:
     """
     Get the default randomizer for the `BoxShelvingSim`.
@@ -373,10 +373,10 @@ def get_default_randomizer_bs() -> DomainRandomizer:
     )
 
 
-@default_randomizer('pyrado.environments.sim_rcs.box_lifting', 'BoxLiftingPosMPsSim')
-@default_randomizer('pyrado.environments.sim_rcs.box_lifting', 'BoxLiftingVelMPsSim')
-@default_randomizer('pyrado.environments.sim_rcs.box_lifting', 'BoxLiftingSimplePosMPsSim')
-@default_randomizer('pyrado.environments.sim_rcs.box_lifting', 'BoxLiftingSimpleVelMPsSim')
+@default_randomizer('pyrado.environments.sim_rcs.box_lifting', 'BoxLiftingPosDSSim')
+@default_randomizer('pyrado.environments.sim_rcs.box_lifting', 'BoxLiftingVelDSSim')
+@default_randomizer('pyrado.environments.sim_rcs.box_lifting', 'BoxLiftingSimplePosDSSim')
+@default_randomizer('pyrado.environments.sim_rcs.box_lifting', 'BoxLiftingSimpleVelDSSim')
 def get_default_randomizer_bl() -> DomainRandomizer:
     """
     Get the default randomizer for the `BoxLifting`.
