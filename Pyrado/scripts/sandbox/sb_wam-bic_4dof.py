@@ -27,49 +27,50 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Run a policy (trained in simulation) on real Barret WAM.
+Test Linear Policy with RBF Features for the WAM Ball-in-a-cup task with 4 dof.
 """
-import os.path as osp
 import numpy as np
 
 import pyrado
-from pyrado.environment_wrappers.utils import inner_env
-from pyrado.environments.barrett_wam.wam import WAMBallInCupReal
-from pyrado.logger.experiment import ask_for_experiment
+from pyrado.environments.mujoco.wam import WAMBallInCupSim
+from pyrado.policies.environment_specific import DualRBFLinearPolicy
+from pyrado.utils.data_types import RenderMode
 from pyrado.sampling.rollout import rollout, after_rollout_query
-from pyrado.utils.experiments import wrap_like_other_env, load_experiment
 from pyrado.utils.input_output import print_cbt
-from pyrado.utils.argparser import get_argparser
 
 
 if __name__ == '__main__':
-    # Parse command line arguments
-    args = get_argparser().parse_args()
+    # Fix seed for reproducibility
+    pyrado.set_seed(101)
 
-    # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment()
+    # Environment
+    env = WAMBallInCupSim(
+        num_dof=4,
+        max_steps=3000,
+        # Note, when tuning the task args: the `R` matrices are now 4x4 for the 4 dof WAM
+        task_args=dict(
+            R=np.zeros((4, 4)),
+            R_dev=np.diag([0.2, 0.2, 1e-2, 1e-2])
+        ),
+    )
 
-    # Load the policy (trained in simulation) and the environment (for constructing the real-world counterpart)
-    env_sim, policy, _ = load_experiment(ex_dir)
+    # Stabilize ball and print out the stable state
+    env.reset()
+    act = np.zeros(env.spec.act_space.flat_dim)
+    for i in range(1500):
+        env.step(act)
+        env.render(mode=RenderMode(video=True))
 
-    # Detect the correct real-world counterpart and create it
-    if env_sim.name == 'wam-bic':  # use hard-coded name to avoid loading mujoco_py by loading WAMBallInCupSim
-        # If `max_steps` (or `dt`) are not explicitly set using `args`, use the same as in the simulation
-        max_steps = args.max_steps if args.max_steps < pyrado.inf else env_sim.max_steps
-        dt = args.dt if args.dt is not None else env_sim.dt
-        env_real = WAMBallInCupReal(dt=dt, max_steps=max_steps, num_dof=inner_env(env_sim).num_dof)
-    else:
-        raise pyrado.ValueErr(given=env_sim.name, eq_constraint='wam-bic')
+    # Printing out actual positions for 4-dof (..just needed to setup the hard-coded values in the class)
+    print('Ball pos:', env.sim.data.get_body_xpos('ball'))
+    print('Cup goal:', env.sim.data.get_site_xpos('cup_goal'))
+    print('Joint pos (incl. first rope angle):', env.sim.data.qpos[:5])
 
-    # Finally wrap the env in the same as done during training
-    env_real = wrap_like_other_env(env_real, env_sim)
-
-    # Run on device
-    done = False
+    # Apply DualRBFLinearPolicy and plot the joint states over the desired ones
+    rbf_hparam = dict(num_feat_per_dim=7, bounds=(np.array([0.]), np.array([1.])))
+    policy = DualRBFLinearPolicy(env.spec, rbf_hparam, dim_mask=2)
+    done, param = False, None
     while not done:
-        ro = rollout(env_real, policy, eval=True)
+        ro = rollout(env, policy, render_mode=RenderMode(video=True), eval=True, reset_kwargs=dict(domain_param=param))
         print_cbt(f'Return: {ro.undiscounted_return()}', 'g', bright=True)
-        np.save(osp.join(ex_dir, 'qpos_real.npy'), env_real.qpos)
-        np.save(osp.join(ex_dir, 'qvel_real.npy'), env_real.qvel)
-        print_cbt('Saved trajectory into qpos_real.npy and qvel_real.npy', 'g')
-        done, _, _ = after_rollout_query(env_real, policy, ro)
+        done, _, param = after_rollout_query(env, policy, ro)

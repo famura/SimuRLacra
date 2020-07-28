@@ -77,7 +77,7 @@ class BayRn(Algorithm, ABC):
                  save_dir: str,
                  env_sim: MetaDomainRandWrapper,
                  env_real: [RealEnv, EnvWrapper],
-                 subroutine: Algorithm,
+                 subrtn: Algorithm,
                  bounds: to.Tensor,
                  max_iter: int,
                  acq_fc: str,
@@ -89,11 +89,11 @@ class BayRn(Algorithm, ABC):
                  num_eval_rollouts_sim: int = 50,
                  num_init_cand: int = 5,
                  thold_succ: float = pyrado.inf,
-                 thold_succ_subroutine: float = -pyrado.inf,
+                 thold_succ_subrtn: float = -pyrado.inf,
                  warmstart: bool = True,
                  policy_param_init: to.Tensor = None,
                  valuefcn_param_init: to.Tensor = None,
-                 subroutine_snapshot_mode: str = 'best'):
+                 subrtn_snapshot_mode: str = 'best'):
         """
         Constructor
 
@@ -104,7 +104,7 @@ class BayRn(Algorithm, ABC):
         :param save_dir: directory to save the snapshots i.e. the results in
         :param env_sim: randomized simulation environment a.k.a. source domain
         :param env_real: real-world environment a.k.a. target domain
-        :param subroutine: algorithm which performs the policy / value-function optimization
+        :param subrtn: algorithm which performs the policy / value-function optimization
         :param bounds: boundaries for inputs of randomization function, format: [lower, upper]
         :param max_iter: maximum number of iterations
         :param acq_fc: Acquisition Function
@@ -120,26 +120,26 @@ class BayRn(Algorithm, ABC):
         :param num_eval_rollouts_sim: number of rollouts in simulation to estimate the return after training
         :param num_init_cand: number of initial policies to train, ignored if `init_dir` is provided
         :param thold_succ: success threshold on the real system's return for BayRn, stop the algorithm if exceeded
-        :param thold_succ_subroutine: success threshold on the simulated system's return for the subroutine, repeat the
+        :param thold_succ_subrtn: success threshold on the simulated system's return for the subroutine, repeat the
                                       subroutine until the threshold is exceeded or the for a given number of iterations
         :param warmstart: initialize the policy parameters with the one of the previous iteration. This option has no
                           effect for initial policies and can be overruled by passing init policy params explicitly.
         :param policy_param_init: initial policy parameter values for the subroutine, set `None` to be random
         :param valuefcn_param_init: initial value function parameter values for the subroutine, set `None` to be random
-        :param subroutine_snapshot_mode: snapshot mode for saving during training of the subroutine
+        :param subrtn_snapshot_mode: snapshot mode for saving during training of the subroutine
         """
         assert isinstance(env_sim, MetaDomainRandWrapper)
-        assert isinstance(subroutine, Algorithm)
+        assert isinstance(subrtn, Algorithm)
         assert bounds.shape[0] == 2
         assert all(bounds[1] > bounds[0])
 
-        # Call Algorithm's constructor without specifying the policy
-        super().__init__(save_dir, max_iter, subroutine.policy, logger=None)
+        # Call Algorithm's constructor
+        super().__init__(save_dir, max_iter, subrtn.policy, logger=None)
 
         # Store the inputs and initialize
         self._env_sim = env_sim
         self._env_real = env_real
-        self._subroutine = subroutine
+        self._subrtn = subrtn
         self.bounds = bounds
         self.cand_dim = bounds.shape[1]
         self.cands = None  # called x in the context of GPs
@@ -155,10 +155,10 @@ class BayRn(Algorithm, ABC):
         self.warmstart = warmstart
         self.num_eval_rollouts_real = num_eval_rollouts_real
         self.num_eval_rollouts_sim = num_eval_rollouts_sim
-        self.subroutine_snapshot_mode = subroutine_snapshot_mode
+        self.subrtn_snapshot_mode = subrtn_snapshot_mode
         self.thold_succ = to.tensor([thold_succ])
-        self.thold_succ_subroutine = to.tensor([thold_succ_subroutine])
-        self.max_subroutine_rep = 3  # number of tries to exceed thold_succ_subroutine during training in simulation
+        self.thold_succ_subrtn = to.tensor([thold_succ_subrtn])
+        self.max_subrtn_rep = 3  # number of tries to exceed thold_succ_subrtn during training in simulation
         self.curr_cand_value = -pyrado.inf  # for the stopping criterion
         self.uc_normalizer = UnitCubeProjector(bounds[0, :], bounds[1, :])
 
@@ -190,13 +190,13 @@ class BayRn(Algorithm, ABC):
         self._env_sim.adapt_randomizer(cand.numpy())
 
         # Reset the subroutine's algorithm which includes resetting the exploration
-        self._subroutine.reset()
+        self._subrtn.reset()
 
         if not self.warmstart or self._curr_iter == 0:
             # Reset the subroutine's policy (and value function)
-            self._subroutine.policy.init_param(self.policy_param_init)
-            if isinstance(self._subroutine, ActorCritic):
-                self._subroutine.critic.value_fcn.init_param(self.valuefcn_param_init)
+            self._subrtn.policy.init_param(self.policy_param_init)
+            if isinstance(self._subrtn, ActorCritic):
+                self._subrtn.critic.value_fcn.init_param(self.valuefcn_param_init)
             if self.policy_param_init is None:
                 print_cbt('Learning the new solution from scratch', 'y')
             else:
@@ -204,21 +204,21 @@ class BayRn(Algorithm, ABC):
 
         elif self.warmstart and self._curr_iter > 0:
             # Continue from the previous policy (and value function)
-            self._subroutine.policy.load_state_dict(
+            self._subrtn.policy.load_state_dict(
                 to.load(osp.join(self._save_dir, f'iter_{self._curr_iter - 1}_policy.pt')).state_dict()
             )
-            if isinstance(self._subroutine, ActorCritic):
-                self._subroutine.critic.value_fcn.load_state_dict(
+            if isinstance(self._subrtn, ActorCritic):
+                self._subrtn.critic.value_fcn.load_state_dict(
                     to.load(osp.join(self._save_dir, f'iter_{self._curr_iter - 1}_valuefcn.pt')).state_dict()
                 )
             print_cbt(f'Initialized the new solution with the results from iteration {self._curr_iter - 1}', 'y')
 
         # Train a policy in simulation using the subroutine
-        self._subroutine.train(snapshot_mode=self.subroutine_snapshot_mode, meta_info=dict(prefix=prefix))
+        self._subrtn.train(snapshot_mode=self.subrtn_snapshot_mode, meta_info=dict(prefix=prefix))
 
         # Return the estimated return of the trained policy in simulation
         avg_ret_sim = self.eval_policy(
-            None, self._env_sim, self._subroutine.policy, self.montecarlo_estimator, prefix, self.num_eval_rollouts_sim
+            None, self._env_sim, self._subrtn.policy, self.montecarlo_estimator, prefix, self.num_eval_rollouts_sim
         )
         return float(avg_ret_sim)
 
@@ -236,7 +236,7 @@ class BayRn(Algorithm, ABC):
             # Train a policy for each candidate, repeat if the resulting policy did not exceed the success thold
             print_cbt(f'Randomly sampled the next candidate: {cands[i].numpy()}', 'g')
             wrapped_trn_fcn = until_thold_exceeded(
-                self.thold_succ_subroutine.item(), max_iter=self.max_subroutine_rep
+                self.thold_succ_subrtn.item(), max_iter=self.max_subrtn_rep
             )(self.train_policy_sim)
             wrapped_trn_fcn(cands[i], prefix=f'init_{i}')
 
@@ -378,7 +378,7 @@ class BayRn(Algorithm, ABC):
         # Train and valuate the new candidate (saves to iter_{self._curr_iter}_policy.pt)
         prefix = f'iter_{self._curr_iter}'
         wrapped_trn_fcn = until_thold_exceeded(
-            self.thold_succ_subroutine.item(), max_iter=self.max_subroutine_rep
+            self.thold_succ_subrtn.item(), max_iter=self.max_subrtn_rep
         )(self.train_policy_sim)
         wrapped_trn_fcn(cand, prefix)
 
@@ -406,9 +406,9 @@ class BayRn(Algorithm, ABC):
             joblib.dump(self._env_sim, osp.join(self._save_dir, 'env_sim.pkl'))
             joblib.dump(self._env_real, osp.join(self._save_dir, 'env_real.pkl'))
             to.save(self.bounds, osp.join(self._save_dir, 'bounds.pt'))
-            to.save(self._subroutine.policy, osp.join(self._save_dir, 'policy.pt'))
-            if isinstance(self._subroutine, ActorCritic):
-                to.save(self._subroutine.critic.value_fcn, osp.join(self._save_dir, 'valuefcn.pt'))
+            to.save(self._subrtn.policy, osp.join(self._save_dir, 'policy.pt'))
+            if isinstance(self._subrtn, ActorCritic):
+                to.save(self._subrtn.critic.value_fcn, osp.join(self._save_dir, 'valuefcn.pt'))
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
 
@@ -529,12 +529,12 @@ class BayRn(Algorithm, ABC):
                 self._curr_iter = len(found_iter_policies)  # continue with next
 
                 # Initialize subroutine with previous iteration
-                self._subroutine.load_snapshot(ld, meta_info=dict(prefix=f'iter_{self._curr_iter - 1}'))
+                self._subrtn.load_snapshot(ld, meta_info=dict(prefix=f'iter_{self._curr_iter - 1}'))
 
                 # Evaluate and save the latest candidate on the target system.
                 # This is the case if we found iter_i_candidate.pt but not iter_i_returns_real.pt
                 if self.cands.shape[0] == self.cands_values.shape[0] + 1:
-                    curr_cand_value = self.eval_policy(self._save_dir, self._env_real, self._subroutine.policy,
+                    curr_cand_value = self.eval_policy(self._save_dir, self._env_real, self._subrtn.policy,
                                                        self.montecarlo_estimator, prefix=f'iter_{self._curr_iter - 1}',
                                                        num_rollouts=self.num_eval_rollouts_real)
                     self.cands_values = to.cat([self.cands_values, curr_cand_value.view(1)], dim=0)
@@ -588,23 +588,23 @@ class BayRn(Algorithm, ABC):
     @staticmethod
     def train_argmax_policy(load_dir: str,
                             env_sim: MetaDomainRandWrapper,
-                            subroutine: Algorithm,
+                            subrtn: Algorithm,
                             num_restarts: int,
                             num_samples: int,
                             policy_param_init: to.Tensor = None,
                             valuefcn_param_init: to.Tensor = None,
-                            subroutine_snapshot_mode: str = 'best') -> Policy:
+                            subrtn_snapshot_mode: str = 'best') -> Policy:
         """
         Train a policy based on the maximizer of the posterior mean.
 
         :param load_dir: directory to load from
         :param env_sim: simulation environment
-        :param subroutine: algorithm which performs the policy / value-function optimization
+        :param subrtn: algorithm which performs the policy / value-function optimization
         :param num_restarts: number of restarts for the optimization of the acquisition function
         :param num_samples: number of samples for the optimization of the acquisition function
         :param policy_param_init: initial policy parameter values for the subroutine, set `None` to be random
         :param valuefcn_param_init: initial value function parameter values for the subroutine, set `None` to be random
-        :param subroutine_snapshot_mode: snapshot mode for saving during training of the subroutine
+        :param subrtn_snapshot_mode: snapshot mode for saving during training of the subroutine
         :return: the final BayRn policy
         """
         # Load the required data
@@ -620,16 +620,16 @@ class BayRn(Algorithm, ABC):
         env_sim.adapt_randomizer(argmax_cand.numpy())
 
         # Reset the subroutine's algorithm which includes resetting the exploration
-        subroutine.reset()
+        subrtn.reset()
 
-        # Reset the subroutine's policy (and value function)
-        subroutine.policy.init_param(policy_param_init)
-        if isinstance(subroutine, ActorCritic):
-            subroutine.critic.value_fcn.init_param(valuefcn_param_init)
+        # Reset the subrtn's policy (and value function)
+        subrtn.policy.init_param(policy_param_init)
+        if isinstance(subrtn, ActorCritic):
+            subrtn.critic.value_fcn.init_param(valuefcn_param_init)
         if policy_param_init is None:
             print_cbt('Learning the argmax solution from scratch', 'y')
         else:
             print_cbt('Learning the argmax solution given an initialization', 'y')
 
-        subroutine.train(snapshot_mode=subroutine_snapshot_mode)
-        return subroutine.policy
+        subrtn.train(snapshot_mode=subrtn_snapshot_mode)
+        return subrtn.policy

@@ -122,7 +122,7 @@ def test_adr_reward_generator(env):
         reward_multiplier=1,
         logger=None
     )
-    policy = FNNPolicy(reference_env.spec, hidden_sizes=[32], hidden_nonlin=to.tanh)
+    policy = FNNPolicy(reference_env.spec, hidden_sizes=[16], hidden_nonlin=to.tanh)
     dr = get_default_randomizer_omo()
     dr.randomize(num_samples=1)
     random_env.domain_param = dr.get_params(format='dict', dtype='numpy')
@@ -130,7 +130,7 @@ def test_adr_reward_generator(env):
     random_sampler = ParallelSampler(random_env, policy, num_envs=4, min_steps=10000)
 
     losses = []
-    for i in range(50):
+    for i in range(200):
         reference_traj = StepSequence.concat(reference_sampler.sample())
         random_traj = StepSequence.concat(random_sampler.sample())
         losses.append(reward_generator.train(reference_traj, random_traj, 10))

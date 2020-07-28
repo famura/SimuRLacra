@@ -170,7 +170,11 @@ def eval_damping():
 
 def rollout_dummy_rbf_policy():
     # Environment
-    env = WAMBallInCupSim(max_steps=1750, task_args=dict(sparse_rew_fcn=True))
+    env = WAMBallInCupSim(
+        num_dof=7,
+        max_steps=1750,
+        task_args=dict(sparse_rew_fcn=True)
+    )
 
     # Stabilize around initial position
     env.reset(domain_param=dict(cup_scale=1., rope_length=0.3103, ball_mass=0.021))

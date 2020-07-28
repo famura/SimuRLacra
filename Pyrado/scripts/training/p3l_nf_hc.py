@@ -27,59 +27,78 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the WAM Ball-in-cup environment using Hill Climbing.
+Train an agent to solve the Planar-3-Link task using Neural Fields and Hill Climbing.
 """
-import numpy as np
+import torch as to
 
 from pyrado.algorithms.hc import HCNormal
-from pyrado.domain_randomization.domain_parameter import UniformDomainParam, NormalDomainParam
-from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
-from pyrado.environments.mujoco.wam import WAMBallInCupSim
+from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
+from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
+from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.environment_specific import DualRBFLinearPolicy
+from pyrado.policies.neural_fields import NFPolicy
 
 
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(WAMBallInCupSim.name, HCNormal.name,
-                              f'{DualRBFLinearPolicy.name}_nom', seed=1001)
-    # f'{DualRBFLinearPolicy.name}_rand-cs-rl-m-jd-js', seed=1001)
+    ex_dir = setup_experiment(Planar3LinkIKActivationSim.name, f'{HCNormal.name}_{NFPolicy.name}', seed=101)
 
     # Environment
     env_hparams = dict(
-        num_dof=7,
-        max_steps=3000,
-        task_args=dict(final_factor=0.01),
-        fixed_initial_state=True,
+        physicsEngine='Bullet',  # Bullet or Vortex
+        dt=1/50.,
+        max_steps=1200,
+        task_args=dict(consider_velocities=True),
+        max_dist_force=None,
+        taskCombinationMethod='sum',
+        checkJointLimits=True,
+        collisionAvoidanceIK=True,
+        observeVelocities=True,
+        observeForceTorque=True,
+        observeCollisionCost=False,
+        observePredictedCollisionCost=False,
+        observeManipulabilityIndex=False,
+        observeCurrentManipulability=True,
+        observeDynamicalSystemGoalDistance=True,
+        observeDynamicalSystemDiscrepancy=False,
+        observeTaskSpaceDiscrepancy=True,
     )
-    env = WAMBallInCupSim(**env_hparams)
-
-    # Randomizer
-    # randomizer = DomainRandomizer(
-    #     UniformDomainParam(name='cup_scale', mean=0.95, halfspan=0.05),
-    #     NormalDomainParam(name='rope_length', mean=0.3, std=0.005),
-    #     NormalDomainParam(name='ball_mass', mean=0.021, std=0.001),
-    #     UniformDomainParam(name='joint_damping', mean=0.05, halfspan=0.05),
-    #     UniformDomainParam(name='joint_stiction', mean=0.1, halfspan=0.1),
-    # )
-    # env = DomainRandWrapperLive(env, randomizer)
+    env = Planar3LinkTASim(**env_hparams)
+    # env = Planar3LinkIKActivationSim(**env_hparams)
+    # eub = {
+    #     'GD_DS0': 2.,
+    #     'GD_DS1': 2.,
+    #     'GD_DS2': 2.,
+    # }
+    # env = ObsNormWrapper(env, explicit_ub=eub)
+    env = ObsPartialWrapper(env, idcs=['Effector_DiscrepTS_X', 'Effector_DiscrepTS_Z'])
+    # env = ObsPartialWrapper(env, idcs=['Effector_DiscrepTS_X', 'Effector_DiscrepTS_Z', 'Effector_Xd', 'Effector_Zd'])
 
     # Policy
     policy_hparam = dict(
-        rbf_hparam=dict(num_feat_per_dim=12, bounds=(0., 1.), scale=None),
-        dim_mask=2
+        hidden_size=3,
+        conv_out_channels=1,
+        mirrored_conv_weights=True,
+        conv_kernel_size=1,
+        conv_padding_mode='circular',
+        init_param_kwargs=dict(bell=True),
+        activation_nonlin=to.sigmoid,
+        tau_init=1e-1,
+        tau_learnable=True,
+        kappa_init=None,
+        kappa_learnable=True,
+        potential_init_learnable=True,
     )
-    policy = DualRBFLinearPolicy(env.spec, **policy_hparam)
+    policy = NFPolicy(spec=env.spec, dt=env.dt, **policy_hparam)
+    print(policy)
 
-    # Algorithm
     algo_hparam = dict(
         max_iter=100,
-        pop_size=10*policy.num_param,
+        pop_size=5*policy.num_param,
         expl_factor=1.05,
         num_rollouts=1,
-        expl_std_init=np.pi/24,
-        num_sampler_envs=8,
+        expl_std_init=1.0,
+        num_sampler_envs=6,
     )
     algo = HCNormal(ex_dir, env, policy, **algo_hparam)
 
@@ -92,4 +111,4 @@ if __name__ == '__main__':
     )
 
     # Jeeeha
-    algo.train(snapshot_mode='best', seed=ex_dir.seed)
+    algo.train(seed=ex_dir.seed)

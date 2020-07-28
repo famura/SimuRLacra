@@ -63,16 +63,16 @@ if __name__ == '__main__':
     # Decide on which algorithm to use via the mode argument
     if args.mode == PPO.name:
         critic = GAE(kwout['value_fcn'], **kwout['hparams']['critic'])
-        subroutine = PPO(ex_dir, env_sim, policy, critic, **kwout['hparams']['subroutine'])
+        subroutine = PPO(ex_dir, env_sim, policy, critic, **kwout['hparams']['subrtn'])
     elif args.mode == PPO2.name:
         critic = GAE(kwout['value_fcn'], **kwout['hparams']['critic'])
-        subroutine = PPO2(ex_dir, env_sim, policy, critic, **kwout['hparams']['subroutine'])
+        subroutine = PPO2(ex_dir, env_sim, policy, critic, **kwout['hparams']['subrtn'])
     elif args.mode == CEM.name:
-        subroutine = CEM(ex_dir, env_sim, policy, **kwout['hparams']['subroutine'])
+        subroutine = CEM(ex_dir, env_sim, policy, **kwout['hparams']['subrtn'])
     elif args.mode == NES.name:
-        subroutine = NES(ex_dir, env_sim, policy, **kwout['hparams']['subroutine'])
+        subroutine = NES(ex_dir, env_sim, policy, **kwout['hparams']['subrtn'])
     elif args.mode == PoWER.name:
-        subroutine = PoWER(ex_dir, env_sim, policy, **kwout['hparams']['subroutine'])
+        subroutine = PoWER(ex_dir, env_sim, policy, **kwout['hparams']['subrtn'])
     else:
         raise NotImplementedError('Only PPO, PPO2, CEM, NES, and PoWER are implemented so far.')
 

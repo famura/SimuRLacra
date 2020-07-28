@@ -41,6 +41,14 @@ from pyrado.tasks.reward_functions import QuadrErrRewFcn, UnderActuatedSwingUpRe
 class QCartPoleSim(SimPyEnv, Serializable):
     """ Base Environment for the Quanser Cart-Pole swing-up and stabilization task """
 
+    def _create_task(self, task_args: dict) -> Task:
+        # Needs to be implemented by subclasses
+        raise NotImplementedError
+
+    def _create_spaces(self):
+        # Needs to be implemented by subclasses
+        raise NotImplementedError
+
     def __init__(self,
                  dt: float,
                  max_steps: int = pyrado.inf,
@@ -65,19 +73,6 @@ class QCartPoleSim(SimPyEnv, Serializable):
 
         # Update the class-specific domain parameters
         self.domain_param = self.get_nominal_domain_param(long=long)
-
-    def _create_spaces(self):
-        l_rail = self.domain_param['l_rail']
-
-        max_act = np.array([8.])  # [V], original: 24, energy-based swing up controller needs at about +-6.5V
-        max_obs = np.array([l_rail/2., 1., 1., np.inf, np.inf])
-
-        self._state_space = None
-        self._obs_space = BoxSpace(-max_obs, max_obs,
-                                   labels=['$x$', r'$\sin(\theta)$', r'$\cos(\theta)$',
-                                           r'$\dot{x}$', r'$\dot{\theta}$'])
-        self._init_space = None
-        self._act_space = BoxSpace(-max_act, max_act, labels=['$V$'])
 
     def observe(self, state):
         return np.array([state[0], np.sin(state[1]), np.cos(state[1]), state[2], state[3]])

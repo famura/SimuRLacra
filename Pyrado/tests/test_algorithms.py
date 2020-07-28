@@ -33,6 +33,7 @@ from pyrado.algorithms.a2c import A2C
 from pyrado.algorithms.actor_critic import ActorCritic
 from pyrado.algorithms.adr import ADR
 from pyrado.algorithms.advantage import GAE
+from pyrado.algorithms.arpl import ARPL
 from pyrado.algorithms.cem import CEM
 from pyrado.algorithms.hc import HCNormal, HCHyper
 from pyrado.algorithms.nes import NES
@@ -44,9 +45,10 @@ from pyrado.algorithms.reps import REPS
 from pyrado.algorithms.sac import SAC
 from pyrado.algorithms.spota import SPOTA
 from pyrado.algorithms.svpg import SVPG
-from pyrado.domain_randomization.default_randomizers import get_default_randomizer
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
+from pyrado.domain_randomization.default_randomizers import get_default_randomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
+from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
 from pyrado.logger import set_log_prefix_dir
 from pyrado.policies.features import *
 from pyrado.policies.fnn import FNNPolicy, FNN
@@ -91,15 +93,15 @@ def ex_dir(tmpdir):
         (A2C, dict(std_init=0.1)),
         (PPO, dict(std_init=0.1)),
         (PPO2, dict(std_init=0.1)),
-        (HCNormal, dict(expl_std_init=0.1, expl_factor=1.1)),
-        (HCHyper, dict(expl_r_init=0.05, expl_factor=1.1)),
-        (NES, dict(expl_std_init=0.1)),
-        (PEPG, dict(expl_std_init=0.1)),
-        (PoWER, dict(expl_std_init=0.1, pop_size=10, num_is_samples=5)),
-        (CEM, dict(expl_std_init=0.1, pop_size=10, num_is_samples=5)),
-        (REPS, dict(eps=0.1, gamma=0.99, pop_size=100, expl_std_init=0.1)),
+        (HCNormal, dict(expl_std_init=0.1, pop_size=None, expl_factor=1.1)),
+        (HCHyper, dict(expl_r_init=0.05, pop_size=None, expl_factor=1.1)),
+        (NES, dict(expl_std_init=0.1, pop_size=None)),
+        (PEPG, dict(expl_std_init=0.1, pop_size=None)),
+        (PoWER, dict(expl_std_init=0.1, pop_size=100, num_is_samples=10)),
+        (CEM, dict(expl_std_init=0.1, pop_size=100, num_is_samples=10)),
+        # (REPS, dict(eps=0.1, pop_size=500, expl_std_init=0.1)),
     ],
-    ids=['a2c', 'ppo', 'ppo2', 'hc_normal', 'hc_hyper', 'nes', 'pepg', 'power', 'cem', 'reps'])
+    ids=['a2c', 'ppo', 'ppo2', 'hc_normal', 'hc_hyper', 'nes', 'pepg', 'power', 'cem'])  # , 'reps'])
 def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
     # Collect hyper-parameters, create algorithm, and train
     common_hparam = dict(max_iter=1, num_sampler_envs=1)
@@ -144,16 +146,16 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
 )
 @pytest.mark.parametrize(
     'algo_class, algo_hparam', [
-        (HCNormal, dict(expl_std_init=0.1, expl_factor=1.1)),
-        (HCHyper, dict(expl_r_init=0.05, expl_factor=1.1)),
-        (NES, dict(expl_std_init=0.1)),
-        (NES, dict(expl_std_init=0.1, transform_returns=True)),
-        (NES, dict(expl_std_init=0.1, symm_sampling=True)),
-        (PEPG, dict(expl_std_init=0.1)),
-        (PoWER, dict(expl_std_init=0.1, pop_size=10, num_is_samples=5)),
-        (CEM, dict(expl_std_init=0.1, pop_size=10, num_is_samples=5, full_cov=True)),
-        (CEM, dict(expl_std_init=0.1, pop_size=10, num_is_samples=5, full_cov=True)),
-        (REPS, dict(eps=0.1, gamma=0.99, pop_size=100, expl_std_init=0.1)),
+        (HCNormal, dict(expl_std_init=0.1, pop_size=None, expl_factor=1.1)),
+        (HCHyper, dict(expl_r_init=0.05, pop_size=None, expl_factor=1.1)),
+        (NES, dict(expl_std_init=0.1, pop_size=None)),
+        (NES, dict(expl_std_init=0.1, pop_size=None, transform_returns=True)),
+        (NES, dict(expl_std_init=0.1, pop_size=None, symm_sampling=True)),
+        (PEPG, dict(expl_std_init=0.1, pop_size=None)),
+        (PoWER, dict(expl_std_init=0.1, pop_size=100, num_is_samples=10)),
+        (CEM, dict(expl_std_init=0.1, pop_size=100, num_is_samples=10, full_cov=True)),
+        (CEM, dict(expl_std_init=0.1, pop_size=100, num_is_samples=10, full_cov=False)),
+        (REPS, dict(eps=0.1, pop_size=300, expl_std_init=0.1)),
     ],
     ids=['hc_normal', 'hc_hyper', 'nes', 'nes_tr', 'nes_symm', 'pepg', 'power', 'cem-fcov', 'cem-dcov', 'reps']
 )
@@ -198,8 +200,8 @@ def test_svpg(env, linear_policy, ex_dir, actor_hparam, value_fcn_hparam, critic
 @pytest.mark.metaalgorithm
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_qq')
-    ], ids=['qq']
+        lazy_fixture('default_qqsu')
+    ], ids=['qq-su']
 )
 @pytest.mark.parametrize(
     'subrtn_hparam', [dict(max_iter=3, min_rollouts=5, num_sampler_envs=1, num_epoch=4)], ids=['casual']
@@ -271,7 +273,6 @@ def test_spota_ppo(env, spota_hparam, ex_dir):
     algo.train()
 
 
-@pytest.mark.algorithm
 @pytest.mark.parametrize(
     'env', [
         lazy_fixture('default_bob'),
@@ -352,12 +353,12 @@ def test_actor_critic(env, linear_policy, ex_dir, algo, algo_hparam, value_fcn_t
 )
 @pytest.mark.parametrize(
     'algo, algo_hparam', [
-        (HCNormal, dict(max_iter=10, pop_size=50, num_rollouts=8, expl_std_init=0.5, expl_factor=1.1)),
-        (NES, dict(max_iter=10, pop_size=50, num_rollouts=8, expl_std_init=0.5, symm_sampling=True)),
-        (PEPG, dict(max_iter=10, pop_size=50, num_rollouts=8, expl_std_init=0.5, lr=1e-2, normalize_update=False)),
-        (PoWER, dict(max_iter=10, pop_size=50, num_rollouts=8, num_is_samples=10, expl_std_init=0.5)),
-        (CEM, dict(max_iter=10, pop_size=50, num_rollouts=8, num_is_samples=10, expl_std_init=0.5, full_cov=False)),
-        (REPS, dict(max_iter=10, pop_size=200, num_rollouts=8, eps=0.1, gamma=0.99, expl_std_init=0.5,
+        (HCNormal, dict(max_iter=10, pop_size=None, num_rollouts=8, expl_std_init=0.5, expl_factor=1.1)),
+        (NES, dict(max_iter=10, pop_size=None, num_rollouts=8, expl_std_init=0.5, symm_sampling=True)),
+        (PEPG, dict(max_iter=10, pop_size=None, num_rollouts=8, expl_std_init=0.5, lr=1e-2, normalize_update=False)),
+        (PoWER, dict(max_iter=10, pop_size=100, num_rollouts=8, num_is_samples=10, expl_std_init=0.5)),
+        (CEM, dict(max_iter=10, pop_size=100, num_rollouts=8, num_is_samples=10, expl_std_init=0.5, full_cov=False)),
+        (REPS, dict(max_iter=10, pop_size=500, num_rollouts=8, eps=0.1, expl_std_init=0.5,
                     use_map=True, grad_free_optim=False)),
     ], ids=['hc_normal', 'nes', 'pepg', 'power', 'cem', 'reps']
 )
@@ -386,7 +387,6 @@ def test_training_parameter_exploring(env, algo, algo_hparam, ex_dir):
     assert all(rets_after > rets_before)
 
 
-@pytest.mark.algorithm
 @pytest.mark.parametrize(
     'env', [
         lazy_fixture('default_omo')
@@ -415,3 +415,55 @@ def test_soft_update(env, module):
     # Do a second soft update to see the exponential decay
     SAC.soft_update(target, source, tau=0.8)
     assert to.allclose(target.param_values, 0.36*to.ones_like(target.param_values))
+
+
+@pytest.mark.parametrize(
+    'env', [
+        lazy_fixture('default_omo')
+    ], ids=['omo']
+)
+def test_arpl(env, ex_dir):
+    env = ActNormWrapper(env)
+    env = StateAugmentationWrapper(env, params=None)
+
+    policy = FNNPolicy(env.spec, hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
+
+    value_fcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)
+    value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
+    critic_hparam = dict(
+        gamma=0.9844534412010116,
+        lamda=0.9710614403461155,
+        num_epoch=10,
+        batch_size=150,
+        standardize_adv=False,
+        lr=0.00016985313083236645,
+    )
+    critic = GAE(value_fcn, **critic_hparam)
+
+    algo_hparam = dict(
+        max_iter=0,
+        min_steps=23*env.max_steps,
+        min_rollouts=None,
+        num_sampler_envs=12,
+        num_epoch=5,
+        eps_clip=0.085,
+        batch_size=150,
+        std_init=0.995,
+        lr=2e-4,
+    )
+    arpl_hparam = dict(
+        max_iter=5,
+        steps_num=23*env.max_steps,
+        halfspan=0.05,
+        dyn_eps=0.07,
+        dyn_phi=0.25,
+        obs_phi=0.1,
+        obs_eps=0.05,
+        proc_phi=0.1,
+        proc_eps=0.03,
+        torch_observation=True
+    )
+    ppo = PPO(ex_dir, env, policy, critic, **algo_hparam)
+    algo = ARPL(ex_dir, env, ppo, policy, ppo.expl_strat, **arpl_hparam)
+
+    algo.train(snapshot_mode='best')

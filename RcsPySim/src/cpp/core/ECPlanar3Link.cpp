@@ -83,12 +83,12 @@ protected:
     {
         std::string actionModelType = "unspecified";
         properties->getProperty(actionModelType, "actionModelType");
-
+    
         // Get the method how to combine the movement primitives / tasks given their activation (not used in every case)
         std::string taskCombinationMethod = "mean";
         properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
         TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(taskCombinationMethod);
-
+    
         // Common for the action models
         RcsBody* effector = RcsGraph_getBodyByName(graph, "Effector");
         RCHECK(effector);
@@ -96,24 +96,38 @@ protected:
         if (actionModelType == "joint_pos") {
             return new AMJointControlPosition(graph);
         }
+
         else if (actionModelType == "joint_vel") {
             double max_action = 90*M_PI/180; // [rad/s]
             return new AMIntegrate1stOrder(new AMJointControlPosition(graph), max_action);
         }
+
         else if (actionModelType == "joint_acc") {
             double max_action = 120*M_PI/180; // [rad/s^2]
             return new AMIntegrate2ndOrder(new AMJointControlPosition(graph), max_action);
         }
-        else if (actionModelType == "ik_activation") {
-            // Create the base action model
+
+        else if (actionModelType == "ik") {
+            // Create the action model
             auto amIK = new AMIKGeneric(graph);
-            std::vector<TaskGenericIK*> tasks;
-            
+            if (properties->getPropertyBool("positionTasks", true)) {
+                throw std::invalid_argument("Position tasks are not implemented for AMIKGeneric in this environment.");
+            }
+            else {
+                amIK->addTask(new TaskVelocity1D("Xd", graph, effector, nullptr, nullptr));
+                amIK->addTask(new TaskVelocity1D("Zd", graph, effector, nullptr, nullptr));
+                return amIK;
+            }
+        }
+
+        else if (actionModelType == "ik_activation") {
+            // Create the action model
+            auto amIK = new AMIKControllerActivation(graph, tcm);
+            std::vector<Task*> tasks;
+    
             // Check if the tasks are defined on position or task level. Adapt their parameters if desired.
             if (properties->getPropertyBool("positionTasks", true)) {
-                // Override the action model
-                amIK = new AMIKControllerActivation(graph, tcm);
-                
+                // Define the Rcs controller tasks
                 RcsBody* goal1 = RcsGraph_getBodyByName(graph, "Goal1");
                 RcsBody* goal2 = RcsGraph_getBodyByName(graph, "Goal2");
                 RcsBody* goal3 = RcsGraph_getBodyByName(graph, "Goal3");
@@ -130,13 +144,12 @@ protected:
 //                    taskName << "Distance " << i++ << " [m]";
 //                    task->resetParameter(Task::Parameters(0., 1.5, 1.0, taskName.str()));
 //                }
-                
                 tasks.emplace_back(new TaskPosition3D(graph, effector, goal1, nullptr));
                 tasks.emplace_back(new TaskPosition3D(graph, effector, goal2, nullptr));
                 tasks.emplace_back(new TaskPosition3D(graph, effector, goal3, nullptr));
                 for (auto task : tasks) {
                     std::stringstream taskName;
-                    taskName << "Position " << i++ << " [m]";
+                    taskName << " Position " << i++ << " [m]";
                     task->resetParameter(
                         Task::Parameters(-0.9, 0.9, 1.0, "X" + taskName.str()));
                     task->addParameter(
@@ -145,13 +158,16 @@ protected:
                 }
             }
             else {
-                tasks.emplace_back(new TaskVelocity1D("Xd", graph, effector, nullptr, nullptr));
-                tasks.emplace_back(new TaskVelocity1D("Zd", graph, effector, nullptr, nullptr));
+                throw std::invalid_argument("Velocity tasks are not supported for AMIKControllerActivation.");
             }
-            
+    
             // Add the tasks
             for (auto t : tasks) { amIK->addTask(t); }
-            
+    
+            // Set the tasks' desired states
+            std::vector<PropertySource*> taskSpec = properties->getChildList("taskSpecIK");
+            amIK->setXdesFromTaskSpec(taskSpec, tasks);
+    
             // Incorporate collision costs into IK
             if (properties->getPropertyBool("collisionAvoidanceIK", true)) {
                 REXEC(4) {
@@ -159,7 +175,7 @@ protected:
                 }
                 amIK->setupCollisionModel(collisionMdl);
             }
-            
+    
             return amIK;
         }
 
@@ -277,15 +293,15 @@ protected:
                 throw std::invalid_argument("The action model needs to be of type ActionModelIK!");
             }
         }
-
+    
         std::string actionModelType = "unspecified";
         properties->getProperty(actionModelType, "actionModelType");
         bool haveJointPos = actionModelType == "joint_pos";
-
+    
         if (haveJointPos) {
             fullState->addPart(OMJointState::observeUnconstrainedJoints(graph));
         }
-
+    
         else if (actionModelType == "ds_activation") {
             if (properties->getPropertyBool("observeDynamicalSystemGoalDistance", false)) {
                 // Add goal distances
@@ -301,7 +317,7 @@ protected:
                     throw std::invalid_argument(os.str());
                 }
             }
-
+        
             if (properties->getPropertyBool("observeDynamicalSystemDiscrepancy", false)) {
                 // Add the discrepancies between commanded and executed the task space changes
                 auto castedAM = dynamic_cast<AMDynamicalSystemActivation*>(actionModel);

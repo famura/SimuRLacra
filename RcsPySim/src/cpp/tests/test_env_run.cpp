@@ -38,15 +38,17 @@
 
 using namespace Rcs;
 
-TEST_CASE("Environment run")
+
+int simpleRollout(int64_t numSteps)
 {
     // Set Rcs debug level
     RcsLogLevel = 2;
     
     // Make sure the resource path is set up
-    Rcs_addResourcePath("config");
+    Rcs_addResourcePath("../../config");
     
-    std::vector<std::string> configs{"config/BallOnPlate/exBotKuka.xml", "config/TargetTracking/exTargetTracking.xml"};
+    //std::vector<std::string> configs{"config/BallOnPlate/exBotKuka.xml", "config/TargetTracking/exTargetTracking.xml"};
+    std::vector<std::string> configs{"BallOnPlate/exBotKuka.xml", "TargetTracking/exTargetTracking.xml"};
     
     for (auto& configFile : configs) {
         DYNAMIC_SECTION("Config " << configFile) {
@@ -62,7 +64,7 @@ TEST_CASE("Environment run")
             MatNd* action = env.actionSpace()->createValueMatrix();
             
             // Perform random steps
-            for (int step = 0; step < 100; ++step) {
+            for (int step = 0; step < numSteps; ++step) {
                 // Make a random action
                 env.actionSpace()->sample(action);
                 
@@ -76,4 +78,11 @@ TEST_CASE("Environment run")
             MatNd_destroy(action);
         }
     }
+    
+    return 0;
+}
+
+TEST_CASE("Environment run")
+{
+    REQUIRE(simpleRollout(100) == 0);
 }

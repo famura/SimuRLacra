@@ -36,6 +36,13 @@ class MPBlendingSim(RcsSim, Serializable):
         """
         Serializable._init(self, locals())
 
+        task_spec_ik = [
+            dict(x_des=np.array([0., 0., 0.])),
+            dict(x_des=np.array([0., 0., 0.])),
+            dict(x_des=np.array([0., 0., 0.])),
+            dict(x_des=np.array([0., 0., 0.]))
+        ]
+
         # Forward to RcsSim's constructor
         RcsSim.__init__(
             self,
@@ -45,6 +52,7 @@ class MPBlendingSim(RcsSim, Serializable):
             actionModelType=action_model_type,
             tasks=mps,
             positionTasks=kwargs.pop('positionTasks', True),
+            taskSpecIK=task_spec_ik,
             **kwargs
         )
 

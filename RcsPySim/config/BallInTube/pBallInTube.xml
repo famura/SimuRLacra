@@ -73,7 +73,7 @@
   <material name="ball_mat"
             friction_model="ScaledBox"
             friction_coefficient="0.8"
-            rolling_friction_coefficient="0.05"
+            rolling_friction_coefficient="0.02"
             static_friction_scale="1.1"
             slip="0.0001"
             integrated_slip_displacement="true"

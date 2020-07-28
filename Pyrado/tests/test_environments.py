@@ -38,7 +38,6 @@ from pyrado.environments.quanser.quanser_cartpole import QCartPoleStabReal, QCar
 from pyrado.environments.quanser.quanser_qube import QQubeReal
 from pyrado.policies.dummy import DummyPolicy
 from pyrado.sampling.rollout import rollout
-from pyrado.spaces.discrete import DiscreteSpace
 from pyrado.utils.data_types import RenderMode
 from tests.conftest import m_needs_bullet, m_needs_mujoco, m_needs_vortex
 
@@ -51,7 +50,8 @@ from tests.conftest import m_needs_bullet, m_needs_mujoco, m_needs_vortex
         lazy_fixture('default_omo'),
         lazy_fixture('default_pend'),
         lazy_fixture('default_qbb'),
-        lazy_fixture('default_qq'),
+        lazy_fixture('default_qqst'),
+        lazy_fixture('default_qqsu'),
         lazy_fixture('default_qcpst'),
         lazy_fixture('default_qcpsu'),
         pytest.param(lazy_fixture('default_p3l_ik_bt'), marks=m_needs_bullet),
@@ -66,9 +66,9 @@ from tests.conftest import m_needs_bullet, m_needs_mujoco, m_needs_vortex
         pytest.param(lazy_fixture('default_cth'), marks=m_needs_mujoco),
         pytest.param(lazy_fixture('default_hop'), marks=m_needs_mujoco),
         pytest.param(lazy_fixture('default_wambic'), marks=m_needs_mujoco),
-    ], ids=['cata', 'rosen', 'bob', 'omo', 'pend', 'qbb', 'qq', 'qcp-st', 'qcp-su', 'p3l_ik_bt', 'p3l_ta_bt',
-            'p3l_ta_vx', 'bop2d_bt', 'bop2d_vx', 'bop5d_bt', 'bop5d_vx', 'bspos_bt', 'bspos_vx', 'cth', 'hop',
-            'wam-bic']
+    ], ids=['cata', 'rosen', 'bob', 'omo', 'pend', 'qbb', 'qq-st', 'qq-su', 'qcp-st', 'qcp-su', 'p3l_ik_bt',
+            'p3l_ta_bt', 'p3l_ta_vx', 'bop2d_bt', 'bop2d_vx', 'bop5d_bt', 'bop5d_vx', 'bspos_bt', 'bspos_vx', 'cth',
+            'hop', 'wam-bic']
 )
 def test_rollout(env):
     assert isinstance(env, SimEnv)
@@ -94,7 +94,8 @@ def test_rollout(env):
         lazy_fixture('default_omo'),
         lazy_fixture('default_pend'),
         lazy_fixture('default_qbb'),
-        lazy_fixture('default_qq'),
+        lazy_fixture('default_qqst'),
+        lazy_fixture('default_qqsu'),
         lazy_fixture('default_qcpst'),
         lazy_fixture('default_qcpsu'),
         pytest.param(lazy_fixture('default_p3l_ik_bt'), marks=m_needs_bullet),
@@ -109,9 +110,9 @@ def test_rollout(env):
         pytest.param(lazy_fixture('default_cth'), marks=m_needs_mujoco),
         pytest.param(lazy_fixture('default_hop'), marks=m_needs_mujoco),
         pytest.param(lazy_fixture('default_wambic'), marks=m_needs_mujoco),
-    ], ids=['cata', 'rosen', 'bob', 'omo', 'pend', 'qbb', 'qq', 'qcp-st', 'qcp-su', 'p3l_ik_bt', 'p3l_ta_bt',
-            'p3l_ta_vx', 'bop2d_bt', 'bop2d_vx', 'bop5d_bt', 'bop5d_vx', 'bspos_bt', 'bspos_vx', 'cth', 'hop',
-            'wam-bic']
+    ], ids=['cata', 'rosen', 'bob', 'omo', 'pend', 'qbb', 'qq-st', 'qq-su', 'qcp-st', 'qcp-su', 'p3l_ik_bt',
+            'p3l_ta_bt', 'p3l_ta_vx', 'bop2d_bt', 'bop2d_vx', 'bop5d_bt', 'bop5d_vx', 'bspos_bt', 'bspos_vx', 'cth',
+            'hop', 'wam-bic']
 )
 def test_init_spaces(env):
     assert isinstance(env, SimEnv)
@@ -132,7 +133,7 @@ def test_init_spaces(env):
         lazy_fixture('default_omo'),
         lazy_fixture('default_pend'),
         lazy_fixture('default_qbb'),
-        lazy_fixture('default_qq'),
+        lazy_fixture('default_qqsu'),
         lazy_fixture('default_qcpst'),
         lazy_fixture('default_qcpsu'),
         pytest.param(lazy_fixture('default_p3l_ik_bt'), marks=m_needs_bullet),
@@ -147,7 +148,7 @@ def test_init_spaces(env):
         pytest.param(lazy_fixture('default_cth'), marks=m_needs_mujoco),
         pytest.param(lazy_fixture('default_hop'), marks=m_needs_mujoco),
         pytest.param(lazy_fixture('default_wambic'), marks=m_needs_mujoco),
-    ], ids=['cata', 'rosen', 'bob', 'omo', 'pend', 'qbb', 'qq', 'qcp-st', 'qcp-su', 'p3l_ik_bt', 'p3l_ta_bt',
+    ], ids=['cata', 'rosen', 'bob', 'omo', 'pend', 'qbb', 'qq-su', 'qcp-st', 'qcp-su', 'p3l_ik_bt', 'p3l_ta_bt',
             'p3l_ta_vx', 'bop2d_bt', 'bop2d_vx', 'bop5d_bt', 'bop5d_vx', 'bspos_bt', 'bspos_vx', 'cth', 'hop',
             'wam-bic']
 )
@@ -160,10 +161,10 @@ def test_reset(env):
         assert env.state_space.contains(env.state, verbose=True)
 
     # Reset with explicitly specified init state
-    initstate = env.init_space.sample_uniform()
+    init_state = env.init_space.sample_uniform()
 
     # Explicitly specify once
-    obs1 = env.reset(init_state=initstate)
+    obs1 = env.reset(init_state=init_state)
     env.render(mode=RenderMode(text=True))
     assert env.state_space.contains(env.state, verbose=True)
 
@@ -171,7 +172,7 @@ def test_reset(env):
     env.reset()
 
     # Reset to fixed state again
-    obs2 = env.reset(init_state=initstate)
+    obs2 = env.reset(init_state=init_state)
     # This should match
     assert obs2 == pytest.approx(obs1)
 
@@ -183,9 +184,9 @@ def test_reset(env):
         lazy_fixture('default_omo'),
         lazy_fixture('default_pend'),
         lazy_fixture('default_qbb'),
-        lazy_fixture('default_qq'),
+        lazy_fixture('default_qqsu'),
         lazy_fixture('default_qcpst'),
-    ], ids=['bob', 'omo', 'pend', 'qbb', 'qq', 'qcp-st']
+    ], ids=['bob', 'omo', 'pend', 'qbb', 'qq-su', 'qcp-st']
 )
 def test_vpython_animations(env):
     assert isinstance(env, SimEnv)

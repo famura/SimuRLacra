@@ -80,7 +80,6 @@ if __name__ == '__main__':
     x_grid_limits = (cands[:, 0].min() - 3*cands[to.argmin(cands[:, 0]), 1],
                      cands[:, 0].max() + 3*cands[to.argmax(cands[:, 0]), 1])
 
-    # /home/fmrt/Software/SimuRLacra/Pyrado/data/training/perma/qq/bayrn_ppo-sim2sim/2020-01-29_19-06-39--fnn_actnorm_dr-Mp+--hilly
     cands = cands[[14, 1, 2, 6, 9, 10, 11, 12, 0, 13], :]
     num_cand = cands.shape[0]
 

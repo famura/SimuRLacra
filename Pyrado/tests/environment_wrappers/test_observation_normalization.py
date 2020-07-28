@@ -40,7 +40,7 @@ def mock_obs_space():
     return BoxSpace([-2, -1, 0], [2, 3, 1])
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 def test_space(mock_obs_space):
     mockenv = MockEnv(obs_space=mock_obs_space)
     wenv = ObsNormWrapper(mockenv)
@@ -51,7 +51,7 @@ def test_space(mock_obs_space):
     assert np.all(ub == 1)
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 def test_denormalization(mock_obs_space):
     mockenv = MockEnv(obs_space=mock_obs_space)
     wenv = ObsNormWrapper(mockenv)

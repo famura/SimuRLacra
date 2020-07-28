@@ -27,62 +27,73 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the WAM Ball-in-cup environment using Policy learning by Weighting Exploration with the Returns.
+Train an agent to solve the Ball-In-Tube environment using Activation Dynamics Networks and Hill Climbing.
 """
-import numpy as np
-import os.path as osp
 import torch as to
 
 from pyrado.algorithms.cem import CEM
-from pyrado.domain_randomization.domain_parameter import UniformDomainParam, NormalDomainParam
-from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
-from pyrado.environments.mujoco.wam import WAMBallInCupSim
+from pyrado.algorithms.hc import HCNormal
+from pyrado.environment_wrappers.action_normalization import ActNormWrapper
+from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
+from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
+from pyrado.environments.rcspysim.ball_in_tube import BallInTubeIKActivationSim
+from pyrado.environments.rcspysim.planar_3_link import Planar3LinkTASim, Planar3LinkIKActivationSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.environment_specific import DualRBFLinearPolicy
+from pyrado.policies.adn import pd_cubic, ADNPolicy, pd_linear
 
 
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(WAMBallInCupSim.name, f'{CEM.name}_{DualRBFLinearPolicy.name}', '4dof_rand', seed=1001)
-    # ex_dir = setup_experiment(WAMBallInCupSim.name, f'{CEM.name}_{DualRBFLinearPolicy.name}', 'rand', seed=1001)
+    # ex_dir = setup_experiment(BallInTubeIKSim.name, f'{HCNormal.name}_{ADNPolicy.name}', seed=1001)
+    ex_dir = setup_experiment(BallInTubeIKActivationSim.name, f'{HCNormal.name}_{ADNPolicy.name}', seed=1001)
 
     # Environment
     env_hparams = dict(
-        num_dof=4,
-        max_steps=1750,
-        task_args=dict(final_factor=0.5),
-        fixed_initial_state=False
+        physicsEngine='Bullet',  # Bullet or Vortex
+        graphFileName='gBallInTube_trqCtrl.xml',
+        dt=1/100.,
+        max_steps=1200,
+        ref_frame='table',  # world, table, or slider
+        fixed_init_state=True,
+        checkJointLimits=True,
+        collisionAvoidanceIK=True,
+        observeVelocities=False,
+        observeForceTorque=True,
+        observeCollisionCost=True,
+        observePredictedCollisionCost=False,
+        observeManipulabilityIndex=False,
+        observeCurrentManipulability=True,
+        observeTaskSpaceDiscrepancy=True,
     )
-    env = WAMBallInCupSim(**env_hparams)
-
-    # Randomizer
-    randomizer = DomainRandomizer(
-        UniformDomainParam(name='cup_scale', mean=0.95, halfspan=0.05),
-        NormalDomainParam(name='rope_length', mean=0.3, std=0.005),
-        NormalDomainParam(name='ball_mass', mean=0.021, std=0.001),
-        UniformDomainParam(name='joint_damping', mean=0.05, halfspan=0.05),
-        UniformDomainParam(name='joint_stiction', mean=0.1, halfspan=0.1),
-    )
-    env = DomainRandWrapperLive(env, randomizer)
+    env = BallInTubeIKActivationSim(**env_hparams)
+    env = ObsPartialWrapper(env, idcs=['Effector_L_DiscrepTS_X', 'Effector_L_DiscrepTS_Y', 'Effector_L_DiscrepTS_Z',
+                                       'Effector_R_DiscrepTS_X', 'Effector_R_DiscrepTS_Y', 'Effector_R_DiscrepTS_Z',
+                                       'CollCost'])
+    env = ObsNormWrapper(env)
+    print(env)
 
     # Policy
     policy_hparam = dict(
-        rbf_hparam=dict(num_feat_per_dim=8, bounds=(0., 1.), scale=None),
-        dim_mask=2
+        tau_init=1e-1,
+        tau_learnable=False,
+        kappa_init=1e-3,
+        kappa_learnable=True,
+        activation_nonlin=to.sigmoid,
+        potentials_dyn_fcn=pd_cubic,
+        potential_init_learnable=False,
     )
-    policy = DualRBFLinearPolicy(env.spec, **policy_hparam)
+    policy = ADNPolicy(spec=env.spec, dt=env.dt, **policy_hparam)
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=100,
-        pop_size=200,
+        max_iter=50,
+        pop_size=2*policy.num_param,
         num_rollouts=1,
-        num_is_samples=10,
-        expl_std_init=np.pi/12,
+        num_is_samples=policy.num_param//10,
+        expl_std_init=1.0,
         expl_std_min=0.02,
-        extra_expl_std_init=np.pi/6,
-        extra_expl_decay_iter=10,
+        extra_expl_std_init=0.5,
+        extra_expl_decay_iter=5,
         full_cov=False,
         symm_sampling=False,
         num_sampler_envs=8,
@@ -98,4 +109,4 @@ if __name__ == '__main__':
     )
 
     # Jeeeha
-    algo.train(seed=ex_dir.seed, snapshot_mode='best')
+    algo.train(seed=ex_dir.seed)

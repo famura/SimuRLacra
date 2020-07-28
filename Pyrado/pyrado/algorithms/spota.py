@@ -71,8 +71,8 @@ class SPOTA(Algorithm):
     def __init__(self,
                  save_dir: str,
                  env: DomainRandWrapperBuffer,
-                 subroutine_cand: Algorithm,
-                 subroutine_refs: Algorithm,
+                 subrtn_cand: Algorithm,
+                 subrtn_refs: Algorithm,
                  max_iter: int,
                  alpha: float,
                  beta: float,
@@ -96,8 +96,8 @@ class SPOTA(Algorithm):
 
         :param save_dir: directory to save the snapshots i.e. the results in
         :param env: the environment which the policy operates
-        :param subroutine_cand: the algorithm that is called at every iteration of SPOTA to yield a candidate policy
-        :param subroutine_refs: the algorithm that is called at every iteration of SPOTA to yield reference policies
+        :param subrtn_cand: the algorithm that is called at every iteration of SPOTA to yield a candidate policy
+        :param subrtn_refs: the algorithm that is called at every iteration of SPOTA to yield reference policies
         :param max_iter: maximum number of iterations that SPOTA algorithm runs.
                          Each of these iterations includes multiple iterations of the subroutine.
         :param alpha: confidence level for the upper confidence bound (UCBOG)
@@ -119,10 +119,10 @@ class SPOTA(Algorithm):
         """
         if not typed_env(env, DomainRandWrapperBuffer):  # there is a domain randomization wrapper
             raise pyrado.TypeErr(msg='There must be a DomainRandWrapperBuffer in the environment chain.')
-        if not isinstance(subroutine_cand, Algorithm):
-            raise pyrado.TypeErr(given=subroutine_cand, expected_type=Algorithm)
-        if not isinstance(subroutine_refs, Algorithm):
-            raise pyrado.TypeErr(given=subroutine_refs, expected_type=Algorithm)
+        if not isinstance(subrtn_cand, Algorithm):
+            raise pyrado.TypeErr(given=subrtn_cand, expected_type=Algorithm)
+        if not isinstance(subrtn_refs, Algorithm):
+            raise pyrado.TypeErr(given=subrtn_refs, expected_type=Algorithm)
 
         # Call Algorithm's constructor without specifying the policy
         super().__init__(save_dir, max_iter, None, logger)
@@ -133,8 +133,8 @@ class SPOTA(Algorithm):
         # Candidate and reference solutions, and optimality gap
         self.Gn_diffs = None
         self.ucbog = pyrado.inf  # upper confidence bound on the optimality gap
-        self._subrtn_cand = subroutine_cand
-        self._subrtn_refs = subroutine_refs
+        self._subrtn_cand = subrtn_cand
+        self._subrtn_refs = subrtn_refs
         assert id(self._subrtn_cand) != id(self._subrtn_refs)
         assert id(self._subrtn_cand.policy) != id(self._subrtn_refs.policy)
         assert id(self._subrtn_cand.expl_strat) != id(self._subrtn_refs.expl_strat)

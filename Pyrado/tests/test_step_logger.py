@@ -34,7 +34,6 @@ import unittest.mock as mock
 import pyrado.logger.step as uut
 
 
-@pytest.mark.logger
 def test_first_step():
     ap = mock.Mock(uut.StepLogPrinter)
     logger = uut.StepLogger()
@@ -59,7 +58,6 @@ def test_first_step():
     ap.reset_mock()
 
 
-@pytest.mark.logger
 def test_values():
     ap = mock.Mock(uut.StepLogPrinter)
     logger = uut.StepLogger()
@@ -86,7 +84,6 @@ def test_values():
     ap.reset_mock()
 
 
-@pytest.mark.logger
 def test_consistent_key_order():
     ap = mock.Mock(uut.StepLogPrinter)
     logger = uut.StepLogger()
@@ -107,7 +104,6 @@ def test_consistent_key_order():
     ap.reset_mock()
 
 
-@pytest.mark.logger
 def test_empty_step_skip():
     ap = mock.Mock(uut.StepLogPrinter)
     logger = uut.StepLogger()
@@ -131,7 +127,6 @@ def test_empty_step_skip():
     ap.reset_mock()
 
 
-@pytest.mark.logger
 def test_late_new_key_error():
     ap = mock.Mock(uut.StepLogPrinter)
     logger = uut.StepLogger()
@@ -147,7 +142,6 @@ def test_late_new_key_error():
         logger.add_value('Unknown', 42)
 
 
-@pytest.mark.logger
 def test_prefix():
     ap = mock.Mock(uut.StepLogPrinter)
     logger = uut.StepLogger()
@@ -170,7 +164,6 @@ def test_prefix():
     ap.print_values.assert_called_once_with(mock.ANY, ['Value0', 'Prefix1_Value1', 'Prefix2_Value2'], mock.ANY)
 
 
-@pytest.mark.logger
 def test_csv_logger_serializer(tmpdir):
     outfile = tmpdir/'testout.csv'
 

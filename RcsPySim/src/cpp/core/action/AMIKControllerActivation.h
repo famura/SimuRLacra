@@ -31,13 +31,14 @@
 #ifndef _AMIKCONTROLLERACTIVATION_H_
 #define _AMIKCONTROLLERACTIVATION_H_
 
+#include <TaskGenericIK.h>
+#include "../config/PropertySource.h"
 #include "ActionModelIK.h"
-#include "DynamicalSystem.h"
 
 namespace Rcs
 {
 
-/*! Action model controlling the activations of multiple tasks. Each task is defined by a DynamicalSystem.
+/*! Action model controlling the activations of multiple tasks. Each task is defined by a Rcs IK controller task.
  * For every task, there is one activation variable as part of the action space.
  * The activation is a value between 0 and 1, where 0 means to ignore the task
  * completely. The activation values do not need to sum to 1.
@@ -55,12 +56,14 @@ public:
     
     // not copy- or movable - klocwork doesn't pick up the inherited ones. RCSPYSIM_NOCOPY_NOMOVE(AMControllerActivation)
     
-    //! Get the number of DS, i.e. entries in the dynamicalSystems vector, owned by the action model
+    //! Get the number of tasks multiplied by their individual dimension, owned by the action model
     virtual unsigned int getDim() const;
     
     virtual void getMinMax(double* min, double* max) const;
     
     virtual std::vector<std::string> getNames() const;
+    
+    void reset();
     
     virtual void computeCommand(MatNd* q_des, MatNd* q_dot_des, MatNd* T_des, const MatNd* action, double dt);
     
@@ -68,11 +71,19 @@ public:
     
     MatNd* getActivation() const;
     
+    MatNd* getXdes() const;
+    
+    void setXdes(const MatNd* x_des);
+    
+    void setXdesFromTaskSpec(std::vector<PropertySource*>& taskSpec, std::vector<Task*>& tasks);
+    
     static TaskCombinationMethod checkTaskCombinationMethod(std::string tcmName);
     
     const char* getTaskCombinationMethodName() const;
 
 protected:
+    //! The goal in task space
+    MatNd* x_des;
     //! The activation resulting from the action and the task combination method (used for logging)
     MatNd* activation;
     //! Way to combine the tasks' contribution

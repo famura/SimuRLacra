@@ -38,52 +38,15 @@ from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn
 
 
 class QQubeSim(SimPyEnv, Serializable):
-    """
-    Environment which models Quanser's Furuta pendulum called Quanser Qube.
-    The goal is to swing the pendulum from a hanging down (alpha = 0) into a upright position (alpha = +-pi).
-    """
-
-    name: str = 'qq'
-
-    def _create_spaces(self):
-        max_volt = self.domain_param['max_volt']
-
-        # Define the spaces
-        max_state = np.array([115./180*np.pi, 4*np.pi, 20*np.pi, 20*np.pi])  # [rad, rad, rad/s, rad/s]
-        max_obs = np.array([1., 1., 1., 1., np.inf, np.inf])  # [-, -, -, -, rad/s, rad/s]
-        max_init_state = np.array([2./180*np.pi, 1./180*np.pi,  # [rad, rad, ...
-                                   0.5/180*np.pi, 0.5/180*np.pi])  # ... rad/s, rad/s]
-
-        self._state_space = BoxSpace(-max_state, max_state,
-                                     labels=[r'$\theta$', r'$\alpha$', r'$\dot{\theta}$', r'$\dot{\alpha}$'])
-        self._obs_space = BoxSpace(-max_obs, max_obs,
-                                   labels=[r'$\sin\theta$', r'$\cos\theta$', r'$\sin\alpha$', r'$\cos\alpha$',
-                                           r'$\dot{\theta}$', r'$\dot{\alpha}$'])
-        self._init_space = BoxSpace(-max_init_state, max_init_state,
-                                    labels=[r'$\theta$', r'$\alpha$', r'$\dot{\theta}$', r'$\dot{\alpha}$'])
-        self._act_space = BoxSpace(-max_volt, max_volt, labels=['$V$'])
+    """ Base Environment for the Quanser Qube swing-up and stabilization task """
 
     def _create_task(self, task_args: dict) -> Task:
-        # Define the task including the reward function
-        state_des = task_args.get('state_des', np.array([0., np.pi, 0., 0.]))
-        Q = task_args.get('Q', np.diag([3e-1, 1., 2e-2, 5e-3]))
-        R = task_args.get('R', np.diag([4e-3]))
+        # Needs to be implemented by subclasses
+        raise NotImplementedError
 
-        return RadiallySymmDesStateTask(self.spec, state_des, ExpQuadrErrRewFcn(Q, R), idcs=[1])
-
-    @property
-    def obs_space(self):
-        return self._obs_space
-
-    def observe(self, state, dtype=np.ndarray):
-        if dtype is np.ndarray:
-            return np.array([np.sin(state[0]), np.cos(state[0]),
-                             np.sin(state[1]), np.cos(state[1]),
-                             state[2], state[3]])
-        elif dtype is to.Tensor:
-            return to.cat((state[0].sin().view(1), state[0].cos().view(1),
-                           state[1].sin().view(1), state[1].cos().view(1),
-                           state[2].view(1), state[3].view(1)))
+    def _create_spaces(self):
+        # Needs to be implemented by subclasses
+        raise NotImplementedError
 
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
@@ -247,14 +210,60 @@ class QQubeSim(SimPyEnv, Serializable):
             self._anim['curve'].clear()
 
 
+class QQubeSwingUpSim(QQubeSim):
+    """
+    Environment which models Quanser's Furuta pendulum called Quanser Qube.
+    The goal is to swing up the pendulum and stabilize at the upright position (alpha = +-pi).
+    """
+
+    name: str = 'qq-su'
+
+    def _create_spaces(self):
+        max_volt = self.domain_param['max_volt']
+
+        # Define the spaces
+        max_state = np.array([115./180*np.pi, 4*np.pi, 20*np.pi, 20*np.pi])  # [rad, rad, rad/s, rad/s]
+        max_obs = np.array([1., 1., 1., 1., np.inf, np.inf])  # [-, -, -, -, rad/s, rad/s]
+        max_init_state = np.array([2., 1., 0.5, 0.5])/180*np.pi  # [rad, rad, rad/s, rad/s]
+
+        self._state_space = BoxSpace(-max_state, max_state,
+                                     labels=[r'$\theta$', r'$\alpha$', r'$\dot{\theta}$', r'$\dot{\alpha}$'])
+        self._obs_space = BoxSpace(-max_obs, max_obs,
+                                   labels=[r'$\sin\theta$', r'$\cos\theta$', r'$\sin\alpha$', r'$\cos\alpha$',
+                                           r'$\dot{\theta}$', r'$\dot{\alpha}$'])
+        self._init_space = BoxSpace(-max_init_state, max_init_state,
+                                    labels=[r'$\theta$', r'$\alpha$', r'$\dot{\theta}$', r'$\dot{\alpha}$'])
+        self._act_space = BoxSpace(-max_volt, max_volt, labels=['$V$'])
+
+    def _create_task(self, task_args: dict) -> Task:
+        # Define the task including the reward function
+        state_des = task_args.get('state_des', np.array([0., np.pi, 0., 0.]))
+        Q = task_args.get('Q', np.diag([3e-1, 1., 2e-2, 5e-3]))
+        R = task_args.get('R', np.diag([4e-3]))
+
+        return RadiallySymmDesStateTask(self.spec, state_des, ExpQuadrErrRewFcn(Q, R), idcs=[1])
+
+    def observe(self, state, dtype=np.ndarray):
+        if dtype is np.ndarray:
+            return np.array([np.sin(state[0]), np.cos(state[0]),
+                             np.sin(state[1]), np.cos(state[1]),
+                             state[2], state[3]])
+        elif dtype is to.Tensor:
+            return to.cat((state[0].sin().view(1), state[0].cos().view(1),
+                           state[1].sin().view(1), state[1].cos().view(1),
+                           state[2].view(1), state[3].view(1)))
+
+
 class QQubeStabSim(QQubeSim):
     """
     Environment which models Quanser's Furuta pendulum called Quanser Qube.
-    The goal is to stabilize the pendulum at  a upright position (alpha = +-pi).
+    The goal is to stabilize the pendulum at the upright position (alpha = +-pi).
 
     .. note::
         This environment is only for testing purposes, or to find the PD gains for stabilizing the pendulum at the top.
     """
+
+    name: str = 'qq-st'
 
     def _create_spaces(self):
         max_volt = self.domain_param['max_volt']
@@ -271,15 +280,14 @@ class QQubeStabSim(QQubeSim):
                                     labels=[r'$\theta$', r'$\alpha$', r'$\dot{\theta}$', r'$\dot{\alpha}$'])
         self._act_space = BoxSpace(-max_volt, max_volt, labels=['$V$'])
 
+    def _create_task(self, task_args: dict) -> Task:
+        # Define the task including the reward function
+        state_des = task_args.get('state_des', np.array([0., np.pi, 0., 0.]))
+        Q = task_args.get('Q', np.diag([3., 4., 2., 2.]))
+        R = task_args.get('R', np.diag([5e-2]))
+
+        return RadiallySymmDesStateTask(self.spec, state_des, ExpQuadrErrRewFcn(Q, R), idcs=[1])
+
     def observe(self, state, dtype=np.ndarray):
         # Directly observe the noise-free state
         return state.copy()
-
-    def _create_task(self, task_args: dict) -> Task:
-        # Define the task including the reward function
-        state_des = task_args.get('state_des', None)
-        if state_des is None:
-            state_des = np.array([0., np.pi, 0., 0.])
-        Q = np.diag([3., 4., 2., 2.])
-        R = np.diag([5e-2])
-        return RadiallySymmDesStateTask(self.spec, state_des, ExpQuadrErrRewFcn(Q, R), idcs=[1])

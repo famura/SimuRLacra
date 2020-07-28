@@ -75,7 +75,6 @@ class BoxFlippingSim(RcsSim, Serializable):
     def __init__(self,
                  task_args: dict,
                  ref_frame: str,
-                 position_mps: bool,
                  mps_left: [Sequence[dict], None] = None,
                  mps_right: [Sequence[dict], None] = None,
                  **kwargs):
@@ -87,12 +86,12 @@ class BoxFlippingSim(RcsSim, Serializable):
 
         :param task_args: arguments for the task construction
         :param ref_frame: reference frame for the MPs, e.g. 'world', 'table', or 'box'
-        :param position_mps: `True` if the MPs are defined on position level, `False` if defined on velocity level
         :param mps_left: left arm's movement primitives holding the dynamical systems and the goal states
         :param mps_right: right arm's movement primitives holding the dynamical systems and the goal states
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        checkJointLimits: bool = False,
                        collisionAvoidanceIK: bool = True,
+                       positionTasks: bool = True,
                        observeVelocities: bool = False,
                        observeCollisionCost: bool = True,
                        observePredictedCollisionCost: bool = False,
@@ -113,7 +112,7 @@ class BoxFlippingSim(RcsSim, Serializable):
             extraConfigDir=osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, 'BoxFlipping'),
             hudColor='BLACK_RUBBER',
             refFrame=ref_frame,
-            positionTasks=position_mps,
+            positionTasks=kwargs.pop('positionTasks', True),
             taskCombinationMethod='sum',
             tasksLeft=mps_left,
             tasksRight=mps_right,
@@ -146,10 +145,10 @@ class BoxFlippingSim(RcsSim, Serializable):
                     table_friction_coefficient=1.0)
 
 
-class BoxFlippingIKSim(BoxFlippingSim, Serializable):
+class BoxFlippingIKActivationSim(BoxFlippingSim, Serializable):
     """ Simplified robotic manipulator flipping a box over and over again using a Rcs IK-based controller """
 
-    name: str = 'bf-ik'
+    name: str = 'bf-ika'
 
     def __init__(self, ref_frame: str, continuous_rew_fcn: bool = True, **kwargs):
         """
@@ -158,8 +157,9 @@ class BoxFlippingIKSim(BoxFlippingSim, Serializable):
         :param ref_frame: reference frame for the Rcs tasks, e.g. 'world', 'table', or 'box'
         :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
-                       checkJointLimits: bool = False,
+                       checkJointLimits:m bool = False,
                        collisionAvoidanceIK: bool = True,
+                       positionTasks: bool = True,
                        observeVelocities: bool = False,
                        observeCollisionCost: bool = True,
                        observePredictedCollisionCost: bool = False,
@@ -171,17 +171,24 @@ class BoxFlippingIKSim(BoxFlippingSim, Serializable):
         """
         Serializable._init(self, locals())
 
+        task_spec_ik = [
+            dict(x_des=np.array([0.])),  # Y left
+            dict(x_des=np.array([0.])),  # Z left
+            dict(x_des=np.array([0.])),  # Y left
+            dict(x_des=np.array([0.])),  # Z left
+        ]
+
         # Forward to the BoxFlippingSim's constructor
         super().__init__(
             task_args=dict(continuous_rew_fcn=continuous_rew_fcn),
             ref_frame=ref_frame,
-            position_mps=True,
             actionModelType='ik_activation',
+            taskSpecIK=task_spec_ik,
             **kwargs
         )
 
 
-class BoxFlippingPosMPsSim(BoxFlippingSim, Serializable):
+class BoxFlippingPosDSSim(BoxFlippingSim, Serializable):
     """ Simplified robotic manipulator flipping a box over and over again using position-level movement primitives """
 
     name: str = 'bf-pos'
@@ -203,6 +210,7 @@ class BoxFlippingPosMPsSim(BoxFlippingSim, Serializable):
                        taskCombinationMethod: str = 'sum', # or 'mean', 'softmax', 'product'
                        checkJointLimits: bool = False,
                        collisionAvoidanceIK: bool = True,
+                       positionTasks: bool = True,
                        observeVelocities: bool = False,
                        observeCollisionCost: bool = True,
                        observePredictedCollisionCost: bool = False,
@@ -250,7 +258,6 @@ class BoxFlippingPosMPsSim(BoxFlippingSim, Serializable):
         super().__init__(
             task_args=dict(continuous_rew_fcn=continuous_rew_fcn),
             ref_frame=ref_frame,
-            position_mps=True,
             mps_left=mps_left,
             mps_right=mps_right,
             actionModelType='ds_activation',
@@ -258,7 +265,7 @@ class BoxFlippingPosMPsSim(BoxFlippingSim, Serializable):
         )
 
 
-class BoxFlippingVelMPsSim(BoxFlippingSim, Serializable):
+class BoxFlippingVelDSSim(BoxFlippingSim, Serializable):
     """ Simplified robotic manipulator flipping a box over and over again using velocity-level movement primitives """
 
     name: str = 'bf-vel'
@@ -279,6 +286,7 @@ class BoxFlippingVelMPsSim(BoxFlippingSim, Serializable):
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        taskCombinationMethod: str = 'sum', # or 'mean', 'softmax', 'product'
                        checkJointLimits: bool = False,
+                       positionTasks: bool = True,
                        collisionAvoidanceIK: bool = True,
                        observeVelocities: bool = False,
                        observeCollisionCost: bool = True,
@@ -317,7 +325,6 @@ class BoxFlippingVelMPsSim(BoxFlippingSim, Serializable):
         super().__init__(
             task_args=dict(continuous_rew_fcn=continuous_rew_fcn),
             ref_frame=ref_frame,
-            position_mps=False,
             mps_left=mps_left,
             mps_right=mps_right,
             actionModelType='ds_activation',

@@ -33,7 +33,7 @@ from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
 from tests.environment_wrappers.mock_env import MockEnv
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 def test_spaces():
     mockenv = MockEnv(obs_space=BoxSpace([-1, -2, -3], [1, 2, 3], labels=['one', 'two', 'three']))
 
@@ -48,7 +48,7 @@ def test_spaces():
     assert list(wenv.obs_space.labels) == ['one', 'three']
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 def test_values():
     mockenv = MockEnv(obs_space=BoxSpace([-1, -2, -3], [1, 2, 3], labels=['one', 'two', 'three']))
 
@@ -66,7 +66,7 @@ def test_values():
     assert list(obs) == [4, 9]
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 def test_mask_invert():
     mockenv = MockEnv(obs_space=BoxSpace([-1, -2, -3], [1, 2, 3], labels=['one', 'two', 'three']))
 
@@ -84,7 +84,7 @@ def test_mask_invert():
     assert list(obs) == [7]
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 def test_mask_from_indices():
     # Test the create_mask helper separately
     space = BoxSpace(-1, 1, shape=5)
@@ -94,7 +94,7 @@ def test_mask_from_indices():
     assert list(mask) == [0, 1, 0, 0, 1]
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 def test_mask_from_labels():
     # Test the create_mask helper separately
     space = BoxSpace(-1, 1, shape=5, labels=['w', 'o', 'r', 'l', 'd'])

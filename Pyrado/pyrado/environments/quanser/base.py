@@ -63,6 +63,7 @@ class RealEnv(Env, ABC):
 
         # Initialize the state since it is needed for the first time the step fcn is called (in the reset fcn)
         self.state = np.zeros(rcv_dim)
+        self._curr_act = None  # just for usage in render function
 
         # Create a socket for communicating with the Quanser devices
         self._qsoc = QSocket(ip, rcv_dim, snd_dim)
@@ -131,6 +132,45 @@ class RealEnv(Env, ABC):
 
         # Reset the task
         self._task.reset(env_spec=self.spec)
+
+    def _correct_sensor_offset(self, meas: np.ndarray) -> np.ndarray:
+        """
+        Correct the sensor's offset. Does nothing by default.
+
+        :param meas: raw measurements from the device
+        :return: corrected measurements
+        """
+        return meas
+
+    def step(self, act):
+        info = dict(t=self._curr_step*self._dt, act_raw=act)
+
+        # Current reward depending on the (measurable) state and the current (unlimited) action
+        remaining_steps = self._max_steps - (self._curr_step + 1) if self._max_steps is not pyrado.inf else 0
+        self._curr_rew = self._task.step_rew(self.state, act, remaining_steps)
+
+        # Apply actuator limits
+        act_lim = self.limit_act(act)
+        self._curr_act = act_lim
+
+        # Send actions and receive sensor measurements
+        meas = self._qsoc.snd_rcv(act_lim)
+
+        # Correct for offset, and construct the state from the measurements
+        meas = self._correct_sensor_offset(meas)
+        self.state = meas
+        self._curr_step += 1
+
+        # Check if the task or the environment is done
+        done = self._task.is_done(self.state)
+        if self._curr_step >= self._max_steps:
+            done = True
+
+        # Add final reward if done
+        if done:
+            self._curr_rew += self._task.final_rew(self.state, remaining_steps)
+
+        return self.observe(self.state), self._curr_rew, done, info
 
     def render(self, mode: RenderMode = RenderMode(text=True), render_step: int = 1):
         """

@@ -57,12 +57,14 @@ class WAMBallInCupReal(Env, Serializable):
     def __init__(self,
                  dt: float = 1/500.,
                  max_steps: int = pyrado.inf,
+                 num_dof: int = 7,
                  ip: [str, None] = '192.168.2.2'):
         """
         Constructor
 
         :param dt: sampling time interval
         :param max_steps: maximum number of time steps
+        :param num_dof: number of degrees of freedom (4 or 7), depending on which Barrett WAM setup being used
         :param ip: IP address of the PC controlling the Barrett WAM, pass `None` to skip connecting
         """
         Serializable._init(self, locals())
@@ -81,8 +83,16 @@ class WAMBallInCupReal(Env, Serializable):
             print_cbt('Connected to the Barret WAM client.', 'c', bright=True)
         self._dc = None  # Goto command
 
+        # Number of controlled joints (dof)
+        self.num_dof = num_dof
+
         # Desired joint position for the initial state
-        self.init_pose_des = np.array([0.0, 0.5876, 0.0, 1.36, 0.0, -0.321, -1.57])
+        if self.num_dof == 4:
+            self.init_pose_des = np.array([0.0, 0.6, 0.0, 1.25])
+        elif self.num_dof == 7:
+            self.init_pose_des = np.array([0.0, 0.5876, 0.0, 1.36, 0.0, -0.321, -1.57])
+        else:
+            raise pyrado.ValueErr(given=self.num_dof, eq_constraint="4 or 7")
 
         # Initialize params
         self._curr_step_rr = 0
@@ -125,11 +135,17 @@ class WAMBallInCupReal(Env, Serializable):
         self._state_space = BoxSpace(np.array([0.]), np.array([1.]))
 
         # Action space (PD controller on 3 joint positions and velocities)
-        act_up = np.array([1.985, np.pi, np.pi/2, 10*np.pi, 10*np.pi, 10*np.pi])
-        act_lo = np.array([-1.985, -0.9, -np.pi/2, -10*np.pi, -10*np.pi, -10*np.pi])
-        self._act_space = BoxSpace(act_lo, act_up,  # [rad, rad, rad, rad/s, rad/s, rad/s]
-                                   labels=[r'$q_{1,des}$', r'$q_{3,des}$', r'$q_{5,des}$',
-                                           r'$\dot{q}_{1,des}$', r'$\dot{q}_{3,des}$', r'$\dot{q}_{5,des}$'])
+        if self.num_dof == 4:
+            labels = [r'$q_{1,des}$', r'$q_{3,des}$', r'$\dot{q}_{1,des}$', r'$\dot{q}_{3,des}$']
+            act_up = np.array([1.985, np.pi, 10*np.pi, 10*np.pi])
+            act_lo = np.array([-1.985, -0.9, -10*np.pi, -10*np.pi])
+            self._act_space = BoxSpace(act_lo, act_up, labels=labels)
+        elif self.num_dof == 7:
+            labels = [r'$q_{1,des}$', r'$q_{3,des}$', r'$q_{5,des}$',
+                      r'$\dot{q}_{1,des}$', r'$\dot{q}_{3,des}$', r'$\dot{q}_{5,des}$']
+            act_up = np.array([1.985, np.pi, np.pi/2, 10*np.pi, 10*np.pi, 10*np.pi])
+            act_lo = np.array([-1.985, -0.9, -np.pi/2, -10*np.pi, -10*np.pi, -10*np.pi])
+            self._act_space = BoxSpace(act_lo, act_up, labels=labels)
 
         # Observation space (normalized time)
         self._obs_space = BoxSpace(np.array([0.]), np.array([1.]), labels=['$t$'])
@@ -182,8 +198,12 @@ class WAMBallInCupReal(Env, Serializable):
         act = self.limit_act(act)
 
         # the policy operates on joint 1, 3 and 5
-        np.add.at(self.qpos_des[self._curr_step], [1, 3, 5], act[:3])
-        np.add.at(self.qvel_des[self._curr_step], [1, 3, 5], act[3:])
+        if self.num_dof == 4:
+            np.add.at(self.qpos_des[self._curr_step], [1, 3], act[:2])
+            np.add.at(self.qvel_des[self._curr_step], [1, 3], act[2:])
+        elif self.num_dof == 7:
+            np.add.at(self.qpos_des[self._curr_step], [1, 3, 5], act[:3])
+            np.add.at(self.qvel_des[self._curr_step], [1, 3, 5], act[3:])
 
         # Update current step and state
         self._curr_step += 1

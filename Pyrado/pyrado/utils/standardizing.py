@@ -59,7 +59,7 @@ class Standardizer:
         self.std = None
 
     def standardize(self, data: [np.ndarray, to.Tensor], eps: float = 1e-8) -> [np.ndarray, to.Tensor]:
-        """
+        r"""
         Standardize the input data to make it $~ N(0, 1)$ and store the input's mean and standard deviation.
 
         :param data: input ndarray or Tensor
@@ -78,7 +78,7 @@ class Standardizer:
             raise pyrado.TypeErr(given=data, expected_type=[np.ndarray, to.Tensor])
 
     def unstandardize(self, data: [np.ndarray, to.Tensor]) -> [np.ndarray, to.Tensor]:
-        """
+        r"""
         Revert the previous standardization of the input data to make it $~ N(\mu, \sigma)$.
 
         :param data: input ndarray or Tensor

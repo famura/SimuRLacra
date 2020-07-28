@@ -39,7 +39,7 @@ from pyrado.algorithms.ppo import PPO
 from pyrado.algorithms.advantage import GAE
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.environments.pysim.quanser_qube import QQubeSim
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import save_list_of_dicts_to_yaml, setup_experiment
 from pyrado.logger.step import create_csv_step_logger
 from pyrado.policies.fnn import FNNPolicy
@@ -67,7 +67,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: [int, None]):
 
     # Environment
     env_hparams = dict(dt=1/100., max_steps=600)
-    env = QQubeSim(**env_hparams)
+    env = QQubeSwingUpSim(**env_hparams)
     env = ActNormWrapper(env)
 
     # Policy
@@ -143,8 +143,8 @@ if __name__ == '__main__':
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    ex_dir = setup_experiment('hyperparams', QQubeSim.name, 'ppo_100Hz_fnn_actnorm', seed=args.seed)
-    # ex_dir = setup_experiment('hyperparams', QQubeSim.name, 'ppo_100Hz_gru_actnorm', seed=args.seed)
+    ex_dir = setup_experiment('hyperparams', QQubeSwingUpSim.name, 'ppo_100Hz_fnn_actnorm', seed=args.seed)
+    # ex_dir = setup_experiment('hyperparams', QQubeSwingUpSim.name, 'ppo_100Hz_gru_actnorm', seed=args.seed)
 
     # Run hyper-parameter optimization
     name = f'{ex_dir.algo_name}_{ex_dir.add_info}'  # e.g. qq_ppo_fnn_actnorm

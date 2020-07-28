@@ -34,7 +34,8 @@ import pyrado
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
-from pyrado.environments.rcspysim.box_flipping import BoxFlippingVelMPsSim, BoxFlippingPosMPsSim, BoxFlippingIKSim
+from pyrado.environments.rcspysim.box_flipping import BoxFlippingVelDSSim, BoxFlippingPosDSSim, \
+    BoxFlippingIKActivationSim
 from pyrado.policies.dummy import IdlePolicy
 from pyrado.policies.time import TimePolicy
 from pyrado.sampling.rollout import rollout, after_rollout_query
@@ -47,7 +48,7 @@ rcsenv.setLogLevel(1)
 
 def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     # Set up environment
-    env = BoxFlippingVelMPsSim(
+    env = BoxFlippingVelDSSim(
         usePhysicsNode=True,
         physicsEngine=physicsEngine,
         graphFileName=graphFileName,
@@ -68,7 +69,7 @@ def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, ch
 
 def create_ik_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     # Set up environment
-    env = BoxFlippingIKSim(
+    env = BoxFlippingIKActivationSim(
         usePhysicsNode=True,
         physicsEngine=physicsEngine,
         graphFileName=graphFileName,
@@ -93,7 +94,7 @@ def create_ik_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, chec
 
 def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     # Set up environment
-    env = BoxFlippingPosMPsSim(
+    env = BoxFlippingPosDSSim(
         usePhysicsNode=True,
         physicsEngine=physicsEngine,
         graphFileName=graphFileName,
@@ -141,7 +142,7 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
 
 def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     # Set up environment
-    env = BoxFlippingVelMPsSim(
+    env = BoxFlippingVelDSSim(
         usePhysicsNode=True,
         physicsEngine=physicsEngine,
         graphFileName=graphFileName,

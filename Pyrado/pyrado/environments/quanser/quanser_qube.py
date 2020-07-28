@@ -26,8 +26,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import time
-
 import numpy as np
 import torch as to
 from init_args_serializer import Serializable
@@ -50,15 +48,15 @@ class QQubeReal(RealEnv, Serializable):
     def __init__(self,
                  dt: float = 1/500.,
                  max_steps: int = pyrado.inf,
-                 ip: str = '192.168.2.40',
-                 task_args: [dict, None] = None):
+                 task_args: [dict, None] = None,
+                 ip: str = '192.168.2.40'):
         """
         Constructor
 
         :param dt: sampling frequency on the Quanser device [Hz]
         :param max_steps: maximum number of steps executed on the device [-]
-        :param ip: IP address of the Qube platform
         :param task_args: arguments for the task construction
+        :param ip: IP address of the Qube platform
         """
         Serializable._init(self, locals())
 
@@ -104,45 +102,17 @@ class QQubeReal(RealEnv, Serializable):
         # Start with a zero action and get the first sensor measurements
         meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
 
-        # Correct for offset
-        meas -= self._sens_offset
+        # Correct for offset, and construct the state from the measurements
+        meas = self._correct_sensor_offset(meas)
+        self.state = meas
 
         # Reset time counter
         self._curr_step = 0
 
-        return self.observe(meas)
+        return self.observe(self.state)
 
-    def step(self, act: np.ndarray) -> tuple:
-        info = dict(t=self._curr_step*self._dt, act_raw=act)
-
-        # Current reward depending on the (measurable) state and the current (unlimited) action
-        remaining_steps = self._max_steps - (self._curr_step + 1) if self._max_steps is not pyrado.inf else 0
-        self._curr_rew = self._task.step_rew(self.state, act, remaining_steps)
-
-        # Apply actuator limits
-        act_lim = self.limit_act(act)
-        self._curr_act = act_lim
-
-        # Send actions and receive sensor measurements
-        meas = self._qsoc.snd_rcv(act_lim)
-
-        # Correct for offset
-        meas -= self._sens_offset
-
-        # Construct the state from the measurements
-        self.state = meas
-        self._curr_step += 1
-
-        # Check if the task or the environment is done
-        done = self._task.is_done(self.state)
-        if self._curr_step >= self._max_steps:
-            done = True
-
-        # Add final reward if done
-        if done:
-            self._curr_rew += self._task.final_rew(self.state, remaining_steps)
-
-        return self.observe(self.state), self._curr_rew, done, info
+    def _correct_sensor_offset(self, meas: np.ndarray) -> np.ndarray:
+        return meas - self._sens_offset
 
     def calibrate(self):
         """ Calibration routine to move to the init position and determine the sensor offset """

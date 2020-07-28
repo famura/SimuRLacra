@@ -29,11 +29,20 @@
 import torch as to
 import torch.nn as nn
 import torch.nn.init as init
-from math import sqrt
+from math import sqrt, ceil
 from warnings import warn
 
 import pyrado
 from pyrado.utils.nn_layers import ScaleLayer, PositiveScaleLayer, IndiNonlinLayer, MirrConv1d
+
+
+def _apply_weights_conf(m, ls, ks):
+    dim_ch_out, dim_ch_in = m.weight.data.shape[0], m.weight.data.shape[1]
+    amp = to.rand(dim_ch_out*dim_ch_in)
+    for i in range(dim_ch_out):
+        for j in range(dim_ch_in):
+            m.weight.data[i, j, :] = amp[i*dim_ch_in + j]*2*(
+                to.exp(-to.pow(ls, 2)/(ks/2)**2) - 0.5)
 
 
 def init_param(m, **kwargs):
@@ -126,11 +135,7 @@ def init_param(m, **kwargs):
                 ks_half = ceil(m.weight.data.shape[2]/2)
                 ls_half = to.linspace(ks_half, 0, ks_half)  # descending
                 ls = to.cat([ls_half, reversed(ls_half[:-1])])
-            dim_ch_out, dim_ch_in = m.weight.data.shape[0], m.weight.data.shape[1]
-            amp = to.rand(dim_ch_out*dim_ch_in)
-            for i in range(dim_ch_out):
-                for j in range(dim_ch_in):
-                    m.weight.data[i, j, :] = amp[i*dim_ch_in + j]*2*(to.exp(-to.pow(ls, 2)/(ks_half/2)**2) - 0.5)
+            _apply_weights_conf(m, ls, ks_half)
 
     elif isinstance(m, MirrConv1d):
         if kwargs.get('bell', False):
@@ -138,11 +143,7 @@ def init_param(m, **kwargs):
             # The biases are left unchanged (does not exist by default).
             ks = m.weight.data.shape[2]  # ks_mirr = ceil(ks_conv1d / 2)
             ls = to.linspace(ks, 0, ks)  # descending
-            dim_ch_out, dim_ch_in = m.weight.data.shape[0], m.weight.data.shape[1]
-            amp = to.rand(dim_ch_out*dim_ch_in)
-            for i in range(dim_ch_out):
-                for j in range(dim_ch_in):
-                    m.weight.data[i, j, :] = amp[i*dim_ch_in + j]*2*(to.exp(-to.pow(ls, 2)/(ks/2)**2) - 0.5)
+            _apply_weights_conf(m, ls, ks)
 
     elif isinstance(m, ScaleLayer):
         # Initialize all weights to 1

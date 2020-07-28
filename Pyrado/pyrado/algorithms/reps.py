@@ -51,7 +51,8 @@ class REPS(ParameterExploring):
 
     .. seealso::
         [1] J. Peters, K. Mülling, Y. Altuen, "Relative Entropy Policy Search", AAAI, 2010
-        [2] A. Abdolmaleki, et al., "Relative Entropy Regularized Policy Iteration",
+        [2] A. Abdolmaleki, J.T. Springenberg, J. Degrave, S. Bohez, Y. Tassa, D. Belov, N. Heess, M. Riedmiller,
+            "Relative Entropy Regularized Policy Iteration", arXiv, 2018
         [3] This implementation is inspired by the work of H. Abdulsamad
             https://github.com/hanyas/rl/blob/master/rl/ereps/ereps.py
     """
@@ -71,6 +72,7 @@ class REPS(ParameterExploring):
                  symm_sampling: bool = False,
                  num_sampler_envs: int = 4,
                  num_epoch_dual: int = 1000,
+                 softmax_transform: bool = False,
                  use_map: bool = True,
                  grad_free_optim: bool = False,
                  lr_dual: float = 5e-4):
@@ -88,6 +90,7 @@ class REPS(ParameterExploring):
         :param expl_std_min: minimal standard deviation for the exploration strategy
         :param symm_sampling: use an exploration strategy which samples symmetric populations
         :param num_epoch_dual: number of epochs for the minimization of the dual function
+        :param softmax_transform: pass `True` to use a softmax to transform the returns, else use a shifted exponential
         :param use_map: use maximum a-posteriori likelihood (`True`) or maximum likelihood (`False`) update rule
         :param grad_free_optim: use a derivative free optimizer (e.g. golden section search) or a SGD-based optimizer
         :param lr_dual: learning rate for the dual's optimizer (ignored if `grad_free_optim = True`)
@@ -108,6 +111,7 @@ class REPS(ParameterExploring):
 
         # Store the inputs
         self.eps = eps
+        self.softmax_transform = softmax_transform
         self.use_map = use_map
 
         # Explore using normal noise
@@ -131,8 +135,8 @@ class REPS(ParameterExploring):
                 [{'params': self._log_eta}], param_min=to.log(to.tensor([1e-5])), param_max=to.log(to.tensor([1e5]))
             )
         else:
-            self.optim_dual = to.optim.Adam([{'params': self._log_eta}], lr=lr_dual)  # used in [2]
-            # self.optim_dual = to.optim.SGD([{'params': self._log_eta}], lr=lr_dual, momentum=0.7, weight_decay=1e-4)
+            self.optim_dual = to.optim.SGD([{'params': self._log_eta}], lr=lr_dual, momentum=0.8, weight_decay=1e-4)
+            # self.optim_dual = to.optim.Adam([{'params': self._log_eta}], lr=lr_dual)  # used in [2], but unstable here
         self.num_epoch_dual = num_epoch_dual
 
     @property
@@ -140,21 +144,20 @@ class REPS(ParameterExploring):
         r""" Get the Lagrange multiplier $\eta$. In [2], $/eta$ is called $/alpha$. """
         return to.exp(self._log_eta)
 
-    def weights(self, rets: to.Tensor, softmax_transform: bool = False) -> to.Tensor:
+    def weights(self, rets: to.Tensor) -> to.Tensor:
         """
         Compute the wights which are used to weights thy policy samples by their return.
         As stated in [2, sec 4.1], we could calculate weights using any rank preserving transformation.
 
         :param rets: return values per policy sample after averaging over multiple rollouts using the same policy
-        :param softmax_transform: pass `True` to use a softmax to transform the returns, else use a shifted exponential
         :return: weights of the policy parameter samples
         """
-        if softmax_transform:
+        if self.softmax_transform:
             # Do softmax transform (softmax from PyTorch is already numerically stable)
             return to.softmax(rets/self.eta, dim=0)
         else:
             # Do numerically stabilized exp transform
-            return to.exp(to.clamp((rets - to.max(rets))/self.eta, -700., 700.))
+            return to.exp(to.clamp((rets - to.max(rets))/self.eta, min=-700.))
 
     def dual_eval(self, rets: to.Tensor) -> to.Tensor:
         """
@@ -163,10 +166,7 @@ class REPS(ParameterExploring):
         :param rets: return values per policy sample after averaging over multiple rollouts using the same policy
         :return: dual loss value
         """
-        # w = self.weights(rets)
-        # return self.eta*self.eps + to.max(rets) + self.eta*to.log(to.mean(w))
         return self.eta*self.eps + self.eta*logmeanexp(rets/self.eta)
-        # return self.eta*self.eps + self.eta*logmeanexp(w)
 
     def dual_impr(self, param_samples: to.Tensor, w: to.Tensor) -> to.Tensor:
         """
@@ -226,7 +226,6 @@ class REPS(ParameterExploring):
                 if loss_fcn == self.dual_eval:
                     self.optim_dual.step(closure=functools.partial(loss_fcn, rets=rets))
                 elif loss_fcn == self.dual_impr:
-                    w = self.weights(rets)
                     self.optim_dual.step(closure=functools.partial(loss_fcn, param_samples=param_samples, w=w))
                 else:
                     raise NotImplementedError
@@ -259,7 +258,7 @@ class REPS(ParameterExploring):
 
         # Update the covariance
         cov_new = (w_diff + self.eta*cov_old +
-                   self.eta*to.einsum('k,h->kh', param_values_delta, param_values_delta)) / (to.sum(w) + self.eta)
+                   self.eta*to.einsum('k,h->kh', param_values_delta, param_values_delta))/(to.sum(w) + self.eta)
         self._expl_strat.adapt(cov=cov_new)
 
     def wmap(self, param_samples: to.Tensor, w: to.Tensor):

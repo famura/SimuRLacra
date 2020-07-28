@@ -33,6 +33,7 @@
 
 #include <Rcs_macros.h>
 
+#include <sstream>
 
 namespace Rcs
 {
@@ -40,11 +41,13 @@ namespace Rcs
 AMIKControllerActivation::AMIKControllerActivation(RcsGraph* graph, TaskCombinationMethod tcm) :
     AMIKGeneric(graph), taskCombinationMethod(tcm)
 {
+    this->x_des = MatNd_clone(dx_des); // dx_des comes from AMIKGeneric
     activation = MatNd_create((unsigned int) getController()->getNumberOfTasks(), 1);
 }
 
 AMIKControllerActivation::~AMIKControllerActivation()
 {
+    delete x_des;
     delete activation;
 }
 
@@ -71,31 +74,34 @@ std::vector<std::string> AMIKControllerActivation::getNames() const
     return names;
 }
 
-void
-AMIKControllerActivation::computeCommand(MatNd* q_des, MatNd* q_dot_des, MatNd* T_des, const MatNd* action, double dt)
+void AMIKControllerActivation::reset()
+{
+    ActionModelIK::reset();
+    
+    activation = MatNd_create((unsigned int) getController()->getNumberOfTasks(), 1);
+}
+
+void AMIKControllerActivation::computeCommand(
+    MatNd* q_des, MatNd* q_dot_des, MatNd* T_des, const MatNd* action, double dt)
 {
     RCHECK(action->n == 1);  // actions are column vectors
     
     // Copy the ExperimentConfig graph which has been updated by the physics simulation into the desired graph
     RcsGraph_copyRigidBodyDofs(desiredGraph->q, graph, NULL);
     
-    // Set the controllers goal to zero. This works, because we define the actual goal by setting the ref_body.
-    MatNd* x_des = MatNd_clone(dx_des);
-    MatNd_setZero(x_des);
-    
     // Combine the individual activations of every controller task
-    MatNd* a = MatNd_clone(action);
+    activation = MatNd_clone(action);
     switch (taskCombinationMethod) {
         case TaskCombinationMethod::Sum:
             break; // no weighting
         
         case TaskCombinationMethod::Mean: {
-            MatNd_constMulSelf(a, 1./MatNd_sumEle(a));
+            MatNd_constMulSelf(activation, 1./MatNd_sumEle(activation));
             break;
         }
         
         case TaskCombinationMethod::SoftMax: {
-            MatNd_softMax(a, action, action->m);  // action->m is a neat heuristic for beta
+            MatNd_softMax(activation, action, action->m);  // action->m is a neat heuristic for beta
             break;
         }
         
@@ -116,26 +122,24 @@ AMIKControllerActivation::computeCommand(MatNd* q_des, MatNd* q_dot_des, MatNd* 
                     prod *= (1 - otherActions->ele[idx]);
                 }
                 MatNd_destroy(otherActions);
-                
+    
                 REXEC(7) {
                     std::cout << "prod " << prod << std::endl;
                 }
-                
-                MatNd_set(a, i, 0, action->ele[i]*prod);
+    
+                MatNd_set(activation, i, 0, action->ele[i]*prod);
             }
-            
+    
             break;
         }
     }
     
     // Stabilize actions. If an action is exactly zero, computeDX will discard that task, leading to a shape error.
-    MatNd_addConst(a, 1e-9);
+    MatNd_addConst(activation, 1e-9);
     
     // Compute the differences in task space and weight them
-    getController()->computeDX(dx_des, x_des, a);
-    MatNd_destroy(x_des);
-    MatNd_destroy(a);
-
+    getController()->computeDX(dx_des, x_des, activation);
+    
     // Compute IK from dx_des
     ActionModelIK::ikFromDX(q_des, q_dot_des, dt);
     
@@ -147,7 +151,6 @@ AMIKControllerActivation::computeCommand(MatNd* q_des, MatNd* q_dot_des, MatNd* 
             MatNd_printComment("T_des", T_des);
         }
     }
-    
 }
 
 void AMIKControllerActivation::getStableAction(MatNd* action) const
@@ -203,5 +206,39 @@ MatNd* AMIKControllerActivation::getActivation() const
     return activation;
 }
 
-} /* namespace Rcs */
+MatNd* AMIKControllerActivation::getXdes() const
+{
+    return x_des;
+}
 
+void AMIKControllerActivation::setXdes(const MatNd* x_des)
+{
+    // Creating a new x_des and shallow copying saves us from the unexpected size error that clone yields
+    this->x_des = MatNd_createLike(x_des);
+    MatNd_copy(this->x_des, x_des);
+}
+
+void AMIKControllerActivation::setXdesFromTaskSpec(
+    std::vector<PropertySource*>& taskSpec, std::vector<Task*>& tasks)
+{
+    MatNd* x_des = MatNd_create(1, 1); // dummy row necessary for MatNd_appendRows
+    if (taskSpec.size() != tasks.size()) {
+        std::ostringstream os;
+        os << "Received " << taskSpec.size() << " elements in taskSpec, but there are "
+           << tasks.size() << " Rcs controller tasks!";
+        throw std::runtime_error(os.str());
+    }
+    
+    for (PropertySource* ts : taskSpec) {
+        MatNd* x_des_temp = NULL;
+        if (!ts->getProperty(x_des_temp, "x_des")) {
+            throw std::invalid_argument("Field x_des is missing for at least one task specification!");
+        }
+        MatNd_appendRows(x_des, x_des_temp);
+    }
+    MatNd_deleteRows(x_des, 0, 0); // delete dummy row
+    this->setXdes(x_des);
+    MatNd_destroy(x_des);
+}
+
+} /* namespace Rcs */

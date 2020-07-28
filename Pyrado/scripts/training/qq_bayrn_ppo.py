@@ -41,7 +41,7 @@ from pyrado.domain_randomization.default_randomizers import get_zero_var_randomi
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
 from pyrado.environments.quanser.quanser_qube import QQubeReal
-from pyrado.environments.pysim.quanser_qube import QQubeSim
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.algorithms.bayrn import BayRn
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.fnn import FNNPolicy
@@ -52,12 +52,12 @@ from pyrado.utils.experiments import wrap_like_other_env
 
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSim.name, f'{BayRn.name}-{PPO.name}_{FNNPolicy.name}',
-                              'actnorm_dr-Mp-Mr-Lp-Lr', seed=111)
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{BayRn.name}-{PPO.name}_{FNNPolicy.name}',
+                              'rand-Mp-Mr-Lp-Lr', seed=111)
 
     # Environments
     env_hparams = dict(dt=1/100., max_steps=600)
-    env_sim = QQubeSim(**env_hparams)
+    env_sim = QQubeSwingUpSim(**env_hparams)
     env_sim = ActNormWrapper(env_sim)
     env_sim = DomainRandWrapperLive(env_sim, get_zero_var_randomizer(env_sim))
     dp_map = get_default_domain_param_map_qq()
@@ -94,18 +94,18 @@ if __name__ == '__main__':
     subroutine_hparam = dict(
         max_iter=300,
         min_steps=23*env_sim.max_steps,
-        num_sampler_envs=16,
         num_epoch=7,
         eps_clip=0.0744,
         batch_size=60,
         std_init=0.9074,
         lr=3.446e-04,
         max_grad_norm=1.,
+        num_sampler_envs=16,
     )
     ppo = PPO(ex_dir, env_sim, policy, critic, **subroutine_hparam)
 
     # Set the boundaries for the GP
-    dp_nom = QQubeSim.get_nominal_domain_param()
+    dp_nom = QQubeSwingUpSim.get_nominal_domain_param()
     # bounds = to.tensor(
     #     [[0.8*dp_nom['Mp'], dp_nom['Mp']/1000],
     #      [1.2*dp_nom['Mp'], dp_nom['Mp']/10]])
@@ -115,8 +115,8 @@ if __name__ == '__main__':
          [1.2*dp_nom['Mp'], dp_nom['Mp']/10, 1.2*dp_nom['Mr'], dp_nom['Mr']/10,
           1.2*dp_nom['Lp'], dp_nom['Lp']/10, 1.2*dp_nom['Lr'], dp_nom['Lr']/10]])
 
-    # policy_init = to.load(osp.join(pyrado.EXP_DIR, QQubeSim.name, PPO.name, 'EXP_NAME', 'policy.pt'))
-    # valuefcn_init = to.load(osp.join(pyrado.EXP_DIR, QQubeSim.name, PPO.name, 'EXP_NAME', 'valuefcn.pt'))
+    # policy_init = to.load(osp.join(pyrado.EXP_DIR, QQubeSwingUpSim.name, PPO.name, 'EXP_NAME', 'policy.pt'))
+    # valuefcn_init = to.load(osp.join(pyrado.EXP_DIR, QQubeSwingUpSim.name, PPO.name, 'EXP_NAME', 'valuefcn.pt'))
 
     # Algorithm
     bayrn_hparam = dict(
@@ -137,12 +137,12 @@ if __name__ == '__main__':
         dict(env=env_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
-        dict(subroutine=subroutine_hparam, subroutine_name=PPO.name),
+        dict(subrtrn=subroutine_hparam, subrtrn_name=PPO.name),
         dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map)],
         ex_dir
     )
 
-    algo = BayRn(ex_dir, env_sim, env_real, subroutine=ppo, bounds=bounds, **bayrn_hparam)
+    algo = BayRn(ex_dir, env_sim, env_real, subrtn=ppo, bounds=bounds, **bayrn_hparam)
 
     # Jeeeha
     algo.train(

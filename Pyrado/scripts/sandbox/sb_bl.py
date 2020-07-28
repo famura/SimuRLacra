@@ -31,7 +31,7 @@ Script to test the bi-manual box lifting task using a hard-coded time-based poli
 """
 import rcsenv
 import pyrado
-from pyrado.environments.rcspysim.box_lifting import BoxLiftingVelMPsSim, BoxLiftingPosMPsSim
+from pyrado.environments.rcspysim.box_lifting import BoxLiftingVelDSSim, BoxLiftingPosDSSim
 from pyrado.policies.dummy import IdlePolicy
 from pyrado.policies.time import TimePolicy
 from pyrado.sampling.rollout import rollout, after_rollout_query
@@ -44,7 +44,7 @@ rcsenv.setLogLevel(0)
 
 def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     # Set up environment
-    env = BoxLiftingVelMPsSim(
+    env = BoxLiftingVelDSSim(
         physicsEngine=physicsEngine,
         graphFileName=graphFileName,
         dt=dt,
@@ -71,7 +71,7 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
                 0, 0, 0, 0, 0, 1]
 
     # Set up environment
-    env = BoxLiftingPosMPsSim(
+    env = BoxLiftingPosDSSim(
         usePhysicsNode=True,
         physicsEngine=physicsEngine,
         graphFileName=graphFileName,
@@ -114,7 +114,7 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
                     0, 0, 0, 0, 0, 0, 0]
 
     # Set up environment
-    env = BoxLiftingVelMPsSim(
+    env = BoxLiftingVelDSSim(
         usePhysicsNode=True,
         physicsEngine=physicsEngine,
         graphFileName=graphFileName,

@@ -35,7 +35,7 @@ import torch as to
 
 import pyrado
 from matplotlib import pyplot as plt
-from pyrado.environments.pysim.quanser_qube import QQubeSim
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.sampling.rollout import rollout
@@ -64,7 +64,7 @@ if __name__ == '__main__':
     num_samples = 10
 
     # Create one-dim evaluation grid for multiple parameters
-    nom_params = QQubeSim.get_nominal_domain_param()
+    nom_params = QQubeSwingUpSim.get_nominal_domain_param()
     param_values = dict(
         Dp=np.logspace(-8, -4, num_samples),
         Dr=np.logspace(-8, -4, num_samples),
@@ -75,7 +75,7 @@ if __name__ == '__main__':
     )
 
     # Set up the environment
-    env = ActNormWrapper(QQubeSim(dt=1/100., max_steps=args.max_steps))
+    env = ActNormWrapper(QQubeSwingUpSim(dt=1/100., max_steps=args.max_steps))
 
     # Evaluate the performance of each policy on the specified domain parameter ranges
     rewards = np.empty([num_policies, num_param, num_samples])

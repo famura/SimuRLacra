@@ -45,15 +45,15 @@ class QBallBalancerReal(RealEnv, Serializable):
     def __init__(self,
                  dt: float = 1/500.,
                  max_steps: int = pyrado.inf,
-                 ip: str = '192.168.2.5',
-                 task_args: [dict, None] = None):
+                 task_args: [dict, None] = None,
+                 ip: str = '192.168.2.5'):
         """
         Constructor
 
         :param dt: sampling frequency on the [Hz]
         :param max_steps: maximum number of steps executed on the device [-]
-        :param ip: IP address of the 2 DOF Ball-Balancer platform
         :param task_args: arguments for the task construction
+        :param ip: IP address of the 2 DOF Ball-Balancer platform
         """
         Serializable._init(self, locals())
 
@@ -90,37 +90,9 @@ class QBallBalancerReal(RealEnv, Serializable):
 
         # Start with a zero action and get the first sensor measurements
         meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
+        self.state = meas
 
         # Reset time counter
         self._curr_step = 0
 
-        return self.observe(meas)
-
-    def step(self, act: np.ndarray) -> tuple:
-        info = dict(t=self._curr_step*self._dt, act_raw=act)
-
-        # Current reward depending on the (measurable) state and the current (unlimited) action
-        remaining_steps = self._max_steps - (self._curr_step + 1) if self._max_steps is not pyrado.inf else 0
-        self._curr_rew = self._task.step_rew(self.state, act, remaining_steps)
-
-        # Apply actuator limits
-        act_lim = self.limit_act(act)
-        self._curr_act = act_lim
-
-        # Send actions and receive sensor measurements
-        meas = self._qsoc.snd_rcv(act_lim)
-
-        # Construct the state from the measurements
-        self.state = meas
-        self._curr_step += 1
-
-        # Check if the task or the environment is done
-        done = self._task.is_done(self.state)
-        if self._curr_step >= self._max_steps:
-            done = True
-
-        # Add final reward if done
-        if done:
-            self._curr_rew += self._task.final_rew(self.state, remaining_steps)
-
-        return self.observe(self.state), self._curr_rew, done, info
+        return self.observe(self.state)

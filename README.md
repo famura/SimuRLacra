@@ -1,9 +1,10 @@
-<img alt="logo" align="left" height="150px" src="logo.png" style="padding-right: 20px">
+<img alt="logo" align="left" height="175px" src="logo.png" style="padding-right: 20px">
 
 **[Overview](#overview)**  
 **[Citing](#citing)**  
 **[Installation](#installation)**  
 **[Checking](#checking)**   
+**[Convenience](#convenience)**   
 **[Troubleshooting](#troubleshooting)**
 
 
@@ -13,6 +14,7 @@ SimuRLacra (composed of the two modules Pyrado and RcsPySim) is a Python/C++ fra
 The focus is on robotics tasks with mostly continuous control.
 It features __randomizable simulations__ written __in standalone Python__ (no license required) as well as simulations driven by the physics engines __Bullet__ (no license required), __Vortex__ (license required), __or MuJoCo__ (license required).
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/73ad23bdf05361b022b4/maintainability)](https://codeclimate.com/github/famura/SimuRLacra/maintainability)
 
 __Pros__  
 * __Exceptionally modular treatment of environments via wrappers.__ The key idea behind this was to be able to quickly modify and randomize all available simulation environments. Moreover, SimuRLacra contains unique environments that either run completely in Python or allow you to switch between the Bullet or Vortex (requires license) physics engine.
@@ -210,6 +212,44 @@ Pyrado
 ```
 firefox Pyrado/doc/build/index.html
 ```
+
+
+## Convenience
+
+### Handy aliases
+You will find yourself often in the same folders, so adding the following aliases to your shell's rc-file will be worth it.
+```
+alias cds='cd PATH_TO/SimuRLacra'
+alias cdps='cd PATH_TO/SimuRLacra/Pyrado/scripts'
+alias cdpt='cd PATH_TO/SimuRLacra/Pyrado/data/temp'
+alias cdrps='cd PATH_TO/SimuRLacra/RcsPySim/build'
+alias cdrcs='cd PATH_TO/SimuRLacra/Rcs/build'
+```
+
+### Working on the intersection of C++ and Python (e.g. RcsPySim)
+Assuming that you use an IDE (in this case CLion), it is nice to put an empty `CMakeLists.txt` into the Python part of your project (here Pyrado) and include this as a subdirectory from the C++ part of your project by adding
+```
+add_subdirectory(../Pyrado "${CMAKE_BINARY_DIR}/pyrado")
+```
+If you then create a project in the RcsPySim directory, your IDE will automatically add Pyrado for you. If you moreover mark Pyrado as `sources root` (CLion specific), it will be parsed by the IDE's git tool.
+
+I also suggest to create run configuration that always build the C++ part (RcsPySim) before executing a Python script.
+In CLion or example, you go `Run->Edit Configurations ...`, select `CMake Application`, hit the plus, select `_rcsenv` as target and `python` as executable, make your program arguments a module call like `-m scripts.sandbox.sb_p3l` in connection with the correct working directory `PATH_TO/SimuRLacra/Pyrado`, and most importantly select `Build` in the `Before launch` section.
+
+In a similar fashion, you can directly call Rcs. This is useful when you are creating a new environment and want to iterate the graph xml-file.
+In CLion or example, you go `Run->Edit Configurations ...`, select `CMake Application`, hit the plus, select `_rcsenv` as target and `Rcs` as executable, pass Rcs-specific arguments to your program arguments like `-m 4 -dir PATH_TO/SimuRLacra/RcsPySim/config/Planar3Link/ -f gPlanar3Link.xml` in connection with the correct working directory `PATH_TO/SimuRLacra/Rcs/build`, and select `Build` in the `Before launch` section.
+There are many more command line arguments for Rcs. Look for `argP` in the Rcs.cpp [source file](https://github.com/HRI-EU/Rcs/blob/master/bin/Rcs.cpp).
+
+### Inspecting training logs
+To look at the training report in detail from console, I recommend to put 
+```
+function pretty_csv {
+    column -t -s, -n "$@" | less -F -S -X -K
+}
+```
+into your sell's rc-file. Executing `pretty_csv progress.csv` in the experiments folder will yield a nicely formatted table.
+I found this neat little trick on [Stefaan Lippens blog](https://www.stefaanlippens.net/pretty-csv.html). You might need to install `column` depending on your OS.
+
 
 ## Troubleshooting
 

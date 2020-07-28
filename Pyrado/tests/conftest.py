@@ -38,7 +38,7 @@ from pyrado.environments.one_step.rosenbrock import RosenSim
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
-from pyrado.environments.pysim.quanser_qube import QQubeSim
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim, QQubeStabSim
 from pyrado.policies.adn import ADNPolicy, pd_cubic
 from pyrado.policies.dummy import DummyPolicy, IdlePolicy
 from pyrado.policies.features import *
@@ -57,11 +57,11 @@ to.set_default_dtype(to.double)
 try:
     import rcsenv
     from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate2DSim, BallOnPlate5DSim
-    from pyrado.environments.rcspysim.box_lifting import BoxLiftingPosMPsSim
-    from pyrado.environments.rcspysim.box_shelving import BoxShelvingVelMPsSim, BoxShelvingPosMPsSim
+    from pyrado.environments.rcspysim.box_lifting import BoxLiftingPosDSSim
+    from pyrado.environments.rcspysim.box_shelving import BoxShelvingVelDSSim, BoxShelvingPosDSSim
     from pyrado.environments.rcspysim.mp_blending import MPBlendingSim
-    from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKSim, Planar3LinkTASim
-    from pyrado.environments.rcspysim.planar_insert import PlanarInsertTASim, PlanarInsertIKSim
+    from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim, Planar3LinkTASim
+    from pyrado.environments.rcspysim.planar_insert import PlanarInsertTASim, PlanarInsertIKActivationSim
     from pyrado.environments.rcspysim.quanser_qube import QQubeRcsSim
     from pyrado.environments.rcspysim.target_tracking import TargetTrackingSim
 
@@ -148,8 +148,13 @@ def default_qcpsu():
 
 
 @pytest.fixture(scope='function')
-def default_qq():
-    return QQubeSim(dt=0.004, max_steps=4000)
+def default_qqst():
+    return QQubeStabSim(dt=0.01, max_steps=500)
+
+
+@pytest.fixture(scope='function')
+def default_qqsu():
+    return QQubeSwingUpSim(dt=0.004, max_steps=4000)
 
 
 @m_needs_bullet
@@ -179,7 +184,7 @@ def default_bop5d_vx():
 @m_needs_bullet
 @pytest.fixture(scope='function')
 def default_p3l_ik_bt():
-    return Planar3LinkIKSim(
+    return Planar3LinkIKActivationSim(
         physicsEngine='Bullet',
         dt=1/50.,
         max_steps=1000,
@@ -199,7 +204,7 @@ def default_p3l_ik_bt():
 @m_needs_vortex
 @pytest.fixture(scope='function')
 def default_p3l_ik_vx():
-    return Planar3LinkIKSim(
+    return Planar3LinkIKActivationSim(
         physicsEngine='Vortex',
         dt=1/50.,
         max_steps=1000,
@@ -265,7 +270,7 @@ def default_p3l_ta_vx():
 @m_needs_vortex
 @pytest.fixture(scope='function')
 def default_pi_ik_6l_vx():
-    return PlanarInsertIKSim(
+    return PlanarInsertIKActivationSim(
         physicsEngine='Vortex',
         graphFileName='gPlanarInsert6Link.xml',
         dt=1/50.,
@@ -287,7 +292,7 @@ def default_pi_ik_6l_vx():
 @m_needs_bullet
 @pytest.fixture(scope='function')
 def default_pi_ik_5l_bt():
-    return PlanarInsertIKSim(
+    return PlanarInsertIKActivationSim(
         physicsEngine='Bullet',
         graphFileName='gPlanarInsert5Link.xml',
         dt=1/50.,
@@ -353,7 +358,7 @@ def default_pi_ta_5l_vx():
 @m_needs_bullet
 @pytest.fixture(scope='function')
 def default_blpos_bt():
-    return BoxLiftingPosMPsSim(
+    return BoxLiftingPosDSSim(
         physicsEngine='Bullet',
         graphFileName='gBoxLifting_posCtrl.xml',
         dt=0.01,
@@ -378,7 +383,7 @@ def default_blpos_bt():
 @m_needs_bullet
 @pytest.fixture(scope='function')
 def default_bspos_bt():
-    return BoxShelvingPosMPsSim(
+    return BoxShelvingPosDSSim(
         physicsEngine='Bullet',
         graphFileName='gBoxShelving_posCtrl.xml',  # gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml
         dt=1/100.,
@@ -405,7 +410,7 @@ def default_bspos_bt():
 @m_needs_vortex
 @pytest.fixture(scope='function')
 def default_bspos_vx():
-    return BoxShelvingPosMPsSim(
+    return BoxShelvingPosDSSim(
         physicsEngine='Vortex',
         graphFileName='gBoxShelving_posCtrl.xml',  # gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml
         dt=1/100.,
@@ -431,7 +436,7 @@ def default_bspos_vx():
 
 @m_needs_bullet
 @pytest.fixture(scope='function')
-def default_qqrcs_bt():
+def default_qqsurcs_bt():
     return QQubeRcsSim(physicsEngine='Bullet', dt=1/250., max_steps=3000)
 
 
@@ -450,7 +455,7 @@ def default_hop():
 @m_needs_mujoco
 @pytest.fixture(scope='function')
 def default_wambic():
-    return WAMBallInCupSim(max_steps=1750)
+    return WAMBallInCupSim(num_dof=7, max_steps=1750)
 
 
 # ---------------
@@ -525,7 +530,7 @@ def thfnn_policy(env):
 
 @pytest.fixture(scope='function')
 def thgru_policy(env):
-    return TwoHeadedGRUPolicy(env.spec, shared_hidden_size=8, shared_num_recurrent_layers=2)
+    return TwoHeadedGRUPolicy(env.spec, shared_hidden_size=8, shared_num_recurrent_layers=1)
 
 
 @pytest.fixture(scope='function')

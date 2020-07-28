@@ -32,17 +32,16 @@ Train an agent to solve the Planar-3-Link task using Neural Fields and Hill Clim
 import torch as to
 
 from pyrado.algorithms.cem import CEM
-from pyrado.algorithms.hc import HCNormal
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
-from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKSim, Planar3LinkTASim
+from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim, Planar3LinkTASim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.neural_fields import NFPolicy
 
 
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(Planar3LinkTASim.name, HCNormal.name, f'{NFPolicy.name}_obsnorm', seed=101)
+    ex_dir = setup_experiment(Planar3LinkIKActivationSim.name, f'{CEM.name}_{NFPolicy.name}', seed=101)
 
     # Environment
     env_hparams = dict(
@@ -65,7 +64,7 @@ if __name__ == '__main__':
         observeTaskSpaceDiscrepancy=True,
     )
     env = Planar3LinkTASim(**env_hparams)
-    # env = Planar3LinkIKSim(**env_hparams)
+    # env = Planar3LinkIKActivationSim(**env_hparams)
     # eub = {
     #     'GD_DS0': 2.,
     #     'GD_DS1': 2.,
@@ -94,29 +93,20 @@ if __name__ == '__main__':
     print(policy)
 
     # Algorithm
-    # algo_hparam = dict(
-    #     max_iter=50,
-    #     pop_size=policy.num_param,
-    #     num_rollouts=1,
-    #     num_is_samples=policy.num_param//10,
-    #     expl_std_init=1.0,
-    #     expl_std_min=0.02,
-    #     extra_expl_std_init=0.5,
-    #     extra_expl_decay_iter=5,
-    #     full_cov=False,
-    #     symm_sampling=False,
-    #     num_sampler_envs=6,
-    # )
-    # algo = CEM(ex_dir, env, policy, **algo_hparam)
     algo_hparam = dict(
-        max_iter=100,
-        pop_size=5*policy.num_param,
-        expl_factor=1.05,
+        max_iter=50,
+        pop_size=policy.num_param,
         num_rollouts=1,
+        num_is_samples=policy.num_param//10,
         expl_std_init=1.0,
+        expl_std_min=0.02,
+        extra_expl_std_init=0.5,
+        extra_expl_decay_iter=5,
+        full_cov=False,
+        symm_sampling=False,
         num_sampler_envs=6,
     )
-    algo = HCNormal(ex_dir, env, policy, **algo_hparam)
+    algo = CEM(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml([

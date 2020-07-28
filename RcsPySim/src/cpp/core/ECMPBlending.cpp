@@ -30,20 +30,13 @@
 
 #include "ExperimentConfig.h"
 #include "action/AMIKControllerActivation.h"
-#include "action/AMJointControlPosition.h"
 #include "action/AMIntegrate2ndOrder.h"
 #include "action/AMDynamicalSystemActivation.h"
 #include "action/ActionModelIK.h"
 #include "initState/ISSMPBlending.h"
 #include "observation/OMBodyStateLinear.h"
 #include "observation/OMCombined.h"
-#include "observation/OMJointState.h"
 #include "observation/OMPartial.h"
-#include "observation/OMDynamicalSystemGoalDistance.h"
-#include "observation/OMForceTorque.h"
-#include "observation/OMCollisionCostPrediction.h"
-#include "observation/OMManipulabilityIndex.h"
-#include "observation/OMDynamicalSystemDiscrepancy.h"
 #include "physics/PhysicsParameterManager.h"
 #include "physics/PPDMassProperties.h"
 #include "physics/PPDMaterialProperties.h"
@@ -126,14 +119,11 @@ protected:
         
         else if (actionModelType == "ik_activation") {
             // Create the action model
-            auto amIK = new AMIKGeneric(graph);
-            std::vector<TaskGenericIK*> tasks;
-            
+            auto amIK = new AMIKControllerActivation(graph, tcm);
+            std::vector<Task*> tasks;
+    
             // Check if the tasks are defined on position or task level. Adapt their parameters if desired.
             if (properties->getPropertyBool("positionTasks", true)) {
-                // Override the action model
-                amIK = new AMIKControllerActivation(graph, tcm);
-                
                 RcsBody* goalLL = RcsGraph_getBodyByName(graph, "GoalLL");
                 RcsBody* goalUL = RcsGraph_getBodyByName(graph, "GoalUL");
                 RcsBody* goalLR = RcsGraph_getBodyByName(graph, "GoalLR");
@@ -150,7 +140,7 @@ protected:
                 tasks.emplace_back(new TaskPosition3D(graph, effector, goalUR, nullptr));
                 for (auto task : tasks) {
                     std::stringstream taskName;
-                    taskName << "Position " << i++ << " [m]";
+                    taskName << " Position " << i++ << " [m]";
                     task->resetParameter(
                         Task::Parameters(-1.2, 1.2, 1.0, static_cast<std::string>("X") + taskName.str()));
                     task->addParameter(
@@ -162,10 +152,14 @@ protected:
                 throw std::invalid_argument("The combination of velocity-based tasks and AMIKControllerActivation is"
                                             "not supported!");
             }
-            
+    
             // Add the tasks
             for (auto t : tasks) { amIK->addTask(t); }
-            
+    
+            // Set the tasks' desired states
+            std::vector<PropertySource*> taskSpec = properties->getChildList("taskSpecIK");
+            amIK->setXdesFromTaskSpec(taskSpec, tasks);
+    
             return amIK;
         }
         

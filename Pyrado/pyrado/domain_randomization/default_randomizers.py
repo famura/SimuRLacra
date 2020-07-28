@@ -84,7 +84,6 @@ def get_default_randomizer(env: [SimEnv, EnvWrapper]) -> DomainRandomizer:
         if dp:
             return dp()
     else:
-        # Not found
         raise ValueError(f'No default randomizer settings for env of type {env_type}!')
 
 
@@ -147,7 +146,7 @@ def get_default_randomizer_cata() -> DomainRandomizer:
 
     dp_nom = CatapultSim.get_nominal_domain_param()
     return DomainRandomizer(
-        NormalDomainParam(name='g', mean=dp_nom['g'], std=dp_nom['g']/5, clip_lo=1e-3),
+        NormalDomainParam(name='g', mean=dp_nom['g'], std=dp_nom['g']/10, clip_lo=1e-3),
         NormalDomainParam(name='k', mean=dp_nom['k'], std=dp_nom['k']/5, clip_lo=1e-3),
         NormalDomainParam(name='x', mean=dp_nom['x'], std=dp_nom['x']/5, clip_lo=1e-3)
     )
@@ -163,7 +162,7 @@ def get_default_randomizer_bob() -> DomainRandomizer:
     from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
     dp_nom = BallOnBeamSim.get_nominal_domain_param()
     return DomainRandomizer(
-        NormalDomainParam(name='g', mean=dp_nom['g'], std=dp_nom['g']/5, clip_lo=1e-4),
+        NormalDomainParam(name='g', mean=dp_nom['g'], std=dp_nom['g']/10, clip_lo=1e-4),
         NormalDomainParam(name='m_ball', mean=dp_nom['m_ball'], std=dp_nom['m_ball']/5, clip_lo=1e-4),
         NormalDomainParam(name='r_ball', mean=dp_nom['r_ball'], std=dp_nom['r_ball']/5, clip_lo=1e-4),
         NormalDomainParam(name='m_beam', mean=dp_nom['m_beam'], std=dp_nom['m_beam']/5, clip_lo=1e-3),
@@ -218,7 +217,7 @@ def get_default_randomizer_qbb() -> DomainRandomizer:
     from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
     dp_nom = QBallBalancerSim.get_nominal_domain_param()
     return DomainRandomizer(
-        NormalDomainParam(name=']', mean=dp_nom['g'], std=dp_nom['g']/5, clip_lo=1e-4),
+        NormalDomainParam(name=']', mean=dp_nom['g'], std=dp_nom['g']/10, clip_lo=1e-4),
         NormalDomainParam(name='m_ball', mean=dp_nom['m_ball'], std=dp_nom['m_ball']/5, clip_lo=1e-4),
         NormalDomainParam(name='r_ball', mean=dp_nom['r_ball'], std=dp_nom['r_ball']/5, clip_lo=1e-3),
         NormalDomainParam(name='l_plate', mean=dp_nom['l_plate'], std=dp_nom['l_plate']/5, clip_lo=5e-2),
@@ -252,7 +251,7 @@ def get_default_randomizer_qcp() -> DomainRandomizer:
     from pyrado.environments.pysim.quanser_cartpole import QCartPoleSim
     dp_nom = QCartPoleSim.get_nominal_domain_param(long=False)
     return DomainRandomizer(
-        NormalDomainParam(name='g', mean=dp_nom['g'], std=dp_nom['g']/5, clip_lo=1e-4),
+        NormalDomainParam(name='g', mean=dp_nom['g'], std=dp_nom['g']/10, clip_lo=1e-4),
         NormalDomainParam(name='m_cart', mean=dp_nom['m_cart'], std=dp_nom['m_cart']/5, clip_lo=1e-4),
         NormalDomainParam(name='m_pole', mean=dp_nom['m_pole'], std=dp_nom['m_pole']/5, clip_lo=1e-4),
         NormalDomainParam(name='l_rail', mean=dp_nom['l_rail'], std=dp_nom['l_rail']/5, clip_lo=1e-2),
@@ -269,7 +268,8 @@ def get_default_randomizer_qcp() -> DomainRandomizer:
     )
 
 
-@default_randomizer('pyrado.environments.pysim.quanser_qube', 'QQubeSim')
+@default_randomizer('pyrado.environments.pysim.quanser_qube', 'QQubeSwingUpSim')
+@default_randomizer('pyrado.environments.pysim.quanser_qube', 'QQubeStabSim')
 def get_default_randomizer_qq() -> DomainRandomizer:
     """
     Get the default randomizer for the `QQubeSim`.
@@ -279,15 +279,15 @@ def get_default_randomizer_qq() -> DomainRandomizer:
     from pyrado.environments.pysim.quanser_qube import QQubeSim
     dp_nom = QQubeSim.get_nominal_domain_param()
     return DomainRandomizer(
-        NormalDomainParam(name='g', mean=dp_nom['g'], std=dp_nom['g']/5, clip_lo=1e-3),
+        NormalDomainParam(name='g', mean=dp_nom['g'], std=dp_nom['g']/10, clip_lo=1e-3),
         NormalDomainParam(name='Rm', mean=dp_nom['Rm'], std=dp_nom['Rm']/5, clip_lo=1e-3),
         NormalDomainParam(name='km', mean=dp_nom['km'], std=dp_nom['km']/5, clip_lo=1e-4),
         NormalDomainParam(name='Mr', mean=dp_nom['Mr'], std=dp_nom['Mr']/5, clip_lo=1e-4),
         NormalDomainParam(name='Lr', mean=dp_nom['Lr'], std=dp_nom['Lr']/5, clip_lo=1e-4),
-        NormalDomainParam(name='Dr', mean=dp_nom['Dr'], std=dp_nom['Dr']/5, clip_lo=1e-9),
+        NormalDomainParam(name='Dr', mean=dp_nom['Dr'], std=dp_nom['Dr']/4, clip_lo=1e-9),
         NormalDomainParam(name='Mp', mean=dp_nom['Mp'], std=dp_nom['Mp']/5, clip_lo=1e-4),
         NormalDomainParam(name='Lp', mean=dp_nom['Lp'], std=dp_nom['Lp']/5, clip_lo=1e-4),
-        NormalDomainParam(name='Dp', mean=dp_nom['Dp'], std=dp_nom['Dp']/5, clip_lo=1e-9)
+        NormalDomainParam(name='Dp', mean=dp_nom['Dp'], std=dp_nom['Dp']/4, clip_lo=1e-9)
     )
 
 
@@ -354,8 +354,8 @@ def get_default_randomizer_pi() -> DomainRandomizer:
     )
 
 
-@default_randomizer('pyrado.environments.sim_rcs.box_shelving', 'BoxShelvingPosMPsSim')
-@default_randomizer('pyrado.environments.sim_rcs.box_shelving', 'BoxShelvingVelMPsSim')
+@default_randomizer('pyrado.environments.sim_rcs.box_shelving', 'BoxShelvingPosDSSim')
+@default_randomizer('pyrado.environments.sim_rcs.box_shelving', 'BoxShelvingVelDSSim')
 def get_default_randomizer_bs() -> DomainRandomizer:
     """
     Get the default randomizer for the `BoxShelvingSim`.
@@ -373,10 +373,10 @@ def get_default_randomizer_bs() -> DomainRandomizer:
     )
 
 
-@default_randomizer('pyrado.environments.sim_rcs.box_lifting', 'BoxLiftingPosMPsSim')
-@default_randomizer('pyrado.environments.sim_rcs.box_lifting', 'BoxLiftingVelMPsSim')
-@default_randomizer('pyrado.environments.sim_rcs.box_lifting', 'BoxLiftingSimplePosMPsSim')
-@default_randomizer('pyrado.environments.sim_rcs.box_lifting', 'BoxLiftingSimpleVelMPsSim')
+@default_randomizer('pyrado.environments.sim_rcs.box_lifting', 'BoxLiftingPosDSSim')
+@default_randomizer('pyrado.environments.sim_rcs.box_lifting', 'BoxLiftingVelDSSim')
+@default_randomizer('pyrado.environments.sim_rcs.box_lifting', 'BoxLiftingSimplePosDSSim')
+@default_randomizer('pyrado.environments.sim_rcs.box_lifting', 'BoxLiftingSimpleVelDSSim')
 def get_default_randomizer_bl() -> DomainRandomizer:
     """
     Get the default randomizer for the `BoxLifting`.
@@ -404,14 +404,15 @@ def get_default_randomizer_wambic() -> DomainRandomizer:
     return DomainRandomizer(
         # Ball needs to fit into the cup
         NormalDomainParam(name='cup_scale', mean=dp_nom['cup_scale'], std=dp_nom['cup_scale']/5, clip_lo=0.65),
-        # Rope won't be more than 5cm off
-        NormalDomainParam(name='rope_length', mean=dp_nom['rope_length'], std=dp_nom['rope_length']/20,
-                          clip_lo=0.25, clip_up=0.35),
+        # Rope won't be more than 3cm off
+        NormalDomainParam(name='rope_length', mean=dp_nom['rope_length'], std=dp_nom['rope_length']/30,
+                          clip_lo=0.27, clip_up=0.33),
         NormalDomainParam(name='ball_mass', mean=dp_nom['ball_mass'], std=dp_nom['ball_mass']/10, clip_lo=1e-2),
         UniformDomainParam(name='joint_damping', mean=dp_nom['joint_damping'], halfspan=dp_nom['joint_damping']/2,
                            clip_lo=0.),
         UniformDomainParam(name='joint_stiction', mean=dp_nom['joint_stiction'], halfspan=dp_nom['joint_stiction'],
                            clip_lo=0.),
+        UniformDomainParam(name='rope_damping', mean=dp_nom['rope_damping'], halfspan=5e-4, clip_lo=1e-6),
     )
 
 
@@ -462,6 +463,10 @@ def get_default_domain_param_map_qq() -> Dict[int, Tuple[str, str]]:
         5: ('Lp', 'std'),
         6: ('Lr', 'mean'),
         7: ('Lr', 'std'),
+        8: ('Dp', 'mean'),
+        9: ('Dp', 'std'),
+        10: ('Dr', 'mean'),
+        11: ('Dr', 'std'),
     }
 
 
@@ -483,4 +488,6 @@ def get_default_domain_param_map_wambic() -> Dict[int, Tuple[str, str]]:
         7: ('joint_damping', 'halfspan'),
         8: ('joint_stiction', 'mean'),
         9: ('joint_stiction', 'halfspan'),
+        10: ('rope_damping', 'mean'),
+        11: ('rope_damping', 'halfspan'),
     }

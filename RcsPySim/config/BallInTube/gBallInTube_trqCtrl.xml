@@ -57,45 +57,50 @@
     <Shape type="FRAME" scale="0.8"/>
   </Body>
 
-  <Body name="Tube" rigid_body_joints="1.25 0 0.78 0 0 0" physics="dynamic" color="WHITE" mass="10.">
-    <Shape type="BOX" extents="0.02 0.54 0.1" transform="0.36  -0.10 0.05 0 0 0" graphics="true" physics="true" material="tube_mat" color="LIGHTGRAY_TRANS"/> <!-- top -->
-    <Shape type="BOX" extents="0.02 0.2 0.1" transform="0.06  -0.25 0.05 0 0 0" graphics="true" physics="true" material="tube_mat" color="LIGHTGRAY_TRANS"/> <!-- top short -->
-    <Shape type="BOX" extents="0.3 0.02 0.1" transform="0.20  -0.36 0.05 0 0 0" graphics="true" physics="true" material="tube_mat" color="LIGHTGRAY_TRANS"/> <!-- right top -->
-    <Shape type="BOX" extents="0.24 0.02 0.1" transform="-0.23 -0.16 0.05 0 0 0" graphics="true" physics="true" material="tube_mat" color="LIGHTGRAY_TRANS"/> <!-- right lower lower -->
-    <Shape type="BOX" extents="0.12 0.02 0.1" transform="-0.01 -0.16 0.05 0 0 0" graphics="true" physics="true" material="tube_mat" color="LIGHTGRAY_TRANS"/> <!-- right lower upper -->
-    <Shape type="BOX" extents="0.7 0.02 0.1" transform="0.0   +0.16 0.05 0 0 0" graphics="true" physics="true" material="tube_mat" color="LIGHTGRAY_TRANS"/> <!-- left -->
+  <Body name="Tube" rigid_body_joints="1.25 0 0.78 0 0 0" physics="kinematic" color="WHITE" mass="100.">
+    <Shape type="BOX" extents="0.02 0.59 0.1" transform="0.36 -0.075 0.05 0 0 0" graphics="true" physics="true" distance="true" material="tube_mat" color="LIGHTGRAY_TRANS"/> <!-- top -->
+    <Shape type="BOX" extents="0.02 0.2 0.1" transform="0.06 -0.25 0.05 0 0 0" graphics="true" physics="true" distance="true" material="tube_mat" color="LIGHTGRAY_TRANS"/> <!-- top short -->
+    <Shape type="BOX" extents="0.3 0.02 0.1" transform="0.20 -0.36 0.05 0 0 0" graphics="true" physics="true" distance="true" material="tube_mat" color="LIGHTGRAY_TRANS"/> <!-- right top -->
+    <Shape type="BOX" extents="0.11 0.02 0.1" transform="-0.005 -0.16 0.05 0 0 0" graphics="true" physics="true" distance="true" material="tube_mat" color="LIGHTGRAY_TRANS"/> <!-- right lower upper -->
+    <Shape type="BOX" extents="0.24 0.02 0.1" transform="-0.23 -0.16 0.05 0 0 0" graphics="true" physics="true" distance="true" material="tube_mat" color="LIGHTGRAY_TRANS"/> <!-- right lower lower -->
+    <Shape type="BOX" extents="0.7 0.02 0.1" transform="0 0.21 0.05 0 0 0" graphics="true" physics="true" distance="true" material="tube_mat" color="LIGHTGRAY_TRANS"/> <!-- left -->
   </Body>
 
-  <Body name="Slider" rigid_body_joints="1.07 -0.35 0.83 0 0 0" physics="dynamic" color="WHITE" mass="2.">
-    <Shape type="BOX" extents="0.02 0.48 0.1" transform="0.09 0.24 0 0 0 0" graphics="true" physics="true" material="tube_mat" color="LIGHTGRAY_TRANS"/>
-    <Shape type="BOX" extents="0.1 0.02 0.1" transform="0.05 -0.01 0 0 0 0" graphics="true" physics="true" material="tube_mat" color="LIGHTGRAY_TRANS"/>
+  <Body name="Slider" rigid_body_joints="1.07 -0.35 0.83 0 0 0" physics="dynamic" color="WHITE" mass="1.">
+    <Shape type="BOX" extents="0.02 0.50 0.1" transform="0.09 0.25 0 0 0 0" graphics="true" distance="true" physics="true" material="tube_mat" color="LIGHTGRAY_TRANS"/>
+    <Shape type="BOX" extents="0.1 0.02 0.1" transform="0.05 -0.01 0 0 0 0" graphics="true" distance="true" physics="true" material="tube_mat" color="LIGHTGRAY_TRANS"/>
     <Shape type="FRAME" graphics="true" scale="0.2"/>
   </Body>
 
   <Body name="Ball" rigid_body_joints="1.45 -0.25 0.85 0 0 0" physics="dynamic" mass="0.3">
-    <Shape type="SPHERE" radius="0.04" color="RUBY_S" material="ball_mat" physics="true" graphics="true"/>
+    <Shape type="SPHERE" radius="0.04" color="RUBY_S" material="ball_mat" physics="true" distance="true" graphics="true"/>
     <Shape type="FRAME" graphics="true" scale="0.1"/>
   </Body>
 
+  <Body name="Goal" transform="1.05 0 0.82 0 0 0">
+    <Shape type="SPHERE" radius="0.01" graphics="true" physics="false" distance="false" color="JADE"/>
+  </Body>
+
   <model_state model="BallInTube" time_stamp="0">
-    <joint_state joint="lbr_joint_1_L" position="35"/>
-    <joint_state joint="lbr_joint_2_L" position="65"/>
-    <joint_state joint="lbr_joint_3_L" position="20"/>
-    <joint_state joint="lbr_joint_4_L" position="90"/>
-    <joint_state joint="lbr_joint_5_L" position="-20"/>
-    <joint_state joint="lbr_joint_6_L" position="-25"/>
-    <joint_state joint="lbr_joint_7_L" position="0"/>
+    <joint_state joint="DofBaseX" position="0.000"/>
+    <joint_state joint="DofBaseY" position="-0.000"/>
+    <joint_state joint="DofBaseThZ" position="-2.020"/>
+    <joint_state joint="DofChestZ" position="0.857"/>
 
-    <joint_state joint="lbr_joint_1_R" position="-35"/>
-    <joint_state joint="lbr_joint_2_R" position="-65"/>
-    <joint_state joint="lbr_joint_3_R" position="-20"/>
-    <joint_state joint="lbr_joint_4_R" position="-90"/>
-    <joint_state joint="lbr_joint_5_R" position="20"/>
-    <joint_state joint="lbr_joint_6_R" position="25"/>
-    <joint_state joint="lbr_joint_7_R" position="0"/>
-
-    <joint_state joint="DofBaseX" position="0.0"/>
-    <joint_state joint="DofChestZ" position="0.85"/>
+    <joint_state joint="lbr_joint_1_L" position="-27.472"/>
+    <joint_state joint="lbr_joint_2_L" position="65.325"/>
+    <joint_state joint="lbr_joint_3_L" position="19.218"/>
+    <joint_state joint="lbr_joint_4_L" position="69.800"/>
+    <joint_state joint="lbr_joint_5_L" position="-4.654"/>
+    <joint_state joint="lbr_joint_6_L" position="-4.251"/>
+    <joint_state joint="lbr_joint_7_L" position="23.153"/>
+    <joint_state joint="lbr_joint_1_R" position="13.822"/>
+    <joint_state joint="lbr_joint_2_R" position="-65.605"/>
+    <joint_state joint="lbr_joint_3_R" position="-28.454"/>
+    <joint_state joint="lbr_joint_4_R" position="-71.531"/>
+    <joint_state joint="lbr_joint_5_R" position="15.451"/>
+    <joint_state joint="lbr_joint_6_R" position="11.599"/>
+    <joint_state joint="lbr_joint_7_R" position="-15.912"/>
   </model_state>
 
 </Graph>

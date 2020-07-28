@@ -36,6 +36,7 @@ import pyrado
 from pyrado.algorithms.adr_discriminator import RewardGenerator
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.svpg import SVPG, SVPGParticle
+from pyrado.domain_randomization.domain_parameter import DomainParam
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.base import Env
@@ -77,32 +78,31 @@ class ADR(Algorithm):
                  num_sampler_envs: int = 4,
                  num_trajs_per_config: int = 8,
                  max_step_length: float = 0.05,
-                 randomized_params=None,
+                 randomized_params: Sequence[str] = None,
                  logger: StepLogger = None):
         """
         Constructor
 
-        TODO @Robin
         :param save_dir: directory to save the snapshots i.e. the results in
-        :param env:
+        :param env: the environment to train in
         :param subroutine: algorithm which performs the policy / value-function optimization
-        :param max_iter:
-        :param svpg_particle_hparam:
-        :param num_svpg_particles:
-        :param num_discriminator_epoch:
-        :param batch_size:
-        :param svpg_learning_rate:
-        :param svpg_temperature:
-        :param svpg_evaluation_steps:
-        :param svpg_horizon:
-        :param svpg_kl_factor:
-        :param svpg_warmup:
-        :param svpg_serial:
-        :param num_sampler_envs:
-        :param num_trajs_per_config:
-        :param max_step_length:
-        :param randomized_params:
-        :param logger:
+        :param max_iter: maximum number of iterations
+        :param svpg_particle_hparam: SVPG particle hyperparameters
+        :param num_svpg_particles: number of SVPG particles
+        :param num_discriminator_epoch: epochs in discriminator training
+        :param batch_size: batch size for training
+        :param svpg_learning_rate: SVPG particle optimizers' learning rate
+        :param svpg_temperature: SVPG temperature coefficient (how strong is the influence of the particles on each other)
+        :param svpg_evaluation_steps: how many configurations to sample between training
+        :param svpg_horizon: how many steps until the particles are reset
+        :param svpg_kl_factor: kl reward coefficient
+        :param svpg_warmup: number of iterations without SVPG training in the beginning
+        :param svpg_serial: serial mode (see SVPG)
+        :param num_sampler_envs: number of parallel sampling environments for the physics configs
+        :param num_trajs_per_config: number of trajectories to sample from each config
+        :param max_step_length: maximum change of physics parameters per step
+        :param randomized_params: which parameters to randomize
+        :param logger: see Logger
         """
         if not isinstance(env, Env):
             raise pyrado.TypeErr(given=env, expected_type=Env)
@@ -131,8 +131,10 @@ class ADR(Algorithm):
         self.svpg_kl_factor = svpg_kl_factor
 
         # Get the number of params
-        self.params = self.PhysicsParameters(env, randomized_params)
-        self.num_params = self.params.length
+        if (isinstance(randomized_params, list) and len(randomized_params) == 0):
+            randomized_params = inner_env(self.env).get_nominal_domain_param().keys()
+        self.params = [DomainParam(param, 1) for param in randomized_params]
+        self.num_params = len(self.params)
 
         # Initialize the sampler
         self.pool = SamplerPool(num_sampler_envs)
@@ -181,13 +183,13 @@ class ADR(Algorithm):
 
     def compute_params(self, sim_instances: to.Tensor, t: int):
         """
-        TODO add doc
+        Computes the parameters
 
-        :param sim_instances:
-        :param t:
-        :return:
+        :param sim_instances: Physics configurations trajectory
+        :param t: time step to chose
+        :return: parameters at the time
         """
-        nominal = self.params.nominal_dict
+        nominal = self.svpg_wrapper.nominal_dict()
         keys = nominal.keys()
         assert (len(keys) == sim_instances[t][0].shape[0])
 
@@ -214,7 +216,6 @@ class ADR(Algorithm):
             rewards = []
             infos = []
             rand_trajs_now = []
-            ref_trajs_now = []
             if parallel:
                 with to.no_grad():
                     for t in range(10):
@@ -305,52 +306,18 @@ class ADR(Algorithm):
             # This algorithm instance is a subroutine of a meta-algorithm
             raise NotImplementedError
 
-    class PhysicsParameters:
-        def __init__(self, env, params: Sequence[str] = None):
-            self._params = None
-            if isinstance(params, list) and len(params) == 0:
-                params = None
-            self._all_nominal = inner_env(env).get_nominal_domain_param()
-            if params is not None:
-                self.params = params
-            else:
-                self.params = self._all_nominal.keys()
-
-        @property
-        def length(self):
-            return len(self.params)
-
-        @property
-        def params(self):
-            return self._params
-
-        @params.setter
-        def params(self, new_params):
-            self._params = new_params
-
-        @property
-        def nominal(self):
-            return [self._all_nominal[k] for k in self._params]
-
-        @property
-        def nominal_dict(self):
-            return {k: self._all_nominal[k] for k in self._params}
-
-        def array_to_dict(self, arr):
-            return {k: a for k, a in zip(self._params, arr)}
-
 
 class SVPGAdapter(EnvWrapper, Serializable):
-    """ Wrapper to encapsulate the physics parameter search as a reinforcement learning problem """
+    """ Wrapper to encapsulate the domain parameter search as a reinforcement learning problem """
 
     def __init__(self,
                  wrapped_env: Env,
-                 parameters: ADR.PhysicsParameters,
+                 parameters: Sequence[DomainParam],
                  inner_policy: Policy,
                  discriminator: RewardGenerator,
-                 step_length=0.01,
-                 horizon=50,
-                 num_trajs_per_config=8,
+                 step_length: float = 0.01,
+                 horizon: int = 50,
+                 num_trajs_per_config: int = 8,
                  num_sampler_envs: int = 4):
         """
         Constructor
@@ -365,8 +332,10 @@ class SVPGAdapter(EnvWrapper, Serializable):
         :param num_sampler_envs: the number of samplers operating in parallel
         """
         Serializable._init(self, locals())
+
         EnvWrapper.__init__(self, wrapped_env)
-        self.parameters = parameters
+
+        self.parameters: Sequence[DomainParam] = parameters
         self.pool = SamplerPool(num_sampler_envs)
         self.inner_policy = inner_policy
         self.state = None
@@ -375,10 +344,9 @@ class SVPGAdapter(EnvWrapper, Serializable):
         self.svpg_max_step_length = step_length
         self.discriminator = discriminator
         self.max_steps = 8
-        self._adapter_obs_space = BoxSpace(-np.ones(self.parameters.length), np.ones(self.parameters.length))
-        self._adapter_act_space = BoxSpace(-np.ones(self.parameters.length), np.ones(self.parameters.length))
+        self._adapter_obs_space = BoxSpace(-np.ones(len(parameters)), np.ones(len(parameters)))
+        self._adapter_act_space = BoxSpace(-np.ones(len(parameters)), np.ones(len(parameters)))
         self.horizon = horizon
-
         self.horizon_count = 0
 
     @property
@@ -393,18 +361,18 @@ class SVPGAdapter(EnvWrapper, Serializable):
         assert domain_param is None
         self.count = 0
         if init_state is None:
-            self.state = np.random.random_sample(self.parameters.length)
+            self.state = np.random.random_sample(len(self.parameters))
         return self.state
 
     def step(self, act: np.ndarray):
-        # clip the action according to the maximum step length
+        # Clip the action according to the maximum step length
         action = np.clip(act, -1, 1)*self.svpg_max_step_length
 
-        # perform step by moving into direction of action
+        # Perform step by moving into direction of action
         self.state = np.clip(self.state + action, 0, 1)
         param_norm = self.state + 0.5
-        rand_eval_params = [self.parameters.array_to_dict(param_norm*self.parameters.nominal)]*self.num_trajs
-        norm_eval_params = [self.parameters.nominal_dict]*self.num_trajs
+        rand_eval_params = [self.array_to_dict(param_norm*self.nominal())]*self.num_trajs
+        norm_eval_params = [self.nominal_dict()]*self.num_trajs
         rand = eval_domain_params(self.pool, self.wrapped_env, self.inner_policy, rand_eval_params)
         ref = eval_domain_params(self.pool, self.wrapped_env, self.inner_policy, norm_eval_params)
         rewards = [self.discriminator.get_reward(traj) for traj in rand]
@@ -419,6 +387,7 @@ class SVPGAdapter(EnvWrapper, Serializable):
         if self.horizon_count >= self.horizon:
             self.horizon_count = 0
             self.state = np.random.random_sample(self.parameters.length)
+
         return self.state, reward, done, info
 
     def lite_step(self, act: np.ndarray):
@@ -442,12 +411,24 @@ class SVPGAdapter(EnvWrapper, Serializable):
         """
         flatten = lambda l: [item for sublist in l for item in sublist]
         sstates = flatten([
-            [self.parameters.array_to_dict((state + 0.5)*self.parameters.nominal)]*self.num_trajs
+            [self.array_to_dict((state + 0.5)*self.nominal())]*self.num_trajs
             for state in states]
         )
         rand = eval_domain_params(self.pool, self.wrapped_env, self.inner_policy, sstates)
         ref = eval_domain_params(self.pool, self.wrapped_env, self.inner_policy,
-                                 [self.parameters.nominal_dict]*(self.num_trajs*len(states)))
+                                 [self.nominal_dict()]*(self.num_trajs*len(states)))
         rewards = [self.discriminator.get_reward(traj) for traj in rand]
         rewards = [np.mean(rewards[i*self.num_trajs:(i + 1)*self.num_trajs]) for i in range(len(states))]
         return rewards, rand, ref
+
+    def params(self):
+        return [param.name for param in self.parameters]
+
+    def nominal(self):
+        return [inner_env(self.wrapped_env).get_nominal_domain_param()[k] for k in self.params()]
+
+    def nominal_dict(self):
+        return {k: inner_env(self.wrapped_env).get_nominal_domain_param()[k] for k in self.params()}
+
+    def array_to_dict(self, arr):
+        return {k: a for k, a in zip(self.params(), arr)}

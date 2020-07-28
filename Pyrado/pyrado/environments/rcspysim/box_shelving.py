@@ -134,7 +134,7 @@ class BoxShelvingSim(RcsSim, Serializable):
                     box_friction_coefficient=0.8)
 
 
-class BoxShelvingPosMPsSim(BoxShelvingSim, Serializable):
+class BoxShelvingPosDSSim(BoxShelvingSim, Serializable):
     """ Humanoid robot putting a box into a shelve using one arm and position-level movement primitives """
 
     name: str = 'bs-pos'
@@ -214,7 +214,7 @@ class BoxShelvingPosMPsSim(BoxShelvingSim, Serializable):
         )
 
 
-class BoxShelvingVelMPsSim(BoxShelvingSim, Serializable):
+class BoxShelvingVelDSSim(BoxShelvingSim, Serializable):
     """ Humanoid robot putting a box into a shelve using one arm and velocity-level movement primitives """
 
     name: str = 'bs-vel'

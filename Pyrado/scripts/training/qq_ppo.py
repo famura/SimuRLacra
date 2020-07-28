@@ -27,67 +27,75 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the WAM Ball-in-cup environment using Policy learning by Weighting Exploration with the Returns.
+Learn the domain parameter distribution of masses and lengths of the Quanser Qube while using a handcrafted
+randomization for the remaining domain parameters
 """
-import numpy as np
-import os.path as osp
 import torch as to
 
-from pyrado.algorithms.cem import CEM
-from pyrado.domain_randomization.domain_parameter import UniformDomainParam, NormalDomainParam
-from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
+from pyrado.algorithms.advantage import GAE
+from pyrado.spaces import ValueFunctionSpace
+from pyrado.algorithms.ppo import PPO
+from pyrado.domain_randomization.default_randomizers import get_default_randomizer
+from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
-from pyrado.environments.mujoco.wam import WAMBallInCupSim
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
+from pyrado.algorithms.bayrn import BayRn
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.environment_specific import DualRBFLinearPolicy
+from pyrado.policies.fnn import FNNPolicy
+from pyrado.policies.rnn import LSTMPolicy, GRUPolicy
+from pyrado.utils.data_types import EnvSpec
 
 
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(WAMBallInCupSim.name, f'{CEM.name}_{DualRBFLinearPolicy.name}', '4dof_rand', seed=1001)
-    # ex_dir = setup_experiment(WAMBallInCupSim.name, f'{CEM.name}_{DualRBFLinearPolicy.name}', 'rand', seed=1001)
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'udr_{FNNPolicy.name}', '100Hz', seed=111)
+    # ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{PPO.name}_{FNNPolicy.name}', '100Hz', seed=111)
 
     # Environment
-    env_hparams = dict(
-        num_dof=4,
-        max_steps=1750,
-        task_args=dict(final_factor=0.5),
-        fixed_initial_state=False
-    )
-    env = WAMBallInCupSim(**env_hparams)
+    env_hparams = dict(dt=1/100., max_steps=600)
+    env = QQubeSwingUpSim(**env_hparams)
+    env = ActNormWrapper(env)
 
-    # Randomizer
-    randomizer = DomainRandomizer(
-        UniformDomainParam(name='cup_scale', mean=0.95, halfspan=0.05),
-        NormalDomainParam(name='rope_length', mean=0.3, std=0.005),
-        NormalDomainParam(name='ball_mass', mean=0.021, std=0.001),
-        UniformDomainParam(name='joint_damping', mean=0.05, halfspan=0.05),
-        UniformDomainParam(name='joint_stiction', mean=0.1, halfspan=0.1),
-    )
+    randomizer = get_default_randomizer(env)
     env = DomainRandWrapperLive(env, randomizer)
 
     # Policy
-    policy_hparam = dict(
-        rbf_hparam=dict(num_feat_per_dim=8, bounds=(0., 1.), scale=None),
-        dim_mask=2
-    )
-    policy = DualRBFLinearPolicy(env.spec, **policy_hparam)
+    policy_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)  # FNN
+    # policy_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
+    policy = FNNPolicy(spec=env.spec, **policy_hparam)
+    # policy = RNNPolicy(spec=env.spec, **policy_hparam)
+    # policy = LSTMPolicy(spec=env.spec, **policy_hparam)
+    # policy = GRUPolicy(spec=env.spec, **policy_hparam)
 
-    # Algorithm
-    algo_hparam = dict(
-        max_iter=100,
-        pop_size=200,
-        num_rollouts=1,
-        num_is_samples=10,
-        expl_std_init=np.pi/12,
-        expl_std_min=0.02,
-        extra_expl_std_init=np.pi/6,
-        extra_expl_decay_iter=10,
-        full_cov=False,
-        symm_sampling=False,
-        num_sampler_envs=8,
+    # Critic
+    value_fcn_hparam = dict(hidden_sizes=[16, 16], hidden_nonlin=to.tanh)  # FNN
+    # value_fcn_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
+    value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
+    # value_fcn = GRUPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
+    critic_hparam = dict(
+        gamma=0.9885,
+        lamda=0.9648,
+        num_epoch=2,
+        batch_size=60,
+        standardize_adv=False,
+        lr=5.792e-4,
+        max_grad_norm=1.,
     )
-    algo = CEM(ex_dir, env, policy, **algo_hparam)
+    critic = GAE(value_fcn, **critic_hparam)
+
+    # Subroutine
+    algo_hparam = dict(
+        max_iter=600,
+        min_steps=23*env.max_steps,
+        num_sampler_envs=8,
+        num_epoch=7,
+        eps_clip=0.0744,
+        batch_size=60,
+        std_init=0.9074,
+        lr=3.446e-04,
+        max_grad_norm=1.,
+    )
+    algo = PPO(ex_dir, env, policy, critic, **algo_hparam)
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml([
@@ -98,4 +106,4 @@ if __name__ == '__main__':
     )
 
     # Jeeeha
-    algo.train(seed=ex_dir.seed, snapshot_mode='best')
+    algo.train(snapshot_mode='latest', seed=ex_dir.seed)

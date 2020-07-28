@@ -170,7 +170,7 @@ class BoxLiftingSim(RcsSim, Serializable):
                     basket_friction_coefficient=0.6)
 
 
-class BoxLiftingPosMPsSim(BoxLiftingSim, Serializable):
+class BoxLiftingPosDSSim(BoxLiftingSim, Serializable):
     """ Humanoid robot lifting a box out of a basket using two arms and position-level movement primitives """
 
     name: str = 'bl-pos'
@@ -259,7 +259,7 @@ class BoxLiftingPosMPsSim(BoxLiftingSim, Serializable):
         )
 
 
-class BoxLiftingVelMPsSim(BoxLiftingSim, Serializable):
+class BoxLiftingVelDSSim(BoxLiftingSim, Serializable):
     """ Humanoid robot lifting a box out of a basket using two arms and velocity-level movement primitives """
 
     name: str = 'bl-vel'
@@ -429,7 +429,7 @@ class BoxLiftingSimpleSim(RcsSim, Serializable):
                     basket_friction_coefficient=0.9)
 
 
-class BoxLiftingSimplePosMPsSim(BoxLiftingSimpleSim, Serializable):
+class BoxLiftingSimplePosDSSim(BoxLiftingSimpleSim, Serializable):
     """ Simplified robotic manipulator turning a box in a basket using position-level movement primitives """
 
     name: str = 'bls-pos'
@@ -485,7 +485,7 @@ class BoxLiftingSimplePosMPsSim(BoxLiftingSimpleSim, Serializable):
         )
 
 
-class BoxLiftingSimpleVelMPsSim(BoxLiftingSimpleSim, Serializable):
+class BoxLiftingSimpleVelDSSim(BoxLiftingSimpleSim, Serializable):
     """ Simplified robotic manipulator turning a box in a basket using velocity-level movement primitives """
 
     name: str = 'bls-vel'

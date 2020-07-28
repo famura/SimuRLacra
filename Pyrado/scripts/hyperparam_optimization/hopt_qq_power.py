@@ -37,7 +37,7 @@ from optuna.pruners import MedianPruner
 import pyrado
 from pyrado.algorithms.power import PoWER
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.environments.pysim.quanser_qube import QQubeSim
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import save_list_of_dicts_to_yaml, setup_experiment
 from pyrado.logger.step import create_csv_step_logger
 from pyrado.policies.features import FeatureStack, identity_feat, sign_feat, abs_feat, squared_feat, \
@@ -64,7 +64,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: [int, None]):
 
     # Environment
     env_hparams = dict(dt=1/250., max_steps=1500)
-    env = QQubeSim(**env_hparams)
+    env = QQubeSwingUpSim(**env_hparams)
     env = ActNormWrapper(env)
 
     # Policy
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    ex_dir = setup_experiment('hyperparams', QQubeSim.name, 'power_lin_actnorm', seed=args.seed)
+    ex_dir = setup_experiment('hyperparams', QQubeSwingUpSim.name, 'power_lin_actnorm', seed=args.seed)
 
     # Run hyper-parameter optimization
     name = f'{ex_dir.algo_name}_{ex_dir.add_info}'  # e.g. qq_ppo_fnn_actnorm

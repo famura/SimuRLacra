@@ -36,7 +36,8 @@ import torch as to
 import rcsenv
 import pyrado
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
-from pyrado.environments.rcspysim.planar_3_link import Planar3LinkJointCtrlSim, Planar3LinkIKSim, Planar3LinkTASim
+from pyrado.environments.rcspysim.planar_3_link import Planar3LinkJointCtrlSim, Planar3LinkIKActivationSim, \
+    Planar3LinkTASim
 from pyrado.domain_randomization.utils import print_domain_params
 from pyrado.plotting.rollout_based import plot_potentials
 from pyrado.policies.adn import ADNPolicy, pd_cubic
@@ -73,7 +74,7 @@ def create_joint_control_setup(dt, max_steps, max_dist_force, physics_engine):
 
 def create_ik_activation_setup(dt, max_steps, max_dist_force, physics_engine):
     # Set up environment
-    env = Planar3LinkIKSim(
+    env = Planar3LinkIKActivationSim(
         physicsEngine=physics_engine,
         dt=dt,
         max_steps=max_steps,

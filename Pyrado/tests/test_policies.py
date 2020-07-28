@@ -212,10 +212,10 @@ def test_rbf_feat_batched(batch_size, obs_dim, num_feat_per_dim, bounds):
 @pytest.mark.parametrize(
     'env', [
         lazy_fixture('default_bob'),
-        lazy_fixture('default_qq'),
+        lazy_fixture('default_qqsu'),
         lazy_fixture('default_qbb'),
         pytest.param(lazy_fixture('default_bop5d_bt'), marks=m_needs_bullet),
-    ], ids=['bob', 'qq', 'qbb', 'bop5D']
+    ], ids=['bob', 'qq-st', 'qbb', 'bop5D']
 )
 @pytest.mark.parametrize(
     'num_feat_per_dim', [4, 100], ids=['4', '100']
@@ -234,10 +234,10 @@ def test_rff_policy_serial(env, num_feat_per_dim):
 @pytest.mark.parametrize(
     'env', [
         lazy_fixture('default_bob'),
-        lazy_fixture('default_qq'),
+        lazy_fixture('default_qqsu'),
         lazy_fixture('default_qbb'),
         pytest.param(lazy_fixture('default_bop5d_bt'), marks=m_needs_bullet),
-    ], ids=['bob', 'qq', 'qbb', 'bop5D']
+    ], ids=['bob', 'qq-su', 'qbb', 'bop5D']
 )
 @pytest.mark.parametrize(
     'batch_size, num_feat_per_dim', [
@@ -259,10 +259,10 @@ def test_rff_policy_batch(env, batch_size, num_feat_per_dim):
 @pytest.mark.parametrize(
     'env', [
         lazy_fixture('default_bob'),
-        lazy_fixture('default_qq'),
+        lazy_fixture('default_qqsu'),
         lazy_fixture('default_qbb'),
         pytest.param(lazy_fixture('default_bop5d_bt'), marks=m_needs_bullet),
-    ], ids=['bob', 'qq', 'qbb', 'bop5D']
+    ], ids=['bob', 'qq-su', 'qbb', 'bop5D']
 )
 @pytest.mark.parametrize(
     'num_feat_per_dim', [4, 100], ids=['4', '100']
@@ -281,10 +281,10 @@ def test_rfb_policy_serial(env, num_feat_per_dim):
 @pytest.mark.parametrize(
     'env', [
         lazy_fixture('default_bob'),
-        lazy_fixture('default_qq'),
+        lazy_fixture('default_qqsu'),
         lazy_fixture('default_qbb'),
         pytest.param(lazy_fixture('default_bop5d_bt'), marks=m_needs_bullet),
-    ], ids=['bob', 'qq', 'qbb', 'bop5D']
+    ], ids=['bob', 'qq-su', 'qbb', 'bop5D']
 )
 @pytest.mark.parametrize(
     'batch_size, num_feat_per_dim', [
@@ -379,7 +379,7 @@ def test_time_policy_one_step(env, policy):
     assert isinstance(act, to.Tensor)
 
 
-@pytest.mark.recurrentpolicy
+@pytest.mark.recurrent_policy
 @pytest.mark.parametrize(
     'env', [
         lazy_fixture('default_bob'),

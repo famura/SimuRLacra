@@ -121,8 +121,7 @@ namespace Rcs
 {
 ActionModelIK::ActionModelIK(RcsGraph* graph) : ActionModel(graph), alpha(1e-4), lambda(1e-6)
 {
-    // Create controller using a separate graph.
-    // that graph will later hold the desired state.
+    // Create controller using a separate graph. That graph will later hold the desired state.
     desiredGraph = RcsGraph_clone(graph);
     controller = new ControllerBase(desiredGraph);
     
@@ -141,11 +140,11 @@ ActionModelIK::ActionModelIK(RcsGraph* graph) : ActionModel(graph), alpha(1e-4),
 
 ActionModelIK::ActionModelIK(RcsGraph* graph, std::vector<Task*> tasks) : ActionModelIK(graph)
 {
-    // populate tasks
+    // Populate tasks
     for (auto task : tasks) {
         addTask(task);
     }
-    // create solver eagerly
+    // Create solver eagerly
     reset();
 }
 

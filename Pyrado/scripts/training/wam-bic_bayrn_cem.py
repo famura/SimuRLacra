@@ -46,11 +46,12 @@ from pyrado.policies.environment_specific import DualRBFLinearPolicy
 
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
-    # ex_dir = setup_experiment(WAMBallInCupSim.name, f'{BayRn.name}_{CEM.name}', 'dr_rl_jd', seed=1001)
-    ex_dir = setup_experiment(WAMBallInCupSim.name, f'{BayRn.name}_{CEM.name}-sim2sim', 'dr_rl_jd', seed=1001)
+    # ex_dir = setup_experiment(WAMBallInCupSim.name, f'{BayRn.name}_{CEM.name}', 'rand-rl-jd', seed=1001)
+    ex_dir = setup_experiment(WAMBallInCupSim.name, f'{BayRn.name}_{CEM.name}_sim2sim', 'rand-rl-jd', seed=1001)
 
     # Environments
     env_hparams = dict(
+        num_dof=4,
         max_steps=1500,
         fixed_initial_state=False,
         task_args=dict(final_factor=0.05)
@@ -85,9 +86,7 @@ if __name__ == '__main__':
     )
     policy = DualRBFLinearPolicy(env_sim.spec, **policy_hparam)
     # policy_init = to.load(osp.join(pyrado.EXP_DIR, WAMBallInCupSim.name, CEM.name,
-    #                                # '2020-06-08_13-04-04--dr_cs_rl--swingfrombelow',
-    #                                # '2020-06-08_13-04-04--dr-cs-rl_firstupthendown',
-    #                                '2020-06-22_10-41-26--catchbelow', 'policy.pt'))
+    #                                'EXP_NAME', 'policy.pt'))
 
     # Subroutine
     subroutine_hparam = dict(
@@ -123,12 +122,12 @@ if __name__ == '__main__':
     save_list_of_dicts_to_yaml([
         dict(env=env_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
-        dict(subroutine=subroutine_hparam, subroutine_name=CEM.name),
+        dict(subrtrn=subroutine_hparam, subrtrn_name=CEM.name),
         dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map)],
         ex_dir
     )
 
-    algo = BayRn(ex_dir, env_sim, env_real, subroutine=cem, bounds=bounds, **bayrn_hparam)
+    algo = BayRn(ex_dir, env_sim, env_real, subrtn=cem, bounds=bounds, **bayrn_hparam)
 
     # Jeeeha
     algo.train(snapshot_mode='latest', seed=ex_dir.seed)

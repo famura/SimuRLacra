@@ -157,20 +157,21 @@ class SVPG(Algorithm):
         # Store the inputs
         self._env = env
         self.num_particles = num_particles
-        self.horizon = horizon  # TODO @Robin: where is the horizon used?!
+        self.horizon = horizon
         self.lr = lr
         self.temperature = temperature
         self.serial = serial
 
         # Prepare placeholders for particles
         self.particles = [None]*num_particles
+        self.particleSteps = [None]*num_particles
         self.expl_strats = [None]*num_particles
         self.optimizers = [None]*num_particles
         self.fixed_particles = [None]*num_particles
         self.fixed_expl_strats = [None]*num_particles
         self.samplers = [None]*num_particles
         self.count = 0
-        self.updatecount = 0
+        self.update_count = 0
 
         # Particle factory
         actor = FNNPolicy(spec=env.spec, **particle_hparam['actor'])
@@ -185,6 +186,7 @@ class SVPG(Algorithm):
             self.optimizers[i] = to.optim.Adam(self.expl_strats[i].parameters(), lr=self.lr)
             self.fixed_particles[i] = deepcopy(self.particles[i])
             self.fixed_expl_strats[i] = deepcopy(self.expl_strats[i])
+            self.particleSteps[i] = 0
 
             if self.serial:
                 self.samplers[i] = ParallelSampler(
@@ -204,6 +206,10 @@ class SVPG(Algorithm):
             # ro_concat.torch(data_type=to.get_default_dtype())
             ros_all_particles.append(ros_one_particle)
             rets_all_particles.append(np.array([ro.undiscounted_return() for ro in ros_one_particle]))
+            self.particleSteps[i] = + 1
+            if self.horizon != 0 and (self.particleSteps[i] > self.horizon):
+                self.particles[i].init_param()
+                self.particleSteps[i] = 0
 
         # Logging
         num_ros_all_prtcls = np.array([len(p) for p in ros_all_particles])
@@ -300,7 +306,7 @@ class SVPG(Algorithm):
         for i in range(self.num_particles):
             self.expl_strats[i].param_grad = grad_theta[i]
             self.optimizers[i].step()
-        self.updatecount += 1
+        self.update_count += 1
 
     def save_snapshot(self, meta_info: dict = None):
         if meta_info is None:

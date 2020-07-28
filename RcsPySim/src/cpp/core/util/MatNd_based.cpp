@@ -30,10 +30,19 @@
 
 #include "MatNd_based.h"
 
+#include <Rcs_macros.h>
 #include <Rcs_MatNd.h>
 
 #include <algorithm>
 #include <vector>
+
+
+void MatNd_checkShapeEq(MatNd* m1, MatNd* m2)
+{
+    RCHECK_MSG((m1->m == m2->m) && (m1->n == m2->n),
+               "Shape mismatch between two MatNds: %d x %d != %d x %d",
+               m1->m, m1->n, m2->m, m2->n);
+}
 
 
 void findAllBitCombinations(MatNd* allComb)

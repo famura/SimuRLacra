@@ -31,7 +31,8 @@ Script to test the bi-manual ball-in-tube task using a hard-coded time-based pol
 """
 import rcsenv
 import pyrado
-from pyrado.environments.rcspysim.ball_in_tube import BallInTubeVelMPsSim, BallInTubePosMPsSim, BallInTubeIKSim
+from pyrado.environments.rcspysim.ball_in_tube import BallInTubeVelDSSim, BallInTubePosDSSim, BallInTubeIKActivationSim, \
+    BallInTubeIKSim
 from pyrado.policies.dummy import IdlePolicy
 from pyrado.policies.time import TimePolicy
 from pyrado.sampling.rollout import rollout, after_rollout_query
@@ -39,12 +40,12 @@ from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt
 
 
-rcsenv.setLogLevel(1)
+rcsenv.setLogLevel(4)
 
 
 def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     # Set up environment
-    env = BallInTubeVelMPsSim(
+    env = BallInTubeVelDSSim(
         physicsEngine=physicsEngine,
         graphFileName=graphFileName,
         dt=dt,
@@ -52,7 +53,6 @@ def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, ch
         mps_left=None,  # use defaults
         mps_right=None,  # use defaults
         ref_frame=ref_frame,
-        collisionConfig={'file': 'collisionModel.xml'},
         checkJointLimits=checkJointLimits,
     )
     env.reset(domain_param=env.get_nominal_domain_param())
@@ -63,9 +63,14 @@ def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, ch
     return env, policy
 
 
-def create_ik_activation_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
+def create_ik_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     def policy(t: float):
-        return [0.2]
+        if t < 2:
+            return [0.001, 0.001, 0.001, 0.002, 0.002, 0.002,
+                    0.001, 0.001, 0.001, 0.002, 0.002, 0.002]
+        else:
+            return [0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0]
 
     # Set up environment
     env = BallInTubeIKSim(
@@ -76,10 +81,55 @@ def create_ik_activation_setup(physicsEngine, graphFileName, dt, max_steps, ref_
         max_steps=max_steps,
         fixed_init_state=True,
         ref_frame=ref_frame,
-        collisionConfig={'file': 'collisionModel.xml'},
+        checkJointLimits=checkJointLimits,
+        collisionAvoidanceIK=True,
+        observeVelocity=False,
+        observeCollisionCost=True,
+        observePredictedCollisionCost=True,
+        observeManipulabilityIndex=True,
+        observeCurrentManipulability=True,
+        observeTaskSpaceDiscrepancy=True,
+    )
+
+    # Set up policy
+    policy = TimePolicy(env.spec, policy, dt)
+
+    return env, policy
+
+
+def create_ik_activation_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
+    def policy(t: float):
+        if t < 3:
+            return [0, 0, 0.1,
+                    0, 0, 0, 0.1]
+        elif t < 5:
+            return [0, 0, 0.001,
+                    0, 0.3, 0, 0.001]
+        elif t < 7:
+            return [0, 0, 0.001,
+                    0, 0, 1, 0.001]
+        elif t < 12:
+            return [0, 1, 0.001,
+                    0, 0, 0, 0.001]
+        elif t < 15:
+            return [1, 0, 0,
+                    1, 0, 0, 0]
+        else:
+            return [0, 0, 0,
+                    0, 0, 0, 0]
+
+    # Set up environment
+    env = BallInTubeIKActivationSim(
+        usePhysicsNode=True,
+        physicsEngine=physicsEngine,
+        graphFileName=graphFileName,
+        dt=dt,
+        max_steps=max_steps,
+        fixed_init_state=True,
+        ref_frame=ref_frame,
         taskCombinationMethod='sum',
         checkJointLimits=checkJointLimits,
-        collisionAvoidanceIK=False,
+        collisionAvoidanceIK=True,
         observeVelocity=False,
         observeCollisionCost=True,
         observePredictedCollisionCost=False,
@@ -100,7 +150,7 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
                 0.5, 0]
 
     # Set up environment
-    env = BallInTubePosMPsSim(
+    env = BallInTubePosDSSim(
         usePhysicsNode=True,
         physicsEngine=physicsEngine,
         graphFileName=graphFileName,
@@ -110,7 +160,6 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         mps_left=None,  # use defaults
         mps_right=None,  # use defaults
         ref_frame=ref_frame,
-        collisionConfig={'file': 'collisionModel.xml'},
         taskCombinationMethod='sum',
         checkJointLimits=checkJointLimits,
         collisionAvoidanceIK=False,
@@ -136,7 +185,7 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
                 1, 1, 1, 1, 1, 1]
 
     # Set up environment
-    env = BallInTubeVelMPsSim(
+    env = BallInTubeVelDSSim(
         usePhysicsNode=True,
         physicsEngine=physicsEngine,
         graphFileName=graphFileName,
@@ -146,7 +195,6 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         mps_left=None,  # use defaults
         mps_right=None,  # use defaults
         ref_frame=ref_frame,
-        collisionConfig={'file': 'collisionModel.xml'},
         taskCombinationMethod='sum',
         checkJointLimits=checkJointLimits,
         collisionAvoidanceIK=False,
@@ -169,7 +217,7 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
 
 if __name__ == '__main__':
     # Choose setup
-    setup_type = 'ik_activation'  # idle, ik_activation, ds_activation_pos, ds_activation_vel
+    setup_type = 'ik_activation'  # idle, ik, ik_activation, ds_activation_pos, ds_activation_vel
     common_hparam = dict(
         physicsEngine='Bullet',  # Bullet or Vortex
         graphFileName='gBallInTube_trqCtrl.xml',  # gBallInTube_trqCtrl
@@ -180,6 +228,8 @@ if __name__ == '__main__':
     )
     if setup_type == 'idle':
         env, policy = create_idle_setup(**common_hparam)
+    elif setup_type == 'ik':
+        env, policy = create_ik_setup(**common_hparam)
     elif setup_type == 'ik_activation':
         env, policy = create_ik_activation_setup(**common_hparam)
     elif setup_type == 'ds_activation_pos':

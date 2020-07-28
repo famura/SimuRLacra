@@ -35,7 +35,7 @@ from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from tests.environment_wrappers.mock_env import MockEnv
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 def test_no_downsampling():
     mockenv = MockEnv(act_space=BoxSpace(-1, 1, shape=(2,)), obs_space=BoxSpace(-1, 1, shape=(2,)))
     wenv = DownsamplingWrapper(mockenv, factor=1)
@@ -47,7 +47,7 @@ def test_no_downsampling():
     assert mockenv.last_act == [7, 5]
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 def test_act_downsampling():
     mockenv = MockEnv(act_space=BoxSpace(-1, 1, shape=(2,)), obs_space=BoxSpace(-1, 1, shape=(2,)))
     wenv = DownsamplingWrapper(mockenv, factor=2)
@@ -63,7 +63,7 @@ def test_act_downsampling():
     assert mockenv.last_act == [1, 2]
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 def test_reset():
     mockenv = MockEnv(act_space=BoxSpace(-1, 1, shape=(2,)), obs_space=BoxSpace(-1, 1, shape=(2,)))
     wenv = DownsamplingWrapper(mockenv, factor=2)
@@ -87,7 +87,7 @@ def test_reset():
     assert mockenv.last_act == [1, 2]
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 def test_domain_param():
     mockenv = MockEnv(act_space=BoxSpace(-1, 1, shape=(2,)), obs_space=BoxSpace(-1, 1, shape=(2,)))
     wenv = DownsamplingWrapper(mockenv, factor=2)
@@ -115,7 +115,7 @@ def test_domain_param():
     assert mockenv.last_act == [8, 9]
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 def test_combination_downsampling_delay():
     mockenv = MockEnv(act_space=BoxSpace(-1, 1, shape=(2,)), obs_space=BoxSpace(-1, 1, shape=(2,)))
     wenv_ds_dl = DownsamplingWrapper(mockenv, factor=2)
@@ -148,7 +148,7 @@ def test_combination_downsampling_delay():
     assert mockenv.last_act == [0, 6]
 
 
-@pytest.mark.wrappers
+@pytest.mark.wrapper
 def test_combination_delay_downsampling():
     """ After delay number of actions, the actions are downsampled by the factor """
     mockenv = MockEnv(act_space=BoxSpace(-1, 1, shape=(2,)), obs_space=BoxSpace(-1, 1, shape=(2,)))
