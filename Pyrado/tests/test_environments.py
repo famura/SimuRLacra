@@ -38,7 +38,6 @@ from pyrado.environments.quanser.quanser_cartpole import QCartPoleStabReal, QCar
 from pyrado.environments.quanser.quanser_qube import QQubeReal
 from pyrado.policies.dummy import DummyPolicy
 from pyrado.sampling.rollout import rollout
-from pyrado.spaces.discrete import DiscreteSpace
 from pyrado.utils.data_types import RenderMode
 from tests.conftest import m_needs_bullet, m_needs_mujoco, m_needs_vortex
 
@@ -162,10 +161,10 @@ def test_reset(env):
         assert env.state_space.contains(env.state, verbose=True)
 
     # Reset with explicitly specified init state
-    initstate = env.init_space.sample_uniform()
+    init_state = env.init_space.sample_uniform()
 
     # Explicitly specify once
-    obs1 = env.reset(init_state=initstate)
+    obs1 = env.reset(init_state=init_state)
     env.render(mode=RenderMode(text=True))
     assert env.state_space.contains(env.state, verbose=True)
 
@@ -173,7 +172,7 @@ def test_reset(env):
     env.reset()
 
     # Reset to fixed state again
-    obs2 = env.reset(init_state=initstate)
+    obs2 = env.reset(init_state=init_state)
     # This should match
     assert obs2 == pytest.approx(obs1)
 

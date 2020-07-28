@@ -28,15 +28,14 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?xml version="1.0" encoding="UTF-8" ?>
-
 <Experiment envType="TargetTracking"
             extraConfigDir="config/TargetTracking"
-            graphFileName="TargetTracking.xml"
+            graphFileName="TargetTracking/TargetTracking.xml"
             dt="0.02"
             physicsEngine="Vortex"
-            physicsConfigFile="BallOnPlate/physics.xml"
+            physicsConfigFile="TargetTracking/pTargetTracking.xml"
 >
+
   <tasksLeft function="lin" errorDynamics="1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0" goal="0.5 0.25 1.0"/>
   <tasksRight function="msd" attractorStiffness="40.0" mass="1.0" damping="30.0" goal="0.25 -0.25 1.0"/>
   <collision threshold="0.1">
@@ -44,4 +43,5 @@
   </collision>
 
   <policy type="torch" file="pTT_simpletime.pth"/>
+
 </Experiment>

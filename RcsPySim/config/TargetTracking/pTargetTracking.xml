@@ -1,4 +1,4 @@
-/*******************************************************************************
+<!--
  Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and
  Technical University of Darmstadt.
  All rights reserved.
@@ -26,9 +26,44 @@
  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
-*******************************************************************************/
+-->
 
-// Create the test main function in this file
-#define CATCH_CONFIG_MAIN
+<content>
 
-#include <catch2/catch.hpp>
+  <vortex_parameters integrator_dt="0.002"
+                     body_linear_damping="0.00001"
+                     body_angular_damping="0.00001"
+                     joint_lock_stiffness="100000.0"
+                     joint_lock_damping="5000000.0"/>
+
+
+  <!-- Definition of available materials (in addition to "default") -->
+  <!-- ==================================================================== -->
+  <!-- Possible friction models are "Box", "ScaledBox", and "ScaledBoxFast" -->
+  <!-- Here is what you can set: -->
+  <!--
+  <material name="default"
+            friction_model="ScaledBox"
+            friction_coefficient="0.8"
+            static_friction_scale="1.5"
+            slip="0.01"
+            integrated_slip_displacement="true"  actually its set to neural
+            compliance="0.0"
+            damping="0.0"
+            restitution_threshold="0.0"
+            adhesive_force="0.0"
+  />
+  -->
+
+  <material name="default"
+            friction_model="ScaledBox"
+            friction_coefficient="0.8"
+            rolling_friction_coefficient="0.0"
+            static_friction_scale="1.0"
+            slip="0.0001"
+            integrated_slip_displacement="true"
+            compliance="0.0001"
+            restitution="0"
+  />
+
+</content>

@@ -180,17 +180,17 @@ class QCartPoleStabReal(QCartPoleReal):
     def __init__(self,
                  dt: float = 1/500.,
                  max_steps: int = pyrado.inf,
-                 ip: str = '192.168.2.17',
-                 task_args: [dict, None] = None):
+                 task_args: [dict, None] = None,
+                 ip: str = '192.168.2.17'):
         """
         Constructor
 
         :param dt: time step size on the Quanser device [s]
         :param max_steps: maximum number of steps executed on the device
-        :param ip: IP address of the Cart-pole platform
         :param task_args: arguments for the task construction
+        :param ip: IP address of the Cart-pole platform
         """
-        super().__init__(dt, max_steps, ip, task_args)
+        super().__init__(dt, max_steps, task_args, ip)
 
         # Define the task-specific state space
         stab_thold = 15/180.*np.pi  # threshold angle for the stabilization task to be a failure [rad]
@@ -285,17 +285,17 @@ class QCartPoleSwingUpReal(QCartPoleReal):
     def __init__(self,
                  dt: float = 1/500.,
                  max_steps: int = pyrado.inf,
-                 ip: str = '192.168.2.17',
-                 task_args: [dict, None] = None):
+                 task_args: [dict, None] = None,
+                 ip: str = '192.168.2.17'):
         """
         Constructor
 
         :param dt: time step size on the Quanser device [s]
         :param max_steps: maximum number of steps executed on the device
-        :param ip: IP address of the Cart-pole platform
         :param task_args: arguments for the task construction
+        :param ip: IP address of the Cart-pole platform
         """
-        super().__init__(dt, max_steps, ip, task_args)
+        super().__init__(dt, max_steps, task_args, ip)
 
         # Define the task-specific state space
         max_state = np.array([self._l_rail/2. - self._x_buffer, +4*np.pi, np.inf, np.inf])  # [m, rad, m/s, rad/s]

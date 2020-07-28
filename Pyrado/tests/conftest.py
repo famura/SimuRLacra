@@ -530,7 +530,7 @@ def thfnn_policy(env):
 
 @pytest.fixture(scope='function')
 def thgru_policy(env):
-    return TwoHeadedGRUPolicy(env.spec, shared_hidden_size=8, shared_num_recurrent_layers=2)
+    return TwoHeadedGRUPolicy(env.spec, shared_hidden_size=8, shared_num_recurrent_layers=1)
 
 
 @pytest.fixture(scope='function')

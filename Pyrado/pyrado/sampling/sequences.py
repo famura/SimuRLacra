@@ -51,7 +51,7 @@ def sequence(x_init, iterations, iterator_function, dtype=int):
         elif dim > 1:
             return x_seq[-1, :].astype(dtype), x_seq.astype(dtype)
 
-    elif iter == 0:
+    else:
         if isinstance(x_init, np.ndarray):
             return x_init.copy().T, x_init.copy().T
         else:
