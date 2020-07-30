@@ -77,7 +77,7 @@ class Experiment:
         :param exp_id: combined timestamp and extra_info, usually the final folder name.
         :param timestamp: experiment creation timestamp
         :param base_dir: base storage directory
-        :param seed: seed value for the random number generators, pass None for no seeding
+        :param seed: seed value for the random number generators, pass `None` for no seeding
         """
         if exp_id is not None:
             # Try to parse extra_info from exp id

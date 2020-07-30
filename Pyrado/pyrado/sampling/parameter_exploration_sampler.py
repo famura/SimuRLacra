@@ -143,7 +143,7 @@ class ParameterExplorationSampler:
         :param policy: policy used for sampling
         :param num_envs: number of parallel samplers
         :param num_rollouts_per_param: number of rollouts per policy parameter set
-        :param seed: seed value for the random number generators, pass None for no seeding
+        :param seed: seed value for the random number generators, pass `None` for no seeding
         """
         # Check environment for domain randomization wrappers (stops after finding the outermost)
         self._dp_wrapper = typed_env(env, DomainRandWrapper)
@@ -155,13 +155,13 @@ class ParameterExplorationSampler:
         self.env, self.policy = env, policy
         self.num_rollouts_per_param = num_rollouts_per_param
 
-        # Create parallel pool. We use one thread per env because it's easier.
+        # Create parallel pool. We use one thread per environment because it's easier.
         self.pool = SamplerPool(num_envs)
 
         if seed is not None:
             self.pool.set_seed(seed)
 
-        # Distribute environments. We use pickle to make sure a copy is created for n_envs=1
+        # Distribute environments. We use pickle to make sure a copy is created for n_envs = 1
         self.pool.invoke_all(_pes_init, pickle.dumps(self.env), pickle.dumps(self.policy))
 
     def _sample_domain_params(self) -> [list, dict]:
@@ -197,7 +197,12 @@ class ParameterExplorationSampler:
             return None
 
     def sample(self, param_sets: to.Tensor) -> ParameterSamplingResult:
-        """ Sample rollouts for a given set of parameters. """
+        """
+        Sample rollouts for a given set of parameters.
+
+        :param param_sets: sets of policy parameters
+        :return: data structure containing the policy parameter sets and the associated rollout data
+        """
         # Sample domain params for each rollout
         domain_params = self._sample_domain_params()
 

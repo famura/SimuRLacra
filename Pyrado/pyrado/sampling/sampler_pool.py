@@ -243,14 +243,13 @@ class SamplerPool:
     state.
     """
 
-    def __init__(self, n_threads):
+    def __init__(self, num_threads: int):
+        assert num_threads >= 1 and isinstance(num_threads, int)
 
-        assert n_threads >= 1
-
-        self._n_threads = n_threads
-        if n_threads > 1:
+        self._n_threads = num_threads
+        if num_threads > 1:
             # Create workers
-            self._workers = [_WorkerInfo(i + 1) for i in range(n_threads)]
+            self._workers = [_WorkerInfo(i + 1) for i in range(num_threads)]
             self._manager = mp.Manager()
         self._G = GlobalNamespace()
 

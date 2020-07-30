@@ -61,7 +61,7 @@ def bootstrap_ci(data: np.ndarray,
     :param bias_correction: bool to decide if the bias should be subtracted (see [2]). However, the confidence intervals
                             are constructed independent of the bias-correction (see [5, p.7])
     :param studentized: flag to determine if the method based on the t-distribution is used (leads to a wider ci)
-    :param seed: seed value for the random number generators, pass None for no seeding
+    :param seed: seed value for the random number generators, pass `None` for no seeding
     :return: mean of the bootstrap replications and the confidence interval
     """
     assert isinstance(data, np.ndarray)

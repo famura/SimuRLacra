@@ -107,6 +107,11 @@ class ParameterExploring(Algorithm):
         self._expl_strat = None
 
     @property
+    def env(self) -> Env:
+        """ Get the environment in which the algorithm exploration trains. """
+        return self._env
+
+    @property
     def expl_strat(self) -> StochasticParamExplStrat:
         return self._expl_strat
 
@@ -129,7 +134,7 @@ class ParameterExploring(Algorithm):
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
         # Sample new policy parameters
-        paramsets = self._expl_strat.sample_param_sets(
+        param_sets = self._expl_strat.sample_param_sets(
             self._policy.param_values,
             self.pop_size,
             # If you do not want to include the current policy parameters, be aware that you also have to do follow-up
@@ -139,7 +144,7 @@ class ParameterExploring(Algorithm):
 
         with to.no_grad():
             # Sample rollouts using these parameters
-            param_samp_res = self.sampler.sample(paramsets)
+            param_samp_res = self.sampler.sample(param_sets)
 
         # Evaluate the current policy (first one in list if include_nominal_params is True)
         ret_avg_curr = param_samp_res[0].mean_undiscounted_return

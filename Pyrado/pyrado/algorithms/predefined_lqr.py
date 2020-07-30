@@ -33,10 +33,10 @@ import torch as to
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.environments.base import Env
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate5DSim
 from pyrado.environment_wrappers.utils import inner_env
+from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.policies.linear import LinearPolicy
@@ -53,7 +53,7 @@ class LQR(Algorithm):
 
     def __init__(self,
                  save_dir: str,
-                 env: Env,
+                 env: SimEnv,
                  policy: Policy,
                  min_rollouts: int = None,
                  min_steps: int = None,
@@ -74,8 +74,8 @@ class LQR(Algorithm):
                                     set to True if the controller does not have the z component (relative position)
                                     of the ball in the state vector, i.e. state is 14-dim instead of 16-dim
         """
-        if not isinstance(env, Env):
-            raise pyrado.TypeErr(given=env, expected_type=Env)
+        if not isinstance(env, SimEnv):
+            raise pyrado.TypeErr(given=env, expected_type=SimEnv)
         if not isinstance(policy, LinearPolicy):
             raise pyrado.TypeErr(given=policy, expected_type=LinearPolicy)
 
@@ -119,7 +119,6 @@ class LQR(Algorithm):
 
             # System modeling
             dp = self._env.domain_param
-            self._env._calc_constants()
             dp['J_eq'] = self._env._J_eq
             dp['B_eq_v'] = self._env._B_eq_v
             dp['c_kin'] = self._env._c_kin
@@ -166,7 +165,7 @@ class LQR(Algorithm):
         # Sample rollouts to evaluate the LQR
         ros = self.sampler.sample()
 
-        # Log return -based metrics
+        # Logging
         rets = [ro.undiscounted_return() for ro in ros]
         ret_avg = np.mean(rets)
         ret_med = np.median(rets)

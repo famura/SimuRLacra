@@ -362,7 +362,7 @@ class StepSequence(Sequence[Step]):
 
     def add_data(self, name: str, value=None, item_shape: tuple = None, with_after_last: bool = False):
         """
-        Add a new data field to the step sequence.
+        Add a new data field to the step sequence. Can also be used to replace data in an existing field.
 
         :param name: sting for the name
         :param value: the data

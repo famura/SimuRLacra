@@ -67,9 +67,6 @@ class RewardGenerator:
         self.optimizer = to.optim.Adam(self.discriminator.parameters(), lr)
         self.logger = logger
 
-    def step(self, snapshot_mode: str, meta_info: dict = None):
-        pass
-
     def get_reward(self, traj: StepSequence):
         traj = convert_step_sequence(traj)
         with to.no_grad():
@@ -133,11 +130,12 @@ class MLPDiscriminator(nn.Module):
             nn.Sigmoid(),
         )
 
-    def forward(self, x):
+    def forward(self, x: to.Tensor):
         """
+        Predict the probability that this tensor originates from a randomized environment.
 
-        :param x: A Tensor which contains the state, action and next state
-        :return: The predicted probability that this tensor originates from a randomized environment
+        :param x: a tensor which contains the state, action and next state
+        :return: predicted probability
         """
         return self.net(x)
 
@@ -169,14 +167,13 @@ class LSTMDiscriminator(nn.Module):
 
     def forward(self, x):
         """
+        Predict the probability that this tensor originates from a randomized environment.
 
-        :param x: A Tensor which contains the state, action and next state
-        :return: The predicted probability that this tensor originates from a randomized environment
+        :param x: a tensor which contains the state, action and next state
+        :return: predicted probability
         """
         x = x.unsqueeze(0)
-
         h0 = to.zeros(self.layer_dim, x.size(0), self.hidden_dim).requires_grad_()
-
         c0 = to.zeros(self.layer_dim, x.size(0), self.hidden_dim).requires_grad_()
 
         out, (hn, cn) = self.lstm(x, (h0.detach(), c0.detach()))
