@@ -87,7 +87,6 @@ figsize_JMLR_warpfig = (2.5, 2.4)
 use_pgf = False
 from pyrado import plotting
 
-
 # Reset the colorama style after each print
 init(autoreset=True)
 
@@ -98,7 +97,7 @@ to.set_printoptions(precision=4, linewidth=200)
 np.set_printoptions(precision=4, sign=' ', linewidth=200)  # suppress=True
 
 # Include all error classes
-from pyrado.utils.exceptions import BaseErr, ValueErr, PathErr, ShapeErr, TypeErr
+from pyrado.utils.exceptions import BaseErr, KeyErr, PathErr, ShapeErr, TypeErr, ValueErr
 
 
 # Set the public API

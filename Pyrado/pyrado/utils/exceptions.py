@@ -88,7 +88,7 @@ class TypeErr(BaseErr):
     def __init__(self, *,
                  given=None,
                  given_name: str = None,
-                 expected_type: [type, list] = None,
+                 expected_type: [type, list, tuple] = None,
                  msg: str = None):
         """
         Constructor
@@ -99,8 +99,8 @@ class TypeErr(BaseErr):
         :param msg: offers possibility to override the error message
         """
         if given is None and msg is None:
-            super().__init__("Either specify an input for the error message using the 'given' arg, or set a custom"
-                             "message via the 'msg' arg!")
+            super().__init__("Either specify an input for the error message using the 'given' argument, or set a custom"
+                             "message via the 'msg' argument!")
         elif msg is None:
             self.given_name = given_name if given_name is not None else BaseErr.retrieve_var_name(given)
             self.given_type = type(given)
@@ -116,6 +116,7 @@ class TypeErr(BaseErr):
             else:
                 msg += ' ' + expected_type.__name__
             msg += f' but received {self.given_type.__name__}!'
+
         # Pass to Python Exception
         super().__init__(msg)
 
@@ -145,8 +146,8 @@ class ValueErr(BaseErr):
         :param msg: offers possibility to override the error message
         """
         if given is None and msg is None:
-            super().__init__("Either specify an input for the error message using the 'given' arg, or set a custom"
-                             "message via the 'msg' arg!")
+            super().__init__("Either specify an input for the error message using the 'given' argument, or set a custom"
+                             "message via the 'msg' argument!")
         if msg is None:
             # If the default error message is used
             assert not (eq_constraint is None and l_constraint is None and le_constraint is None and
@@ -172,6 +173,7 @@ class ValueErr(BaseErr):
             if ge_constraint is not None:
                 msg += f'greater or equal than {self.ge_constraint_str} '
             msg += f'but it is {self.given_str}!'
+
         # Pass to Python Exception
         super().__init__(msg)
 
@@ -205,8 +207,8 @@ class ShapeErr(BaseErr):
         :param msg: offers possibility to override the error message
         """
         if given is None and msg is None:
-            super().__init__("Either specify an input for the error message using the 'given' arg, or set a custom"
-                             "message via the 'msg' arg!")
+            super().__init__("Either specify an input for the error message using the 'given' argument, or set a custom"
+                             "message via the 'msg' argument!")
         elif msg is None:
             self.given_name = given_name if given_name is not None else BaseErr.retrieve_var_name(given)
             self.given_shape, gsn = ShapeErr.get_shape_and_name(given, "given")
@@ -216,6 +218,7 @@ class ShapeErr(BaseErr):
             # Default error message
             msg = f'The {self.attributes[0]} of {self.given_name} should match the {self.attributes[1]} ' \
                   f'{self.expected_shape} but it is {self.given_shape}!'
+
         # Pass to Python Exception
         super().__init__(msg)
 
@@ -231,8 +234,8 @@ class PathErr(BaseErr):
         :param msg: offers possibility to override the error message
         """
         if given is None and msg is None:
-            super().__init__("Either specify an input for the error message using the 'given' arg, or set a custom"
-                             "message via the 'msg' arg!")
+            super().__init__("Either specify an input for the error message using the 'given' argument, or set a custom"
+                             "message via the 'msg' argument!")
         elif msg is None:
             self.is_dir = osp.isdir(given)
             self.is_file = osp.isfile(given)
@@ -244,5 +247,33 @@ class PathErr(BaseErr):
                 msg += 'is not a directory but a file!'
             if not self.is_dir and self.is_file:
                 msg += 'is a directory but not a file!'
-            # Pass to Python Exception
+
+        # Pass to Python Exception
+        super().__init__(msg)
+
+
+class KeyErr(BaseErr):
+    """ Class for exceptions raised asking for a key in an object that does not exist """
+
+    def __init__(self, *,
+                 key: str = None,
+                 container: dict = None,
+                 msg: str = None):
+        """
+        Constructor
+
+        :param key: key that caused the error
+        :param container: object that should have the key
+        :param msg: offers possibility to override the error message
+        """
+        if (key is None or container is None) and msg is None:
+            super().__init__("Either specify an input for the error message using the 'key' and the 'container'"
+                             "argument, or set a custom message via the 'msg' argument!")
+        elif msg is None:
+            self.key = key
+            self.container = container
+            # Default error message
+            msg = f'{self.container} does not have the key {self.key} but the keys {list(self.container.keys())}!'
+
+        # Pass to Python Exception
         super().__init__(msg)
