@@ -93,16 +93,20 @@ def until_thold_exceeded(thold: float, max_iter: int = None):
                 # Train and evaluate
                 ret = trn_eval_fcn(*args, **kwargs)
                 cnt_iter += 1
-                # Check if done
-                if ret < thold:
-                    print_cbt(f'The policy did not exceed the threshold {thold}.', 'y', True)
-                if max_iter is None:
-                    print_cbt(f'Repeating training and evaluation ...', 'y', True)
-                else:
-                    if cnt_iter < max_iter:
-                        print_cbt(f'Repeating training and evaluation ...', 'y', True)
-                    else:
-                        print_cbt(f'Exiting the training and evaluation loop after {max_iter} iterations.', 'y', True)
+
+                # Break if done
+                if ret >= thold:
+                    print_cbt(f'The policy exceeded the threshold {thold}.', 'g', True)
+                    break
+
+                # Break if max_iter is reached
+                if max_iter is not None and cnt_iter == max_iter:
+                    print_cbt(f'Exiting the training and evaluation loop after {max_iter} iterations.', 'y', True)
+                    break
+
+                # Else repeat training
+                print_cbt(f'The policy did not exceed the threshold {thold}. Repeating training and evaluation ...',
+                          'w', True)
             return ret
 
         return wrapper_trn_eval_fcn
