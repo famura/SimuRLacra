@@ -30,8 +30,8 @@ jobs:
           sudo ln -s $COVPATH /home/user/SimuRLacra
           cd Pyrado
           ls
-          ./test-reporter-latest-linux-amd64 format-coverage $COVPATH/coverage.xml -t coverage.py -p /home/user/SimuRLacra/Pyrado
-          ./test-reporter-latest-linux-amd64 upload-coverage
+          ./test-reporter-latest-linux-amd64 format-coverage $COVPATH/coverage.xml --debug -t coverage.py -p /home/user/SimuRLacra/Pyrado
+          ./test-reporter-latest-linux-amd64 upload-coverage --debug
       - uses: codecov/codecov-action@v1
         with:
           file: coverage.xml # optional
