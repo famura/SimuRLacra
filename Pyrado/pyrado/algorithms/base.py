@@ -34,6 +34,8 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 import pyrado
+from pyrado.exploration.stochastic_action import StochasticActionExplStrat
+from pyrado.exploration.stochastic_params import StochasticParamExplStrat
 from pyrado.logger import get_log_prefix_dir
 from pyrado.logger.step import StepLogger, LoggerAware
 from pyrado.policies.base import Policy
@@ -95,12 +97,12 @@ class Algorithm(ABC, LoggerAware):
         return self._curr_iter
 
     @property
-    def policy(self):
+    def policy(self) -> Policy:
         """ Get the algorithm's policy. """
         return self._policy
 
     @property
-    def expl_strat(self):
+    def expl_strat(self) -> [StochasticActionExplStrat, StochasticParamExplStrat]:
         """ Get the algorithm's exploration strategy. """
         return None
 
@@ -121,7 +123,7 @@ class Algorithm(ABC, LoggerAware):
         By default, this resets the iteration count. 
         Be sure to call this function if you override it.
 
-        :param seed: seed value for the random number generators, pass None for no seeding
+        :param seed: seed value for the random number generators, pass `None` for no seeding
         """
         # Reset the exploration strategy if any
         if self.expl_strat is not None:
@@ -146,7 +148,7 @@ class Algorithm(ABC, LoggerAware):
         :param load_dir: if not `None` the training snapshot will be loaded from the given directory, i.e. the training
                          does not start from scratch
         :param snapshot_mode: determines when the snapshots are stored (e.g. on every iteration or on new high-score)
-        :param seed: seed value for the random number generators, pass None for no seeding
+        :param seed: seed value for the random number generators, pass `None` for no seeding
         :param meta_info: is not None if this algorithm is run as a subroutine of a meta-algorithm,
                           contains a dict of information about the current iteration of the meta-algorithm
         """
@@ -206,7 +208,7 @@ class Algorithm(ABC, LoggerAware):
 
     def update(self, *args: Any, **kwargs: Any):
         """ Update the policy's (and value functions') parameters based on the collected rollout data. """
-        raise NotImplementedError
+        pass
 
     @staticmethod
     def clip_grad(module: nn.Module, max_grad_norm: [float, None]) -> float:

@@ -31,7 +31,6 @@ import numpy as np
 import os
 import os.path as osp
 import torch as to
-from abc import ABC
 from botorch.models import SingleTaskGP
 from botorch.fit import fit_gpytorch_model
 from botorch.acquisition import UpperConfidenceBound, ExpectedImprovement, ProbabilityOfImprovement, PosteriorMean
@@ -58,12 +57,13 @@ from pyrado.utils.math import UnitCubeProjector
 from pyrado.utils.standardizing import standardize
 
 
-class BayRn(Algorithm, ABC):
+class BayRn(Algorithm):
     """
     Bayesian Domain Randomization (BayRn)
 
     .. note::
-        A candidate is a set of parameter values for the domain parameter distribution
+        A candidate is a set of parameter values for the domain parameter distribution and its value is the
+        (estimated) real-world return.
 
     .. seealso::
         F. Muratore, C. Eilers, M. Gienger, J. Peters, "Bayesian Domain Randomization for Sim-to-Real Transfer",
@@ -84,7 +84,7 @@ class BayRn(Algorithm, ABC):
                  acq_restarts: int,
                  acq_samples: int,
                  acq_param: dict = None,
-                 montecarlo_estimator: bool = True,
+                 mc_estimator: bool = True,
                  num_eval_rollouts_real: int = 5,
                  num_eval_rollouts_sim: int = 50,
                  num_init_cand: int = 5,
@@ -114,7 +114,7 @@ class BayRn(Algorithm, ABC):
         :param acq_restarts: number of restarts for optimizing the acquisition function
         :param acq_samples: number of initial samples for optimizing the acquisition function
         :param acq_param: hyper-parameter for the acquisition function, e.g. $\beta$ for UCB
-        :param montecarlo_estimator: estimate the return with a sample average (`True`) or a lower confidence
+        :param mc_estimator: estimate the return with a sample average (`True`) or a lower confidence
                                      bound (`False`) obtained from bootstrapping
         :param num_eval_rollouts_real: number of rollouts in the target domain to estimate the return
         :param num_eval_rollouts_sim: number of rollouts in simulation to estimate the return after training
@@ -145,7 +145,7 @@ class BayRn(Algorithm, ABC):
         self.cands = None  # called x in the context of GPs
         self.cands_values = None  # called y in the context of GPs
         self.argmax_cand = to.Tensor()
-        self.montecarlo_estimator = montecarlo_estimator
+        self.mc_estimator = mc_estimator
         self.acq_fcn_type = acq_fc.upper()
         self.acq_restarts = acq_restarts
         self.acq_samples = acq_samples
@@ -218,7 +218,7 @@ class BayRn(Algorithm, ABC):
 
         # Return the estimated return of the trained policy in simulation
         avg_ret_sim = self.eval_policy(
-            None, self._env_sim, self._subrtn.policy, self.montecarlo_estimator, prefix, self.num_eval_rollouts_sim
+            None, self._env_sim, self._subrtn.policy, self.mc_estimator, prefix, self.num_eval_rollouts_sim
         )
         return float(avg_ret_sim)
 
@@ -233,10 +233,10 @@ class BayRn(Algorithm, ABC):
                       'g', bright=True)
             # Generate random samples within bounds
             cands[i, :] = (self.bounds[1, :] - self.bounds[0, :])*to.rand(self.bounds.shape[1]) + self.bounds[0, :]
-            # Train a policy for each candidate, repeat if the resulting policy did not exceed the success thold
+            # Train a policy for each candidate, repeat if the resulting policy did not exceed the success threshold
             print_cbt(f'Randomly sampled the next candidate: {cands[i].numpy()}', 'g')
             wrapped_trn_fcn = until_thold_exceeded(
-                self.thold_succ_subrtn.item(), max_iter=self.max_subrtn_rep
+                self.thold_succ_subrtn.item(), self.max_subrtn_rep
             )(self.train_policy_sim)
             wrapped_trn_fcn(cands[i], prefix=f'init_{i}')
 
@@ -268,11 +268,11 @@ class BayRn(Algorithm, ABC):
         # Evaluate learned policies from random candidates on the target environment (real-world) system
         for i in range(num_init_cand):
             policy = to.load(osp.join(self._save_dir, f'init_{i}_policy.pt'))
-            cands_values[i] = self.eval_policy(self._save_dir, self._env_real, policy, self.montecarlo_estimator,
+            cands_values[i] = self.eval_policy(self._save_dir, self._env_real, policy, self.mc_estimator,
                                                prefix=f'init_{i}', num_rollouts=self.num_eval_rollouts_real)
 
         # Save candidates's and their returns into tensors (policy is saved during training or exists already)
-        to.save(cands, osp.join(self._save_dir, 'candidates.pt'))
+        # to.save(cands, osp.join(self._save_dir, 'candidates.pt'))
         to.save(cands_values, osp.join(self._save_dir, 'candidates_values.pt'))
         self.cands, self.cands_values = cands, cands_values
 
@@ -281,9 +281,9 @@ class BayRn(Algorithm, ABC):
 
     @staticmethod
     def eval_policy(save_dir: [str, None],
-                    env_real: [RealEnv, SimEnv, MetaDomainRandWrapper],
+                    env: [RealEnv, SimEnv, MetaDomainRandWrapper],
                     policy: Policy,
-                    montecarlo_estimator: bool,
+                    mc_estimator: bool,
                     prefix: str,
                     num_rollouts: int) -> to.Tensor:
         """
@@ -291,32 +291,32 @@ class BayRn(Algorithm, ABC):
         This method is static to facilitate evaluation of specific policies in hindsight.
 
         :param save_dir: directory to save the snapshots i.e. the results in, if `None` nothing is saved
-        :param env_real: target environment for evaluation, in the sim-2-sim case this is another simulation instance
+        :param env: target environment for evaluation, in the sim-2-sim case this is another simulation instance
         :param policy: policy to evaluate
-        :param montecarlo_estimator: estimate the return with a sample average (`True`) or a lower confidence
+        :param mc_estimator: estimate the return with a sample average (`True`) or a lower confidence
                                      bound (`False`) obtained from bootrapping
-        :param num_rollouts: number of rollouts to collect on the target system
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
+        :param num_rollouts: number of rollouts to collect on the target system
         :return: estimated return in the target domain
         """
-        if isinstance(env_real, RealEnv):
+        if isinstance(env, RealEnv):
             input('Evaluating in the target domain. Hit any key to continue.')
         if save_dir is not None:
-            print_cbt(f'Evaluating {prefix}_policy on the target system ...', 'c', bright=True)
+            print_cbt(f'Executing {prefix}_policy ...', 'c', bright=True)
 
         rets_real = to.zeros(num_rollouts)
-        if isinstance(env_real, RealEnv):
+        if isinstance(env, RealEnv):
             # Evaluate sequentially when conducting a sim-to-real experiment
             for i in range(num_rollouts):
-                rets_real[i] = rollout(env_real, policy, eval=True, no_close=False).undiscounted_return()
-        elif isinstance(env_real, (SimEnv, MetaDomainRandWrapper)):
+                rets_real[i] = rollout(env, policy, eval=True, no_close=False).undiscounted_return()
+        elif isinstance(env, (SimEnv, MetaDomainRandWrapper)):
             # Create a parallel sampler when conducting a sim-to-sim experiment
-            sampler = ParallelSampler(env_real, policy, num_envs=1, min_rollouts=num_rollouts)
+            sampler = ParallelSampler(env, policy, num_envs=1, min_rollouts=num_rollouts)
             ros = sampler.sample()
             for i in range(num_rollouts):
                 rets_real[i] = ros[i].undiscounted_return()
         else:
-            raise pyrado.TypeErr(given=env_real, expected_type=[RealEnv, SimEnv, MetaDomainRandWrapper])
+            raise pyrado.TypeErr(given=env, expected_type=[RealEnv, SimEnv, MetaDomainRandWrapper])
 
         if save_dir is not None:
             # Save the evaluation results
@@ -328,7 +328,7 @@ class BayRn(Algorithm, ABC):
                             ['min return', to.min(rets_real)],
                             ['max return', to.max(rets_real)]]))
 
-        if montecarlo_estimator:
+        if mc_estimator:
             return to.mean(rets_real)
         else:
             return to.from_numpy(bootstrap_ci(rets_real.numpy(), np.mean,
@@ -375,17 +375,17 @@ class BayRn(Algorithm, ABC):
         self.cands = to.cat([self.cands, next_cand], dim=0)
         to.save(self.cands, osp.join(self._save_dir, 'candidates.pt'))
 
-        # Train and valuate the new candidate (saves to iter_{self._curr_iter}_policy.pt)
+        # Train and evaluate a new policy, repeat if the resulting policy did not exceed the success threshold
         prefix = f'iter_{self._curr_iter}'
         wrapped_trn_fcn = until_thold_exceeded(
-            self.thold_succ_subrtn.item(), max_iter=self.max_subrtn_rep
+            self.thold_succ_subrtn.item(), self.max_subrtn_rep
         )(self.train_policy_sim)
         wrapped_trn_fcn(cand, prefix)
 
-        # Evaluate the current policy on the target domain
+        # Evaluate the current policy in the target domain
         policy = to.load(osp.join(self._save_dir, f'{prefix}_policy.pt'))
         self.curr_cand_value = self.eval_policy(
-            self._save_dir, self._env_real, policy, self.montecarlo_estimator, prefix, self.num_eval_rollouts_real
+            self._save_dir, self._env_real, policy, self.mc_estimator, prefix, self.num_eval_rollouts_real
         )
 
         self.cands_values = to.cat([self.cands_values, self.curr_cand_value.view(1)], dim=0)
@@ -483,7 +483,7 @@ class BayRn(Algorithm, ABC):
                 self.cands_values = to.empty(self.cands.shape[0])
                 for i, fe in enumerate(found_evals):
                     # Get the return estimate from the raw evaluations as in eval_policy()
-                    if self.montecarlo_estimator:
+                    if self.mc_estimator:
                         self.cands_values[i] = to.mean(to.load(osp.join(ld, fe)))
                     else:
                         self.cands_values[i] = to.from_numpy(bootstrap_ci(
@@ -494,14 +494,14 @@ class BayRn(Algorithm, ABC):
                     print_cbt(f'Found {len(found_evals)} real-world evaluation files but {len(found_cands)} candidates.'
                               f' Now evaluation the remaining ones.', 'c', bright=True)
                 for i in range(len(found_cands) - len(found_evals)):
-                    # Evaluate the current policy on the target domain
+                    # Evaluate the current policy in the target domain
                     if len(found_evals) < self.num_init_cand:
                         prefix = f'init_{i + len(found_evals)}'
                     else:
                         prefix = f'iter_{i + len(found_evals) - self.num_init_cand}'
                     policy = to.load(osp.join(self._save_dir, f'{prefix}_policy.pt'))
                     self.cands_values[i + len(found_evals)] = self.eval_policy(
-                        self._save_dir, self._env_real, policy, self.montecarlo_estimator, prefix,
+                        self._save_dir, self._env_real, policy, self.mc_estimator, prefix,
                         self.num_eval_rollouts_real
                     )
                 to.save(self.cands_values, osp.join(self._save_dir, 'candidates_values.pt'))
@@ -535,7 +535,7 @@ class BayRn(Algorithm, ABC):
                 # This is the case if we found iter_i_candidate.pt but not iter_i_returns_real.pt
                 if self.cands.shape[0] == self.cands_values.shape[0] + 1:
                     curr_cand_value = self.eval_policy(self._save_dir, self._env_real, self._subrtn.policy,
-                                                       self.montecarlo_estimator, prefix=f'iter_{self._curr_iter - 1}',
+                                                       self.mc_estimator, prefix=f'iter_{self._curr_iter - 1}',
                                                        num_rollouts=self.num_eval_rollouts_real)
                     self.cands_values = to.cat([self.cands_values, curr_cand_value.view(1)], dim=0)
                     to.save(self.cands_values, osp.join(self._save_dir, 'candidates_values.pt'))

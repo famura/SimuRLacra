@@ -37,7 +37,7 @@ from typing import Sequence, Type
 
 import pyrado
 from pyrado.sampling.data_format import stack_to_format, to_format, cat_to_format, new_tuple
-from pyrado.sampling.utils import gen_batches
+from pyrado.sampling.utils import gen_batch_idcs
 
 
 def _index_to_int(idx, n):
@@ -638,7 +638,7 @@ class StepSequence(Sequence[Step]):
 
         else:
             # Split by steps
-            for b in gen_batches(batch_size, self.length):
+            for b in gen_batch_idcs(batch_size, self.length):
                 yield self[b]
 
     @property

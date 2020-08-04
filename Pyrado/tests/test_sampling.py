@@ -80,7 +80,7 @@ def _cb_test_collecthandler(G):
 
 @pytest.mark.sampling
 @pytest.mark.parametrize(
-    'n_threads', [1, 2, 4]
+    'num_threads', [1, 2, 4]
 )
 @pytest.mark.parametrize(
     'min_samples', [10, 20, 40]
@@ -98,7 +98,7 @@ def test_sampler_collect(n_threads, min_samples):
 
 @pytest.mark.sampling
 @pytest.mark.parametrize(
-    'n_threads', [1, 2, 4]
+    'num_threads', [1, 2, 4]
 )
 @pytest.mark.parametrize(
     'min_samples', [10, 20, 40]

@@ -85,7 +85,7 @@ if __name__ == '__main__':
     #                                'EXP_NAME', 'policy.pt'))
 
     # Subroutine
-    subroutine_hparam = dict(
+    subrtn_hparam = dict(
         max_iter=25,
         pop_size=100,
         num_rollouts=20,
@@ -94,7 +94,7 @@ if __name__ == '__main__':
         expl_std_min=0.02,
         num_sampler_envs=12,
     )
-    power = PoWER(ex_dir, env_sim, policy, **subroutine_hparam)
+    power = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
 
     # Algorithm
     bayrn_hparam = dict(
@@ -113,7 +113,7 @@ if __name__ == '__main__':
     save_list_of_dicts_to_yaml([
         dict(env=env_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
-        dict(subrtrn=subroutine_hparam, subrtrn_name=PoWER.name),
+        dict(subrtrn=subrtn_hparam, subrtrn_name=PoWER.name),
         dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map)],
         ex_dir
     )

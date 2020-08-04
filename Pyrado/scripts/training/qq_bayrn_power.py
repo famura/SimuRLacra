@@ -74,7 +74,7 @@ if __name__ == '__main__':
     policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec, **policy_hparam)
 
     # Subroutine
-    subroutine_hparam = dict(
+    subrtn_hparam = dict(
         max_iter=20,
         pop_size=50,
         num_rollouts=10,
@@ -84,7 +84,7 @@ if __name__ == '__main__':
         symm_sampling=False,
         num_sampler_envs=8,
     )
-    power = PoWER(ex_dir, env_sim, policy, **subroutine_hparam)
+    power = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
 
     # Set the boundaries for the GP
     dp_nom = QQubeSwingUpSim.get_nominal_domain_param()
@@ -116,7 +116,7 @@ if __name__ == '__main__':
     save_list_of_dicts_to_yaml([
         dict(env=env_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
-        dict(subrtrn=subroutine_hparam, subrtrn_name=PoWER.name),
+        dict(subrtrn=subrtn_hparam, subrtrn_name=PoWER.name),
         dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map)],
         ex_dir
     )

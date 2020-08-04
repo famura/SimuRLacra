@@ -30,9 +30,10 @@ import pytest
 import torch as to
 import torch.nn as nn
 from functools import partial
+from math import ceil
 from tqdm import tqdm
 
-from pyrado.sampling.utils import gen_batches, gen_ordered_batches
+from pyrado.sampling.utils import gen_batch_idcs, gen_ordered_batch_idcs, gen_ordered_batches
 from pyrado.utils.data_types import *
 from pyrado.utils.functions import noisy_nonlin_fcn
 from pyrado.utils.math import cosine_similarity, cov
@@ -125,15 +126,16 @@ def test_merge_lod_var_dtype(x, y):
         (2, 2)
     ], ids=['division_mod0', 'division_mod1', 'division_mod2', 'edge_case']
 )
-def test_gen_ordered_batches(batch_size, data_size):
-    from math import ceil
-
-    generator = gen_batches(batch_size, data_size)
+@pytest.mark.parametrize(
+    'sorted', [True, False], ids=['sorted', 'unsorted']
+)
+def test_gen_batch_idcs(batch_size, data_size, sorted):
+    generator = gen_batch_idcs(batch_size, data_size)
     unordered_batches = list(generator)
     assert len(unordered_batches) == ceil(data_size/batch_size)
     assert all(len(uob) <= batch_size for uob in unordered_batches)
 
-    generator = gen_ordered_batches(batch_size, data_size)
+    generator = gen_ordered_batch_idcs(batch_size, data_size, sorted)
     ordered_batches = list(generator)
     assert len(ordered_batches) == ceil(data_size/batch_size)
     assert all(len(ob) <= batch_size for ob in ordered_batches)

@@ -34,9 +34,12 @@ import numpy as np
 import torch as to
 import itertools
 import pickle
+from pytest_lazyfixture import lazy_fixture
 from typing import NamedTuple
 
+from pyrado.algorithms.sysid_as_rl import RLSysId
 from pyrado.algorithms.utils import ReplayMemory
+from pyrado.policies.dummy import DummyPolicy
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.sampling.data_format import to_format
 from pyrado.sampling.step_sequence import discounted_value, gae_returns
@@ -369,3 +372,43 @@ def test_namedtuple(data_format):
     for i, step in enumerate(ro):
         assert isinstance(step.hidden, DummyNT)
         assert (step.hidden.part1 == to_format(hid_nt[i].part1, data_format)).all()
+
+
+@pytest.mark.parametrize(
+    'env', [
+        lazy_fixture('default_pend'),
+        lazy_fixture('default_bob'),
+    ], ids=['pend', 'bob'],
+)
+@pytest.mark.parametrize(
+    'num_real_ros', [1, 3], ids=['1realro', '3realro']
+)
+@pytest.mark.parametrize(
+    'num_sim_ros', [1, 3], ids=['1simro', '3simro']
+)
+@pytest.mark.parametrize(
+    'max_real_steps, max_sim_steps',
+    [
+        (4, 4,), (4, 7), (7, 4), (10000, 10000)
+    ], ids=['real=sim', 'real<sim', 'real>sim', 'inf']
+)
+def test_truncate_rollouts(env, num_real_ros, num_sim_ros, max_real_steps, max_sim_steps):
+    policy = DummyPolicy(env.spec)
+    ros_real = []
+    ros_sim = []
+
+    # Create the rollout data
+    for _ in range(num_real_ros):
+        ros_real.append(rollout(env, policy, eval=True, max_steps=max_real_steps, stop_on_done=True))
+    for _ in range(num_sim_ros):
+        ros_sim.append(rollout(env, policy, eval=True, max_steps=max_sim_steps, stop_on_done=True))
+
+    # Truncate them
+    ros_real_tr, ros_sim_tr = RLSysId.truncate_rollouts(ros_real, ros_sim)
+
+    # Obtained the right number of rollouts
+    assert len(ros_real_tr) == len(ros_sim_tr)
+
+    for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr):
+        # All individual truncated rollouts have the correct length
+        assert ro_r.length == ro_s.length

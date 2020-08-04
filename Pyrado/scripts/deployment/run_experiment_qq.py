@@ -60,6 +60,6 @@ if __name__ == '__main__':
     ex_ts = datetime.now().strftime(timestamp_format)
     save_dir = osp.join(ex_dir, 'evaluation')
     os.makedirs(save_dir, exist_ok=True)
-    est_ret = BayRn.eval_policy(save_dir, env_real, policy, montecarlo_estimator=True, prefix=ex_ts, num_rollouts=5)
+    est_ret = BayRn.eval_policy(save_dir, env_real, policy, mc_estimator=True, prefix=ex_ts, num_rollouts=5)
 
     print_cbt(f'Estimated return: {est_ret.item()}', 'g')

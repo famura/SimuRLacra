@@ -424,7 +424,7 @@ def test_soft_update(env, module):
 )
 def test_arpl(env, ex_dir):
     env = ActNormWrapper(env)
-    env = StateAugmentationWrapper(env, params=None)
+    env = StateAugmentationWrapper(env, domain_param=None)
 
     policy = FNNPolicy(env.spec, hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
 

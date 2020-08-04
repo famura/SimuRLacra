@@ -163,19 +163,19 @@ class SAC(Algorithm):
         else:
             init_expl_policy = DummyPolicy(env.spec)
         self.sampler_init = ParallelSampler(
-            env, init_expl_policy,  # samples uniformly random from the action space
+            self._env, init_expl_policy,  # samples uniformly random from the action space
             num_envs=num_sampler_envs,
             min_steps=memory_size,
         )
         self._expl_strat = SACExplStrat(self._policy, std_init=1.)  # std_init will be overwritten by 2nd policy head
         self.sampler = ParallelSampler(
-            env, self._expl_strat,
+            self._env, self._expl_strat,
             num_envs=1,
             min_steps=min_steps,  # in [2] this would be 1
             min_rollouts=min_rollouts  # in [2] this would be None
         )
         self.sampler_eval = ParallelSampler(
-            env, self._policy,
+            self._env, self._policy,
             num_envs=num_sampler_envs,
             min_steps=100*env.max_steps,
             min_rollouts=None
@@ -442,7 +442,7 @@ class SAC(Algorithm):
         super().reset(seed)
 
         # Re-initialize sampler in case env or policy changed
-        self.sampler.reinit()
+        self.sampler.reinit(self._env, self._expl_strat)
 
         # Reset the replay memory
         self._memory.reset()

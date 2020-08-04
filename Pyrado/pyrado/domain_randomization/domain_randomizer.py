@@ -125,7 +125,7 @@ class DomainRandomizer:
         """
         Get the values in the data frame of the perturbed parameters.
 
-        :param num_samples: number of samples to be extracted from the pertruber
+        :param num_samples: number of samples to be extracted from the randomizer
         :param format: format (list of dicts or dict of lists) in which the params should be returned
         :param dtype: data type in which the params should be returned
         :return: dict of num_samples perturbed values per specified param or one dict of one perturbed

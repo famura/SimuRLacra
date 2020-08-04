@@ -123,6 +123,8 @@ class MetaDomainRandWrapper(DomainRandWrapper, Serializable):
             pass
         elif domain_distr_param_values.ndim == 2:
             domain_distr_param_values = domain_distr_param_values.ravel()
+        else:
+            raise pyrado.ShapeErr(given=domain_distr_param_values, expected_match=(1,))
 
         # Reconfigure the wrapped environment's DomainRandomizer
         for i, value in enumerate(domain_distr_param_values):
@@ -216,7 +218,7 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
                 self._ring_idx = (self._ring_idx + 1)%len(self._buffer)  # idx cycles over buffer
             else:
                 raise pyrado.TypeErr(given=self._buffer, given_name='self._buffer', expected_type=[dict, list])
-        elif domain_param is not None:
+        else:
             # Explicit specification of domain parameters
             self._load_domain_param(domain_param)
 
