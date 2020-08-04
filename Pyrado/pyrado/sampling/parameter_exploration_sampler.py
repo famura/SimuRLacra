@@ -202,25 +202,32 @@ class ParameterExplorationSampler:
             # No init space, no init state
             return None
 
-    def sample(self, param_sets: to.Tensor) -> ParameterSamplingResult:
+    def sample(self, param_sets: to.Tensor, init_states: List[np.ndarray] = None) -> ParameterSamplingResult:
         """
         Sample rollouts for a given set of parameters.
 
         :param param_sets: sets of policy parameters
+        :param init_states: list of initial states for `run_map()`, pass `None` (default) to sample from the
+                            environment's initial state space
         :return: data structure containing the policy parameter sets and the associated rollout data
         """
         # Sample domain params for each rollout
         domain_params = self._sample_domain_params()
 
-        if isinstance(domain_params, dict):
-            # There is only one domain parameter set (i.e. one init state)
-            init_states = [self._sample_one_init_state(domain_params)]
-            domain_params = [domain_params]  # cast to list of dict to make iterable like the next case
-        elif isinstance(domain_params, list):
-            # There are more than one domain parameter set (i.e. multiple init states)
-            init_states = [self._sample_one_init_state(dp) for dp in domain_params]
+        if init_states is None:
+            if isinstance(domain_params, dict):
+                # There is only one domain parameter set (i.e. one init state)
+                init_states = [self._sample_one_init_state(domain_params)]
+                domain_params = [domain_params]  # cast to list of dict to make iterable like the next case
+            elif isinstance(domain_params, list):
+                # There are more than one domain parameter set (i.e. multiple init states)
+                init_states = [self._sample_one_init_state(dp) for dp in domain_params]
+            else:
+                raise pyrado.TypeErr(given=domain_params, expected_type=[list, dict])
+
         else:
-            pyrado.TypeErr(given=domain_params, expected_type=[list, dict])
+            if not isinstance(init_states[0], np.ndarray):  # checking the first element is sufficient
+                raise pyrado.TypeErr(given=init_states[0], expected_type=np.ndarray)
 
         # Explode parameter list for rollouts per param
         all_params = [(p, *r)
@@ -228,8 +235,7 @@ class ParameterExplorationSampler:
                       for r in zip(domain_params, init_states)]
 
         # Sample rollouts in parallel
-        with tqdm(leave=False, file=sys.stdout, desc='Sampling',
-                  unit='rollouts') as pb:
+        with tqdm(leave=False, file=sys.stdout, desc='Sampling', unit='rollouts') as pb:
             all_ros = self.pool.run_map(_pes_sample_one, all_params, pb)
 
         # Group rollouts by parameters

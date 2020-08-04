@@ -25,14 +25,17 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+from itertools import product
 
+import numpy as np
 import pickle
 import sys
+import torch.multiprocessing as mp
 from init_args_serializer import Serializable
 from tqdm import tqdm
 from typing import List
-import torch.multiprocessing as mp
 
+import pyrado
 from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.sampling.rollout import rollout
@@ -62,6 +65,25 @@ def _ps_sample_one(G):
 def _ps_run_one(G, num):
     """ Sample one rollout. This function is used when a minimum number of rollouts was given. """
     return rollout(G.env, G.policy)
+
+
+def _ps_run_one_init_state(G, init_state: np.ndarray):
+    """ Sample one rollout with fixed init state. This function is used when a minimum number of rollouts was given. """
+    return rollout(G.env, G.policy, reset_kwargs=dict(init_state=init_state))
+
+
+def _ps_run_one_reset_kwargs(G, reset_kwargs: tuple):
+    """
+    Sample one rollout with fixed init state and domain parameters, passed as a tuple for simplicity at the other end.
+    This function is used when a minimum number of rollouts was given.
+    """
+    if len(reset_kwargs) != 2:
+        raise pyrado.ShapeErr(given=reset_kwargs, expected_match=(2,))
+    if not isinstance(reset_kwargs[0], np.ndarray):
+        raise pyrado.TypeErr(given=reset_kwargs[0], expected_type=np.ndarray)
+    if not isinstance(reset_kwargs[1], dict):
+        raise pyrado.TypeErr(given=reset_kwargs[1], expected_type=dict)
+    return rollout(G.env, G.policy, reset_kwargs=dict(init_state=reset_kwargs[0], domain_param=reset_kwargs[1]))
 
 
 class ParallelSampler(SamplerBase, Serializable):
@@ -99,13 +121,26 @@ class ParallelSampler(SamplerBase, Serializable):
         self.pool = SamplerPool(num_envs)
 
         if seed is not None:
-            self.pool.set_seed(seed)
+            self.set_seed(seed)
 
         # Distribute environments. We use pickle to make sure a copy is created for n_envs=1
         self.pool.invoke_all(_ps_init, pickle.dumps(self.env), pickle.dumps(self.policy))
 
+    def set_seed(self, seed):
+        """
+        Set a deterministic seed on all workers.
+
+        :param seed: seed value for the random number generators
+        """
+        self.pool.set_seed(seed)
+
     def reinit(self, env=None, policy=None):
-        """ Re-initialize the sampler. """
+        """
+        Re-initialize the sampler.
+
+        :param env: the environment which the policy operates
+        :param policy: the policy used for sampling
+        """
         # Update env and policy if passed
         if env is not None:
             self.env = env
@@ -115,8 +150,17 @@ class ParallelSampler(SamplerBase, Serializable):
         # Always broadcast to workers
         self.pool.invoke_all(_ps_init, pickle.dumps(self.env), pickle.dumps(self.policy))
 
-    def sample(self) -> List[StepSequence]:
-        """ Do the sampling according to the previously given environment, policy, and number of steps/rollouts. """
+    def sample(self, init_states: List[np.ndarray] = None, domain_params: List[np.ndarray] = None
+               ) -> List[StepSequence]:
+        """
+        Do the sampling according to the previously given environment, policy, and number of steps/rollouts.
+
+        :param init_states: list of initial states for `run_map()`, pass `None` (default) to sample from the
+                            environment's initial state space
+        :param domain_params: list of domain parameters for `run_map()`, pass `None` (default) to not explicitly
+                              set them
+        :return: list of sampled rollouts
+        """
         # Update policy's state
         self.pool.invoke_all(_ps_update_policy, self.policy.state_dict())
 
@@ -125,13 +169,39 @@ class ParallelSampler(SamplerBase, Serializable):
                   unit='steps' if self.min_steps is not None else 'rollouts') as pb:
 
             if self.min_steps is None:
+                if init_states is None and domain_params is None:
+                    # Simply run min_rollouts times
+                    func = _ps_run_one
+                    arglist = range(self.min_rollouts)
+                elif init_states is not None and domain_params is None:
+                    # Run every init state min_rollouts times
+                    func = _ps_run_one_init_state
+                    arglist = self.min_rollouts*init_states
+                elif init_states is not None and domain_params is not None:
+                    # Run every combination of init state and domain parameter min_rollouts times
+                    func = _ps_run_one_reset_kwargs
+                    arglist = self.min_rollouts*list(product(init_states, domain_params))
+                else:
+                    raise NotImplementedError
+
                 # Only minimum number of rollouts given, thus use run_map
-                return self.pool.run_map(_ps_run_one, range(self.min_rollouts), pb)
+                return self.pool.run_map(func, arglist, pb)
+
             else:
                 # Minimum number of steps given, thus use run_collect (automatically handles min_runs=None)
-                return self.pool.run_collect(
-                    self.min_steps,
-                    _ps_sample_one,
-                    collect_progressbar=pb,
-                    min_runs=self.min_rollouts
-                )[0]
+                if init_states is None:
+                    return self.pool.run_collect(
+                        self.min_steps,
+                        _ps_sample_one,
+                        collect_progressbar=pb,
+                        min_runs=self.min_rollouts
+                    )[0]
+                else:
+                    raise NotImplementedError
+                    # return self.pool.run_collect(
+                    #     self.min_steps,
+                    #     _ps_run_one_init_state,
+                    #     init_states,  # *args
+                    #     collect_progressbar=pb,
+                    #     min_runs=self.min_rollouts
+                    # )[0]

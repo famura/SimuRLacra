@@ -143,6 +143,21 @@ def test_gen_batch_idcs(batch_size, data_size, sorted):
     assert all(all(ob[i] <= ob[i + 1] for i in range(len(ob) - 1)) for ob in ordered_batches)
 
 
+@pytest.mark.parametrize(
+    'data, batch_size', [
+        (list(range(9)), 3),
+        (list(range(10)), 3),
+    ], ids=['division_mod0', 'division_mod1']
+)
+def test_gen_ordered_batches(data, batch_size):
+    n = ceil(len(data)/batch_size)
+    for i, batch in enumerate(gen_ordered_batches(data, batch_size)):
+        if i < n - 1:
+            assert len(batch) == batch_size
+        if i == n - 1:
+            assert len(batch) <= batch_size
+
+
 @pytest.mark.parametrize('dtype', ['torch', 'numpy'], ids=['to', 'np'])
 @pytest.mark.parametrize('axis', [0, 1], ids=['ax_0', 'ax_1'])
 def test_normalize(dtype, axis):
