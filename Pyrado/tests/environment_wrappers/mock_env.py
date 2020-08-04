@@ -113,8 +113,6 @@ class MockEnv(SimEnv):
         return np.array(self.next_obs)
 
     def reset(self, init_state=None, domain_param=None):
-        # Init state is not needed for now.
-
         # Set domain params
         if domain_param is not None:
             self.domain_param = domain_param

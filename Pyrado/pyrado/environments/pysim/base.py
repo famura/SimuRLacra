@@ -162,9 +162,9 @@ class SimPyEnv(SimEnv, Serializable):
             except Exception:
                 raise pyrado.TypeErr(given=init_state, expected_type=[np.ndarray, list])
 
-        if init_state.shape == self.obs_space.shape:
-            # Allow setting the whole space
-            if not self.obs_space.contains(init_state, verbose=True):
+        if init_state.shape == self.state_space.shape:
+            # Allow setting the complete state space
+            if not self.state_space.contains(init_state, verbose=True):
                 pyrado.ValueErr(msg='The full init state must be within the state space!')
             self.state = init_state.copy()
         else:

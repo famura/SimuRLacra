@@ -111,6 +111,11 @@ class EnvWrapper(Env, Serializable):
         return self._wrapped_env.task
 
     @property
+    def state(self) -> np.ndarray:
+        """ Get the state of the wrapped environment. """
+        return self._wrapped_env.state
+
+    @property
     def domain_param(self) -> dict:
         """
         These are the environment's domain parameters, which are synonymous to the parameters used by the simulator to

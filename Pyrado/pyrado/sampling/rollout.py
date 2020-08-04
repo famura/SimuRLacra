@@ -141,6 +141,7 @@ def rollout(env: Env,
 
     # Setup rollout information
     rollout_info = dict(env_spec=env.spec)
+    rollout_info['init_state'] = env.state.copy()
     if isinstance(inner_env(env), SimEnv):
         rollout_info['domain_param'] = env.domain_param
 
