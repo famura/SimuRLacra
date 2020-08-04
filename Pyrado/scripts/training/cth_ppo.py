@@ -82,7 +82,7 @@ if __name__ == '__main__':
         eps_clip=0.1,
         batch_size=512,
         lr=3e-4,
-        num_sampler_envs=6,
+        num_workers=6,
     )
     algo = PPO(ex_dir, env, policy, critic, **algo_hparam)
 

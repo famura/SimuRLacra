@@ -86,7 +86,7 @@ if __name__ == '__main__':
     algo_hparam = dict(
         max_iter=1000,
         min_steps=30*env.max_steps,
-        num_sampler_envs=4,
+        num_workers=4,
         num_epoch=3,
         value_fcn_coeff=0.7,
         entropy_coeff=1e-4,

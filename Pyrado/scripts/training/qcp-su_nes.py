@@ -64,7 +64,7 @@ if __name__ == '__main__':
         expl_std_init=0.5,
         symm_sampling=False,
         transform_returns=True,
-        num_sampler_envs=10,
+        num_workers=10,
     )
     algo = NES(ex_dir, env, policy, **algo_hparam)
 

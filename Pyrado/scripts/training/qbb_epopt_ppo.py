@@ -92,7 +92,7 @@ if __name__ == '__main__':
     algo_hparam = dict(
         max_iter=1000,
         min_steps=30*env.max_steps,
-        num_sampler_envs=4,
+        num_workers=4,
         num_epoch=5,
         eps_clip=0.1,
         batch_size=100,

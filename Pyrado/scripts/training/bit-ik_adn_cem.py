@@ -96,7 +96,7 @@ if __name__ == '__main__':
         extra_expl_decay_iter=5,
         full_cov=False,
         symm_sampling=False,
-        num_sampler_envs=8,
+        num_workers=8,
     )
     algo = CEM(ex_dir, env, policy, **algo_hparam)
 

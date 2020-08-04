@@ -59,7 +59,7 @@ if __name__ == '__main__':
 
     # Subroutine
     algo_hparam = hparams['subrtn']
-    # algo_hparam.update({'num_sampler_envs': 1})
+    # algo_hparam.update({'num_workers': 1})
     ppo = PPO(ex_dir, env_sim, policy, critic, **algo_hparam)
 
     # Set the boundaries for the GP

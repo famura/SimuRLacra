@@ -67,7 +67,7 @@ if __name__ == '__main__':
         grad_free_optim=False,
         lr_dual=1e-3,
         use_map=True,
-        num_sampler_envs=4,
+        num_workers=4,
     )
     algo = REPS(ex_dir, env, policy, **algo_hparam)
 

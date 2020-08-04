@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import ABC, abstractmethod
-from collections import Iterable
+from collections.abc import Iterable
 from init_args_serializer import Serializable
 
 from pyrado.environments.base import Env

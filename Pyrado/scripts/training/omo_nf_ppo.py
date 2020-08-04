@@ -94,7 +94,7 @@ if __name__ == '__main__':
         std_init=0.6,
         # max_grad_norm=5.,
         lr=5e-4,
-        num_sampler_envs=6,
+        num_workers=6,
     )
     algo = PPO(ex_dir, env, policy, critic, **algo_hparam)
 

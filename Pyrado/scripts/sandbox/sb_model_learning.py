@@ -48,7 +48,7 @@ if __name__ == '__main__':
     policy = DummyPolicy(env.spec)
 
     # Sample
-    sampler = ParallelSampler(env, policy, num_envs=4, min_rollouts=50, seed=1)
+    sampler = ParallelSampler(env, policy, num_workers=4, min_rollouts=50, seed=1)
     ros = sampler.sample()
 
     # Create a model for learning the domain parameters

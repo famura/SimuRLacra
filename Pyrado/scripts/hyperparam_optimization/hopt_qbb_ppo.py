@@ -96,7 +96,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: [int, None]):
 
     # Algorithm
     algo_hparam = dict(
-        num_sampler_envs=1,  # parallelize via optuna n_jobs
+        num_workers=1,  # parallelize via optuna n_jobs
         max_iter=500,
         min_steps=25*env.max_steps,
         num_epoch=trial.suggest_int('num_epoch_algo', 1, 10),
@@ -117,7 +117,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: [int, None]):
 
     # Evaluate
     min_rollouts = 1000
-    sampler = ParallelSampler(env, policy, num_envs=20, min_rollouts=min_rollouts)
+    sampler = ParallelSampler(env, policy, num_workers=20, min_rollouts=min_rollouts)
     ros = sampler.sample()
     mean_ret = sum([r.undiscounted_return() for r in ros])/min_rollouts
 

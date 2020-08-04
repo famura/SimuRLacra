@@ -69,7 +69,7 @@ class CEM(ParameterExploring):
                  extra_expl_decay_iter: int = 10,
                  full_cov: bool = False,
                  symm_sampling: bool = False,
-                 num_sampler_envs: int = 4,
+                 num_workers: int = 4,
                  logger: StepLogger = None):
         """
         Constructor
@@ -106,7 +106,7 @@ class CEM(ParameterExploring):
             max_iter,
             num_rollouts,
             pop_size=pop_size,
-            num_sampler_envs=num_sampler_envs,
+            num_workers=num_workers,
             logger=logger,
         )
 

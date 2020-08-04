@@ -75,7 +75,7 @@ if __name__ == '__main__':
     algo_hparam = dict(
         max_iter=500,
         min_steps=10000,
-        num_sampler_envs=4,
+        num_workers=4,
         value_fcn_coeff=0.7,
         entropy_coeff=4e-5,
         batch_size=100,

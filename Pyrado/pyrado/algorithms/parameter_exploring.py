@@ -53,7 +53,7 @@ class ParameterExploring(Algorithm):
                  max_iter: int,
                  num_rollouts: int,
                  pop_size: [int, None] = None,
-                 num_sampler_envs: int = 4,
+                 num_workers: int = 4,
                  logger: StepLogger = None):
         """
         Constructor
@@ -65,7 +65,7 @@ class ParameterExploring(Algorithm):
         :param num_rollouts: number of rollouts per policy parameter set
         :param pop_size: number of solutions in the population, pass `None` to use a default that scales logarithmically
                          with the number of policy parameters
-        :param num_sampler_envs: number of environments for parallel sampling
+        :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         if not isinstance(env, Env):
@@ -92,7 +92,7 @@ class ParameterExploring(Algorithm):
         self.sampler = ParameterExplorationSampler(
             env,
             policy,
-            num_envs=num_sampler_envs,
+            num_workers=num_workers,
             num_rollouts_per_param=num_rollouts,
         )
 

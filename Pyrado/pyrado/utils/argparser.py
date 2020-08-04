@@ -69,7 +69,7 @@ def get_argparser() -> argparse.ArgumentParser:
     parser.add_argument('-n', '--num_ro_per_config', type=int, default=180,
                         help="number of rollouts per environment configuration / domain parameter set (default: 120)")
 
-    parser.add_argument('--num_envs', type=int, default=8,
+    parser.add_argument('--num_workers', type=int, default=8,
                         help="number of environments to sample from in parallel (default: 8)")
 
     parser.add_argument('--num_runs', type=int, default=1,

@@ -108,7 +108,7 @@ if __name__ == '__main__':
     init_state = None
 
     # Create sampler
-    pool = SamplerPool(args.num_envs)
+    pool = SamplerPool(args.num_workers)
     if args.seed is not None:
         pool.set_seed(args.seed)
         print_cbt(f'Set seed to {args.seed}', 'y')

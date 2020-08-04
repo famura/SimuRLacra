@@ -311,7 +311,7 @@ class BayRn(Algorithm):
                 rets_real[i] = rollout(env, policy, eval=True, no_close=False).undiscounted_return()
         elif isinstance(env, (SimEnv, MetaDomainRandWrapper)):
             # Create a parallel sampler when conducting a sim-to-sim experiment
-            sampler = ParallelSampler(env, policy, num_envs=1, min_rollouts=num_rollouts)
+            sampler = ParallelSampler(env, policy, num_workers=1, min_rollouts=num_rollouts)
             ros = sampler.sample()
             for i in range(num_rollouts):
                 rets_real[i] = ros[i].undiscounted_return()

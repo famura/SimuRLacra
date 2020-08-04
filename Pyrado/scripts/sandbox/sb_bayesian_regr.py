@@ -180,7 +180,7 @@ if __name__ == '__main__':
     policy = DummyPolicy(env.spec)
 
     # Sample
-    sampler = ParallelSampler(env, policy, num_envs=1, min_rollouts=50, seed=1)
+    sampler = ParallelSampler(env, policy, num_workers=1, min_rollouts=50, seed=1)
     ros = sampler.sample()
 
     # Pyro

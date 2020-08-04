@@ -68,7 +68,7 @@ if __name__ == '__main__':
         expl_std_init=0.5,
         expl_std_min=0.02,
         symm_sampling=False,
-        num_sampler_envs=12,
+        num_workers=12,
     )
     algo = PoWER(ex_dir, env, policy, **algo_hparam)
 

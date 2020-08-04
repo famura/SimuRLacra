@@ -70,7 +70,7 @@ class DQL(Algorithm):
                  min_rollouts: int = None,
                  min_steps: int = None,
                  batch_size: int = 256,
-                 num_sampler_envs: int = 4,
+                 num_workers: int = 4,
                  max_grad_norm: float = 0.5,
                  lr: float = 5e-4,
                  lr_scheduler=None,
@@ -92,7 +92,7 @@ class DQL(Algorithm):
         :param min_rollouts: minimum number of rollouts sampled per policy update batch
         :param min_steps: minimum number of state transitions sampled per policy update batch
         :param batch_size: number of samples per policy update batch
-        :param num_sampler_envs: number of environments for parallel sampling
+        :param num_workers: number of environments for parallel sampling
         :param max_grad_norm: maximum L2 norm of the gradients for clipping, set to `None` to disable gradient clipping
         :param lr: (initial) learning rate for the optimizer which can be by modified by the scheduler.
                    By default, the learning rate is constant.
@@ -131,13 +131,13 @@ class DQL(Algorithm):
         self._memory = ReplayMemory(memory_size)
         self.sampler = ParallelSampler(
             self._env, self._expl_strat,
-            num_envs=1,
+            num_workers=1,
             min_steps=min_steps,
             min_rollouts=min_rollouts
         )
         self.sampler_eval = ParallelSampler(
             self._env, self._policy,
-            num_envs=num_sampler_envs,
+            num_workers=num_workers,
             min_steps=100*env.max_steps,
             min_rollouts=None
         )

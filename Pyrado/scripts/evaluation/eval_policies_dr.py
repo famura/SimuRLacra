@@ -110,7 +110,7 @@ if __name__ == '__main__':
     # Evaluate all policies
     for i, policy in enumerate(policies):
         # Create a new sampler pool for every policy to synchronize the random seeds i.e. init states
-        pool = SamplerPool(args.num_envs)
+        pool = SamplerPool(args.num_workers)
 
         # Seed the sampler
         if args.seed is not None:

@@ -58,7 +58,7 @@ class HC(ParameterExploring):
                  num_rollouts: int,
                  expl_factor: float,
                  pop_size: int = None,
-                 num_sampler_envs: int = 4):
+                 num_workers: int = 4):
         """
         Constructor
 
@@ -69,7 +69,7 @@ class HC(ParameterExploring):
         :param num_rollouts: number of rollouts per policy sample
         :param expl_factor: scalar value which determines how the exploration strategy adapts its search space
         :param pop_size: number of solutions in the population
-        :param num_sampler_envs: number of environments for parallel sampling
+        :param num_workers: number of environments for parallel sampling
         """
         # Call ParameterExploring's constructor
         super().__init__(
@@ -79,7 +79,7 @@ class HC(ParameterExploring):
             max_iter,
             num_rollouts,
             pop_size=pop_size,
-            num_sampler_envs=num_sampler_envs
+            num_workers=num_workers
         )
 
         # Store the inputs

@@ -75,7 +75,7 @@ class ADR(Algorithm):
                  svpg_kl_factor: float = 0.03,
                  svpg_warmup: int = 0,
                  svpg_serial: bool = False,
-                 num_sampler_envs: int = 4,
+                 num_workers: int = 4,
                  num_trajs_per_config: int = 8,
                  max_step_length: float = 0.05,
                  randomized_params: Sequence[str] = None,
@@ -98,7 +98,7 @@ class ADR(Algorithm):
         :param svpg_kl_factor: kl reward coefficient
         :param svpg_warmup: number of iterations without SVPG training in the beginning
         :param svpg_serial: serial mode (see SVPG)
-        :param num_sampler_envs: number of environments for parallel sampling
+        :param num_workers: number of environments for parallel sampling
         :param num_trajs_per_config: number of trajectories to sample from each config
         :param max_step_length: maximum change of physics parameters per step
         :param randomized_params: which parameters to randomize
@@ -137,7 +137,7 @@ class ADR(Algorithm):
         self.num_params = len(self.params)
 
         # Initialize the sampler
-        self.pool = SamplerPool(num_sampler_envs)
+        self.pool = SamplerPool(num_workers)
 
         # Initialize reward generator
         self.reward_generator = RewardGenerator(
@@ -163,7 +163,7 @@ class ADR(Algorithm):
             self.reward_generator,
             horizon=self.svpg_horizon,
             num_trajs_per_config=self.num_trajs_per_config,
-            num_sampler_envs=num_sampler_envs,
+            num_workers=num_workers,
         )
 
         # Initialize SVPG
@@ -177,7 +177,7 @@ class ADR(Algorithm):
             self.svpg_lr,
             self.svpg_horizon,
             serial=svpg_serial,
-            num_sampler_envs=num_sampler_envs,
+            num_workers=num_workers,
             logger=logger
         )
 
@@ -318,7 +318,7 @@ class SVPGAdapter(EnvWrapper, Serializable):
                  step_length: float = 0.01,
                  horizon: int = 50,
                  num_trajs_per_config: int = 8,
-                 num_sampler_envs: int = 4):
+                 num_workers: int = 4):
         """
         Constructor
 
@@ -329,14 +329,14 @@ class SVPGAdapter(EnvWrapper, Serializable):
         :param step_length: the step size
         :param horizon: an svpg horizon
         :param num_trajs_per_config: number of trajectories to sample per physics configuration
-        :param num_sampler_envs: number of environments for parallel sampling
+        :param num_workers: number of environments for parallel sampling
         """
         Serializable._init(self, locals())
 
         EnvWrapper.__init__(self, wrapped_env)
 
         self.parameters: Sequence[DomainParam] = parameters
-        self.pool = SamplerPool(num_sampler_envs)
+        self.pool = SamplerPool(num_workers)
         self.inner_policy = inner_policy
         self.svpg_state = None
         self.count = 0

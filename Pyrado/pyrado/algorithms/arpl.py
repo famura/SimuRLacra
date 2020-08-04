@@ -69,7 +69,7 @@ class ARPL(Algorithm):
                  obs_eps: float = 0.01,
                  obs_phi: float = 0.05,
                  torch_observation: bool = True,
-                 num_sampler_envs: int = 4,
+                 num_workers: int = 4,
                  logger: StepLogger = None):
         """
         Constructor
@@ -93,7 +93,7 @@ class ARPL(Algorithm):
         :param obs_eps: the intensity of generated observation noise
         :param obs_phi: the probability of applying observation noise
         :param torch_observation: a function to provide a differentiable observation
-        :param num_sampler_envs: number of environments for parallel sampling
+        :param num_workers: number of environments for parallel sampling
         :param logger: the logger
         """
         assert isinstance(subroutine, Algorithm)
@@ -115,7 +115,7 @@ class ARPL(Algorithm):
         self.sampler = ParallelSampler(
             env,
             expl_strat,
-            num_envs=num_sampler_envs,
+            num_workers=num_workers,
             min_steps=steps_num,
             min_rollouts=num_rollouts,
         )

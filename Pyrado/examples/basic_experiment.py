@@ -60,7 +60,7 @@ policy = LinearPolicy(spec=env.spec, **policy_hparam)
 
 """
 Specify the algorithm you want to use for learning the policy parameters.
-For deterministic sampling, you need to set `num_sampler_envs=1`. If `num_sampler_envs>1`, PyTorch's multiprocessing
+For deterministic sampling, you need to set `num_workers=1`. If `num_workers>1`, PyTorch's multiprocessing
 library will be used to parallelize sampling from the environment on the CPU. The resulting behavior is non-deterministic,
 i.e. even for the same random seed, you will get different results.
 The algorithms can be categorized in two different types: one type randomizes the action every step (their exploration
@@ -74,7 +74,7 @@ algo_hparam = dict(
     num_rollouts=10,
     expl_factor=1.1,
     expl_std_init=1.,
-    num_sampler_envs=4,
+    num_workers=4,
 )
 algo = HCNormal(ex_dir, env, policy, **algo_hparam)
 

@@ -52,7 +52,7 @@ if __name__ == '__main__':
         num_dof=4,
         max_steps=1750,
         task_args=dict(final_factor=0.5),
-        fixed_initial_state=False
+        fixed_init_state=False
     )
     env = WAMBallInCupSim(**env_hparams)
 
@@ -85,7 +85,7 @@ if __name__ == '__main__':
         extra_expl_decay_iter=10,
         full_cov=False,
         symm_sampling=False,
-        num_sampler_envs=8,
+        num_workers=8,
     )
     algo = CEM(ex_dir, env, policy, **algo_hparam)
 

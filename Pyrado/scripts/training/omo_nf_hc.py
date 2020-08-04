@@ -72,7 +72,7 @@ if __name__ == '__main__':
         expl_factor=1.05,
         num_rollouts=6,
         expl_std_init=0.3,
-        num_sampler_envs=6,
+        num_workers=6,
     )
     algo = HCNormal(ex_dir, env, policy, **algo_hparam)
 

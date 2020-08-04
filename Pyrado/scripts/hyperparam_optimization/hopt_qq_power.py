@@ -75,7 +75,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: [int, None]):
 
     # Algorithm
     algo_hparam = dict(
-        num_sampler_envs=1,  # parallelize via optuna n_jobs
+        num_workers=1,  # parallelize via optuna n_jobs
         max_iter=150,
         pop_size=trial.suggest_categorical('pop_size', [100, 150, 200, 250]),
         num_rollouts=trial.suggest_categorical('num_rollouts', [4, 6, 8, 10, 12]),
@@ -92,7 +92,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: [int, None]):
 
     # Evaluate
     min_rollouts = 1000
-    sampler = ParallelSampler(env, policy, num_envs=1, min_rollouts=min_rollouts)  # parallelize via optuna n_jobs
+    sampler = ParallelSampler(env, policy, num_workers=1, min_rollouts=min_rollouts)  # parallelize via optuna n_jobs
     ros = sampler.sample()
     mean_ret = sum([r.undiscounted_return() for r in ros])/min_rollouts
 

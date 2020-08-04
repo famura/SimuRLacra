@@ -87,7 +87,7 @@ if __name__ == '__main__':
         batch_size=512,
         max_grad_norm=1.,
         lr=3e-4,
-        num_sampler_envs=12,
+        num_workers=12,
     )
     algo = PPO(ex_dir, env, policy, critic, **algo_hparam)
 

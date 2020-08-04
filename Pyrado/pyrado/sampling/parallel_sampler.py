@@ -93,7 +93,7 @@ class ParallelSampler(SamplerBase, Serializable):
     def __init__(self,
                  env,
                  policy,
-                 num_envs: int,
+                 num_workers: int,
                  *,
                  min_rollouts: int = None,
                  min_steps: int = None,
@@ -103,9 +103,9 @@ class ParallelSampler(SamplerBase, Serializable):
 
         :param env: environment to sample from
         :param policy: policy to act in the environment (can also be an exploration strategy)
-        :param num_envs: number of parallel samplers
-        :param min_rollouts: minimum number of complete rollouts to sample.
-        :param min_steps: minimum total number of steps to sample.
+        :param num_workers: number of parallel samplers
+        :param min_rollouts: minimum number of complete rollouts to sample
+        :param min_steps: minimum total number of steps to sample
         :param seed: seed value for the random number generators, pass `None` for no seeding
         """
         Serializable._init(self, locals())

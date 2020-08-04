@@ -82,7 +82,7 @@ if __name__ == '__main__':
         expl_std_init=2.0,
         expl_std_min=0.02,
         symm_sampling=False,
-        num_sampler_envs=8,
+        num_workers=8,
     )
     power = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
 

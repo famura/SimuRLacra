@@ -111,7 +111,7 @@ if __name__ == '__main__':
         expl_std_init=1.0,
         symm_sampling=False,
         transform_returns=True,
-        num_sampler_envs=12,
+        num_workers=12,
     )
     algo = NES(ex_dir, env, policy, **algo_hparam)
 

@@ -53,7 +53,7 @@ if __name__ == '__main__':
     env_hparams = dict(
         num_dof=4,
         max_steps=1500,
-        fixed_initial_state=False,
+        fixed_init_state=False,
         task_args=dict(final_factor=0.05)
     )
     env_sim = WAMBallInCupSim(**env_hparams)
@@ -100,7 +100,7 @@ if __name__ == '__main__':
         extra_expl_decay_iter=15,
         full_cov=False,
         symm_sampling=False,
-        num_sampler_envs=16,
+        num_workers=16,
     )
     cem = CEM(ex_dir, env_sim, policy, **subrtn_hparam)
 

@@ -334,7 +334,7 @@ def test_param_expl_sampler(default_bob, bob_pert):
     sampler = ParameterExplorationSampler(
         env,
         policy,
-        num_envs=1,
+        num_workers=1,
         num_rollouts_per_param=num_rollouts_per_param,
     )
 
@@ -373,7 +373,7 @@ def test_cuda_sampling_w_dr(default_bob, bob_pert):
     policy = FNNPolicy(env.spec, hidden_sizes=[8], hidden_nonlin=to.tanh, use_cuda=True)
 
     # Create the sampler
-    sampler = ParallelSampler(env, policy, num_envs=2, min_rollouts=10)
+    sampler = ParallelSampler(env, policy, num_workers=2, min_rollouts=10)
 
     samples = sampler.sample()
     assert samples is not None

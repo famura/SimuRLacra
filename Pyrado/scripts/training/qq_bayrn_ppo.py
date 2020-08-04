@@ -100,7 +100,7 @@ if __name__ == '__main__':
         std_init=0.9074,
         lr=3.446e-04,
         max_grad_norm=1.,
-        num_sampler_envs=16,
+        num_workers=16,
     )
     ppo = PPO(ex_dir, env_sim, policy, critic, **subrtn_hparam)
 

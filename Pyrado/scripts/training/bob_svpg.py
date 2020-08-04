@@ -74,7 +74,7 @@ if __name__ == '__main__':
         lr=1e-3,
         std_init=1.0,
         horizon=50,
-        num_sampler_envs=12,
+        num_workers=12,
     )
     algo = SVPG(ex_dir, env, particle_hparam, **algo_hparam)
 

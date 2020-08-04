@@ -84,7 +84,7 @@ class PEPG(ParameterExploring):
                  clip_ratio_std: float = 0.05,
                  normalize_update: bool = False,
                  transform_returns: bool = True,
-                 num_sampler_envs: int = 4,
+                 num_workers: int = 4,
                  lr: float = 5e-4):
         """
         Constructor
@@ -108,7 +108,7 @@ class PEPG(ParameterExploring):
             max_iter,
             num_rollouts,
             pop_size=pop_size,
-            num_sampler_envs=num_sampler_envs,
+            num_workers=num_workers,
         )
 
         # Store the inputs

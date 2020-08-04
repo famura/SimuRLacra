@@ -64,7 +64,7 @@ if __name__ == '__main__':
         normalize_update=False,
         transform_returns=True,
         lr=1e-2,
-        num_sampler_envs=8,
+        num_workers=8,
     )
     algo = PEPG(ex_dir, env, policy, **algo_hparam)
 

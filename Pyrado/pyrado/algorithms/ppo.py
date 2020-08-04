@@ -73,7 +73,7 @@ class PPO(ActorCritic):
                  eps_clip: float = 0.1,
                  batch_size: int = 64,
                  std_init: float = 1.0,
-                 num_sampler_envs: int = 4,
+                 num_workers: int = 4,
                  max_grad_norm: float = None,
                  lr: float = 5e-4,
                  lr_scheduler=None,
@@ -93,7 +93,7 @@ class PPO(ActorCritic):
         :param eps_clip: max/min probability ratio, see [1]
         :param batch_size: number of samples per policy update batch
         :param std_init: initial standard deviation on the actions for the exploration noise
-        :param num_sampler_envs: number of environments for parallel sampling
+        :param num_workers: number of environments for parallel sampling
         :param max_grad_norm: maximum L2 norm of the gradients for clipping, set to `None` to disable gradient clipping
         :param lr: (initial) learning rate for the optimizer which can be by modified by the scheduler.
                    By default, the learning rate is constant.
@@ -123,7 +123,7 @@ class PPO(ActorCritic):
         self._expl_strat = NormalActNoiseExplStrat(self._policy, std_init=std_init)
         self.sampler = ParallelSampler(
             env, self._expl_strat,
-            num_envs=num_sampler_envs,
+            num_workers=num_workers,
             min_steps=min_steps,
             min_rollouts=min_rollouts
         )
@@ -258,7 +258,7 @@ class PPO2(ActorCritic):
                  entropy_coeff: float = 1e-3,
                  batch_size: int = 32,
                  std_init: float = 1.0,
-                 num_sampler_envs: int = 4,
+                 num_workers: int = 4,
                  max_grad_norm: float = None,
                  lr: float = 5e-4,
                  lr_scheduler=None,
@@ -280,7 +280,7 @@ class PPO2(ActorCritic):
         :param entropy_coeff: weighting factor of the entropy term in the combined loss, specific to PPO2
         :param batch_size: number of samples per policy update batch
         :param std_init: initial standard deviation on the actions for the exploration noise
-        :param num_sampler_envs: number of environments for parallel sampling
+        :param num_workers: number of environments for parallel sampling
         :param max_grad_norm: maximum L2 norm of the gradients for clipping, set to `None` to disable gradient clipping
         :param lr: (initial) learning rate for the optimizer which can be by modified by the scheduler.
                    By default, the learning rate is constant.
@@ -312,7 +312,7 @@ class PPO2(ActorCritic):
         self._expl_strat = NormalActNoiseExplStrat(self._policy, std_init=std_init)
         self.sampler = ParallelSampler(
             env, self._expl_strat,
-            num_envs=num_sampler_envs,
+            num_workers=num_workers,
             min_steps=min_steps,
             min_rollouts=min_rollouts
         )

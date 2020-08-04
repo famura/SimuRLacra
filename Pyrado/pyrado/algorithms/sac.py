@@ -83,7 +83,7 @@ class SAC(Algorithm):
                  batch_size: int = 500,
                  min_rollouts: int = None,
                  min_steps: int = None,
-                 num_sampler_envs: int = 4,
+                 num_workers: int = 4,
                  max_grad_norm: float = 5.,
                  lr: float = 3e-4,
                  lr_scheduler=None,
@@ -112,7 +112,7 @@ class SAC(Algorithm):
         :param batch_size: number of samples per policy update batch
         :param min_rollouts: minimum number of rollouts sampled per policy update batch
         :param min_steps: minimum number of state transitions sampled per policy update batch
-        :param num_sampler_envs: number of environments for parallel sampling
+        :param num_workers: number of environments for parallel sampling
         :param max_grad_norm: maximum L2 norm of the gradients for clipping, set to `None` to disable gradient clipping
         :param lr: (initial) learning rate for the optimizer which can be by modified by the scheduler.
                    By default, the learning rate is constant.
@@ -164,19 +164,19 @@ class SAC(Algorithm):
             init_expl_policy = DummyPolicy(env.spec)
         self.sampler_init = ParallelSampler(
             self._env, init_expl_policy,  # samples uniformly random from the action space
-            num_envs=num_sampler_envs,
+            num_workers=num_workers,
             min_steps=memory_size,
         )
         self._expl_strat = SACExplStrat(self._policy, std_init=1.)  # std_init will be overwritten by 2nd policy head
         self.sampler = ParallelSampler(
             self._env, self._expl_strat,
-            num_envs=1,
+            num_workers=1,
             min_steps=min_steps,  # in [2] this would be 1
             min_rollouts=min_rollouts  # in [2] this would be None
         )
         self.sampler_eval = ParallelSampler(
             self._env, self._policy,
-            num_envs=num_sampler_envs,
+            num_workers=num_workers,
             min_steps=100*env.max_steps,
             min_rollouts=None
         )

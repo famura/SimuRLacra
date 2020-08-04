@@ -86,7 +86,7 @@ if __name__ == '__main__':
         standardize_rew=False,
         min_steps=1,
         batch_size=256,
-        num_sampler_envs=4,
+        num_workers=4,
         lr=3e-4,
     )
     algo = SAC(ex_dir, env, policy, q_fcn_1, q_fcn_2, **algo_hparam)

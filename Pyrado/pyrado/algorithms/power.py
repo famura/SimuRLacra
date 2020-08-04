@@ -65,7 +65,7 @@ class PoWER(ParameterExploring):
                  expl_std_init: float,
                  expl_std_min: float = 0.01,
                  symm_sampling: bool = False,
-                 num_sampler_envs: int = 4,
+                 num_workers: int = 4,
                  logger: StepLogger = None):
         """
         Constructor
@@ -93,7 +93,7 @@ class PoWER(ParameterExploring):
             max_iter,
             num_rollouts,
             pop_size=pop_size,
-            num_sampler_envs=num_sampler_envs,
+            num_workers=num_workers,
             logger=logger,
         )
 

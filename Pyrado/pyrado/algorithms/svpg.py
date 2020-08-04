@@ -123,7 +123,7 @@ class SVPG(Algorithm):
                  std_init: float = 1.0,
                  min_rollouts: int = None,
                  min_steps: int = 10000,
-                 num_sampler_envs: int = 4,
+                 num_workers: int = 4,
                  serial: bool = True,
                  logger: StepLogger = None):
         """
@@ -140,7 +140,7 @@ class SVPG(Algorithm):
         :param std_init: initial standard deviation for the exploration
         :param min_rollouts: minimum number of rollouts sampled per policy update batch
         :param min_steps: minimum number of state transitions sampled per policy update batch
-        :param num_sampler_envs: number of environments for parallel sampling
+        :param num_workers: number of environments for parallel sampling
         :param serial: serial mode can be switched off which can be used to partly control the flow of SVPG from outside
         :param logger: logger for every step of the algorithm
         """
@@ -190,7 +190,7 @@ class SVPG(Algorithm):
 
             if self.serial:
                 self.samplers[i] = ParallelSampler(
-                    env, self.expl_strats[i], num_sampler_envs, min_rollouts=min_rollouts, min_steps=min_steps
+                    env, self.expl_strats[i], num_workers, min_rollouts=min_rollouts, min_steps=min_steps
                 )
 
     def step(self, snapshot_mode: str, meta_info: dict = None):

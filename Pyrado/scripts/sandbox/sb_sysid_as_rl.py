@@ -86,7 +86,7 @@ if __name__ == '__main__':
     #     grad_free_optim=False,
     #     lr_dual=5e-4,
     #     use_map=True,
-    #     num_sampler_envs=6,
+    #     num_workers=6,
     # )
     # subrtn = REPS(ex_dir, env_sim, ddp_policy, **subrtn_hparam)
     subrtn_hparam = dict(
@@ -98,7 +98,7 @@ if __name__ == '__main__':
         expl_std_min=0.001,
         extra_expl_std_init=0.,
         extra_expl_decay_iter=10,
-        num_sampler_envs=6,
+        num_workers=6,
     )
     subrtn = CEM(ex_dir, env_sim, ddp_policy, **subrtn_hparam)
 
@@ -106,7 +106,7 @@ if __name__ == '__main__':
         metric=None,
         obs_dim_weight=[1., 1., 1., 1.],
         num_rollouts_per_distr=50,
-        num_sampler_envs=subrtn_hparam['num_sampler_envs']
+        num_workers=subrtn_hparam['num_workers']
     )
 
     # Save the environments and the hyper-parameters (do it before the init routine of BayRn)

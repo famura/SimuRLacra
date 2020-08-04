@@ -104,7 +104,7 @@ def ex_dir(tmpdir):
     ids=['a2c', 'ppo', 'ppo2', 'hc_normal', 'hc_hyper', 'nes', 'pepg', 'power', 'cem'])  # , 'reps'])
 def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
     # Collect hyper-parameters, create algorithm, and train
-    common_hparam = dict(max_iter=1, num_sampler_envs=1)
+    common_hparam = dict(max_iter=1, num_workers=1)
     common_hparam.update(algo_hparam)
 
     if issubclass(algo_class, ActorCritic):
@@ -204,7 +204,7 @@ def test_svpg(env, linear_policy, ex_dir, actor_hparam, value_fcn_hparam, critic
     ], ids=['qq-su']
 )
 @pytest.mark.parametrize(
-    'subrtn_hparam', [dict(max_iter=3, min_rollouts=5, num_sampler_envs=1, num_epoch=4)], ids=['casual']
+    'subrtn_hparam', [dict(max_iter=3, min_rollouts=5, num_workers=1, num_epoch=4)], ids=['casual']
 )
 @pytest.mark.parametrize(
     'actor_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)], ids=['casual']
@@ -217,7 +217,7 @@ def test_svpg(env, linear_policy, ex_dir, actor_hparam, value_fcn_hparam, critic
 )
 @pytest.mark.parametrize(
     'adr_hparam', [dict(max_iter=3, num_svpg_particles=3, num_discriminator_epoch=3, batch_size=100,
-                        num_sampler_envs=1, randomized_params=[])], ids=['casual']
+                        num_workers=1, randomized_params=[])], ids=['casual']
 )
 def test_adr(env, ex_dir, subrtn_hparam, actor_hparam, value_fcn_hparam, critic_hparam, adr_hparam):
     # Create the subroutine for the meta-algorithm
@@ -262,7 +262,7 @@ def test_spota_ppo(env, spota_hparam, ex_dir):
     subrtn_hparam_cand = dict(
         # min_rollouts=0,  # will be overwritten by SPOTA
         min_steps=0,  # will be overwritten by SPOTA
-        max_iter=2, num_epoch=3, eps_clip=0.1, batch_size=64, num_sampler_envs=4, std_init=0.5, lr=1e-2)
+        max_iter=2, num_epoch=3, eps_clip=0.1, batch_size=64, num_workers=4, std_init=0.5, lr=1e-2)
     subrtn_hparam_cand = subrtn_hparam_cand
 
     sr_cand = PPO(ex_dir, env, policy, critic_cand, **subrtn_hparam_cand)
@@ -335,7 +335,7 @@ def test_actor_critic(env, linear_policy, ex_dir, algo, algo_hparam, value_fcn_t
     critic = GAE(value_fcn, **critic_hparam)
 
     # Common hyper-parameters
-    common_hparam = dict(max_iter=3, min_rollouts=3, num_sampler_envs=1)
+    common_hparam = dict(max_iter=3, min_rollouts=3, num_workers=1)
     # Add specific hyper parameters if any
     common_hparam.update(algo_hparam)
 
@@ -444,7 +444,7 @@ def test_arpl(env, ex_dir):
         max_iter=0,
         min_steps=23*env.max_steps,
         min_rollouts=None,
-        num_sampler_envs=12,
+        num_workers=12,
         num_epoch=5,
         eps_clip=0.085,
         batch_size=150,

@@ -135,7 +135,7 @@ class ParameterExplorationSampler:
     def __init__(self,
                  env: Env,
                  policy: Policy,
-                 num_envs: int,
+                 num_workers: int,
                  num_rollouts_per_param: int,
                  seed: int = None):
         """
@@ -143,8 +143,8 @@ class ParameterExplorationSampler:
 
         :param env: environment to sample from
         :param policy: policy used for sampling
-        :param num_envs: number of parallel samplers
-        :param num_rollouts_per_param: number of rollouts per policy parameter set
+        :param num_workers: number of parallel samplers
+        :param num_rollouts_per_param: number of rollouts per policy parameter set (and init state if specified)
         :param seed: seed value for the random number generators, pass `None` for no seeding
         """
         if not isinstance(num_rollouts_per_param, int):
@@ -163,7 +163,7 @@ class ParameterExplorationSampler:
         self.num_rollouts_per_param = num_rollouts_per_param
 
         # Create parallel pool. We use one thread per environment because it's easier.
-        self.pool = SamplerPool(num_envs)
+        self.pool = SamplerPool(num_workers)
 
         if seed is not None:
             self.pool.set_seed(seed)

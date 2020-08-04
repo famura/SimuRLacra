@@ -65,7 +65,7 @@ class A2C(ActorCritic):
                  batch_size: int = 32,
                  std_init: float = 1.0,
                  max_grad_norm: float = None,
-                 num_sampler_envs: int = 4,
+                 num_workers: int = 4,
                  lr: float = 5e-4,
                  lr_scheduler=None,
                  lr_scheduler_hparam: [dict, None] = None,
@@ -85,7 +85,7 @@ class A2C(ActorCritic):
         :param batch_size: number of samples per policy update batch
         :param std_init: initial standard deviation on the actions for the exploration noise
         :param max_grad_norm: maximum L2 norm of the gradients for clipping, set to `None` to disable gradient clipping
-        :param num_sampler_envs: number of environments for parallel sampling
+        :param num_workers: number of environments for parallel sampling
         :param lr: (initial) learning rate for the optimizer which can be by modified by the scheduler.
                    By default, the learning rate is constant.
         :param lr_scheduler: learning rate scheduler that does one step per epoch (pass through the whole data set)
@@ -107,7 +107,7 @@ class A2C(ActorCritic):
         self._expl_strat = NormalActNoiseExplStrat(self._policy, std_init=std_init)
         self.sampler = ParallelSampler(
             env, self.expl_strat,
-            num_envs=num_sampler_envs,
+            num_workers=num_workers,
             min_steps=min_steps,
             min_rollouts=min_rollouts
         )

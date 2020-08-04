@@ -126,8 +126,8 @@ def test_adr_reward_generator(env):
     dr = get_default_randomizer_omo()
     dr.randomize(num_samples=1)
     random_env.domain_param = dr.get_params(format='dict', dtype='numpy')
-    reference_sampler = ParallelSampler(reference_env, policy, num_envs=4, min_steps=10000)
-    random_sampler = ParallelSampler(random_env, policy, num_envs=4, min_steps=10000)
+    reference_sampler = ParallelSampler(reference_env, policy, num_workers=4, min_steps=10000)
+    random_sampler = ParallelSampler(random_env, policy, num_workers=4, min_steps=10000)
 
     losses = []
     for i in range(200):

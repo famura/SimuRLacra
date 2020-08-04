@@ -55,7 +55,7 @@ if __name__ == '__main__':
         max_iter=0,
         min_steps=23*env.max_steps,
         min_rollouts=None,
-        num_sampler_envs=12,
+        num_workers=12,
         num_epoch=5,
         eps_clip=0.08588362499920563,
         batch_size=150,

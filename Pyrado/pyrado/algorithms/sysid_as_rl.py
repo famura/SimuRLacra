@@ -142,7 +142,7 @@ class SysIdByEpisodicRL(Algorithm):
                  metric: [Callable[[np.ndarray], np.ndarray], None],
                  obs_dim_weight: [list, np.ndarray],
                  num_rollouts_per_distr: int,
-                 num_sampler_envs: int = 4):
+                 num_workers: int = 4):
         """
         Constructor
 
@@ -150,7 +150,7 @@ class SysIdByEpisodicRL(Algorithm):
         :param behavior_policy: lower level policy used to generate the rollouts
         :param metric: from differences in observations to value
         :param num_rollouts_per_distr: number of rollouts per domain distribution parameter set
-        :param num_sampler_envs: number of environments for parallel sampling
+        :param num_workers: number of environments for parallel sampling
         """
         if not isinstance(subrtn, ParameterExploring):
             raise pyrado.TypeErr(given=subrtn, expected_type=ParameterExploring)
@@ -192,7 +192,7 @@ class SysIdByEpisodicRL(Algorithm):
         self.behavior_sampler = ParallelSampler(
             self._subrtn.env,
             self._behavior_policy,
-            num_envs=num_sampler_envs,
+            num_workers=num_workers,
             min_rollouts=1,  # TODO think about this
             seed=1001
         )

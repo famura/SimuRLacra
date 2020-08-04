@@ -48,7 +48,7 @@ if __name__ == '__main__':
     policy = LinearPolicy(env.spec, feats)
 
     # Set up sampler
-    sampler = ParallelSampler(env, policy, num_envs=2, min_rollouts=2000)
+    sampler = ParallelSampler(env, policy, num_workers=2, min_rollouts=2000)
 
     # Sample and print
     ros = sampler.sample()

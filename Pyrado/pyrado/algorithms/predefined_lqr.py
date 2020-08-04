@@ -57,7 +57,7 @@ class LQR(Algorithm):
                  policy: Policy,
                  min_rollouts: int = None,
                  min_steps: int = None,
-                 num_sampler_envs: int = 4,
+                 num_workers: int = 4,
                  logger: StepLogger = None,
                  sampler: SamplerBase = None,
                  ball_z_dim_mismatch: bool = True):
@@ -69,7 +69,7 @@ class LQR(Algorithm):
         :param policy: policy which this algorithm is creating
         :param min_rollouts: minimum number of rollouts sampled per policy update batch
         :param min_steps: minimum number of state transitions sampled per policy update batch
-        :param num_sampler_envs: number of environments for parallel sampling
+        :param num_workers: number of environments for parallel sampling
         :param ball_z_dim_mismatch: only useful for BallOnPlate5DSim,
                                     set to True if the controller does not have the z component (relative position)
                                     of the ball in the state vector, i.e. state is 14-dim instead of 16-dim
@@ -90,7 +90,7 @@ class LQR(Algorithm):
         if sampler is None:
             sampler = ParallelSampler(
                 env, self._policy,
-                num_envs=num_sampler_envs,
+                num_workers=num_workers,
                 min_steps=min_steps,
                 min_rollouts=min_rollouts
             )

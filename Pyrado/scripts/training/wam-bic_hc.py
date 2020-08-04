@@ -51,7 +51,7 @@ if __name__ == '__main__':
         num_dof=7,
         max_steps=3000,
         task_args=dict(final_factor=0.01),
-        fixed_initial_state=True,
+        fixed_init_state=True,
     )
     env = WAMBallInCupSim(**env_hparams)
 
@@ -79,7 +79,7 @@ if __name__ == '__main__':
         expl_factor=1.05,
         num_rollouts=1,
         expl_std_init=np.pi/24,
-        num_sampler_envs=8,
+        num_workers=8,
     )
     algo = HCNormal(ex_dir, env, policy, **algo_hparam)
 

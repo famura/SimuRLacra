@@ -50,7 +50,7 @@ if __name__ == '__main__':
         num_dof=4,
         max_steps=1750,
         task_args=dict(final_factor=0.5),
-        fixed_initial_state=False
+        fixed_init_state=False
     )
     env = WAMBallInCupSim(**env_hparams)
 
@@ -79,7 +79,7 @@ if __name__ == '__main__':
         num_is_samples=10,
         expl_std_init=np.pi/6,
         expl_std_min=0.02,
-        num_sampler_envs=8,
+        num_workers=8,
     )
     algo = PoWER(ex_dir, env, policy, **algo_hparam)
 

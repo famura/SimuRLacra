@@ -135,7 +135,7 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
                  num_dof: int = 7,
                  frame_skip: int = 4,
                  max_steps: int = pyrado.inf,
-                 fixed_initial_state: bool = True,
+                 fixed_init_state: bool = True,
                  stop_on_collision: bool = True,
                  task_args: [dict, None] = None):
         """
@@ -144,7 +144,7 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         :param num_dof: number of degrees of freedom (4 or 7), depending on which Barrett WAM setup being used
         :param frame_skip: number of frames for holding the same action, i.e. multiplier of the time step size
         :param max_steps: max number of simulation time steps
-        :param fixed_initial_state: enables/disables deterministic, fixed initial state
+        :param fixed_init_state: enables/disables deterministic, fixed initial state
         :param stop_on_collision: set the `failed` flag in the `dict` returned by `_mujoco_step()` to true, if the ball
                                   collides with something else than the desired parts of the cup. This causes the
                                   episode to end. Keep in mind that in case of a negative step reward and no final
@@ -153,7 +153,7 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         """
         Serializable._init(self, locals())
 
-        self.fixed_initial_state = fixed_initial_state
+        self.fixed_init_state = fixed_init_state
 
         # File name of the xml and desired joint position for the initial state
         self.num_dof = num_dof
@@ -225,7 +225,7 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             init_cup_goal = np.array([0.758, 0, 1.5])
         # The initial position of the ball in cartesian coordinates
         init_state = np.concatenate([self.init_qpos, self.init_qvel, init_ball_pos, init_cup_goal])
-        if self.fixed_initial_state:
+        if self.fixed_init_state:
             self._init_space = SingularStateSpace(init_state)
         else:
             # Add plus/minus one degree to each motor joint and the first rope segment joint

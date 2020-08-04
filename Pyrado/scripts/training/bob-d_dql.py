@@ -64,7 +64,7 @@ if __name__ == '__main__':
         max_grad_norm=0.5,
         min_steps=1,
         batch_size=256,
-        num_sampler_envs=4,
+        num_workers=4,
         lr=7.461e-4,
     )
     algo = DQL(ex_dir, env, policy, **algo_hparam)
