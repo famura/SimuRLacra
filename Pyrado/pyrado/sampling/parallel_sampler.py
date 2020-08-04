@@ -25,13 +25,14 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-from itertools import product
 
 import numpy as np
 import pickle
 import sys
 import torch.multiprocessing as mp
 from init_args_serializer import Serializable
+from itertools import product
+from math import ceil
 from tqdm import tqdm
 from typing import List
 
@@ -118,7 +119,7 @@ class ParallelSampler(SamplerBase, Serializable):
             mp.set_start_method('spawn', force=True)
 
         # Create parallel pool. We use one thread per env because it's easier.
-        self.pool = SamplerPool(num_envs)
+        self.pool = SamplerPool(num_workers)
 
         if seed is not None:
             self.set_seed(seed)
@@ -174,13 +175,17 @@ class ParallelSampler(SamplerBase, Serializable):
                     func = _ps_run_one
                     arglist = range(self.min_rollouts)
                 elif init_states is not None and domain_params is None:
-                    # Run every init state min_rollouts times
+                    # Run every initial state so often that we at least get min_rollouts trajectories
                     func = _ps_run_one_init_state
-                    arglist = self.min_rollouts*init_states
+                    rep_factor = ceil(self.min_rollouts/len(init_states))
+                    arglist = rep_factor*init_states
                 elif init_states is not None and domain_params is not None:
-                    # Run every combination of init state and domain parameter min_rollouts times
+                    # Run every combination of initial state and domain parameter so often that we at least get
+                    # min_rollouts trajectories
                     func = _ps_run_one_reset_kwargs
-                    arglist = self.min_rollouts*list(product(init_states, domain_params))
+                    allcombs = list(product(init_states, domain_params))
+                    rep_factor = ceil(self.min_rollouts/len(allcombs))
+                    arglist = rep_factor*allcombs
                 else:
                     raise NotImplementedError
 
