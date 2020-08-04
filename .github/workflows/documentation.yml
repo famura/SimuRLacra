@@ -1,0 +1,23 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master, cicd ]
+  pull_request:
+    branches: [ master, cicd ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag simurlacra
+      - name: Build Docs
+        run: |
+          mkdir public
+          export PUBLIC=$(realpath ./public)
+          docker run --rm -i -v $PUBLIC:/home/simurlacra/Pyrado/doc/build/html simurlacra conda run -n pyrado bash -c ""
