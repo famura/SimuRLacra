@@ -28,7 +28,7 @@
 
 import math
 import torch as to
-from collections import Callable
+from collections.abc import Callable
 from torch.optim.optimizer import Optimizer
 
 import pyrado

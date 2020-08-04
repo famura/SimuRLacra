@@ -31,7 +31,7 @@ import operator
 import random
 import scipy
 import torch as to
-from collections import Iterable
+from collections.abc import Iterable
 from copy import deepcopy
 from typing import Sequence, Type
 

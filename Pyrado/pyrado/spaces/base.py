@@ -28,7 +28,7 @@
 
 import numpy as np
 from abc import ABC, abstractmethod
-from collections import Iterable
+from collections.abc import Iterable
 from colorama import Style
 from copy import deepcopy
 from functools import reduce
