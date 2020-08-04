@@ -198,6 +198,7 @@ def default_p3l_ik_bt():
         observePredictedCollisionCost=False,
         observeManipulabilityIndex=True,
         observeCurrentManipulability=True,
+        observeTaskSpaceDiscrepancy=True,
     )
 
 
@@ -218,6 +219,7 @@ def default_p3l_ik_vx():
         observePredictedCollisionCost=False,
         observeManipulabilityIndex=True,
         observeCurrentManipulability=True,
+        observeTaskSpaceDiscrepancy=True,
     )
 
 
@@ -239,6 +241,7 @@ def default_p3l_ta_bt():
         observePredictedCollisionCost=True,
         observeManipulabilityIndex=True,
         observeCurrentManipulability=True,
+        observeTaskSpaceDiscrepancy=True,
         observeDynamicalSystemGoalDistance=True,
         observeDynamicalSystemDiscrepancy=True,
     )
@@ -262,6 +265,7 @@ def default_p3l_ta_vx():
         observePredictedCollisionCost=True,
         observeManipulabilityIndex=True,
         observeCurrentManipulability=True,
+        observeTaskSpaceDiscrepancy=True,
         observeDynamicalSystemGoalDistance=True,
         observeDynamicalSystemDiscrepancy=True,
     )

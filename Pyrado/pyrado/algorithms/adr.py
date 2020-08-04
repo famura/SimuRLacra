@@ -338,7 +338,7 @@ class SVPGAdapter(EnvWrapper, Serializable):
         self.parameters: Sequence[DomainParam] = parameters
         self.pool = SamplerPool(num_sampler_envs)
         self.inner_policy = inner_policy
-        self.state = None
+        self.svpg_state = None
         self.count = 0
         self.num_trajs = num_trajs_per_config
         self.svpg_max_step_length = step_length
@@ -361,16 +361,16 @@ class SVPGAdapter(EnvWrapper, Serializable):
         assert domain_param is None
         self.count = 0
         if init_state is None:
-            self.state = np.random.random_sample(len(self.parameters))
-        return self.state
+            self.svpg_state = np.random.random_sample(len(self.parameters))
+        return self.svpg_state
 
     def step(self, act: np.ndarray):
         # Clip the action according to the maximum step length
         action = np.clip(act, -1, 1)*self.svpg_max_step_length
 
         # Perform step by moving into direction of action
-        self.state = np.clip(self.state + action, 0, 1)
-        param_norm = self.state + 0.5
+        self.svpg_state = np.clip(self.svpg_state + action, 0, 1)
+        param_norm = self.svpg_state + 0.5
         rand_eval_params = [self.array_to_dict(param_norm*self.nominal())]*self.num_trajs
         norm_eval_params = [self.nominal_dict()]*self.num_trajs
         rand = eval_domain_params(self.pool, self.wrapped_env, self.inner_policy, rand_eval_params)
@@ -386,9 +386,9 @@ class SVPGAdapter(EnvWrapper, Serializable):
         self.horizon_count += 1
         if self.horizon_count >= self.horizon:
             self.horizon_count = 0
-            self.state = np.random.random_sample(self.parameters.length)
+            self.svpg_state = np.random.random_sample(self.parameters.length)
 
-        return self.state, reward, done, info
+        return self.svpg_state, reward, done, info
 
     def lite_step(self, act: np.ndarray):
         """
@@ -399,8 +399,8 @@ class SVPGAdapter(EnvWrapper, Serializable):
         :return: the observation after the step
         """
         action = np.clip(act, -1, 1)*self.svpg_max_step_length
-        self.state = np.clip(self.state + action, 0, 1)
-        return self.state
+        self.svpg_state = np.clip(self.svpg_state + action, 0, 1)
+        return self.svpg_state
 
     def eval_states(self, states: Sequence[np.ndarray]):
         """

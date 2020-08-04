@@ -236,9 +236,9 @@ def get_default_randomizer_qbb() -> DomainRandomizer:
         UniformDomainParam(name='B_eq', mean=dp_nom['B_eq'], halfspan=dp_nom['B_eq']/4, clip_lo=1e-4),
         UniformDomainParam(name='c_frict', mean=dp_nom['c_frict'], halfspan=dp_nom['c_frict']/4, clip_lo=1e-4),
         UniformDomainParam(name='V_thold_x_pos', mean=dp_nom['V_thold_x_pos'], halfspan=dp_nom['V_thold_x_pos']/3),
-        UniformDomainParam(name='V_thold_x_neg', mean=dp_nom['V_thold_x_neg'], halfspan=dp_nom['V_thold_x_neg']/3),
+        UniformDomainParam(name='V_thold_x_neg', mean=dp_nom['V_thold_x_neg'], halfspan=abs(dp_nom['V_thold_x_neg'])/3),
         UniformDomainParam(name='V_thold_y_pos', mean=dp_nom['V_thold_y_pos'], halfspan=dp_nom['V_thold_y_pos']/3),
-        UniformDomainParam(name='V_thold_y_neg', mean=dp_nom['V_thold_y_neg'], halfspan=dp_nom['V_thold_y_neg']/3),
+        UniformDomainParam(name='V_thold_y_neg', mean=dp_nom['V_thold_y_neg'], halfspan=abs(dp_nom['V_thold_y_neg'])/3),
         UniformDomainParam(name='offset_th_x', mean=dp_nom['offset_th_x'], halfspan=6./180*np.pi),
         UniformDomainParam(name='offset_th_y', mean=dp_nom['offset_th_y'], halfspan=6./180*np.pi)
     )

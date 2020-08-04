@@ -353,12 +353,12 @@ def test_actor_critic(env, linear_policy, ex_dir, algo, algo_hparam, value_fcn_t
 )
 @pytest.mark.parametrize(
     'algo, algo_hparam', [
-        (HCNormal, dict(max_iter=10, pop_size=None, num_rollouts=8, expl_std_init=0.5, expl_factor=1.1)),
-        (NES, dict(max_iter=10, pop_size=None, num_rollouts=8, expl_std_init=0.5, symm_sampling=True)),
-        (PEPG, dict(max_iter=10, pop_size=None, num_rollouts=8, expl_std_init=0.5, lr=1e-2, normalize_update=False)),
+        (HCNormal, dict(max_iter=5, pop_size=None, num_rollouts=8, expl_std_init=0.5, expl_factor=1.1)),
+        (NES, dict(max_iter=50, pop_size=None, num_rollouts=8, expl_std_init=0.5, symm_sampling=True)),
+        (PEPG, dict(max_iter=50, pop_size=None, num_rollouts=8, expl_std_init=0.5, lr=1e-2, normalize_update=False)),
         (PoWER, dict(max_iter=10, pop_size=100, num_rollouts=8, num_is_samples=10, expl_std_init=0.5)),
         (CEM, dict(max_iter=10, pop_size=100, num_rollouts=8, num_is_samples=10, expl_std_init=0.5, full_cov=False)),
-        (REPS, dict(max_iter=10, pop_size=500, num_rollouts=8, eps=0.1, expl_std_init=0.5,
+        (REPS, dict(max_iter=50, pop_size=500, num_rollouts=8, eps=0.1, expl_std_init=0.5,
                     use_map=True, grad_free_optim=False)),
     ], ids=['hc_normal', 'nes', 'pepg', 'power', 'cem', 'reps']
 )
