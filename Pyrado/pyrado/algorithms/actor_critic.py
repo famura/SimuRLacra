@@ -56,7 +56,7 @@ class ActorCritic(Algorithm, ABC):
         """
         Constructor
 
-        :param env: environment which the policy operates
+        :param env: the environment which the policy operates
         :param actor: policy taking the actions in the environment
         :param critic: estimates the value of states (e.g. advantage or return)
         :param save_dir: directory to save the snapshots i.e. the results in

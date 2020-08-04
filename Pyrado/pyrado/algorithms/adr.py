@@ -98,7 +98,7 @@ class ADR(Algorithm):
         :param svpg_kl_factor: kl reward coefficient
         :param svpg_warmup: number of iterations without SVPG training in the beginning
         :param svpg_serial: serial mode (see SVPG)
-        :param num_sampler_envs: number of parallel sampling environments for the physics configs
+        :param num_sampler_envs: number of environments for parallel sampling
         :param num_trajs_per_config: number of trajectories to sample from each config
         :param max_step_length: maximum change of physics parameters per step
         :param randomized_params: which parameters to randomize
@@ -329,7 +329,7 @@ class SVPGAdapter(EnvWrapper, Serializable):
         :param step_length: the step size
         :param horizon: an svpg horizon
         :param num_trajs_per_config: number of trajectories to sample per physics configuration
-        :param num_sampler_envs: the number of samplers operating in parallel
+        :param num_sampler_envs: number of environments for parallel sampling
         """
         Serializable._init(self, locals())
 

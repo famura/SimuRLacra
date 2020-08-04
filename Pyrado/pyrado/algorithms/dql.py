@@ -80,7 +80,7 @@ class DQL(Algorithm):
         Constructor
 
         :param save_dir: directory to save the snapshots i.e. the results in
-        :param env: environment which the policy operates
+        :param env: the environment which the policy operates
         :param policy: (current) Q-network updated by this algorithm
         :param memory_size: number of transitions in the replay memory buffer
         :param eps_init: initial value for the probability of taking a random action, constant if `eps_schedule_gamma==1`
@@ -130,13 +130,13 @@ class DQL(Algorithm):
         self._expl_strat = EpsGreedyExplStrat(self._policy, eps_init, eps_schedule_gamma)
         self._memory = ReplayMemory(memory_size)
         self.sampler = ParallelSampler(
-            env, self._expl_strat,
+            self._env, self._expl_strat,
             num_envs=1,
             min_steps=min_steps,
             min_rollouts=min_rollouts
         )
         self.sampler_eval = ParallelSampler(
-            env, self._policy,
+            self._env, self._policy,
             num_envs=num_sampler_envs,
             min_steps=100*env.max_steps,
             min_rollouts=None
@@ -304,7 +304,7 @@ class DQL(Algorithm):
         super().reset(seed)
 
         # Re-initialize sampler in case env or policy changed
-        self.sampler.reinit()
+        self.sampler.reinit(self._env, self._expl_strat)
 
         # Reset the replay memory
         self._memory.reset()

@@ -30,9 +30,10 @@ import pytest
 import torch as to
 import torch.nn as nn
 from functools import partial
+from math import ceil
 from tqdm import tqdm
 
-from pyrado.sampling.utils import gen_batches, gen_ordered_batches
+from pyrado.sampling.utils import gen_batch_idcs, gen_ordered_batch_idcs, gen_ordered_batches
 from pyrado.utils.data_types import *
 from pyrado.utils.functions import noisy_nonlin_fcn
 from pyrado.utils.math import cosine_similarity, cov
@@ -125,20 +126,36 @@ def test_merge_lod_var_dtype(x, y):
         (2, 2)
     ], ids=['division_mod0', 'division_mod1', 'division_mod2', 'edge_case']
 )
-def test_gen_ordered_batches(batch_size, data_size):
-    from math import ceil
-
-    generator = gen_batches(batch_size, data_size)
+@pytest.mark.parametrize(
+    'sorted', [True, False], ids=['sorted', 'unsorted']
+)
+def test_gen_batch_idcs(batch_size, data_size, sorted):
+    generator = gen_batch_idcs(batch_size, data_size)
     unordered_batches = list(generator)
     assert len(unordered_batches) == ceil(data_size/batch_size)
     assert all(len(uob) <= batch_size for uob in unordered_batches)
 
-    generator = gen_ordered_batches(batch_size, data_size)
+    generator = gen_ordered_batch_idcs(batch_size, data_size, sorted)
     ordered_batches = list(generator)
     assert len(ordered_batches) == ceil(data_size/batch_size)
     assert all(len(ob) <= batch_size for ob in ordered_batches)
     # Check if each mini-batch is sorted
     assert all(all(ob[i] <= ob[i + 1] for i in range(len(ob) - 1)) for ob in ordered_batches)
+
+
+@pytest.mark.parametrize(
+    'data, batch_size', [
+        (list(range(9)), 3),
+        (list(range(10)), 3),
+    ], ids=['division_mod0', 'division_mod1']
+)
+def test_gen_ordered_batches(data, batch_size):
+    n = ceil(len(data)/batch_size)
+    for i, batch in enumerate(gen_ordered_batches(data, batch_size)):
+        if i < n - 1:
+            assert len(batch) == batch_size
+        if i == n - 1:
+            assert len(batch) <= batch_size
 
 
 @pytest.mark.parametrize('dtype', ['torch', 'numpy'], ids=['to', 'np'])

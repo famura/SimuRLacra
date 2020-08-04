@@ -62,10 +62,10 @@ class ParameterExploring(Algorithm):
         :param env: the environment which the policy operates
         :param policy: policy to be updated
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
-        :param num_rollouts: number of rollouts per solution
+        :param num_rollouts: number of rollouts per policy parameter set
         :param pop_size: number of solutions in the population, pass `None` to use a default that scales logarithmically
                          with the number of policy parameters
-        :param num_sampler_envs: number of parallel environments in the sampler
+        :param num_sampler_envs: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         if not isinstance(env, Env):
@@ -100,10 +100,10 @@ class ParameterExploring(Algorithm):
         self.ret_avg_stack = 1e3*np.random.randn(20)  # stack size = 20
         self.thold_ret_std = 1e-1  # algorithm terminates if below for multiple iterations
 
-        # Saving the best policy, not the mean for policy parameter exploration
+        # Saving the best policy (this is not the mean for policy parameter exploration)
         self.best_policy_param = policy.param_values.clone()
 
-        # Set this in subclasses!
+        # Set this in subclasses
         self._expl_strat = None
 
     @property

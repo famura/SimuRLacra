@@ -244,7 +244,10 @@ class SamplerPool:
     """
 
     def __init__(self, num_threads: int):
-        assert num_threads >= 1 and isinstance(num_threads, int)
+        if not isinstance(num_threads, int):
+            raise pyrado.TypeErr(given=num_threads, expected_type=int)
+        if num_threads < 1:
+            raise pyrado.ValueErr(given=num_threads, ge_constraint='1')
 
         self._n_threads = num_threads
         if num_threads > 1:
@@ -310,14 +313,14 @@ class SamplerPool:
         # Await results
         return self._await_result()
 
-    def run_map(self, func, arglist, progressbar: tqdm = None):
+    def run_map(self, func, arglist: list, progressbar: tqdm = None):
         """
-        A parallel version of [func(G, arg) for arg in arglist].
+        A parallel version of `[func(G, arg) for arg in arglist]`.
         There is no deterministic assignment of workers to arglist elements. Optionally runs with progress bar.
 
-        :param func: mapper function. Must be pickleable
+        :param func: mapper function, must be pickleable
         :param arglist: list of function args
-        :param progressbar: optional progress bar from the tqdm library
+        :param progressbar: optional progress bar from the `tqdm` library
         :return: list of results
         """
         # Set max on progress bar

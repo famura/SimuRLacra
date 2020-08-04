@@ -96,22 +96,26 @@ def get_conservative_randomizer(env: [SimEnv, EnvWrapper]) -> DomainRandomizer:
     """
     randomizer = get_default_randomizer(env)
     randomizer.rescale_distr_param('std', 0.5)
-    randomizer.rescale_distr_param('cov', np.sqrt(0.5))
+    randomizer.rescale_distr_param('cov', 0.5)
     randomizer.rescale_distr_param('halfspan', 0.5)
     return randomizer
 
 
-def get_zero_var_randomizer(env: [SimEnv, EnvWrapper]) -> DomainRandomizer:
+def get_zero_var_randomizer(env: [SimEnv, EnvWrapper], eps: float = 1e-18) -> DomainRandomizer:
     """
     Get the randomizer which always returns the nominal domain parameter values.
 
+    .. note::
+        The variance will not be completely zero as this would lead to invalid distributions (PyTorch checks)
+
     :param env: environment that should be perturbed
+    :param eps: factor to scale the distributions variance with
     :return: randomizer with zero variance for all parameters
     """
     randomizer = get_default_randomizer(env)
-    randomizer.rescale_distr_param('std', 0.)
-    randomizer.rescale_distr_param('cov', 0.)
-    randomizer.rescale_distr_param('halfspan', 0.)
+    randomizer.rescale_distr_param('std', np.sqrt(eps))
+    randomizer.rescale_distr_param('cov', eps)
+    randomizer.rescale_distr_param('halfspan', np.sqrt(eps))  # var(U) = 1/12 halspan**2
     return randomizer
 
 
@@ -169,7 +173,7 @@ def get_default_randomizer_bob() -> DomainRandomizer:
         NormalDomainParam(name='l_beam', mean=dp_nom['l_beam'], std=dp_nom['l_beam']/5, clip_lo=1e-3),
         NormalDomainParam(name='d_beam', mean=dp_nom['d_beam'], std=dp_nom['d_beam']/5, clip_lo=1e-3),
         UniformDomainParam(name='c_frict', mean=dp_nom['c_frict'], halfspan=dp_nom['c_frict'], clip_lo=0),
-        UniformDomainParam(name='ang_offset', mean=0./180*np.pi, halfspan=0./180*np.pi)
+        UniformDomainParam(name='ang_offset', mean=0./180*np.pi, halfspan=0.1/180*np.pi)
     )
 
 
@@ -330,8 +334,8 @@ def get_default_randomizer_bop() -> DomainRandomizer:
                            halfspan=dp_nom['ball_rolling_friction_coefficient'], clip_lo=0, clip_hi=1),
         # Vortex only
         UniformDomainParam(name='ball_slip', mean=dp_nom['ball_slip'], halfspan=dp_nom['ball_slip'], clip_lo=0)
-        # UniformDomainParam(name='ball_linearvelocitydamnping', mean=0., halfspan=0.),
-        # UniformDomainParam(name='ball_angularvelocitydamnping', mean=0., halfspan=0.)
+        # UniformDomainParam(name='ball_linearvelocitydamnping', mean=0., halfspan=1e-4),
+        # UniformDomainParam(name='ball_angularvelocitydamnping', mean=0., halfspan=1e-4)
     )
 
 
@@ -416,9 +420,35 @@ def get_default_randomizer_wambic() -> DomainRandomizer:
     )
 
 
+def get_default_domain_param_map_bob() -> Dict[int, Tuple[str, str]]:
+    """
+    Get the default mapping from indices to domain parameters(as for example used in the `BayRn` algorithm).
+
+    :return: `dict` where the key is the index and the value is a tuple of domain parameter and the associated domain
+             distribution parameter
+    """
+    return {
+        0: ('g', 'mean'),
+        1: ('g', 'std'),
+        2: ('m_ball', 'mean'),
+        3: ('m_ball', 'std'),
+        4: ('r_ball', 'mean'),
+        5: ('r_ball', 'std'),
+        6: ('m_beam', 'mean'),
+        7: ('m_beam', 'std'),
+        8: ('l_beam', 'mean'),
+        9: ('l_beam', 'std'),
+        # d_beam ignored
+        10: ('c_frict', 'mean'),
+        11: ('c_frict', 'halfspan'),
+        12: ('ang_offset', 'mean'),
+        13: ('ang_offset', 'halfspan'),
+    }
+
+
 def get_default_domain_param_map_omo() -> Dict[int, Tuple[str, str]]:
     """
-    Get the default mapping from indices to domain parameters as used in the `BayRn` algorithm.
+    Get the default mapping from indices to domain parameters(as for example used in the `BayRn` algorithm).
 
     :return: `dict` where the key is the index and the value is a tuple of domain parameter and the associated domain
              distribution parameter
@@ -428,15 +458,14 @@ def get_default_domain_param_map_omo() -> Dict[int, Tuple[str, str]]:
         1: ('m', 'std'),
         2: ('k', 'mean'),
         3: ('k', 'std'),
-        4: ('k', 'mean'),
-        5: ('d', 'std'),
-        6: ('d', 'mean'),
+        5: ('d', 'mean'),
+        6: ('d', 'std'),
     }
 
 
 def get_default_domain_param_map_pend() -> Dict[int, Tuple[str, str]]:
     """
-    Get the default mapping from indices to domain parameters as used in the `BayRn` algorithm.
+    Get the default mapping from indices to domain parameters(as for example used in the `BayRn` algorithm).
 
     :return: `dict` where the key is the index and the value is a tuple of domain parameter and the associated domain
              distribution parameter
@@ -449,7 +478,7 @@ def get_default_domain_param_map_pend() -> Dict[int, Tuple[str, str]]:
 
 def get_default_domain_param_map_qq() -> Dict[int, Tuple[str, str]]:
     """
-    Get the default mapping from indices to domain parameters as used in the `BayRn` algorithm.
+    Get the default mapping from indices to domain parameters(as for example used in the `BayRn` algorithm).
 
     :return: `dict` where the key is the index and the value is a tuple of domain parameter and the associated domain
              distribution parameter
@@ -472,7 +501,7 @@ def get_default_domain_param_map_qq() -> Dict[int, Tuple[str, str]]:
 
 def get_default_domain_param_map_wambic() -> Dict[int, Tuple[str, str]]:
     """
-    Get the default mapping from indices to domain parameters as used in the `BayRn` algorithm.
+    Get the default mapping from indices to domain parameters(as for example used in the `BayRn` algorithm).
 
     :return: `dict` where the key is the index and the value is a tuple of domain parameter and the associated domain
              distribution parameter

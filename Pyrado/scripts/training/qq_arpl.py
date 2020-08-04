@@ -25,7 +25,7 @@ if __name__ == '__main__':
     env_hparams = dict(dt=1/250., max_steps=1500)
     env = QQubeSim(**env_hparams)
     env = ActNormWrapper(env)
-    env = StateAugmentationWrapper(env, params=None)
+    env = StateAugmentationWrapper(env, domain_param=None)
 
     # Policy
     policy_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)  # FNN

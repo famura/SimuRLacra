@@ -89,7 +89,7 @@ def eval_domain_params(pool: SamplerPool, env: SimEnv, policy: Policy, params: l
     :param env: environment to evaluate in
     :param policy: policy to evaluate
     :param params: multidimensional grid of domain parameters
-    :param init_state: initial state of the environment which will be fixed if not set to None
+    :param init_state: initial state of the environment which will be fixed if not set to `None`
     :return: list of rollouts
     """
     # Strip all domain randomization wrappers from the environment

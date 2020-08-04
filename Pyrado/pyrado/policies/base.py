@@ -64,9 +64,13 @@ class Policy(nn.Module, ABC):
         :param spec: environment specification
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
-        super().__init__()
         if not isinstance(spec, EnvSpec):
             raise pyrado.TypeErr(given=spec, expected_type=EnvSpec)
+        if not isinstance(use_cuda, bool):
+            raise pyrado.TypeErr(given=use_cuda, expected_type=bool)
+
+        # Call torch.nn.Module's constructor
+        super().__init__()
 
         self._env_spec = spec
         if not use_cuda:
@@ -154,7 +158,7 @@ class Policy(nn.Module, ABC):
         This should be called at the start of a rollout. Stateful policies should use it to reset the state variables.
         The default implementation does nothing.
         """
-        pass  # this is used in rollout() even though PyCharm doesn't link it.
+        pass  # this is used in rollout() even though your IDE might not link it
 
     @abstractmethod
     def forward(self, obs: to.Tensor) -> [to.Tensor, (to.Tensor, to.Tensor)]:
@@ -197,19 +201,19 @@ class TracedPolicyWrapper(nn.Module):
     input_size: int
     output_size: int
 
-    def __init__(self, net: Policy):
+    def __init__(self, module: Policy):
         """
         Constructor
 
-        :param net: non-recurrent network to wrap, which must not be a script module
+        :param module: non-recurrent network to wrap, which must not be a script module
         """
         super().__init__()
 
         # Setup attributes
-        self.input_size = net.env_spec.obs_space.flat_dim
-        self.output_size = net.env_spec.act_space.flat_dim
+        self.input_size = module.env_spec.obs_space.flat_dim
+        self.output_size = module.env_spec.act_space.flat_dim
 
-        self.net = trace(net, (to.from_numpy(net.env_spec.obs_space.sample_uniform()),))
+        self.module = trace(module, (to.from_numpy(module.env_spec.obs_space.sample_uniform()),))
 
     def forward(self, obs):
-        return self.net(obs)
+        return self.module(obs)

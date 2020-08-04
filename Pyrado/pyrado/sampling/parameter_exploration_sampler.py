@@ -54,8 +54,8 @@ class ParameterSample(NamedTuple):
     rollouts: List[StepSequence]
 
     @property
-    def mean_undiscounted_return(self):
-        return np.mean([r.undiscounted_return() for r in self.rollouts])
+    def mean_undiscounted_return(self) -> float:
+        return np.mean([r.undiscounted_return() for r in self.rollouts]).item()
 
     @property
     def num_rollouts(self):
@@ -111,13 +111,13 @@ class ParameterSamplingResult(Sequence[ParameterSample]):
 
 
 def _pes_init(G, env, policy):
-    # Store pickled (and thus copied) env/policy
+    """ Store pickled (and thus copied) env/policy. """
     G.env = pickle.loads(env)
     G.policy = pickle.loads(policy)
 
 
 def _pes_sample_one(G, param):
-    # Sample one rollout with the current setting
+    """ Sample one rollout with the current setting. """
     pol_param, dom_param, init_state = param
     vector_to_parameters(pol_param, G.policy.parameters())
 
@@ -145,11 +145,16 @@ class ParameterExplorationSampler:
         :param num_rollouts_per_param: number of rollouts per policy parameter set
         :param seed: seed value for the random number generators, pass `None` for no seeding
         """
+        if not isinstance(num_rollouts_per_param, int):
+            raise pyrado.TypeErr(given=num_rollouts_per_param, expected_type=int)
+        if num_rollouts_per_param < 1:
+            raise pyrado.ValueErr(given=num_rollouts_per_param, ge_constraint='1')
+
         # Check environment for domain randomization wrappers (stops after finding the outermost)
-        self._dp_wrapper = typed_env(env, DomainRandWrapper)
-        if self._dp_wrapper is not None:
+        self._dr_wrapper = typed_env(env, DomainRandWrapper)
+        if self._dr_wrapper is not None:
             assert isinstance(inner_env(env), SimEnv)
-            # Remove it from env chain
+            # Remove them all from the env chain since we sample the domain parameter later explicitly
             env = remove_all_dr_wrappers(env)
 
         self.env, self.policy = env, policy
@@ -165,19 +170,20 @@ class ParameterExplorationSampler:
         self.pool.invoke_all(_pes_init, pickle.dumps(self.env), pickle.dumps(self.policy))
 
     def _sample_domain_params(self) -> [list, dict]:
-        # Sample domain params from wrapper
-        if self._dp_wrapper is None:
+        """ Sample domain parameters from the cached domain randomization wrapper. """
+        if self._dr_wrapper is None:
             # No params
             return [None]*self.num_rollouts_per_param
-        elif isinstance(self._dp_wrapper, DomainRandWrapperBuffer) and self._dp_wrapper.buffer is not None:
-            # Use buffered param sets
-            idcs = np.random.randint(0, len(self._dp_wrapper.buffer), size=self.num_rollouts_per_param)
-            return [self._dp_wrapper.buffer[i] for i in idcs]
 
-        # Sample new ones
-        rand = self._dp_wrapper.randomizer
-        rand.randomize(self.num_rollouts_per_param)
-        return rand.get_params(-1, format='list', dtype='numpy')
+        elif isinstance(self._dr_wrapper, DomainRandWrapperBuffer) and self._dr_wrapper.buffer is not None:
+            # Use buffered param sets
+            idcs = np.random.randint(0, len(self._dr_wrapper.buffer), size=self.num_rollouts_per_param)
+            return [self._dr_wrapper.buffer[i] for i in idcs]
+
+        else:
+            # Sample new ones (same as in DomainRandWrapperBuffer.fill_buffer)
+            self._dr_wrapper.randomizer.randomize(self.num_rollouts_per_param)
+            return self._dr_wrapper.randomizer.get_params(-1, format='list', dtype='numpy')
 
     def _sample_one_init_state(self, domain_param: dict) -> [np.ndarray, None]:
         """
@@ -196,25 +202,32 @@ class ParameterExplorationSampler:
             # No init space, no init state
             return None
 
-    def sample(self, param_sets: to.Tensor) -> ParameterSamplingResult:
+    def sample(self, param_sets: to.Tensor, init_states: List[np.ndarray] = None) -> ParameterSamplingResult:
         """
         Sample rollouts for a given set of parameters.
 
         :param param_sets: sets of policy parameters
+        :param init_states: list of initial states for `run_map()`, pass `None` (default) to sample from the
+                            environment's initial state space
         :return: data structure containing the policy parameter sets and the associated rollout data
         """
         # Sample domain params for each rollout
         domain_params = self._sample_domain_params()
 
-        if isinstance(domain_params, dict):
-            # There is only one domain parameter set (i.e. one init state)
-            init_states = [self._sample_one_init_state(domain_params)]
-            domain_params = [domain_params]  # cast to list of dict to make iterable like the next case
-        elif isinstance(domain_params, list):
-            # There are more than one domain parameter set (i.e. multiple init states)
-            init_states = [self._sample_one_init_state(dp) for dp in domain_params]
+        if init_states is None:
+            if isinstance(domain_params, dict):
+                # There is only one domain parameter set (i.e. one init state)
+                init_states = [self._sample_one_init_state(domain_params)]
+                domain_params = [domain_params]  # cast to list of dict to make iterable like the next case
+            elif isinstance(domain_params, list):
+                # There are more than one domain parameter set (i.e. multiple init states)
+                init_states = [self._sample_one_init_state(dp) for dp in domain_params]
+            else:
+                raise pyrado.TypeErr(given=domain_params, expected_type=[list, dict])
+
         else:
-            pyrado.TypeErr(given=domain_params, expected_type=[list, dict])
+            if not isinstance(init_states[0], np.ndarray):  # checking the first element is sufficient
+                raise pyrado.TypeErr(given=init_states[0], expected_type=np.ndarray)
 
         # Explode parameter list for rollouts per param
         all_params = [(p, *r)
@@ -222,8 +235,7 @@ class ParameterExplorationSampler:
                       for r in zip(domain_params, init_states)]
 
         # Sample rollouts in parallel
-        with tqdm(leave=False, file=sys.stdout, desc='Sampling',
-                  unit='rollouts') as pb:
+        with tqdm(leave=False, file=sys.stdout, desc='Sampling', unit='rollouts') as pb:
             all_ros = self.pool.run_map(_pes_sample_one, all_params, pb)
 
         # Group rollouts by parameters

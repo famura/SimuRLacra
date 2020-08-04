@@ -52,7 +52,7 @@ class EmptySpace(Space):
 
     @property
     def shape(self) -> tuple:
-        return (0,)
+        return (1,)  # (0,) would be better, but that causes the param init function form PyTorch to crash
 
     def shrink(self, new_lo: np.ndarray, new_up: np.ndarray):
         raise NotImplementedError("Cannot shrink empty space!")

@@ -26,26 +26,25 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import sys
-import os.path as osp
-import joblib
 import csv
+import joblib
 import numpy as np
+import os.path as osp
+import sys
 import torch as to
-from pyrado.algorithms.parameter_exploring import ParameterExploring
 from tqdm import tqdm
 from warnings import warn
 
 import pyrado
 from pyrado.algorithms.actor_critic import ActorCritic
 from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.parameter_exploring import ParameterExploring
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.domain_randomization.utils import print_domain_params
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sequences import *
 from pyrado.sampling.bootstrapping import bootstrap_ci
-from pyrado import set_seed
 from pyrado.utils.input_output import print_cbt
 
 
@@ -358,7 +357,7 @@ class SPOTA(Algorithm):
         # Do nJ rollouts for each set of physics params
         for r in range(self.nJ):
             # Candidate solution
-            set_seed(self.base_seed + i*self.nJ + r)
+            pyrado.set_seed(self.base_seed + i*self.nJ + r)
             # Set the circular index for the particular realization
             self._env_dr.ring_idx = i
             # Do the rollout and collect the return
@@ -366,7 +365,7 @@ class SPOTA(Algorithm):
             cand_ret_avg += ro_cand.undiscounted_return()
 
             # Reference solution
-            set_seed(self.base_seed + i*self.nJ + r)
+            pyrado.set_seed(self.base_seed + i*self.nJ + r)
             # Set the circular index for the particular realization
             self._env_dr.ring_idx = i
             # Do the rollout and collect the return
@@ -474,7 +473,7 @@ class SPOTA(Algorithm):
                     other_ref_ret = 0
                     for r in range(self.nJ):
                         # Set the same random seed
-                        set_seed(self.base_seed + i*self.nJ + r)
+                        pyrado.set_seed(self.base_seed + i*self.nJ + r)
                         # Set the circular index for the particular realization
                         self._env_dr.ring_idx = i
                         # Do the rollout and collect the return
