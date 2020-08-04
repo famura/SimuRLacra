@@ -55,10 +55,12 @@ class ParameterSample(NamedTuple):
 
     @property
     def mean_undiscounted_return(self) -> float:
+        """ Get the mean of the undiscounted returns over all rollouts. """
         return np.mean([r.undiscounted_return() for r in self.rollouts]).item()
 
     @property
-    def num_rollouts(self):
+    def num_rollouts(self) -> int:
+        """ Get the number of rollouts. """
         return len(self.rollouts)
 
 
@@ -122,8 +124,8 @@ def _pes_sample_one(G, param):
     vector_to_parameters(pol_param, G.policy.parameters())
 
     return rollout(G.env, G.policy, reset_kwargs={
-        "init_state": init_state,
-        "domain_param": dom_param,
+        'init_state': init_state,
+        'domain_param': dom_param,
     })
 
 
@@ -202,32 +204,25 @@ class ParameterExplorationSampler:
             # No init space, no init state
             return None
 
-    def sample(self, param_sets: to.Tensor, init_states: List[np.ndarray] = None) -> ParameterSamplingResult:
+    def sample(self, param_sets: to.Tensor) -> ParameterSamplingResult:
         """
         Sample rollouts for a given set of parameters.
 
         :param param_sets: sets of policy parameters
-        :param init_states: list of initial states for `run_map()`, pass `None` (default) to sample from the
-                            environment's initial state space
         :return: data structure containing the policy parameter sets and the associated rollout data
         """
         # Sample domain params for each rollout
         domain_params = self._sample_domain_params()
 
-        if init_states is None:
-            if isinstance(domain_params, dict):
-                # There is only one domain parameter set (i.e. one init state)
-                init_states = [self._sample_one_init_state(domain_params)]
-                domain_params = [domain_params]  # cast to list of dict to make iterable like the next case
-            elif isinstance(domain_params, list):
-                # There are more than one domain parameter set (i.e. multiple init states)
-                init_states = [self._sample_one_init_state(dp) for dp in domain_params]
-            else:
-                raise pyrado.TypeErr(given=domain_params, expected_type=[list, dict])
-
+        if isinstance(domain_params, dict):
+            # There is only one domain parameter set (i.e. one init state)
+            init_states = [self._sample_one_init_state(domain_params)]
+            domain_params = [domain_params]  # cast to list of dict to make iterable like the next case
+        elif isinstance(domain_params, list):
+            # There are more than one domain parameter set (i.e. multiple init states)
+            init_states = [self._sample_one_init_state(dp) for dp in domain_params]
         else:
-            if not isinstance(init_states[0], np.ndarray):  # checking the first element is sufficient
-                raise pyrado.TypeErr(given=init_states[0], expected_type=np.ndarray)
+            raise pyrado.TypeErr(given=domain_params, expected_type=[list, dict])
 
         # Explode parameter list for rollouts per param
         all_params = [(p, *r)
