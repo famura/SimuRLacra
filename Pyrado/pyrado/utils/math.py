@@ -43,38 +43,58 @@ class UnitCubeProjector:
         :param bound_lo: lower bound
         :param bound_up: upper bound
         """
+        if not type(bound_lo) == type(bound_up):
+            raise pyrado.TypeErr(msg='Passed two different types for bounds!')
         self.bound_lo = bound_lo
         self.bound_up = bound_up
 
-    def project_to(self, x: [np.ndarray, to.Tensor]) -> [np.ndarray, to.Tensor]:
+    def _convert_bounds(self, data: [to.Tensor, np.ndarray]) -> [(to.Tensor, to.Tensor), (np.ndarray, np.ndarray)]:
+        """
+        Convert the bounds into the right type
+
+        :param data: data that is later used for projecting
+        :return: bounds casted to the type of data
+        """
+        if isinstance(data, to.Tensor) and isinstance(self.bound_lo, np.ndarray):
+            bound_up, bound_lo = to.from_numpy(self.bound_up), to.from_numpy(self.bound_lo)
+        elif isinstance(data, np.ndarray) and isinstance(self.bound_lo, to.Tensor):
+            bound_up, bound_lo = self.bound_up.numpy(), self.bound_lo.numpy()
+        else:
+            bound_up, bound_lo = self.bound_up, self.bound_lo
+        return bound_up, bound_lo
+
+    def project_to(self, data: [np.ndarray, to.Tensor]) -> [np.ndarray, to.Tensor]:
         """
         Normalize every dimension individually using the stored explicit bounds and the L_1 norm.
 
-        :param x: input ndarray or Tensor
+        :param data: input to project to the unit space
         :return: element of the unit cube
         """
-        span = self.bound_up - self.bound_lo
-        span[span == 0] = 1.  # avoid division by 0
-        if isinstance(x, to.Tensor):
-            return (x - self.bound_lo)/span
-        elif isinstance(x, np.ndarray):
-            return (x - self.bound_lo.numpy())/span.numpy()
-        else:
-            raise pyrado.TypeErr(given=x, expected_type=[np.ndarray, to.Tensor])
+        if not isinstance(data, (to.Tensor, np.ndarray)):
+            raise pyrado.TypeErr(given=data, expected_type=(to.Tensor, np.ndarray))
 
-    def project_back(self, x: [np.ndarray, to.Tensor]) -> [np.ndarray, to.Tensor]:
+        # Convert if necessary
+        bound_up, bound_lo = self._convert_bounds(data)
+
+        span = bound_up - bound_lo
+        span[span == 0] = 1.  # avoid division by 0
+        return (data - self.bound_lo)/span
+
+    def project_back(self, data: [np.ndarray, to.Tensor]) -> [np.ndarray, to.Tensor]:
         """
         Revert the previous normalization using the stored explicit bounds
 
-        :param x: input ndarray or Tensor
+        :param data: input from the uni space
+        :return: element of the original space
         """
-        span = self.bound_up - self.bound_lo
-        if isinstance(x, to.Tensor):
-            return span*x + self.bound_lo
-        elif isinstance(x, np.ndarray):
-            return span.numpy()*x + self.bound_lo.numpy()
-        else:
-            raise pyrado.TypeErr(given=x, expected_type=[np.ndarray, to.Tensor])
+        if not isinstance(data, (to.Tensor, np.ndarray)):
+            raise pyrado.TypeErr(given=data, expected_type=(to.Tensor, np.ndarray))
+
+        # Convert if necessary
+        bound_up, bound_lo = self._convert_bounds(data)
+
+        span = bound_up - bound_lo
+        return span*data + bound_lo
 
 
 def cov(x: to.Tensor, data_along_rows: bool = False):
