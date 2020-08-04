@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import torch as to
-from abc import ABC, abstractmethod
+from abc import ABC
 from torch.distributions.uniform import Uniform
 from torch.distributions.normal import Normal
 from torch.distributions.multivariate_normal import MultivariateNormal
@@ -132,7 +132,7 @@ class UniformDomainParam(DomainParam):
         super().__init__(**kwargs)
 
         self.halfspan = halfspan
-        self.distr = Uniform(self.mean - self.halfspan, self.mean + self.halfspan)
+        self.distr = Uniform(self.mean - self.halfspan, self.mean + self.halfspan, validate_args=True)
 
     @staticmethod
     def get_field_names() -> Sequence[str]:
@@ -143,7 +143,7 @@ class UniformDomainParam(DomainParam):
         super().adapt(domain_distr_param, domain_distr_param_value)
 
         # Re-create the distribution, otherwise the changes will have no effect
-        self.distr = Uniform(self.mean - self.halfspan, self.mean + self.halfspan)
+        self.distr = Uniform(self.mean - self.halfspan, self.mean + self.halfspan, validate_args=True)
 
 
 class NormalDomainParam(DomainParam):
@@ -159,7 +159,7 @@ class NormalDomainParam(DomainParam):
         super().__init__(**kwargs)
 
         self.std = std
-        self.distr = Normal(self.mean, self.std)
+        self.distr = Normal(self.mean, self.std, validate_args=True)
 
     @staticmethod
     def get_field_names() -> Sequence[str]:
@@ -170,7 +170,7 @@ class NormalDomainParam(DomainParam):
         super().adapt(domain_distr_param, domain_distr_param_value)
 
         # Re-create the distribution, otherwise the changes will have no effect
-        self.distr = Normal(self.mean, self.std)
+        self.distr = Normal(self.mean, self.std, validate_args=True)
 
 
 class MultivariateNormalDomainParam(DomainParam):
@@ -188,18 +188,21 @@ class MultivariateNormalDomainParam(DomainParam):
 
         self.mean = self.mean.view(-1, )
         self.cov = cov
-        self.distr = MultivariateNormal(self.mean, self.cov)
+        self.distr = MultivariateNormal(self.mean, self.cov, validate_args=True)
 
     @staticmethod
     def get_field_names() -> Sequence[str]:
         return ['name', 'mean', 'cov', 'clip_lo', 'clip_up', 'roundint']
 
-    def adapt(self, domain_distr_param: str, domain_distr_param_value: [float, int]):
+    def adapt(self, domain_distr_param: str, domain_distr_param_value: to.Tensor):
+        if domain_distr_param == 'cov' and domain_distr_param_value < 0:
+            raise pyrado.ValueErr(given_name='cov', ge_constraint='0')
+
         # Set the attributes
         super().adapt(domain_distr_param, domain_distr_param_value)
 
         # Re-create the distribution, otherwise the changes will have no effect
-        self.distr = MultivariateNormal(self.mean, self.cov)
+        self.distr = MultivariateNormal(self.mean, self.cov, validate_args=True)
 
 
 class BernoulliDomainParam(DomainParam):
@@ -221,7 +224,7 @@ class BernoulliDomainParam(DomainParam):
         self.val_0 = val_0
         self.val_1 = val_1
         self.prob_1 = prob_1
-        self.distr = Bernoulli(self.prob_1)
+        self.distr = Bernoulli(self.prob_1, validate_args=True)
 
     @staticmethod
     def get_field_names() -> Sequence[str]:
@@ -232,7 +235,7 @@ class BernoulliDomainParam(DomainParam):
         super().adapt(domain_distr_param, domain_distr_param_value)
 
         # Re-create the distribution, otherwise the changes will have no effect
-        self.distr = Bernoulli(self.prob_1)
+        self.distr = Bernoulli(self.prob_1, validate_args=True)
 
     def sample(self, num_samples: int = 1) -> list:
         """
