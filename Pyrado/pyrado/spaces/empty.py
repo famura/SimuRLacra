@@ -27,7 +27,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import numpy as np
-from abc import ABC
 from tabulate import tabulate
 from typing import Sequence
 
@@ -36,7 +35,7 @@ from pyrado.spaces.base import Space
 from pyrado.utils.input_output import color_validity
 
 
-class EmptySpace(Space, ABC):
+class EmptySpace(Space):
     """ A space with no content """
 
     def _members(self) -> tuple:
@@ -53,7 +52,7 @@ class EmptySpace(Space, ABC):
 
     @property
     def shape(self) -> tuple:
-        return ()
+        return (1,)  # (0,) would be better, but that causes the param init function form PyTorch to crash
 
     def shrink(self, new_lo: np.ndarray, new_up: np.ndarray):
         raise NotImplementedError("Cannot shrink empty space!")
@@ -75,6 +74,9 @@ class EmptySpace(Space, ABC):
 
     def project_to(self, ele: np.ndarray) -> np.ndarray:
         return np.array([])
+
+    def subspace(self, idcs: [np.ndarray, int, slice] = None):
+        return self
 
     @staticmethod
     def cat(spaces: [list, tuple]):
