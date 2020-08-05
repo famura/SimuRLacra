@@ -139,9 +139,7 @@ class DomainRandomizer:
             if format == 'list':
                 # Return a list with all domain parameter sets
                 copy = deepcopy(self._params_pert_list)
-                if dtype == 'torch':
-                    pass  # nothing to be done
-                elif dtype == 'numpy':
+                if dtype == 'numpy':  # nothing to be done for torch
                     for i in range(len(copy)):
                         for k in copy[i].keys():
                             copy[i][k] = copy[i][k].numpy()
@@ -150,9 +148,7 @@ class DomainRandomizer:
             elif format == 'dict':
                 # Returns a dict (as many entries as parameters) with lists as values (as many entries as samples)
                 copy = deepcopy(self._params_pert_dict)
-                if dtype == 'torch':
-                    pass  # nothing to be done
-                elif dtype == 'numpy':
+                if dtype == 'numpy':  # nothing to be done for torch
                     for key in copy.keys():
                         copy[key] = [samples.numpy() for samples in copy[key]]
                 return copy
@@ -160,11 +156,11 @@ class DomainRandomizer:
         elif num_samples == 1 or len(self._params_pert_list) == 1:
             # If only one sample is wanted or the internal list just contains 1 element
             copy = deepcopy(self._params_pert_list[0])
-            if dtype == 'torch':
-                pass  # nothing to be done
-            elif dtype == 'numpy':
+            if dtype == 'numpy':  # nothing to be done for torch
                 for k in copy.keys():
                     copy[k] = copy[k].numpy()
+            if format == 'list':  # nothing to be done for dict
+                copy = [copy]
             return copy
 
         elif num_samples >= 1:
@@ -172,9 +168,7 @@ class DomainRandomizer:
             if format == 'list':
                 copy = deepcopy(self._params_pert_list[:num_samples])
                 # Return a list with the fist num_samples domain parameter sets
-                if dtype == 'torch':
-                    pass  # nothing to be done
-                elif dtype == 'numpy':
+                if dtype == 'numpy':  # nothing to be done for torch
                     for i in range(num_samples):
                         for k in copy[i].keys():
                             copy[i][k] = copy[i][k].numpy()
@@ -186,9 +180,7 @@ class DomainRandomizer:
                 for key in self._params_pert_dict:
                     # Only select the fist num_samples elements of the list
                     params_pert_subset[key] = self._params_pert_dict[key][:num_samples]
-                    if dtype == 'torch':
-                        pass  # nothing to be done
-                    elif dtype == 'numpy':
+                    if dtype == 'numpy':  # nothing to be done for torch
                         params_pert_subset[key] = [p.numpy() for p in params_pert_subset[key]]
                 return params_pert_subset
 
