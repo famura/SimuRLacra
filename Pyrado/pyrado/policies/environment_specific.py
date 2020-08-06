@@ -28,6 +28,7 @@
 
 import math
 import numpy as np
+import time
 import torch as to
 import torch.nn as nn
 
@@ -281,7 +282,7 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
         # Energy terms
         E_kin = J_pole/2.*theta_dot**2
         E_pot = self.dp_nom['m_pole']*self.dp_nom['g']*self.dp_nom['l_pole']*(
-                1 - cos_th)  # E(0) = 0., E(pi) = E(-pi) = 2 mgl
+            1 - cos_th)  # E(0) = 0., E(pi) = E(-pi) = 2 mgl
         E_ref = 2.*self.dp_nom['m_pole']*self.dp_nom['g']*self.dp_nom['l_pole']
 
         if to.abs(alpha) < 0.1745 or self.pd_control:
@@ -495,7 +496,62 @@ class QQubePDCtrl(Policy):
         return k.dot(err).unsqueeze(0)
 
 
-class GoToLimCtrl:
+class QCartPoleGoToLimCtrl:
+    """ Controller for going to one of the joint limits (part of the calibration routine) """
+
+    def __init__(self, init_state: np.ndarray, positive: bool = True):
+        """
+        Constructor
+
+        :param init_state: initial state of the system
+        :param positive: direction switch
+        """
+        self.done = False
+        self.success = False
+        self.x_init = init_state[0]
+        self.x_lim = 0.0
+        self.xd_max = 1e-4
+        self.delta_x_min = 0.1
+        self.sign = 1 if positive else -1
+        self.u_max = self.sign*np.array([1.5])
+        self._t_init = False
+        self._t0 = None
+        self._t_max = 10.0
+        self._t_min = 2.0
+
+    def __call__(self, obs: np.ndarray) -> np.ndarray:
+        """
+        Go to joint limits by applying u_max and save limit value in th_lim.
+
+        :param obs: observation from the environment
+        :return: action
+        """
+        x, _, _, xd, _ = obs
+
+        # Initialize time
+        if not self._t_init:
+            self._t0 = time.time()
+            self._t_init = True
+
+        # Compute voltage
+        if (time.time() - self._t0) < self._t_min:
+            # Go full speed before t_min
+            u = self.u_max
+        elif (time.time() - self._t0) > self._t_max:
+            # Do nothing if t_max is elapsed
+            u = np.zeros(1)
+            self.success, self.done = False, True
+        elif np.abs(xd) < self.xd_max:  # and np.abs(x - self.x_init) > self.delta_x_min:
+            # Do nothing
+            u = np.zeros(1)
+            self.success, self.done = True, True
+        else:
+            u = self.u_max
+
+        return u
+
+
+class QQubeGoToLimCtrl:
     """ Controller for going to one of the joint limits (part of the calibration routine) """
 
     def __init__(self, positive: bool = True, cnt_done: int = 250):
@@ -513,7 +569,7 @@ class GoToLimCtrl:
 
     def __call__(self, meas: to.Tensor) -> to.Tensor:
         """
-        Go to joint limits by applying u_max and save limit value in th_lim.
+        Go to joint limits by applying `u_max` and save limit value in `th_lim`.
 
         :param meas: sensor measurement
         :return: action

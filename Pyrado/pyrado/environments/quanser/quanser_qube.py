@@ -32,7 +32,7 @@ from init_args_serializer import Serializable
 
 import pyrado
 from pyrado.environments.quanser.base import RealEnv
-from pyrado.policies.environment_specific import QQubePDCtrl, GoToLimCtrl
+from pyrado.policies.environment_specific import QQubePDCtrl, QQubeGoToLimCtrl
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
@@ -133,8 +133,8 @@ class QQubeReal(RealEnv, Serializable):
         self._sens_offset[1] = meas[1]
 
         # Create parts of the calibration controller
-        go_right = GoToLimCtrl(positive=True, cnt_done=int(.5/self._dt))
-        go_left = GoToLimCtrl(positive=False, cnt_done=int(.5/self._dt))
+        go_right = QQubeGoToLimCtrl(positive=True, cnt_done=int(.5/self._dt))
+        go_left = QQubeGoToLimCtrl(positive=False, cnt_done=int(.5/self._dt))
         go_center = QQubePDCtrl(self.spec, calibration_mode=True)
 
         # Go to both limits for theta calibration

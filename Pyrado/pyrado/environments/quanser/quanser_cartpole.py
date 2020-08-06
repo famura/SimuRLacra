@@ -33,6 +33,7 @@ from init_args_serializer import Serializable
 
 import pyrado
 from pyrado.environments.quanser.base import RealEnv
+from pyrado.policies.environment_specific import QCartPoleGoToLimCtrl
 from pyrado.spaces.box import BoxSpace
 from pyrado.spaces.compound import CompoundSpace
 from pyrado.tasks.base import Task
@@ -100,8 +101,7 @@ class QCartPoleReal(RealEnv, Serializable):
         # Go to the left
         print('Going to the left ...', end=' ')
         obs, _, _, _ = self.step(np.zeros(self.act_space.shape))
-        ctrl = GoToLimCtrl(obs, positive=True)
-
+        ctrl = QCartPoleGoToLimCtrl(obs, positive=True)
         while not ctrl.done:
             act = ctrl(obs)
             obs, _, _, _ = self.step(act)
@@ -116,8 +116,7 @@ class QCartPoleReal(RealEnv, Serializable):
         # Go to the right
         print('Going to the right ...', end=' ')
         obs, _, _, _ = self.step(np.zeros(self.act_space.shape))
-        ctrl = GoToLimCtrl(obs, positive=False)
-
+        ctrl = QCartPoleGoToLimCtrl(obs, positive=False)
         while not ctrl.done:
             act = ctrl(obs)
             obs, _, _, _ = self.step(act)
