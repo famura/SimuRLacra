@@ -32,7 +32,7 @@ from collections import deque
 from init_args_serializer import Serializable
 
 from pyrado.environment_wrappers.base import EnvWrapper, EnvWrapperAct, EnvWrapperObs
-from pyrado.environments.quanser.base import RealEnv
+from pyrado.environments.real_base import RealEnv
 
 
 class DownsamplingWrapper(EnvWrapperAct, EnvWrapperObs, Serializable):

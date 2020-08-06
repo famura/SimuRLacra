@@ -34,7 +34,7 @@ import numpy as np
 import os.path as osp
 
 import pyrado
-from pyrado.environments.quanser.base import RealEnv
+from pyrado.environments.quanser.base import QuanserReal
 from pyrado.environments.quanser.quanser_cartpole import QCartPoleStabReal
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.sim_base import SimEnv
@@ -56,7 +56,7 @@ def volt_disturbance_neg(t: float):
     return [-6.]
 
 
-def experiment_wo_distruber(env_real: RealEnv, env_sim: SimEnv):
+def experiment_wo_distruber(env_real: QuanserReal, env_sim: SimEnv):
     # Wrap the environment in the same as done during training
     env_real = wrap_like_other_env(env_real, env_sim)
 
@@ -66,7 +66,7 @@ def experiment_wo_distruber(env_real: RealEnv, env_sim: SimEnv):
                    no_reset=True, no_close=True)
 
 
-def experiment_w_distruber(env_real: RealEnv, env_sim: SimEnv):
+def experiment_w_distruber(env_real: QuanserReal, env_sim: SimEnv):
     # Wrap the environment in the same as done during training
     env_real = wrap_like_other_env(env_real, env_sim)
 

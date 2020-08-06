@@ -272,7 +272,7 @@ def test_qbb_kin(servo_ang):
         (1/500., 1)
     ], ids=['default']
 )
-def test_real_env_contructors(dt, max_steps):
+def test_quanser_real_contructors(dt, max_steps):
     qbbr = QBallBalancerReal(dt=dt, max_steps=max_steps)
     assert qbbr is not None
     qcp_st = QCartPoleStabReal(dt=dt, max_steps=max_steps)

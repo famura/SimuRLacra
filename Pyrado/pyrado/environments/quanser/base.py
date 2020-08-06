@@ -30,16 +30,16 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 import pyrado
-from pyrado.environments.base import Env
 from pyrado.environments.quanser.quanser_common import QSocket
+from pyrado.environments.real_base import RealEnv
 from pyrado.spaces.base import Space
 from pyrado.tasks.base import Task
 from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt
 
 
-class RealEnv(Env, ABC):
-    """ Base class of all real-world environments in Pyrado """
+class QuanserReal(RealEnv, ABC):
+    """ Base class of all real-world Quanser environments in Pyrado """
 
     def __init__(self,
                  ip: str,

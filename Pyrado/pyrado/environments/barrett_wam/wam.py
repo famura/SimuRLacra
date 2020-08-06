@@ -32,7 +32,7 @@ import robcom_python as robcom
 from init_args_serializer import Serializable
 
 import pyrado
-from pyrado.environments.base import Env
+from pyrado.environments.real_base import RealEnv
 from pyrado.spaces import BoxSpace
 from pyrado.spaces.base import Space
 from pyrado.tasks.base import Task
@@ -43,7 +43,7 @@ from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt
 
 
-class WAMBallInCupReal(Env, Serializable):
+class WAMBallInCupReal(RealEnv, Serializable):
     """
     Class for the real Barrett WAM
 

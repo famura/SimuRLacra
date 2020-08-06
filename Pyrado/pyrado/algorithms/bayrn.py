@@ -46,7 +46,7 @@ from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.utils import until_thold_exceeded
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
-from pyrado.environments.quanser.base import RealEnv
+from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
 from pyrado.sampling.bootstrapping import bootstrap_ci

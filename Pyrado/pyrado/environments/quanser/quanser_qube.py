@@ -31,7 +31,7 @@ import torch as to
 from init_args_serializer import Serializable
 
 import pyrado
-from pyrado.environments.quanser.base import RealEnv
+from pyrado.environments.quanser.base import QuanserReal
 from pyrado.policies.environment_specific import QQubePDCtrl, QQubeGoToLimCtrl
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
@@ -40,7 +40,7 @@ from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn
 from pyrado.utils.input_output import print_cbt
 
 
-class QQubeReal(RealEnv, Serializable):
+class QQubeReal(QuanserReal, Serializable):
     """ Class for the real Quanser Qube a.k.a. Furuta pendulum """
 
     name: str = 'qq'

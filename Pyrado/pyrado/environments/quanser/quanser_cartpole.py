@@ -32,7 +32,7 @@ from abc import abstractmethod
 from init_args_serializer import Serializable
 
 import pyrado
-from pyrado.environments.quanser.base import RealEnv
+from pyrado.environments.quanser.base import QuanserReal
 from pyrado.policies.environment_specific import QCartPoleGoToLimCtrl
 from pyrado.spaces.box import BoxSpace
 from pyrado.spaces.compound import CompoundSpace
@@ -43,7 +43,7 @@ from pyrado.tasks.reward_functions import UnderActuatedSwingUpRewFcn, QuadrErrRe
 from pyrado.utils.input_output import print_cbt
 
 
-class QCartPoleReal(RealEnv, Serializable):
+class QCartPoleReal(QuanserReal, Serializable):
     """ Base class for the real Quanser Cart-Pole """
 
     def __init__(self,

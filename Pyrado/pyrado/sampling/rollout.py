@@ -36,7 +36,7 @@ from tabulate import tabulate
 import pyrado
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environments.base import Env
-from pyrado.environments.quanser.base import RealEnv
+from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.environment_wrappers.utils import inner_env, typed_env
 from pyrado.plotting.curve import plot_dts

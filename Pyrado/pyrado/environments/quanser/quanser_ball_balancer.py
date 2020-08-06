@@ -30,14 +30,14 @@ import numpy as np
 from init_args_serializer import Serializable
 
 import pyrado
-from pyrado.environments.quanser.base import RealEnv
+from pyrado.environments.quanser.base import QuanserReal
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import DesStateTask
 from pyrado.tasks.reward_functions import ScaledExpQuadrErrRewFcn
 
 
-class QBallBalancerReal(RealEnv, Serializable):
+class QBallBalancerReal(QuanserReal, Serializable):
     """ Class for the real Quanser Ball-Balancer """
 
     name: str = 'qbb'
