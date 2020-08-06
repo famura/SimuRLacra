@@ -198,9 +198,9 @@ class BayRn(Algorithm):
             if isinstance(self._subrtn, ActorCritic):
                 self._subrtn.critic.value_fcn.init_param(self.valuefcn_param_init)
             if self.policy_param_init is None:
-                print_cbt('Learning the new solution from scratch', 'y')
+                print_cbt('Learning the new policy from scratch.', 'y')
             else:
-                print_cbt('Learning the new solution given an initialization', 'y')
+                print_cbt('Learning the new policy given an initialization.', 'y')
 
         elif self.warmstart and self._curr_iter > 0:
             # Continue from the previous policy (and value function)
@@ -211,7 +211,7 @@ class BayRn(Algorithm):
                 self._subrtn.critic.value_fcn.load_state_dict(
                     to.load(osp.join(self._save_dir, f'iter_{self._curr_iter - 1}_valuefcn.pt')).state_dict()
                 )
-            print_cbt(f'Initialized the new solution with the results from iteration {self._curr_iter - 1}', 'y')
+            print_cbt(f'Initialized the new policy with the one from iteration {self._curr_iter - 1}.', 'y')
 
         # Train a policy in simulation using the subroutine
         self._subrtn.train(snapshot_mode=self.subrtn_snapshot_mode, meta_info=dict(prefix=prefix))

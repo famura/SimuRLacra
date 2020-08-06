@@ -219,28 +219,22 @@ class SPOTA(Algorithm):
         :param nc: number of domains used for training the candidate solution
         """
         if self._curr_iter == 0 or not self.warmstart_cand:
-            # Create a new candidate policy by re-initializing its parameters
+            # Create a new candidate by re-initializing the parameters
             self._subrtn_cand.policy.init_param(self.cand_policy_param_init)
-
-            # Create a new value function by re-initializing its parameters
             if isinstance(self._subrtn_cand, ActorCritic):
                 self._subrtn_cand.critic.value_fcn.init_param(self.cand_critic_param_init)
-
-            print_cbt('Created a new candidate solution.\n', 'y')
+            print_cbt('Created a new candidate solution.', 'y')
 
         elif self._curr_iter > 0 and self.warmstart_cand:
-            # Continue from the candidate's policy of the previous iteration
+            # Continue from the previous iteration
             self._subrtn_cand.policy.load_state_dict(
                 to.load(osp.join(self._save_dir, f'iter_{self._curr_iter - 1}_policy_cand.pt')).state_dict()
             )
-
-            # Continue from the candidate's value function of the previous iteration
             if isinstance(self._subrtn_cand, ActorCritic):
                 self._subrtn_cand.critic.value_fcn.load_state_dict(
                     to.load(osp.join(self._save_dir, f'iter_{self._curr_iter - 1}_valuefcn_cand.pt')).state_dict()
                 )
-
-            print_cbt('Initialized the candidate solution with the previously trained candidate.\n', 'y')
+            print_cbt('Initialized the candidate solution with the previously trained candidate.', 'y')
 
         else:
             raise pyrado.ValueErr(msg='Faulty joint configuration of curr_iter and warmstart_cand!')

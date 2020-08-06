@@ -156,7 +156,7 @@ class Space(ABC):
         Check if a candidate element is in the state.
 
         :param cand: candidate to check if it is an element of the space
-        :param verbose: flag if details should be printed in case the candidate is not an element of the space
+        :param verbose: if `True` details are be printed in case the candidate is not an element of the space
         :return: bool value
         """
         raise NotImplementedError

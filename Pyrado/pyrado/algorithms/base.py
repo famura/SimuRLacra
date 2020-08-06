@@ -135,8 +135,7 @@ class Algorithm(ABC, LoggerAware):
         self._highest_avg_ret = -pyrado.inf
 
         if seed is not None:
-            set_seed(seed)
-            print_cbt(f"Set the random number generators' seed to {seed}.", 'y')
+            set_seed(seed, verbose=True)
 
     def train(self,
               load_dir: str = None,
@@ -166,8 +165,7 @@ class Algorithm(ABC, LoggerAware):
             print_cbt(f'{get_class_name(self)} started training using the snapshot mode {snapshot_mode}.', 'g')
 
         if seed is not None:
-            set_seed(seed)
-            print_cbt(f"Set the random number generators' seed to {seed}.", 'y')
+            set_seed(seed, verbose=True)
 
         while self._curr_iter < self.max_iter and not self.stopping_criterion_met():
             # Record current iteration to logger

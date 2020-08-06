@@ -111,8 +111,7 @@ class Experiment:
 
         # Set the random seed
         if seed is not None:
-            pyrado.set_seed(seed)
-            print_cbt(f"Set the random number generators' seed to {seed}.", 'y')
+            pyrado.set_seed(seed, verbose=True)
 
     def __fspath__(self):
         """ Allows to use the experiment object where the experiment path is needed. """

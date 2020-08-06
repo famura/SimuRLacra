@@ -87,6 +87,7 @@ figsize_JMLR_warpfig = (2.5, 2.4)
 use_pgf = False
 from pyrado import plotting
 
+
 # Reset the colorama style after each print
 init(autoreset=True)
 
@@ -96,13 +97,17 @@ to.set_printoptions(precision=4, linewidth=200)
 # Set a uniform printing style for numpy
 np.set_printoptions(precision=4, sign=' ', linewidth=200)  # suppress=True
 
+sym_success = '\u2713'
+sym_failure = '\u274C'
+
 # Include all error classes
 from pyrado.utils.exceptions import BaseErr, KeyErr, PathErr, ShapeErr, TypeErr, ValueErr
 
 
 # Set the public API
 __all__ = ['VERSION', 'TEMP_DIR', 'PERMA_DIR', 'EVAL_DIR', 'EXP_DIR', 'HPARAM_DIR',
-           'rcsenv_available', 'mujoco_available', 'use_pgf', 'inf', 'nan']
+           'rcsenv_available', 'mujoco_available', 'use_pgf', 'inf', 'nan',
+           'sym_success', 'sym_failure']
 
 
 def close_vpython():
@@ -110,14 +115,18 @@ def close_vpython():
     _exit(0)
 
 
-def set_seed(seed: int):
+def set_seed(seed: int, verbose: bool = False):
     """
     Set the seed for the random number generators
 
     :param seed: value for the random number generators' seeds
+    :param verbose: if `True` the seed is printed
     """
     random.seed(seed)
     np.random.seed(seed)
     to.manual_seed(seed)
     if to.cuda.is_available():
         to.cuda.manual_seed_all(seed)
+
+    if verbose:
+        print(f"Set the random number generators' seed to {seed}.")

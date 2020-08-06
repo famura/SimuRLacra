@@ -95,11 +95,10 @@ class QCartPoleReal(RealEnv, Serializable):
     def calibrate(self):
         if self._calibrated:
             return
-        print_cbt('Calibrate the cartpole ...', 'c')
+        print_cbt('Calibrating the cart-pole ...', 'c')
 
         # Go to the left
-        print('\tGo to the Left:\t\t\t', end='')
-
+        print('Going to the left ...', end=' ')
         obs, _, _, _ = self.step(np.zeros(self.act_space.shape))
         ctrl = GoToLimCtrl(obs, positive=True)
 
@@ -109,15 +108,13 @@ class QCartPoleReal(RealEnv, Serializable):
 
         if ctrl.success:
             self._norm_x_lim[1] = obs[0]
-            print('\u2713')
-
+            print(pyrado.sym_success)
         else:
-            print('\u274C ')
-            raise RuntimeError('Going to the left limit failed.')
+            print(pyrado.sym_failure)
+            raise RuntimeError('Going to the left limit failed!')
 
         # Go to the right
-        print('Go to the right ...\t\t', end='')
-
+        print('Going to the right ...', end=' ')
         obs, _, _, _ = self.step(np.zeros(self.act_space.shape))
         ctrl = GoToLimCtrl(obs, positive=False)
 
@@ -127,10 +124,10 @@ class QCartPoleReal(RealEnv, Serializable):
 
         if ctrl.success:
             self._norm_x_lim[0] = obs[0]
-            print('\u2713')
+            print(pyrado.sym_success)
         else:
-            print('\u274C')
-            raise RuntimeError('Going to the right limit failed.')
+            print(pyrado.sym_failure)
+            raise RuntimeError('Going to the right limit failed!')
 
         # Activate the absolute cart position:
         self._calibrated = True
@@ -141,7 +138,7 @@ class QCartPoleReal(RealEnv, Serializable):
         t_max, t0 = 10.0, time.time()
         obs, _, _, _ = self.step(np.zeros(self.act_space.shape))
 
-        print('Centering the cart ...\t\t', end='')
+        print('Centering the cart ...', end=' ')
         while (time.time() - t0) < t_max:
             act = -np.sign(obs[0])*1.5*np.ones(self.act_space.shape)
             obs, _, _, _ = self.step(act)
@@ -154,12 +151,12 @@ class QCartPoleReal(RealEnv, Serializable):
         time.sleep(0.5)
 
         if np.abs(obs[0]) > self._c_lim:
-            print('\u274C')
-            time.sleep(0.1)
+            print(pyrado.sym_failure)
+            # time.sleep(0.1)
             raise RuntimeError(
                 f'Centering of the cart failed: |x| = {np.abs(obs[0]):.2f} > {self._c_lim:.2f}')
 
-        print('\u2713')
+        print(pyrado.sym_success)
 
     def _correct_sensor_offset(self, meas: np.ndarray) -> np.ndarray:
         # Transform the relative cart position to [-0.4, +0.4]
@@ -217,7 +214,7 @@ class QCartPoleStabReal(QCartPoleReal):
 
     def _wait_for_upright_pole(self, verbose=False):
         if verbose:
-            print('\tCentering the Pole:\t\t', end='')
+            print('Centering the Pole:\t\t', end='')
 
         # Initialize
         t_max, t0 = 15.0, time.time()
@@ -241,8 +238,8 @@ class QCartPoleStabReal(QCartPoleReal):
 
         if not upright:
             if verbose:
-                print('\u274C')
-            time.sleep(0.1)
+                print(pyrado.sym_failure)
+            # time.sleep(0.1)
             state_str = np.array2string(np.abs(obs), suppress_small=True, precision=2,
                                         formatter={'float_kind': lambda x: '{0:+05.2f}'.format(x)})
             th_str = np.array2string(th, suppress_small=True, precision=2,
@@ -250,7 +247,7 @@ class QCartPoleStabReal(QCartPoleReal):
             raise TimeoutError('The pole is not upright: {0} > {1}'.format(state_str, th_str))
 
         elif verbose:
-            print('\u2713')
+            print(pyrado.sym_success)
 
         return
 
@@ -331,60 +328,3 @@ class QCartPoleSwingUpReal(QCartPoleReal):
         self._curr_step = 0
 
         return self.observe(self.state)
-
-
-class GoToLimCtrl:
-    """ Controller for going to one of the joint limits (part of the calibration routine) """
-
-    def __init__(self, init_state: np.ndarray, positive: bool = True):
-        """
-        Constructor
-
-        :param init_state: initial state of the system
-        :param positive: direction switch
-        """
-        self.done = False
-        self.success = False
-        self.x_init = init_state[0]
-        self.x_lim = 0.0
-        self.xd_max = 1e-4
-        self.delta_x_min = 0.1
-        self.sign = 1 if positive else -1
-        self.u_max = self.sign*np.array([1.5])
-        self._t_init = False
-        self._t0 = None
-        self._t_max = 10.0
-        self._t_min = 2.0
-
-    def __call__(self, obs: np.ndarray) -> np.ndarray:
-        """
-        Go to joint limits by applying u_max and save limit value in th_lim.
-
-        :param obs: observation from the environment
-        :return: action
-        """
-        x, _, _, xd, _ = obs
-
-        # Initialize time
-        if not self._t_init:
-            self._t0 = time.time()
-            self._t_init = True
-
-        # Compute voltage
-        if (time.time() - self._t0) < self._t_min:
-            # Go full speed before t_min
-            u = self.u_max
-        elif (time.time() - self._t0) > self._t_max:
-            # Do nothing if t_max is elapsed
-            u = np.zeros(1)
-            self.success = False
-            self.done = True
-        elif np.abs(xd) < self.xd_max:  # and np.abs(x - self.x_init) > self.delta_x_min:
-            # Do nothing i
-            u = np.zeros(1)
-            self.success = True
-            self.done = True
-        else:
-            u = self.u_max
-
-        return u
