@@ -287,10 +287,9 @@ class ADR(Algorithm):
             # This algorithm instance is not a subroutine of a meta-algorithm
             joblib.dump(self.env, osp.join(self._save_dir, 'env.pkl'))
             to.save(self.reward_generator.discriminator, osp.join(self._save_dir, 'discriminator.pt'))
-            self.svpg.save_snapshot(meta_info=[])
+            self.svpg.save_snapshot(meta_info=None)
         else:
-            # This algorithm instance is a subroutine of a meta-algorithm
-            raise NotImplementedError
+            raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
 
     def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
         # Get the directory to load from
@@ -303,8 +302,7 @@ class ADR(Algorithm):
             )
             self.svpg.load_snapshot(ld)
         else:
-            # This algorithm instance is a subroutine of a meta-algorithm
-            raise NotImplementedError
+            raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
 
 
 class SVPGAdapter(EnvWrapper, Serializable):

@@ -75,18 +75,18 @@ class EPOpt(Algorithm):
         super().__init__(subrtn.save_dir, subrtn.max_iter, subrtn.policy, subrtn.logger)
 
         # Store inputs
-        self._subtn = subrtn
+        self._subrtn = subrtn
         self.epsilon = epsilon
         self.gamma = gamma
         self.skip_iter = skip_iter
 
         # Override the subroutine's sampler
-        self._subtn.sampler = CVaRSampler(
-            self._subtn.sampler,
+        self._subrtn.sampler = CVaRSampler(
+            self._subrtn.sampler,
             epsilon=1.,  # keep all rollouts until curr_iter = skip_iter
             gamma=self.gamma,
-            min_rollouts=self._subtn.sampler.min_rollouts,
-            min_steps=self._subtn.sampler.min_steps,
+            min_rollouts=self._subrtn.sampler.min_rollouts,
+            min_steps=self._subrtn.sampler.min_steps,
         )
 
         # Save initial randomizer
@@ -94,24 +94,24 @@ class EPOpt(Algorithm):
 
     @property
     def subroutine(self) -> Algorithm:
-        return self._subtn
+        return self._subrtn
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
         # Activate the CVaR mechanism after skip_iter iterations
         if self.curr_iter == self.skip_iter:
-            self._subtn.sampler.epsilon = self.epsilon
+            self._subrtn.sampler.epsilon = self.epsilon
 
         # Call subroutine
-        self._subtn.step(snapshot_mode, meta_info)
+        self._subrtn.step(snapshot_mode, meta_info)
 
     def save_snapshot(self, meta_info: dict = None):
         if meta_info is None:
             # This algorithm instance is not a subroutine of a meta-algorithm
             if self.curr_iter == self.skip_iter:
                 # Save the last snapshot before applying the CVaR
-                self._subtn.save_snapshot(meta_info=dict(prefix=f'iter_{self.skip_iter}'))
+                self._subrtn.save_snapshot(meta_info=dict(prefix=f'iter_{self.skip_iter}'))
             else:
-                self._subtn.save_snapshot(meta_info=None)
+                self._subrtn.save_snapshot(meta_info=None)
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
 
@@ -121,6 +121,6 @@ class EPOpt(Algorithm):
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of a meta-algorithm
-            self._subtn.load_snapshot(ld, meta_info)
+            self._subrtn.load_snapshot(ld, meta_info)
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')

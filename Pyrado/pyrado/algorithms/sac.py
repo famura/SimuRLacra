@@ -37,7 +37,7 @@ from tqdm import tqdm
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.utils import ReplayMemory
+from pyrado.algorithms.utils import ReplayMemory, save_prefix_suffix, load_prefix_suffix
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.base import Env
@@ -380,62 +380,24 @@ class SAC(Algorithm):
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
+        save_prefix_suffix(self.q_targ_1, 'target1', 'pt', self._save_dir, meta_info)
+        save_prefix_suffix(self.q_targ_2, 'target2', 'pt', self._save_dir, meta_info)
+
         if meta_info is None:
             # This instance is not a subroutine of a meta-algorithm
             joblib.dump(self._env, osp.join(self._save_dir, 'env.pkl'))
-            to.save(self.q_targ_1, osp.join(self._save_dir, 'target1.pt'))
-            to.save(self.q_targ_2, osp.join(self._save_dir, 'target2.pt'))
-        else:
-            # This algorithm instance is a subroutine of a meta-algorithm
-            if 'prefix' in meta_info and 'suffix' in meta_info:
-                to.save(self.q_targ_1,
-                        osp.join(self._save_dir, f"{meta_info['prefix']}_target1_{meta_info['suffix']}.pt"))
-                to.save(self.q_targ_2,
-                        osp.join(self._save_dir, f"{meta_info['prefix']}_target2_{meta_info['suffix']}.pt"))
-            elif 'prefix' in meta_info and 'suffix' not in meta_info:
-                to.save(self.q_targ_1, osp.join(self._save_dir, f"{meta_info['prefix']}_target1.pt"))
-                to.save(self.q_targ_2, osp.join(self._save_dir, f"{meta_info['prefix']}_target2.pt"))
-            elif 'prefix' not in meta_info and 'suffix' in meta_info:
-                to.save(self.q_targ_1, osp.join(self._save_dir, f"target1_{meta_info['suffix']}.pt"))
-                to.save(self.q_targ_2, osp.join(self._save_dir, f"target2_{meta_info['suffix']}.pt"))
-            else:
-                raise NotImplementedError
 
     def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
         # Get the directory to load from
         ld = load_dir if load_dir is not None else self._save_dir
         super().load_snapshot(ld, meta_info)
 
+        self.q_targ_1 = load_prefix_suffix(self.q_targ_1, 'target1', 'pt', ld, meta_info)
+        self.q_targ_2 = load_prefix_suffix(self.q_targ_2, 'target2', 'pt', ld, meta_info)
+
         if meta_info is None:
             # This algorithm instance is not a subroutine of a meta-algorithm
             self._env = joblib.load(osp.join(ld, 'env.pkl'))
-            self.q_targ_1.load_state_dict(to.load(osp.join(ld, 'target1.pt')).state_dict())
-            self.q_targ_2.load_state_dict(to.load(osp.join(ld, 'target2.pt')).state_dict())
-        else:
-            # This algorithm instance is a subroutine of a meta-algorithm
-            if 'prefix' in meta_info and 'suffix' in meta_info:
-                self.q_targ_1.load_state_dict(
-                    to.load(osp.join(ld, f"{meta_info['prefix']}_target1_{meta_info['suffix']}.pt")).state_dict()
-                )
-                self.q_targ_2.load_state_dict(
-                    to.load(osp.join(ld, f"{meta_info['prefix']}_target2_{meta_info['suffix']}.pt")).state_dict()
-                )
-            elif 'prefix' in meta_info and 'suffix' not in meta_info:
-                self.q_targ_1.load_state_dict(
-                    to.load(osp.join(ld, f"{meta_info['prefix']}_target1.pt")).state_dict()
-                )
-                self.q_targ_2.load_state_dict(
-                    to.load(osp.join(ld, f"{meta_info['prefix']}_target2.pt")).state_dict()
-                )
-            elif 'prefix' not in meta_info and 'suffix' in meta_info:
-                self.q_targ_1.load_state_dict(
-                    to.load(osp.join(ld, f"target1_{meta_info['suffix']}.pt")).state_dict()
-                )
-                self.q_targ_2.load_state_dict(
-                    to.load(osp.join(ld, f"target2_{meta_info['suffix']}.pt")).state_dict()
-                )
-            else:
-                raise NotImplementedError
 
     def reset(self, seed: int = None):
         # Reset the exploration strategy, internal variables and the random seeds

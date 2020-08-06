@@ -503,6 +503,7 @@ class SPOTA(Algorithm):
             # This algorithm instance is not a subroutine of a meta-algorithm
             np.save(osp.join(self._save_dir, f'iter_{self._curr_iter}_diffs.npy'), self.Gn_diffs)
             self._subrtn_cand.save_snapshot(meta_info=dict(prefix='final', suffix='cand'))
+            self._subrtn_refs.save_snapshot(meta_info=dict(prefix='final', suffix='refs'))
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
 
@@ -513,5 +514,6 @@ class SPOTA(Algorithm):
         if meta_info is None:
             # This algorithm instance is not a subroutine of a meta-algorithm
             self._subrtn_cand.load_snapshot(ld, meta_info=dict(prefix='final', suffix='cand'))
+            self._subrtn_refs.load_snapshot(ld, meta_info=dict(prefix='final', suffix='refs'))
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')

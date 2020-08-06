@@ -416,7 +416,7 @@ class BayRn(Algorithm):
         # Get the directory to load from
         ld = load_dir if load_dir is not None else self._save_dir
         if not osp.isdir(ld):
-            raise pyrado.ValueErr(msg='Given path is not a directory!')
+            raise pyrado.PathErr(given=ld)
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of a meta-algorithm

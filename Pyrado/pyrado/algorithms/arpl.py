@@ -25,7 +25,7 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-
+import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.environment_wrappers.adversarial import AdversarialDynamicsWrapper, AdversarialStateWrapper, \
     AdversarialObservationWrapper
@@ -52,7 +52,7 @@ class ARPL(Algorithm):
     def __init__(self,
                  save_dir: str,
                  env: [SimEnv, StateAugmentationWrapper],
-                 subroutine: Algorithm,
+                 subrtn: Algorithm,
                  policy: Policy,
                  expl_strat: StochasticActionExplStrat,
                  max_iter: int,
@@ -76,7 +76,7 @@ class ARPL(Algorithm):
 
         :param save_dir: directory to save the snapshots i.e. the results in
         :param env: the environment in which the agent should be trained
-        :param subroutine: algorithm which performs the policy / value-function optimization
+        :param subrtn: algorithm which performs the policy / value-function optimization
         :param policy: policy to be updated
         :param expl_strat: the exploration strategy
         :param max_iter: the maximum number of iterations
@@ -96,7 +96,7 @@ class ARPL(Algorithm):
         :param num_workers: number of environments for parallel sampling
         :param logger: the logger
         """
-        assert isinstance(subroutine, Algorithm)
+        assert isinstance(subrtn, Algorithm)
         assert isinstance(max_iter, int) and max_iter > 0
 
         super().__init__(save_dir, max_iter, policy, logger)
@@ -119,7 +119,7 @@ class ARPL(Algorithm):
             min_steps=steps_num,
             min_rollouts=num_rollouts,
         )
-        self._subroutine = subroutine
+        self._subrtn = subrtn
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
         rollouts = self.sampler.sample()
@@ -134,6 +134,23 @@ class ARPL(Algorithm):
         self.logger.add_value('std return', ret_std)
 
         # Sub-routine
-        self._subroutine.update(rollouts)
-        self._subroutine.logger.record_step()
-        self._subroutine.make_snapshot(snapshot_mode, ret_avg.item())
+        self._subrtn.update(rollouts)
+        self._subrtn.logger.record_step()
+        self._subrtn.make_snapshot(snapshot_mode, ret_avg.item())
+
+    def save_snapshot(self, meta_info: dict = None):
+        if meta_info is None:
+            # This algorithm instance is not a subroutine of a meta-algorithm
+            self._subrtn.save_snapshot(meta_info=None)
+        else:
+            raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
+
+    def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
+        # Get the directory to load from
+        ld = load_dir if load_dir is not None else self._save_dir
+
+        if meta_info is None:
+            # This algorithm instance is not a subroutine of a meta-algorithm
+            self._subrtn.load_snapshot(ld, meta_info)
+        else:
+            raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
