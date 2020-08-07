@@ -129,8 +129,8 @@ def save_prefix_suffix(obj, name: str, file_ext: str, save_dir: str, meta_info: 
     """
     if not isinstance(name, str):
         raise pyrado.TypeErr(given=name, expected_type=str)
-    if not (file_ext == 'pt'):
-        raise pyrado.ValueErr(given=file_ext, eq_constraint='pt')
+    if not (file_ext == 'pt' or file_ext == 'pkl'):
+        raise pyrado.ValueErr(given=file_ext, eq_constraint='pt or pkl')
     if not osp.isdir(save_dir):
         raise pyrado.PathErr(given=save_dir)
 
@@ -171,15 +171,15 @@ def load_prefix_suffix(obj, name: str, file_ext: str, load_dir: str, meta_info: 
     Load an arbitrary object object using a prefix or suffix, depending on the meta information.
 
     :param obj: object to load into
-    :param name: name of the object for saving
+    :param name: name of the object for loading
     :param file_ext: file extension, e.g. 'pt' for policies
     :param load_dir: directory to load from
     :param meta_info: meta information that can contain a pre- and/or suffix for altering the name
     """
     if not isinstance(name, str):
         raise pyrado.TypeErr(given=name, expected_type=str)
-    if not (file_ext == 'pt'):
-        raise pyrado.ValueErr(given=file_ext, eq_constraint='pt')
+    if not (file_ext == 'pt' or file_ext == 'pkl'):
+        raise pyrado.ValueErr(given=file_ext, eq_constraint='pt or pkl')
     if not osp.isdir(load_dir):
         raise pyrado.PathErr(given=load_dir)
 
@@ -218,7 +218,7 @@ def load_prefix_suffix(obj, name: str, file_ext: str, load_dir: str, meta_info: 
             elif 'prefix' not in meta_info and 'suffix' in meta_info:
                 obj = joblib.load(osp.join(load_dir, f"{name}_{meta_info['suffix']}.{file_ext}"))
             else:
-                obj = joblib.load(osp.join(load_dir, f"{meta_info['prefix']}_{name}_{meta_info['suffix']}.{file_ext}"))
+                obj = joblib.load(osp.join(load_dir, f"{name}.{file_ext}"))
 
     return obj
 
