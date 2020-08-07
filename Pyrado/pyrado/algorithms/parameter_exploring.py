@@ -35,6 +35,7 @@ from copy import deepcopy
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.utils import save_prefix_suffix
 from pyrado.environments.base import Env
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
@@ -129,9 +130,6 @@ class ParameterExploring(Algorithm):
         # Reset the exploration strategy, internal variables and the random seeds
         super().reset(seed)
 
-        # Reset the best policy parameters
-        self.best_policy_param = self._policy.param_values.clone()
-
     def step(self, snapshot_mode: str, meta_info: dict = None):
         # Sample new policy parameters
         param_sets = self._expl_strat.sample_param_sets(
@@ -196,29 +194,20 @@ class ParameterExploring(Algorithm):
         best_policy.param_values = self.best_policy_param
 
         if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
+            # This algorithm instance is not a subroutine of another algorithm
             joblib.dump(self._env, osp.join(self._save_dir, 'env.pkl'))
             to.save(best_policy, osp.join(self._save_dir, 'policy.pt'))
         else:
             # This algorithm instance is a subroutine of a meta-algorithm
-            if 'prefix' in meta_info and 'suffix' in meta_info:
-                to.save(best_policy, osp.join(self._save_dir,
-                                              f"{meta_info['prefix']}_policy_{meta_info['suffix']}.pt"))
-            elif 'prefix' in meta_info and 'suffix' not in meta_info:
-                to.save(best_policy, osp.join(self._save_dir, f"{meta_info['prefix']}_policy.pt"))
-            elif 'prefix' not in meta_info and 'suffix' in meta_info:
-                to.save(best_policy, osp.join(self._save_dir, f"policy_{meta_info['suffix']}.pt"))
-            else:
-                raise NotImplementedError
+            save_prefix_suffix(best_policy, 'policy', 'pt', self._save_dir, meta_info)
 
     def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
         # Get the directory to load from
         ld = load_dir if load_dir is not None else self._save_dir
+
+        # Load the policy
         super().load_snapshot(ld, meta_info)
 
         if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
+            # This algorithm instance is not a subroutine of another algorithm
             self._env = joblib.load(osp.join(ld, 'env.pkl'))
-        else:
-            # This algorithm instance is a subroutine of a meta-algorithm
-            pass

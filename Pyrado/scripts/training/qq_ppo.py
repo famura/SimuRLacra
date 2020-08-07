@@ -101,6 +101,7 @@ if __name__ == '__main__':
     save_list_of_dicts_to_yaml([
         dict(env=env_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
+        dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
         dict(algo=algo_hparam, algo_name=algo.name)],
         ex_dir
     )

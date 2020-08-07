@@ -36,6 +36,7 @@ from typing import Sequence
 import pyrado
 from pyrado.algorithms.advantage import GAE
 from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.utils import save_prefix_suffix, load_prefix_suffix
 from pyrado.environments.base import Env
 from pyrado.logger.step import StepLogger
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
@@ -148,49 +149,20 @@ class ActorCritic(Algorithm, ABC):
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
+        save_prefix_suffix(self._expl_strat.policy, 'policy', 'pt', self._save_dir, meta_info)
+        save_prefix_suffix(self._critic.value_fcn, 'valuefcn', 'pt', self._save_dir, meta_info)
+
         if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
+            # This algorithm instance is not a subroutine of another algorithm
             joblib.dump(self._env, osp.join(self._save_dir, 'env.pkl'))
-            to.save(self._expl_strat.policy, osp.join(self._save_dir, 'policy.pt'))
-            to.save(self._critic.value_fcn, osp.join(self._save_dir, 'valuefcn.pt'))
-        else:
-            # This algorithm instance is a subroutine of a meta-algorithm
-            if 'prefix' in meta_info and 'suffix' in meta_info:
-                to.save(self._expl_strat.policy, osp.join(self._save_dir,
-                                                          f"{meta_info['prefix']}_policy_{meta_info['suffix']}.pt"))
-                to.save(self._critic.value_fcn, osp.join(self._save_dir,
-                                                         f"{meta_info['prefix']}_valuefcn_{meta_info['suffix']}.pt"))
-            elif 'prefix' in meta_info and 'suffix' not in meta_info:
-                to.save(self._expl_strat.policy, osp.join(self._save_dir, f"{meta_info['prefix']}_policy.pt"))
-                to.save(self._critic.value_fcn, osp.join(self._save_dir, f"{meta_info['prefix']}_valuefcn.pt"))
-            elif 'prefix' not in meta_info and 'suffix' in meta_info:
-                to.save(self._expl_strat.policy, osp.join(self._save_dir, f"policy_{meta_info['suffix']}.pt"))
-                to.save(self._critic.value_fcn, osp.join(self._save_dir, f"valuefcn_{meta_info['suffix']}.pt"))
-            else:
-                raise NotImplementedError
 
     def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
         # Get the directory to load from
         ld = load_dir if load_dir is not None else self._save_dir
+
         super().load_snapshot(ld, meta_info)
+        self._critic.value_fcn = load_prefix_suffix(self._critic.value_fcn, 'valuefcn', 'pt', ld, meta_info)
 
         if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
+            # This algorithm instance is not a subroutine of another algorithm
             self._env = joblib.load(osp.join(ld, 'env.pkl'))
-            self._critic.value_fcn.load_state_dict(to.load(osp.join(ld, 'valuefcn.pt')).state_dict())
-        else:
-            # This algorithm instance is a subroutine of a meta-algorithm
-            if 'prefix' in meta_info and 'suffix' in meta_info:
-                self._critic.value_fcn.load_state_dict(
-                    to.load(osp.join(ld, f"{meta_info['prefix']}_valuefcn_{meta_info['suffix']}.pt")).state_dict()
-                )
-            elif 'prefix' in meta_info and 'suffix' not in meta_info:
-                self._critic.value_fcn.load_state_dict(
-                    to.load(osp.join(ld, f"{meta_info['prefix']}_valuefcn.pt")).state_dict()
-                )
-            elif 'prefix' not in meta_info and 'suffix' in meta_info:
-                self._critic.value_fcn.load_state_dict(
-                    to.load(osp.join(ld, f"valuefcn_{meta_info['suffix']}.pt")).state_dict()
-                )
-            else:
-                raise NotImplementedError

@@ -113,7 +113,7 @@ class MetaDomainRandWrapper(DomainRandWrapper, Serializable):
         # Forward to the wrapped DomainRandWrapper
         self._wrapped_env.randomizer = dr
 
-    def reset(self, init_state: np.ndarray = None, domain_param: dict = None):
+    def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         # Forward to the wrapped DomainRandWrapper
         return self._wrapped_env.reset(init_state, domain_param)
 
@@ -138,7 +138,7 @@ class DomainRandWrapperLive(DomainRandWrapper, Serializable):
     Thus every rollout is done with different domain parameters.
     """
 
-    def reset(self, init_state: np.ndarray = None, domain_param: dict = None):
+    def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         if domain_param is None:
             # No explicit specification of domain parameters, so randomizer is called to draw a parameter dict
             self._randomizer.randomize(num_samples=1)

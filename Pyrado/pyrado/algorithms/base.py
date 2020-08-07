@@ -34,6 +34,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 import pyrado
+from pyrado.algorithms.utils import save_prefix_suffix, load_prefix_suffix
 from pyrado.exploration.stochastic_action import StochasticActionExplStrat
 from pyrado.exploration.stochastic_params import StochasticParamExplStrat
 from pyrado.logger import get_log_prefix_dir
@@ -133,6 +134,7 @@ class Algorithm(ABC, LoggerAware):
         self._curr_iter = 0
         self._highest_avg_ret = -pyrado.inf
 
+        # Set all rngs' seeds
         if seed is not None:
             set_seed(seed)
             print_cbt(f"Set the random number generators' seed to {seed}.", 'y')
@@ -149,7 +151,7 @@ class Algorithm(ABC, LoggerAware):
                          does not start from scratch
         :param snapshot_mode: determines when the snapshots are stored (e.g. on every iteration or on new high-score)
         :param seed: seed value for the random number generators, pass `None` for no seeding
-        :param meta_info: is not None if this algorithm is run as a subroutine of a meta-algorithm,
+        :param meta_info: is not `None` if this algorithm is run as a subroutine of a meta-algorithm,
                           contains a dict of information about the current iteration of the meta-algorithm
         """
         if load_dir is not None:
@@ -164,6 +166,7 @@ class Algorithm(ABC, LoggerAware):
         else:
             print_cbt(f'{get_class_name(self)} started training using the snapshot mode {snapshot_mode}.', 'g')
 
+        # Set all rngs' seeds
         if seed is not None:
             set_seed(seed)
             print_cbt(f"Set the random number generators' seed to {seed}.", 'y')
@@ -239,7 +242,7 @@ class Algorithm(ABC, LoggerAware):
 
         :param snapshot_mode: determines when the snapshots are stored (e.g. on every iteration or on new highscore)
         :param curr_avg_ret: current average return used for the snapshot_mode 'best' to trigger `save_snapshot()`
-        :param meta_info: is not None if this algorithm is run as a subroutine of a meta-algorithm,
+        :param meta_info: is not `None` if this algorithm is run as a subroutine of a meta-algorithm,
                           contains a dict of information about the current iteration of the meta-algorithm
         """
         if snapshot_mode == 'latest':
@@ -263,20 +266,8 @@ class Algorithm(ABC, LoggerAware):
         :param meta_info: is not `None` if this algorithm is run as a subroutine of a meta-algorithm,
                           contains a `dict` of information about the current iteration of the meta-algorithm
         """
-        if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
-            to.save(self._policy, osp.join(self._save_dir, 'policy.pt'))
-        else:
-            # This algorithm instance is a subroutine of a meta-algorithm
-            if 'prefix' in meta_info and 'suffix' in meta_info:
-                to.save(self._policy, osp.join(self._save_dir,
-                                               f"{meta_info['prefix']}_policy_{meta_info['suffix']}.pt"))
-            elif 'prefix' in meta_info and 'suffix' not in meta_info:
-                to.save(self._policy, osp.join(self._save_dir, f"{meta_info['prefix']}_policy.pt"))
-            elif 'prefix' not in meta_info and 'suffix' in meta_info:
-                to.save(self._policy, osp.join(self._save_dir, f"policy_{meta_info['suffix']}.pt"))
-            else:
-                raise NotImplementedError
+        # Does not matter if this algorithm instance is a subroutine of another algorithm
+        save_prefix_suffix(self._policy, 'policy', 'pt', self._save_dir, meta_info)
 
     def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
         """
@@ -293,22 +284,5 @@ class Algorithm(ABC, LoggerAware):
         except (FileNotFoundError, pd.errors.EmptyDataError):
             self._curr_iter = 0
 
-        if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
-            self._policy.load_state_dict(to.load(osp.join(ld, 'policy.pt')).state_dict())
-        else:
-            # This algorithm instance is a subroutine of a meta-algorithm
-            if 'prefix' in meta_info and 'suffix' in meta_info:
-                self._policy.load_state_dict(
-                    to.load(osp.join(ld, f"{meta_info['prefix']}_policy_{meta_info['suffix']}.pt")).state_dict()
-                )
-            elif 'prefix' in meta_info and 'suffix' not in meta_info:
-                self._policy.load_state_dict(
-                    to.load(osp.join(ld, f"{meta_info['prefix']}_policy.pt")).state_dict()
-                )
-            elif 'prefix' not in meta_info and 'suffix' in meta_info:
-                self._policy.load_state_dict(
-                    to.load(osp.join(ld, f"policy_{meta_info['suffix']}.pt")).state_dict()
-                )
-            else:
-                raise NotImplementedError
+        # Does not matter if this algorithm instance is a subroutine of another algorithm
+        self._policy = load_prefix_suffix(self._policy, 'policy', 'pt', ld, meta_info)

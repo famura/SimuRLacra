@@ -76,7 +76,7 @@ class StateAugmentationWrapper(EnvWrapper, Serializable):
         obs = np.concatenate((obs, params))
         return obs, reward, done, info
 
-    def reset(self, init_state: np.ndarray = None, domain_param: dict = None):
+    def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         obs = self.wrapped_env.reset(init_state, domain_param)
         params = self._params_as_tensor()
         return np.concatenate((obs, params))

@@ -37,7 +37,7 @@ from tqdm import tqdm
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.utils import ReplayMemory
+from pyrado.algorithms.utils import ReplayMemory, save_prefix_suffix, load_prefix_suffix
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import EpsGreedyExplStrat
 from pyrado.logger.step import StepLogger, ConsolePrinter, CSVPrinter
@@ -257,47 +257,22 @@ class DQL(Algorithm):
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
+        save_prefix_suffix(self.target, 'target', 'pt', self._save_dir, meta_info)
+
         if meta_info is None:
-            # This instance is not a subroutine of a meta-algorithm
+            # This algorithm instance is not a subroutine of another algorithm
             joblib.dump(self._env, osp.join(self._save_dir, 'env.pkl'))
-            to.save(self.target, osp.join(self._save_dir, 'target.pt'))
-        else:
-            # This algorithm instance is a subroutine of a meta-algorithm
-            if 'prefix' in meta_info and 'suffix' in meta_info:
-                to.save(self.target,
-                        osp.join(self._save_dir, f"{meta_info['prefix']}_target_{meta_info['suffix']}.pt"))
-            elif 'prefix' in meta_info and 'suffix' not in meta_info:
-                to.save(self.target, osp.join(self._save_dir, f"{meta_info['prefix']}_target.pt"))
-            elif 'prefix' not in meta_info and 'suffix' in meta_info:
-                to.save(self.target, osp.join(self._save_dir, f"target_{meta_info['suffix']}.pt"))
-            else:
-                raise NotImplementedError
 
     def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
         # Get the directory to load from
         ld = load_dir if load_dir is not None else self._save_dir
+
         super().load_snapshot(ld, meta_info)
+        self.target = load_prefix_suffix(self.target, 'target', 'pt', ld, meta_info)
 
         if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
+            # This algorithm instance is not a subroutine of another algorithm
             self._env = joblib.load(osp.join(ld, 'env.pkl'))
-            self.target.load_state_dict(to.load(osp.join(ld, 'target.pt')).state_dict())
-        else:
-            # This algorithm instance is a subroutine of a meta-algorithm
-            if 'prefix' in meta_info and 'suffix' in meta_info:
-                self.target.load_state_dict(
-                    to.load(osp.join(ld, f"{meta_info['prefix']}_target_{meta_info['suffix']}.pt")).state_dict()
-                )
-            elif 'prefix' in meta_info and 'suffix' not in meta_info:
-                self.target.load_state_dict(
-                    to.load(osp.join(ld, f"{meta_info['prefix']}_target.pt")).state_dict()
-                )
-            elif 'prefix' not in meta_info and 'suffix' in meta_info:
-                self.target.load_state_dict(
-                    to.load(osp.join(ld, f"target_{meta_info['suffix']}.pt")).state_dict()
-                )
-            else:
-                raise NotImplementedError
 
     def reset(self, seed: int = None):
         # Reset the exploration strategy, internal variables and the random seeds

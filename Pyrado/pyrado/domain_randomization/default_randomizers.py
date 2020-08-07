@@ -221,7 +221,7 @@ def get_default_randomizer_qbb() -> DomainRandomizer:
     from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
     dp_nom = QBallBalancerSim.get_nominal_domain_param()
     return DomainRandomizer(
-        NormalDomainParam(name=']', mean=dp_nom['g'], std=dp_nom['g']/10, clip_lo=1e-4),
+        NormalDomainParam(name='g', mean=dp_nom['g'], std=dp_nom['g']/10, clip_lo=1e-4),
         NormalDomainParam(name='m_ball', mean=dp_nom['m_ball'], std=dp_nom['m_ball']/5, clip_lo=1e-4),
         NormalDomainParam(name='r_ball', mean=dp_nom['r_ball'], std=dp_nom['r_ball']/5, clip_lo=1e-3),
         NormalDomainParam(name='l_plate', mean=dp_nom['l_plate'], std=dp_nom['l_plate']/5, clip_lo=5e-2),

@@ -187,8 +187,5 @@ class LQR(Algorithm):
         super().save_snapshot()
 
         if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
+            # This algorithm instance is not a subroutine of another algorithm
             joblib.dump(self._env, osp.join(self._save_dir, 'env.pkl'))
-        else:
-            # This algorithm instance is a subroutine of a meta-algorithm
-            pass

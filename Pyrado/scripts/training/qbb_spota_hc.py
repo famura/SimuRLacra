@@ -76,7 +76,7 @@ if __name__ == '__main__':
     # Algorithm
     subrtn_hparam_cand = dict(
         max_iter=100,
-        num_rollouts=0,  # will be overwritten by SPOTA
+        num_rollouts=1,  # will be overwritten by SPOTA
         pop_size=50,
         expl_factor=1.1,
         expl_std_init=0.5,

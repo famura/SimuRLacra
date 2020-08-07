@@ -356,20 +356,16 @@ class SPOTA(Algorithm):
 
         # Do nJ rollouts for each set of physics params
         for r in range(self.nJ):
-            # Candidate solution
-            pyrado.set_seed(self.base_seed + i*self.nJ + r)
             # Set the circular index for the particular realization
             self._env_dr.ring_idx = i
             # Do the rollout and collect the return
-            ro_cand = rollout(self._env_dr, self._subrtn_cand.policy, eval=True)
+            ro_cand = rollout(self._env_dr, self._subrtn_cand.policy, eval=True, seed=self.base_seed + i*self.nJ + r)
             cand_ret_avg += ro_cand.undiscounted_return()
 
-            # Reference solution
-            pyrado.set_seed(self.base_seed + i*self.nJ + r)
             # Set the circular index for the particular realization
             self._env_dr.ring_idx = i
             # Do the rollout and collect the return
-            ro_ref = rollout(self._env_dr, self._subrtn_refs.policy, eval=True)
+            ro_ref = rollout(self._env_dr, self._subrtn_refs.policy, eval=True, seed=self.base_seed + i*self.nJ + r)
             refs_ret_avg += ro_ref.undiscounted_return()
 
         return cand_ret_avg/self.nJ, refs_ret_avg/self.nJ  # average over nJ seeds
@@ -500,9 +496,10 @@ class SPOTA(Algorithm):
 
     def save_snapshot(self, meta_info: dict = None):
         if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
+            # This algorithm instance is not a subroutine of another algorithm
             np.save(osp.join(self._save_dir, f'iter_{self._curr_iter}_diffs.npy'), self.Gn_diffs)
             self._subrtn_cand.save_snapshot(meta_info=dict(prefix='final', suffix='cand'))
+            self._subrtn_refs.save_snapshot(meta_info=dict(prefix='final', suffix='refs'))
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
 
@@ -511,7 +508,8 @@ class SPOTA(Algorithm):
         ld = load_dir if load_dir is not None else self._save_dir
 
         if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
+            # This algorithm instance is not a subroutine of another algorithm
             self._subrtn_cand.load_snapshot(ld, meta_info=dict(prefix='final', suffix='cand'))
+            self._subrtn_refs.load_snapshot(ld, meta_info=dict(prefix='final', suffix='refs'))
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')

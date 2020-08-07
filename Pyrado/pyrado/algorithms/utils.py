@@ -27,6 +27,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import functools
+import os.path as osp
+
+import joblib
 import torch as to
 from copy import deepcopy
 from torch.distributions import Distribution
@@ -112,6 +115,112 @@ def until_thold_exceeded(thold: float, max_iter: int = None):
         return wrapper_trn_eval_fcn
 
     return actual_decorator
+
+
+def save_prefix_suffix(obj, name: str, file_ext: str, save_dir: str, meta_info: [dict, None]):
+    """
+    Save an arbitrary object object using a prefix or suffix, depending on the meta information.
+
+    :param obj: object to save
+    :param name: name of the object for saving
+    :param file_ext: file extension, e.g. 'pt' for policies
+    :param save_dir: directory to save in
+    :param meta_info: meta information that can contain a pre- and/or suffix for altering the name
+    """
+    if not isinstance(name, str):
+        raise pyrado.TypeErr(given=name, expected_type=str)
+    if not (file_ext == 'pt'):
+        raise pyrado.ValueErr(given=file_ext, eq_constraint='pt')
+    if not osp.isdir(save_dir):
+        raise pyrado.PathErr(given=save_dir)
+
+    if meta_info is None:
+        if file_ext == 'pt':
+            to.save(obj, osp.join(save_dir, f"{name}.{file_ext}"))
+
+        elif file_ext == 'pkl':
+            joblib.dump(obj, osp.join(save_dir, f"{name}.{file_ext}"))
+
+    else:
+        if not isinstance(meta_info, dict):
+            raise pyrado.TypeErr(given=meta_info, expected_type=dict)
+
+        if file_ext == 'pt':
+            if 'prefix' in meta_info and 'suffix' in meta_info:
+                to.save(obj, osp.join(save_dir, f"{meta_info['prefix']}_{name}_{meta_info['suffix']}.{file_ext}"))
+            elif 'prefix' in meta_info and 'suffix' not in meta_info:
+                to.save(obj, osp.join(save_dir, f"{meta_info['prefix']}_{name}.{file_ext}"))
+            elif 'prefix' not in meta_info and 'suffix' in meta_info:
+                to.save(obj, osp.join(save_dir, f"{name}_{meta_info['suffix']}.{file_ext}"))
+            else:
+                to.save(obj, osp.join(save_dir, f"{name}.{file_ext}"))
+
+        elif file_ext == 'pkl':
+            if 'prefix' in meta_info and 'suffix' in meta_info:
+                joblib.dump(obj, osp.join(save_dir, f"{meta_info['prefix']}_{name}_{meta_info['suffix']}.{file_ext}"))
+            elif 'prefix' in meta_info and 'suffix' not in meta_info:
+                joblib.dump(obj, osp.join(save_dir, f"{meta_info['prefix']}_{name}.{file_ext}"))
+            elif 'prefix' not in meta_info and 'suffix' in meta_info:
+                joblib.dump(obj, osp.join(save_dir, f"{name}_{meta_info['suffix']}.{file_ext}"))
+            else:
+                joblib.dump(obj, osp.join(save_dir, f"{name}.{file_ext}"))
+
+
+def load_prefix_suffix(obj, name: str, file_ext: str, load_dir: str, meta_info: [dict, None]):
+    """
+    Load an arbitrary object object using a prefix or suffix, depending on the meta information.
+
+    :param obj: object to load into
+    :param name: name of the object for saving
+    :param file_ext: file extension, e.g. 'pt' for policies
+    :param load_dir: directory to load from
+    :param meta_info: meta information that can contain a pre- and/or suffix for altering the name
+    """
+    if not isinstance(name, str):
+        raise pyrado.TypeErr(given=name, expected_type=str)
+    if not (file_ext == 'pt'):
+        raise pyrado.ValueErr(given=file_ext, eq_constraint='pt')
+    if not osp.isdir(load_dir):
+        raise pyrado.PathErr(given=load_dir)
+
+    if meta_info is None:
+        if file_ext == 'pt':
+            obj.load_state_dict(to.load(osp.join(load_dir, f"{name}.{file_ext}")).state_dict())
+
+        elif file_ext == 'pkl':
+            obj = joblib.load(osp.join(load_dir, f"{name}.{file_ext}"))
+
+    else:
+        if not isinstance(meta_info, dict):
+            raise pyrado.TypeErr(given=meta_info, expected_type=dict)
+
+        if file_ext == 'pt':
+            if 'prefix' in meta_info and 'suffix' in meta_info:
+                obj.load_state_dict(to.load(osp.join(
+                    load_dir, f"{meta_info['prefix']}_{name}_{meta_info['suffix']}.{file_ext}")
+                ).state_dict())
+            elif 'prefix' in meta_info and 'suffix' not in meta_info:
+                obj.load_state_dict(to.load(osp.join(
+                    load_dir, f"{meta_info['prefix']}_{name}.{file_ext}")
+                ).state_dict())
+            elif 'prefix' not in meta_info and 'suffix' in meta_info:
+                obj.load_state_dict(to.load(osp.join(
+                    load_dir, f"{name}_{meta_info['suffix']}.{file_ext}")
+                ).state_dict())
+            else:
+                obj.load_state_dict(to.load(osp.join(load_dir, f"{name}.{file_ext}")).state_dict())
+
+        if file_ext == 'pkl':
+            if 'prefix' in meta_info and 'suffix' in meta_info:
+                obj = joblib.load(osp.join(load_dir, f"{meta_info['prefix']}_{name}_{meta_info['suffix']}.{file_ext}"))
+            elif 'prefix' in meta_info and 'suffix' not in meta_info:
+                obj = joblib.load(osp.join(load_dir, f"{meta_info['prefix']}_{name}.{file_ext}"))
+            elif 'prefix' not in meta_info and 'suffix' in meta_info:
+                obj = joblib.load(osp.join(load_dir, f"{name}_{meta_info['suffix']}.{file_ext}"))
+            else:
+                obj = joblib.load(osp.join(load_dir, f"{meta_info['prefix']}_{name}_{meta_info['suffix']}.{file_ext}"))
+
+    return obj
 
 
 class ReplayMemory:

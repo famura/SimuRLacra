@@ -38,7 +38,7 @@ from typing import Sequence
 import pyrado
 from pyrado.algorithms.advantage import GAE
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.utils import compute_action_statistics
+from pyrado.algorithms.utils import compute_action_statistics, save_prefix_suffix, load_prefix_suffix
 from pyrado.environments.base import Env
 from pyrado.policies.fnn import FNNPolicy
 from pyrado.algorithms.advantage import ValueFunctionSpace
@@ -310,26 +310,17 @@ class SVPG(Algorithm):
         self.update_count += 1
 
     def save_snapshot(self, meta_info: dict = None):
+
+        for idx, p in enumerate(self.particles):
+            save_prefix_suffix(p, f'particle_{idx}', 'pt', self._save_dir, meta_info)
+
         if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
+            # This algorithm instance is not a subroutine of another algorithm
             joblib.dump(self._env, osp.join(self._save_dir, 'env.pkl'))
-            for idx, p in enumerate(self.particles):
-                to.save(p, osp.join(self._save_dir, f'particle_{idx}.pt'))
-        else:
-            # This algorithm instance is a subroutine of a meta-algorithm
-            for idx, p in enumerate(self.particles):
-                to.save(p, osp.join(self._save_dir, f'particle_{idx}.pt'))
 
     def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
         # Get the directory to load from
         ld = load_dir if load_dir is not None else self._save_dir
 
-        if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
-            for idx in range(self.num_particles):
-                self.particles[idx].load_state_dict(
-                    to.load(osp.join(ld, f'particle_{idx}.pt')).state_dict()
-                )
-        else:
-            # This algorithm instance is a subroutine of a meta-algorithm
-            raise NotImplementedError
+        for idx in range(self.num_particles):
+            self.particles[idx] = load_prefix_suffix(self.particles[idx], f'particle_{idx}.pt', 'pt', ld, meta_info)
