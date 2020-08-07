@@ -106,7 +106,7 @@ class EPOpt(Algorithm):
 
     def save_snapshot(self, meta_info: dict = None):
         if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
+            # This algorithm instance is not a subroutine of another algorithm
             if self.curr_iter == self.skip_iter:
                 # Save the last snapshot before applying the CVaR
                 self._subrtn.save_snapshot(meta_info=dict(prefix=f'iter_{self.skip_iter}'))

@@ -183,10 +183,10 @@ class BayRn(Algorithm):
         :param prefix: set a prefix to the saved file name by passing it to `meta_info`
         :return: estimated return of the trained policy in the target domain
         """
-        # Save the individual candidate
+        # Save the current candidate
         to.save(cand.view(-1), osp.join(self._save_dir, f'{prefix}_candidate.pt'))
 
-        # Set the domain randomizer given the hyper-parameters
+        # Set the domain randomizer
         self._env_sim.adapt_randomizer(cand.numpy())
 
         # Reset the subroutine's algorithm which includes resetting the exploration
@@ -276,9 +276,6 @@ class BayRn(Algorithm):
         to.save(cands_values, osp.join(self._save_dir, 'candidates_values.pt'))
         self.cands, self.cands_values = cands, cands_values
 
-        if isinstance(self._env_real, RealEnv):
-            input('Evaluated in the target domain. Hit any key to continue.')
-
     @staticmethod
     def eval_policy(save_dir: [str, None],
                     env: [RealEnv, SimEnv, MetaDomainRandWrapper],
@@ -322,7 +319,7 @@ class BayRn(Algorithm):
             # Save the evaluation results
             to.save(rets_real, osp.join(save_dir, f'{prefix}_returns_real.pt'))
 
-            print_cbt('target domain performance', bright=True)
+            print_cbt('Target domain performance', bright=True)
             print(tabulate([['mean return', to.mean(rets_real).item()],
                             ['std return', to.std(rets_real)],
                             ['min return', to.min(rets_real)],
@@ -385,8 +382,7 @@ class BayRn(Algorithm):
         # Evaluate the current policy in the target domain
         policy = to.load(osp.join(self._save_dir, f'{prefix}_policy.pt'))
         self.curr_cand_value = self.eval_policy(
-            self._save_dir, self._env_real, policy, self.mc_estimator, prefix, self.num_eval_rollouts_real
-        )
+            self._save_dir, self._env_real, policy, self.mc_estimator, prefix, self.num_eval_rollouts_real)
 
         self.cands_values = to.cat([self.cands_values, self.curr_cand_value.view(1)], dim=0)
         to.save(self.cands_values, osp.join(self._save_dir, 'candidates_values.pt'))
@@ -402,7 +398,7 @@ class BayRn(Algorithm):
     def save_snapshot(self, meta_info: dict = None):
         # Policies (and value functions) are saved by the subroutine in train_policy_sim()
         if meta_info is None:
-            # This instance is not a subroutine of a meta-algorithm
+            # This algorithm instance is not a subroutine of another algorithm
             joblib.dump(self._env_sim, osp.join(self._save_dir, 'env_sim.pkl'))
             joblib.dump(self._env_real, osp.join(self._save_dir, 'env_real.pkl'))
             to.save(self.bounds, osp.join(self._save_dir, 'bounds.pt'))
@@ -419,10 +415,6 @@ class BayRn(Algorithm):
             raise pyrado.PathErr(given=ld)
 
         if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
-            self._env_sim = joblib.load(osp.join(ld, 'env_sim.pkl'))
-            self._env_real = joblib.load(osp.join(ld, 'env_real.pkl'))
-
             # Crawl through the given directory and check how many policies and candidates there are
             found_policies, found_cands = None, None
             for root, dirs, files in os.walk(ld):
@@ -460,18 +452,18 @@ class BayRn(Algorithm):
 
             else:
                 # Assuming not even the training of the initial policies has not been finished. Redo it all.
-                print_cbt('No policies have been found. Basically starting from scratch.', 'c')
+                print_cbt('No policies have been found. Basically starting from scratch.', 'y', bright=True)
                 self.train_init_policies()
                 self.eval_init_policies()
                 self.initialized = True
 
             try:
-                # Crawl through the load_dir and copy all done evaluations.
+                # Crawl through the load_dir and copy all previous evaluations.
                 # Not necessary if we are continuing in that directory.
                 if ld != self._save_dir:
                     for root, dirs, files in os.walk(load_dir):
-                        [copyfile(osp.join(load_dir, c), osp.join(self._save_dir, c)) for c in files
-                         if c.endswith('_returns_real.pt')]
+                        [copyfile(osp.join(load_dir, c), osp.join(self._save_dir, c))
+                         for c in files if c.endswith('_returns_real.pt')]
 
                 # Get all previously done evaluations. If we don't find any, the exception is caught.
                 found_evals = None
@@ -531,17 +523,15 @@ class BayRn(Algorithm):
                 # Initialize subroutine with previous iteration
                 self._subrtn.load_snapshot(ld, meta_info=dict(prefix=f'iter_{self._curr_iter - 1}'))
 
-                # Evaluate and save the latest candidate on the target system.
                 # This is the case if we found iter_i_candidate.pt but not iter_i_returns_real.pt
                 if self.cands.shape[0] == self.cands_values.shape[0] + 1:
-                    curr_cand_value = self.eval_policy(self._save_dir, self._env_real, self._subrtn.policy,
-                                                       self.mc_estimator, prefix=f'iter_{self._curr_iter - 1}',
-                                                       num_rollouts=self.num_eval_rollouts_real)
+                    # Evaluate and save the latest candidate on the target system.
+                    curr_cand_value = self.eval_policy(
+                        self._save_dir, self._env_real, self._subrtn.policy, self.mc_estimator,
+                        prefix=f'iter_{self._curr_iter - 1}', num_rollouts=self.num_eval_rollouts_real
+                    )
                     self.cands_values = to.cat([self.cands_values, curr_cand_value.view(1)], dim=0)
                     to.save(self.cands_values, osp.join(self._save_dir, 'candidates_values.pt'))
-
-                    if isinstance(self._env_real, RealEnv):
-                        input('Evaluated in the target domain. Hit any key to continue.')
 
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
@@ -616,7 +606,7 @@ class BayRn(Algorithm):
         # Find the maximizer
         argmax_cand = BayRn.argmax_posterior_mean(cands, cands_values, uc_normalizer, num_restarts, num_samples)
 
-        # Set the domain randomizer given the hyper-parameters
+        # Set the domain randomizer
         env_sim.adapt_randomizer(argmax_cand.numpy())
 
         # Reset the subroutine's algorithm which includes resetting the exploration

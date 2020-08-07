@@ -315,7 +315,7 @@ class SVPG(Algorithm):
             save_prefix_suffix(p, f'particle_{idx}', 'pt', self._save_dir, meta_info)
 
         if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
+            # This algorithm instance is not a subroutine of another algorithm
             joblib.dump(self._env, osp.join(self._save_dir, 'env.pkl'))
 
     def load_snapshot(self, load_dir: str = None, meta_info: dict = None):

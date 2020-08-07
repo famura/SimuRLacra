@@ -102,7 +102,7 @@ class RosenSim(SimEnv, Serializable):
     def get_nominal_domain_param(cls) -> dict:
         return {}
 
-    def reset(self, init_state=None, domain_param=None):
+    def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         # Reset time
         self._curr_step = 0
 

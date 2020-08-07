@@ -180,7 +180,7 @@ class AdversarialDynamicsWrapper(AdversarialWrapper, Serializable):
     def re_adv(self):
         self.adv = np.random.uniform(1 - self.width, 1 + self.width, self.nominal.shape)*self.nominal
 
-    def reset(self, init_state: np.ndarray = None, domain_param: dict = None):
+    def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         self.re_adv()
         self.saw.set_param(to.tensor(self.adv))
         return self.wrapped_env.reset(init_state, domain_param)

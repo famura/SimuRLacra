@@ -134,6 +134,7 @@ class Algorithm(ABC, LoggerAware):
         self._curr_iter = 0
         self._highest_avg_ret = -pyrado.inf
 
+        # Set all rngs' seeds
         if seed is not None:
             set_seed(seed, verbose=True)
 
@@ -164,6 +165,7 @@ class Algorithm(ABC, LoggerAware):
         else:
             print_cbt(f'{get_class_name(self)} started training using the snapshot mode {snapshot_mode}.', 'g')
 
+        # Set all rngs' seeds
         if seed is not None:
             set_seed(seed, verbose=True)
 

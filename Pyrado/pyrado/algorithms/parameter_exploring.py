@@ -130,9 +130,6 @@ class ParameterExploring(Algorithm):
         # Reset the exploration strategy, internal variables and the random seeds
         super().reset(seed)
 
-        # Reset the best policy parameters
-        self.best_policy_param = self._policy.param_values.clone()
-
     def step(self, snapshot_mode: str, meta_info: dict = None):
         # Sample new policy parameters
         param_sets = self._expl_strat.sample_param_sets(
@@ -197,7 +194,7 @@ class ParameterExploring(Algorithm):
         best_policy.param_values = self.best_policy_param
 
         if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
+            # This algorithm instance is not a subroutine of another algorithm
             joblib.dump(self._env, osp.join(self._save_dir, 'env.pkl'))
             to.save(best_policy, osp.join(self._save_dir, 'policy.pt'))
         else:
@@ -212,5 +209,5 @@ class ParameterExploring(Algorithm):
         super().load_snapshot(ld, meta_info)
 
         if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
+            # This algorithm instance is not a subroutine of another algorithm
             self._env = joblib.load(osp.join(ld, 'env.pkl'))

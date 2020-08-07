@@ -206,7 +206,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         state[6:8] = init_state[2:]
         return state
 
-    def reset(self, init_state=None, domain_param=None):
+    def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         obs = super().reset(init_state=init_state, domain_param=domain_param)
 
         # Reset the plate angles

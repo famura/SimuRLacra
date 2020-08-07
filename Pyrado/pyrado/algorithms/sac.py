@@ -384,7 +384,7 @@ class SAC(Algorithm):
         save_prefix_suffix(self.q_targ_2, 'target2', 'pt', self._save_dir, meta_info)
 
         if meta_info is None:
-            # This instance is not a subroutine of a meta-algorithm
+            # This algorithm instance is not a subroutine of another algorithm
             joblib.dump(self._env, osp.join(self._save_dir, 'env.pkl'))
 
     def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
@@ -396,7 +396,7 @@ class SAC(Algorithm):
         self.q_targ_2 = load_prefix_suffix(self.q_targ_2, 'target2', 'pt', ld, meta_info)
 
         if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
+            # This algorithm instance is not a subroutine of another algorithm
             self._env = joblib.load(osp.join(ld, 'env.pkl'))
 
     def reset(self, seed: int = None):

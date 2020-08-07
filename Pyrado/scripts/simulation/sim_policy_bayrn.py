@@ -96,7 +96,7 @@ if __name__ == '__main__':
         policy = to.load(osp.join(ex_dir, found_policies[i]))
         cand = to.load(osp.join(ex_dir, found_cands[i]))
 
-        # Set the domain randomizer given the hyper-parameters
+        # Set the domain randomizer
         if isinstance(env_sim, MetaDomainRandWrapper):
             env_sim.adapt_randomizer(cand)
             print_cbt(f'Set the domain randomizer to\n{env_sim.randomizer}', 'c')

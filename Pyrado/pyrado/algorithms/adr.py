@@ -284,7 +284,7 @@ class ADR(Algorithm):
 
     def save_snapshot(self, meta_info: dict = None):
         if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
+            # This algorithm instance is not a subroutine of another algorithm
             joblib.dump(self.env, osp.join(self._save_dir, 'env.pkl'))
             to.save(self.reward_generator.discriminator, osp.join(self._save_dir, 'discriminator.pt'))
             self.svpg.save_snapshot(meta_info=None)
@@ -296,7 +296,7 @@ class ADR(Algorithm):
         ld = load_dir if load_dir is not None else self._save_dir
 
         if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
+            # This algorithm instance is not a subroutine of another algorithm
             self.reward_generator.discriminator.load_state_dict(
                 to.load(osp.join(ld, 'discriminator.pt')).state_dict()
             )
@@ -355,7 +355,7 @@ class SVPGAdapter(EnvWrapper, Serializable):
     def act_space(self):
         return self._adapter_act_space
 
-    def reset(self, init_state: np.ndarray = None, domain_param: dict = None):
+    def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         assert domain_param is None
         self.count = 0
         if init_state is None:

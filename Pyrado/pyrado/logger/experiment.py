@@ -109,7 +109,7 @@ class Experiment:
         self.base_dir = base_dir
         self.seed = seed
 
-        # Set the random seed
+        # Set all rngs' seeds
         if seed is not None:
             pyrado.set_seed(seed, verbose=True)
 
