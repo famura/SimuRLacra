@@ -72,8 +72,7 @@ def test_action_statistics(env, policy):
     explstrat = NormalActNoiseExplStrat(policy, std_init=sigma)
 
     # Sample a deterministic rollout
-    pyrado.set_seed(0)
-    ro_policy = rollout(env, policy, eval=True, max_steps=1000, stop_on_done=False)
+    ro_policy = rollout(env, policy, eval=True, max_steps=1000, stop_on_done=False, seed=0)
     ro_policy.torch()
 
     # Run the exploration strategy on the previously sampled rollout

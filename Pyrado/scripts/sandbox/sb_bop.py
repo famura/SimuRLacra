@@ -84,8 +84,7 @@ if __name__ == '__main__':
             env, policy = create_setup(pe, dt=0.01, max_steps=1000, max_dist_force=0.)
 
             # Simulate
-            pyrado.set_seed(1)
-            ro = rollout(env, policy, render_mode=RenderMode(video=True))
+            ro = rollout(env, policy, render_mode=RenderMode(video=True), seed=0)
 
             # Render plots
             axs[0].plot(ro.observations[:, 0], label=pe)

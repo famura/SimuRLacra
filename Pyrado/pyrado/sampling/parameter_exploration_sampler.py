@@ -165,6 +165,7 @@ class ParameterExplorationSampler:
         # Create parallel pool. We use one thread per environment because it's easier.
         self.pool = SamplerPool(num_workers)
 
+        # Set all rngs' seeds
         if seed is not None:
             self.pool.set_seed(seed)
 

@@ -154,7 +154,7 @@ def create_manual_activation_setup(dt, max_steps, max_dist_force, physics_engine
 
 
 def create_adn_setup(dt, max_steps, max_dist_force, physics_engine, normalize_obs=True, obsnorm_cpp=True):
-    pyrado.set_seed(1001)
+    pyrado.set_seed(0)
 
     # Explicit normalization bounds
     elb = {

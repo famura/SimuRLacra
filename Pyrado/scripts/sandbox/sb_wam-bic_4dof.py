@@ -41,7 +41,7 @@ from pyrado.utils.input_output import print_cbt
 
 if __name__ == '__main__':
     # Fix seed for reproducibility
-    pyrado.set_seed(101)
+    pyrado.set_seed(0)
 
     # Environment
     env = WAMBallInCupSim(

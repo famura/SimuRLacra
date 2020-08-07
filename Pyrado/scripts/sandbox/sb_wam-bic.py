@@ -224,7 +224,7 @@ def rollout_dummy_rbf_policy():
 
 if __name__ == '__main__':
     # Fix seed for reproducibility
-    pyrado.set_seed(101)
+    pyrado.set_seed(0)
 
     # Check for function equality
     if check_feat_equality():

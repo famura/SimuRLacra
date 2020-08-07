@@ -62,14 +62,15 @@ def rollout(env: Env,
             no_reset: bool = False,
             no_close: bool = False,
             record_dts: bool = False,
-            stop_on_done: bool = True) -> StepSequence:
+            stop_on_done: bool = True,
+            seed: int = None) -> StepSequence:
     """
     Perform a rollout (i.e. sample a trajectory) in the given environment using given policy.
 
     :param env: environment to use (`SimEnv` or `RealEnv`)
     :param policy: policy to determine the next action given the current observation.
                    This policy may be wrapped by an exploration strategy.
-    :param eval: flag if the rollout is executed during training (`False`) or during evaluation (`True`)
+    :param eval: pass `False` if the rollout is executed during training, else `True`. Forwarded to PyTorch `Module`.
     :param max_steps: maximum number of time steps, if `None` the environment's property is used
     :param reset_kwargs: keyword arguments passed to environment's reset function
     :param render_mode: determines if the user sees an animation, console prints, or nothing
@@ -78,6 +79,7 @@ def rollout(env: Env,
     :param no_close: do not close (and disconnect) the environment after running the rollout
     :param record_dts: flag if the time intervals of different parts of one step should be recorded (for debugging)
     :param stop_on_done: set to false to ignore the environments's done flag (for debugging)
+    :param seed: seed value for the random number generators, pass `None` for no seeding
     :return paths of the observations, actions, rewards, and information about the environment as well as the policy
     """
     # Check the input
@@ -115,6 +117,10 @@ def rollout(env: Env,
     # Override the number of steps to execute
     if max_steps is not None:
         env.max_steps = max_steps
+
+    # Set all rngs' seeds
+    if seed is not None:
+        pyrado.set_seed(seed)
 
     # Reset the environment and pass the kwargs
     if reset_kwargs is None:

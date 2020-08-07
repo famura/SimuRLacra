@@ -371,8 +371,7 @@ def test_training_parameter_exploring(env, algo, algo_hparam, ex_dir):
     # Get initial return for comparison
     rets_before = np.zeros(5)
     for i in range(rets_before.size):
-        pyrado.set_seed(i)
-        rets_before[i] = rollout(env, policy, eval=True).undiscounted_return()
+        rets_before[i] = rollout(env, policy, eval=True, seed=i).undiscounted_return()
 
     # Create the algorithm and train
     algo = algo(ex_dir, env, policy, **algo_hparam)
@@ -381,8 +380,7 @@ def test_training_parameter_exploring(env, algo, algo_hparam, ex_dir):
     # Compare returns before and after training for max_iter iteration
     rets_after = np.zeros_like(rets_before)
     for i in range(rets_before.size):
-        pyrado.set_seed(i)
-        rets_after[i] = rollout(env, policy, eval=True).undiscounted_return()
+        rets_after[i] = rollout(env, policy, eval=True, seed=i).undiscounted_return()
 
     assert all(rets_after > rets_before)
 
