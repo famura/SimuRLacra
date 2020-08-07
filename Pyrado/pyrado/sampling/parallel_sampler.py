@@ -30,6 +30,7 @@ import numpy as np
 import pickle
 import sys
 import torch.multiprocessing as mp
+from functools import partial
 from init_args_serializer import Serializable
 from itertools import product
 from math import ceil
@@ -54,26 +55,26 @@ def _ps_update_policy(G, state):
     G.policy.load_state_dict(state)
 
 
-def _ps_sample_one(G):
+def _ps_sample_one(G, eval: bool):
     """
     Sample one rollout and return step count if counting steps, rollout count (1) otherwise.
     This function is used when a minimum number of steps was given.
     """
-    ro = rollout(G.env, G.policy)
+    ro = rollout(G.env, G.policy, eval=eval)
     return ro, len(ro)
 
 
-def _ps_run_one(G, num):
+def _ps_run_one(G, num: int, eval: bool):
     """ Sample one rollout. This function is used when a minimum number of rollouts was given. """
-    return rollout(G.env, G.policy)
+    return rollout(G.env, G.policy, eval=eval)
 
 
-def _ps_run_one_init_state(G, init_state: np.ndarray):
+def _ps_run_one_init_state(G, init_state: np.ndarray, eval: bool):
     """ Sample one rollout with fixed init state. This function is used when a minimum number of rollouts was given. """
-    return rollout(G.env, G.policy, reset_kwargs=dict(init_state=init_state))
+    return rollout(G.env, G.policy, eval=eval, reset_kwargs=dict(init_state=init_state))
 
 
-def _ps_run_one_reset_kwargs(G, reset_kwargs: tuple):
+def _ps_run_one_reset_kwargs(G, reset_kwargs: tuple, eval: bool):
     """
     Sample one rollout with fixed init state and domain parameters, passed as a tuple for simplicity at the other end.
     This function is used when a minimum number of rollouts was given.
@@ -84,7 +85,8 @@ def _ps_run_one_reset_kwargs(G, reset_kwargs: tuple):
         raise pyrado.TypeErr(given=reset_kwargs[0], expected_type=np.ndarray)
     if not isinstance(reset_kwargs[1], dict):
         raise pyrado.TypeErr(given=reset_kwargs[1], expected_type=dict)
-    return rollout(G.env, G.policy, reset_kwargs=dict(init_state=reset_kwargs[0], domain_param=reset_kwargs[1]))
+    return rollout(G.env, G.policy, eval=eval,
+                   reset_kwargs=dict(init_state=reset_kwargs[0], domain_param=reset_kwargs[1]))
 
 
 class ParallelSampler(SamplerBase, Serializable):
@@ -121,6 +123,7 @@ class ParallelSampler(SamplerBase, Serializable):
         # Create parallel pool. We use one thread per env because it's easier.
         self.pool = SamplerPool(num_workers)
 
+        # Set all rngs' seeds
         if seed is not None:
             self.set_seed(seed)
 
@@ -151,15 +154,15 @@ class ParallelSampler(SamplerBase, Serializable):
         # Always broadcast to workers
         self.pool.invoke_all(_ps_init, pickle.dumps(self.env), pickle.dumps(self.policy))
 
-    def sample(self, init_states: List[np.ndarray] = None, domain_params: List[np.ndarray] = None
-               ) -> List[StepSequence]:
+    def sample(self, init_states: List[np.ndarray] = None, domain_params: List[np.ndarray] = None,
+               eval: bool = False) -> List[StepSequence]:
         """
         Do the sampling according to the previously given environment, policy, and number of steps/rollouts.
 
-        :param init_states: list of initial states for `run_map()`, pass `None` (default) to sample from the
-                            environment's initial state space
-        :param domain_params: list of domain parameters for `run_map()`, pass `None` (default) to not explicitly
-                              set them
+        :param init_states: initial states forw `run_map()`, pass `None` (default) to sample from the environment's
+                            initial state space
+        :param domain_params: domain parameters for `run_map()`, pass `None` (default) to not explicitly set them
+        :param eval: pass `False` if the rollout is executed during training, else `True`. Forwarded to `rollout()`.
         :return: list of sampled rollouts
         """
         # Update policy's state
@@ -172,17 +175,17 @@ class ParallelSampler(SamplerBase, Serializable):
             if self.min_steps is None:
                 if init_states is None and domain_params is None:
                     # Simply run min_rollouts times
-                    func = _ps_run_one
+                    func = partial(_ps_run_one, eval=eval)
                     arglist = range(self.min_rollouts)
                 elif init_states is not None and domain_params is None:
                     # Run every initial state so often that we at least get min_rollouts trajectories
-                    func = _ps_run_one_init_state
+                    func = partial(_ps_run_one_init_state, eval=eval)
                     rep_factor = ceil(self.min_rollouts/len(init_states))
                     arglist = rep_factor*init_states
                 elif init_states is not None and domain_params is not None:
                     # Run every combination of initial state and domain parameter so often that we at least get
                     # min_rollouts trajectories
-                    func = _ps_run_one_reset_kwargs
+                    func = partial(_ps_run_one_reset_kwargs, eval=eval)
                     allcombs = list(product(init_states, domain_params))
                     rep_factor = ceil(self.min_rollouts/len(allcombs))
                     arglist = rep_factor*allcombs
@@ -197,7 +200,7 @@ class ParallelSampler(SamplerBase, Serializable):
                 if init_states is None:
                     return self.pool.run_collect(
                         self.min_steps,
-                        _ps_sample_one,
+                        partial(_ps_sample_one, eval=eval),
                         collect_progressbar=pb,
                         min_runs=self.min_rollouts
                     )[0]
