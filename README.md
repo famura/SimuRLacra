@@ -18,7 +18,7 @@ It features __randomizable simulations__ written __in standalone Python__ (no li
 
 __Pros__  
 * __Exceptionally modular treatment of environments via wrappers.__ The key idea behind this was to be able to quickly modify and randomize all available simulation environments. Moreover, SimuRLacra contains unique environments that either run completely in Python or allow you to switch between the Bullet or Vortex (requires license) physics engine.
-* __C++ export of policies based on PyTorch Modules.__ You can port your neural-network policies, learned with Python, to you C++ applications. This also holds for stateful recurrent networks and linear policies. 
+* __C++ export of policies based on PyTorch Modules.__ Since the `Policy` class is a subclass of PyTorch's `nn.Module`, you can port your neural-network policies, learned with Python, to you C++ applications. This also holds for stateful recurrent networks.
 * __CPU-based parallelization for sampling the environments.__ Similar to the OpenAI Gym, SimuRLacra offers parallelized environments for sampling. This is done by employing [Serializable](https://github.com/Xfel/init-args-serializer), making the simulation environments fully pickleable.
 * __Separation of the exploration strategies and the policy.__ Instead of having a GaussianFNN and a GaussianRNN ect. policy, you can wrap your policy architectures with (almost) any exploration scheme. At test time, you simple strip the exploration wrapper.
 * __Tested integration of real-world Quanser platforms__. This feature is extremely valuable if you want to conduct sim-to-real research, since you can simply replace the simulated environment with the physical one by changing one line of code.
@@ -57,9 +57,9 @@ If you use code or ideas from this project for your research, please cite SimuRL
 
 ## Installation
 
-Follow the instructions on the [anaconda homepage](https://www.anaconda.com/download/#download) to download the anaconda (or miniconda) version for your machine (andaconda 3 is recommended).
+It is recommended to install SimuRLacra in a separate virtual environment such as anaconda. Follow the instructions on the [anaconda homepage](https://www.anaconda.com/download/#download) to download the anaconda (or miniconda) version for your machine (andaconda 3 is recommended).
 
-Clone the repository and go to the project's directory (defaults to SimuRLacra)
+Clone the repository and go to the project's directory
 ```
 git clone https://github.com/famura/SimuRLacra.git
 # or via ssh
@@ -69,7 +69,7 @@ cd SimuRLacra
 
 Create an anaconda environment (without PyTorch)
 ```
-conda create -n pyrado python=3.7 blas cmake colorama coverage cython joblib lapack libgcc-ng mkl matplotlib-base numpy pandas patchelf pip pycairo pytest pytest-cov pytest-xdist pyyaml scipy seaborn setuptools sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tqdm -c conda-forge
+conda create -n pyrado python=3.7 blas cmake colorama coverage cython joblib lapack libgcc-ng mkl matplotlib-base numpy optuna pandas patchelf pip pycairo pytest pytest-cov pytest-xdist pyyaml scipy seaborn setuptools sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tqdm -c conda-forge
 
 conda activate pyrado
 
@@ -77,74 +77,85 @@ pip install git+https://github.com/Xfel/init-args-serializer.git@master argparse
 ```
 Any warnings from VPython can be safely ignored.
 
- _Infrastructure dependent_: install libraries system-wide  
+### What do you want to be installed?
+
+If you just want to have a look at SimuRLacra, or don't care too much about the robotics part, I recommend going for [Red Velvet](#option-red-velvet). However, if you for example want to export your learned controller to a C++ program runnning on a phsical robot, I recommend [Black Forest](#option-black-forest). Here is an overview of the options:
+
+Options                              | PyTorch build | Policy export to C++ | CUDA support | Rcs-based environments (RcsPySim) | Pyrado and (subset of) mujoco-py environments
+---                                  | ---           | ---                  | ---          |  ---                              |---
+[Red Velvet](#option-red-velvet)     | pip           | no                   | yes          | no                                | yes
+[Malakoff](#option-malakoff)         | local         | yes                  | no           | no                                | yes 
+[Sacher](#option-sacher)             | pip           | no                   | yes          | yes                               | yes 
+[Black Forest](#option-black-forest) | local         | yes                  | no           | yes                               | yes 
+
+> Please note that the Vortex (optionally used in RcsPySim) as well as the MuJoCo (mandatory for mujoco-py) physics engine require a license.
+
+> Please note that building PyTorch locally from source will take about 30-60 min.
+
+In all cases you will download Rcs, eigen3, pybind11, catch2, and mujoco-py, into the `thirdParty` directory as git submodules. Rcs will be placed in the project's root directory.
+
+
+### Option Red Velvet
+Run (the setup script calls `git submodule init` and `git submodule update`)
+```
+conda activate pyrado
+pip install torch==1.4.0
+# OR if CUDA support not needed
+# pip install torch==1.4.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+python setup_deps.py wo_rcs_wo_pytorch -j8
+```
+In case this process crashes, please first check the [Troubleshooting](#troubleshooting) section below.
+
+
+### Option Malakoff
+Run (the setup script calls `git submodule init` and `git submodule update`)
+```
+conda activate pyrado
+python setup_deps.py wo_rcs_w_pytorch -j8
+```
+In case this process crashes, please first check the [Troubleshooting](#troubleshooting) section below.
+
+
+### Option Sacher
+_Infrastructure dependent_: install libraries system-wide  
 Parts of this framework create Python bindings of [Rcs](https://github.com/HRI-EU/Rcs) called RcsPySim. Running Rcs requires several libraries which can be installed (__requires sudo rights__) via
 ```
 python setup_deps.py dep_libraries
 ```
 This command will install `g++-4.8`, `libqwt-qt5-dev`, `libbullet-dev`, `libfreetype6-dev`, `libxml2-dev`, `libglu1-mesa-dev`, `freeglut3-dev`, `mesa-common-dev`, `libopenscenegraph-dev`, `openscenegraph`, and `liblapack-dev`.
-If you can't install the libraries, you can still use the part of this framework which is purely in Python, but no environments in the `rcspysim` folder.
-In case you have no sudo rights, but want to use all the Rcs-dependent environments, you can try installing the libraries via anaconda. For references, see the comments behind `required_packages` in `setup_deps.py`.
+In case you have no sudo rights, but want to use all the Rcs-dependent environments, you can try installing the libraries via anaconda. For references, see the comments behind `required_packages` in `setup_deps.py`.  
+If you can't install the libraries, you can still use the Python part of this framework called Pyrado, but no environments in the `rcspysim` folder.
 
-Now you have __two options__:
-
-1. Create the anaconda environment without PyTorch and build it together with all the other dependencies right after. This is necessary if you want to export PyTorch Modules to C++. The Pyrado `Policy` class is a subclass of PyTorch's `nn.Module`. Finally, the setup script (using the `all`) will install GPyTorch, BoTorch, and Pyro without touching the previously installed PyTroch version.
-
-2. Create the anaconda environment and install PyTorch GPyTorch, BoTorch, and Pyro right after via pip. This version is perfectly fine if you never want to export you learned policies. This variant is faster and we can be sure that PyTorch, BoTorch, ect. are compatible versions.
-
-### Option 1
-Next, we will download eigen3, pybind11, catch2, WM5, ect. into the `thirdParty` directory as git submodules. Rcs will be placed in the project's directory. Moreover, we will set up PyTorch.
-> _Note_: Following this setup option, PyTorch will be build from source, takes at least 30 min.
-
-Make sure the `pyrado` anaconda environment is activated and run
+Run (the setup script calls `git submodule init` and `git submodule update`)
 ```
 conda activate pyrado
-python setup_deps.py all -j8
+pip install torch==1.4.0
+# OR if CUDA support not needed
+# pip install torch==1.4.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+python setup_deps.py w_rcs_wo_pytorch -j8
 ```
-This setup script calls `git submodule init` and `git submodule update`. During the installation of Rcs, the Vortex physics engine as well as the WM5 collision library are searched via a cmake find scripts.
 In case this process crashes, please first check the [Troubleshooting](#troubleshooting) section below.
 
-### Option 2
-Next, we will download eigen3, pybind11, catch2, WM5, ect. into the `thirdParty` directory as git submodules. Rcs will be placed in the project's directory. Moreover, we will set up PyTorch.
-> _Note_: Following this setup option, PyTorch will be installed via anaconda, takes about 2 min.
 
-Make sure the `pyrado` anaconda environment is activated and run
+### Option Black Forest
+_Infrastructure dependent_: install libraries system-wide  
+Parts of this framework create Python bindings of [Rcs](https://github.com/HRI-EU/Rcs) called RcsPySim. Running Rcs requires several libraries which can be installed (__requires sudo rights__) via
+```
+python setup_deps.py dep_libraries
+```
+This command will install `g++-4.8`, `libqwt-qt5-dev`, `libbullet-dev`, `libfreetype6-dev`, `libxml2-dev`, `libglu1-mesa-dev`, `freeglut3-dev`, `mesa-common-dev`, `libopenscenegraph-dev`, `openscenegraph`, and `liblapack-dev`.
+In case you have no sudo rights, but want to use all the Rcs-dependent environments, you can try installing the libraries via anaconda. For references, see the comments behind `required_packages` in `setup_deps.py`.  
+If you can't install the libraries, you can still use the Python part of this framework called Pyrado, but no environments in the `rcspysim` folder.
+
+Run (the setup script calls `git submodule init` and `git submodule update`)
 ```
 conda activate pyrado
-python setup_deps.py separate_pytorch -j8
+python setup_deps.py w_rcs_w_pytorch -j8
 ```
-This setup script calls `git submodule init` and `git submodule update`. During the installation of Rcs, the Vortex physics engine as well as the WM5 collision library are searched via a cmake find scripts.
 In case this process crashes, please first check the [Troubleshooting](#troubleshooting) section below.
 
-### Verify the installation of the anaconda env
-```
-conda activate pyrado
-conda env list
-conda list | grep torch  # check if the desired version of PyTorch is installed
-python --version  # should return Python 3.7.X :: Anaconda, Inc._
-```
 
-### Final notes
-If the install script crashes, this is most likely due to missing (or not found, or incomatible) libraries or your OS version. Please see the most common pitfalls below.
-In case you are struggeling with the dependencies, or only want to use the Python part, try setting it up using
-```
-conda activate pyrado
-python setup_deps.py no_rcs -j12
-```
-
-In the end (given you chose a full install), OpenSceneGraph, eigen3, pybind11, WM5, catch2, Rcs, Kuka iiwa meshes, Schunk SDH meshes, Barrett WAM meshes, PyTorch, mujoco-py, as well as RcsPySim and Pyrado should be downloaded and installed.
-
->__Optional:__ Create an activation script which also sets the `PYTHONPATH`.
-> Replace the `PATH_TO` snippets in the template for activating the anaconda environment with the paths in your system
->```
->gedit PATH_TO/SimuRLacra/Pyrado/activate_pyrado.sh
->```
->and save your custom copy (e.g. in the project's root directory).
->Activate new environment using the custom bash script which 
->```
->source activate_pyrado.sh
->```
-
+<!--
 ### Docker Container (experimental)
 There is also a Dockerfile which can be used to spin up a docker container.
 Please note that the container is still experimental and not all features have been tested.
@@ -168,17 +179,24 @@ The command in `run_docker.sh` uses cuda supprort. If you do not want to use cud
 
 It will build the pyrado image. And configure a script to run the docker container with GUI support.
 You can also connect the image with IDEs such as PyCharm to develop directly in the docker container.
+-->
 
 
 ## Checking
 
-If not already activated, execute
+### Verify the installation of PyTorch
+```
+conda activate pyrado
+conda env list
+conda list | grep torch  # check if the desired version of PyTorch is installed
+python --version  # should return Python 3.7.X :: Anaconda, Inc._
+```
+
+### Verify the installation of Pyrado and RcsPySim
+To exemplarily check basic Pyrado environments (implemented in Python without dependencies to RcsPySim)
 ```
 conda activate pyrado
 cd PATH_TO/SimuRLacra/Pyrado/scripts
-```
-To exemplarily check basic Pyrado environments (implemented in Python without dependencies to RcsPySim)
-```
 python sandbox/sb_qcp.py --env_name qcp-su --dt 0.002
 ```
 Quickly check the environments interfacing Rcs via RcsPySim

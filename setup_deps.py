@@ -510,7 +510,26 @@ def setup_robcom():
     sp.check_call([sys.executable, "setup.py", "install", "--user"], cwd=robcom_dir, env=env)
 
 
-def setup_separate_pytorch():
+def setup_wo_rcs_wo_pytorch():
+    # Rcs will still be downloaded since it is a submodule
+    setup_wam()  # ignoring the meshes used in RcsPySim
+    setup_mujoco_py()
+    setup_pyrado()
+    setup_pytorch_based()
+    print("\nWAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n")
+
+
+def setup_wo_rcs_w_pytorch():
+    # Rcs will still be downloaded since it is a submodule
+    setup_pytorch()
+    setup_wam()  # ignoring the meshes used in RcsPySim
+    setup_mujoco_py()
+    setup_pyrado()
+    setup_pytorch_based()
+    print("\nPyTorch, WAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n")
+
+
+def setup_w_rcs_wo_pytorch():
     # We could do setup_dep_libraries() here, but it requires sudo rights
     if not IN_HRI:
         setup_wm5()
@@ -520,20 +539,11 @@ def setup_separate_pytorch():
     setup_meshes()
     setup_mujoco_py()
     setup_pyrado()
-    print("\nWM5, Rcs, RcsPySim, iiwa & Schunk & WAM meshes, mujoco-py, and Pyrado are set up!\n")
-
-
-def setup_no_rcs():
-    # Rcs will still be downloaded since it is a submodule
-    setup_pytorch()
-    setup_wam()  # ignoring the meshes used in RcsPySim
-    setup_pyrado()
-    setup_mujoco_py()
     setup_pytorch_based()
-    print("\nPyTorch, RcsPySim, WAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro) are set up!\n")
+    print("\nWM5, Rcs, RcsPySim, iiwa & Schunk & WAM meshes, mujoco-py, and Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n")
 
 
-def setup_all():
+def setup_w_rcs_w_pytorch():
     # We could do setup_dep_libraries() here, but it requires sudo rights
     if not IN_HRI:
         setup_wm5()
@@ -541,10 +551,10 @@ def setup_all():
     setup_pytorch()
     setup_rcspysim()
     setup_meshes()
-    setup_pyrado()
     setup_mujoco_py()
+    setup_pyrado()
     setup_pytorch_based()
-    print("\nWM5, Rcs, PyTorch, RcsPySim, iiwa & Schunk & WAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro) are set up!\n")
+    print("\nWM5, Rcs, PyTorch, RcsPySim, iiwa & Schunk & WAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n")
     
 
 # All tasks list
