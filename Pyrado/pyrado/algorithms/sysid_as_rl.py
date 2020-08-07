@@ -25,26 +25,25 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-import itertools
-import sys
 
+import joblib
 import numpy as np
+import os.path as osp
 import torch as to
 import torch.nn as nn
 from collections.abc import Iterable
 from itertools import product
 from typing import Callable, Sequence, Tuple, Dict
-from tqdm import tqdm
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.parameter_exploring import ParameterExploring
+from pyrado.algorithms.utils import save_prefix_suffix
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
 from pyrado.policies.base import Policy
 from pyrado.sampling.parallel_sampler import ParallelSampler
-from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult, ParameterSample, \
-    ParameterExplorationSampler
+from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult, ParameterSample
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.sampling.utils import gen_ordered_batch_idcs
 from pyrado.spaces import BoxSpace
@@ -90,6 +89,7 @@ class DomainDistrParamPolicy(Policy):
         super().__init__(param_spec, use_cuda)
 
         self.params = nn.Parameter(to.Tensor(param_spec.act_space.flat_dim), requires_grad=True)
+        self.prior = prior
         self.init_param(prior=prior)
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
@@ -198,6 +198,15 @@ class SysIdByEpisodicRL(Algorithm):
         )
         self.num_rollouts_per_distr = num_rollouts_per_distr
 
+    @property
+    def subrtn(self) -> ParameterExploring:
+        """ Get the subroutine used for updating the domain parameter distribution. """
+        return self._subrtn
+
+    def reset(self, seed: int = None):
+        # Forward to subroutine
+        self._subrtn.reset(seed)
+
     def step(self, snapshot_mode: str, meta_info: dict = None):
         if 'rollouts_real' not in meta_info:
             raise pyrado.KeyErr(key='rollouts_real', container=meta_info)
@@ -225,11 +234,11 @@ class SysIdByEpisodicRL(Algorithm):
             ps = self._subrtn.policy.clamp_params(ps)
             self._subrtn.env.adapt_randomizer(domain_distr_param_values=ps.detach().numpy())
             self._subrtn.env.randomizer.randomize(num_samples=self.num_rollouts_per_distr)
-            sampled_dps = self._subrtn.env.randomizer.get_params()
+            sampled_domain_params = self._subrtn.env.randomizer.get_params()
 
             # Sample the rollouts
-            self.behavior_sampler.set_seed(1001)
-            rollouts_sim = self.behavior_sampler.sample(init_states=init_states_real, domain_params=sampled_dps)
+            self.behavior_sampler.set_seed(1001)  # TODO
+            rollouts_sim = self.behavior_sampler.sample(init_states_real, sampled_domain_params, eval=True)
 
             # Iterate over simulated rollout with the same initial state
             for idx_real, idcs_sim in enumerate(gen_ordered_batch_idcs(self.num_rollouts_per_distr, len(rollouts_sim),
@@ -241,24 +250,15 @@ class SysIdByEpisodicRL(Algorithm):
                 assert all([np.allclose(r.rollout_info['init_state'], s.rollout_info['init_state'])
                             for r, s in zip(ros_real_tr, ros_sim_tr)])
 
-                # Concatenate the rollouts to batch the loss computation
-                # concat_real = StepSequence.concat(ros_real_tr)
-                # concat_sim = StepSequence.concat(ros_sim_tr)
-                # loss_per_dim = self.loss_fcn(concat_real, concat_sim)
+                # Compute the losses
+                losses = [self.obs_dim_weight@self.loss_fcn(ro_r, ro_s) for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr)]
+                loss_hist.extend(losses)
 
-                for i, (ro_r, ro_s) in enumerate(zip(ros_real_tr, ros_sim_tr)):
-                    # Compute the loss for every trajectory
-                    loss_per_dim = self.loss_fcn(ro_r, ro_s)
-                    loss = self.obs_dim_weight@loss_per_dim
-                    loss_hist.append(loss)
-                    assert loss >= 0
-
-                    # We need to assign the loss value to the simulated rollout, but this one can be of a different
-                    # length than the real-world rollouts as well as of different length than the original
-                    # (non-truncated) simulated rollout. We simply put all the loss into the first step (it is an
-                    # episodic scenario anyway).
-                    rollouts_sim[i + idcs_sim[0]].rewards[:] = 0.
-                    rollouts_sim[i + idcs_sim[0]].rewards[0] = -loss
+                # We need to assign the loss value to the simulated rollout, but this one can be of a different
+                # length than the real-world rollouts as well as of different length than the original
+                # (non-truncated) simulated rollout. We simply distribute loss evenly over the rollout
+                for i, l in zip(range(idcs_sim[0], idcs_sim[-1] + 1), losses):
+                    rollouts_sim[i].rewards[:] = -l/rollouts_sim[i].length
 
             # Collect the results
             param_samples.append(ParameterSample(params=ps, rollouts=rollouts_sim))
@@ -277,25 +277,20 @@ class SysIdByEpisodicRL(Algorithm):
         # Extract the best policy parameter sample for saving it later
         self._subrtn.best_policy_param = param_samp_res.parameters[np.argmax(param_samp_res.mean_returns)].clone()
 
-        # Save snapshot data TODO
-        # self.make_snapshot(snapshot_mode, float(np.max(param_samp_res.mean_returns)), meta_info)
-
-        # Set the randomizer to domain distribution
-        self._subrtn.env.adapt_randomizer(domain_distr_param_values=self._subrtn.best_policy_param.detach().numpy())
-        print(self._subrtn.env.randomizer)
-        print(self._subrtn.policy.param_values.detach().numpy())
+        # Save snapshot data
+        self.make_snapshot(snapshot_mode, float(np.max(param_samp_res.mean_returns)), meta_info)
 
         # Update the wrapped algorithm's update method
         self._subrtn.update(param_samp_res, ret_avg_curr=param_samp_res[0].mean_undiscounted_return)
 
-    def loss_fcn(self, rollout_real: StepSequence, rollout_sim: StepSequence) -> to.Tensor:
+    def loss_fcn(self, rollout_real: StepSequence, rollout_sim: StepSequence) -> np.ndarray:
         """
         Compute the discrepancy between two time sequences of observations given metric.
         Be sure to align and truncate the rollouts beforehand.
 
         :param rollout_real: (concatenated) real-world rollout containing the observations
         :param rollout_sim: (concatenated) simulated rollout containing the observations
-        :return: (concatenated) discrepancy cost
+        :return: (concatenated) discrepancy cost for every observation dimension
         """
         if len(rollout_real) != len(rollout_sim):
             raise pyrado.ShapeErr(given=rollout_real, expected_match=rollout_sim)
@@ -309,7 +304,9 @@ class SysIdByEpisodicRL(Algorithm):
         sim_obs_norm = self.uc_normalizer.project_to(sim_obs)
 
         # Compute loss based on the error
-        return self.metric(real_obs_norm - sim_obs_norm)
+        loss = self.metric(real_obs_norm - sim_obs_norm)
+        assert all(loss >= 0)
+        return loss
 
     @staticmethod
     def truncate_rollouts(rollouts_real: Sequence[StepSequence],
@@ -345,3 +342,19 @@ class SysIdByEpisodicRL(Algorithm):
                 rollouts_sim_tr.append(ro_s)
 
         return rollouts_real_tr, rollouts_sim_tr
+
+    def save_snapshot(self, meta_info: dict = None):
+        # ParameterExploring subroutine saves the best policy (in this case a DomainDistrParamPolicy)
+        self._subrtn.save_snapshot(meta_info=dict(prefix='ddp'))
+
+        # Set the randomizer to best fitted domain distribution
+        self._subrtn.env.adapt_randomizer(domain_distr_param_values=self._subrtn.best_policy_param.detach().numpy())
+        print_cbt(f'Best fitted domain parameter distribution\n{self._subrtn.env.randomizer}', 'g')
+        joblib.dump(self._subrtn.env, osp.join(self._save_dir, 'env_sim.pkl'))
+
+        if 'rollouts_real' not in meta_info:
+            raise pyrado.KeyErr(key='rollouts_real', container=meta_info)
+        save_prefix_suffix(meta_info['rollouts_real'], 'rollouts_real', 'pkl', self._save_dir, meta_info)
+
+    def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
+        return self._subrtn.load_snapshot(load_dir, meta_info)

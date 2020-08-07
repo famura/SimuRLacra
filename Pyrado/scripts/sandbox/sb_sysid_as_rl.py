@@ -40,6 +40,8 @@ from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapp
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.dummy import DummyPolicy, IdlePolicy
+from pyrado.policies.features import FeatureStack, identity_feat
+from pyrado.policies.linear import LinearPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.input_output import print_cbt
 
@@ -52,29 +54,31 @@ if __name__ == '__main__':
     env_hparams = dict(dt=1/100., max_steps=500)
     env_real = BallOnBeamSim(**env_hparams)
     env_real.domain_param = dict(
-        # l_beam=2.2,
-        ang_offset=5*np.pi/180
+        l_beam=2.1,
+        ang_offset=-2*np.pi/180
     )
 
     env_sim = BallOnBeamSim(**env_hparams)
     randomizer = DomainRandomizer(
-        # NormalDomainParam(name='l_beam', mean=1.8, std=1e-3, clip_lo=1, clip_up=4),
-        UniformDomainParam(name='ang_offset', mean=0*np.pi/180, halfspan=1*np.pi/180),
+        NormalDomainParam(name='l_beam', mean=0, std=1e-12, clip_lo=1, clip_up=4),
+        UniformDomainParam(name='ang_offset', mean=0, halfspan=1e-12),
     )
     env_sim = DomainRandWrapperLive(env_sim, randomizer)
-    # dp_map = {0: ('l_beam', 'mean'), 1: ('l_beam', 'std')}
-    dp_map = {0: ('ang_offset', 'mean'), 1: ('ang_offset', 'halfspan')}
+    dp_map = {0: ('l_beam', 'mean'), 1: ('l_beam', 'std'),
+              2: ('ang_offset', 'mean'), 3: ('ang_offset', 'halfspan')}
+    # dp_map = {0: ('ang_offset', 'mean'), 1: ('ang_offset', 'halfspan')}
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
 
-    # Policies
-    behavior_policy = IdlePolicy(env_sim.spec)  # DummyPolicy(env_sim.spec)  #
+    # Policies (the behavioral policy needs to be deterministic)
+    # behavior_policy = IdlePolicy(env_sim.spec)
+    behavior_policy = LinearPolicy(env_sim.spec, feats=FeatureStack([identity_feat]))
     prior = DomainRandomizer(
-        # NormalDomainParam(name='l_beam', mean=2, std=1e-3),
-        UniformDomainParam(name='ang_offset', mean=5*np.pi/180, halfspan=1e-8*np.pi/180),
+        NormalDomainParam(name='l_beam', mean=1.9, std=1e-3),
+        UniformDomainParam(name='ang_offset', mean=1*np.pi/180, halfspan=1*np.pi/180),
     )
     ddp_policy = DomainDistrParamPolicy(mapping=dp_map, prior=prior)
 
-    # Algorithm
+    # Subroutine
     # subrtn_hparam = dict(
     #     max_iter=100,
     #     eps=0.1,
@@ -91,14 +95,14 @@ if __name__ == '__main__':
     # subrtn = REPS(ex_dir, env_sim, ddp_policy, **subrtn_hparam)
     subrtn_hparam = dict(
         max_iter=100,
-        pop_size=40,
+        pop_size=60,
         num_rollouts=1,
         num_is_samples=4,
-        expl_std_init=0.05,
+        expl_std_init=0.1,
         expl_std_min=0.001,
         extra_expl_std_init=0.,
         extra_expl_decay_iter=10,
-        num_workers=6,
+        num_workers=8,
     )
     subrtn = CEM(ex_dir, env_sim, ddp_policy, **subrtn_hparam)
 
