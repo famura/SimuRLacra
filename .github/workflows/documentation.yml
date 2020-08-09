@@ -20,4 +20,5 @@ jobs:
         run: |
           mkdir public
           export PUBLIC=$(realpath ./public)
-          docker run --rm -i -v $PUBLIC:/home/simurlacra/Pyrado/doc/build/html simurlacra conda run -n pyrado bash -c ""
+          docker run --rm -v $PUBLIC:/home/user/SimuRLacra/Pyrado/doc/build simurlacra conda run -n pyrado /bin/bash -c "cd /home/user/SimuRLacra; ./build_docs.sh"
+          ls $PUBLIC
