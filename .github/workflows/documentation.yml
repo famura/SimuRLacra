@@ -22,3 +22,9 @@ jobs:
           export PUBLIC=$(realpath ./public)
           docker run --rm -v $PUBLIC:/home/user/SimuRLacra/Pyrado/doc/build simurlacra conda run -n pyrado /bin/bash -c "cd /home/user/SimuRLacra; ./build_docs.sh"
           ls $PUBLIC
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@3.5.9
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: $PUBLIC
