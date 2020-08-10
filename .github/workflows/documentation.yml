@@ -29,7 +29,7 @@ jobs:
               fi
             done
           cd ..
-          sphinx-build -b html source build"
+          sudo sphinx-build -b html source build"
           ls $PUBLIC
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@3.5.9
