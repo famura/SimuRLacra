@@ -68,7 +68,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: [int, None]):
     # Policy
     policy = FNNPolicy(
         spec=env.spec,
-        hidden_sizes=trial.suggest_categorical('hidden_sizes_policy', [[16, 16], [32, 32], [64, 64]]),
+        hidden_sizes=trial.suggest_categorical('hidden_sizes_policy', [(16, 16), (32, 32), (64, 64)]),
         hidden_nonlin=fcn_from_str(trial.suggest_categorical('hidden_nonlin_policy', ['to_tanh', 'to_relu'])),
     )
 
@@ -76,7 +76,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: [int, None]):
     value_fcn = FNN(
         input_size=env.obs_space.flat_dim,
         output_size=1,
-        hidden_sizes=trial.suggest_categorical('hidden_sizes_critic', [[16, 16], [32, 32], [64, 64]]),
+        hidden_sizes=trial.suggest_categorical('hidden_sizes_critic', [(16, 16), (32, 32), (64, 64)]),
         hidden_nonlin=fcn_from_str(trial.suggest_categorical('hidden_nonlin_critic', ['to_tanh', 'to_relu'])),
     )
     critic_hparam = dict(
@@ -131,7 +131,7 @@ if __name__ == '__main__':
     ex_dir = setup_experiment('hyperparams', QBallBalancerSim.name, 'ppo_250Hz_actnorm', seed=args.seed)
 
     # Run hyper-parameter optimization
-    name = f'{ex_dir.algo_name}_{ex_dir.add_info}'  # e.g. qbb_ppo_fnn_actnorm
+    name = f'{ex_dir.algo_name}_{ex_dir.extra_info}'  # e.g. qbb_ppo_fnn_actnorm
     study = optuna.create_study(
         study_name=name,
         storage=f"sqlite:////{osp.join(pyrado.TEMP_DIR, ex_dir, f'{name}.db')}",

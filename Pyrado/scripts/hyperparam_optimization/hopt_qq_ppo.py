@@ -72,7 +72,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: [int, None]):
 
     # Policy
     policy_hparam = dict(
-        hidden_sizes=trial.suggest_categorical('hidden_sizes_policy', [[16, 16], [32, 32], [64, 64]]),
+        hidden_sizes=trial.suggest_categorical('hidden_sizes_policy', [(16, 16), (32, 32), (64, 64)]),
         hidden_nonlin=fcn_from_str(trial.suggest_categorical('hidden_nonlin_policy', ['to_tanh', 'to_relu'])),
     )  # FNN
     # policy_hparam = dict(
@@ -84,7 +84,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: [int, None]):
 
     # Critic
     value_fcn_hparam = dict(
-        hidden_sizes=trial.suggest_categorical('hidden_sizes_critic', [[16, 16], [32, 32], [64, 64]]),
+        hidden_sizes=trial.suggest_categorical('hidden_sizes_critic', [(16, 16), (32, 32), (64, 64)]),
         hidden_nonlin=fcn_from_str(trial.suggest_categorical('hidden_nonlin_critic', ['to_tanh', 'to_relu'])),
     )
     # value_fcn_hparam = dict(
@@ -147,7 +147,7 @@ if __name__ == '__main__':
     # ex_dir = setup_experiment('hyperparams', QQubeSwingUpSim.name, 'ppo_100Hz_gru_actnorm', seed=args.seed)
 
     # Run hyper-parameter optimization
-    name = f'{ex_dir.algo_name}_{ex_dir.add_info}'  # e.g. qq_ppo_fnn_actnorm
+    name = f'{ex_dir.algo_name}_{ex_dir.extra_info}'  # e.g. qq_ppo_fnn_actnorm
     study = optuna.create_study(
         study_name=name,
         storage=f"sqlite:////{osp.join(pyrado.TEMP_DIR, ex_dir, f'{name}.db')}",
