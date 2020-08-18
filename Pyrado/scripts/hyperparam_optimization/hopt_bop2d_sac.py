@@ -37,7 +37,7 @@ from optuna.pruners import MedianPruner
 import pyrado
 from pyrado.algorithms.sac import SAC
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
+from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate2DSim
 from pyrado.logger.experiment import save_list_of_dicts_to_yaml, setup_experiment
 from pyrado.logger.step import create_csv_step_logger
 from pyrado.policies.fnn import FNNPolicy
@@ -65,14 +65,18 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: [int, None]):
     pyrado.set_seed(seed)
 
     # Environment
-    env_hparams = dict(dt=1/100., max_steps=600)
-    env = QQubeSwingUpSim(**env_hparams)
+    env_hparams = dict(
+        physicsEngine='Bullet',
+        dt=1/100.,
+        max_steps=500
+    )
+    env = BallOnPlate2DSim(**env_hparams)
     env = ActNormWrapper(env)
 
     # Policy
     policy_hparam = dict(
         shared_hidden_sizes=trial.suggest_categorical('shared_hidden_sizes_policy',
-                                                      [[16, 16], [32, 32], [64, 64], [16, 16, 16], [32, 32, 32]]),
+                                                      [(16, 16), (32, 32), (64, 64), (16, 16, 16), (32, 32, 32)]),
         shared_hidden_nonlin=fcn_from_str(
             trial.suggest_categorical('shared_hidden_nonlin_policy', ['to_tanh', 'to_relu'])),
     )
@@ -81,7 +85,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: [int, None]):
     # Critic
     q_fcn_hparam = dict(
         hidden_sizes=trial.suggest_categorical('hidden_sizes_critic',
-                                               [[16, 16], [32, 32], [64, 64], [16, 16, 16], [32, 32, 32]]),
+                                               [(16, 16), (32, 32), (64, 64), (16, 16, 16), (32, 32, 32)]),
         hidden_nonlin=fcn_from_str(trial.suggest_categorical('hidden_nonlin_critic', ['to_tanh', 'to_relu'])),
     )
     obsact_space = BoxSpace.cat([env.obs_space, env.act_space])
@@ -123,10 +127,10 @@ if __name__ == '__main__':
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    ex_dir = setup_experiment('hyperparams', QQubeSwingUpSim.name, 'fnn', seed=args.seed)
+    ex_dir = setup_experiment('hyperparams', BallOnPlate2DSim.name, FNNPolicy.name, seed=args.seed)
 
     # Run hyper-parameter optimization
-    name = f'{ex_dir.algo_name}_{ex_dir.add_info}'  # e.g. qq_ppo_fnn_actnorm
+    name = f'{ex_dir.algo_name}_{ex_dir.extra_info}'  # e.g. qq_ppo_fnn_actnorm
     study = optuna.create_study(
         study_name=name,
         storage=f"sqlite:////{osp.join(pyrado.TEMP_DIR, ex_dir, f'{name}.db')}",
