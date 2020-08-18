@@ -30,12 +30,14 @@ import csv
 import os
 import os.path as osp
 import torch as to
+import numpy as np
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from tabulate import tabulate
 
 import pyrado
 from pyrado.logger import resolve_log_path
+from torch.utils.tensorboard import SummaryWriter
 
 
 class StepLogger:
@@ -116,7 +118,7 @@ class StepLogger:
             values = self._current_values.copy()
 
             # Print only once every print_interval calls
-            if self._counter%self.print_interval == 0:
+            if self._counter % self.print_interval == 0:
                 # Pass values to printers
                 for p in self.printers:
                     p.print_values(values, self._value_keys, self._first_step)
@@ -237,7 +239,26 @@ class CSVPrinter(StepLogPrinter):
         self._writer = csv.writer(self._fd)
 
 
-# TODO we could add a tensorboard version here - maybe wait until the pytorch tensorboard integration is stable.
+class TensorBoardPrinter(StepLogPrinter):
+    def __init__(self, file):
+        file = resolve_log_path(file)
+        self.writer = SummaryWriter(log_dir=file)
+        self.step = 0
+
+    def print_values(self, values: dict, ordered_keys: list, first_step: bool):
+        for k in ordered_keys:
+            value = values[k]
+            if isinstance(value, list):
+                for i, scalar in enumerate(value):
+                   self.writer.add_scalar(k + str(i), scalar, self.step)
+            elif isinstance(value, np.ndarray):
+                for i, scalar in enumerate(value.flat):
+                   self.writer.add_scalar(k + '/' + str(i), scalar, self.step)
+            else:
+                self.writer.add_scalar(k, values[k], self.step)
+        self.step += 1
+        self.writer.flush()
+
 
 class LoggerAware:
     """
