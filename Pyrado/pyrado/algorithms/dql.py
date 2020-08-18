@@ -40,7 +40,7 @@ from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.utils import ReplayMemory, save_prefix_suffix, load_prefix_suffix
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import EpsGreedyExplStrat
-from pyrado.logger.step import StepLogger, ConsolePrinter, CSVPrinter
+from pyrado.logger.step import StepLogger, ConsolePrinter, CSVPrinter, TensorBoardPrinter
 from pyrado.policies.fnn import DiscrActQValFNNPolicy
 from pyrado.sampling.parallel_sampler import ParallelSampler
 from pyrado.utils.input_output import print_cbt
@@ -110,6 +110,7 @@ class DQL(Algorithm):
             logger = StepLogger(print_interval=100)
             logger.printers.append(ConsolePrinter())
             logger.printers.append(CSVPrinter(osp.join(save_dir, 'progress.csv')))
+            logger.printers.append(TensorBoardPrinter(osp.join(save_dir, 'tb')))
 
         # Call Algorithm's constructor
         super().__init__(save_dir, max_iter, policy, logger)
