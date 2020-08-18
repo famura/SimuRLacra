@@ -255,7 +255,7 @@ class DiscrActQValFNNPolicy(Policy):
         """
         if not isinstance(spec.act_space, DiscreteSpace):
             raise pyrado.TypeErr(given=spec.act_space, expected_type=DiscreteSpace)
-        super().__init__(spec)
+        super().__init__(spec, use_cuda=to.cuda.is_available())
 
         # Create the feed-forward neural network
         self.net = FNN(
