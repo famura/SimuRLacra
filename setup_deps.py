@@ -195,6 +195,7 @@ sl_dir = osp.join(dependency_dir, "ias", "sl")
 robcom_dir = osp.join(dependency_dir, "ias", "robcom")
 
 cppsctp_cmake_vars = {"IAS_DIR": ias_dir}
+cppsctpinstall_dir = osp.join(cppsctp_dir, "install")
 sl_cmake_vars = {"IAS_DIR": ias_dir, "BUILD_barrett": "ON"}
 
 # ======= #
@@ -451,7 +452,7 @@ def setup_cppsctp():
         mkdir_p(cppsctp_dir)
 
     # Build it
-    buildCMakeProject(cppsctp_dir, cppsctp_build_dir, cmakeVars=cppsctp_cmake_vars)
+    buildCMakeProject(cppsctp_dir, cppsctp_build_dir, cmakeVars=cppsctp_cmake_vars, install_dir=cppsctpinstall_dir)
 
 
 def setup_sl():

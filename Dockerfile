@@ -63,14 +63,11 @@ SHELL ["conda", "run", "-n", "pyrado", "/bin/bash", "-c"]
 RUN echo "export PATH=/home/user/miniconda3/bin:$PATH" >> ~/.bashrc
 RUN echo "conda activate pyrado" >> ~/.bashrc
 
-RUN python setup_deps.py dep_libraries -j4
-#RUN python setup_deps.py all --use-cuda -j4
+# Option Sacher (pip compiles PyTorch with CUDA support; we are not using torchvision)
+RUN python setup_deps.py dep_libraries -j8
+RUN pip install torch==1.4.0
+RUN python setup_deps.py w_rcs_wo_pytorch -j8
 
-#RUN conda install pytorch torchvision
-RUN conda install pytorch cudatoolkit=10.1 -c pytorch
-
-RUN python setup_deps.py separate_pytorch -j4
-RUN python setup_deps.py pytorch_based -j4
 ENV PATH /opt/conda/envs/pyrado/bin:$PATH
 ENV PYTHONPATH /home/user/SimuRLacra/RcsPySim/build/lib:/home/user/SimuRLacra/Pyrado/:$PYTHONPATH
 ENV RCSVIEWER_SIMPLEGRAPHICS 1

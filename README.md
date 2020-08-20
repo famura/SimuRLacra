@@ -73,7 +73,7 @@ conda create -n pyrado python=3.7 blas cmake colorama coverage cython joblib lap
 
 conda activate pyrado
 
-pip install git+https://github.com/Xfel/init-args-serializer.git@master argparse box2d glfw gym pprint pytest-lazy-fixture vpython
+pip install git+https://github.com/Xfel/init-args-serializer.git@master argparse box2d glfw gym prettyprinter pytest-lazy-fixture vpython
 ```
 Any warnings from VPython can be safely ignored.
 
