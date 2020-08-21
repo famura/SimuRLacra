@@ -132,12 +132,12 @@ if __name__ == '__main__':
         # valuefcn_param_init=valuefcn_init.param_values.data,
     )
 
-    # Save the environments and the hyper-parameters (do it before the init routine of BayRn)
+    # Save the environments and the hyper-parameters
     save_list_of_dicts_to_yaml([
         dict(env=env_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
-        dict(subrtrn=subrtn_hparam, subrtrn_name=PPO.name),
+        dict(subrtn=subrtn_hparam, subrtn_name=PPO.name),
         dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map)],
         ex_dir
     )

@@ -36,6 +36,7 @@ from typing import Callable
 from warnings import warn
 
 from pyrado.algorithms.parameter_exploring import ParameterExploring
+from pyrado.algorithms.sysid_as_rl import DomainDistrParamPolicy
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import NormalParamNoise, SymmParamExplStrat
 from pyrado.policies.linear import LinearPolicy
@@ -95,7 +96,7 @@ class REPS(ParameterExploring):
         :param grad_free_optim: use a derivative free optimizer (e.g. golden section search) or a SGD-based optimizer
         :param lr_dual: learning rate for the dual's optimizer (ignored if `grad_free_optim = True`)
         """
-        if not isinstance(policy, LinearPolicy):
+        if not isinstance(policy, (LinearPolicy, DomainDistrParamPolicy)):
             warn('REPS was designed for linear policies.', UserWarning)
 
         # Call ParameterExploring's constructor

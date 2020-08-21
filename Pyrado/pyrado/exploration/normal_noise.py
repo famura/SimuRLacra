@@ -54,13 +54,13 @@ class DiagNormalNoise(nn.Module):
         :param learnable: `True` if the parameters should be tuneable (default), `False` for shallow use (just sampling)
         """
         if not isinstance(std_init, (float, to.Tensor)):
-            raise pyrado.TypeErr(given=std_init, expected_type=(float, to.Tensor))
+            raise pyrado.TypeErr(given=std_init, expected_type=[float, to.Tensor])
         if isinstance(std_init, to.Tensor) and not std_init.size() == noise_dim:
             raise pyrado.ShapeErr(given=std_init, expected_match=to.empty(noise_dim))
         if not (isinstance(std_init, float) and std_init > 0 or isinstance(std_init, to.Tensor) and all(std_init > 0)):
             raise pyrado.ValueErr(given=std_init, g_constraint='0')
         if not isinstance(std_min, (float, to.Tensor)):
-            raise pyrado.TypeErr(given=std_min, expected_type=(float, to.Tensor))
+            raise pyrado.TypeErr(given=std_min, expected_type=[float, to.Tensor])
 
         super().__init__()
 
@@ -164,14 +164,14 @@ class FullNormalNoise(nn.Module):
         :param learnable: `True` if the parameters should be tuneable (default), `False` for shallow use (just sampling)
         """
         if not isinstance(std_init, (float, to.Tensor)):
-            raise pyrado.TypeErr(given=std_init, expected_type=(float, to.Tensor))
+            raise pyrado.TypeErr(given=std_init, expected_type=[float, to.Tensor])
         if isinstance(std_init, to.Tensor) and not std_init.size() == noise_dim:
             raise pyrado.ShapeErr(given=std_init, expected_match=to.empty(noise_dim))
         if not (isinstance(std_init, float) and std_init > 0 or
                 isinstance(std_init, to.Tensor) and all(std_init > 0)):
             raise pyrado.ValueErr(given=std_init, g_constraint='0')
         if not isinstance(std_min, (float, to.Tensor)):
-            raise pyrado.TypeErr(given=std_min, expected_type=(float, to.Tensor))
+            raise pyrado.TypeErr(given=std_min, expected_type=[float, to.Tensor])
         if not (isinstance(std_min, float) and std_min > 0 or
                 isinstance(std_min, to.Tensor) and all(std_min > 0)):
             raise pyrado.ValueErr(given=std_min, g_constraint='0')

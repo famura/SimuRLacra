@@ -35,6 +35,7 @@ from torch.distributions.bernoulli import Bernoulli
 from typing import Sequence
 
 import pyrado
+from pyrado.utils.input_output import print_cbt
 
 
 class DomainParam(ABC):
@@ -143,7 +144,13 @@ class UniformDomainParam(DomainParam):
         super().adapt(domain_distr_param, domain_distr_param_value)
 
         # Re-create the distribution, otherwise the changes will have no effect
-        self.distr = Uniform(self.mean - self.halfspan, self.mean + self.halfspan, validate_args=True)
+        try:
+            self.distr = Uniform(self.mean - self.halfspan, self.mean + self.halfspan, validate_args=True)
+        except ValueError as err:
+            print_cbt(f'Inputs that lead to the ValueError from PyTorch Distributions:'
+                      f'\ndomain_distr_param = {domain_distr_param}\n'
+                      f'low = {self.mean - self.halfspan}\nhigh = {self.mean + self.halfspan}')
+            raise err
 
 
 class NormalDomainParam(DomainParam):
@@ -170,7 +177,12 @@ class NormalDomainParam(DomainParam):
         super().adapt(domain_distr_param, domain_distr_param_value)
 
         # Re-create the distribution, otherwise the changes will have no effect
-        self.distr = Normal(self.mean, self.std, validate_args=True)
+        try:
+            self.distr = Normal(self.mean, self.std, validate_args=True)
+        except ValueError as err:
+            print_cbt(f'Inputs that lead to the ValueError from PyTorch Distributions:'
+                      f'\ndomain_distr_param = {domain_distr_param}\nloc = {self.mean}\nscale = {self.std}')
+            raise err
 
 
 class MultivariateNormalDomainParam(DomainParam):
@@ -202,7 +214,12 @@ class MultivariateNormalDomainParam(DomainParam):
         super().adapt(domain_distr_param, domain_distr_param_value)
 
         # Re-create the distribution, otherwise the changes will have no effect
-        self.distr = MultivariateNormal(self.mean, self.cov, validate_args=True)
+        try:
+            self.distr = MultivariateNormal(self.mean, self.cov, validate_args=True)
+        except ValueError as err:
+            print_cbt(f'Inputs that lead to the ValueError from PyTorch Distributions:'
+                      f'\ndomain_distr_param = {domain_distr_param}\nloc = {self.mean}\ncov = {self.cov}')
+            raise err
 
 
 class BernoulliDomainParam(DomainParam):
@@ -235,7 +252,12 @@ class BernoulliDomainParam(DomainParam):
         super().adapt(domain_distr_param, domain_distr_param_value)
 
         # Re-create the distribution, otherwise the changes will have no effect
-        self.distr = Bernoulli(self.prob_1, validate_args=True)
+        try:
+            self.distr = Bernoulli(self.prob_1, validate_args=True)
+        except ValueError as err:
+            print_cbt(f'Inputs that lead to the ValueError from PyTorch Distributions:'
+                      f'\ndomain_distr_param = {domain_distr_param}\nprobs = {self.prob_1}')
+            raise err
 
     def sample(self, num_samples: int = 1) -> list:
         """

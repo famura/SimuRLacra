@@ -45,9 +45,13 @@ from pyrado.algorithms.reps import REPS
 from pyrado.algorithms.sac import SAC
 from pyrado.algorithms.spota import SPOTA
 from pyrado.algorithms.svpg import SVPG
+from pyrado.algorithms.sysid_as_rl import DomainDistrParamPolicy, SysIdByEpisodicRL
+from pyrado.domain_randomization.domain_parameter import UniformDomainParam
+from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.domain_randomization.default_randomizers import get_default_randomizer
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer, DomainRandWrapperLive, \
+    MetaDomainRandWrapper
 from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
 from pyrado.logger import set_log_prefix_dir
 from pyrado.policies.features import *
@@ -420,7 +424,7 @@ def test_soft_update(env, module):
         lazy_fixture('default_omo')
     ], ids=['omo']
 )
-def test_arpl(env, ex_dir):
+def test_arpl(ex_dir, env):
     env = ActNormWrapper(env)
     env = StateAugmentationWrapper(env, domain_param=None)
 
@@ -465,3 +469,96 @@ def test_arpl(env, ex_dir):
     algo = ARPL(ex_dir, env, ppo, policy, ppo.expl_strat, **arpl_hparam)
 
     algo.train(snapshot_mode='best')
+
+
+@pytest.mark.longtime
+@pytest.mark.parametrize(
+    'env, num_eval_rollouts', [
+        (lazy_fixture('default_bob'), 5)
+    ], ids=['bob']
+)
+def test_sysidasrl(ex_dir, env, num_eval_rollouts):
+    def eval_ddp_policy(rollouts_real):
+        init_states_real = np.array([ro.rollout_info['init_state'] for ro in rollouts_real])
+        rollouts_sim = []
+        for i, _ in enumerate(range(num_eval_rollouts)):
+            rollouts_sim.append(rollout(env_sim, behavior_policy, eval=True,
+                                        reset_kwargs=dict(init_state=init_states_real[i, :])))
+
+        # Clip the rollouts rollouts yielding two lists of pairwise equally long rollouts
+        ros_real_tr, ros_sim_tr = algo.truncate_rollouts(
+            rollouts_real, rollouts_sim, replicate=False
+        )
+        assert len(ros_real_tr) == len(ros_sim_tr)
+        assert all([np.allclose(r.rollout_info['init_state'], s.rollout_info['init_state'])
+                    for r, s in zip(ros_real_tr, ros_sim_tr)])
+
+        # Return the average the loss
+        losses = [algo.obs_dim_weight@algo.loss_fcn(ro_r, ro_s) for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr)]
+        return float(np.mean(np.asarray(losses)))
+
+    # Environments
+    env_real = deepcopy(env)
+    env_real.domain_param = dict(ang_offset=-2*np.pi/180)
+
+    env_sim = deepcopy(env)
+    randomizer = DomainRandomizer(
+        UniformDomainParam(name='ang_offset', mean=0, halfspan=1e-12),
+    )
+    env_sim = DomainRandWrapperLive(env_sim, randomizer)
+    dp_map = {0: ('ang_offset', 'mean'), 1: ('ang_offset', 'halfspan')}
+    env_sim = MetaDomainRandWrapper(env_sim, dp_map)
+
+    assert env_real is not env_sim
+
+    # Policies (the behavioral policy needs to be deterministic)
+    behavior_policy = LinearPolicy(env_sim.spec, feats=FeatureStack([identity_feat]))
+    prior = DomainRandomizer(
+        UniformDomainParam(name='ang_offset', mean=1*np.pi/180, halfspan=1*np.pi/180),
+    )
+    ddp_policy = DomainDistrParamPolicy(mapping=dp_map, prior=prior)
+
+    # Subroutine
+    subrtn_hparam = dict(
+        max_iter=5,
+        pop_size=40,
+        num_rollouts=1,
+        num_is_samples=4,
+        expl_std_init=1*np.pi/180,
+        expl_std_min=0.001,
+        extra_expl_std_init=0.,
+        extra_expl_decay_iter=5,
+        num_workers=4,
+    )
+    subrtn = CEM(ex_dir, env_sim, ddp_policy, **subrtn_hparam)
+
+    algo_hparam = dict(
+        metric=None,
+        obs_dim_weight=np.ones(env_sim.obs_space.shape),
+        num_rollouts_per_distr=20,
+        num_workers=subrtn_hparam['num_workers']
+    )
+
+    algo = SysIdByEpisodicRL(subrtn, behavior_policy, **algo_hparam)
+
+    rollouts_real_tst = []
+    for _ in range(num_eval_rollouts):
+        rollouts_real_tst.append(rollout(env_real, behavior_policy, eval=True))
+    loss_pre = eval_ddp_policy(rollouts_real_tst)
+
+    # Mimic training
+    while algo.curr_iter < algo.max_iter and not algo.stopping_criterion_met():
+        algo.logger.add_value(algo.iteration_key, algo.curr_iter)
+
+        # Creat fake real-world data
+        rollouts_real = []
+        for _ in range(num_eval_rollouts):
+            rollouts_real.append(rollout(env_real, behavior_policy, eval=True))
+
+        algo.step(snapshot_mode='latest', meta_info=dict(rollouts_real=rollouts_real))
+
+        algo.logger.record_step()
+        algo._curr_iter += 1
+
+    loss_post = eval_ddp_policy(rollouts_real_tst)
+    assert loss_post <= loss_pre  # don't have to be better every step

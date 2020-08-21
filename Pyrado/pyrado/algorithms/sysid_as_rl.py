@@ -41,6 +41,7 @@ from pyrado.algorithms.parameter_exploring import ParameterExploring
 from pyrado.algorithms.utils import save_prefix_suffix
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
+from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.policies.base import Policy
 from pyrado.sampling.parallel_sampler import ParallelSampler
 from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult, ParameterSample
@@ -81,7 +82,7 @@ class DomainDistrParamPolicy(Policy):
         for idx, ddp in self._mapping.items():
             lables[idx] = f'{ddp[0]}_{ddp[1]}'
             if ddp[1] in ['std', 'halfspan']:  # 2nd output is the name of the domain distribution param
-                bound_lo[idx] = 1e-6
+                bound_lo[idx] = 1e-4  # hard coded lower bound on all domain parameters variances
 
         param_spec = EnvSpec(obs_space=EmptySpace(), act_space=BoxSpace(bound_lo, bound_up, labels=lables))
 
@@ -182,10 +183,18 @@ class SysIdByEpisodicRL(Algorithm):
         else:
             w_l1, w_l2 = 0.5, 1.
             self.metric = lambda e: w_l1*np.linalg.norm(e, ord=1, axis=0) + w_l2*np.linalg.norm(e, ord=2, axis=0)
-        self.uc_normalizer = UnitCubeProjector(
-            bound_lo=subrtn.env.obs_space.bound_lo,
-            bound_up=subrtn.env.obs_space.bound_up
+
+        elb = ObsNormWrapper.override_bounds(
+            subrtn.env.obs_space.bound_lo,
+            {r'$\dot{\theta}$': -10., r'$\dot{\alpha}$': -10.},
+            subrtn.env.obs_space.labels
         )
+        eub = ObsNormWrapper.override_bounds(
+            subrtn.env.obs_space.bound_up,
+            {r'$\dot{\theta}$': 10., r'$\dot{\alpha}$': 10.},
+            subrtn.env.obs_space.labels
+        )
+        self.uc_normalizer = UnitCubeProjector(bound_lo=elb, bound_up=eub)
         self.obs_dim_weight = np.array(obs_dim_weight)  # weighting factor between the different observations
 
         # Create the sampler used to execute the same policy as on the real system in the meta-randomized env
@@ -204,6 +213,10 @@ class SysIdByEpisodicRL(Algorithm):
         return self._subrtn
 
     def reset(self, seed: int = None):
+        # Reset internal variables inherited from Algorithm
+        self._curr_iter = 0
+        self._highest_avg_ret = -pyrado.inf
+
         # Forward to subroutine
         self._subrtn.reset(seed)
 
@@ -310,26 +323,36 @@ class SysIdByEpisodicRL(Algorithm):
 
     @staticmethod
     def truncate_rollouts(rollouts_real: Sequence[StepSequence],
-                          rollouts_sim: Sequence[StepSequence]
-                          ) -> Tuple[Sequence[StepSequence], Sequence[StepSequence]]:
+                          rollouts_sim: Sequence[StepSequence],
+                          replicate: bool = True) -> Tuple[Sequence[StepSequence], Sequence[StepSequence]]:
         """
         In case (some of the) rollouts failed or succeed in one domain, but not in the other, we truncate the longer
         observation sequence. When truncating, we compare every of the M real rollouts to every of the N simulated
         rollouts, thus replicate the real rollout N times and the simulated rollouts M times.
 
-        :param rollouts_real: M real-world rollouts of different length
-        :param rollouts_sim: N simulated rollouts of different length
-        :return: MxN real-world rollouts and MxN simulated rollouts of equal length
+        :param rollouts_real: M real-world rollouts of different length if `replicate = True`, else K real-world
+                              rollouts of different length
+        :param rollouts_sim: N simulated rollouts of different length if `replicate = True`, else K simulated
+                              rollouts of different length
+        :param replicate: if `False` the i-th rollout from `rollouts_real` is (only) compared with the i-th rollout from
+                          `rollouts_sim`, in this case the number of rollouts and the initial states have to match
+        :return: MxN real-world rollouts and MxN simulated rollouts of equal length if `replicate = True`, else
+                 K real-world rollouts and K simulated rollouts of equal length
         """
         if not isinstance(rollouts_real[0], Iterable):
             raise pyrado.TypeErr(given=rollouts_real[0], expected_type=Iterable)
         if not isinstance(rollouts_sim[0], Iterable):
             raise pyrado.TypeErr(given=rollouts_sim[0], expected_type=Iterable)
+        if not replicate and len(rollouts_real) != len(rollouts_sim):
+            raise pyrado.ShapeErr(msg='In case of a one on one comparison, the number of rollouts needs to be equal!')
+
+        # Choose the function for creating the comparison, the rollouts
+        comp_fcn = product if replicate else zip
 
         # Go over all combinations rollouts individually
         rollouts_real_tr = []
         rollouts_sim_tr = []
-        for ro_r, ro_s in product(rollouts_real, rollouts_sim):
+        for ro_r, ro_s in comp_fcn(rollouts_real, rollouts_sim):
             # Handle rollouts of different length, assuming that they are staring at the same state
             if ro_r.length < ro_s.length:
                 rollouts_real_tr.append(ro_r)

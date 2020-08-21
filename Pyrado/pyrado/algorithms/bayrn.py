@@ -572,7 +572,7 @@ class BayRn(Algorithm):
         )
 
         cand = uc_normalizer.project_back(cand_norm.detach())
-        print_cbt(f'Converged to argmax of the posterior mean\n{cand.numpy()}', 'g', bright=True)
+        print_cbt(f'Converged to argmax of the posterior mean: {cand.numpy()}', 'g', bright=True)
         return cand
 
     @staticmethod

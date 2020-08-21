@@ -38,17 +38,138 @@ from pyrado.domain_randomization.domain_parameter import UniformDomainParam, Nor
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper, DomainRandWrapperLive
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
+from pyrado.environments.pysim.quanser_qube import QQubeStabSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.dummy import DummyPolicy, IdlePolicy
-from pyrado.policies.features import FeatureStack, identity_feat
+from pyrado.policies.features import FeatureStack, identity_feat, sign_feat, abs_feat
 from pyrado.policies.linear import LinearPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.input_output import print_cbt
 
 
-if __name__ == '__main__':
+def create_qq_reps_setup():
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(BallOnBeamSim.name, f'{SysIdByEpisodicRL.name}-{REPS.name}', seed=1001)
+    ex_dir = setup_experiment(QQubeStabSim.name, f'{SysIdByEpisodicRL.name}-{REPS.name}', seed=1001)
+
+    # Environments
+    env_hparams = dict(dt=1/100., max_steps=500)
+    env_real = QQubeStabSim(**env_hparams)
+    env_real.domain_param = dict(
+        # Rm=8.4*0.9,
+        Mp=0.024*1.1,
+    )
+
+    env_sim = QQubeStabSim(**env_hparams)
+    randomizer = DomainRandomizer(
+        # NormalDomainParam(name='Rm', mean=0., std=1e-9),
+        NormalDomainParam(name='Mp', mean=0., std=1e-9, clip_lo=0.01, clip_up=0.04),
+    )
+    env_sim = DomainRandWrapperLive(env_sim, randomizer)
+    dp_map = {
+        # 0: ('Rm', 'mean'), 1: ('Rm', 'std'),
+        # 2: ('Mp', 'mean'), 3: ('Mp', 'std')
+        0: ('Mp', 'mean'), 1: ('Mp', 'std')
+    }
+    env_sim = MetaDomainRandWrapper(env_sim, dp_map)
+
+    # Policies (the behavioral policy needs to be deterministic)
+    behavior_policy = LinearPolicy(env_sim.spec, feats=FeatureStack([identity_feat, sign_feat, abs_feat]))
+    prior = DomainRandomizer(
+        # NormalDomainParam(name='Rm', mean=8.4, std=8.4e-2),
+        NormalDomainParam(name='Mp', mean=0.024, std=0.024e-2),
+    )
+    ddp_policy = DomainDistrParamPolicy(mapping=dp_map, prior=prior)
+
+    # Subroutine
+    subrtn_hparam = dict(
+        max_iter=100,
+        eps=0.1,
+        pop_size=100,
+        num_rollouts=1,
+        expl_std_init=0.005,
+        expl_std_min=1e-4,
+        num_epoch_dual=1000,
+        grad_free_optim=False,
+        lr_dual=5e-4,
+        use_map=True,
+        num_workers=8,
+    )
+    subrtn = REPS(ex_dir, env_sim, ddp_policy, **subrtn_hparam)
+    # subrtn_hparam = dict(
+    #     max_iter=100,
+    #     pop_size=80,
+    #     num_rollouts=1,
+    #     num_is_samples=4,
+    #     expl_std_init=0.005,
+    #     expl_std_min=1e-4,
+    #     extra_expl_std_init=0.005,
+    #     extra_expl_decay_iter=10,
+    #     num_workers=8,
+    # )
+    # subrtn = CEM(ex_dir, env_sim, ddp_policy, **subrtn_hparam)
+
+    return ex_dir, env_sim, env_real, env_hparams, subrtn, subrtn_hparam, dp_map, behavior_policy, ddp_policy
+
+
+def create_qq_cem_setup():
+    # Experiment (set seed before creating the modules)
+    ex_dir = setup_experiment(QQubeStabSim.name, f'{SysIdByEpisodicRL.name}-{REPS.name}', seed=1001)
+
+    # Environments
+    env_hparams = dict(dt=1/100., max_steps=600)
+    env_real = QQubeStabSim(**env_hparams)
+    env_real.domain_param = dict(
+        Mr=0.095*0.85,
+        Mp=0.024*1.15,
+        Lr=0.085*0.85,
+        Lp=0.129*1.15,
+    )
+
+    env_sim = QQubeStabSim(**env_hparams)
+    randomizer = DomainRandomizer(
+        NormalDomainParam(name='Mr', mean=0., std=1e-9, clip_lo=1e-3),
+        NormalDomainParam(name='Mp', mean=0., std=1e-9, clip_lo=1e-3),
+        NormalDomainParam(name='Lr', mean=0., std=1e-9, clip_lo=1e-3),
+        NormalDomainParam(name='Lp', mean=0., std=1e-9, clip_lo=1e-3),
+    )
+    env_sim = DomainRandWrapperLive(env_sim, randomizer)
+    dp_map = {
+        0: ('Mr', 'mean'), 1: ('Mr', 'std'),
+        2: ('Mp', 'mean'), 3: ('Mp', 'std'),
+        4: ('Lr', 'mean'), 5: ('Lr', 'std'),
+        6: ('Lp', 'mean'), 7: ('Lp', 'std')
+    }
+    env_sim = MetaDomainRandWrapper(env_sim, dp_map)
+
+    # Policies (the behavioral policy needs to be deterministic)
+    behavior_policy = LinearPolicy(env_sim.spec, feats=FeatureStack([identity_feat, sign_feat, abs_feat]))
+    prior = DomainRandomizer(
+        NormalDomainParam(name='Mr', mean=0.095, std=0.095e-2, clip_lo=1e-3),
+        NormalDomainParam(name='Mp', mean=0.024, std=0.024e-2, clip_lo=1e-3),
+        NormalDomainParam(name='Lr', mean=0.085, std=0.085e-2, clip_lo=1e-3),
+        NormalDomainParam(name='Lp', mean=0.129, std=0.129e-2, clip_lo=1e-3),
+    )
+    ddp_policy = DomainDistrParamPolicy(mapping=dp_map, prior=prior)
+
+    # Subroutine
+    subrtn_hparam = dict(
+        max_iter=10,
+        pop_size=40,
+        num_rollouts=1,
+        num_is_samples=4,
+        expl_std_init=0.01,
+        expl_std_min=0.001,
+        extra_expl_std_init=0.01,
+        extra_expl_decay_iter=5,
+        num_workers=10,
+    )
+    subrtn = CEM(ex_dir, env_sim, ddp_policy, **subrtn_hparam)
+
+    return ex_dir, env_sim, env_real, env_hparams, subrtn, subrtn_hparam, dp_map, behavior_policy, ddp_policy
+
+
+def create_bob_cem_setup():
+    # Experiment (set seed before creating the modules)
+    ex_dir = setup_experiment(BallOnBeamSim.name, f'{SysIdByEpisodicRL.name}-{CEM.name}', seed=1001)
 
     # Environments
     env_hparams = dict(dt=1/100., max_steps=500)
@@ -79,23 +200,9 @@ if __name__ == '__main__':
     ddp_policy = DomainDistrParamPolicy(mapping=dp_map, prior=prior)
 
     # Subroutine
-    # subrtn_hparam = dict(
-    #     max_iter=100,
-    #     eps=0.1,
-    #     pop_size=10*ddp_policy.num_param,
-    #     num_rollouts=1,
-    #     expl_std_init=1.0,
-    #     expl_std_min=0.02,
-    #     num_epoch_dual=1000,
-    #     grad_free_optim=False,
-    #     lr_dual=5e-4,
-    #     use_map=True,
-    #     num_workers=6,
-    # )
-    # subrtn = REPS(ex_dir, env_sim, ddp_policy, **subrtn_hparam)
     subrtn_hparam = dict(
-        max_iter=100,
-        pop_size=60,
+        max_iter=20,
+        pop_size=40,
         num_rollouts=1,
         num_is_samples=4,
         expl_std_init=0.1,
@@ -106,17 +213,29 @@ if __name__ == '__main__':
     )
     subrtn = CEM(ex_dir, env_sim, ddp_policy, **subrtn_hparam)
 
+    return ex_dir, env_sim, env_real, env_hparams, subrtn, subrtn_hparam, dp_map, behavior_policy, ddp_policy
+
+
+if __name__ == '__main__':
+    # Toggle experiments
+    # ex = create_qq_reps_setup()
+    ex = create_qq_cem_setup()
+    # ex = create_bob_cem_setup()
+
+    ex_dir, env_sim, env_real, env_hparams, subrtn, subrtn_hparam, dp_map, behavior_policy, ddp_policy = ex
+    num_eval_rollouts = 5
+
     algo_hparam = dict(
         metric=None,
-        obs_dim_weight=[1., 1., 1., 1.],
-        num_rollouts_per_distr=50,
+        obs_dim_weight=np.ones(env_sim.obs_space.shape),
+        num_rollouts_per_distr=40,  # former 50
         num_workers=subrtn_hparam['num_workers']
     )
 
-    # Save the environments and the hyper-parameters (do it before the init routine of BayRn)
+    # Save the environments and the hyper-parameters
     save_list_of_dicts_to_yaml([
         dict(env=env_hparams, seed=ex_dir.seed),
-        dict(subrtrn=subrtn_hparam, subrtrn_name=REPS.name),
+        dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
         dict(algo=algo_hparam, algo_name=SysIdByEpisodicRL.name, dp_map=dp_map)],
         ex_dir
     )
@@ -129,7 +248,7 @@ if __name__ == '__main__':
 
         # Creat fake real-world data
         ro_real = []
-        for _ in range(7):
+        for _ in range(num_eval_rollouts):
             ro_real.append(rollout(env_real, behavior_policy, eval=True))
 
         algo.step(snapshot_mode='latest', meta_info=dict(rollouts_real=ro_real))
