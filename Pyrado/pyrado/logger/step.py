@@ -30,9 +30,11 @@ import csv
 import os
 import os.path as osp
 import torch as to
+import numpy as np
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from tabulate import tabulate
+from torch.utils.tensorboard import SummaryWriter
 
 import pyrado
 from pyrado.logger import resolve_log_path
@@ -237,7 +239,32 @@ class CSVPrinter(StepLogPrinter):
         self._writer = csv.writer(self._fd)
 
 
-# TODO we could add a tensorboard version here - maybe wait until the pytorch tensorboard integration is stable.
+class TensorBoardPrinter(StepLogPrinter):
+    """ Class for writing tensorboard logs """
+    def __init__(self, dir):
+        """
+        Constructor
+
+        :param dir: folder path name
+        """
+        file = resolve_log_path(dir)
+        self.writer = SummaryWriter(log_dir=dir)
+        self.step = 0
+
+    def print_values(self, values: dict, ordered_keys: list, first_step: bool):
+        for k in ordered_keys:
+            value = values[k]
+            if isinstance(value, list):
+                for i, scalar in enumerate(value):
+                   self.writer.add_scalar(k + str(i), scalar, self.step)
+            elif isinstance(value, np.ndarray):
+                for i, scalar in enumerate(value.flat):
+                   self.writer.add_scalar(k + '/' + str(i), scalar, self.step)
+            else:
+                self.writer.add_scalar(k, values[k], self.step)
+        self.step += 1
+        self.writer.flush()
+
 
 class LoggerAware:
     """
@@ -257,6 +284,7 @@ class LoggerAware:
         if self._save_dir is not None:
             logfile = osp.join(self._save_dir, logfile)
         logger.printers.append(CSVPrinter(logfile))
+        logger.printers.append(TensorBoardPrinter(osp.join(self._save_dir, 'tb')))
         return logger
 
     @property

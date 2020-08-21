@@ -29,7 +29,7 @@
 import numpy as np
 import operator
 import random
-import scipy
+import scipy.signal as signal
 import torch as to
 from collections.abc import Iterable
 from copy import deepcopy
@@ -734,7 +734,7 @@ def discounted_reverse_cumsum(data, gamma: float):
     :param gamma: discount factor
     :return: cumulative sums for every step
     """
-    return scipy.signal.lfilter([1], [1, -gamma], data[::-1], axis=0)[::-1]
+    return signal.lfilter([1], [1, -gamma], data[::-1], axis=0)[::-1]
 
 
 def discounted_value(rollout: StepSequence, gamma: float):
