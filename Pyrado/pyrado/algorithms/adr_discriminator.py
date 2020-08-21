@@ -34,10 +34,7 @@ from pyrado.logger.step import StepLogger
 from pyrado.policies.fnn import FNNPolicy
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.spaces import BoxSpace
-from pyrado.spaces.base import Space
 from pyrado.utils.data_types import EnvSpec
-
-device = to.device('cuda' if to.cuda.is_available() else 'cpu')
 
 
 class RewardGenerator:
@@ -50,7 +47,9 @@ class RewardGenerator:
                  batch_size: int,
                  reward_multiplier: float,
                  lr: float = 3e-3,
-                 logger: StepLogger = None):
+                 logger: StepLogger = None,
+                 device: str = 'cuda' if to.cuda.is_available() else 'cpu'):
+
         """
         Constructor
 
@@ -60,6 +59,7 @@ class RewardGenerator:
         :param lr: learning rate
         :param logger: logger instance
         """
+        self.device = device
         self.batch_size = batch_size
         self.reward_multiplier = reward_multiplier
         self.lr = lr
@@ -107,17 +107,17 @@ class RewardGenerator:
         return loss
 
 
-def convert_step_sequence(traj: StepSequence):
+def convert_step_sequence(trajectory: StepSequence):
     """
     Converts a StepSequence to a Tensor which can be fed through a Network
 
-    :param traj: A step sequence containing a trajectory
+    :param trajectory: A step sequence containing a trajectory
     :return: A Tensor containing the trajectory
     """
-    assert isinstance(traj, StepSequence)
-    traj.torch()
-    state = traj.get_data_values('observations')[:-1].double()
-    next_state = traj.get_data_values('observations')[1::].double()
-    action = traj.get_data_values('actions').narrow(0, 0, next_state.shape[0]).double()
-    traj = to.cat((state, next_state, action), 1).cpu().double()
-    return traj
+    assert isinstance(trajectory, StepSequence)
+    trajectory.torch()
+    state = trajectory.get_data_values('observations')[:-1].double()
+    next_state = trajectory.get_data_values('observations')[1::].double()
+    action = trajectory.get_data_values('actions').narrow(0, 0, next_state.shape[0]).double()
+    trajectory = to.cat((state, next_state, action), 1).cpu().double()
+    return trajectory
