@@ -1,0 +1,29 @@
+name: Coverage
+on:
+  push:
+    branches: [ master, cicd ]
+  pull_request:
+    branches: [ master, cicd ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup SimuRLacra
+        run: |
+        python setup_deps.py dep_libraries
+        conda activate pyrado
+        pip install torch==1.4.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+        python setup_deps.py w_rcs_wo_pytorch -j8
+      - name: Execute tests
+        env:
+          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+        run: |
+          wget https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+          pytest Pyrado/tests --cov=./Pyrado --cov-report=xml --verbose -m 'not visualization and not longtime'; sudo cp ./coverage.xml /cov"
+          ./../test-reporter-latest-linux-amd64 format-coverage --debug -t coverage.py coverage.xml
+          ./../test-reporter-latest-linux-amd64 upload-coverage --debug
