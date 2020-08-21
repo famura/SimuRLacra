@@ -28,10 +28,10 @@
 
 import torch as to
 import torch.nn as nn
-from pyrado.policies.fnn import FNNPolicy
 from tqdm import tqdm
 
 from pyrado.logger.step import StepLogger
+from pyrado.policies.fnn import FNNPolicy
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.spaces import BoxSpace
 from pyrado.spaces.base import Space
@@ -64,7 +64,7 @@ class RewardGenerator:
         self.reward_multiplier = reward_multiplier
         self.lr = lr
         spec = EnvSpec(obs_space=BoxSpace.cat([env_spec.obs_space, env_spec.obs_space, env_spec.act_space]),
-                       act_space=BoxSpace([0], [1]))
+                       act_space=BoxSpace(bound_lo=[0], bound_up=[1]))
         self.discriminator = FNNPolicy(spec=spec, hidden_nonlin=to.tanh, hidden_sizes=[62], output_nonlin=to.sigmoid)
         self.loss_fcn = nn.BCELoss()
         self.optimizer = to.optim.Adam(self.discriminator.parameters(), lr)
@@ -74,7 +74,7 @@ class RewardGenerator:
         traj = convert_step_sequence(traj)
         with to.no_grad():
             reward = self.discriminator.forward(traj).cpu()
-            return to.log(reward.mean()) * self.reward_multiplier
+            return to.log(reward.mean())*self.reward_multiplier
 
     def train(self,
               reference_trajectory: StepSequence,
