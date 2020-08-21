@@ -29,7 +29,6 @@
 import numpy as np
 import operator
 import random
-import scipy
 import scipy.signal as signal
 import torch as to
 from collections.abc import Iterable
