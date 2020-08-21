@@ -280,7 +280,7 @@ class RBFFeat:
             elif isinstance(b, (int, float)):
                 bounds_to[i] = to.tensor(b, dtype=to.get_default_dtype()).view(1, )
             else:
-                raise pyrado.TypeErr(given=b, expected_type=(np.ndarray, to.Tensor, int, float))
+                raise pyrado.TypeErr(given=b, expected_type=[np.ndarray, to.Tensor, int, float])
         if any([any(np.isinf(b)) for b in bounds_to]):
             bound_lo, bound_up = [to.clamp(b, min=-1e6, max=1e6) for b in bounds_to]
             print_cbt('Clipped the bounds of the RBF centers to [-1e6, 1e6].', 'y')

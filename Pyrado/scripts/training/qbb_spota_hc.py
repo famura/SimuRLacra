@@ -109,7 +109,7 @@ if __name__ == '__main__':
     save_list_of_dicts_to_yaml([
         dict(env=env_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
-        dict(subrtrn_cand=subrtn_hparam_cand, subrtrn_refs=subrtn_hparam_cand, subrtrn_name=HCNormal.name),
+        dict(subrtn_cand=subrtn_hparam_cand, subrtn_refs=subrtn_hparam_cand, subrtn_name=HCNormal.name),
         dict(algo=spota_hparam, algo_name=SPOTA.name)],
         ex_dir
     )

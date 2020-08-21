@@ -68,7 +68,6 @@ class ObsNormWrapper(EnvWrapperObs, Serializable):
     @staticmethod
     def override_bounds(bounds: np.ndarray,
                         override: Optional[Mapping[str, float]],
-                        bound_label: str,
                         names: np.ndarray) -> np.ndarray:
         """
         Override a given bound. This function is useful if some entries of the observation space have an infinite bound
@@ -76,8 +75,7 @@ class ObsNormWrapper(EnvWrapperObs, Serializable):
 
         :param bounds: bound to override
         :param override: value to override with
-        :param bound_label: label of the bound to override
-        :param names: e.g. lower or upper
+        :param names: label of the bound to override
         :return: new bound created from a copy of the old bound
         """
         if not override:
@@ -91,8 +89,8 @@ class ObsNormWrapper(EnvWrapperObs, Serializable):
                 bc[idx] = ov
             elif np.isinf(bc[idx]):
                 # Report unbounded entry
-                raise pyrado.ValueErr(msg=f'{name} entry of {bound_label} bound is infinite and not overridden.'
-                                          f'Cannot apply normalization.')
+                raise pyrado.ValueErr(msg=f'The entry {name} of a bound is infinite and not overwritten.'
+                                          f'Cannot apply normalization!')
             else:
                 # Do nothing if ov is None
                 pass
@@ -104,8 +102,8 @@ class ObsNormWrapper(EnvWrapperObs, Serializable):
         lb, ub = wos.bounds
 
         # Override the bounds if desired
-        lb = ObsNormWrapper.override_bounds(lb, self.explicit_lb, 'lower', wos.labels)
-        ub = ObsNormWrapper.override_bounds(ub, self.explicit_ub, 'upper', wos.labels)
+        lb = ObsNormWrapper.override_bounds(lb, self.explicit_lb, wos.labels)
+        ub = ObsNormWrapper.override_bounds(ub, self.explicit_ub, wos.labels)
 
         # Normalize observation
         obs_norm = (obs - lb)/(ub - lb)*2 - 1
@@ -118,8 +116,8 @@ class ObsNormWrapper(EnvWrapperObs, Serializable):
         lb, ub = space.bounds
 
         # Override the bounds if desired
-        lb_ov = ObsNormWrapper.override_bounds(lb, self.explicit_lb, 'lower', space.labels)
-        ub_ov = ObsNormWrapper.override_bounds(ub, self.explicit_ub, 'upper', space.labels)
+        lb_ov = ObsNormWrapper.override_bounds(lb, self.explicit_lb, space.labels)
+        ub_ov = ObsNormWrapper.override_bounds(ub, self.explicit_ub, space.labels)
 
         if any(lb_ov == -pyrado.inf):
             raise pyrado.ValueErr(msg=f'At least one element of the lower bounds is (negative) infinite:\n'

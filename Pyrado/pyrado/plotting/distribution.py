@@ -31,7 +31,7 @@ import torch as to
 from matplotlib import pyplot as plt
 from matplotlib.cm import get_cmap
 from torch.distributions import Distribution
-from typing import Sequence
+from typing import Sequence, Iterable
 
 import pyrado
 from pyrado.utils.data_types import check_all_types_equal
@@ -39,7 +39,7 @@ from pyrado.utils.data_types import check_all_types_equal
 
 def render_distr_evo(
     ax: plt.Axes,
-    distributions: [list, tuple],
+    distributions: Iterable,
     x_grid_limits: [tuple, list, np.ndarray],
     x_label: str = '',
     y_label: str = '',
@@ -58,7 +58,7 @@ def render_distr_evo(
         `constrained_layout=True`.
 
     :param ax: axis of the figure to plot on
-    :param distributions: iterable with the distrubutions in the order they should be plotted
+    :param distributions: iterable with the distributions in the order they should be plotted
     :param x_grid_limits: min and max value for the evaluation grid
     :param x_label: label for the x-axis
     :param y_label: label for the y-axis
@@ -73,10 +73,10 @@ def render_distr_evo(
     if not check_all_types_equal(distributions):
         raise pyrado.TypeErr(msg='Types of all distributions have to be identical!')
     if not isinstance(distributions[0], Distribution):
-        raise pyrado.TypeErr(msg='Distributions must be Pytorch Distribution instances!')
+        raise pyrado.TypeErr(msg='Distributions must be PyTorch Distribution instances!')
 
     if distr_labels is None:
-        distr_labels = [f'iter\_{i}' for i in range(len(distributions))]
+        distr_labels = [rf'iter\_{i}' for i in range(len(distributions))]
 
     # Get the color map customized to the number of distributions to plot
     cmap = get_cmap(cmap_name)

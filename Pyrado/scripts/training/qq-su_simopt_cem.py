@@ -39,7 +39,7 @@ from pyrado.algorithms.sysid_as_rl import SysIdByEpisodicRL, DomainDistrParamPol
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam, NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper, DomainRandWrapperLive
-from pyrado.environments.pysim.quanser_qube import QQubeStabSim
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.fnn import FNNPolicy
 from pyrado.spaces import ValueFunctionSpace
@@ -48,22 +48,35 @@ from pyrado.utils.data_types import EnvSpec
 
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeStabSim.name, f'{SimOpt.name}-{CEM.name}', seed=1001)
-    num_workers = 6
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{SimOpt.name}-{CEM.name}', seed=1001)
+    num_workers = 16
 
     # Environments
-    env_hparams = dict(dt=1/100., max_steps=500)
-    env_real = QQubeStabSim(**env_hparams)
+    env_hparams = dict(dt=1/100., max_steps=600)
+    env_real = QQubeSwingUpSim(**env_hparams)
     env_real.domain_param = dict(
-        Rm=8.4*0.8,
+        Mr=0.095*0.85,
+        Mp=0.024*1.15,
+        Lr=0.085*0.85,
+        Lp=0.129*1.15,
     )
 
-    env_sim = QQubeStabSim(**env_hparams)
+    env_sim = QQubeSwingUpSim(**env_hparams)
     randomizer = DomainRandomizer(
-        NormalDomainParam(name='R_m', mean=0, std=1e-12),
+        NormalDomainParam(name='Mr', mean=0., std=1e-9, clip_lo=1e-3),
+        NormalDomainParam(name='Mp', mean=0., std=1e-9, clip_lo=1e-3),
+        NormalDomainParam(name='Lr', mean=0., std=1e-9, clip_lo=1e-3),
+        NormalDomainParam(name='Lp', mean=0., std=1e-9, clip_lo=1e-3),
     )
     env_sim = DomainRandWrapperLive(env_sim, randomizer)
-    dp_map = {0: ('R_m', 'mean'), 1: ('R_m', 'std')}
+    dp_map = {
+        0: ('Mr', 'mean'), 1: ('Mr', 'std'),
+        2: ('Mp', 'mean'), 3: ('Mp', 'std'),
+        4: ('Lr', 'mean'), 5: ('Lr', 'std'),
+        6: ('Lp', 'mean'), 7: ('Lp', 'std')
+        # 0: ('Lr', 'mean'), 1: ('Lr', 'std'),
+        # 2: ('Lp', 'mean'), 3: ('Lp', 'std')
+    }
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
 
     # Subroutine for policy improvement
@@ -82,7 +95,7 @@ if __name__ == '__main__':
     )
     critic = GAE(value_fcn, **critic_hparam)
     subrtn_policy_hparam = dict(
-        max_iter=100,
+        max_iter=150,
         min_steps=23*env_sim.max_steps,
         num_workers=num_workers,
         num_epoch=7,
@@ -96,32 +109,36 @@ if __name__ == '__main__':
 
     # Subroutine for system identification
     prior = DomainRandomizer(
-        NormalDomainParam(name='R_m', mean=8.4, std=8.4e-2),
+        NormalDomainParam(name='Mr', mean=0.095, std=0.095e-2, clip_lo=1e-3),
+        NormalDomainParam(name='Mp', mean=0.024, std=0.024e-2, clip_lo=1e-3),
+        NormalDomainParam(name='Lr', mean=0.085, std=0.085e-2, clip_lo=1e-3),
+        NormalDomainParam(name='Lp', mean=0.129, std=0.129e-2, clip_lo=1e-3),
     )
     ddp_policy = DomainDistrParamPolicy(mapping=dp_map, prior=prior)
     subsubrtn_distr_hparam = dict(
-        max_iter=100,
-        pop_size=40,
+        max_iter=10,
+        pop_size=200,
         num_rollouts=1,
         num_is_samples=4,
-        expl_std_init=0.1,
+        expl_std_init=0.005,
         expl_std_min=0.001,
-        extra_expl_std_init=0.,
-        extra_expl_decay_iter=10,
+        extra_expl_std_init=0.005,
+        extra_expl_decay_iter=5,
         num_workers=num_workers,
     )
     subsubrtn = CEM(ex_dir, env_sim, ddp_policy, **subsubrtn_distr_hparam)
     subrtn_hparam = dict(
         metric=None,
-        obs_dim_weight=[1., 1., 1., 1.],
-        num_rollouts_per_distr=50,
+        obs_dim_weight=[1., 1., 1., 1., 5., 5.],
+        num_rollouts_per_distr=100,
         num_workers=num_workers,
     )
     subrtn_distr = SysIdByEpisodicRL(subsubrtn, behavior_policy=behav_policy, **subrtn_hparam)
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=200,
+        max_iter=10,
+        num_eval_rollouts=7,
     )
     algo = SimOpt(ex_dir, env_sim, env_real, subrtn_policy, subrtn_distr, **algo_hparam)
 

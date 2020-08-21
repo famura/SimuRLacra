@@ -45,6 +45,11 @@ class UnitCubeProjector:
         """
         if not type(bound_lo) == type(bound_up):
             raise pyrado.TypeErr(msg='Passed two different types for bounds!')
+        if any(bound_lo == pyrado.inf):
+            raise pyrado.ValueErr(given=bound_lo, eq_constraint='not +/- inf')
+        if any(bound_up == pyrado.inf):
+            raise pyrado.ValueErr(given=bound_up, eq_constraint='not +/- inf')
+
         self.bound_lo = bound_lo
         self.bound_up = bound_up
 
@@ -71,7 +76,7 @@ class UnitCubeProjector:
         :return: element of the unit cube
         """
         if not isinstance(data, (to.Tensor, np.ndarray)):
-            raise pyrado.TypeErr(given=data, expected_type=(to.Tensor, np.ndarray))
+            raise pyrado.TypeErr(given=data, expected_type=[to.Tensor, np.ndarray])
 
         # Convert if necessary
         bound_up, bound_lo = self._convert_bounds(data)
@@ -88,7 +93,7 @@ class UnitCubeProjector:
         :return: element of the original space
         """
         if not isinstance(data, (to.Tensor, np.ndarray)):
-            raise pyrado.TypeErr(given=data, expected_type=(to.Tensor, np.ndarray))
+            raise pyrado.TypeErr(given=data, expected_type=[to.Tensor, np.ndarray])
 
         # Convert if necessary
         bound_up, bound_lo = self._convert_bounds(data)

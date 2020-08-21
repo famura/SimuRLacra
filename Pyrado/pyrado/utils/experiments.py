@@ -94,7 +94,7 @@ def load_experiment(ex_dir: str, args: Any = None) -> ([SimEnv, EnvWrapper], Pol
                 policy = to.load(osp.join(ex_dir, f'iter_{args.iter}_policy_cand.pt'))
                 print_cbt(f"Loaded {osp.join(ex_dir, f'iter_{args.iter}_policy_cand.pt')}", 'g')
             # Value function (optional)
-            if any([a.name in hparams.get('subrtrn_name', '') for a in [PPO, PPO2, A2C]]):
+            if any([a.name in hparams.get('subrtn_name', '') for a in [PPO, PPO2, A2C]]):
                 try:
                     kwout['valuefcn'] = to.load(osp.join(ex_dir, 'final_valuefcn.pt'))
                     print_cbt(f"Loaded {osp.join(ex_dir, 'final_valuefcn.pt')}", 'g')
@@ -118,7 +118,7 @@ def load_experiment(ex_dir: str, args: Any = None) -> ([SimEnv, EnvWrapper], Pol
                 policy = to.load(osp.join(ex_dir, f'iter_{args.iter}.pt'))
                 print_cbt(f"Loaded {osp.join(ex_dir, f'iter_{args.iter}.pt')}", 'g')
             # Value function (optional)
-            if any([a.name in hparams.get('subrtrn_name', '') for a in [PPO, PPO2, A2C]]):
+            if any([a.name in hparams.get('subrtn_name', '') for a in [PPO, PPO2, A2C]]):
                 try:
                     kwout['valuefcn'] = to.load(osp.join(ex_dir, 'final_valuefcn.pt'))
                     print_cbt(f"Loaded {osp.join(ex_dir, 'final_valuefcn.pt')}", 'g')

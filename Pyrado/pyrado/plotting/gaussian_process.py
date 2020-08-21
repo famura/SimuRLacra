@@ -141,7 +141,7 @@ def render_singletask_gp(
     # Project back
     argmax_posterior = argmax_pmean_norm*(data_x_max - data_x_min) + data_x_min
     argmax_pmean_val = argmax_pmean_val_stdzed*data_y_std + data_y_mean
-    print_cbt(f'Converged to argmax of the posterior mean\n{argmax_posterior.numpy()}', 'g')
+    print_cbt(f'Converged to argmax of the posterior mean: {argmax_posterior.numpy()}', 'g')
 
     mll.eval()
     gp.eval()

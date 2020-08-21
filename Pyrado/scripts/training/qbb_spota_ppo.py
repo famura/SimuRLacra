@@ -139,7 +139,7 @@ if __name__ == '__main__':
         dict(env=env_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
         dict(critic_cand_and_ref=critic_hparam),
-        dict(subrtrn_cand=subrtn_hparam_cand, subrtrn_refs=subrtn_hparam_cand, subrtrn_name=PPO.name),
+        dict(subrtn_cand=subrtn_hparam_cand, subrtn_refs=subrtn_hparam_cand, subrtn_name=PPO.name),
         dict(algo=spota_hparam, algo_name=SPOTA.name)],
         ex_dir
     )

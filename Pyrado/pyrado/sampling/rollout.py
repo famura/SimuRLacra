@@ -314,9 +314,9 @@ def after_rollout_query(env: Env, policy: Policy, rollout: StepSequence) -> tupl
     # Fist entry contains hotkey, second the info text
     options = [
         ['C', 'continue simulation (with domain randomization)'],
-        ['N', 'set domain parameters to nominal values and continue'],
+        ['N', 'set domain parameters to nominal values, and continue'],
         ['F', 'fix the initial state'],
-        ['I', 'print information about environment and policy'],
+        ['I', 'print information about environment (including randomizer), and policy'],
         ['S', 'set a domain parameter explicitly'],
         ['P', 'plot all observations, actions, and rewards'],
         ['PA', 'plot actions'],
@@ -370,6 +370,8 @@ def after_rollout_query(env: Env, policy: Policy, rollout: StepSequence) -> tupl
     elif ans == 'i':
         # Print the information and return to the query
         print(env)
+        if hasattr(env, 'randomizer'):
+            print(env.randomizer)
         print(policy)
         return after_rollout_query(env, policy, rollout)
 
