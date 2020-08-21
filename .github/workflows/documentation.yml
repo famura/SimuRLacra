@@ -20,7 +20,7 @@ jobs:
         run: |
           mkdir public
           export PUBLIC=$(realpath ./public)
-          docker run --rm -v $PUBLIC:/home/user/SimuRLacra/Pyrado/doc/build simurlacra conda run -n pyrado /bin/bash -c "cd Pyrado/doc; ./build.sh"
+          docker run --rm -i -t -u 1000:1000 -v $PUBLIC:/var/www simurlacra conda run -n pyrado bash -c "./build_docs.sh;cp -r Pyrado/doc/build /var/www"
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@3.5.9
         with:
