@@ -45,7 +45,6 @@ from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapp
 from pyrado.environments.quanser.base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
-from pyrado.sampling.bootstrapping import bootstrap_ci
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.input_output import print_cbt
@@ -80,7 +79,7 @@ class SimOpt(Algorithm):
                  warmstart: bool = True,
                  policy_param_init: to.Tensor = None,
                  valuefcn_param_init: to.Tensor = None,
-                 subrtn_snapshot_mode: str = 'best'):
+                 subrtn_snapshot_mode: str = 'latest'):
         """
         Constructor
 
@@ -211,7 +210,9 @@ class SimOpt(Algorithm):
         )
 
         # Clip the rollouts rollouts yielding two lists of pairwise equally long rollouts
-        ros_real_tr, ros_sim_tr = self._subrtn_distr.truncate_rollouts(rollouts_real, rollouts_sim)
+        ros_real_tr, ros_sim_tr = self._subrtn_distr.truncate_rollouts(
+            rollouts_real, rollouts_sim, replicate=False
+        )
         assert len(ros_real_tr) == len(ros_sim_tr)
         assert all([np.allclose(r.rollout_info['init_state'], s.rollout_info['init_state'])
                     for r, s in zip(ros_real_tr, ros_sim_tr)])
@@ -219,7 +220,7 @@ class SimOpt(Algorithm):
         # Return the average the loss
         losses = [self._subrtn_distr.obs_dim_weight@self._subrtn_distr.loss_fcn(ro_r, ro_s)
                   for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr)]
-        return float(np.mean(losses))
+        return float(np.mean(np.asarray(losses)))
 
     @staticmethod
     def eval_behav_policy(save_dir: [str, None],
@@ -282,13 +283,16 @@ class SimOpt(Algorithm):
         return ros
 
     def step(self, snapshot_mode: str = 'latest', meta_info: dict = None):
-        if self.cands is None:
+        if self._curr_iter == 0:
             # First iteration, use the random policy parameters
             cand = self._subrtn_distr.policy.param_values.detach()
-            print('cand ', cand)
+            self.cands = cand.clone().unsqueeze(0)
         else:
             # Select the latest domain distribution parameter set
+            assert isinstance(self.cands, to.Tensor)
             cand = self.cands[-1, :]
+
+        print_cbt(f'Current domain distribution parameters: {cand.detach().cpu().numpy()}', 'g')
 
         # Train and evaluate the behavioral policy, repeat if the resulting policy did not exceed the success threshold
         prefix = f'iter_{self._curr_iter}'
@@ -302,13 +306,17 @@ class SimOpt(Algorithm):
         rollouts_real = self.eval_behav_policy(
             self._save_dir, self._env_real, policy, prefix, self.num_eval_rollouts, None)
 
+        if self._curr_iter == 0:
+            # First iteration, also evaluate the random initialization
+            self.cands_values = to.tensor(self.eval_ddp_policy(rollouts_real)).unsqueeze(0)
+
         # Train and evaluate the policy which represents domain parameter distribution. Save the real-world rollouts.
         curr_cand_value = self.train_randomizer(rollouts_real, prefix)
-        next_cand = self._subrtn_distr.best_policy_param.detach()
+        next_cand = self._subrtn_distr.subrtn.best_policy_param.detach()
 
         # Logging
-        self.cands = to.cat([self.cands, next_cand], dim=0)
-        self.cands_values = to.cat([self.cands_values, to.tensor(curr_cand_value)], dim=0)
+        self.cands = to.cat([self.cands, next_cand.unsqueeze(0)], dim=0)
+        self.cands_values = to.cat([self.cands_values, to.tensor(curr_cand_value).unsqueeze(0)], dim=0)
         self.make_snapshot(snapshot_mode='latest', meta_info=meta_info)  # only latest makes sense
 
     def save_snapshot(self, meta_info: dict = None):
@@ -321,6 +329,9 @@ class SimOpt(Algorithm):
             to.save(self.cands_values, osp.join(self._save_dir, 'candidates_values.pt'))
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subrtn!')
+
+        # Save the latest behavioral policy explicitly
+        to.save(self._subrtn_policy.policy, osp.join(self.save_dir, 'policy.pt'))
 
     def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
         # Get the directory to load from
@@ -375,49 +386,36 @@ class SimOpt(Algorithm):
                 if ld != self._save_dir:
                     for root, dirs, files in os.walk(load_dir):
                         [copyfile(osp.join(load_dir, c), osp.join(self._save_dir, c))
-                         for c in files if c.endswith('_rollouts_real.pt')]
+                         for c in files if c.endswith('_rollouts_real.pkl')]
 
                 # Get all previously done evaluations. If we don't find any, the exception is caught.
                 found_evals = None
                 for root, dirs, files in os.walk(ld):
-                    found_evals = [v for v in files if v.endswith('_rollouts_real.pt')]
+                    found_evals = [v for v in files if v.endswith('_rollouts_real.pkl')]
                 found_evals.sort()  # the order is important since it determines the rows of the tensor
 
                 # Reconstruct candidates_values.pt
                 self.cands_values = to.empty(self.cands.shape[0])
                 for i, fe in enumerate(found_evals):
+                    rollouts_real = joblib.load(osp.join(ld, fe))
                     # Get the return estimate from the raw evaluations as in eval_behav_policy()
-                    if self.mc_estimator:
-                        self.cands_values[i] = to.mean(to.load(osp.join(ld, fe)))
-                    else:
-                        self.cands_values[i] = to.from_numpy(bootstrap_ci(
-                            to.load(osp.join(ld, fe)).numpy(), np.mean,
-                            num_reps=1000, alpha=0.05, ci_sides=1, studentized=False)[1])
+                    self.cands_values[i] = to.mean(to.load(osp.join(ld, fe)))
 
                 if len(found_evals) < len(found_cands):
                     print_cbt(f'Found {len(found_evals)} real-world evaluation files but {len(found_cands)} candidates.'
                               f' Now evaluation the remaining ones.', 'c', bright=True)
                 for i in range(len(found_cands) - len(found_evals)):
                     # Evaluate the current policy in the target domain
-                    if len(found_evals) < self.num_init_cand:
-                        prefix = f'init_{i + len(found_evals)}'
-                    else:
-                        prefix = f'iter_{i + len(found_evals) - self.num_init_cand}'
+                    prefix = f'init_{i + len(found_evals)}'
                     policy = to.load(osp.join(self._save_dir, f'{prefix}_policy.pt'))
-                    self.cands_values[i + len(found_evals)] = self.eval_behav_policy(
-                        self._save_dir, self._env_real, policy, self.mc_estimator, prefix, self.num_eval_rollouts
+                    self.cands_values[i + len(found_evals)] = self.eval_ddp_policy(
+                        rollouts_real  # TODO
                     )
                 to.save(self.cands_values, osp.join(self._save_dir, 'candidates_values.pt'))
 
-                if len(found_cands) < self.num_init_cand:
-                    print_cbt('Found less candidates than the number of initial candidates.', 'y')
-                else:
-                    self.initialized = True
-
             except (FileNotFoundError, RuntimeError):
-                # If there are returns_real.pt files but len(found_policies) > 0 (was checked earlier),
-                # then the initial policies have not been evaluated yet
-                self.eval_init_policies()
+                # If there are returns_real.pt files but len(found_policies) > 0 (was checked earlier)
+                raise pyrado.PathErr(msg='No real world evaluations found!')
 
             # Get current iteration count
             found_iter_policies = None
@@ -428,16 +426,7 @@ class SimOpt(Algorithm):
 
             # Initialize subroutines with previous iteration
             self._subrtn_policy.load_snapshot(ld, meta_info=dict(prefix=f'iter_{self._curr_iter - 1}'))
-            self._subrtn_distr.load_snapshot(ld, meta_info=dict(prefix=f'iter_{self._curr_iter - 1}'))  # TODO
-
-            # This is the case if we found iter_i_candidate.pt but not iter_i_rollouts_real.pt
-            if self.cands.shape[0] == self.cands_values.shape[0] + 1:
-                # Evaluate and save the latest candidate on the target system
-                curr_cand_value = self.eval_behav_policy(self._save_dir, self._env_real, self._subrtn_policy.policy,
-                                                         self.mc_estimator, prefix=f'iter_{self._curr_iter - 1}',
-                                                         num_rollouts=self.num_eval_rollouts)
-                self.cands_values = to.cat([self.cands_values, curr_cand_value.view(1)], dim=0)
-                to.save(self.cands_values, osp.join(self._save_dir, 'candidates_values.pt'))
+            self._subrtn_distr.load_snapshot(ld, meta_info=dict(prefix=f'iter_{self._curr_iter - 1}'))
 
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subrtn!')

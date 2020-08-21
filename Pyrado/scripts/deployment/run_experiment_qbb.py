@@ -58,7 +58,7 @@ if __name__ == '__main__':
     env_sim, policy, _ = load_experiment(ex_dir)
 
     if args.verbose:
-        print(f'Policy params:\n{policy.param_values.detach().numpy()}')
+        print(f'Policy params:\n{policy.param_values.detach().cpu().numpy()}')
 
     # Create real-world counterpart (without domain randomization)
     env_real = QBallBalancerReal(args.dt)

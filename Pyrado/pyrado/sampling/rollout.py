@@ -237,9 +237,9 @@ def rollout(env: Env,
                 hidden = hidden_next
             # If an ExplStrat is passed use the policy property, if a Policy is passed use it directly
             if isinstance(getattr(policy, 'policy', policy), (ADNPolicy, NFPolicy)):
-                pot_hist.append(getattr(policy, 'policy', policy).potentials.detach().numpy())
-                stim_ext_hist.append(getattr(policy, 'policy', policy).stimuli_external.detach().numpy())
-                stim_int_hist.append(getattr(policy, 'policy', policy).stimuli_internal.detach().numpy())
+                pot_hist.append(getattr(policy, 'policy', policy).potentials.detach().cpu().numpy())
+                stim_ext_hist.append(getattr(policy, 'policy', policy).stimuli_external.detach().cpu().numpy())
+                stim_int_hist.append(getattr(policy, 'policy', policy).stimuli_internal.detach().cpu().numpy())
             elif isinstance(getattr(policy, 'policy', policy), TwoHeadedPolicy):
                 head_2_hist.append(head_2_to)
 

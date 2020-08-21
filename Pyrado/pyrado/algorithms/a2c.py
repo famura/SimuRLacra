@@ -134,7 +134,7 @@ class A2C(ActorCritic):
         """
         # Policy, value function, and entropy losses
         policy_loss = -to.mean(adv.to(self.policy.device)*log_probs)
-        value_fcn_loss = 0.5*to.mean(to.pow(v_targ.cpu() - v_pred.cpu(), 2))
+        value_fcn_loss = 0.5*to.mean(to.pow(v_targ - v_pred, 2))  # former v_targ.cpu() - v_pred.cpu()
         entropy_mean = to.mean(self.expl_strat.noise.get_entropy())
 
         # Return the combined loss
@@ -211,10 +211,10 @@ class A2C(ActorCritic):
             loss_after = self.loss_fcn(log_probs_new, adv, v_pred, v_targ)
             kl_avg = to.mean(
                 kl_divergence(act_distr_old, act_distr_new))  # mean seeking a.k.a. inclusive KL
-            explvar = explained_var(v_pred.cpu(), v_targ.cpu())  # values close to 1 are desired
+            explvar = explained_var(v_pred, v_targ)  # values close to 1 are desired
             self.logger.add_value('loss after', loss_after.item())
             self.logger.add_value('KL(old_new)', kl_avg.item())
-            self.logger.add_value('explained var', explvar)
+            self.logger.add_value('explained var', explvar.item())
 
         ent = self.expl_strat.noise.get_entropy()
         self.logger.add_value('avg expl strat std', to.mean(self.expl_strat.noise.std.data).item())

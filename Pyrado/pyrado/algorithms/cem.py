@@ -167,6 +167,6 @@ class CEM(ParameterExploring):
         self.logger.add_value('median imp samp return', to.median(rets_avg_is))
         self.logger.add_value('min imp samp return', to.min(rets_avg_is))
         self.logger.add_value('min expl strat std', to.min(self._expl_strat.std))
-        self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.std.data).detach().numpy())
+        self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.std.data).detach().cpu().numpy())
         self.logger.add_value('max expl strat std', to.max(self._expl_strat.std))
         self.logger.add_value('expl strat entropy', self._expl_strat.get_entropy().item())

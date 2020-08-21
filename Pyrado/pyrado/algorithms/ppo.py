@@ -152,7 +152,7 @@ class PPO(ActorCritic):
         """
         prob_ratio = to.exp(log_probs - log_probs_old)
         pr_clip = prob_ratio.clamp(1 - self.eps_clip, 1 + self.eps_clip)
-        return -to.mean(to.min(prob_ratio*adv.cpu(), pr_clip*adv.cpu()))  # PyTorch's optimizers are minimizers
+        return -to.mean(to.min(prob_ratio*adv, pr_clip*adv))  # former prob_ratio*adv.cpu(), pr_clip*adv.cpu()
 
     def update(self, rollouts: Sequence[StepSequence]):
         # Turn the batch of rollouts into a list of steps
@@ -200,7 +200,7 @@ class PPO(ActorCritic):
 
                 if to.isnan(self._expl_strat.noise.std).any():
                     raise RuntimeError(f'At least one exploration parameter became NaN! The exploration parameters are'
-                                       f'\n{self._expl_strat.std.detach().numpy()}')
+                                       f'\n{self._expl_strat.std.detach().cpu().numpy()}')
 
             # Update the learning rate if a scheduler has been specified
             if self._lr_scheduler is not None:
@@ -214,11 +214,11 @@ class PPO(ActorCritic):
                 act_distr_new = act_stats.act_distr
                 loss_after = self.loss_fcn(log_probs_new, log_probs_old, adv)
                 kl_avg = to.mean(kl_divergence(act_distr_old, act_distr_new))  # mean seeking a.k.a. inclusive KL
-                self.logger.add_value('loss after', loss_after.detach().numpy())
+                self.logger.add_value('loss after', loss_after.detach().cpu().numpy())
                 self.logger.add_value('KL(old_new)', kl_avg.item())
 
         # Logging
-        self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.noise.std.data).detach().numpy())
+        self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.noise.std.data).detach().cpu().numpy())
         self.logger.add_value('expl strat entropy', self._expl_strat.noise.get_entropy().item())
         self.logger.add_value('avg policy grad norm', np.mean(policy_grad_norm))
         if self._lr_scheduler is not None:
@@ -425,7 +425,7 @@ class PPO2(ActorCritic):
 
                 if to.isnan(self._expl_strat.noise.std).any():
                     raise RuntimeError(f'At least one exploration parameter became NaN! The exploration parameters are'
-                                       f'\n{self._expl_strat.std.detach().numpy()}')
+                                       f'\n{self._expl_strat.std.detach().cpu().numpy()}')
 
             # Update the learning rate if a scheduler has been specified
             if self._lr_scheduler is not None:
@@ -450,13 +450,13 @@ class PPO2(ActorCritic):
 
                 # Compute explained variance (after the updates)
                 explvar = explained_var(v_pred, v_targ)
-                self.logger.add_value('explained var', explvar.detach().numpy())
-                self.logger.add_value('V-fcn loss improvement', value_fcn_loss_impr.detach().numpy())
-                self.logger.add_value('loss after', loss_after.detach().numpy())
+                self.logger.add_value('explained var', explvar.detach().cpu().numpy())
+                self.logger.add_value('V-fcn loss improvement', value_fcn_loss_impr.detach().cpu().numpy())
+                self.logger.add_value('loss after', loss_after.detach().cpu().numpy())
                 self.logger.add_value('KL(old_new)', kl_avg.item())
 
         # Logging
-        self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.noise.std.data).detach().numpy())
+        self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.noise.std.data).detach().cpu().numpy())
         self.logger.add_value('expl strat entropy', self._expl_strat.noise.get_entropy().item())
         self.logger.add_value('avg policy grad norm', np.mean(policy_grad_norm))
         self.logger.add_value('avg V-fcn grad norm', np.mean(value_fcn_grad_norm))

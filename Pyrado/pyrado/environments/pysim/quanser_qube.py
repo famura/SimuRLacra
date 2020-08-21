@@ -114,7 +114,7 @@ class QQubeSim(SimPyEnv, Serializable):
         thdd = (c*x - b*y)/det
         aldd = (a*y - b*x)/det
 
-        return np.array([thd, ald, thdd, aldd])
+        return np.array([thd, ald, thdd, aldd], dtype=np.float64)
 
     def _step_dynamics(self, act: np.ndarray):
         # Compute the derivative

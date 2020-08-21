@@ -67,7 +67,7 @@ def compute_action_statistics(steps: StepSequence, expl_strat: StochasticActionE
     distr = expl_strat.evaluate(steps)
 
     # Collect results
-    return ActionStatistics(distr, distr.log_prob(steps.actions), distr.entropy())
+    return ActionStatistics(distr, distr.log_prob(steps.actions.to(expl_strat.device)), distr.entropy())
 
 
 def until_thold_exceeded(thold: float, max_iter: int = None):

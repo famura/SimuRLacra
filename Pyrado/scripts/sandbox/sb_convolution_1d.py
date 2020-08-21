@@ -131,7 +131,7 @@ if __name__ == '__main__':
     for j in range(out_channels):
         for k in range(in_channels):
             ax = fig.add_subplot(gs[j, k])
-            ax.plot(conv_layer.weight[j, k, :].detach().numpy(), c=colors_w[j*in_channels + k])
+            ax.plot(conv_layer.weight[j, k, :].detach().cpu().numpy(), c=colors_w[j*in_channels + k])
             ax.set_xlabel(f'in channel {k}')
             ax.set_ylabel(f'out channel {j}')
 

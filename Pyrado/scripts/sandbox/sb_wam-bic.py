@@ -114,19 +114,19 @@ def check_feat_equality():
     assert q1.size() == q2.shape
     assert qd1.size() == qd2.shape
 
-    is_q_equal = np.allclose(q1.detach().numpy(), q2)
-    is_qd_equal = np.allclose(qd1.detach().numpy(), qd2)
+    is_q_equal = np.allclose(q1.detach().cpu().numpy(), q2)
+    is_qd_equal = np.allclose(qd1.detach().cpu().numpy(), qd2)
 
     correct = is_q_equal and is_qd_equal
 
     if not correct:
         _, axs = plt.subplots(2)
         axs[0].set_title('positions - solid: pyrado, dashed: reference')
-        axs[0].plot(q1.detach().numpy())
+        axs[0].plot(q1.detach().cpu().numpy())
         axs[0].set_prop_cycle(None)
         axs[0].plot(q2, ls='--')
         axs[1].set_title('velocities - solid: pyrado, dashed: reference, dotted: finite difference')
-        axs[1].plot(qd1.detach().numpy())
+        axs[1].plot(qd1.detach().cpu().numpy())
         axs[1].set_prop_cycle(None)
         axs[1].plot(qd2, ls='--')
         if is_q_equal:  # q1 and a2 are the same

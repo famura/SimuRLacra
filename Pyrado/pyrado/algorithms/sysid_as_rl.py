@@ -232,7 +232,7 @@ class SysIdByEpisodicRL(Algorithm):
         for idx_ps, ps in enumerate(param_sets):
             # Update the randomizer to use the new
             ps = self._subrtn.policy.clamp_params(ps)
-            self._subrtn.env.adapt_randomizer(domain_distr_param_values=ps.detach().numpy())
+            self._subrtn.env.adapt_randomizer(domain_distr_param_values=ps.detach().cpu().numpy())
             self._subrtn.env.randomizer.randomize(num_samples=self.num_rollouts_per_distr)
             sampled_domain_params = self._subrtn.env.randomizer.get_params()
 
@@ -348,7 +348,8 @@ class SysIdByEpisodicRL(Algorithm):
         self._subrtn.save_snapshot(meta_info=dict(prefix='ddp'))
 
         # Set the randomizer to best fitted domain distribution
-        self._subrtn.env.adapt_randomizer(domain_distr_param_values=self._subrtn.best_policy_param.detach().numpy())
+        self._subrtn.env.adapt_randomizer(
+            domain_distr_param_values=self._subrtn.best_policy_param.detach().cpu().numpy())
         print_cbt(f'Best fitted domain parameter distribution\n{self._subrtn.env.randomizer}', 'g')
         joblib.dump(self._subrtn.env, osp.join(self._save_dir, 'env_sim.pkl'))
 

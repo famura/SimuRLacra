@@ -97,9 +97,9 @@ if __name__ == '__main__':
             final_values[idx_p_init] = p[-1, idx_p]
 
             # Plot
-            plt.plot(time.numpy(), p_0.repeat(num_steps).numpy(), p[:, idx_p].detach().numpy())
+            plt.plot(time.numpy(), p_0.repeat(num_steps).numpy(), p[:, idx_p].detach().cpu().numpy())
         plt.title(f'Final values for the different initial potentials\n'
-                  f'{final_values.detach().numpy().round(3)}', y=1.05)
+                  f'{final_values.detach().cpu().numpy().round(3)}', y=1.05)
 
     # Save
     if args.save_figures:

@@ -104,7 +104,7 @@ def render_surface(
         else:
             zz = to.stack([z_fcn(to.stack((x, y), dim=1).transpose(0, 1).to(to.get_default_dtype()))
                            for x, y in zip(xx_tensor, yy_tensor)])
-        zz = zz.squeeze().detach().numpy()
+        zz = zz.squeeze().detach().cpu().numpy()
 
     else:
         raise pyrado.ValueErr(given=data_format, eq_constraint="'numpy' or 'torch'")

@@ -32,9 +32,11 @@ Script to plot the evolution of the domain parameter distribution after a Bayesi
 import os.path as osp
 import torch as to
 from matplotlib import pyplot as plt
-from torch.distributions import Normal
+from torch.distributions import Normal, Uniform
 
 import pyrado
+from pyrado.algorithms.bayrn import BayRn
+from pyrado.algorithms.simopt import SimOpt
 from pyrado.logger.experiment import ask_for_experiment, load_dict_from_yaml
 from pyrado.plotting.distribution import render_distr_evo
 from pyrado.utils.argparser import get_argparser
@@ -54,58 +56,79 @@ if __name__ == '__main__':
     # cands_values = to.load(osp.join(ex_dir, 'candidates_values.pt')).unsqueeze(1)
     num_cand = cands.shape[0]  # number of samples i.e. iterations of BayRn (including init phase)
     dim_cand = cands.shape[1]  # number of domain distribution parameters
+    print_cbt(f'Found {num_cand} candidates of dimension {dim_cand}:\n{cands.detach().cpu().numpy()}', 'w')
     if dim_cand%2 != 0:
-        raise pyrado.ValueErr(msg='The dimension of domain distribution parameters must be a multiple of 2!')
+        raise pyrado.ShapeErr(msg='The dimension of domain distribution parameters must be a multiple of 2!')
 
     # Remove the initial candidates
     hparams = load_dict_from_yaml(osp.join(ex_dir, 'hyperparams.yaml'))
-    try:
-        num_init_cand = hparams['BayRn']['num_init_cand']
-    except KeyError:
-        raise KeyError('There was no BayRn or num_init_cand key in the hyperparameters.yaml file!'
-                       'Are you sure you loaded a BayRn experiment?')
+    if 'algo_name' not in hparams:
+        raise pyrado.KeyErr(key='algo_name', container=hparams)
+    if 'dp_map' not in hparams:
+        raise pyrado.KeyErr(key='dp_map', container=hparams)
 
-    if not args.load_all:
-        cands = cands[num_init_cand:, :]
-        # cands_values = cands_values[num_init_cand:, :]
-        num_cand -= num_init_cand
-        print_cbt(f'Removed the {num_init_cand} (randomly sampled) initial candidates.', 'y')
+    # Process algorithms differently
+    if hparams['algo_name'] == BayRn.name:
+        try:
+            num_init_cand = hparams['algo']['num_init_cand']
+        except KeyError:
+            raise KeyError('There was no num_init_cand key in the hyperparameters.yaml file!'
+                           'Are you sure you loaded a BayRn experiment?')
+        if not args.load_all:
+            cands = cands[num_init_cand:, :]
+            # cands_values = cands_values[num_init_cand:, :]
+            num_cand -= num_init_cand
+            print_cbt(f'Removed the {num_init_cand} (randomly sampled) initial candidates.', 'c')
+        else:
+            print_cbt(f'Did not remove the {num_init_cand} (randomly sampled) initial candidates.', 'c')
+
+    elif hparams['algo_name'] == SimOpt.name:
+        pass
+
     else:
-        print_cbt(f'Did not remove the {num_init_cand} (randomly sampled) initial candidates.', 'y')
+        raise pyrado.ValueErr(given=hparams['algo_name'], eq_constraint=f'{BayRn.name} or {SimOpt.name}')
 
     # Create the figure
-    fig, axs = plt.subplots(dim_cand//2)  # 2 parameters per domain parameter for Gaussian distributions
+    fig, axs = plt.subplots(dim_cand//2,
+                            figsize=(8, 12))  # 2 parameters per domain parameter for Gaussian distributions
 
     # Determine the evaluation grid from the means and the associated stds
     x_grid_limits = (cands[:, 0].min() - 3*cands[to.argmin(cands[:, 0]), 1],
                      cands[:, 0].max() + 3*cands[to.argmax(cands[:, 0]), 1])
 
-    cands = cands[[14, 1, 2, 6, 9, 10, 11, 12, 0, 13], :]
+    # cands = cands[[14, 1, 2, 6, 9, 10, 11, 12, 0, 13], :]
     num_cand = cands.shape[0]
 
     # Extract the distributions
-    for dp in range(dim_cand//2):  # 2 parameters per domain parameter for Gaussian distributions
+    for idx_dp in range(dim_cand//2):  # 2 parameters per domain parameter for Gaussian or uniform distributions
         distributions = []
 
         for i in range(num_cand):
-            distributions.append(Normal(loc=cands[i, dp*2], scale=cands[i, dp*2 + 1]))
+            dp_name, ddp_name = hparams['dp_map'][2*idx_dp + 1]  # +1 to get the second ddp for this distribution
+            if ddp_name == 'std':
+                distributions.append(Normal(loc=cands[i, 2*idx_dp], scale=cands[i, 2*idx_dp + 1]))
+            elif ddp_name == 'halfspan':
+                mean, halfspan = cands[i, 2*idx_dp], cands[i, 2*idx_dp + 1]
+                distributions.append(Uniform(low=mean - halfspan, high=mean + halfspan))
+            else:
+                raise NotImplementedError(f'{ddp_name}')
 
         # Determine the evaluation grid from the means and the associated stds
-        x_grid_limits = (cands[:, dp*2].min() - 3*cands[to.argmin(cands[:, dp*2]), 1],
-                         cands[:, dp*2].max() + 3*cands[to.argmax(cands[:, dp*2]), 1])
+        x_grid_limits = (cands[:, 2*idx_dp].min() - 3*cands[to.argmin(cands[:, 2*idx_dp]), 1],
+                         cands[:, 2*idx_dp].max() + 3*cands[to.argmax(cands[:, 2*idx_dp]), 1])
 
-        # Plot the normal distributions
+        # Plot the distributions
         if dim_cand//2 == 1:
-            fig = render_distr_evo(axs, distributions, x_grid_limits,
-                                   x_label=f'$\\xi_{dp}$', y_label=f'$p(\\xi_{dp})$',
-                                   distr_labels=[f'iter\_{i}' for i in range(num_cand)])
+            fig = render_distr_evo(axs, distributions, x_grid_limits, resolution=301,
+                                   x_label=f'$\\xi_{idx_dp}$', y_label=f'$p(\\xi_{idx_dp})$',
+                                   distr_labels=[rf'iter\_{i}' for i in range(num_cand)])
         else:
-            fig = render_distr_evo(axs[dp], distributions, x_grid_limits,
-                                   x_label=f'$\\xi_{dp}$', y_label=f'$p(\\xi_{dp})$',
-                                   distr_labels=[f'iter\_{i}' for i in range(num_cand)])
+            fig = render_distr_evo(axs[idx_dp], distributions, x_grid_limits, resolution=301,
+                                   x_label=f'$\\xi_{idx_dp}$', y_label=f'$p(\\xi_{idx_dp})$',
+                                   distr_labels=[rf'iter\_{i}' for i in range(num_cand)])
 
         if args.save_figures:
             for fmt in ['pdf', 'pgf']:
-                fig.savefig(osp.join(ex_dir, f'distribution-evolution.{fmt}'), dpi=500)
+                fig.savefig(osp.join(ex_dir, f'distr_evo.{fmt}'), dpi=500)
 
     plt.show()

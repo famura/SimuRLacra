@@ -39,14 +39,16 @@ class DiagNormalNoise(nn.Module):
     """ Module for learnable additive Gaussian noise with a diagonal covariance matrix """
 
     def __init__(self,
+                 use_cuda: bool,
                  noise_dim: [int, tuple],
                  std_init: [float, to.Tensor],
-                 std_min: [float, to.Tensor] = 0.01,
+                 std_min: [float, to.Tensor] = 1e-3,
                  train_mean: bool = False,
                  learnable: bool = True):
         """
         Constructor
 
+        :param use_cuda: `True` to move the module to the GPU, `False` (default) to use the CPU
         :param noise_dim: number of dimension
         :param std_init: initial standard deviation for the exploration noise
         :param std_min: minimal standard deviation for the exploration noise
@@ -62,7 +64,16 @@ class DiagNormalNoise(nn.Module):
         if not isinstance(std_min, (float, to.Tensor)):
             raise pyrado.TypeErr(given=std_min, expected_type=(float, to.Tensor))
 
+        # Call torch.nn.Module's constructor
         super().__init__()
+
+        if not use_cuda:
+            self._device = 'cpu'
+        elif use_cuda and to.cuda.is_available():
+            self._device = 'cuda'
+        elif use_cuda and not to.cuda.is_available():
+            warn('Tried to run on CUDA, but it is not available. Falling back to CPU.')
+            self._device = 'cpu'
 
         # Register parameters
         if learnable:
@@ -81,6 +92,12 @@ class DiagNormalNoise(nn.Module):
             raise pyrado.TypeErr(given=self.std_min, expected_type=to.Tensor)
 
         self.reset_expl_params()
+        self.to(self.device)
+
+    @property
+    def device(self) -> str:
+        """ Get the device (CPU or GPU) on which the policy is stored. """
+        return self._device
 
     @property
     def std(self) -> to.Tensor:
@@ -149,14 +166,16 @@ class FullNormalNoise(nn.Module):
     """ Module for learnable additive Gaussian noise with a full covariance matrix """
 
     def __init__(self,
+                 use_cuda: bool,
                  noise_dim: [int, tuple],
                  std_init: [float, to.Tensor],
-                 std_min: [float, to.Tensor] = 0.01,
+                 std_min: [float, to.Tensor] = 1e-3,
                  train_mean: bool = False,
                  learnable: bool = True):
         """
         Constructor
 
+        :param use_cuda: `True` to move the module to the GPU, `False` (default) to use the CPU
         :param noise_dim: number of dimension
         :param std_init: initial standard deviation for the exploration noise
         :param std_min: minimal standard deviation for the exploration noise
@@ -176,7 +195,16 @@ class FullNormalNoise(nn.Module):
                 isinstance(std_min, to.Tensor) and all(std_min > 0)):
             raise pyrado.ValueErr(given=std_min, g_constraint='0')
 
+        # Call torch.nn.Module's constructor
         super().__init__()
+
+        if not use_cuda:
+            self._device = 'cpu'
+        elif use_cuda and to.cuda.is_available():
+            self._device = 'cuda'
+        elif use_cuda and not to.cuda.is_available():
+            warn('Tried to run on CUDA, but it is not available. Falling back to CPU.')
+            self._device = 'cpu'
 
         # Register parameters
         if learnable:
@@ -195,6 +223,12 @@ class FullNormalNoise(nn.Module):
             raise pyrado.TypeErr(given=self.std_min, expected_type=to.Tensor)
 
         self.reset_expl_params()
+        self.to(self.device)
+
+    @property
+    def device(self) -> str:
+        """ Get the device (CPU or GPU) on which the policy is stored. """
+        return self._device
 
     @property
     @to.no_grad()

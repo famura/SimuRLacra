@@ -220,7 +220,7 @@ class ADR(Algorithm):
                 with to.no_grad():
                     for t in range(10):
                         action = self.svpg.expl_strats[i](
-                            to.as_tensor(state, dtype=to.get_default_dtype())).detach().numpy()
+                            to.as_tensor(state, dtype=to.get_default_dtype())).detach().cpu().numpy()
                         state = svpg_env.lite_step(action)
                         states.append(state)
                         actions.append(action)
@@ -233,7 +233,7 @@ class ADR(Algorithm):
                 with to.no_grad():
                     while not done:
                         action = self.svpg.expl_strats[i](
-                            to.as_tensor(state, dtype=to.get_default_dtype())).detach().numpy()
+                            to.as_tensor(state, dtype=to.get_default_dtype())).detach().cpu().numpy()
                         state, reward, done, info = svpg_env.step(action)
                         print(self.params.array_to_dict(state), ' => ', reward)
                         states.append(state)

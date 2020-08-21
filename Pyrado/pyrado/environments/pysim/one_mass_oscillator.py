@@ -277,8 +277,8 @@ class OneMassOscillatorDomainParamEstimator(nn.Module):
                 self.optim.zero_grad()
                 loss = self.loss_fcn(preds, targets_cat[idcs])
                 loss.backward()
-                loss_list.append(loss.detach().numpy())
+                loss_list.append(loss.detach().cpu().numpy())
                 self.optim.step()
 
             print(tabulate([['avg loss', np.mean(loss_list)],
-                            ['param estimate', self.dp_est.cpu().detach().numpy()]]))
+                            ['param estimate', self.dp_est.detach().cpu().numpy()]]))

@@ -67,9 +67,9 @@ def to_format(data, data_format, data_type=None):
                 return data.astype(data_type)
         elif isinstance(data, to.Tensor):
             if data_type is None:
-                return data.cpu().detach().numpy()  # detach() is necessary, if the variable requires gradient
+                return data.detach().cpu().numpy()  # detach() is necessary, if the variable requires gradient
             else:
-                return data.cpu().detach().numpy().astype(data_type)
+                return data.detach().cpu().numpy().astype(data_type)
         else:
             # Can't guarantee this, but let's try
             return np.asanyarray(data)

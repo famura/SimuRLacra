@@ -58,4 +58,4 @@ if __name__ == '__main__':
 
     print_cbt(f'true domain param   : {dp_gt}', 'g')
     print_cbt(f'initial domain param: {dp_init}', 'y')
-    print_cbt(f'learned domain param: {model.dp_est.detach().numpy()}', 'c')
+    print_cbt(f'learned domain param: {model.dp_est.detach().cpu().numpy()}', 'c')

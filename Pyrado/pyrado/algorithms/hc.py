@@ -148,9 +148,9 @@ class HCNormal(HC):
             self._expl_strat.adapt(std=self._expl_strat.std*self.expl_factor)
 
         self.logger.add_value('min expl strat std', to.min(self._expl_strat.std))
-        self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.std.data).detach().numpy())
+        self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.std.data).detach().cpu().numpy())
         self.logger.add_value('max expl strat std', to.max(self._expl_strat.std))
-        self.logger.add_value('expl strat entropy', np.mean(self._expl_strat.get_entropy().detach().numpy()))
+        self.logger.add_value('expl strat entropy', np.mean(self._expl_strat.get_entropy().detach().cpu().numpy()))
 
 
 class HCHyper(HC):

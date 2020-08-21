@@ -144,15 +144,15 @@ def render_policy_params(policy: Policy,
             # For example convolution layers
             param = param.flatten(0)
             print_cbt(f'Flattened the first dimension of the {name} parameter tensor.', 'y')
-        data = np.atleast_2d(param.detach().numpy())
+        data = np.atleast_2d(param.detach().cpu().numpy())
 
         img = plt.imshow(data, cmap=cmap, norm=norm, aspect='auto', origin='lower')
 
         if annotate:
             _annotate_img(
                 img,
-                thold_lo=0.75*min(policy.param_values).detach().numpy(),
-                thold_up=0.75*max(policy.param_values).detach().numpy(),
+                thold_lo=0.75*min(policy.param_values).detach().cpu().numpy(),
+                thold_up=0.75*max(policy.param_values).detach().cpu().numpy(),
                 valfmt=annotation_valfmt
             )
 

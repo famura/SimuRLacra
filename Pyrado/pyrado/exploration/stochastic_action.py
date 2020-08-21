@@ -127,7 +127,7 @@ class NormalActNoiseExplStrat(StochasticActionExplStrat):
     def __init__(self,
                  policy: Policy,
                  std_init: [float, to.Tensor],
-                 std_min: [float, to.Tensor] = 0.01,
+                 std_min: [float, to.Tensor] = 1e-3,
                  train_mean: bool = False,
                  learnable: bool = True):
         """
@@ -140,7 +140,9 @@ class NormalActNoiseExplStrat(StochasticActionExplStrat):
         :param learnable: `True` if the parameters should be tuneable (default), `False` for shallow use (just sampling)
         """
         super().__init__(policy)
+
         self._noise = DiagNormalNoise(
+            use_cuda=policy.device == 'cuda',
             noise_dim=policy.env_spec.act_space.flat_dim,
             std_init=std_init,
             std_min=std_min,
@@ -182,7 +184,9 @@ class UniformActNoiseExplStrat(StochasticActionExplStrat):
         :param learnable: `True` if the parameters should be tuneable (default), `False` for shallow use (just sampling)
         """
         super().__init__(policy)
+
         self._noise = UniformNoise(
+            use_cuda=policy.device == 'cuda',
             noise_dim=policy.env_spec.act_space.flat_dim,
             halfspan_init=halfspan_init,
             halfspan_min=halfspan_min,
@@ -222,10 +226,12 @@ class SACExplStrat(StochasticActionExplStrat):
         """
         if not isinstance(policy, TwoHeadedPolicy):
             raise pyrado.TypeErr(given=policy, expected_type=TwoHeadedPolicy)
+
         super().__init__(policy)
 
         # Do not need to learn the exploration noise via an optimizer, since it is handled by the policy in this case
         self._noise = DiagNormalNoise(
+            use_cuda=policy.device == 'cuda',
             noise_dim=policy.env_spec.act_space.flat_dim,
             std_init=std_init,
             std_min=0.,  # ignore since we are explicitly clipping in log space later
@@ -335,6 +341,7 @@ class EpsGreedyExplStrat(StochasticActionExplStrat):
         :param eps_final: minimum value of epsilon
         """
         super().__init__(policy)
+
         self.eps = nn.Parameter(to.tensor(eps), requires_grad=True)
         self._eps_init = to.tensor(eps)
         self._eps_final = to.tensor(eps_final)

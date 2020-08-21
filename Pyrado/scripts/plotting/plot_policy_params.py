@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     # Print the policy structure
     for name, param in policy.named_parameters():
-        print(f'{name}\n{param.detach().numpy()}')
+        print(f'{name}\n{param.detach().cpu().numpy()}')
 
     # Visualize the parameters
     fig = render_policy_params(policy, env.spec, annotate=args.verbose)

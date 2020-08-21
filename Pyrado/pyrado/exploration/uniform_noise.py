@@ -29,6 +29,7 @@
 import torch as to
 import torch.nn as nn
 from torch.distributions import Uniform
+from warnings import warn
 
 import pyrado
 
@@ -37,6 +38,7 @@ class UniformNoise(nn.Module):
     """ Module for learnable additive uniform noise """
 
     def __init__(self,
+                 use_cuda: bool,
                  noise_dim: [int, tuple],
                  halfspan_init: [float, to.Tensor],
                  halfspan_min: [float, to.Tensor] = 0.01,
@@ -45,6 +47,7 @@ class UniformNoise(nn.Module):
         """
         Constructor
 
+        :param use_cuda: `True` to move the module to the GPU, `False` (default) to use the CPU
         :param noise_dim: number of dimension
         :param halfspan_init: initial value of the half interval for the exploration noise
         :param halfspan_min: minimal value of the half interval for the exploration noise
@@ -62,7 +65,16 @@ class UniformNoise(nn.Module):
                 isinstance(halfspan_min, to.Tensor) and all(halfspan_min > 0)):
             raise pyrado.ValueErr(given=halfspan_min, g_constraint='0')
 
+        # Call torch.nn.Module's constructor
         super().__init__()
+
+        if not use_cuda:
+            self._device = 'cpu'
+        elif use_cuda and to.cuda.is_available():
+            self._device = 'cuda'
+        elif use_cuda and not to.cuda.is_available():
+            warn('Tried to run on CUDA, but it is not available. Falling back to CPU.')
+            self._device = 'cpu'
 
         # Register parameters
         if learnable:
@@ -82,6 +94,12 @@ class UniformNoise(nn.Module):
             raise pyrado.TypeErr(given=self.halfspan_min, expected_type=to.Tensor)
 
         self.reset_expl_params()
+        self.to(self.device)
+
+    @property
+    def device(self) -> str:
+        """ Get the device (CPU or GPU) on which the policy is stored. """
+        return self._device
 
     @property
     def halfspan(self) -> to.Tensor:

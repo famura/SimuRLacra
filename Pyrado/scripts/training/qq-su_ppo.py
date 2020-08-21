@@ -60,7 +60,7 @@ if __name__ == '__main__':
     env = DomainRandWrapperLive(env, randomizer)
 
     # Policy
-    policy_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)  # FNN
+    policy_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh, use_cuda=True)  # FNN
     # policy_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
     policy = FNNPolicy(spec=env.spec, **policy_hparam)
     # policy = RNNPolicy(spec=env.spec, **policy_hparam)
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     # policy = GRUPolicy(spec=env.spec, **policy_hparam)
 
     # Critic
-    value_fcn_hparam = dict(hidden_sizes=[16, 16], hidden_nonlin=to.tanh)  # FNN
+    value_fcn_hparam = dict(hidden_sizes=[16, 16], hidden_nonlin=to.tanh, use_cuda=True)  # FNN
     # value_fcn_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
     value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
     # value_fcn = GRUPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
@@ -87,13 +87,13 @@ if __name__ == '__main__':
     algo_hparam = dict(
         max_iter=600,
         min_steps=23*env.max_steps,
-        num_workers=8,
         num_epoch=7,
         eps_clip=0.0744,
         batch_size=60,
         std_init=0.9074,
         lr=3.446e-04,
         max_grad_norm=1.,
+        num_workers=4,
     )
     algo = PPO(ex_dir, env, policy, critic, **algo_hparam)
 

@@ -168,6 +168,6 @@ class PoWER(ParameterExploring):
 
         # Logging
         self.logger.add_value('min expl strat std', to.min(self._expl_strat.std))
-        self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.std.data).detach().numpy())
+        self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.std.data).detach().cpu().numpy())
         self.logger.add_value('max expl strat std', to.max(self._expl_strat.std))
         self.logger.add_value('expl strat entropy', self._expl_strat.get_entropy().item())
