@@ -1,6 +1,4 @@
 ### Project-Specific Paths
-!/Pyrado/data/perma/experiments
-/Pyrado/data/temp/*
 /Pyrado/pyrado/environments/mujoco/assets/meshes/barrett_wam/*.stl
 /RcsPySim/build/
 /RcsPySim/config/iiwa_description/meshes/iiwa14/*/*.stl
