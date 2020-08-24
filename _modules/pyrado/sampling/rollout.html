@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.sampling.rollout &mdash; Pyrado 0.1 documentation</title>
+  <title>pyrado.sampling.rollout &mdash; Pyrado 0.2 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -413,9 +413,9 @@
                 <span class="n">hidden</span> <span class="o">=</span> <span class="n">hidden_next</span>
             <span class="c1"># If an ExplStrat is passed use the policy property, if a Policy is passed use it directly</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="n">policy</span><span class="p">),</span> <span class="p">(</span><span class="n">ADNPolicy</span><span class="p">,</span> <span class="n">NFPolicy</span><span class="p">)):</span>
-                <span class="n">pot_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="n">policy</span><span class="p">)</span><span class="o">.</span><span class="n">potentials</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-                <span class="n">stim_ext_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="n">policy</span><span class="p">)</span><span class="o">.</span><span class="n">stimuli_external</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-                <span class="n">stim_int_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="n">policy</span><span class="p">)</span><span class="o">.</span><span class="n">stimuli_internal</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+                <span class="n">pot_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="n">policy</span><span class="p">)</span><span class="o">.</span><span class="n">potentials</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+                <span class="n">stim_ext_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="n">policy</span><span class="p">)</span><span class="o">.</span><span class="n">stimuli_external</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+                <span class="n">stim_int_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="n">policy</span><span class="p">)</span><span class="o">.</span><span class="n">stimuli_internal</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="n">policy</span><span class="p">),</span> <span class="n">TwoHeadedPolicy</span><span class="p">):</span>
                 <span class="n">head_2_hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">head_2_to</span><span class="p">)</span>
 
@@ -490,9 +490,9 @@
     <span class="c1"># Fist entry contains hotkey, second the info text</span>
     <span class="n">options</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;continue simulation (with domain randomization)&#39;</span><span class="p">],</span>
-        <span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;set domain parameters to nominal values and continue&#39;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;set domain parameters to nominal values, and continue&#39;</span><span class="p">],</span>
         <span class="p">[</span><span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;fix the initial state&#39;</span><span class="p">],</span>
-        <span class="p">[</span><span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="s1">&#39;print information about environment and policy&#39;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="s1">&#39;print information about environment (including randomizer), and policy&#39;</span><span class="p">],</span>
         <span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="s1">&#39;set a domain parameter explicitly&#39;</span><span class="p">],</span>
         <span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;plot all observations, actions, and rewards&#39;</span><span class="p">],</span>
         <span class="p">[</span><span class="s1">&#39;PA&#39;</span><span class="p">,</span> <span class="s1">&#39;plot actions&#39;</span><span class="p">],</span>
@@ -546,6 +546,8 @@
     <span class="k">elif</span> <span class="n">ans</span> <span class="o">==</span> <span class="s1">&#39;i&#39;</span><span class="p">:</span>
         <span class="c1"># Print the information and return to the query</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s1">&#39;randomizer&#39;</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">randomizer</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">policy</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">after_rollout_query</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">rollout</span><span class="p">)</span>
 

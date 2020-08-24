@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.environment_wrappers.observation_normalization &mdash; Pyrado 0.1 documentation</title>
+  <title>pyrado.environment_wrappers.observation_normalization &mdash; Pyrado 0.2 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -244,7 +244,6 @@
 <div class="viewcode-block" id="ObsNormWrapper.override_bounds"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.observation_normalization.ObsNormWrapper.override_bounds">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">override_bounds</span><span class="p">(</span><span class="n">bounds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
                         <span class="n">override</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
-                        <span class="n">bound_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                         <span class="n">names</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Override a given bound. This function is useful if some entries of the observation space have an infinite bound</span>
@@ -252,8 +251,7 @@
 
 <span class="sd">        :param bounds: bound to override</span>
 <span class="sd">        :param override: value to override with</span>
-<span class="sd">        :param bound_label: label of the bound to override</span>
-<span class="sd">        :param names: e.g. lower or upper</span>
+<span class="sd">        :param names: label of the bound to override</span>
 <span class="sd">        :return: new bound created from a copy of the old bound</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">override</span><span class="p">:</span>
@@ -267,8 +265,8 @@
                 <span class="n">bc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">ov</span>
             <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">bc</span><span class="p">[</span><span class="n">idx</span><span class="p">]):</span>
                 <span class="c1"># Report unbounded entry</span>
-                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> entry of </span><span class="si">{</span><span class="n">bound_label</span><span class="si">}</span><span class="s1"> bound is infinite and not overridden.&#39;</span>
-                                          <span class="sa">f</span><span class="s1">&#39;Cannot apply normalization.&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;The entry </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> of a bound is infinite and not overwritten.&#39;</span>
+                                          <span class="sa">f</span><span class="s1">&#39;Cannot apply normalization!&#39;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Do nothing if ov is None</span>
                 <span class="k">pass</span>
@@ -280,8 +278,8 @@
         <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span> <span class="o">=</span> <span class="n">wos</span><span class="o">.</span><span class="n">bounds</span>
 
         <span class="c1"># Override the bounds if desired</span>
-        <span class="n">lb</span> <span class="o">=</span> <span class="n">ObsNormWrapper</span><span class="o">.</span><span class="n">override_bounds</span><span class="p">(</span><span class="n">lb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">explicit_lb</span><span class="p">,</span> <span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">wos</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
-        <span class="n">ub</span> <span class="o">=</span> <span class="n">ObsNormWrapper</span><span class="o">.</span><span class="n">override_bounds</span><span class="p">(</span><span class="n">ub</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">explicit_ub</span><span class="p">,</span> <span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">wos</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
+        <span class="n">lb</span> <span class="o">=</span> <span class="n">ObsNormWrapper</span><span class="o">.</span><span class="n">override_bounds</span><span class="p">(</span><span class="n">lb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">explicit_lb</span><span class="p">,</span> <span class="n">wos</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
+        <span class="n">ub</span> <span class="o">=</span> <span class="n">ObsNormWrapper</span><span class="o">.</span><span class="n">override_bounds</span><span class="p">(</span><span class="n">ub</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">explicit_ub</span><span class="p">,</span> <span class="n">wos</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
 
         <span class="c1"># Normalize observation</span>
         <span class="n">obs_norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">obs</span> <span class="o">-</span> <span class="n">lb</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">ub</span> <span class="o">-</span> <span class="n">lb</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span>
@@ -294,8 +292,8 @@
         <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span> <span class="o">=</span> <span class="n">space</span><span class="o">.</span><span class="n">bounds</span>
 
         <span class="c1"># Override the bounds if desired</span>
-        <span class="n">lb_ov</span> <span class="o">=</span> <span class="n">ObsNormWrapper</span><span class="o">.</span><span class="n">override_bounds</span><span class="p">(</span><span class="n">lb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">explicit_lb</span><span class="p">,</span> <span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
-        <span class="n">ub_ov</span> <span class="o">=</span> <span class="n">ObsNormWrapper</span><span class="o">.</span><span class="n">override_bounds</span><span class="p">(</span><span class="n">ub</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">explicit_ub</span><span class="p">,</span> <span class="s1">&#39;upper&#39;</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
+        <span class="n">lb_ov</span> <span class="o">=</span> <span class="n">ObsNormWrapper</span><span class="o">.</span><span class="n">override_bounds</span><span class="p">(</span><span class="n">lb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">explicit_lb</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
+        <span class="n">ub_ov</span> <span class="o">=</span> <span class="n">ObsNormWrapper</span><span class="o">.</span><span class="n">override_bounds</span><span class="p">(</span><span class="n">ub</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">explicit_ub</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">lb_ov</span> <span class="o">==</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;At least one element of the lower bounds is (negative) infinite:</span><span class="se">\n</span><span class="s1">&#39;</span>

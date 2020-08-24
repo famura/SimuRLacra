@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>logger &mdash; Pyrado 0.1 documentation</title>
+  <title>logger &mdash; Pyrado 0.2 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -107,7 +107,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">logger</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.logger.experiment">experiment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.logger.iteration">iteration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.logger.step">step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step">step</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.logger">Module contents</a></li>
 </ul>
 </li>
@@ -373,164 +373,8 @@ This is a path-like object, and as such it can be used everywhere a normal path 
 </dd></dl>
 
 </div>
-<div class="section" id="module-pyrado.logger.step">
-<span id="step"></span><h2>step<a class="headerlink" href="#module-pyrado.logger.step" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="pyrado.logger.step.CSVPrinter">
-<em class="property">class </em><code class="sig-name descname">CSVPrinter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#CSVPrinter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.CSVPrinter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pyrado.logger.step.StepLogPrinter" title="pyrado.logger.step.StepLogPrinter"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.logger.step.StepLogPrinter</span></code></a></p>
-<p>Logs step data to a CSV file</p>
-<dl class="py method">
-<dt id="pyrado.logger.step.CSVPrinter.print_values">
-<code class="sig-name descname">print_values</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">values</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">ordered_keys</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">first_step</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#CSVPrinter.print_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.CSVPrinter.print_values" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the values for a step.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>values</strong> – named progress values</p></li>
-<li><p><strong>ordered_keys</strong> – value keys in a consistent order</p></li>
-<li><p><strong>first_step</strong> – <cite>True</cite> for the first recorded step</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="pyrado.logger.step.ConsolePrinter">
-<em class="property">class </em><code class="sig-name descname">ConsolePrinter</code><a class="reference internal" href="_modules/pyrado/logger/step.html#ConsolePrinter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.ConsolePrinter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pyrado.logger.step.StepLogPrinter" title="pyrado.logger.step.StepLogPrinter"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.logger.step.StepLogPrinter</span></code></a></p>
-<p>Prints step data to the console</p>
-<dl class="py method">
-<dt id="pyrado.logger.step.ConsolePrinter.print_values">
-<code class="sig-name descname">print_values</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">values</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">ordered_keys</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">first_step</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#ConsolePrinter.print_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.ConsolePrinter.print_values" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the values for a step.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>values</strong> – named progress values</p></li>
-<li><p><strong>ordered_keys</strong> – value keys in a consistent order</p></li>
-<li><p><strong>first_step</strong> – <cite>True</cite> for the first recorded step</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="pyrado.logger.step.LoggerAware">
-<em class="property">class </em><code class="sig-name descname">LoggerAware</code><a class="reference internal" href="_modules/pyrado/logger/step.html#LoggerAware"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.LoggerAware" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Base for objects holding a StepLogger.
-Features automatic detection of child LoggerAware objects. Override to customize.</p>
-<dl class="py method">
-<dt id="pyrado.logger.step.LoggerAware.logger">
-<em class="property">property </em><code class="sig-name descname">logger</code><a class="headerlink" href="#pyrado.logger.step.LoggerAware.logger" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get or create the step logger to use for this object.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="pyrado.logger.step.StepLogPrinter">
-<em class="property">class </em><code class="sig-name descname">StepLogPrinter</code><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogPrinter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.StepLogPrinter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
-<p>Base class for log printers. Formats progress values for a step.</p>
-<dl class="py method">
-<dt id="pyrado.logger.step.StepLogPrinter.print_values">
-<em class="property">abstract </em><code class="sig-name descname">print_values</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">values</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">ordered_keys</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">first_step</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogPrinter.print_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.StepLogPrinter.print_values" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the values for a step.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>values</strong> – named progress values</p></li>
-<li><p><strong>ordered_keys</strong> – value keys in a consistent order</p></li>
-<li><p><strong>first_step</strong> – <cite>True</cite> for the first recorded step</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="pyrado.logger.step.StepLogger">
-<em class="property">class </em><code class="sig-name descname">StepLogger</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">print_interval</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.StepLogger" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Step-based progress logger.
-This class collects progress values during a step. At the end, the record_step function will pass the collected
-values to one or more StepLogPrinters.
-The logger also validates that no values  are added unexpectedly, which i.e. a csv printer would not support.</p>
-<dl class="py method">
-<dt id="pyrado.logger.step.StepLogger.add_value">
-<code class="sig-name descname">add_value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogger.add_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.StepLogger.add_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a column value to the current step.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> – data key</p></li>
-<li><p><strong>value</strong> – value to record, pass ‘’ to print nothing</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.logger.step.StepLogger.pop_prefix">
-<code class="sig-name descname">pop_prefix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogger.pop_prefix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.StepLogger.pop_prefix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove the last string from the key prefix stack.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.logger.step.StepLogger.prefix">
-<code class="sig-name descname">prefix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pfx</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogger.prefix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.StepLogger.prefix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Context manager to add a prefix to the key prefix stack during use.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>pfx</strong> – prefix string</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.logger.step.StepLogger.push_prefix">
-<code class="sig-name descname">push_prefix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pfx</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogger.push_prefix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.StepLogger.push_prefix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Push a string onto the key prefix stack.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>pfx</strong> – prefix string</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.logger.step.StepLogger.record_step">
-<code class="sig-name descname">record_step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogger.record_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.StepLogger.record_step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Record the currently stored values as step and print them at the end.
-To properly support nesting, this method does nothing if called twice in a row without an add_value in between.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.logger.step.create_csv_step_logger">
-<code class="sig-name descname">create_csv_step_logger</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">file_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'progress.csv'</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger">pyrado.logger.step.StepLogger</a><a class="reference internal" href="_modules/pyrado/logger/step.html#create_csv_step_logger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.create_csv_step_logger" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a step-based logger which only safes to a csv-file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>save_dir</strong> – parent directory to save the results in (usually the algorithm’s <cite>save_dir</cite>)</p></li>
-<li><p><strong>file_name</strong> – name of the cvs-file (with ending)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>step-based logger</p>
-</dd>
-</dl>
-</dd></dl>
-
+<div class="section" id="step">
+<h2>step<a class="headerlink" href="#step" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-pyrado.logger">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.logger" title="Permalink to this headline">¶</a></h2>

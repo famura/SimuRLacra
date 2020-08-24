@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>plotting &mdash; Pyrado 0.1 documentation</title>
+  <title>plotting &mdash; Pyrado 0.2 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -378,7 +378,7 @@ The plot is neither shown nor saved.</p>
 <span id="distribution"></span><h2>distribution<a class="headerlink" href="#module-pyrado.plotting.distribution" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.plotting.distribution.render_distr_evo">
-<code class="sig-name descname">render_distr_evo</code><span class="sig-paren">(</span><em class="sig-param">ax: matplotlib.axes._axes.Axes, distributions: [&lt;class 'list'&gt;, &lt;class 'tuple'&gt;], x_grid_limits: [&lt;class 'tuple'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], x_label: str = '', y_label: str = '', distr_labels: Sequence[str] = None, resolution: int = 201, alpha: float = 0.3, cmap_name: str = 'plasma', show_legend: bool = True, title: str = None</em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/pyrado/plotting/distribution.html#render_distr_evo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.distribution.render_distr_evo" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">render_distr_evo</code><span class="sig-paren">(</span><em class="sig-param">ax: matplotlib.axes._axes.Axes, distributions: Iterable, x_grid_limits: [&lt;class 'tuple'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], x_label: str = '', y_label: str = '', distr_labels: Sequence[str] = None, resolution: int = 201, alpha: float = 0.3, cmap_name: str = 'plasma', show_legend: bool = True, title: str = None</em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/pyrado/plotting/distribution.html#render_distr_evo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.distribution.render_distr_evo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the evolution of a sequence of PyTorch probability distributions.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -389,7 +389,7 @@ The plot is neither shown nor saved.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ax</strong> – axis of the figure to plot on</p></li>
-<li><p><strong>distributions</strong> – iterable with the distrubutions in the order they should be plotted</p></li>
+<li><p><strong>distributions</strong> – iterable with the distributions in the order they should be plotted</p></li>
 <li><p><strong>x_grid_limits</strong> – min and max value for the evaluation grid</p></li>
 <li><p><strong>x_label</strong> – label for the x-axis</p></li>
 <li><p><strong>y_label</strong> – label for the y-axis</p></li>

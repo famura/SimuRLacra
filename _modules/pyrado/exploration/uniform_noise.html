@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.exploration.uniform_noise &mdash; Pyrado 0.1 documentation</title>
+  <title>pyrado.exploration.uniform_noise &mdash; Pyrado 0.2 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -205,6 +205,7 @@
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">Uniform</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 
@@ -213,6 +214,7 @@
     <span class="sd">&quot;&quot;&quot; Module for learnable additive uniform noise &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
                  <span class="n">noise_dim</span><span class="p">:</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">],</span>
                  <span class="n">halfspan_init</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span>
                  <span class="n">halfspan_min</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
@@ -221,6 +223,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
+<span class="sd">        :param use_cuda: `True` to move the module to the GPU, `False` (default) to use the CPU</span>
 <span class="sd">        :param noise_dim: number of dimension</span>
 <span class="sd">        :param halfspan_init: initial value of the half interval for the exploration noise</span>
 <span class="sd">        :param halfspan_min: minimal value of the half interval for the exploration noise</span>
@@ -238,7 +241,16 @@
                 <span class="nb">isinstance</span><span class="p">(</span><span class="n">halfspan_min</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">halfspan_min</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">halfspan_min</span><span class="p">,</span> <span class="n">g_constraint</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">)</span>
 
+        <span class="c1"># Call torch.nn.Module&#39;s constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">use_cuda</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="s1">&#39;cpu&#39;</span>
+        <span class="k">elif</span> <span class="n">use_cuda</span> <span class="ow">and</span> <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="s1">&#39;cuda&#39;</span>
+        <span class="k">elif</span> <span class="n">use_cuda</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+            <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Tried to run on CUDA, but it is not available. Falling back to CPU.&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="s1">&#39;cpu&#39;</span>
 
         <span class="c1"># Register parameters</span>
         <span class="k">if</span> <span class="n">learnable</span><span class="p">:</span>
@@ -258,6 +270,12 @@
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">halfspan_min</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_expl_params</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">device</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Get the device (CPU or GPU) on which the policy is stored. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">halfspan</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>

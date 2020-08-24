@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.environments.pysim.one_mass_oscillator &mdash; Pyrado 0.1 documentation</title>
+  <title>pyrado.environments.pysim.one_mass_oscillator &mdash; Pyrado 0.2 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -453,11 +453,11 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
                 <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_fcn</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">targets_cat</span><span class="p">[</span><span class="n">idcs</span><span class="p">])</span>
                 <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-                <span class="n">loss_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+                <span class="n">loss_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
             <span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([[</span><span class="s1">&#39;avg loss&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">loss_list</span><span class="p">)],</span>
-                            <span class="p">[</span><span class="s1">&#39;param estimate&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dp_est</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()]]))</span></div></div>
+                            <span class="p">[</span><span class="s1">&#39;param estimate&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dp_est</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()]]))</span></div></div>
 </pre></div>
 
            </div>

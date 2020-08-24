@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.plotting.gaussian_process &mdash; Pyrado 0.1 documentation</title>
+  <title>pyrado.plotting.gaussian_process &mdash; Pyrado 0.2 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -319,7 +319,7 @@
     <span class="c1"># Project back</span>
     <span class="n">argmax_posterior</span> <span class="o">=</span> <span class="n">argmax_pmean_norm</span><span class="o">*</span><span class="p">(</span><span class="n">data_x_max</span> <span class="o">-</span> <span class="n">data_x_min</span><span class="p">)</span> <span class="o">+</span> <span class="n">data_x_min</span>
     <span class="n">argmax_pmean_val</span> <span class="o">=</span> <span class="n">argmax_pmean_val_stdzed</span><span class="o">*</span><span class="n">data_y_std</span> <span class="o">+</span> <span class="n">data_y_mean</span>
-    <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Converged to argmax of the posterior mean</span><span class="se">\n</span><span class="si">{</span><span class="n">argmax_posterior</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">)</span>
+    <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Converged to argmax of the posterior mean: </span><span class="si">{</span><span class="n">argmax_posterior</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">)</span>
 
     <span class="n">mll</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
     <span class="n">gp</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>

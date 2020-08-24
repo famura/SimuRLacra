@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>environment_wrappers &mdash; Pyrado 0.1 documentation</title>
+  <title>environment_wrappers &mdash; Pyrado 0.2 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -809,7 +809,7 @@ per environment step, i.e. send-and-receive when using the real device.</p>
 hard-coded bounds, such that all values are in range [-1, 1]</p>
 <dl class="py method">
 <dt id="pyrado.environment_wrappers.observation_normalization.ObsNormWrapper.override_bounds">
-<em class="property">static </em><code class="sig-name descname">override_bounds</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bounds</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">override</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Mapping<span class="p">[</span>str<span class="p">, </span>float<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">bound_label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">names</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/environment_wrappers/observation_normalization.html#ObsNormWrapper.override_bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environment_wrappers.observation_normalization.ObsNormWrapper.override_bounds" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">override_bounds</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bounds</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">override</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Mapping<span class="p">[</span>str<span class="p">, </span>float<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">names</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/environment_wrappers/observation_normalization.html#ObsNormWrapper.override_bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environment_wrappers.observation_normalization.ObsNormWrapper.override_bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override a given bound. This function is useful if some entries of the observation space have an infinite bound
 and/or you want to specify a certain bound</p>
 <dl class="field-list simple">
@@ -817,8 +817,7 @@ and/or you want to specify a certain bound</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>bounds</strong> – bound to override</p></li>
 <li><p><strong>override</strong> – value to override with</p></li>
-<li><p><strong>bound_label</strong> – label of the bound to override</p></li>
-<li><p><strong>names</strong> – e.g. lower or upper</p></li>
+<li><p><strong>names</strong> – label of the bound to override</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

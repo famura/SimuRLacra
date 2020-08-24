@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.exploration.stochastic_params &mdash; Pyrado 0.1 documentation</title>
+  <title>pyrado.exploration.stochastic_params &mdash; Pyrado 0.2 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -327,11 +327,13 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">param_dim</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">full_cov</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span> <span class="o">=</span> <span class="n">FullNormalNoise</span><span class="p">(</span><span class="n">noise_dim</span><span class="o">=</span><span class="n">param_dim</span><span class="p">,</span> <span class="n">std_init</span><span class="o">=</span><span class="n">std_init</span><span class="p">,</span> <span class="n">std_min</span><span class="o">=</span><span class="n">std_min</span><span class="p">,</span>
-                                          <span class="n">train_mean</span><span class="o">=</span><span class="n">train_mean</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span> <span class="o">=</span> <span class="n">FullNormalNoise</span><span class="p">(</span>
+                <span class="n">use_cuda</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">noise_dim</span><span class="o">=</span><span class="n">param_dim</span><span class="p">,</span> <span class="n">std_init</span><span class="o">=</span><span class="n">std_init</span><span class="p">,</span> <span class="n">std_min</span><span class="o">=</span><span class="n">std_min</span><span class="p">,</span> <span class="n">train_mean</span><span class="o">=</span><span class="n">train_mean</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span> <span class="o">=</span> <span class="n">DiagNormalNoise</span><span class="p">(</span><span class="n">noise_dim</span><span class="o">=</span><span class="n">param_dim</span><span class="p">,</span> <span class="n">std_init</span><span class="o">=</span><span class="n">std_init</span><span class="p">,</span> <span class="n">std_min</span><span class="o">=</span><span class="n">std_min</span><span class="p">,</span>
-                                          <span class="n">train_mean</span><span class="o">=</span><span class="n">train_mean</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span> <span class="o">=</span> <span class="n">DiagNormalNoise</span><span class="p">(</span>
+                <span class="n">use_cuda</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">noise_dim</span><span class="o">=</span><span class="n">param_dim</span><span class="p">,</span> <span class="n">std_init</span><span class="o">=</span><span class="n">std_init</span><span class="p">,</span> <span class="n">std_min</span><span class="o">=</span><span class="n">std_min</span><span class="p">,</span> <span class="n">train_mean</span><span class="o">=</span><span class="n">train_mean</span>
+            <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">noise</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">FullNormalNoise</span><span class="p">,</span> <span class="n">DiagNormalNoise</span><span class="p">]:</span>

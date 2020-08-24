@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>exploration &mdash; Pyrado 0.1 documentation</title>
+  <title>exploration &mdash; Pyrado 0.2 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -190,7 +190,7 @@
 <span id="normal-noise"></span><h2>normal_noise<a class="headerlink" href="#module-pyrado.exploration.normal_noise" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.exploration.normal_noise.DiagNormalNoise">
-<em class="property">class </em><code class="sig-name descname">DiagNormalNoise</code><span class="sig-paren">(</span><em class="sig-param">noise_dim: [&lt;class 'int'&gt;, &lt;class 'tuple'&gt;], std_init: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;], std_min: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;] = 0.01, train_mean: bool = False, learnable: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/normal_noise.html#DiagNormalNoise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.normal_noise.DiagNormalNoise" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">DiagNormalNoise</code><span class="sig-paren">(</span><em class="sig-param">use_cuda: bool, noise_dim: [&lt;class 'int'&gt;, &lt;class 'tuple'&gt;], std_init: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;], std_min: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;] = 0.001, train_mean: bool = False, learnable: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/normal_noise.html#DiagNormalNoise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.normal_noise.DiagNormalNoise" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p>Module for learnable additive Gaussian noise with a diagonal covariance matrix</p>
 <dl class="py method">
@@ -206,6 +206,12 @@ Use <cite>None</cite> to leave one of the parameters at their current value.</p>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.normal_noise.DiagNormalNoise.device">
+<em class="property">property </em><code class="sig-name descname">device</code><a class="headerlink" href="#pyrado.exploration.normal_noise.DiagNormalNoise.device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the device (CPU or GPU) on which the policy is stored.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -250,7 +256,7 @@ The entropy of a normal distribution is independent of the mean.</p>
 
 <dl class="py class">
 <dt id="pyrado.exploration.normal_noise.FullNormalNoise">
-<em class="property">class </em><code class="sig-name descname">FullNormalNoise</code><span class="sig-paren">(</span><em class="sig-param">noise_dim: [&lt;class 'int'&gt;, &lt;class 'tuple'&gt;], std_init: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;], std_min: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;] = 0.01, train_mean: bool = False, learnable: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/normal_noise.html#FullNormalNoise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.normal_noise.FullNormalNoise" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">FullNormalNoise</code><span class="sig-paren">(</span><em class="sig-param">use_cuda: bool, noise_dim: [&lt;class 'int'&gt;, &lt;class 'tuple'&gt;], std_init: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;], std_min: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;] = 0.001, train_mean: bool = False, learnable: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/normal_noise.html#FullNormalNoise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.normal_noise.FullNormalNoise" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p>Module for learnable additive Gaussian noise with a full covariance matrix</p>
 <dl class="py method">
@@ -266,6 +272,12 @@ Use <cite>None</cite> to leave one of the parameters at their current value.</p>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.normal_noise.FullNormalNoise.device">
+<em class="property">property </em><code class="sig-name descname">device</code><a class="headerlink" href="#pyrado.exploration.normal_noise.FullNormalNoise.device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the device (CPU or GPU) on which the policy is stored.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -365,7 +377,7 @@ The entropy of a normal distribution is independent of the mean.</p>
 
 <dl class="py class">
 <dt id="pyrado.exploration.stochastic_action.NormalActNoiseExplStrat">
-<em class="property">class </em><code class="sig-name descname">NormalActNoiseExplStrat</code><span class="sig-paren">(</span><em class="sig-param">policy: pyrado.policies.base.Policy, std_init: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;], std_min: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;] = 0.01, train_mean: bool = False, learnable: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#NormalActNoiseExplStrat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">NormalActNoiseExplStrat</code><span class="sig-paren">(</span><em class="sig-param">policy: pyrado.policies.base.Policy, std_init: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;], std_min: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;] = 0.001, train_mean: bool = False, learnable: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#NormalActNoiseExplStrat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat" title="pyrado.exploration.stochastic_action.StochasticActionExplStrat"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.exploration.stochastic_action.StochasticActionExplStrat</span></code></a></p>
 <p>Exploration strategy which adds Gaussian noise to the continuous policy actions</p>
 <dl class="py method">
@@ -1030,7 +1042,7 @@ policy parameters</p>
 <span id="uniform-noise"></span><h2>uniform_noise<a class="headerlink" href="#module-pyrado.exploration.uniform_noise" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.exploration.uniform_noise.UniformNoise">
-<em class="property">class </em><code class="sig-name descname">UniformNoise</code><span class="sig-paren">(</span><em class="sig-param">noise_dim: [&lt;class 'int'&gt;, &lt;class 'tuple'&gt;], halfspan_init: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;], halfspan_min: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;] = 0.01, train_mean: bool = False, learnable: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/uniform_noise.html#UniformNoise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.uniform_noise.UniformNoise" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">UniformNoise</code><span class="sig-paren">(</span><em class="sig-param">use_cuda: bool, noise_dim: [&lt;class 'int'&gt;, &lt;class 'tuple'&gt;], halfspan_init: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;], halfspan_min: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;] = 0.01, train_mean: bool = False, learnable: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/uniform_noise.html#UniformNoise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.uniform_noise.UniformNoise" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p>Module for learnable additive uniform noise</p>
 <dl class="py method">
@@ -1046,6 +1058,12 @@ Use <cite>None</cite> to leave one of the parameters at their current value.</p>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.uniform_noise.UniformNoise.device">
+<em class="property">property </em><code class="sig-name descname">device</code><a class="headerlink" href="#pyrado.exploration.uniform_noise.UniformNoise.device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the device (CPU or GPU) on which the policy is stored.</p>
 </dd></dl>
 
 <dl class="py method">
