@@ -1,0 +1,1452 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sampling &mdash; Pyrado 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="spaces" href="spaces.html" />
+    <link rel="prev" title="policies" href="policies.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/experiment.html">How to run an experiment</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Package Overview:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="domain_randomization.html">domain_randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.rcspysim.html">rcspysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environment_wrappers.html">environment_wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exploration.html">exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.html">policies</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">sampling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.bootstrapping">bootstrapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.cvar_sampler">cvar_sampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.data_format">data_format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.hyper_sphere">hyper_sphere</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.parallel_evaluation">parallel_evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.parallel_sampler">parallel_sampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.parameter_exploration_sampler">parameter_exploration_sampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.rollout">rollout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.sampler">sampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.sampler_pool">sampler_pool</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.sequences">sequences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.step_sequence">step_sequence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling.utils">utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.sampling">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="spaces.html">spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tasks.html">tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>sampling</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/sampling.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="sampling">
+<h1>sampling<a class="headerlink" href="#sampling" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-pyrado.sampling.bootstrapping">
+<span id="bootstrapping"></span><h2>bootstrapping<a class="headerlink" href="#module-pyrado.sampling.bootstrapping" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pyrado.sampling.bootstrapping.bootstrap_ci">
+<code class="sig-name descname">bootstrap_ci</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">stat_fcn</span></em>, <em class="sig-param"><span class="n">num_reps</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">ci_sides</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">bias_correction</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">studentized</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/bootstrapping.html#bootstrap_ci"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.bootstrapping.bootstrap_ci" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-sampling input data using the nonparametric bootstrap method, computing bootstrap replications using stat_fcn and
+computing a confidence interval on the statistic of interest given by stat_fcn.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>[1] <a class="reference external" href="https://projecteuclid.org/download/pdf_1/euclid.ss/1032280214">https://projecteuclid.org/download/pdf_1/euclid.ss/1032280214</a>
+[2] <a class="reference external" href="https://people.csail.mit.edu/tommi/papers/SteJaa-nips03.pdf">https://people.csail.mit.edu/tommi/papers/SteJaa-nips03.pdf</a>
+[3] Cameron &amp; Trivedi, “Microeconometrics: Methods and Applications”, 2005, page 361
+[4] <a class="reference external" href="http://users.stat.umn.edu/~helwig/notes/bootci-Notes.pdf">http://users.stat.umn.edu/~helwig/notes/bootci-Notes.pdf</a>
+[5] <a class="reference external" href="https://www.diva-portal.org/smash/get/diva2:130905/FULLTEXT01.pdf">https://www.diva-portal.org/smash/get/diva2:130905/FULLTEXT01.pdf</a>
+[6] <a class="reference external" href="https://www.ethz.ch/content/dam/ethz/special-interest/math/statistics/sfs/Education/Advanced%20Studies%20in%20Applied%20Statistics/course-material-1719/Nonparametric%20Methods/lecture_2up.pdf">https://www.ethz.ch/content/dam/ethz/special-interest/math/statistics/sfs/Education/Advanced%20Studies%20in%20Applied%20Statistics/course-material-1719/Nonparametric%20Methods/lecture_2up.pdf</a>
+[7] <a class="reference external" href="https://ocw.mit.edu/courses/mathematics/18-05-introduction-to-probability-and-statistics-spring-2014/readings/MIT18_05S14_Reading24.pdf">https://ocw.mit.edu/courses/mathematics/18-05-introduction-to-probability-and-statistics-spring-2014/readings/MIT18_05S14_Reading24.pdf</a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – data to bootstrap from (for now only 1D arrays supported)</p></li>
+<li><p><strong>stat_fcn</strong> – function to compute a statistic of interest (e.g. mean, variance) on bootstrap samples</p></li>
+<li><p><strong>num_reps</strong> – number of samples in every bootstrap sample</p></li>
+<li><p><strong>alpha</strong> – determines the confidence level <span class="math notranslate nohighlight">\(1 - \alpha \in [0, 1]\)</span></p></li>
+<li><p><strong>ci_sides</strong> – one or two-sided confidence interval</p></li>
+<li><p><strong>bias_correction</strong> – bool to decide if the bias should be subtracted (see [2]). However, the confidence intervals
+are constructed independent of the bias-correction (see [5, p.7])</p></li>
+<li><p><strong>studentized</strong> – flag to determine if the method based on the t-distribution is used (leads to a wider ci)</p></li>
+<li><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>mean of the bootstrap replications and the confidence interval</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.sampling.cvar_sampler">
+<span id="cvar-sampler"></span><h2>cvar_sampler<a class="headerlink" href="#module-pyrado.sampling.cvar_sampler" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.sampling.cvar_sampler.CVaRSampler">
+<em class="property">class </em><code class="sig-name descname">CVaRSampler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wrapped_sampler</span></em>, <em class="sig-param"><span class="n">epsilon</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">gamma</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">min_rollouts</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/cvar_sampler.html#CVaRSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.cvar_sampler.CVaRSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.sampler.SamplerBase" title="pyrado.sampling.sampler.SamplerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sampler.SamplerBase</span></code></a>, <a class="reference internal" href="logger.html#pyrado.logger.step.LoggerAware" title="pyrado.logger.step.LoggerAware"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.logger.step.LoggerAware</span></code></a></p>
+<p>Samples rollouts to optimize the CVaR of the discounted return.
+This is done by sampling more rollouts, and then only using the epsilon-qunatile of them.</p>
+<dl class="py method">
+<dt id="pyrado.sampling.cvar_sampler.CVaRSampler.reinit">
+<code class="sig-name descname">reinit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">policy</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/cvar_sampler.html#CVaRSampler.reinit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.cvar_sampler.CVaRSampler.reinit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the sampler after changes were made to the environment or the policy, optionally replacing one of them.</p>
+<p>Most samplers will be implemented in parallel, so if there are changes to the environment or the policy, 
+they will not automatically propagate to all processes. This method exists as a workaround; call it to 
+force a reinitialization of environment and policy in all subprocesses.</p>
+<p>Note that you don’t need to call this if the policy parameters change, since that is to be expected between 
+sampling runs, the sample() method takes care of this on it’s own.</p>
+<p>You can use the env and policy parameters to completely replace the stored environment or policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – new environment to use, or None to keep the old one</p></li>
+<li><p><strong>policy</strong> – new policy to use, or None to keep the old one</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.cvar_sampler.CVaRSampler.sample">
+<code class="sig-name descname">sample</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference internal" href="#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><span class="p">]</span><a class="reference internal" href="_modules/pyrado/sampling/cvar_sampler.html#CVaRSampler.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.cvar_sampler.CVaRSampler.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a list of rollouts. This method works exactly as specified in the class description.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>sampled rollouts</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.cvar_sampler.CVaRSampler.set_min_count">
+<code class="sig-name descname">set_min_count</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">min_rollouts</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_steps</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/cvar_sampler.html#CVaRSampler.set_min_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.cvar_sampler.CVaRSampler.set_min_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adapt the sampling boundaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_rollouts</strong> – minimum number of complete rollouts to sample</p></li>
+<li><p><strong>min_steps</strong> – minimum total number of steps to sample</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.cvar_sampler.select_cvar">
+<code class="sig-name descname">select_cvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollouts</span></em>, <em class="sig-param"><span class="n">epsilon</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">gamma</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/cvar_sampler.html#select_cvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.cvar_sampler.select_cvar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select a subset of rollouts so that their mean discounted return is the CVaR(eps) of the full rollout set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollouts</strong> – list of rollouts</p></li>
+<li><p><strong>epsilon</strong> – chosen return quantile</p></li>
+<li><p><strong>gamma</strong> – discount factor to compute the discounted return, default is 1 (no discount)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of selected rollouts</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.sampling.data_format">
+<span id="data-format"></span><h2>data_format<a class="headerlink" href="#module-pyrado.sampling.data_format" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pyrado.sampling.data_format.cat_to_format">
+<code class="sig-name descname">cat_to_format</code><span class="sig-paren">(</span><em class="sig-param">data: [&lt;class 'dict'&gt;, &lt;class 'tuple'&gt;, &lt;class 'collections.abc.Sequence'&gt;], data_format: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/data_format.html#cat_to_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.data_format.cat_to_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenate the generic data in the given data format.
+For dicts, the dict elements are stacked individually. A list of dicts is treated as a dict of lists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – input data</p></li>
+<li><p><strong>data_format</strong> – numpy or torch</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>numpy.ndarray or torch.Tensor, or dict of these</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.data_format.new_tuple">
+<code class="sig-name descname">new_tuple</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nt_type</span></em>, <em class="sig-param"><span class="n">values</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/data_format.html#new_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.data_format.new_tuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new tuple of the same type as nt_type.
+This handles the constructor differences between tuple and NamedTuples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nt_type</strong> – type of tuple</p></li>
+<li><p><strong>values</strong> – values as sequence</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>new named tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.data_format.stack_to_format">
+<code class="sig-name descname">stack_to_format</code><span class="sig-paren">(</span><em class="sig-param">data: [&lt;class 'dict'&gt;, &lt;class 'tuple'&gt;, &lt;class 'collections.abc.Sequence'&gt;], data_format: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/data_format.html#stack_to_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.data_format.stack_to_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stack the generic data in the given data format.
+For dicts, the dict elements are stacked individually. A list of dicts is treated as a dict of lists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – input data</p></li>
+<li><p><strong>data_format</strong> – ‘numpy’ or ‘torch’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>numpy <cite>ndarray</cite> or PyTorch <cite>Tensor</cite>, or <cite>dict</cite> of these</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.data_format.to_format">
+<code class="sig-name descname">to_format</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">data_format</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/data_format.html#to_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.data_format.to_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the tensor data to the given data format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – input data</p></li>
+<li><p><strong>data_format</strong> – numpy or torch</p></li>
+<li><p><strong>data_type</strong> – type to return data in. When None is passed, the data type is left unchanged.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>numpy.ndarray or torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.sampling.hyper_sphere">
+<span id="hyper-sphere"></span><h2>hyper_sphere<a class="headerlink" href="#module-pyrado.sampling.hyper_sphere" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pyrado.sampling.hyper_sphere.sample_from_hyper_sphere_surface">
+<code class="sig-name descname">sample_from_hyper_sphere_surface</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_dim</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">method</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/sampling/hyper_sphere.html#sample_from_hyper_sphere_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.hyper_sphere.sample_from_hyper_sphere_surface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sampling from the surface of a multidimensional unit sphere.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>[1] G. Marsaglia, “Choosing a Point from the Surface of a Sphere”, Ann. Math. Statist., 1972</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_dim</strong> – number of dimensions of the sphere</p></li>
+<li><p><strong>method</strong> – approach used to acquire the samples</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>sample with L2-norm equal 1</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.sampling.parallel_evaluation">
+<span id="parallel-evaluation"></span><h2>parallel_evaluation<a class="headerlink" href="#module-pyrado.sampling.parallel_evaluation" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pyrado.sampling.parallel_evaluation.conditional_actnorm_wrapper">
+<code class="sig-name descname">conditional_actnorm_wrapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span></em>, <em class="sig-param"><span class="n">ex_dirs</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">idx</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parallel_evaluation.html#conditional_actnorm_wrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parallel_evaluation.conditional_actnorm_wrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrap the environment with an action normalization wrapper if the simulated environment had one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – environment to sample from</p></li>
+<li><p><strong>ex_dirs</strong> – list of experiment directories that will be loaded</p></li>
+<li><p><strong>idx</strong> – index of the current directory</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>modified environment</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.parallel_evaluation.eval_domain_params">
+<code class="sig-name descname">eval_domain_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pool</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.sampling.sampler_pool.SamplerPool" title="pyrado.sampling.sampler_pool.SamplerPool">pyrado.sampling.sampler_pool.SamplerPool</a></span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">params</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">init_state</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pyrado/sampling/parallel_evaluation.html#eval_domain_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parallel_evaluation.eval_domain_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate a policy on a multidimensional grid of domain parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pool</strong> – parallel sampler</p></li>
+<li><p><strong>env</strong> – environment to evaluate in</p></li>
+<li><p><strong>policy</strong> – policy to evaluate</p></li>
+<li><p><strong>params</strong> – multidimensional grid of domain parameters</p></li>
+<li><p><strong>init_state</strong> – initial state of the environment which will be fixed if not set to <cite>None</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of rollouts</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.parallel_evaluation.eval_nominal_domain">
+<code class="sig-name descname">eval_nominal_domain</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pool</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.sampling.sampler_pool.SamplerPool" title="pyrado.sampling.sampler_pool.SamplerPool">pyrado.sampling.sampler_pool.SamplerPool</a></span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">init_states</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pyrado/sampling/parallel_evaluation.html#eval_nominal_domain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parallel_evaluation.eval_nominal_domain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate a policy using the nominal (set in the given environment) domain parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pool</strong> – parallel sampler</p></li>
+<li><p><strong>env</strong> – environment to evaluate in</p></li>
+<li><p><strong>policy</strong> – policy to evaluate</p></li>
+<li><p><strong>init_states</strong> – initial states of the environment which will be fixed if not set to None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of rollouts</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.parallel_evaluation.eval_randomized_domain">
+<code class="sig-name descname">eval_randomized_domain</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pool</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.sampling.sampler_pool.SamplerPool" title="pyrado.sampling.sampler_pool.SamplerPool">pyrado.sampling.sampler_pool.SamplerPool</a></span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a></span></em>, <em class="sig-param"><span class="n">randomizer</span><span class="p">:</span> <span class="n"><a class="reference internal" href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">init_states</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pyrado/sampling/parallel_evaluation.html#eval_randomized_domain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parallel_evaluation.eval_randomized_domain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate a policy in a randomized domain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pool</strong> – parallel sampler</p></li>
+<li><p><strong>env</strong> – environment to evaluate in</p></li>
+<li><p><strong>randomizer</strong> – randomizer used to sample random domain instances, inherited from <cite>DomainRandomizer</cite></p></li>
+<li><p><strong>policy</strong> – policy to evaluate</p></li>
+<li><p><strong>init_states</strong> – initial states of the environment which will be fixed if not set to None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of rollouts</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.sampling.parallel_sampler">
+<span id="parallel-sampler"></span><h2>parallel_sampler<a class="headerlink" href="#module-pyrado.sampling.parallel_sampler" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.sampling.parallel_sampler.ParallelSampler">
+<em class="property">class </em><code class="sig-name descname">ParallelSampler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em>, <em class="sig-param"><span class="n">num_workers</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">min_rollouts</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parallel_sampler.html#ParallelSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parallel_sampler.ParallelSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.sampler.SamplerBase" title="pyrado.sampling.sampler.SamplerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.sampler.SamplerBase</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
+<p>Class for sampling from multiple environments in parallel</p>
+<dl class="py method">
+<dt id="pyrado.sampling.parallel_sampler.ParallelSampler.reinit">
+<code class="sig-name descname">reinit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">policy</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parallel_sampler.html#ParallelSampler.reinit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parallel_sampler.ParallelSampler.reinit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-initialize the sampler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – the environment which the policy operates</p></li>
+<li><p><strong>policy</strong> – the policy used for sampling</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.parallel_sampler.ParallelSampler.sample">
+<code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">init_states</span><span class="p">:</span> <span class="n">List<span class="p">[</span>numpy.ndarray<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">domain_params</span><span class="p">:</span> <span class="n">List<span class="p">[</span>numpy.ndarray<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">eval</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference internal" href="#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><span class="p">]</span><a class="reference internal" href="_modules/pyrado/sampling/parallel_sampler.html#ParallelSampler.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parallel_sampler.ParallelSampler.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do the sampling according to the previously given environment, policy, and number of steps/rollouts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_states</strong> – initial states forw <cite>run_map()</cite>, pass <cite>None</cite> (default) to sample from the environment’s
+initial state space</p></li>
+<li><p><strong>domain_params</strong> – domain parameters for <cite>run_map()</cite>, pass <cite>None</cite> (default) to not explicitly set them</p></li>
+<li><p><strong>eval</strong> – pass <cite>False</cite> if the rollout is executed during training, else <cite>True</cite>. Forwarded to <cite>rollout()</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of sampled rollouts</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.parallel_sampler.ParallelSampler.set_seed">
+<code class="sig-name descname">set_seed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parallel_sampler.html#ParallelSampler.set_seed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parallel_sampler.ParallelSampler.set_seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a deterministic seed on all workers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.sampling.parameter_exploration_sampler">
+<span id="parameter-exploration-sampler"></span><h2>parameter_exploration_sampler<a class="headerlink" href="#module-pyrado.sampling.parameter_exploration_sampler" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler">
+<em class="property">class </em><code class="sig-name descname">ParameterExplorationSampler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">num_workers</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num_rollouts_per_param</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parameter_exploration_sampler.html#ParameterExplorationSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Parallel sampler for parameter exploration</p>
+<dl class="py method">
+<dt id="pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler.sample">
+<code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">param_sets</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult" title="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult">pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult</a><a class="reference internal" href="_modules/pyrado/sampling/parameter_exploration_sampler.html#ParameterExplorationSampler.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample rollouts for a given set of parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>param_sets</strong> – sets of policy parameters</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>data structure containing the policy parameter sets and the associated rollout data</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.sampling.parameter_exploration_sampler.ParameterSample">
+<em class="property">class </em><code class="sig-name descname">ParameterSample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">rollouts</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parameter_exploration_sampler.html#ParameterSample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterSample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>Stores policy parameters and associated rollouts.</p>
+<dl class="py method">
+<dt id="pyrado.sampling.parameter_exploration_sampler.ParameterSample.mean_undiscounted_return">
+<em class="property">property </em><code class="sig-name descname">mean_undiscounted_return</code><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterSample.mean_undiscounted_return" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the mean of the undiscounted returns over all rollouts.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.parameter_exploration_sampler.ParameterSample.num_rollouts">
+<em class="property">property </em><code class="sig-name descname">num_rollouts</code><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterSample.num_rollouts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of rollouts.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.parameter_exploration_sampler.ParameterSample.params">
+<em class="property">property </em><code class="sig-name descname">params</code><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterSample.params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.parameter_exploration_sampler.ParameterSample.rollouts">
+<em class="property">property </em><code class="sig-name descname">rollouts</code><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterSample.rollouts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult">
+<em class="property">class </em><code class="sig-name descname">ParameterSamplingResult</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parameter_exploration_sampler.html#ParameterSamplingResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Sequence</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></p>
+<p>Result of a parameter exploration sampling run.
+On one hand, this is a list of ParameterSamples.
+On the other hand, this allows to query combined tensors of parameters and mean returns.</p>
+<dl class="py method">
+<dt id="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult.mean_returns">
+<code class="sig-name descname">mean_returns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parameter_exploration_sampler.html#ParameterSamplingResult.mean_returns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult.mean_returns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all parameter sample means return as a N-dim vector, where N is the number of samples.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult.num_rollouts">
+<code class="sig-name descname">num_rollouts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parameter_exploration_sampler.html#ParameterSamplingResult.num_rollouts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult.num_rollouts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the total number of rollouts for all samples.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult.parameters">
+<code class="sig-name descname">parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parameter_exploration_sampler.html#ParameterSamplingResult.parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all policy parameters as NxP matrix, where N is the number of samples and P is the policy param dim.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult.rollouts">
+<code class="sig-name descname">rollouts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parameter_exploration_sampler.html#ParameterSamplingResult.rollouts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult.rollouts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all rollouts for all samples, i.e. a list of pop_size items, each a list of nom_rollouts rollouts.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.sampling.rollout">
+<span id="rollout"></span><h2>rollout<a class="headerlink" href="#module-pyrado.sampling.rollout" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pyrado.sampling.rollout.after_rollout_query">
+<code class="sig-name descname">after_rollout_query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">rollout</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em><span class="sig-paren">)</span> &#x2192; tuple<a class="reference internal" href="_modules/pyrado/sampling/rollout.html#after_rollout_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.rollout.after_rollout_query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ask the user what to do after a rollout has been animated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – environment used for the rollout</p></li>
+<li><p><strong>policy</strong> – policy used for the rollout</p></li>
+<li><p><strong>rollout</strong> – collected data from the rollout</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>done flag, initial state, and domain parameters</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.rollout.rollout">
+<code class="sig-name descname">rollout</code><span class="sig-paren">(</span><em class="sig-param">env: pyrado.environments.base.Env, policy: [&lt;class 'torch.nn.modules.module.Module'&gt;, &lt;class 'pyrado.policies.base.Policy'&gt;, typing.Callable], eval: bool = False, max_steps: int = None, reset_kwargs: dict = None, render_mode: pyrado.utils.data_types.RenderMode = RenderMode(text=False, video=False), render_step: int = 1, no_reset: bool = False, no_close: bool = False, record_dts: bool = False, stop_on_done: bool = True, seed: int = None</em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><a class="reference internal" href="_modules/pyrado/sampling/rollout.html#rollout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.rollout.rollout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a rollout (i.e. sample a trajectory) in the given environment using given policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – environment to use (<cite>SimEnv</cite> or <cite>RealEnv</cite>)</p></li>
+<li><p><strong>policy</strong> – policy to determine the next action given the current observation.
+This policy may be wrapped by an exploration strategy.</p></li>
+<li><p><strong>eval</strong> – pass <cite>False</cite> if the rollout is executed during training, else <cite>True</cite>. Forwarded to PyTorch <cite>Module</cite>.</p></li>
+<li><p><strong>max_steps</strong> – maximum number of time steps, if <cite>None</cite> the environment’s property is used</p></li>
+<li><p><strong>reset_kwargs</strong> – keyword arguments passed to environment’s reset function</p></li>
+<li><p><strong>render_mode</strong> – determines if the user sees an animation, console prints, or nothing</p></li>
+<li><p><strong>render_step</strong> – rendering interval, renders every step if set to 1</p></li>
+<li><p><strong>no_reset</strong> – do not reset the environment before running the rollout</p></li>
+<li><p><strong>no_close</strong> – do not close (and disconnect) the environment after running the rollout</p></li>
+<li><p><strong>record_dts</strong> – flag if the time intervals of different parts of one step should be recorded (for debugging)</p></li>
+<li><p><strong>stop_on_done</strong> – set to false to ignore the environments’s done flag (for debugging)</p></li>
+<li><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p></li>
+</ul>
+</dd>
+</dl>
+<p>:return paths of the observations, actions, rewards, and information about the environment as well as the policy</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.sampling.sampler">
+<span id="sampler"></span><h2>sampler<a class="headerlink" href="#module-pyrado.sampling.sampler" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.sampling.sampler.SamplerBase">
+<em class="property">class </em><code class="sig-name descname">SamplerBase</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">min_rollouts</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sampler.html#SamplerBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sampler.SamplerBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>A sampler generates a list of rollouts in some unspecified way.</p>
+<p>Since the sampling might occur in parallel, there is no way to reliably generate an exact amount of samples. 
+The sampler can however guarantee a minimum amount of samples to be available. The sampler does not discard any 
+samples on it’s own, all sampled data will be returned. 
+There are two ways to regulate the sampling process:
+1. the minimum number of rollouts
+2. the minimum number of steps in all rollouts</p>
+<p>At least one of these bounds must be specified. If both are set, the sampler will only terminate once both are 
+fulfilled.</p>
+<dl class="py method">
+<dt id="pyrado.sampling.sampler.SamplerBase.reinit">
+<em class="property">abstract </em><code class="sig-name descname">reinit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sampler.html#SamplerBase.reinit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sampler.SamplerBase.reinit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the sampler after changes were made to the environment or the policy, optionally replacing one of them.</p>
+<p>Most samplers will be implemented in parallel, so if there are changes to the environment or the policy, 
+they will not automatically propagate to all processes. This method exists as a workaround; call it to 
+force a reinitialization of environment and policy in all subprocesses.</p>
+<p>Note that you don’t need to call this if the policy parameters change, since that is to be expected between 
+sampling runs, the sample() method takes care of this on it’s own.</p>
+<p>You can use the env and policy parameters to completely replace the stored environment or policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – new environment to use, or None to keep the old one</p></li>
+<li><p><strong>policy</strong> – new policy to use, or None to keep the old one</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.sampler.SamplerBase.sample">
+<em class="property">abstract </em><code class="sig-name descname">sample</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference internal" href="#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><span class="p">]</span><a class="reference internal" href="_modules/pyrado/sampling/sampler.html#SamplerBase.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sampler.SamplerBase.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a list of rollouts. This method works exactly as specified in the class description.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>sampled rollouts</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.sampler.SamplerBase.set_min_count">
+<code class="sig-name descname">set_min_count</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">min_rollouts</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sampler.html#SamplerBase.set_min_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sampler.SamplerBase.set_min_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adapt the sampling boundaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_rollouts</strong> – minimum number of complete rollouts to sample</p></li>
+<li><p><strong>min_steps</strong> – minimum total number of steps to sample</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.sampling.sampler_pool">
+<span id="sampler-pool"></span><h2>sampler_pool<a class="headerlink" href="#module-pyrado.sampling.sampler_pool" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.sampling.sampler_pool.GlobalNamespace">
+<em class="property">class </em><code class="sig-name descname">GlobalNamespace</code><a class="reference internal" href="_modules/pyrado/sampling/sampler_pool.html#GlobalNamespace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sampler_pool.GlobalNamespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Type of the worker’s global namespace</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.sampling.sampler_pool.SamplerPool">
+<em class="property">class </em><code class="sig-name descname">SamplerPool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_threads</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sampler_pool.html#SamplerPool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sampler_pool.SamplerPool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A process pool capable of executing operations in parallel. This differs from the multiprocessing.Pool class in 
+that it explicitly incorporates process-local state.</p>
+<p>Every parallel function gets a GlobalNamespace object as first argument, which can hold arbitrary worker-local 
+state. This allows for certain optimizations. For example, when the parallel operation requires an object that is
+expensive to transmit, we can create this object once in each process, store it in the namespace, and then use it 
+in every map function call.</p>
+<p>This class also contains additional methods to call a function exactly once in each worker, to setup worker-local 
+state.</p>
+<dl class="py method">
+<dt id="pyrado.sampling.sampler_pool.SamplerPool.invoke_all">
+<code class="sig-name descname">invoke_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sampler_pool.html#SamplerPool.invoke_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sampler_pool.SamplerPool.invoke_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invoke func on all workers using the same argument values.
+The return values are collected into a list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>func</strong> – the first argument of func will be a worker-local namespace</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.sampler_pool.SamplerPool.invoke_all_map">
+<code class="sig-name descname">invoke_all_map</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em>, <em class="sig-param"><span class="n">arglist</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sampler_pool.html#SamplerPool.invoke_all_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sampler_pool.SamplerPool.invoke_all_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invoke func(arg) on all workers using one argument from the list for each ordered worker.
+The length of the argument list must match the number of workers.
+The first argument of func will be a worker-local namespace.
+The return values are collected into a list.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.sampler_pool.SamplerPool.run_collect">
+<code class="sig-name descname">run_collect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">func</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">collect_progressbar</span><span class="p">:</span> <span class="n">tqdm.std.tqdm</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_runs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; tuple<a class="reference internal" href="_modules/pyrado/sampling/sampler_pool.html#SamplerPool.run_collect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sampler_pool.SamplerPool.run_collect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collect at least n samples from func, where the number of samples per run can vary.</p>
+<p>This is done by calling res, ns = func(G, <a href="#id1"><span class="problematic" id="id2">*</span></a>args, <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs) until the sum of ns exceeds n.</p>
+<p>This is intended for situations like reinforcement learning runs. If the environment ends up 
+in an error state, you get less samples per run. To ensure a stable learning behaviour, you can
+specify the minimum amount of samples to collect before returning.</p>
+<p>Since the workers can only check the amount of samples before starting a run, you will likely 
+get more samples than the minimum. No generated samples are dropped; if that is desired, 
+do so manually.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> – minimum number of samples to collect</p></li>
+<li><p><strong>func</strong> – sampler function. Must be pickleable.</p></li>
+<li><p><strong>args</strong> – remaining positional args are passed to the function</p></li>
+<li><p><strong>collect_progressbar</strong> – tdqm progress bar to use; default None</p></li>
+<li><p><strong>min_runs</strong> – optionally specify a minimum amount of runs to be executed before returning</p></li>
+<li><p><strong>kwargs</strong> – remaining keyword args are passed to the function</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of all results</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>total number of samples</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.sampler_pool.SamplerPool.run_map">
+<code class="sig-name descname">run_map</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em>, <em class="sig-param"><span class="n">arglist</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">progressbar</span><span class="p">:</span> <span class="n">tqdm.std.tqdm</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sampler_pool.html#SamplerPool.run_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sampler_pool.SamplerPool.run_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>A parallel version of <cite>[func(G, arg) for arg in arglist]</cite>.
+There is no deterministic assignment of workers to arglist elements. Optionally runs with progress bar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> – mapper function, must be pickleable</p></li>
+<li><p><strong>arglist</strong> – list of function args</p></li>
+<li><p><strong>progressbar</strong> – optional progress bar from the <cite>tqdm</cite> library</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of results</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.sampler_pool.SamplerPool.set_seed">
+<code class="sig-name descname">set_seed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sampler_pool.html#SamplerPool.set_seed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sampler_pool.SamplerPool.set_seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a deterministic seed on all workers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.sampler_pool.SamplerPool.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sampler_pool.html#SamplerPool.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sampler_pool.SamplerPool.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Terminate all workers.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.sampling.sequences">
+<span id="sequences"></span><h2>sequences<a class="headerlink" href="#module-pyrado.sampling.sequences" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pyrado.sampling.sequences.sequence">
+<code class="sig-name descname">sequence</code><span class="sig-paren">(</span><em class="sig-param">x_init</em>, <em class="sig-param">iterations</em>, <em class="sig-param">iterator_function</em>, <em class="sig-param">dtype=&lt;class 'int'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sequences.html#sequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sequences.sequence" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.sequences.sequence_add_init">
+<code class="sig-name descname">sequence_add_init</code><span class="sig-paren">(</span><em class="sig-param">x_init</em>, <em class="sig-param">iter</em>, <em class="sig-param">dtype=&lt;class 'int'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sequences.html#sequence_add_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sequences.sequence_add_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mathematical sequence: x_n = x_0 * n</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_init</strong> – initial values of the sequence</p></li>
+<li><p><strong>iter</strong> – iteration until the sequence should be evaluated</p></li>
+<li><p><strong>dtype</strong> – data type to cast to (either int of float)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element at the given iteration and array of the whole sequence</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.sequences.sequence_const">
+<code class="sig-name descname">sequence_const</code><span class="sig-paren">(</span><em class="sig-param">x_init</em>, <em class="sig-param">iter</em>, <em class="sig-param">dtype=&lt;class 'int'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sequences.html#sequence_const"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sequences.sequence_const" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mathematical sequence: x_n = x_0</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_init</strong> – constant values of the sequence</p></li>
+<li><p><strong>iter</strong> – iteration until the sequence should be evaluated</p></li>
+<li><p><strong>dtype</strong> – data type to cast to (either int of float)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element at the given iteration and array of the whole sequence</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.sequences.sequence_nlog2">
+<code class="sig-name descname">sequence_nlog2</code><span class="sig-paren">(</span><em class="sig-param">x_init</em>, <em class="sig-param">iter</em>, <em class="sig-param">dtype=&lt;class 'int'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sequences.html#sequence_nlog2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sequences.sequence_nlog2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mathematical sequence: x_n = x_0 * n * log2(n+2), with log2 being the base 2 logarithm</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_init</strong> – initial values of the sequence</p></li>
+<li><p><strong>iter</strong> – iteration until the sequence should be evaluated</p></li>
+<li><p><strong>dtype</strong> – data type to cast to (either int of float)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element at the given iteration and array of the whole sequence</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.sequences.sequence_plus_one">
+<code class="sig-name descname">sequence_plus_one</code><span class="sig-paren">(</span><em class="sig-param">x_init</em>, <em class="sig-param">iter</em>, <em class="sig-param">dtype=&lt;class 'int'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sequences.html#sequence_plus_one"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sequences.sequence_plus_one" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mathematical sequence: x_n = x_0 + n</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_init</strong> – initial values of the sequence</p></li>
+<li><p><strong>iter</strong> – iteration until the sequence should be evaluated</p></li>
+<li><p><strong>dtype</strong> – data type to cast to (either int of float)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element at the given iteration and array of the whole sequence</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.sequences.sequence_rec_double">
+<code class="sig-name descname">sequence_rec_double</code><span class="sig-paren">(</span><em class="sig-param">x_init</em>, <em class="sig-param">iter</em>, <em class="sig-param">dtype=&lt;class 'int'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sequences.html#sequence_rec_double"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sequences.sequence_rec_double" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mathematical sequence: x_n = x_{n-1} * 2</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_init</strong> – initial values of the sequence</p></li>
+<li><p><strong>iter</strong> – iteration until the sequence should be evaluated</p></li>
+<li><p><strong>dtype</strong> – data type to cast to (either int of float)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element at the given iteration and array of the whole sequence</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.sequences.sequence_rec_sqrt">
+<code class="sig-name descname">sequence_rec_sqrt</code><span class="sig-paren">(</span><em class="sig-param">x_init</em>, <em class="sig-param">iter</em>, <em class="sig-param">dtype=&lt;class 'int'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sequences.html#sequence_rec_sqrt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sequences.sequence_rec_sqrt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mathematical sequence: x_n = x_{n-1} * sqrt(n)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_init</strong> – initial values of the sequence</p></li>
+<li><p><strong>iter</strong> – iteration until the sequence should be evaluated</p></li>
+<li><p><strong>dtype</strong> – data type to cast to (either int of float)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element at the given iteration and array of the whole sequence</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.sequences.sequence_sqrt">
+<code class="sig-name descname">sequence_sqrt</code><span class="sig-paren">(</span><em class="sig-param">x_init</em>, <em class="sig-param">iter</em>, <em class="sig-param">dtype=&lt;class 'int'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sequences.html#sequence_sqrt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sequences.sequence_sqrt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mathematical sequence: x_n = x_0 * sqrt(n)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_init</strong> – initial values of the sequence</p></li>
+<li><p><strong>iter</strong> – iteration until the sequence should be evaluated</p></li>
+<li><p><strong>dtype</strong> – data type to cast to (either int of float)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element at the given iteration and array of the whole sequence</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.sampling.step_sequence">
+<span id="step-sequence"></span><h2>step_sequence<a class="headerlink" href="#module-pyrado.sampling.step_sequence" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.sampling.step_sequence.DictIndexProxy">
+<em class="property">class </em><code class="sig-name descname">DictIndexProxy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">index</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#DictIndexProxy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.DictIndexProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Views a slice through a dict of lists or tensors.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.sampling.step_sequence.Step">
+<em class="property">class </em><code class="sig-name descname">Step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollout</span></em>, <em class="sig-param"><span class="n">index</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#Step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.Step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.sampling.step_sequence.DictIndexProxy" title="pyrado.sampling.step_sequence.DictIndexProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.sampling.step_sequence.DictIndexProxy</span></code></a></p>
+<p>A single step in a rollout.</p>
+<p>This object is a proxy, referring a specific index in the rollout. When querying an attribute from the step,
+it will try to return the corresponding slice from the rollout. Additionally, one can prefix attributes with <cite>next_</cite>
+to access the value for the next step, i.e. <cite>next_observations</cite> the observation made at the start of the next step.</p>
+<dl class="py attribute">
+<dt id="pyrado.sampling.step_sequence.Step.l">
+<code class="sig-name descname">l</code><a class="headerlink" href="#pyrado.sampling.step_sequence.Step.l" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.sampling.step_sequence.Step.o">
+<code class="sig-name descname">o</code><a class="headerlink" href="#pyrado.sampling.step_sequence.Step.o" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.sampling.step_sequence.Step.r">
+<code class="sig-name descname">r</code><a class="headerlink" href="#pyrado.sampling.step_sequence.Step.r" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.sampling.step_sequence.Step.t">
+<code class="sig-name descname">t</code><a class="headerlink" href="#pyrado.sampling.step_sequence.Step.t" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.sampling.step_sequence.Step.u">
+<code class="sig-name descname">u</code><a class="headerlink" href="#pyrado.sampling.step_sequence.Step.u" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.sampling.step_sequence.StepSequence">
+<em class="property">class </em><code class="sig-name descname">StepSequence</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#StepSequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Sequence</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></p>
+<p>A sequence of steps.</p>
+<p>During the rollout, the values of different variables are recorded. This class provides efficient storage and
+access for these values. The constructor accepts a list of step entries for each variable. For every step,
+the list should contain a Tensor/ndarray of values for that step. The shape of these tensors must be the same for
+all step entries. The passed tensors are then stacked, so that the first dimension is the step count.
+Some values, like the observations, can have one more element then there are steps to encode the state after the
+last step. Additionally, the step entries may be dicts to support keyed storage. A list of dicts is converted to
+a dict of lists, each of which will be regularly stacked. Apart from the variable-based view, the rollout can also
+be seen as a sequence of steps. Each Step object is a proxy, it’s attributes refer to the respective slice of the
+corresponding variable. The only required result variable is rewards. All other variables are optional.
+Common are observations, actions, policy_infos and env_infos.</p>
+<p>Storing PyTorch tensors with gradient tracing is NOT supported. The rationale behind this is eager error avoidance.
+The only reason you would add them is to profit from the optimized slicing, but using that with gradient tracking
+risks lingering incomplete graphs. Thus, just don’t.</p>
+<dl class="py method">
+<dt id="pyrado.sampling.step_sequence.StepSequence.add_data">
+<code class="sig-name descname">add_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">value</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">item_shape</span><span class="p">:</span> <span class="n">tuple</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">with_after_last</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#StepSequence.add_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.add_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new data field to the step sequence. Can also be used to replace data in an existing field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – sting for the name</p></li>
+<li><p><strong>value</strong> – the data</p></li>
+<li><p><strong>item_shape</strong> – shape to store the data in</p></li>
+<li><p><strong>with_after_last</strong> – <cite>True</cite> if there is one more element than the length (e.g. last observation)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.step_sequence.StepSequence.concat">
+<em class="property">classmethod </em><code class="sig-name descname">concat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parts</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference internal" href="#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">StepSequence</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">data_format</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">truncate_last</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#StepSequence.concat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.concat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenate multiple step sequences into one, truncating the last observation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parts</strong> – batch of sequences to concatenate</p></li>
+<li><p><strong>data_format</strong> – torch to use Tensors, numpy to use ndarrays, <cite>None</cite> to choose automatically</p></li>
+<li><p><strong>truncate_last</strong> – remove the last step from each part, highly recommended to be <cite>True</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>concatenated sequence of <cite>Steps</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.step_sequence.StepSequence.convert">
+<code class="sig-name descname">convert</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_format</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">data_type</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#StepSequence.convert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert data to specified format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_format</strong> – torch to use Tensors, numpy to use ndarrays</p></li>
+<li><p><strong>data_type</strong> – optional torch/numpy dtype for data. When <cite>None</cite> is passed, the data type is left unchanged.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.step_sequence.StepSequence.data_format">
+<em class="property">property </em><code class="sig-name descname">data_format</code><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.data_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the name of data format (‘torch’ or ‘numpy’).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.step_sequence.StepSequence.data_names">
+<em class="property">property </em><code class="sig-name descname">data_names</code><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.data_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the list of data attribute names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.step_sequence.StepSequence.discounted_return">
+<code class="sig-name descname">discounted_return</code><span class="sig-paren">(</span><em class="sig-param">gamma: float) -&gt; (&lt;class 'torch.Tensor'&gt;</em>, <em class="sig-param">&lt;class 'numpy.ndarray'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#StepSequence.discounted_return"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.discounted_return" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the discounted return.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>gamma</strong> – temporal discount factor</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>exponentially weighted sum of rewards</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.step_sequence.StepSequence.get_data_values">
+<code class="sig-name descname">get_data_values</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">truncate_last</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#StepSequence.get_data_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.get_data_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the data tensor stored under the given name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – data name</p></li>
+<li><p><strong>truncate_last</strong> – True to truncate the length+1 entry if present</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.step_sequence.StepSequence.get_rollout">
+<code class="sig-name descname">get_rollout</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#StepSequence.get_rollout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.get_rollout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an indexed sub-rollout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>index</strong> – generic index of sub-rollout, negative values, slices and iterables are allowed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>selected subset.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.step_sequence.StepSequence.iterate_rollouts">
+<code class="sig-name descname">iterate_rollouts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#StepSequence.iterate_rollouts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.iterate_rollouts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over all sub-rollouts of a concatenated rollout.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.step_sequence.StepSequence.numpy">
+<code class="sig-name descname">numpy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_type</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#StepSequence.numpy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.numpy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert data to numpy ndarrays.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_type</strong> – type to return data in. When None is passed, the data type is left unchanged.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.sampling.step_sequence.StepSequence.required_fields">
+<code class="sig-name descname">required_fields</code><em class="property"> = {'actions', 'observations'}</em><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.required_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.step_sequence.StepSequence.rollout_bounds">
+<em class="property">property </em><code class="sig-name descname">rollout_bounds</code><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.rollout_bounds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.step_sequence.StepSequence.rollout_count">
+<em class="property">property </em><code class="sig-name descname">rollout_count</code><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.rollout_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Count the number of sub-rollouts inside this step sequence.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.step_sequence.StepSequence.rollout_lengths">
+<em class="property">property </em><code class="sig-name descname">rollout_lengths</code><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.rollout_lengths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lengths of sub-rollouts.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.step_sequence.StepSequence.sample_w_next">
+<code class="sig-name descname">sample_w_next</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; tuple<a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#StepSequence.sample_w_next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.sample_w_next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample a random batch of steps from a together with the associated next steps.
+Similar to <cite>split_shuffled_batches</cite> with <cite>complete_rollouts=False</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>batch_size</strong> – number of steps to sample</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>randomly sampled batch of steps</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.step_sequence.StepSequence.split_shuffled_batches">
+<code class="sig-name descname">split_shuffled_batches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">complete_rollouts</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#StepSequence.split_shuffled_batches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.split_shuffled_batches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Batch generation. Split the step collection into mini-batches of size batch_size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch_size</strong> – number of steps per batch</p></li>
+<li><p><strong>complete_rollouts</strong> – if <cite>complete_rollouts = True</cite>, the batches will not contain partial rollouts.
+However, the size of the returned batches cannot be strictly maintained in this case.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method is also supposed to be called for recurrent networks, which have a different <cite>evaluate()</cite>
+method that recognized where the rollouts end within a batch.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.step_sequence.StepSequence.torch">
+<code class="sig-name descname">torch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_type</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#StepSequence.torch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.torch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert data to PyTorch Tensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_type</strong> – type to return data in. When None is passed, the data type is left unchanged.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.sampling.step_sequence.StepSequence.undiscounted_return">
+<code class="sig-name descname">undiscounted_return</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#StepSequence.undiscounted_return"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence.undiscounted_return" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the undiscounted return.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>sum of rewards</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.step_sequence.discounted_reverse_cumsum">
+<code class="sig-name descname">discounted_reverse_cumsum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">gamma</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#discounted_reverse_cumsum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.discounted_reverse_cumsum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use a linear filter to compute the reverse discounted cumulative sum.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><cite>scipy.signal.lfilter</cite> assumes an initialization with 0 by default.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – input data with samples along the 0 axis (e.g. time series)</p></li>
+<li><p><strong>gamma</strong> – discount factor</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>cumulative sums for every step</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.step_sequence.discounted_value">
+<code class="sig-name descname">discounted_value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollout</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">gamma</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#discounted_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.discounted_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the discounted state values for one rollout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollout</strong> – input data</p></li>
+<li><p><strong>gamma</strong> – temporal discount factor</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>state values for every time step in the rollout</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.step_sequence.discounted_values">
+<code class="sig-name descname">discounted_values</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollouts</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference internal" href="#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">gamma</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">data_format</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'torch'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#discounted_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.discounted_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the discounted state values for multiple rollouts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollouts</strong> – input data</p></li>
+<li><p><strong>gamma</strong> – temporal discount factor</p></li>
+<li><p><strong>data_format</strong> – data format of the given</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>state values for every time step in the rollouts (concatenated sequence across rollouts)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.step_sequence.gae_returns">
+<code class="sig-name descname">gae_returns</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollout</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">gamma</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.99</span></em>, <em class="sig-param"><span class="n">lamb</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.95</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#gae_returns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.gae_returns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute returns using generalized advantage estimation.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>[1] J. Schulmann, P. Moritz, S. Levine, M. Jordan, P. Abbeel, ‘High-Dimensional Continuous Control Using
+Generalized Advantage Estimation’, ICLR 2016</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollout</strong> – sequence of steps</p></li>
+<li><p><strong>gamma</strong> – temporal discount factor</p></li>
+<li><p><strong>lamb</strong> – discount factor</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>estimated advantage</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.sampling.utils">
+<span id="utils"></span><h2>utils<a class="headerlink" href="#module-pyrado.sampling.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pyrado.sampling.utils.gen_batch_idcs">
+<code class="sig-name descname">gen_batch_idcs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">data_size</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/utils.html#gen_batch_idcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.utils.gen_batch_idcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function for doing SGD on mini-batches that returns the indies for the mini-batch samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch_size</strong> – number of samples in each mini-batch</p></li>
+<li><p><strong>data_size</strong> – total number of samples</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>generator for lists of random indices of sub-samples</p>
+</dd>
+<dt class="field-odd">Usage</dt>
+<dd class="field-odd"><p>If num_rollouts = 2 and data_size = 5, then the output might be ((0, 3), (2, 1), (4,))</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.utils.gen_ordered_batch_idcs">
+<code class="sig-name descname">gen_ordered_batch_idcs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">data_size</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">sorted</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/utils.html#gen_ordered_batch_idcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.utils.gen_ordered_batch_idcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function for doing SGD on mini-batches that returns the indies for the mini-batch samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch_size</strong> – number of samples in each mini-batch</p></li>
+<li><p><strong>data_size</strong> – total number of samples</p></li>
+<li><p><strong>sorted</strong> – if <cite>False</cite>, the order of batches is randomized (but the order within them is preserved)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>generator for lists of random indices of sub-samples</p>
+</dd>
+<dt class="field-odd">Usage</dt>
+<dd class="field-odd"><p>If num_rollouts = 2, data_size = 5 and sorted = False, then the output might be ((2, 3), (0, 1), (4,))
+If num_rollouts = 2, data_size = 5 and sorted = True, then the output will be ((0, 1), (2, 3), (4,))</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.sampling.utils.gen_ordered_batches">
+<code class="sig-name descname">gen_ordered_batches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span><span class="p">:</span> <span class="n">Iterable</span></em>, <em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/utils.html#gen_ordered_batches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.utils.gen_ordered_batches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function that cuts the input into equal spaced chunks</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inp</strong> – iterable input</p></li>
+<li><p><strong>batch_size</strong> – number of samples in each mini-batch</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>iterator over the input</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.sampling">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.sampling" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="spaces.html" class="btn btn-neutral float-right" title="spaces" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="policies.html" class="btn btn-neutral float-left" title="policies" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

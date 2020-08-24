@@ -1,0 +1,657 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyrado.algorithms.adr &mdash; Pyrado 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/experiment.html">How to run an experiment</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Package Overview:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../domain_randomization.html">domain_randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.rcspysim.html">rcspysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environment_wrappers.html">environment_wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../exploration.html">exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../logger.html">logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plotting.html">plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sampling.html">sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../spaces.html">spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tasks.html">tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tests.html">tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pyrado.algorithms.adr</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyrado.algorithms.adr</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">import</span> <span class="nn">joblib</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">init_args_serializer</span> <span class="kn">import</span> <span class="n">Serializable</span>
+
+<span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.adr_discriminator</span> <span class="kn">import</span> <span class="n">RewardGenerator</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.svpg</span> <span class="kn">import</span> <span class="n">SVPG</span><span class="p">,</span> <span class="n">SVPGParticle</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="n">DomainParam</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.base</span> <span class="kn">import</span> <span class="n">EnvWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">inner_env</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
+<span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_evaluation</span> <span class="kn">import</span> <span class="n">eval_domain_params</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.sampler_pool</span> <span class="kn">import</span> <span class="n">SamplerPool</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces.box</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span> <span class="k">as</span> <span class="n">osp</span>
+
+
+<div class="viewcode-block" id="ADR"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.adr.ADR">[docs]</a><span class="k">class</span> <span class="nc">ADR</span><span class="p">(</span><span class="n">Algorithm</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Active Domain Randomization (ADR)</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        [1] B. Mehta, M. Diaz, F. Golemo, C.J. Pal, L. Paull, &quot;Active Domain Randomization&quot;, arXiv, 2019</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;adr&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">,</span>
+                 <span class="n">subroutine</span><span class="p">:</span> <span class="n">Algorithm</span><span class="p">,</span>
+                 <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">svpg_particle_hparam</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+                 <span class="n">num_svpg_particles</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">num_discriminator_epoch</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">svpg_learning_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3e-4</span><span class="p">,</span>
+                 <span class="n">svpg_temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+                 <span class="n">svpg_evaluation_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+                 <span class="n">svpg_horizon</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+                 <span class="n">svpg_kl_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.03</span><span class="p">,</span>
+                 <span class="n">svpg_warmup</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                 <span class="n">svpg_serial</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+                 <span class="n">num_trajs_per_config</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+                 <span class="n">max_step_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+                 <span class="n">randomized_params</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">logger</span><span class="p">:</span> <span class="n">StepLogger</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
+<span class="sd">        :param env: the environment to train in</span>
+<span class="sd">        :param subroutine: algorithm which performs the policy / value-function optimization</span>
+<span class="sd">        :param max_iter: maximum number of iterations</span>
+<span class="sd">        :param svpg_particle_hparam: SVPG particle hyperparameters</span>
+<span class="sd">        :param num_svpg_particles: number of SVPG particles</span>
+<span class="sd">        :param num_discriminator_epoch: epochs in discriminator training</span>
+<span class="sd">        :param batch_size: batch size for training</span>
+<span class="sd">        :param svpg_learning_rate: SVPG particle optimizers&#39; learning rate</span>
+<span class="sd">        :param svpg_temperature: SVPG temperature coefficient (how strong is the influence of the particles on each other)</span>
+<span class="sd">        :param svpg_evaluation_steps: how many configurations to sample between training</span>
+<span class="sd">        :param svpg_horizon: how many steps until the particles are reset</span>
+<span class="sd">        :param svpg_kl_factor: kl reward coefficient</span>
+<span class="sd">        :param svpg_warmup: number of iterations without SVPG training in the beginning</span>
+<span class="sd">        :param svpg_serial: serial mode (see SVPG)</span>
+<span class="sd">        :param num_workers: number of environments for parallel sampling</span>
+<span class="sd">        :param num_trajs_per_config: number of trajectories to sample from each config</span>
+<span class="sd">        :param max_step_length: maximum change of physics parameters per step</span>
+<span class="sd">        :param randomized_params: which parameters to randomize</span>
+<span class="sd">        :param logger: see Logger</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">Env</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Env</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subroutine</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">subroutine</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Algorithm</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subroutine</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">Policy</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">subroutine</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Policy</span><span class="p">)</span>
+
+        <span class="c1"># Call Algorithm&#39;s constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">,</span> <span class="n">subroutine</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_loss</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Store the inputs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subroutine</span> <span class="o">=</span> <span class="n">subroutine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span> <span class="o">=</span> <span class="n">num_svpg_particles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_discriminator_epoch</span> <span class="o">=</span> <span class="n">num_discriminator_epoch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_trajs_per_config</span> <span class="o">=</span> <span class="n">num_trajs_per_config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warm_up_time</span> <span class="o">=</span> <span class="n">svpg_warmup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">svpg_evaluation_steps</span> <span class="o">=</span> <span class="n">svpg_evaluation_steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">svpg_temperature</span> <span class="o">=</span> <span class="n">svpg_temperature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">svpg_lr</span> <span class="o">=</span> <span class="n">svpg_learning_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">svpg_max_step_length</span> <span class="o">=</span> <span class="n">max_step_length</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">svpg_horizon</span> <span class="o">=</span> <span class="n">svpg_horizon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">svpg_kl_factor</span> <span class="o">=</span> <span class="n">svpg_kl_factor</span>
+
+        <span class="c1"># Get the number of params</span>
+        <span class="k">if</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">randomized_params</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">randomized_params</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">randomized_params</span> <span class="o">=</span> <span class="n">inner_env</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">)</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">DomainParam</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">randomized_params</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_params</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="c1"># Initialize the sampler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pool</span> <span class="o">=</span> <span class="n">SamplerPool</span><span class="p">(</span><span class="n">num_workers</span><span class="p">)</span>
+
+        <span class="c1"># Initialize reward generator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reward_generator</span> <span class="o">=</span> <span class="n">RewardGenerator</span><span class="p">(</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">reward_multiplier</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+            <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Initialize step counter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">curr_time_step</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Initialize logbook</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim_instances_full_horizon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random_sample</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">svpg_horizon</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">svpg_evaluation_steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_params</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">svpg_wrapper</span> <span class="o">=</span> <span class="n">SVPGAdapter</span><span class="p">(</span>
+            <span class="n">env</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+            <span class="n">subroutine</span><span class="o">.</span><span class="n">expl_strat</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reward_generator</span><span class="p">,</span>
+            <span class="n">horizon</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">svpg_horizon</span><span class="p">,</span>
+            <span class="n">num_trajs_per_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_trajs_per_config</span><span class="p">,</span>
+            <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Initialize SVPG</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">svpg</span> <span class="o">=</span> <span class="n">SVPG</span><span class="p">(</span>
+            <span class="n">save_dir</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">svpg_wrapper</span><span class="p">,</span>
+            <span class="n">svpg_particle_hparam</span><span class="p">,</span>
+            <span class="n">max_iter</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">svpg_temperature</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">svpg_lr</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">svpg_horizon</span><span class="p">,</span>
+            <span class="n">serial</span><span class="o">=</span><span class="n">svpg_serial</span><span class="p">,</span>
+            <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
+            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="ADR.compute_params"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.adr.ADR.compute_params">[docs]</a>    <span class="k">def</span> <span class="nf">compute_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim_instances</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the parameters</span>
+
+<span class="sd">        :param sim_instances: Physics configurations trajectory</span>
+<span class="sd">        :param t: time step to chose</span>
+<span class="sd">        :return: parameters at the time</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nominal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">svpg_wrapper</span><span class="o">.</span><span class="n">nominal_dict</span><span class="p">()</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">nominal</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="o">==</span> <span class="n">sim_instances</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">sim_instance</span> <span class="ow">in</span> <span class="n">sim_instances</span><span class="p">[</span><span class="n">t</span><span class="p">]:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">sim_instance</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">nominal</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">params</span></div>
+
+<div class="viewcode-block" id="ADR.step"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.adr.ADR.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="n">rand_trajs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">ref_trajs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">ros</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">visited</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">svpg</span><span class="o">.</span><span class="n">num_particles</span><span class="p">):</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">svpg_env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">svpg_wrapper</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">svpg_env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">actions</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">rewards</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">infos</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">rand_trajs_now</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">parallel</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+                        <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">svpg</span><span class="o">.</span><span class="n">expl_strats</span><span class="p">[</span><span class="n">i</span><span class="p">](</span>
+                            <span class="n">to</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()))</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+                        <span class="n">state</span> <span class="o">=</span> <span class="n">svpg_env</span><span class="o">.</span><span class="n">lite_step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+                        <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+                        <span class="n">actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+                    <span class="n">visited</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
+                    <span class="n">rewards</span><span class="p">,</span> <span class="n">rand_trajs_now</span><span class="p">,</span> <span class="n">ref_trajs_now</span> <span class="o">=</span> <span class="n">svpg_env</span><span class="o">.</span><span class="n">eval_states</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
+                    <span class="n">rand_trajs</span> <span class="o">+=</span> <span class="n">rand_trajs_now</span>
+                    <span class="n">ref_trajs</span> <span class="o">+=</span> <span class="n">ref_trajs_now</span>
+                    <span class="n">ros</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">StepSequence</span><span class="p">(</span><span class="n">observations</span><span class="o">=</span><span class="n">states</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="n">actions</span><span class="p">,</span> <span class="n">rewards</span><span class="o">=</span><span class="n">rewards</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                    <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+                        <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">svpg</span><span class="o">.</span><span class="n">expl_strats</span><span class="p">[</span><span class="n">i</span><span class="p">](</span>
+                            <span class="n">to</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()))</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+                        <span class="n">state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">svpg_env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">array_to_dict</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="s1">&#39; =&gt; &#39;</span><span class="p">,</span> <span class="n">reward</span><span class="p">)</span>
+                        <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+                        <span class="n">rewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>
+                        <span class="n">actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+                        <span class="n">infos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+                        <span class="n">rand_trajs</span> <span class="o">+=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;rand&#39;</span><span class="p">]</span>
+                        <span class="n">ref_trajs</span> <span class="o">+=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;ref&#39;</span><span class="p">]</span>
+                    <span class="n">ros</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">StepSequence</span><span class="p">(</span><span class="n">observations</span><span class="o">=</span><span class="n">states</span><span class="p">,</span> <span class="n">actions</span><span class="o">=</span><span class="n">actions</span><span class="p">,</span> <span class="n">rewards</span><span class="o">=</span><span class="n">rewards</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;SVPG_agent_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_mean_reward&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rewards</span><span class="p">))</span>
+            <span class="n">ros</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">torch</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">DoubleTensor</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">rt</span> <span class="ow">in</span> <span class="n">rand_trajs_now</span><span class="p">:</span>
+                <span class="n">rt</span><span class="o">.</span><span class="n">torch</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+                <span class="n">rt</span><span class="o">.</span><span class="n">observations</span> <span class="o">=</span> <span class="n">rt</span><span class="o">.</span><span class="n">observations</span><span class="o">.</span><span class="n">double</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+                <span class="n">rt</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="n">rt</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">double</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">subroutine</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">rand_trajs_now</span><span class="p">)</span>
+
+        <span class="c1"># Logging</span>
+        <span class="n">rets</span> <span class="o">=</span> <span class="p">[</span><span class="n">ro</span><span class="o">.</span><span class="n">undiscounted_return</span><span class="p">()</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rand_trajs</span><span class="p">]</span>
+        <span class="n">ret_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rets</span><span class="p">)</span>
+        <span class="n">ret_med</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">rets</span><span class="p">)</span>
+        <span class="n">ret_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rets</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;num rollouts&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rand_trajs</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;avg rollout len&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">ro</span><span class="o">.</span><span class="n">length</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rand_trajs</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;avg return&#39;</span><span class="p">,</span> <span class="n">ret_avg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;median return&#39;</span><span class="p">,</span> <span class="n">ret_med</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;std return&#39;</span><span class="p">,</span> <span class="n">ret_std</span><span class="p">)</span>
+
+        <span class="c1"># Flatten and combine all randomized and reference trajectories for discriminator</span>
+        <span class="n">flattened_randomized</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">rand_trajs</span><span class="p">)</span>
+        <span class="n">flattened_randomized</span><span class="o">.</span><span class="n">torch</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+        <span class="n">flattened_reference</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">ref_trajs</span><span class="p">)</span>
+        <span class="n">flattened_reference</span><span class="o">.</span><span class="n">torch</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reward_generator</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">flattened_reference</span><span class="p">,</span> <span class="n">flattened_randomized</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_discriminator_epoch</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_time_step</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">warm_up_time</span><span class="p">:</span>
+            <span class="c1"># Update the particles</span>
+            <span class="c1"># List of lists to comply with interface</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">svpg</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">ros</span><span class="p">)))</span>
+        <span class="n">flattened_randomized</span><span class="o">.</span><span class="n">torch</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+        <span class="n">flattened_randomized</span><span class="o">.</span><span class="n">observations</span> <span class="o">=</span> <span class="n">flattened_randomized</span><span class="o">.</span><span class="n">observations</span><span class="o">.</span><span class="n">double</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+        <span class="n">flattened_randomized</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="n">flattened_randomized</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">double</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+
+        <span class="c1"># np.save(f&#39;{self.save_dir}actions{self.curr_iter}&#39;, flattened_randomized.actions)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">make_snapshot</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">ret_avg</span><span class="p">),</span> <span class="n">meta_info</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subroutine</span><span class="o">.</span><span class="n">make_snapshot</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">,</span> <span class="n">curr_avg_ret</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">ret_avg</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">curr_time_step</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="ADR.save_snapshot"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.adr.ADR.save_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">save_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># This algorithm instance is not a subroutine of another algorithm</span>
+            <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="s1">&#39;env.pkl&#39;</span><span class="p">))</span>
+            <span class="n">to</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reward_generator</span><span class="o">.</span><span class="n">discriminator</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="s1">&#39;discriminator.pt&#39;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">svpg</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> is not supposed be run as a subroutine!&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ADR.load_snapshot"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.adr.ADR.load_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">load_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">load_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Get the directory to load from</span>
+        <span class="n">ld</span> <span class="o">=</span> <span class="n">load_dir</span> <span class="k">if</span> <span class="n">load_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span>
+
+        <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># This algorithm instance is not a subroutine of another algorithm</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reward_generator</span><span class="o">.</span><span class="n">discriminator</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span>
+                <span class="n">to</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ld</span><span class="p">,</span> <span class="s1">&#39;discriminator.pt&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">svpg</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">ld</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> is not supposed be run as a subroutine!&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="SVPGAdapter"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.adr.SVPGAdapter">[docs]</a><span class="k">class</span> <span class="nc">SVPGAdapter</span><span class="p">(</span><span class="n">EnvWrapper</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Wrapper to encapsulate the domain parameter search as a reinforcement learning problem &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">wrapped_env</span><span class="p">:</span> <span class="n">Env</span><span class="p">,</span>
+                 <span class="n">parameters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">DomainParam</span><span class="p">],</span>
+                 <span class="n">inner_policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
+                 <span class="n">discriminator</span><span class="p">:</span> <span class="n">RewardGenerator</span><span class="p">,</span>
+                 <span class="n">step_length</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+                 <span class="n">horizon</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+                 <span class="n">num_trajs_per_config</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+                 <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param wrapped_env: the environment to wrap</span>
+<span class="sd">        :param parameters: which physics parameters should be randomized</span>
+<span class="sd">        :param inner_policy: the policy to train the subroutine on</span>
+<span class="sd">        :param discriminator: the discriminator to distinguish reference envs from randomized ones</span>
+<span class="sd">        :param step_length: the step size</span>
+<span class="sd">        :param horizon: an svpg horizon</span>
+<span class="sd">        :param num_trajs_per_config: number of trajectories to sample per physics configuration</span>
+<span class="sd">        :param num_workers: number of environments for parallel sampling</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+
+        <span class="n">EnvWrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapped_env</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">DomainParam</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pool</span> <span class="o">=</span> <span class="n">SamplerPool</span><span class="p">(</span><span class="n">num_workers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inner_policy</span> <span class="o">=</span> <span class="n">inner_policy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">svpg_state</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_trajs</span> <span class="o">=</span> <span class="n">num_trajs_per_config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">svpg_max_step_length</span> <span class="o">=</span> <span class="n">step_length</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">discriminator</span> <span class="o">=</span> <span class="n">discriminator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">=</span> <span class="mi">8</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_adapter_obs_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_adapter_act_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizon</span> <span class="o">=</span> <span class="n">horizon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizon_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">obs_space</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adapter_obs_space</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">act_space</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adapter_act_space</span>
+
+<div class="viewcode-block" id="SVPGAdapter.reset"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.adr.SVPGAdapter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">domain_param</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">init_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">svpg_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random_sample</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">svpg_state</span></div>
+
+<div class="viewcode-block" id="SVPGAdapter.step"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.adr.SVPGAdapter.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="c1"># Clip the action according to the maximum step length</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">act</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">svpg_max_step_length</span>
+
+        <span class="c1"># Perform step by moving into direction of action</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">svpg_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">svpg_state</span> <span class="o">+</span> <span class="n">action</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">param_norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">svpg_state</span> <span class="o">+</span> <span class="mf">0.5</span>
+        <span class="n">rand_eval_params</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">array_to_dict</span><span class="p">(</span><span class="n">param_norm</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nominal</span><span class="p">())]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">num_trajs</span>
+        <span class="n">norm_eval_params</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">nominal_dict</span><span class="p">()]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">num_trajs</span>
+        <span class="n">rand</span> <span class="o">=</span> <span class="n">eval_domain_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapped_env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_policy</span><span class="p">,</span> <span class="n">rand_eval_params</span><span class="p">)</span>
+        <span class="n">ref</span> <span class="o">=</span> <span class="n">eval_domain_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapped_env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_policy</span><span class="p">,</span> <span class="n">norm_eval_params</span><span class="p">)</span>
+        <span class="n">rewards</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">discriminator</span><span class="o">.</span><span class="n">get_reward</span><span class="p">(</span><span class="n">traj</span><span class="p">)</span> <span class="k">for</span> <span class="n">traj</span> <span class="ow">in</span> <span class="n">rand</span><span class="p">]</span>
+        <span class="n">reward</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rewards</span><span class="p">)</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">rand</span><span class="o">=</span><span class="n">rand</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">ref</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizon_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">horizon_count</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">horizon</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">horizon_count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">svpg_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random_sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">svpg_state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span></div>
+
+<div class="viewcode-block" id="SVPGAdapter.lite_step"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.adr.SVPGAdapter.lite_step">[docs]</a>    <span class="k">def</span> <span class="nf">lite_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs a step without the step interface.</span>
+<span class="sd">        This allows for parallel computation of prior steps.</span>
+
+<span class="sd">        :param act: the action to perform</span>
+<span class="sd">        :return: the observation after the step</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">act</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">svpg_max_step_length</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">svpg_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">svpg_state</span> <span class="o">+</span> <span class="n">action</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">svpg_state</span></div>
+
+<div class="viewcode-block" id="SVPGAdapter.eval_states"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.adr.SVPGAdapter.eval_states">[docs]</a>    <span class="k">def</span> <span class="nf">eval_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate the states.</span>
+
+<span class="sd">        :param states: the states to evaluate</span>
+<span class="sd">        :return: respective rewards and according trajectories</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">flatten</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">l</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+        <span class="n">sstates</span> <span class="o">=</span> <span class="n">flatten</span><span class="p">([</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">array_to_dict</span><span class="p">((</span><span class="n">state</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nominal</span><span class="p">())]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">num_trajs</span>
+            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">rand</span> <span class="o">=</span> <span class="n">eval_domain_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapped_env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_policy</span><span class="p">,</span> <span class="n">sstates</span><span class="p">)</span>
+        <span class="n">ref</span> <span class="o">=</span> <span class="n">eval_domain_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapped_env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_policy</span><span class="p">,</span>
+                                 <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">nominal_dict</span><span class="p">()]</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_trajs</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">)))</span>
+        <span class="n">rewards</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">discriminator</span><span class="o">.</span><span class="n">get_reward</span><span class="p">(</span><span class="n">traj</span><span class="p">)</span> <span class="k">for</span> <span class="n">traj</span> <span class="ow">in</span> <span class="n">rand</span><span class="p">]</span>
+        <span class="n">rewards</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rewards</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">num_trajs</span><span class="p">:(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">num_trajs</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">))]</span>
+        <span class="k">return</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">rand</span><span class="p">,</span> <span class="n">ref</span></div>
+
+<div class="viewcode-block" id="SVPGAdapter.params"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.adr.SVPGAdapter.params">[docs]</a>    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">param</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="SVPGAdapter.nominal"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.adr.SVPGAdapter.nominal">[docs]</a>    <span class="k">def</span> <span class="nf">nominal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">inner_env</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wrapped_env</span><span class="p">)</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">()]</span></div>
+
+<div class="viewcode-block" id="SVPGAdapter.nominal_dict"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.adr.SVPGAdapter.nominal_dict">[docs]</a>    <span class="k">def</span> <span class="nf">nominal_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">inner_env</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wrapped_env</span><span class="p">)</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">()}</span></div>
+
+<div class="viewcode-block" id="SVPGAdapter.array_to_dict"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.adr.SVPGAdapter.array_to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">array_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">a</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">arr</span><span class="p">)}</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,1045 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>spaces &mdash; Pyrado 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="tasks" href="tasks.html" />
+    <link rel="prev" title="sampling" href="sampling.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/experiment.html">How to run an experiment</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Package Overview:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="domain_randomization.html">domain_randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.rcspysim.html">rcspysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environment_wrappers.html">environment_wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exploration.html">exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sampling.html">sampling</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">spaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.spaces.base">base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.spaces.box">box</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.spaces.compound">compound</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.spaces.discrete">discrete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.spaces.empty">empty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.spaces.polar">polar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.spaces.singular">singular</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.spaces">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tasks.html">tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>spaces</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/spaces.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="spaces">
+<h1>spaces<a class="headerlink" href="#spaces" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-pyrado.spaces.base">
+<span id="base"></span><h2>base<a class="headerlink" href="#module-pyrado.spaces.base" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.spaces.base.Space">
+<em class="property">class </em><code class="sig-name descname">Space</code><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.base.Space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Base class of all state, action, and init spaces in Pyrado</p>
+<dl class="py method">
+<dt id="pyrado.spaces.base.Space.bound_abs_up">
+<em class="property">property </em><code class="sig-name descname">bound_abs_up</code><a class="headerlink" href="#pyrado.spaces.base.Space.bound_abs_up" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the upper bound in terms of absolute values.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.spaces.base.Space.bound_lo">
+<code class="sig-name descname">bound_lo</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.base.Space.bound_lo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.spaces.base.Space.bound_up">
+<code class="sig-name descname">bound_up</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.base.Space.bound_up" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.base.Space.bounds">
+<em class="property">property </em><code class="sig-name descname">bounds</code><a class="headerlink" href="#pyrado.spaces.base.Space.bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the lower (first element) and upper bound (second element) of the space.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.base.Space.cat">
+<em class="property">static </em><code class="sig-name descname">cat</code><span class="sig-paren">(</span><em class="sig-param">spaces: [&lt;class 'list'&gt;, &lt;class 'tuple'&gt;]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.cat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.base.Space.cat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenate a sequence of spaces in the given order. This creates a new Space object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>spaces</strong> – spaces to concatenate</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>concatenated space</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.base.Space.contains">
+<em class="property">abstract </em><code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cand</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.base.Space.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a candidate element is in the state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cand</strong> – candidate to check if it is an element of the space</p></li>
+<li><p><strong>verbose</strong> – if <cite>True</cite> details are be printed in case the candidate is not an element of the space</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.base.Space.copy">
+<code class="sig-name descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.base.Space.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a deep copy (recursively copy values of a compound object).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.base.Space.create_mask">
+<code class="sig-name descname">create_mask</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">idcs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.create_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.base.Space.create_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a mask selecting the given indices from this space.
+Every index should be a number or a name in labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idcs</strong> – index list, which can either be varargs or a single iterable</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>mask array with 1 at each index</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.base.Space.ele_dim">
+<em class="property">property </em><code class="sig-name descname">ele_dim</code><a class="headerlink" href="#pyrado.spaces.base.Space.ele_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the dimension of an element of the space.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.base.Space.flat_dim">
+<em class="property">property </em><code class="sig-name descname">flat_dim</code><a class="headerlink" href="#pyrado.spaces.base.Space.flat_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the dimension of the flattened space.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.base.Space.labels">
+<em class="property">property </em><code class="sig-name descname">labels</code><a class="headerlink" href="#pyrado.spaces.base.Space.labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the labels for space entries, or None if not supported.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.base.Space.project_to">
+<em class="property">abstract </em><code class="sig-name descname">project_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ele</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.project_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.base.Space.project_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Project an into the box space by clipping, or do nothing of it already is.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ele</strong> – element from outside or inside of the box space</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element within the box space (at the border if it has been outside of the space before the projection).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.base.Space.sample_uniform">
+<em class="property">abstract </em><code class="sig-name descname">sample_uniform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">concrete_inf</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1000000.0</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.sample_uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.base.Space.sample_uniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample an element of this space using a uniform distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>concrete_inf</strong> – It’s impossible to sample uniform from infinite bounds. As a workaround, infinite
+bounds are replaced with this value.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element within the space</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.base.Space.shape">
+<em class="property">abstract property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#pyrado.spaces.base.Space.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the shape of the full space.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.base.Space.shrink">
+<em class="property">abstract </em><code class="sig-name descname">shrink</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_lo</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">new_up</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.shrink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.base.Space.shrink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a convex subspace of the existing space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>new_lo</strong> – array containing the new lower bound</p></li>
+<li><p><strong>new_up</strong> – array containing the new upper bound</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>subspace that is bounded by the original space</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.base.Space.subspace">
+<code class="sig-name descname">subspace</code><span class="sig-paren">(</span><em class="sig-param">idcs: [&lt;class 'numpy.ndarray'&gt;, &lt;class 'int'&gt;, &lt;class 'slice'&gt;]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/base.html#Space.subspace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.base.Space.subspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select a subspace by passing an array or a list of indices. The oder is preserved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idcs</strong> – indices or mask, entries with <cite>True</cite> are kept</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>subspace with the same boundaries but reduced dimensionality</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.spaces.box">
+<span id="box"></span><h2>box<a class="headerlink" href="#module-pyrado.spaces.box" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.spaces.box.BoxSpace">
+<em class="property">class </em><code class="sig-name descname">BoxSpace</code><span class="sig-paren">(</span><em class="sig-param">bound_lo: [&lt;class 'float'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], bound_up: [&lt;class 'float'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], shape: [&lt;class 'tuple'&gt;, &lt;class 'int'&gt;] = None, labels: Sequence[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.spaces.base.Space</span></code></a></p>
+<p>Multidimensional box space. (This class can also be used to describe a sphere.)</p>
+<dl class="py attribute">
+<dt id="pyrado.spaces.box.BoxSpace.bound_lo">
+<code class="sig-name descname">bound_lo</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.bound_lo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.spaces.box.BoxSpace.bound_up">
+<code class="sig-name descname">bound_up</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.bound_up" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.box.BoxSpace.cat">
+<em class="property">static </em><code class="sig-name descname">cat</code><span class="sig-paren">(</span><em class="sig-param">spaces: [&lt;class 'list'&gt;, &lt;class 'tuple'&gt;]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace.cat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.cat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenate BoxSpaces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>spaces</strong> – list or tuple of spaces</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function does not check if the dimensions of the BoxSpaces are correct!</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.box.BoxSpace.contains">
+<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cand</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a candidate element is in the state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cand</strong> – candidate to check if it is an element of the space</p></li>
+<li><p><strong>verbose</strong> – if <cite>True</cite> details are be printed in case the candidate is not an element of the space</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.box.BoxSpace.labels">
+<em class="property">property </em><code class="sig-name descname">labels</code><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the labels for space entries, or None if not supported.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.box.BoxSpace.project_to">
+<code class="sig-name descname">project_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ele</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace.project_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.project_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Project an into the box space by clipping, or do nothing of it already is.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ele</strong> – element from outside or inside of the box space</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element within the box space (at the border if it has been outside of the space before the projection).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.box.BoxSpace.sample_uniform">
+<code class="sig-name descname">sample_uniform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">concrete_inf</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1000000.0</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace.sample_uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample an element of this space using a uniform distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>concrete_inf</strong> – It’s impossible to sample uniform from infinite bounds. As a workaround, infinite
+bounds are replaced with this value.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element within the space</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.box.BoxSpace.shape">
+<em class="property">property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the shape of the full space.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.box.BoxSpace.shrink">
+<code class="sig-name descname">shrink</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_lo</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">new_up</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace.shrink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.shrink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a convex subspace of the existing space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>new_lo</strong> – array containing the new lower bound</p></li>
+<li><p><strong>new_up</strong> – array containing the new upper bound</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>subspace that is bounded by the original space</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.box.BoxSpace.subspace">
+<code class="sig-name descname">subspace</code><span class="sig-paren">(</span><em class="sig-param">idcs: [&lt;class 'numpy.ndarray'&gt;, &lt;class 'int'&gt;, &lt;class 'slice'&gt;]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/box.html#BoxSpace.subspace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.subspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select a subspace by passing an array or a list of indices. The oder is preserved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idcs</strong> – indices or mask, entries with <cite>True</cite> are kept</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>subspace with the same boundaries but reduced dimensionality</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.spaces.compound">
+<span id="compound"></span><h2>compound<a class="headerlink" href="#module-pyrado.spaces.compound" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.spaces.compound.CompoundSpace">
+<em class="property">class </em><code class="sig-name descname">CompoundSpace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spaces</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference internal" href="#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space">pyrado.spaces.base.Space</a><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.spaces.base.Space</span></code></a></p>
+<p>Space consisting of other spaces</p>
+<dl class="py attribute">
+<dt id="pyrado.spaces.compound.CompoundSpace.bound_lo">
+<code class="sig-name descname">bound_lo</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.bound_lo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.spaces.compound.CompoundSpace.bound_up">
+<code class="sig-name descname">bound_up</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.bound_up" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.compound.CompoundSpace.cat">
+<em class="property">static </em><code class="sig-name descname">cat</code><span class="sig-paren">(</span><em class="sig-param">spaces: [&lt;class 'list'&gt;, &lt;class 'tuple'&gt;]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace.cat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.cat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenate a sequence of spaces in the given order. This creates a new Space object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>spaces</strong> – spaces to concatenate</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>concatenated space</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.compound.CompoundSpace.contains">
+<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cand</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a candidate element is in the state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cand</strong> – candidate to check if it is an element of the space</p></li>
+<li><p><strong>verbose</strong> – if <cite>True</cite> details are be printed in case the candidate is not an element of the space</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.compound.CompoundSpace.project_to">
+<code class="sig-name descname">project_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ele</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace.project_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.project_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Project an into the box space by clipping, or do nothing of it already is.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ele</strong> – element from outside or inside of the box space</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element within the box space (at the border if it has been outside of the space before the projection).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.compound.CompoundSpace.sample_uniform">
+<code class="sig-name descname">sample_uniform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">concrete_inf</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1000000.0</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace.sample_uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample an element of this space using a uniform distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>concrete_inf</strong> – It’s impossible to sample uniform from infinite bounds. As a workaround, infinite
+bounds are replaced with this value.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element within the space</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.compound.CompoundSpace.shape">
+<em class="property">property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the shape of the full space.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.compound.CompoundSpace.shrink">
+<code class="sig-name descname">shrink</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_lo</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">new_up</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace.shrink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.shrink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a convex subspace of the existing space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>new_lo</strong> – array containing the new lower bound</p></li>
+<li><p><strong>new_up</strong> – array containing the new upper bound</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>subspace that is bounded by the original space</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.compound.CompoundSpace.subspace">
+<code class="sig-name descname">subspace</code><span class="sig-paren">(</span><em class="sig-param">idcs: [&lt;class 'int'&gt;, &lt;class 'slice'&gt;]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/compound.html#CompoundSpace.subspace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.compound.CompoundSpace.subspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select a subspace by passing an array or a list of indices. The oder is preserved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idcs</strong> – indices or mask, entries with <cite>True</cite> are kept</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>subspace with the same boundaries but reduced dimensionality</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.spaces.discrete">
+<span id="discrete"></span><h2>discrete<a class="headerlink" href="#module-pyrado.spaces.discrete" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.spaces.discrete.DiscreteSpace">
+<em class="property">class </em><code class="sig-name descname">DiscreteSpace</code><span class="sig-paren">(</span><em class="sig-param">eles: [&lt;class 'numpy.ndarray'&gt;, &lt;class 'list'&gt;], labels: Sequence[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/discrete.html#DiscreteSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.spaces.base.Space</span></code></a></p>
+<p>Discrete space implemented as a ndarray containing all possible integer-valued elements (unsorted)</p>
+<dl class="py attribute">
+<dt id="pyrado.spaces.discrete.DiscreteSpace.bound_lo">
+<code class="sig-name descname">bound_lo</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.bound_lo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.spaces.discrete.DiscreteSpace.bound_up">
+<code class="sig-name descname">bound_up</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.bound_up" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.discrete.DiscreteSpace.cat">
+<em class="property">static </em><code class="sig-name descname">cat</code><span class="sig-paren">(</span><em class="sig-param">spaces: [&lt;class 'list'&gt;, &lt;class 'tuple'&gt;]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/discrete.html#DiscreteSpace.cat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.cat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenate multiple instances of <cite>DiscreteSpace</cite>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function does not check if the dimensions of the BoxSpaces are correct!</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>spaces</strong> – list or tuple of spaces</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.discrete.DiscreteSpace.contains">
+<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cand</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/spaces/discrete.html#DiscreteSpace.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a candidate element is in the state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cand</strong> – candidate to check if it is an element of the space</p></li>
+<li><p><strong>verbose</strong> – if <cite>True</cite> details are be printed in case the candidate is not an element of the space</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.discrete.DiscreteSpace.flat_dim">
+<em class="property">property </em><code class="sig-name descname">flat_dim</code><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.flat_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the dimension of the flattened space.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.discrete.DiscreteSpace.labels">
+<em class="property">property </em><code class="sig-name descname">labels</code><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the labels for space entries, or None if not supported.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.discrete.DiscreteSpace.project_to">
+<code class="sig-name descname">project_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ele</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/discrete.html#DiscreteSpace.project_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.project_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Project an into the box space by clipping, or do nothing of it already is.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ele</strong> – element from outside or inside of the box space</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element within the box space (at the border if it has been outside of the space before the projection).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.discrete.DiscreteSpace.sample_uniform">
+<code class="sig-name descname">sample_uniform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">concrete_inf</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1000000.0</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/discrete.html#DiscreteSpace.sample_uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample an element of this space using a uniform distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>concrete_inf</strong> – It’s impossible to sample uniform from infinite bounds. As a workaround, infinite
+bounds are replaced with this value.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element within the space</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.discrete.DiscreteSpace.shape">
+<em class="property">property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the shape of the full space.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.discrete.DiscreteSpace.shrink">
+<code class="sig-name descname">shrink</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_lo</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">new_up</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/discrete.html#DiscreteSpace.shrink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.shrink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a convex subspace of the existing space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>new_lo</strong> – array containing the new lower bound</p></li>
+<li><p><strong>new_up</strong> – array containing the new upper bound</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>subspace that is bounded by the original space</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.spaces.empty">
+<span id="empty"></span><h2>empty<a class="headerlink" href="#module-pyrado.spaces.empty" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.spaces.empty.EmptySpace">
+<em class="property">class </em><code class="sig-name descname">EmptySpace</code><a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.spaces.base.Space</span></code></a></p>
+<p>A space with no content</p>
+<dl class="py attribute">
+<dt id="pyrado.spaces.empty.EmptySpace.bound_lo">
+<code class="sig-name descname">bound_lo</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.bound_lo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.spaces.empty.EmptySpace.bound_up">
+<code class="sig-name descname">bound_up</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.bound_up" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.empty.EmptySpace.bounds">
+<em class="property">property </em><code class="sig-name descname">bounds</code><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the lower (first element) and upper bound (second element) of the space.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.empty.EmptySpace.cat">
+<em class="property">static </em><code class="sig-name descname">cat</code><span class="sig-paren">(</span><em class="sig-param">spaces: [&lt;class 'list'&gt;, &lt;class 'tuple'&gt;]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace.cat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.cat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenate a sequence of spaces in the given order. This creates a new Space object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>spaces</strong> – spaces to concatenate</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>concatenated space</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.empty.EmptySpace.contains">
+<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cand</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a candidate element is in the state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cand</strong> – candidate to check if it is an element of the space</p></li>
+<li><p><strong>verbose</strong> – if <cite>True</cite> details are be printed in case the candidate is not an element of the space</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.empty.EmptySpace.labels">
+<em class="property">property </em><code class="sig-name descname">labels</code><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the labels for space entries, or None if not supported.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.empty.EmptySpace.project_to">
+<code class="sig-name descname">project_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ele</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace.project_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.project_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Project an into the box space by clipping, or do nothing of it already is.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ele</strong> – element from outside or inside of the box space</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element within the box space (at the border if it has been outside of the space before the projection).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.empty.EmptySpace.sample_uniform">
+<code class="sig-name descname">sample_uniform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">concrete_inf</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1000000.0</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace.sample_uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample an element of this space using a uniform distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>concrete_inf</strong> – It’s impossible to sample uniform from infinite bounds. As a workaround, infinite
+bounds are replaced with this value.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element within the space</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.empty.EmptySpace.shape">
+<em class="property">property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the shape of the full space.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.empty.EmptySpace.shrink">
+<code class="sig-name descname">shrink</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_lo</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">new_up</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace.shrink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.shrink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a convex subspace of the existing space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>new_lo</strong> – array containing the new lower bound</p></li>
+<li><p><strong>new_up</strong> – array containing the new upper bound</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>subspace that is bounded by the original space</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.empty.EmptySpace.subspace">
+<code class="sig-name descname">subspace</code><span class="sig-paren">(</span><em class="sig-param">idcs: [&lt;class 'numpy.ndarray'&gt;</em>, <em class="sig-param">&lt;class 'int'&gt;</em>, <em class="sig-param">&lt;class 'slice'&gt;] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/empty.html#EmptySpace.subspace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.subspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select a subspace by passing an array or a list of indices. The oder is preserved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idcs</strong> – indices or mask, entries with <cite>True</cite> are kept</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>subspace with the same boundaries but reduced dimensionality</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.spaces.polar">
+<span id="polar"></span><h2>polar<a class="headerlink" href="#module-pyrado.spaces.polar" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.spaces.polar.Polar2DPosSpace">
+<em class="property">class </em><code class="sig-name descname">Polar2DPosSpace</code><span class="sig-paren">(</span><em class="sig-param">bound_lo: [&lt;class 'float'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], bound_up: [&lt;class 'float'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], labels: Sequence[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.spaces.box.BoxSpace" title="pyrado.spaces.box.BoxSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.spaces.box.BoxSpace</span></code></a></p>
+<p>Samples positions on a 2-dim torus, i.e. the area between two concentric circles.
+Can also be a section of a 2-dim torus, i.e. not a full circle.</p>
+<dl class="py attribute">
+<dt id="pyrado.spaces.polar.Polar2DPosSpace.bound_lo">
+<code class="sig-name descname">bound_lo</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosSpace.bound_lo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.spaces.polar.Polar2DPosSpace.bound_up">
+<code class="sig-name descname">bound_up</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosSpace.bound_up" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.polar.Polar2DPosSpace.contains">
+<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cand</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosSpace.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosSpace.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a candidate element is in the state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cand</strong> – candidate to check if it is an element of the space</p></li>
+<li><p><strong>verbose</strong> – if <cite>True</cite> details are be printed in case the candidate is not an element of the space</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.polar.Polar2DPosSpace.sample_uniform">
+<code class="sig-name descname">sample_uniform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">concrete_inf</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1000000.0</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosSpace.sample_uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosSpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample an element of this space using a uniform distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>concrete_inf</strong> – It’s impossible to sample uniform from infinite bounds. As a workaround, infinite
+bounds are replaced with this value.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element within the space</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.spaces.polar.Polar2DPosVelSpace">
+<em class="property">class </em><code class="sig-name descname">Polar2DPosVelSpace</code><span class="sig-paren">(</span><em class="sig-param">bound_lo: [&lt;class 'float'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], bound_up: [&lt;class 'float'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], labels: Sequence[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosVelSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosVelSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.spaces.box.BoxSpace" title="pyrado.spaces.box.BoxSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.spaces.box.BoxSpace</span></code></a></p>
+<p>Samples positions on a 2-dim torus, i.e. the area between 2 circles augmented with cartesian velocities.
+Can also be a section of a 2-dim torus, i.e. not a full circle.</p>
+<dl class="py attribute">
+<dt id="pyrado.spaces.polar.Polar2DPosVelSpace.bound_lo">
+<code class="sig-name descname">bound_lo</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosVelSpace.bound_lo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.spaces.polar.Polar2DPosVelSpace.bound_up">
+<code class="sig-name descname">bound_up</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosVelSpace.bound_up" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.polar.Polar2DPosVelSpace.contains">
+<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cand</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosVelSpace.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosVelSpace.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a candidate element is in the state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cand</strong> – candidate to check if it is an element of the space</p></li>
+<li><p><strong>verbose</strong> – if <cite>True</cite> details are be printed in case the candidate is not an element of the space</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.polar.Polar2DPosVelSpace.sample_uniform">
+<code class="sig-name descname">sample_uniform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">concrete_inf</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1000000.0</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosVelSpace.sample_uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosVelSpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample an element of this space using a uniform distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>concrete_inf</strong> – It’s impossible to sample uniform from infinite bounds. As a workaround, infinite
+bounds are replaced with this value.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element within the space</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.spaces.singular">
+<span id="singular"></span><h2>singular<a class="headerlink" href="#module-pyrado.spaces.singular" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.spaces.singular.SingularStateSpace">
+<em class="property">class </em><code class="sig-name descname">SingularStateSpace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fixed_state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">labels</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/singular.html#SingularStateSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.singular.SingularStateSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.spaces.box.BoxSpace" title="pyrado.spaces.box.BoxSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.spaces.box.BoxSpace</span></code></a></p>
+<p>Space which always returns the same initial state (trivial space)</p>
+<dl class="py attribute">
+<dt id="pyrado.spaces.singular.SingularStateSpace.bound_lo">
+<code class="sig-name descname">bound_lo</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.singular.SingularStateSpace.bound_lo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.spaces.singular.SingularStateSpace.bound_up">
+<code class="sig-name descname">bound_up</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#pyrado.spaces.singular.SingularStateSpace.bound_up" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.spaces.singular.SingularStateSpace.sample_uniform">
+<code class="sig-name descname">sample_uniform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">concrete_inf</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1000000.0</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/spaces/singular.html#SingularStateSpace.sample_uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.singular.SingularStateSpace.sample_uniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample an element of this space using a uniform distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>concrete_inf</strong> – It’s impossible to sample uniform from infinite bounds. As a workaround, infinite
+bounds are replaced with this value.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>element within the space</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.spaces">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.spaces" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tasks.html" class="btn btn-neutral float-right" title="tasks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="sampling.html" class="btn btn-neutral float-left" title="sampling" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
