@@ -1,5 +1,4 @@
 name: Documentation
-
 on:
   push:
     branches: [ master, cicd ]
@@ -7,9 +6,7 @@ on:
     branches: [ master, cicd ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -21,6 +18,8 @@ jobs:
           mkdir public
           export PUBLIC=$(realpath ./public)
           docker run --rm -v $PUBLIC:/var/www simurlacra conda run -n pyrado bash -c "./build_docs.sh;cp -r Pyrado/doc/build/* /var/www"
+          echo $PUBLIC
+          ls $PUBLIC
       - name: Deploy 🚀
         continue-on-error: true
         uses: JamesIves/github-pages-deploy-action@3.5.9
