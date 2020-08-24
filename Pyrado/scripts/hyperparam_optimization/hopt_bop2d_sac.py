@@ -49,7 +49,7 @@ from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.experiments import fcn_from_str
 
 
-def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: [int, None]):
+def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
     """
     Objective function for the Optuna `Study` to maximize.
 
@@ -96,7 +96,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: [int, None]):
     algo_hparam = dict(
         num_workers=1,  # parallelize via optuna n_jobs
         max_iter=100*env.max_steps,
-        min_steps=trial.suggest_categorical('min_steps_algo', [1]),  # , 10, env.max_steps, 10*env.max_steps
+        min_steps=trial.suggest_categorical('min_steps_algo', [1]),  # 10, env.max_steps, 10*env.max_steps
         memory_size=trial.suggest_loguniform('memory_size_algo', 1e2*env.max_steps, 1e4*env.max_steps),
         tau=trial.suggest_uniform('tau_algo', 0.99, 1.),
         alpha_init=trial.suggest_uniform('alpha_init_algo', 0.1, 0.9),
@@ -127,10 +127,11 @@ if __name__ == '__main__':
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    ex_dir = setup_experiment('hyperparams', BallOnPlate2DSim.name, FNNPolicy.name, seed=args.seed)
+    ex_dir = setup_experiment('hyperparams', BallOnPlate2DSim.name, f'{SAC.name}_{FNNPolicy.name}_100Hz',
+                              seed=args.seed)
 
     # Run hyper-parameter optimization
-    name = f'{ex_dir.algo_name}_{ex_dir.extra_info}'  # e.g. qq_ppo_fnn_actnorm
+    name = f'{ex_dir.algo_name}_{ex_dir.extra_info}'  # e.g. bop2d_sac_fnn_100Hz
     study = optuna.create_study(
         study_name=name,
         storage=f"sqlite:////{osp.join(pyrado.TEMP_DIR, ex_dir, f'{name}.db')}",
@@ -138,7 +139,7 @@ if __name__ == '__main__':
         pruner=MedianPruner(),
         load_if_exists=True
     )
-    study.optimize(functools.partial(train_and_eval, ex_dir=ex_dir, seed=args.seed), n_trials=50, n_jobs=3)
+    study.optimize(functools.partial(train_and_eval, ex_dir=ex_dir, seed=args.seed), n_trials=50, n_jobs=6)
 
     # Save the best hyper-parameters
     save_list_of_dicts_to_yaml([study.best_params, dict(seed=args.seed)], ex_dir, 'best_hyperparams')

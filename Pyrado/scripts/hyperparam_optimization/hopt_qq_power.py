@@ -47,7 +47,7 @@ from pyrado.sampling.parallel_sampler import ParallelSampler
 from pyrado.utils.argparser import get_argparser
 
 
-def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: [int, None]):
+def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
     """
     Objective function for the Optuna `Study` to maximize.
 
@@ -76,12 +76,11 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: [int, None]):
     # Algorithm
     algo_hparam = dict(
         num_workers=1,  # parallelize via optuna n_jobs
-        max_iter=150,
-        pop_size=trial.suggest_categorical('pop_size', [100, 150, 200, 250]),
-        num_rollouts=trial.suggest_categorical('num_rollouts', [4, 6, 8, 10, 12]),
-        num_is_samples=trial.suggest_categorical('num_is_samples', [50, 100, 150, 200]),
-        expl_std_init=trial.suggest_uniform('expl_std_init', 0.2, 1.5),
-        expl_std_min=0.02,
+        max_iter=100,
+        pop_size=trial.suggest_int('pop_size', 10, 200),
+        num_rollouts=trial.suggest_int('num_rollouts', 4, 12),
+        num_is_samples=trial.suggest_int('num_is_samples', 2, 20),
+        expl_std_init=trial.suggest_uniform('expl_std_init', 0.1, 1.),
         symm_sampling=trial.suggest_categorical('symm_sampling', [True, False]),
     )
     csv_logger = create_csv_step_logger(osp.join(ex_dir, f'trial_{trial.number}'))
@@ -103,10 +102,11 @@ if __name__ == '__main__':
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    ex_dir = setup_experiment('hyperparams', QQubeSwingUpSim.name, 'power_lin_actnorm', seed=args.seed)
+    ex_dir = setup_experiment('hyperparams', QQubeSwingUpSim.name, f'{PoWER.name}_{LinearPolicy.name}_250Hz_actnorm',
+                              seed=args.seed)
 
     # Run hyper-parameter optimization
-    name = f'{ex_dir.algo_name}_{ex_dir.extra_info}'  # e.g. qq_ppo_fnn_actnorm
+    name = f'{ex_dir.algo_name}_{ex_dir.extra_info}'  # e.g. qq-su_power_lin_250Hz_actnorm
     study = optuna.create_study(
         study_name=name,
         storage=f"sqlite:////{osp.join(pyrado.TEMP_DIR, ex_dir, f'{name}.db')}",

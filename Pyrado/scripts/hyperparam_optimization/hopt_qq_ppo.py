@@ -33,6 +33,7 @@ import functools
 import optuna
 import os.path as osp
 from optuna.pruners import MedianPruner
+from torch.optim import lr_scheduler as scheduler
 
 import pyrado
 from pyrado.algorithms.ppo import PPO
@@ -50,7 +51,7 @@ from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.experiments import fcn_from_str
 
 
-def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: [int, None]):
+def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
     """
     Objective function for the Optuna `Study` to maximize.
     
@@ -69,6 +70,14 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: [int, None]):
     env_hparams = dict(dt=1/100., max_steps=600)
     env = QQubeSwingUpSim(**env_hparams)
     env = ActNormWrapper(env)
+
+    # Learning rate scheduler
+    lrs_gamma = trial.suggest_categorical('exp_lr_scheduler_gamma', [None, 0.99, 0.995, 0.999])
+    if lrs_gamma is not None:
+        lr_scheduler = scheduler.ExponentialLR
+        lr_scheduler_hparam = dict(gamma=lrs_gamma)
+    else:
+        lr_scheduler, lr_scheduler_hparam = None, dict()
 
     # Policy
     policy_hparam = dict(
@@ -94,35 +103,31 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: [int, None]):
     value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
     # value_fcn = GRUPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
     critic_hparam = dict(
+        batch_size=250,
         gamma=trial.suggest_uniform('gamma_critic', 0.98, 1.),
         lamda=trial.suggest_uniform('lamda_critic', 0.95, 1.),
         num_epoch=trial.suggest_int('num_epoch_critic', 1, 10),
-        batch_size=150,
         lr=trial.suggest_loguniform('lr_critic', 1e-5, 1e-3),
         standardize_adv=trial.suggest_categorical('standardize_adv_critic', [False]),
         max_grad_norm=trial.suggest_categorical('max_grad_norm_critic', [None, 1., 5.]),
-        # lr_scheduler=scheduler.StepLR,
-        # lr_scheduler_hparam=dict(step_size=10, gamma=0.9)
-        # lr_scheduler=scheduler.ExponentialLR,
-        # lr_scheduler_hparam=dict(gamma=0.99)
+        lr_scheduler=lr_scheduler,
+        lr_scheduler_hparam=lr_scheduler_hparam
     )
     critic = GAE(value_fcn, **critic_hparam)
 
     # Algorithm
     algo_hparam = dict(
         num_workers=1,  # parallelize via optuna n_jobs
-        max_iter=300,
+        max_iter=200,
+        batch_size=250,
         min_steps=trial.suggest_int('num_rollouts_algo', 10, 30)*env.max_steps,
         num_epoch=trial.suggest_int('num_epoch_algo', 1, 10),
         eps_clip=trial.suggest_uniform('eps_clip_algo', 0.05, 0.2),
-        batch_size=150,
-        std_init=trial.suggest_uniform('std_init_algo', 0.6, 1.0),
+        std_init=trial.suggest_uniform('std_init_algo', 0.5, 1.0),
         lr=trial.suggest_loguniform('lr_algo', 1e-5, 1e-3),
         max_grad_norm=trial.suggest_categorical('max_grad_norm_algo', [None, 1., 5.]),
-        # lr_scheduler=scheduler.StepLR,
-        # lr_scheduler_hparam=dict(step_size=10, gamma=0.9)
-        # lr_scheduler=scheduler.ExponentialLR,
-        # lr_scheduler_hparam=dict(gamma=0.99)
+        lr_scheduler=lr_scheduler,
+        lr_scheduler_hparam=lr_scheduler_hparam
     )
     csv_logger = create_csv_step_logger(osp.join(ex_dir, f'trial_{trial.number}'))
     algo = PPO(osp.join(ex_dir, f'trial_{trial.number}'), env, policy, critic, **algo_hparam, logger=csv_logger)
@@ -143,11 +148,12 @@ if __name__ == '__main__':
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    ex_dir = setup_experiment('hyperparams', QQubeSwingUpSim.name, 'ppo_100Hz_fnn_actnorm', seed=args.seed)
-    # ex_dir = setup_experiment('hyperparams', QQubeSwingUpSim.name, 'ppo_100Hz_gru_actnorm', seed=args.seed)
+    # Set up experiment
+    ex_dir = setup_experiment('hyperparams', QQubeSwingUpSim.name, f'{PPO.name}_{FNNPolicy.name}_100Hz_actnorm',
+                              seed=args.seed)
 
     # Run hyper-parameter optimization
-    name = f'{ex_dir.algo_name}_{ex_dir.extra_info}'  # e.g. qq_ppo_fnn_actnorm
+    name = f'{ex_dir.algo_name}_{ex_dir.extra_info}'  # e.g. qq-su_ppo_fnn_100Hz_actnorm
     study = optuna.create_study(
         study_name=name,
         storage=f"sqlite:////{osp.join(pyrado.TEMP_DIR, ex_dir, f'{name}.db')}",
@@ -155,7 +161,7 @@ if __name__ == '__main__':
         pruner=MedianPruner(),
         load_if_exists=True
     )
-    study.optimize(functools.partial(train_and_eval, ex_dir=ex_dir, seed=args.seed), n_trials=100, n_jobs=6)
+    study.optimize(functools.partial(train_and_eval, ex_dir=ex_dir, seed=args.seed), n_trials=100, n_jobs=16)
 
     # Save the best hyper-parameters
     save_list_of_dicts_to_yaml([study.best_params, dict(seed=args.seed)], ex_dir, 'best_hyperparams')
