@@ -89,7 +89,7 @@ class CMakeBuild(build_ext):
 
 setup(
     name='RcsPySim',
-    version='0.1',
+    version='0.2',
     description='Robotic simulation environments backed by Rcs',
     author='Fabio Muratore & Felix Treede',
     author_email='fabio.muratore@famura.net',

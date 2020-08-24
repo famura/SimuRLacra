@@ -108,10 +108,10 @@ if __name__ == '__main__':
         max_grad_norm=1.,
         lr=1e-4,
     )
-    subrtn_hparam_cand = subrtn_hparam_cand
+    subrtn_hparam_refs = deepcopy(subrtn_hparam_cand)
 
     sr_cand = PPO(ex_dir, env, policy, critic_cand, **subrtn_hparam_cand)
-    sr_refs = PPO(ex_dir, env, deepcopy(policy), critic_refs, **subrtn_hparam_cand)
+    sr_refs = PPO(ex_dir, env, deepcopy(policy), critic_refs, **subrtn_hparam_refs)
 
     # Meta-Algorithm
     spota_hparam = dict(
@@ -139,7 +139,7 @@ if __name__ == '__main__':
         dict(env=env_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
         dict(critic_cand_and_ref=critic_hparam),
-        dict(subrtn_cand=subrtn_hparam_cand, subrtn_refs=subrtn_hparam_cand, subrtn_name=PPO.name),
+        dict(subrtn_name=PPO.name, subrtn_cand=subrtn_hparam_cand, subrtn_refs=subrtn_hparam_refs),
         dict(algo=spota_hparam, algo_name=SPOTA.name)],
         ex_dir
     )

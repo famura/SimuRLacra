@@ -35,7 +35,7 @@ from os import _exit
 
 
 # Pyrado version number
-VERSION = '0.1'
+VERSION = '0.2'
 
 # Provide global data directories
 PERMA_DIR = osp.join(osp.dirname(__file__), '..', 'data', 'perma')

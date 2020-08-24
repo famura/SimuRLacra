@@ -115,7 +115,7 @@ if __name__ == '__main__':
         num_eval_rollouts_real=100 if isinstance(env_real, WAMBallInCupSim) else 5,
         num_eval_rollouts_sim=100,
         # policy_param_init=policy_init.param_values.data,
-        subroutine_snapshot_mode='latest'
+        subrtn_snapshot_mode='latest'
     )
 
     # Save the environments and the hyper-parameters (do it before the init routine of BDR)

@@ -151,11 +151,13 @@ class NormalParamNoise(StochasticParamExplStrat):
         super().__init__(param_dim)
 
         if full_cov:
-            self._noise = FullNormalNoise(noise_dim=param_dim, std_init=std_init, std_min=std_min,
-                                          train_mean=train_mean)
+            self._noise = FullNormalNoise(
+                use_cuda=False, noise_dim=param_dim, std_init=std_init, std_min=std_min, train_mean=train_mean
+            )
         else:
-            self._noise = DiagNormalNoise(noise_dim=param_dim, std_init=std_init, std_min=std_min,
-                                          train_mean=train_mean)
+            self._noise = DiagNormalNoise(
+                use_cuda=False, noise_dim=param_dim, std_init=std_init, std_min=std_min, train_mean=train_mean
+            )
 
     @property
     def noise(self) -> [FullNormalNoise, DiagNormalNoise]:
