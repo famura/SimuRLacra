@@ -146,26 +146,10 @@ class SimOpt(Algorithm):
         # Reset the subroutine algorithm which includes resetting the exploration
         self._subrtn_policy.reset()
 
-        if not self.warmstart or self._curr_iter == 0:
-            # Reset the subrtn's policy (and value function)
-            self._subrtn_policy.policy.init_param(self.policy_param_init)
-            if isinstance(self._subrtn_policy, ActorCritic):
-                self._subrtn_policy.critic.value_fcn.init_param(self.valuefcn_param_init)
-            if self.policy_param_init is None:
-                print_cbt('Learning the new solution from scratch', 'y')
-            else:
-                print_cbt('Learning the new solution given an initialization', 'y')
-
-        elif self.warmstart and self._curr_iter > 0:
-            # Continue from the previous policy (and value function)
-            self._subrtn_policy.policy.load_state_dict(
-                to.load(osp.join(self._save_dir, f'iter_{self._curr_iter - 1}_policy.pt')).state_dict()
-            )
-            if isinstance(self._subrtn_policy, ActorCritic):
-                self._subrtn_policy.critic.value_fcn.load_state_dict(
-                    to.load(osp.join(self._save_dir, f'iter_{self._curr_iter - 1}_valuefcn.pt')).state_dict()
-                )
-            print_cbt(f'Initialized the new solution with the results from iteration {self._curr_iter - 1}', 'y')
+        # Do a warm start if desired
+        self._subrtn_policy.init_modules(
+            self.warmstart, policy_param_init=self.policy_param_init, valuefcn_param_init=self.valuefcn_param_init
+        )
 
         # Train a policy in simulation using the subroutine
         self._subrtn_policy.train(snapshot_mode=self.subrtn_snapshot_mode, meta_info=dict(prefix=prefix))

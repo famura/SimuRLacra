@@ -190,7 +190,7 @@ class SPOTA(Algorithm):
         .. note:: The UCBOG is equal to zero if all optimality gap samples are negative.
         """
         if self.ucbog != 0 and self.ucbog < self.beta:
-            print_cbt(f'UCBOG is below specified threshold. ({self.ucbog,} < {self.beta})', 'r')
+            print_cbt(f'UCBOG is below specified threshold: {self.ucbog} < {self.beta}', 'g', bright=True)
             return True
         else:
             return False
@@ -218,26 +218,12 @@ class SPOTA(Algorithm):
 
         :param nc: number of domains used for training the candidate solution
         """
-        if self._curr_iter == 0 or not self.warmstart_cand:
-            # Create a new candidate by re-initializing the parameters
-            self._subrtn_cand.policy.init_param(self.cand_policy_param_init)
-            if isinstance(self._subrtn_cand, ActorCritic):
-                self._subrtn_cand.critic.value_fcn.init_param(self.cand_critic_param_init)
-            print_cbt('Created a new candidate solution.', 'y')
-
-        elif self._curr_iter > 0 and self.warmstart_cand:
-            # Continue from the previous iteration
-            self._subrtn_cand.policy.load_state_dict(
-                to.load(osp.join(self._save_dir, f'iter_{self._curr_iter - 1}_policy_cand.pt')).state_dict()
-            )
-            if isinstance(self._subrtn_cand, ActorCritic):
-                self._subrtn_cand.critic.value_fcn.load_state_dict(
-                    to.load(osp.join(self._save_dir, f'iter_{self._curr_iter - 1}_valuefcn_cand.pt')).state_dict()
-                )
-            print_cbt('Initialized the candidate solution with the previously trained candidate.', 'y')
-
-        else:
-            raise pyrado.ValueErr(msg='Faulty joint configuration of curr_iter and warmstart_cand!')
+        # Do a warm start if desired
+        self._subrtn_cand.init_modules(
+            self.warmstart_cand, suffix='cand',
+            policy_param_init=self.cand_policy_param_init,
+            valuefcn_param_init=self.cand_critic_param_init
+        )
 
         # Sample sets of physics params xi_{1}, ..., xi_{nc}
         self._env_dr.fill_buffer(nc)
@@ -250,6 +236,7 @@ class SPOTA(Algorithm):
         self._subrtn_cand.reset()
         print('Reset candidate exploration noise.')
 
+        pol_param_before = self._subrtn_cand.policy.param_values.clone()
         if isinstance(self._subrtn_cand, ActorCritic):
             # Set dropout and batch normalization layers to training mode
             self._subrtn_cand.critic.value_fcn.train()
@@ -257,7 +244,6 @@ class SPOTA(Algorithm):
 
         # Solve the (approx) stochastic program SP_nc for the sampled physics parameter sets
         print_cbt(f'\nIteration {self._curr_iter} | Candidate solution\n', 'c', bright=True)
-        pol_param_before = self._subrtn_cand.policy.param_values.clone()
         self._subrtn_cand.train(
             snapshot_mode='best', meta_info=dict(prefix=f'iter_{self._curr_iter}', suffix='cand')
         )
@@ -279,34 +265,14 @@ class SPOTA(Algorithm):
         """
         # Loop to compute a distribution of optimality gaps via nG samples
         for k in range(nG):
-            print_cbt(f'Iteration {self._curr_iter} | Reference solution {k + 1} of {nG}\n',
-                      'c', bright=True)
-            if not self.warmstart_refs:
-                # Create a new reference policy by re-initializing its parameters
-                self._subrtn_cand.policy.init_param()
+            print_cbt(f'Iteration {self._curr_iter} | Reference solution {k + 1} of {nG}\n', 'c', bright=True)
 
-                # Create a new value function by re-initializing its parameters
-                if isinstance(self._subrtn_refs, ActorCritic):
-                    self._subrtn_refs.critic.value_fcn.init_param()
-
-                print_cbt('Created a new reference solution.\n', 'y')
-
-            else:
-                # Continue from the candidate's policy of the current iteration
-                self._subrtn_refs.policy.load_state_dict(
-                    to.load(osp.join(self._save_dir, f'iter_{self._curr_iter}_policy_cand.pt')).state_dict()
-                )
-                if not (self._subrtn_refs.policy.param_values == self._subrtn_cand.policy.param_values).all():
-                    warn("The reference policy's parameters are not equal to the candidate's after loading them!"
-                         "This can be explained by snapshot_mode='best'", UserWarning)
-
-                # Continue from the candidate's value function of the current iteration
-                if isinstance(self._subrtn_cand, ActorCritic) and isinstance(self._subrtn_refs, ActorCritic):
-                    self._subrtn_refs.critic.value_fcn.load_state_dict(
-                        to.load(osp.join(self._save_dir, f'iter_{self._curr_iter}_valuefcn_cand.pt')).state_dict()
-                    )
-
-                print_cbt('Initialized the reference solution with the previously trained candidate solution.\n', 'y')
+            # Do a warm start if desired
+            self._subrtn_refs.init_modules(
+                self.warmstart_refs, suffix='cand',
+                policy_param_init=self.cand_policy_param_init,
+                valuefcn_param_init=self.cand_critic_param_init
+            )
 
             # Sample new sets of physics params xi_{k,1}, ..., xi_{k,nr}
             self._env_dr.fill_buffer(nr)
@@ -319,13 +285,13 @@ class SPOTA(Algorithm):
             self._subrtn_refs.reset()
             print_cbt('Reset reference exploration noise.', 'y')
 
+            pol_param_before = self._subrtn_refs.policy.param_values.clone()
             if isinstance(self._subrtn_refs, ActorCritic):
                 # Set dropout and batch normalization layers to training mode
                 self._subrtn_refs.critic.value_fcn.train()
                 critic_param_before = self._subrtn_refs.critic.value_fcn.param_values.clone()
 
             # Solve the (approx) stochastic program SP_n for the samples physics parameter sets
-            pol_param_before = self._subrtn_refs.policy.param_values.clone()
             self._subrtn_refs.train(
                 snapshot_mode='best', meta_info=dict(prefix=f'iter_{self._curr_iter}', suffix=f'ref_{k}')
             )
@@ -377,7 +343,7 @@ class SPOTA(Algorithm):
 
         # Loop over all reference solutions
         for k in range(self.nG):
-            print(f'Estimating the UCBOG | Reference {k + 1} of {self.nG}')
+            print_cbt(f'Estimating the UCBOG | Reference {k + 1} of {self.nG} ...', 'c')
             # Load the domain parameters corresponding to the k-th reference solution
             env_params_ref = joblib.load(osp.join(self._save_dir, f'iter_{self._curr_iter}_env_params_ref_{k}.pkl'))
             self._env_dr.buffer = env_params_ref
@@ -492,8 +458,8 @@ class SPOTA(Algorithm):
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
             np.save(osp.join(self._save_dir, f'iter_{self._curr_iter}_diffs.npy'), self.Gn_diffs)
-            self._subrtn_cand.save_snapshot(meta_info=dict(prefix='final', suffix='cand'))
-            self._subrtn_refs.save_snapshot(meta_info=dict(prefix='final', suffix='refs'))
+            self._subrtn_cand.save_snapshot(meta_info=dict(suffix='cand'))
+            self._subrtn_refs.save_snapshot(meta_info=dict(suffix='refs'))
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
 
@@ -503,7 +469,7 @@ class SPOTA(Algorithm):
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            self._subrtn_cand.load_snapshot(ld, meta_info=dict(prefix='final', suffix='cand'))
-            self._subrtn_refs.load_snapshot(ld, meta_info=dict(prefix='final', suffix='refs'))
+            self._subrtn_cand.load_snapshot(ld, meta_info=dict(suffix='cand'))
+            self._subrtn_refs.load_snapshot(ld, meta_info=dict(suffix='refs'))
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')

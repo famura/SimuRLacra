@@ -192,26 +192,10 @@ class BayRn(Algorithm):
         # Reset the subroutine's algorithm which includes resetting the exploration
         self._subrtn.reset()
 
-        if not self.warmstart or self._curr_iter == 0:
-            # Reset the subroutine's policy (and value function)
-            self._subrtn.policy.init_param(self.policy_param_init)
-            if isinstance(self._subrtn, ActorCritic):
-                self._subrtn.critic.value_fcn.init_param(self.valuefcn_param_init)
-            if self.policy_param_init is None:
-                print_cbt('Learning the new policy from scratch.', 'y')
-            else:
-                print_cbt('Learning the new policy given an initialization.', 'y')
-
-        elif self.warmstart and self._curr_iter > 0:
-            # Continue from the previous policy (and value function)
-            self._subrtn.policy.load_state_dict(
-                to.load(osp.join(self._save_dir, f'iter_{self._curr_iter - 1}_policy.pt')).state_dict()
-            )
-            if isinstance(self._subrtn, ActorCritic):
-                self._subrtn.critic.value_fcn.load_state_dict(
-                    to.load(osp.join(self._save_dir, f'iter_{self._curr_iter - 1}_valuefcn.pt')).state_dict()
-                )
-            print_cbt(f'Initialized the new policy with the one from iteration {self._curr_iter - 1}.', 'y')
+        # Do a warm start if desired
+        self._subrtn.init_modules(
+            self.warmstart, policy_param_init=self.policy_param_init, valuefcn_param_init=self.valuefcn_param_init
+        )
 
         # Train a policy in simulation using the subroutine
         self._subrtn.train(snapshot_mode=self.subrtn_snapshot_mode, meta_info=dict(prefix=prefix))
@@ -612,14 +596,10 @@ class BayRn(Algorithm):
         # Reset the subroutine's algorithm which includes resetting the exploration
         subrtn.reset()
 
-        # Reset the subrtn's policy (and value function)
-        subrtn.policy.init_param(policy_param_init)
-        if isinstance(subrtn, ActorCritic):
-            subrtn.critic.value_fcn.init_param(valuefcn_param_init)
-        if policy_param_init is None:
-            print_cbt('Learning the argmax solution from scratch', 'y')
-        else:
-            print_cbt('Learning the argmax solution given an initialization', 'y')
+        # Do a warmstart
+        subrtn.init_modules(
+            warmstart=True, policy_param_init=policy_param_init, valuefcn_param_init=valuefcn_param_init
+        )
 
         subrtn.train(snapshot_mode=subrtn_snapshot_mode)
         return subrtn.policy

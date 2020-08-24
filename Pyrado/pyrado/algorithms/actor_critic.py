@@ -29,7 +29,6 @@
 import joblib
 import numpy as np
 import os.path as osp
-import torch as to
 from abc import ABC, abstractmethod
 from typing import Sequence
 
@@ -42,6 +41,7 @@ from pyrado.logger.step import StepLogger
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 from pyrado.policies.base import Policy
 from pyrado.sampling.step_sequence import StepSequence
+from pyrado.utils.input_output import print_cbt
 
 
 class ActorCritic(Algorithm, ABC):
@@ -145,6 +145,32 @@ class ActorCritic(Algorithm, ABC):
         # Reset the learning rate scheduler
         if self._lr_scheduler is not None:
             self._lr_scheduler.last_epoch = -1
+
+    def init_modules(self, warmstart: bool, suffix: str = '', **kwargs):
+        ppi = kwargs.get('policy_param_init', None)
+        vpi = kwargs.get('valuefcn_param_init', None)
+
+        if warmstart and ppi is not None and vpi is not None:
+            self._policy.init_param(ppi)
+            self._critic.value_fcn.init_param(vpi)
+            print_cbt('Learning given an fixed parameter initialization.', 'w')
+
+        elif warmstart and ppi is None and self._curr_iter > 0:
+            self._policy = load_prefix_suffix(
+                self._policy, 'policy', 'pt', self._save_dir,
+                meta_info=dict(prefix=f'iter_{self._curr_iter - 1}', suffix=suffix)
+            )
+            self._critic.value_fcn = load_prefix_suffix(
+                self._critic.value_fcn, 'valuefcn', 'pt', self._save_dir,
+                meta_info=dict(prefix=f'iter_{self._curr_iter - 1}', suffix=suffix)
+            )
+            print_cbt(f'Learning given the results from iteration {self._curr_iter - 1}', 'w')
+
+        else:
+            # Reset the policy
+            self._policy.init_param()
+            self._critic.value_fcn.init_param()
+            print_cbt('Learning from scratch.', 'w')
 
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)

@@ -377,6 +377,57 @@ class SAC(Algorithm):
         if self._lr_scheduler_policy is not None:
             self.logger.add_value('learning rate', self._lr_scheduler_policy.get_lr())
 
+    def reset(self, seed: int = None):
+        # Reset the exploration strategy, internal variables and the random seeds
+        super().reset(seed)
+
+        # Re-initialize sampler in case env or policy changed
+        self.sampler.reinit(self._env, self._expl_strat)
+
+        # Reset the replay memory
+        self._memory.reset()
+
+        # Reset the learning rate schedulers
+        if self._lr_scheduler_policy is not None:
+            self._lr_scheduler_policy.last_epoch = -1
+        if self._lr_scheduler_q_fcn_1 is not None:
+            self._lr_scheduler_q_fcn_1.last_epoch = -1
+        if self._lr_scheduler_q_fcn_2 is not None:
+            self._lr_scheduler_q_fcn_2.last_epoch = -1
+
+    def init_modules(self, warmstart: bool, suffix: str = '', **kwargs):
+        ppi = kwargs.get('policy_param_init', None)
+        t1pi = kwargs.get('target1_param_init', None)
+        t2pi = kwargs.get('target2_param_init', None)
+
+        if warmstart and ppi is not None and t1pi is not None and t2pi is not None:
+            self._policy.init_param(ppi)
+            self.q_targ_1.init_param(t1pi)
+            self.q_targ_2.init_param(t2pi)
+            print_cbt('Learning given an fixed parameter initialization.', 'w')
+
+        elif warmstart and ppi is None and self._curr_iter > 0:
+            self._policy = load_prefix_suffix(
+                self._policy, 'policy', 'pt', self._save_dir,
+                meta_info=dict(prefix=f'iter_{self._curr_iter - 1}', suffix=suffix)
+            )
+            self.q_targ_1 = load_prefix_suffix(
+                self.q_targ_1, 'target1', 'pt', self._save_dir,
+                meta_info=dict(prefix=f'iter_{self._curr_iter - 1}', suffix=suffix)
+            )
+            self.q_targ_2 = load_prefix_suffix(
+                self.q_targ_2, 'target2', 'pt', self._save_dir,
+                meta_info=dict(prefix=f'iter_{self._curr_iter - 1}', suffix=suffix)
+            )
+            print_cbt(f'Learning given the results from iteration {self._curr_iter - 1}', 'w')
+
+        else:
+            # Reset the policy
+            self._policy.init_param()
+            self.q_targ_1.init_param()
+            self.q_targ_2.init_param()
+            print_cbt('Learning from scratch.', 'w')
+
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
@@ -398,21 +449,3 @@ class SAC(Algorithm):
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
             self._env = joblib.load(osp.join(ld, 'env.pkl'))
-
-    def reset(self, seed: int = None):
-        # Reset the exploration strategy, internal variables and the random seeds
-        super().reset(seed)
-
-        # Re-initialize sampler in case env or policy changed
-        self.sampler.reinit(self._env, self._expl_strat)
-
-        # Reset the replay memory
-        self._memory.reset()
-
-        # Reset the learning rate schedulers
-        if self._lr_scheduler_policy is not None:
-            self._lr_scheduler_policy.last_epoch = -1
-        if self._lr_scheduler_q_fcn_1 is not None:
-            self._lr_scheduler_q_fcn_1.last_epoch = -1
-        if self._lr_scheduler_q_fcn_2 is not None:
-            self._lr_scheduler_q_fcn_2.last_epoch = -1

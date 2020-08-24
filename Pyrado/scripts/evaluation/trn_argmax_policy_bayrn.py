@@ -76,12 +76,9 @@ if __name__ == '__main__':
     else:
         raise NotImplementedError('Only PPO, PPO2, CEM, NES, and PoWER are implemented so far.')
 
-    if args.warmstart:
-        ppi = policy.param_values.data
-        vpi = kwout['value_fcn'].param_values.data
-    else:
-        ppi = None
-        vpi = None
+    # Start from previous results policy if desired
+    ppi = policy.param_values.data if args.warmstart is not None else None
+    vpi = kwout['value_fcn'].param_values.data if args.warmstart is not None else None
 
     # Train the policy on the most lucrative domain
     BayRn.train_argmax_policy(ex_dir, env_sim, subroutine, num_restarts=500, num_samples=1000,

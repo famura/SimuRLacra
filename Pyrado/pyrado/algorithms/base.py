@@ -121,7 +121,7 @@ class Algorithm(ABC, LoggerAware):
     def reset(self, seed: int = None):
         """
         Reset the algorithm to it's initial state. This should NOT reset learned policy parameters.
-        By default, this resets the iteration count. 
+        By default, this resets the iteration count and the exploration strategy.
         Be sure to call this function if you override it.
 
         :param seed: seed value for the random number generators, pass `None` for no seeding
@@ -137,6 +137,35 @@ class Algorithm(ABC, LoggerAware):
         # Set all rngs' seeds
         if seed is not None:
             set_seed(seed, verbose=True)
+
+    def init_modules(self, warmstart: bool, suffix: str = '', **kwargs):
+        """
+        Initialize the algorithm's learnable modules, e.g. a policy or value function.
+        Overwrite this method if the algorithm uses a learnable module aside the policy, e.g. a value function.
+        This method is similar to `load_snapshot()` which also loads additional algorithm members like environments.
+
+        :param warmstart: if `True`, the algorithm starts learning with an initialization. This can either be the a
+                          fixed parameter vector, or the results of the previous iteration
+        :param suffix: keyword for `meta_info` when loading from previous iteration
+        :param kwargs: keyword arguments for initialization, e.g. `policy_param_init` or `valuefcn_param_init`
+        """
+        ppi = kwargs.get('policy_param_init', None)
+
+        if warmstart and ppi is not None:
+            self._policy.init_param(ppi)
+            print_cbt('Learning given an fixed parameter initialization.', 'w')
+
+        elif warmstart and ppi is None and self._curr_iter > 0:
+            self._policy = load_prefix_suffix(
+                self._policy, 'policy', 'pt', self._save_dir,
+                meta_info=dict(prefix=f'iter_{self._curr_iter - 1}', suffix=suffix)
+            )
+            print_cbt(f'Learning given the results from iteration {self._curr_iter - 1}', 'w')
+
+        else:
+            # Reset the policy
+            self._policy.init_param()
+            print_cbt('Learning from scratch.', 'w')
 
     def train(self,
               load_dir: str = None,
