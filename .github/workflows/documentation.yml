@@ -1,5 +1,4 @@
 name: Documentation
-
 on:
   push:
     branches: [ master, cicd ]
@@ -7,18 +6,24 @@ on:
     branches: [ master, cicd ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag simurlacra
       - name: Build Docs
+        continue-on-error: true
         run: |
           mkdir public
           export PUBLIC=$(realpath ./public)
-          docker run --rm -v $PUBLIC:/home/user/SimuRLacra/Pyrado/doc/build simurlacra conda run -n pyrado /bin/bash -c "cd /home/user/SimuRLacra; ./build_docs.sh"
+          docker run --rm -u 1000:1000 -v $PUBLIC:/var/www simurlacra conda run -n pyrado bash -c "./build_docs.sh;sudo cp -r Pyrado/doc/build/* /var/www"
+          echo $PUBLIC
           ls $PUBLIC
+      - name: Deploy 🚀
+        continue-on-error: true
+        uses: JamesIves/github-pages-deploy-action@3.5.9
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: public
