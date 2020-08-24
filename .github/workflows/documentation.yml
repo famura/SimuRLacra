@@ -17,7 +17,7 @@ jobs:
         run: |
           mkdir public
           export PUBLIC=$(realpath ./public)
-          docker run --rm -v $PUBLIC:/var/www simurlacra conda run -n pyrado bash -c "./build_docs.sh;cp -r Pyrado/doc/build/* /var/www"
+          docker run --rm -v $PUBLIC:/var/www simurlacra conda run -n pyrado bash -c "./build_docs.sh;sudo cp -r Pyrado/doc/build/* /var/www"
           echo $PUBLIC
           ls $PUBLIC
       - name: Deploy 🚀
