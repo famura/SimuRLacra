@@ -136,7 +136,7 @@ if args.headless:
 # Bullet
 if IN_HRI:
     # Use bullet double from SIT
-    rcs_cmake_vars["USE_BULLET"] = "2.83_double"
+    rcs_cmake_vars["USE_BULLET"] = "2.83_float"
 else:
     # Bullet from package is in float mode
     rcs_cmake_vars["USE_BULLET"] = "2.83_float"
