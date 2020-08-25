@@ -38,6 +38,7 @@ from pyrado.environments.one_step.rosenbrock import RosenSim
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
+from pyrado.environments.pysim.quanser_cartpole import QCartPoleStabSim, QCartPoleSwingUpSim
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim, QQubeStabSim
 from pyrado.policies.adn import ADNPolicy, pd_cubic
 from pyrado.policies.dummy import DummyPolicy, IdlePolicy
@@ -139,12 +140,12 @@ def default_qbb():
 
 @pytest.fixture(scope='function')
 def default_qcpst():
-    return QBallBalancerSim(dt=0.01, max_steps=300)
+    return QCartPoleStabSim(dt=0.01, max_steps=300)
 
 
 @pytest.fixture(scope='function')
 def default_qcpsu():
-    return QBallBalancerSim(dt=0.002, max_steps=8000)
+    return QCartPoleSwingUpSim(dt=0.002, max_steps=8000)
 
 
 @pytest.fixture(scope='function')

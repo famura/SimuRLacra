@@ -28,6 +28,7 @@
 
 import numpy as np
 import torch as to
+from abc import abstractmethod
 from init_args_serializer.serializable import Serializable
 
 from pyrado.environments.pysim.base import SimPyEnv
@@ -40,12 +41,12 @@ from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn
 class QQubeSim(SimPyEnv, Serializable):
     """ Base Environment for the Quanser Qube swing-up and stabilization task """
 
+    @abstractmethod
     def _create_task(self, task_args: dict) -> Task:
-        # Needs to be implemented by subclasses
         raise NotImplementedError
 
+    @abstractmethod
     def _create_spaces(self):
-        # Needs to be implemented by subclasses
         raise NotImplementedError
 
     @classmethod

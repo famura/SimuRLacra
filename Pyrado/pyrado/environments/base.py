@@ -147,6 +147,7 @@ class Env(ABC, Serializable):
         :param task_args: arguments for the task construction, e.g `dict(state_des=np.zeros(42))`
         :return: task of the environment
         """
+        raise NotImplementedError
 
     @property
     @abstractmethod

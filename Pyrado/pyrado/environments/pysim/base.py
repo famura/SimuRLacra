@@ -114,15 +114,6 @@ class SimPyEnv(SimEnv, Serializable):
         # Reset task to adapt for the potentially changed spaces
         self._task.reset(env_spec=self.spec)
 
-    def _calc_constants(self):
-        """
-        Called to calculate the physics constants that depend on the domain parameters. Override in subclasses.
-
-        .. note::
-            This function is called from the constructor and from the domain parameter setter.
-        """
-        pass
-
     @abstractmethod
     def _create_spaces(self):
         """
@@ -132,6 +123,25 @@ class SimPyEnv(SimEnv, Serializable):
         .. note::
             This function is called from the constructor and from the domain parameter setter.
         """
+        raise NotImplementedError
+
+    @abstractmethod
+    def _step_dynamics(self, act: np.ndarray):
+        """
+        Implement this to apply the given action to the environment's current state.
+
+        :param act: action
+        """
+        raise NotImplementedError
+
+    def _calc_constants(self):
+        """
+        Called to calculate the physics constants that depend on the domain parameters. Override in subclasses.
+
+        .. note::
+            This function is called from the constructor and from the domain parameter setter.
+        """
+        pass
 
     def _set_domain_param_attrs(self, domain_param: dict):
         """
@@ -193,14 +203,6 @@ class SimPyEnv(SimEnv, Serializable):
         assert self._init_space.shape == self._state_space.shape, \
             "Must override _state_from_init if init state space differs from state space!"
         return init_state
-
-    @abstractmethod
-    def _step_dynamics(self, act: np.ndarray):
-        """
-        Implement this to apply the given action to the environment's current state.
-
-        :param act: action
-        """
 
     def step(self, act: np.ndarray) -> tuple:
         # Current reward depending on the state (before step) and the (unlimited) action
