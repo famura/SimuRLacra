@@ -262,8 +262,8 @@
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;min_samples&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">40</span><span class="p">]</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_sampler_collect</span><span class="p">(</span><span class="n">n_threads</span><span class="p">,</span> <span class="n">min_samples</span><span class="p">):</span>
-    <span class="n">pool</span> <span class="o">=</span> <span class="n">SamplerPool</span><span class="p">(</span><span class="n">n_threads</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_sampler_collect</span><span class="p">(</span><span class="n">num_threads</span><span class="p">,</span> <span class="n">min_samples</span><span class="p">):</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">SamplerPool</span><span class="p">(</span><span class="n">num_threads</span><span class="p">)</span>
 
     <span class="c1"># Run the collector</span>
     <span class="n">cr</span><span class="p">,</span> <span class="n">cn</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">run_collect</span><span class="p">(</span><span class="n">min_samples</span><span class="p">,</span> <span class="n">_cb_test_collecthandler</span><span class="p">)</span>
@@ -283,8 +283,8 @@
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;min_runs&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">40</span><span class="p">]</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_sampler_collect_minrun</span><span class="p">(</span><span class="n">n_threads</span><span class="p">,</span> <span class="n">min_samples</span><span class="p">,</span> <span class="n">min_runs</span><span class="p">):</span>
-    <span class="n">pool</span> <span class="o">=</span> <span class="n">SamplerPool</span><span class="p">(</span><span class="n">n_threads</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_sampler_collect_minrun</span><span class="p">(</span><span class="n">num_threads</span><span class="p">,</span> <span class="n">min_samples</span><span class="p">,</span> <span class="n">min_runs</span><span class="p">):</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">SamplerPool</span><span class="p">(</span><span class="n">num_threads</span><span class="p">)</span>
 
     <span class="c1"># Run the collector</span>
     <span class="n">cr</span><span class="p">,</span> <span class="n">cn</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">run_collect</span><span class="p">(</span><span class="n">min_samples</span><span class="p">,</span> <span class="n">_cb_test_collecthandler</span><span class="p">,</span> <span class="n">min_runs</span><span class="o">=</span><span class="n">min_runs</span><span class="p">)</span>
