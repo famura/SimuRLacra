@@ -63,7 +63,21 @@ class ObsNormWrapper(EnvWrapperObs, Serializable):
         self.explicit_lb = explicit_lb
         self.explicit_ub = explicit_ub
 
-        # Check that the
+        # Get the bounds of the inner observation space
+        wos = self.wrapped_env.obs_space
+        lb, ub = wos.bounds
+
+        # Override the bounds if desired and store the result for usage in _process_obs
+        self.ov_lb = ObsNormWrapper.override_bounds(lb, self.explicit_lb, wos.labels)
+        self.ov_ub = ObsNormWrapper.override_bounds(ub, self.explicit_ub, wos.labels)
+
+        # Check if the new bounds are valid
+        if any(self.ov_lb == -pyrado.inf):
+            raise pyrado.ValueErr(msg=f'At least one element of the lower bounds is (negative) infinite:\n'
+                                      f'(overwritten) bound: {self.ov_lb}\nnames: {wos.labels}')
+        if any(self.ov_ub == pyrado.inf):
+            raise pyrado.ValueErr(msg=f'At least one element of the upper bound is (positive) infinite:\n'
+                                      f'(overwritten) bound: {self.ov_ub}\nnames: {wos.labels}')
 
     @staticmethod
     def override_bounds(bounds: np.ndarray,
@@ -97,39 +111,16 @@ class ObsNormWrapper(EnvWrapperObs, Serializable):
         return bc
 
     def _process_obs(self, obs: np.ndarray) -> np.ndarray:
-        # Get the bounds of the inner observation space
-        wos = self.wrapped_env.obs_space
-        lb, ub = wos.bounds
-
-        # Override the bounds if desired
-        lb = ObsNormWrapper.override_bounds(lb, self.explicit_lb, wos.labels)
-        ub = ObsNormWrapper.override_bounds(ub, self.explicit_ub, wos.labels)
-
         # Normalize observation
-        obs_norm = (obs - lb)/(ub - lb)*2 - 1
+        obs_norm = (obs - self.ov_lb)/(self.ov_ub - self.ov_lb)*2 - 1
         return obs_norm
 
     def _process_obs_space(self, space: BoxSpace) -> BoxSpace:
         if not isinstance(space, BoxSpace):
             raise NotImplementedError('Only implemented ObsNormWrapper._process_obs_space() for BoxSpace!')
-        # Get the bounds of the inner observation space
-        lb, ub = space.bounds
 
-        # Override the bounds if desired
-        lb_ov = ObsNormWrapper.override_bounds(lb, self.explicit_lb, space.labels)
-        ub_ov = ObsNormWrapper.override_bounds(ub, self.explicit_ub, space.labels)
-
-        if any(lb_ov == -pyrado.inf):
-            raise pyrado.ValueErr(msg=f'At least one element of the lower bounds is (negative) infinite:\n'
-                                      f'(overwritten) bound: {lb_ov}\nnames: {space.labels}')
-        if any(ub_ov == pyrado.inf):
-            raise pyrado.ValueErr(msg=f'At least one element of the upper bound is (positive) infinite:\n'
-                                      f'(overwritten) bound: {ub_ov}\nnames: {space.labels}')
-
-        # Report actual bounds, which are not +-1 for overridden fields
-        lb_norm = (lb - lb_ov)/(ub_ov - lb_ov)*2 - 1
-        ub_norm = (ub - lb_ov)/(ub_ov - lb_ov)*2 - 1
-        return BoxSpace(lb_norm, ub_norm, labels=space.labels)
+        # Return space with same shape but bounds from -1 to 1
+        return BoxSpace(-np.ones(space.shape), np.ones(space.shape), labels=space.labels)
 
 
 class ObsRunningNormWrapper(EnvWrapperObs, Serializable):
