@@ -115,18 +115,18 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">tests</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tests.environment_wrappers.html">environment_wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-tests.conftest">conftest</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#test-algorithm-utils">test_algorithm_utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#test-algorithms">test_algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tests.test_algorithm_utils">test_algorithm_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tests.test_algorithms">test_algorithms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-tests.test_domain_randomization">test_domain_randomization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-tests.test_environments">test_environments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-tests.test_exploration">test_exploration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#test-logger">test_logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tests.test_logger">test_logger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-tests.test_plotting">test_plotting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-tests.test_policies">test_policies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#test-rollout-result">test_rollout_result</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#test-sampling">test_sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tests.test_rollout_result">test_rollout_result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tests.test_sampling">test_sampling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-tests.test_spaces">test_spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#test-step-logger">test_step_logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tests.test_step_logger">test_step_logger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-tests.test_tasks">test_tasks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-tests.test_tensor_utils">test_tensor_utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-tests.test_utils">test_utils</a></li>
@@ -445,11 +445,81 @@
 <dd></dd></dl>
 
 </div>
-<div class="section" id="test-algorithm-utils">
-<h2>test_algorithm_utils<a class="headerlink" href="#test-algorithm-utils" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-tests.test_algorithm_utils">
+<span id="test-algorithm-utils"></span><h2>test_algorithm_utils<a class="headerlink" href="#module-tests.test_algorithm_utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="tests.test_algorithm_utils.test_action_statistics">
+<code class="sig-name descname">test_action_statistics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithm_utils.html#test_action_statistics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithm_utils.test_action_statistics" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_algorithm_utils.test_adr_reward_generator">
+<code class="sig-name descname">test_adr_reward_generator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithm_utils.html#test_adr_reward_generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithm_utils.test_adr_reward_generator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_algorithm_utils.test_until_thold_exceeded">
+<code class="sig-name descname">test_until_thold_exceeded</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">thold</span></em>, <em class="sig-param"><span class="n">max_iter</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithm_utils.html#test_until_thold_exceeded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithm_utils.test_until_thold_exceeded" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
-<div class="section" id="test-algorithms">
-<h2>test_algorithms<a class="headerlink" href="#test-algorithms" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-tests.test_algorithms">
+<span id="test-algorithms"></span><h2>test_algorithms<a class="headerlink" href="#module-tests.test_algorithms" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="tests.test_algorithms.ex_dir">
+<code class="sig-name descname">ex_dir</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tmpdir</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#ex_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.ex_dir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_algorithms.test_actor_critic">
+<code class="sig-name descname">test_actor_critic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">linear_policy</span></em>, <em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">algo</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em>, <em class="sig-param"><span class="n">value_fcn_type</span></em>, <em class="sig-param"><span class="n">use_cuda</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_actor_critic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_actor_critic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_algorithms.test_adr">
+<code class="sig-name descname">test_adr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">subrtn_hparam</span></em>, <em class="sig-param"><span class="n">actor_hparam</span></em>, <em class="sig-param"><span class="n">value_fcn_hparam</span></em>, <em class="sig-param"><span class="n">critic_hparam</span></em>, <em class="sig-param"><span class="n">adr_hparam</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_adr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_adr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_algorithms.test_arpl">
+<code class="sig-name descname">test_arpl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_arpl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_arpl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_algorithms.test_param_expl">
+<code class="sig-name descname">test_param_expl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">linear_policy</span></em>, <em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">algo_class</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_param_expl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_param_expl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_algorithms.test_snapshots_notmeta">
+<code class="sig-name descname">test_snapshots_notmeta</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em>, <em class="sig-param"><span class="n">algo_class</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_snapshots_notmeta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_snapshots_notmeta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_algorithms.test_soft_update">
+<code class="sig-name descname">test_soft_update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">module</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_soft_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_soft_update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_algorithms.test_spota_ppo">
+<code class="sig-name descname">test_spota_ppo</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">spota_hparam</span></em>, <em class="sig-param"><span class="n">ex_dir</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_spota_ppo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_spota_ppo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_algorithms.test_svpg">
+<code class="sig-name descname">test_svpg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">linear_policy</span></em>, <em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">actor_hparam</span></em>, <em class="sig-param"><span class="n">value_fcn_hparam</span></em>, <em class="sig-param"><span class="n">critic_hparam</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_svpg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_svpg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_algorithms.test_sysidasrl">
+<code class="sig-name descname">test_sysidasrl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">num_eval_rollouts</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_sysidasrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_sysidasrl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_algorithms.test_training_parameter_exploring">
+<code class="sig-name descname">test_training_parameter_exploring</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">algo</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em>, <em class="sig-param"><span class="n">ex_dir</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_training_parameter_exploring"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_training_parameter_exploring" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 <div class="section" id="module-tests.test_domain_randomization">
 <span id="test-domain-randomization"></span><h2>test_domain_randomization<a class="headerlink" href="#module-tests.test_domain_randomization" title="Permalink to this headline">¶</a></h2>
@@ -545,8 +615,18 @@
 <dd></dd></dl>
 
 </div>
-<div class="section" id="test-logger">
-<h2>test_logger<a class="headerlink" href="#test-logger" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-tests.test_logger">
+<span id="test-logger"></span><h2>test_logger<a class="headerlink" href="#module-tests.test_logger" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="tests.test_logger.test_experiment">
+<code class="sig-name descname">test_experiment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_logger.html#test_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_logger.test_experiment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_logger.test_save_and_laod_yaml">
+<code class="sig-name descname">test_save_and_laod_yaml</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_logger.html#test_save_and_laod_yaml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_logger.test_save_and_laod_yaml" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 <div class="section" id="module-tests.test_plotting">
 <span id="test-plotting"></span><h2>test_plotting<a class="headerlink" href="#module-tests.test_plotting" title="Permalink to this headline">¶</a></h2>
@@ -764,11 +844,160 @@
 <dd></dd></dl>
 
 </div>
-<div class="section" id="test-rollout-result">
-<h2>test_rollout_result<a class="headerlink" href="#test-rollout-result" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-tests.test_rollout_result">
+<span id="test-rollout-result"></span><h2>test_rollout_result<a class="headerlink" href="#module-tests.test_rollout_result" title="Permalink to this headline">¶</a></h2>
+<p>NOTE: This file is not using to.testing.assert_allclose because most methods need to work for both torch and numpy.</p>
+<dl class="py class">
+<dt id="tests.test_rollout_result.DummyNT">
+<em class="property">class </em><code class="sig-name descname">DummyNT</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">part1</span></em>, <em class="sig-param"><span class="n">part2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_rollout_result.html#DummyNT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_rollout_result.DummyNT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py method">
+<dt id="tests.test_rollout_result.DummyNT.part1">
+<em class="property">property </em><code class="sig-name descname">part1</code><a class="headerlink" href="#tests.test_rollout_result.DummyNT.part1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tests.test_rollout_result.DummyNT.part2">
+<em class="property">property </em><code class="sig-name descname">part2</code><a class="headerlink" href="#tests.test_rollout_result.DummyNT.part2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_rollout_result.test_add_data">
+<code class="sig-name descname">test_add_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_format</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_rollout_result.html#test_add_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_rollout_result.test_add_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_rollout_result.test_advantage_calculation">
+<code class="sig-name descname">test_advantage_calculation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">linear_policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_rollout_result.html#test_advantage_calculation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_rollout_result.test_advantage_calculation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_rollout_result.test_concat">
+<code class="sig-name descname">test_concat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_format</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_rollout_result.html#test_concat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_rollout_result.test_concat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_rollout_result.test_convert">
+<code class="sig-name descname">test_convert</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other_format</span></em>, <em class="sig-param"><span class="n">tensor_type</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_rollout_result.html#test_convert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_rollout_result.test_convert" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_rollout_result.test_create">
+<code class="sig-name descname">test_create</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_format</span></em>, <em class="sig-param"><span class="n">tensor_type</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_rollout_result.html#test_create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_rollout_result.test_create" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_rollout_result.test_create_rew_only">
+<code class="sig-name descname">test_create_rew_only</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_rollout_result.html#test_create_rew_only"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_rollout_result.test_create_rew_only" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_rollout_result.test_namedtuple">
+<code class="sig-name descname">test_namedtuple</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_format</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_rollout_result.html#test_namedtuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_rollout_result.test_namedtuple" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_rollout_result.test_pickle">
+<code class="sig-name descname">test_pickle</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_format</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_rollout_result.html#test_pickle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_rollout_result.test_pickle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_rollout_result.test_replay_memory">
+<code class="sig-name descname">test_replay_memory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">capacity</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_rollout_result.html#test_replay_memory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_rollout_result.test_replay_memory" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_rollout_result.test_slice">
+<code class="sig-name descname">test_slice</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sls</span></em>, <em class="sig-param"><span class="n">data_format</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_rollout_result.html#test_slice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_rollout_result.test_slice" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_rollout_result.test_split_multi">
+<code class="sig-name descname">test_split_multi</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_format</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_rollout_result.html#test_split_multi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_rollout_result.test_split_multi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_rollout_result.test_step_iter">
+<code class="sig-name descname">test_step_iter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_format</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_rollout_result.html#test_step_iter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_rollout_result.test_step_iter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_rollout_result.test_truncate_rollouts">
+<code class="sig-name descname">test_truncate_rollouts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">num_real_ros</span></em>, <em class="sig-param"><span class="n">num_sim_ros</span></em>, <em class="sig-param"><span class="n">max_real_steps</span></em>, <em class="sig-param"><span class="n">max_sim_steps</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_rollout_result.html#test_truncate_rollouts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_rollout_result.test_truncate_rollouts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
-<div class="section" id="test-sampling">
-<h2>test_sampling<a class="headerlink" href="#test-sampling" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-tests.test_sampling">
+<span id="test-sampling"></span><h2>test_sampling<a class="headerlink" href="#module-tests.test_sampling" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="tests.test_sampling.test_bootsrapping">
+<code class="sig-name descname">test_bootsrapping</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_sampling.html#test_bootsrapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_sampling.test_bootsrapping" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_sampling.test_cuda_sampling_w_dr">
+<code class="sig-name descname">test_cuda_sampling_w_dr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_bob</span></em>, <em class="sig-param"><span class="n">bob_pert</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_sampling.html#test_cuda_sampling_w_dr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_sampling.test_cuda_sampling_w_dr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_sampling.test_param_expl_sampler">
+<code class="sig-name descname">test_param_expl_sampler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_bob</span></em>, <em class="sig-param"><span class="n">bob_pert</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_sampling.html#test_param_expl_sampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_sampling.test_param_expl_sampler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_sampling.test_reparametrization_trick">
+<code class="sig-name descname">test_reparametrization_trick</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mean</span></em>, <em class="sig-param"><span class="n">cov</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_sampling.html#test_reparametrization_trick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_sampling.test_reparametrization_trick" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_sampling.test_rollout_wo_exploration">
+<code class="sig-name descname">test_rollout_wo_exploration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_sampling.html#test_rollout_wo_exploration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_sampling.test_rollout_wo_exploration" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_sampling.test_rollout_wo_policy">
+<code class="sig-name descname">test_rollout_wo_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_sampling.html#test_rollout_wo_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_sampling.test_rollout_wo_policy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_sampling.test_sample_from_unit_sphere_surface">
+<code class="sig-name descname">test_sample_from_unit_sphere_surface</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_dim</span></em>, <em class="sig-param"><span class="n">method</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_sampling.html#test_sample_from_unit_sphere_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_sampling.test_sample_from_unit_sphere_surface" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_sampling.test_sampler_collect">
+<code class="sig-name descname">test_sampler_collect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_threads</span></em>, <em class="sig-param"><span class="n">min_samples</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_sampling.html#test_sampler_collect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_sampling.test_sampler_collect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_sampling.test_sampler_collect_minrun">
+<code class="sig-name descname">test_sampler_collect_minrun</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_threads</span></em>, <em class="sig-param"><span class="n">min_samples</span></em>, <em class="sig-param"><span class="n">min_runs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_sampling.html#test_sampler_collect_minrun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_sampling.test_sampler_collect_minrun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_sampling.test_sampler_pool">
+<code class="sig-name descname">test_sampler_pool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_sampling.html#test_sampler_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_sampling.test_sampler_pool" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_sampling.test_select_cvar">
+<code class="sig-name descname">test_select_cvar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">epsilon</span></em>, <em class="sig-param"><span class="n">num_ro</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_sampling.html#test_select_cvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_sampling.test_select_cvar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_sampling.test_sequences">
+<code class="sig-name descname">test_sequences</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sequence</span></em>, <em class="sig-param"><span class="n">x_init</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_sampling.html#test_sequences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_sampling.test_sequences" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_sampling.test_to_format">
+<code class="sig-name descname">test_to_format</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_type</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_sampling.html#test_to_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_sampling.test_to_format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 <div class="section" id="module-tests.test_spaces">
 <span id="test-spaces"></span><h2>test_spaces<a class="headerlink" href="#module-tests.test_spaces" title="Permalink to this headline">¶</a></h2>
@@ -843,8 +1072,43 @@
 <dd></dd></dl>
 
 </div>
-<div class="section" id="test-step-logger">
-<h2>test_step_logger<a class="headerlink" href="#test-step-logger" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-tests.test_step_logger">
+<span id="test-step-logger"></span><h2>test_step_logger<a class="headerlink" href="#module-tests.test_step_logger" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="tests.test_step_logger.test_consistent_key_order">
+<code class="sig-name descname">test_consistent_key_order</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_step_logger.html#test_consistent_key_order"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_step_logger.test_consistent_key_order" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_step_logger.test_csv_logger_serializer">
+<code class="sig-name descname">test_csv_logger_serializer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tmpdir</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_step_logger.html#test_csv_logger_serializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_step_logger.test_csv_logger_serializer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_step_logger.test_empty_step_skip">
+<code class="sig-name descname">test_empty_step_skip</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_step_logger.html#test_empty_step_skip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_step_logger.test_empty_step_skip" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_step_logger.test_first_step">
+<code class="sig-name descname">test_first_step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_step_logger.html#test_first_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_step_logger.test_first_step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_step_logger.test_late_new_key_error">
+<code class="sig-name descname">test_late_new_key_error</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_step_logger.html#test_late_new_key_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_step_logger.test_late_new_key_error" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_step_logger.test_prefix">
+<code class="sig-name descname">test_prefix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_step_logger.html#test_prefix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_step_logger.test_prefix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_step_logger.test_values">
+<code class="sig-name descname">test_values</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_step_logger.html#test_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_step_logger.test_values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 <div class="section" id="module-tests.test_tasks">
 <span id="test-tasks"></span><h2>test_tasks<a class="headerlink" href="#module-tests.test_tasks" title="Permalink to this headline">¶</a></h2>

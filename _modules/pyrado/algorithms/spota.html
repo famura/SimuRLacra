@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.algorithms.spota &mdash; Pyrado 0.1 documentation</title>
+  <title>pyrado.algorithms.spota &mdash; Pyrado 0.2 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -88,8 +88,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/algorithm.html">How to create an algorithm</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package Overview:</span></p>
 <ul>
@@ -366,7 +367,7 @@
 <span class="sd">        .. note:: The UCBOG is equal to zero if all optimality gap samples are negative.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ucbog</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ucbog</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">:</span>
-            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;UCBOG is below specified threshold. (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ucbog</span><span class="p">,</span><span class="si">}</span><span class="s1"> &lt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;UCBOG is below specified threshold: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ucbog</span><span class="si">}</span><span class="s1"> &lt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
@@ -394,26 +395,12 @@
 
 <span class="sd">        :param nc: number of domains used for training the candidate solution</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmstart_cand</span><span class="p">:</span>
-            <span class="c1"># Create a new candidate by re-initializing the parameters</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">init_param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cand_policy_param_init</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="p">,</span> <span class="n">ActorCritic</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">value_fcn</span><span class="o">.</span><span class="n">init_param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cand_critic_param_init</span><span class="p">)</span>
-            <span class="n">print_cbt</span><span class="p">(</span><span class="s1">&#39;Created a new candidate solution.&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span>
-
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmstart_cand</span><span class="p">:</span>
-            <span class="c1"># Continue from the previous iteration</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span>
-                <span class="n">to</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s1">_policy_cand.pt&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
-            <span class="p">)</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="p">,</span> <span class="n">ActorCritic</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">value_fcn</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span>
-                    <span class="n">to</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s1">_valuefcn_cand.pt&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
-                <span class="p">)</span>
-            <span class="n">print_cbt</span><span class="p">(</span><span class="s1">&#39;Initialized the candidate solution with the previously trained candidate.&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Faulty joint configuration of curr_iter and warmstart_cand!&#39;</span><span class="p">)</span>
+        <span class="c1"># Do a warm start if desired</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">init_modules</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warmstart_cand</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;cand&#39;</span><span class="p">,</span>
+            <span class="n">policy_param_init</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cand_policy_param_init</span><span class="p">,</span>
+            <span class="n">valuefcn_param_init</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cand_critic_param_init</span>
+        <span class="p">)</span>
 
         <span class="c1"># Sample sets of physics params xi_{1}, ..., xi_{nc}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_env_dr</span><span class="o">.</span><span class="n">fill_buffer</span><span class="p">(</span><span class="n">nc</span><span class="p">)</span>
@@ -426,6 +413,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reset candidate exploration noise.&#39;</span><span class="p">)</span>
 
+        <span class="n">pol_param_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="p">,</span> <span class="n">ActorCritic</span><span class="p">):</span>
             <span class="c1"># Set dropout and batch normalization layers to training mode</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">value_fcn</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
@@ -433,7 +421,6 @@
 
         <span class="c1"># Solve the (approx) stochastic program SP_nc for the sampled physics parameter sets</span>
         <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Iteration </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s1"> | Candidate solution</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">pol_param_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
             <span class="n">snapshot_mode</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">,</span> <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;cand&#39;</span><span class="p">)</span>
         <span class="p">)</span>
@@ -455,34 +442,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Loop to compute a distribution of optimality gaps via nG samples</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nG</span><span class="p">):</span>
-            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Iteration </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s1"> | Reference solution </span><span class="si">{</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s1"> of </span><span class="si">{</span><span class="n">nG</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
-                      <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmstart_refs</span><span class="p">:</span>
-                <span class="c1"># Create a new reference policy by re-initializing its parameters</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">init_param</span><span class="p">()</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Iteration </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s1"> | Reference solution </span><span class="si">{</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s1"> of </span><span class="si">{</span><span class="n">nG</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-                <span class="c1"># Create a new value function by re-initializing its parameters</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="p">,</span> <span class="n">ActorCritic</span><span class="p">):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">value_fcn</span><span class="o">.</span><span class="n">init_param</span><span class="p">()</span>
-
-                <span class="n">print_cbt</span><span class="p">(</span><span class="s1">&#39;Created a new reference solution.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span>
-
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># Continue from the candidate&#39;s policy of the current iteration</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span>
-                    <span class="n">to</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s1">_policy_cand.pt&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
-                <span class="p">)</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-                    <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The reference policy&#39;s parameters are not equal to the candidate&#39;s after loading them!&quot;</span>
-                         <span class="s2">&quot;This can be explained by snapshot_mode=&#39;best&#39;&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
-
-                <span class="c1"># Continue from the candidate&#39;s value function of the current iteration</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="p">,</span> <span class="n">ActorCritic</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="p">,</span> <span class="n">ActorCritic</span><span class="p">):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">value_fcn</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span>
-                        <span class="n">to</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s1">_valuefcn_cand.pt&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
-                    <span class="p">)</span>
-
-                <span class="n">print_cbt</span><span class="p">(</span><span class="s1">&#39;Initialized the reference solution with the previously trained candidate solution.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span>
+            <span class="c1"># Do a warm start if desired</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">init_modules</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">warmstart_refs</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;cand&#39;</span><span class="p">,</span>
+                <span class="n">policy_param_init</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cand_policy_param_init</span><span class="p">,</span>
+                <span class="n">valuefcn_param_init</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cand_critic_param_init</span>
+            <span class="p">)</span>
 
             <span class="c1"># Sample new sets of physics params xi_{k,1}, ..., xi_{k,nr}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_env_dr</span><span class="o">.</span><span class="n">fill_buffer</span><span class="p">(</span><span class="n">nr</span><span class="p">)</span>
@@ -495,13 +462,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
             <span class="n">print_cbt</span><span class="p">(</span><span class="s1">&#39;Reset reference exploration noise.&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span>
 
+            <span class="n">pol_param_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="p">,</span> <span class="n">ActorCritic</span><span class="p">):</span>
                 <span class="c1"># Set dropout and batch normalization layers to training mode</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">value_fcn</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
                 <span class="n">critic_param_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">value_fcn</span><span class="o">.</span><span class="n">param_values</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
 
             <span class="c1"># Solve the (approx) stochastic program SP_n for the samples physics parameter sets</span>
-            <span class="n">pol_param_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
                 <span class="n">snapshot_mode</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">,</span> <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;ref_</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="p">)</span>
@@ -553,7 +520,7 @@
 
         <span class="c1"># Loop over all reference solutions</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nG</span><span class="p">):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Estimating the UCBOG | Reference </span><span class="si">{</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s1"> of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nG</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Estimating the UCBOG | Reference </span><span class="si">{</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s1"> of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nG</span><span class="si">}</span><span class="s1"> ...&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">)</span>
             <span class="c1"># Load the domain parameters corresponding to the k-th reference solution</span>
             <span class="n">env_params_ref</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s1">_env_params_ref_</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">.pkl&#39;</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_env_dr</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">env_params_ref</span>
@@ -668,8 +635,8 @@
         <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># This algorithm instance is not a subroutine of another algorithm</span>
             <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="si">}</span><span class="s1">_diffs.npy&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">Gn_diffs</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;final&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;cand&#39;</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;final&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;refs&#39;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;cand&#39;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;refs&#39;</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> is not supposed be run as a subroutine!&#39;</span><span class="p">)</span></div>
 
@@ -679,8 +646,8 @@
 
         <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># This algorithm instance is not a subroutine of another algorithm</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">ld</span><span class="p">,</span> <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;final&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;cand&#39;</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">ld</span><span class="p">,</span> <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;final&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;refs&#39;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_cand</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">ld</span><span class="p">,</span> <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;cand&#39;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn_refs</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">ld</span><span class="p">,</span> <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;refs&#39;</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> is not supposed be run as a subroutine!&#39;</span><span class="p">)</span></div></div>
 </pre></div>

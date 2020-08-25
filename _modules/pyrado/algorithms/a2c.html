@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.algorithms.a2c &mdash; Pyrado 0.1 documentation</title>
+  <title>pyrado.algorithms.a2c &mdash; Pyrado 0.2 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -88,8 +88,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/algorithm.html">How to create an algorithm</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package Overview:</span></p>
 <ul>
@@ -310,7 +311,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Policy, value function, and entropy losses</span>
         <span class="n">policy_loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">adv</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">*</span><span class="n">log_probs</span><span class="p">)</span>
-        <span class="n">value_fcn_loss</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">v_targ</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span> <span class="o">-</span> <span class="n">v_pred</span><span class="o">.</span><span class="n">cpu</span><span class="p">(),</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">value_fcn_loss</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">v_targ</span> <span class="o">-</span> <span class="n">v_pred</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>  <span class="c1"># former v_targ.cpu() - v_pred.cpu()</span>
         <span class="n">entropy_mean</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expl_strat</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">get_entropy</span><span class="p">())</span>
 
         <span class="c1"># Return the combined loss</span>
@@ -387,10 +388,10 @@
             <span class="n">loss_after</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_fcn</span><span class="p">(</span><span class="n">log_probs_new</span><span class="p">,</span> <span class="n">adv</span><span class="p">,</span> <span class="n">v_pred</span><span class="p">,</span> <span class="n">v_targ</span><span class="p">)</span>
             <span class="n">kl_avg</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
                 <span class="n">kl_divergence</span><span class="p">(</span><span class="n">act_distr_old</span><span class="p">,</span> <span class="n">act_distr_new</span><span class="p">))</span>  <span class="c1"># mean seeking a.k.a. inclusive KL</span>
-            <span class="n">explvar</span> <span class="o">=</span> <span class="n">explained_var</span><span class="p">(</span><span class="n">v_pred</span><span class="o">.</span><span class="n">cpu</span><span class="p">(),</span> <span class="n">v_targ</span><span class="o">.</span><span class="n">cpu</span><span class="p">())</span>  <span class="c1"># values close to 1 are desired</span>
+            <span class="n">explvar</span> <span class="o">=</span> <span class="n">explained_var</span><span class="p">(</span><span class="n">v_pred</span><span class="p">,</span> <span class="n">v_targ</span><span class="p">)</span>  <span class="c1"># values close to 1 are desired</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;loss after&#39;</span><span class="p">,</span> <span class="n">loss_after</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;KL(old_new)&#39;</span><span class="p">,</span> <span class="n">kl_avg</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;explained var&#39;</span><span class="p">,</span> <span class="n">explvar</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;explained var&#39;</span><span class="p">,</span> <span class="n">explvar</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
 
         <span class="n">ent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expl_strat</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">get_entropy</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;avg expl strat std&#39;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expl_strat</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">std</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>

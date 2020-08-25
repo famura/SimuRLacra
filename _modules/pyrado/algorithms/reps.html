@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.algorithms.reps &mdash; Pyrado 0.1 documentation</title>
+  <title>pyrado.algorithms.reps &mdash; Pyrado 0.2 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.1
+                0.2
               </div>
             
           
@@ -88,8 +88,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/algorithm.html">How to create an algorithm</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package Overview:</span></p>
 <ul>
@@ -212,6 +213,7 @@
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
 
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.parameter_exploring</span> <span class="kn">import</span> <span class="n">ParameterExploring</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.sysid_as_rl</span> <span class="kn">import</span> <span class="n">DomainDistrParamPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
 <span class="kn">from</span> <span class="nn">pyrado.exploration.stochastic_params</span> <span class="kn">import</span> <span class="n">NormalParamNoise</span><span class="p">,</span> <span class="n">SymmParamExplStrat</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
@@ -271,7 +273,7 @@
 <span class="sd">        :param grad_free_optim: use a derivative free optimizer (e.g. golden section search) or a SGD-based optimizer</span>
 <span class="sd">        :param lr_dual: learning rate for the dual&#39;s optimizer (ignored if `grad_free_optim = True`)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">LinearPolicy</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="p">(</span><span class="n">LinearPolicy</span><span class="p">,</span> <span class="n">DomainDistrParamPolicy</span><span class="p">)):</span>
             <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;REPS was designed for linear policies.&#39;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
 
         <span class="c1"># Call ParameterExploring&#39;s constructor</span>
@@ -485,7 +487,7 @@
         <span class="n">kl_e</span> <span class="o">=</span> <span class="n">kl_divergence</span><span class="p">(</span><span class="n">distr_new</span><span class="p">,</span> <span class="n">distr_old</span><span class="p">)</span>  <span class="c1"># mode seeking a.k.a. exclusive KL</span>
         <span class="n">kl_i</span> <span class="o">=</span> <span class="n">kl_divergence</span><span class="p">(</span><span class="n">distr_old</span><span class="p">,</span> <span class="n">distr_new</span><span class="p">)</span>  <span class="c1"># mean seeking a.k.a. inclusive KL</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;min expl strat std&#39;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">std</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;avg expl strat std&#39;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">std</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;avg expl strat std&#39;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">std</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;max expl strat std&#39;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">std</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;expl strat entropy&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">get_entropy</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;KL(new_old)&#39;</span><span class="p">,</span> <span class="n">kl_e</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
