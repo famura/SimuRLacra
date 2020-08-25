@@ -214,6 +214,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.ball_on_beam</span> <span class="kn">import</span> <span class="n">BallOnBeamSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.pendulum</span> <span class="kn">import</span> <span class="n">PendulumSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_ball_balancer</span> <span class="kn">import</span> <span class="n">QBallBalancerSim</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_cartpole</span> <span class="kn">import</span> <span class="n">QCartPoleStabSim</span><span class="p">,</span> <span class="n">QCartPoleSwingUpSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_qube</span> <span class="kn">import</span> <span class="n">QQubeSwingUpSim</span><span class="p">,</span> <span class="n">QQubeStabSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.adn</span> <span class="kn">import</span> <span class="n">ADNPolicy</span><span class="p">,</span> <span class="n">pd_cubic</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.dummy</span> <span class="kn">import</span> <span class="n">DummyPolicy</span><span class="p">,</span> <span class="n">IdlePolicy</span>
@@ -315,12 +316,12 @@
 
 <div class="viewcode-block" id="default_qcpst"><a class="viewcode-back" href="../../tests.html#tests.conftest.default_qcpst">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">default_qcpst</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">QBallBalancerSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">QCartPoleStabSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="default_qcpsu"><a class="viewcode-back" href="../../tests.html#tests.conftest.default_qcpsu">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">default_qcpsu</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">QBallBalancerSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.002</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">8000</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">QCartPoleSwingUpSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.002</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">8000</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="default_qqst"><a class="viewcode-back" href="../../tests.html#tests.conftest.default_qqst">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">)</span>

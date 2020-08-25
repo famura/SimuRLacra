@@ -235,7 +235,7 @@ instances are deterministic. The exploration is handled separately (see <cite>Py
 </pre></div>
 </div>
 <p>Specify the algorithm you want to use for learning the policy parameters.
-For deterministic sampling, you need to set <cite>num_sampler_envs=1</cite>. If <cite>num_sampler_envs&gt;1</cite>, PyTorch’s multiprocessing
+For deterministic sampling, you need to set <cite>num_workers=1</cite>. If <cite>num_workers&gt;1</cite>, PyTorch’s multiprocessing
 library will be used to parallelize sampling from the environment on the CPU. The resulting behavior is non-deterministic,
 i.e. even for the same random seed, you will get different results.
 The algorithms can be categorized in two different types: one type randomizes the action every step (their exploration
@@ -248,7 +248,7 @@ algorithm has different hyper-parameters. However, they all use the same <cite>r
     <span class="n">num_rollouts</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
     <span class="n">expl_factor</span><span class="o">=</span><span class="mf">1.1</span><span class="p">,</span>
     <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>
-    <span class="n">num_sampler_envs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">algo</span> <span class="o">=</span> <span class="n">HCNormal</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="o">**</span><span class="n">algo_hparam</span><span class="p">)</span>
 </pre></div>
