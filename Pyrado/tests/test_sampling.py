@@ -85,8 +85,8 @@ def _cb_test_collecthandler(G):
 @pytest.mark.parametrize(
     'min_samples', [10, 20, 40]
 )
-def test_sampler_collect(n_threads, min_samples):
-    pool = SamplerPool(n_threads)
+def test_sampler_collect(num_threads, min_samples):
+    pool = SamplerPool(num_threads)
 
     # Run the collector
     cr, cn = pool.run_collect(min_samples, _cb_test_collecthandler)
@@ -106,8 +106,8 @@ def test_sampler_collect(n_threads, min_samples):
 @pytest.mark.parametrize(
     'min_runs', [10, 20, 40]
 )
-def test_sampler_collect_minrun(n_threads, min_samples, min_runs):
-    pool = SamplerPool(n_threads)
+def test_sampler_collect_minrun(num_threads, min_samples, min_runs):
+    pool = SamplerPool(num_threads)
 
     # Run the collector
     cr, cn = pool.run_collect(min_samples, _cb_test_collecthandler, min_runs=min_runs)

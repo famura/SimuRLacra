@@ -41,7 +41,7 @@ from pyrado.utils.input_output import print_cbt
 
 
 class ActionStatistics(NamedTuple):
-    """
+    r"""
     act_distr: probability distribution at the given policy output values
     log_probs: $\log (p(act|obs, hidden))$ if hidden exists, else $\log (p(act|obs))$
     entropy: entropy of the action distribution

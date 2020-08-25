@@ -156,7 +156,7 @@ def render_mean_std(
     """
     ax.plot(x_grid, mean, label=curve_label, color=color)
     if show_legend_std:
-        ax.fill_between(x_grid, mean - num_stds*std, mean + num_stds*std, alpha=alpha, label=f'$\pm {num_stds}$ std')
+        ax.fill_between(x_grid, mean - num_stds*std, mean + num_stds*std, alpha=alpha, label=rf'$\pm {num_stds}$ std')
     else:
         ax.fill_between(x_grid, mean - num_stds*std, mean + num_stds*std, alpha=alpha)
     ax.set_xlabel(x_label)

@@ -137,7 +137,7 @@ def render_policy_params(policy: Policy,
     for i, (name, param) in enumerate(policy.named_parameters()):
         # Create current axis
         ax = plt.subplot(gs[i, 0])
-        ax.set_title(name.replace('_', '\_'))
+        ax.set_title(name.replace('_', r'\_'))
 
         # Convert the data and plot the image with the colors proportional to the parameters
         if param.ndim == 3:
