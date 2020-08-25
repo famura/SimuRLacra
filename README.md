@@ -389,3 +389,9 @@ During executing `setup_deps.py`, mujoco-py is set up as a git submodule and ins
 If this fails, have a look at the mujoco-py's [canonical dependencies](https://github.com/openai/mujoco-py/blob/master/Dockerfile). Try again. If you get an error mentioning `patchelf`, run ` conda install -c anaconda patchelf`
 
 If you get visualization errors related to `GLEW` (render causes a frozen window and crashes) add `export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libGLEW.so` to your `~/.bashrc` or `~/.zshrc`.
+
+### Shut down the mujoco-py message about the missing MuJoCo installation / license
+If you dont have a MuJoCo license, or MuJoCo is not installed on zour machine, mujoco-py will print an error message. One way to avoid this would be to not install mujoco-py by default. However, this would create even more options above. Thus, we will just fool mujoco-py's checker by creating a fake directory and an empty license file.
+```
+mkdir /$HOME/.mujoco/mujoco200 -p && touch /$HOME/.mujoco/mjkey.txt
+```
