@@ -90,8 +90,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="examples/algorithm.html">How to create an algorithm</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package Overview:</span></p>
 <ul class="current">
@@ -230,7 +231,7 @@
 <span id="action-noise"></span><h2>action_noise<a class="headerlink" href="#module-pyrado.environment_wrappers.action_noise" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.environment_wrappers.action_noise.GaussianActNoiseWrapper">
-<em class="property">class </em><code class="sig-name descname">GaussianActNoiseWrapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wrapped_env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span></em>, <em class="sig-param"><span class="n">noise_mean</span><span class="p">:</span> <span class="n">numpy.ndarray</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">noise_std</span><span class="p">:</span> <span class="n">numpy.ndarray</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/action_noise.html#GaussianActNoiseWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environment_wrappers.action_noise.GaussianActNoiseWrapper" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">GaussianActNoiseWrapper</code><span class="sig-paren">(</span><em class="sig-param">wrapped_env: pyrado.environments.base.Env</em>, <em class="sig-param">noise_mean: [&lt;class 'float'&gt;</em>, <em class="sig-param">&lt;class 'numpy.ndarray'&gt;] = None</em>, <em class="sig-param">noise_std: [&lt;class 'float'&gt;</em>, <em class="sig-param">&lt;class 'numpy.ndarray'&gt;] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/action_noise.html#GaussianActNoiseWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environment_wrappers.action_noise.GaussianActNoiseWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.base.EnvWrapperAct" title="pyrado.environment_wrappers.base.EnvWrapperAct"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.base.EnvWrapperAct</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Environment wrapper which adds normally distributed i.i.d. noise to all action.
 This noise is independent for the potentially applied action-based exploration strategy.</p>

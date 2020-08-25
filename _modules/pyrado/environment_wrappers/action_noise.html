@@ -88,8 +88,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/algorithm.html">How to create an algorithm</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package Overview:</span></p>
 <ul>
@@ -216,11 +217,11 @@
 <span class="sd">    This noise is independent for the potentially applied action-based exploration strategy.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapped_env</span><span class="p">:</span> <span class="n">Env</span><span class="p">,</span> <span class="n">noise_mean</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">noise_std</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapped_env</span><span class="p">:</span> <span class="n">Env</span><span class="p">,</span> <span class="n">noise_mean</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">noise_std</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
-<span class="sd">        :param wrapped_env: environment to wrap around (only makes sense from simulation environments)</span>
+<span class="sd">        :param wrapped_env: environment to wrap around (only makes sense for simulations)</span>
 <span class="sd">        :param noise_mean: mean of the noise distribution</span>
 <span class="sd">        :param noise_std: standard deviation of the noise distribution</span>
 <span class="sd">        &quot;&quot;&quot;</span>
