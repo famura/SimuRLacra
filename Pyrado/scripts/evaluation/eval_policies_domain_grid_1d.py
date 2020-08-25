@@ -30,10 +30,9 @@
 Script to evaluate multiple policies in one environment using a range (1D grid) of domain parameters
 """
 import os.path as osp
-import torch as to
 import numpy as np
 import pandas as pd
-import pprint
+from prettyprinter import pprint
 
 import pyrado
 from pyrado.domain_randomization.utils import param_grid
@@ -225,7 +224,7 @@ if __name__ == '__main__':
         quantile5_ret=df.groupby('policy').quantile(q=0.05)['ret'].to_dict(),
         quantile95_ret=df.groupby('policy').quantile(q=0.95)['ret'].to_dict()
     )
-    pprint.pprint(metrics)
+    pprint(metrics, indnet=4)
 
     # Create subfolder and save
     save_dir = setup_experiment('multiple_policies', args.env_name, varied_param_key, base_dir=pyrado.EVAL_DIR)

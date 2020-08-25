@@ -33,10 +33,9 @@ NOTE: the domain parameters have to be scalars, otherwise the generation of the 
 import datetime
 import os
 import os.path as osp
-import torch as to
 import numpy as np
 import pandas as pd
-import pprint
+from prettyprinter import pprint
 
 from pyrado.domain_randomization.utils import param_grid
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlateSim
@@ -139,7 +138,7 @@ if __name__ == '__main__':
         max_ret=df['ret'].max(),
         std_ret=df['ret'].std()
     )
-    pprint.pprint(metrics)
+    pprint(metrics, indent=4)
 
     # Create subfolder and save
     timestamp = datetime.datetime.now()

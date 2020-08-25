@@ -292,7 +292,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
 
             # Print to console
             if mode.text:
-                print("step: {:3}  |  r: {:1.3f}  |  a: {}  |  s_t+1: {}".format(
+                print("step: {:3}  |  r_t: {: 1.3f}  |  a_t: {}\t |  s_t+1: {}".format(
                     self._curr_step,
                     self._curr_rew,
                     self._curr_act,

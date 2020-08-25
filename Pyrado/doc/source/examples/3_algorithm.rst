@@ -11,6 +11,7 @@ policy parameters and inherits from `ParameterExploring` (which also inherits fr
 Start by creating a new class which inherits from `Algorithm` or `ParameterExploring`.
 
 .. code-block:: python
+
     from typing import Sequence
 
     import pyrado

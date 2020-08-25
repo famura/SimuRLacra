@@ -40,11 +40,11 @@ class GaussianActNoiseWrapper(EnvWrapperAct, Serializable):
     This noise is independent for the potentially applied action-based exploration strategy.
     """
 
-    def __init__(self, wrapped_env: Env, noise_mean: np.ndarray = None, noise_std: np.ndarray = None):
+    def __init__(self, wrapped_env: Env, noise_mean: [float, np.ndarray] = None, noise_std: [float, np.ndarray] = None):
         """
         Constructor
 
-        :param wrapped_env: environment to wrap around (only makes sense from simulation environments)
+        :param wrapped_env: environment to wrap around (only makes sense for simulations)
         :param noise_mean: mean of the noise distribution
         :param noise_std: standard deviation of the noise distribution
         """

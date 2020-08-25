@@ -33,8 +33,8 @@ import numpy as np
 import optuna
 import os
 import os.path as osp
-import pprint
 from matplotlib.ticker import MaxNLocator
+from prettyprinter import pprint
 
 from pyrado.logger.experiment import ask_for_experiment
 from matplotlib import pyplot as plt
@@ -62,10 +62,9 @@ if __name__ == '__main__':
     values = -1*values[values != np.array(None)]  # broken trials return None
 
     # Print the best parameter configuration
-    pp = pprint.PrettyPrinter(indent=4)
     print_cbt(f'Best parameter set (trial_{study.best_trial.number}) from study {study_name} with average return '
               f'{-study.best_value}', 'g', bright=True)
-    pp.pprint(study.best_params)
+    pprint(study.best_params, indent=4)
 
     # Plot a histogram
     fig, ax = plt.subplots(1, figsize=(8, 6))

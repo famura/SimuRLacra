@@ -210,7 +210,7 @@ class CatapultSim(SimEnv, Serializable):
         # Print to console
         if mode.text:
             if self._curr_step%render_step == 0 and self._curr_step > 0:  # skip the render before the first step
-                print("step: {:3}  |  r: {:1.3f}  |  a: {}  |  s_t+1: {}".format(
+                print("step: {:3}  |  r_t: {: 1.3f}  |  a_t: {}\t |  s_t+1: {}".format(
                     self._curr_step,
                     self._curr_rew,
                     self._curr_act,

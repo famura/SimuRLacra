@@ -31,7 +31,7 @@ Script to evaluate multiple policies in one environment using the nominal domain
 """
 import os.path as osp
 import pandas as pd
-import pprint
+from prettyprinter import pprint
 
 import pyrado
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
@@ -137,7 +137,7 @@ if __name__ == '__main__':
         max_ret=df.groupby('policy').max()['ret'].to_dict(),
         std_ret=df.groupby('policy').std()['ret'].to_dict()
     )
-    pprint.pprint(metrics)
+    pprint(metrics, indnet=4)
 
     # Create sub-folder and save
     save_dir = setup_experiment('multiple_policies', args.env_name, 'nominal', base_dir=pyrado.EVAL_DIR)

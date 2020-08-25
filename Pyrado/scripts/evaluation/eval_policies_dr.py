@@ -31,7 +31,7 @@ Script to evaluate multiple policies in a randomized environment
 """
 import os.path as osp
 import pandas as pd
-import pprint
+from prettyprinter import pprint
 
 import pyrado
 from pyrado.domain_randomization.default_randomizers import get_conservative_randomizer
@@ -138,7 +138,7 @@ if __name__ == '__main__':
         max_ret=df.groupby('policy').max()['ret'].to_dict(),
         std_ret=df.groupby('policy').std()['ret'].to_dict()
     )
-    pprint.pprint(metrics)
+    pprint(metrics, indnet=4)
 
     # Create subfolder and save
     save_dir = setup_experiment('multiple_policies', args.env_name, 'randomized', base_dir=pyrado.EVAL_DIR)

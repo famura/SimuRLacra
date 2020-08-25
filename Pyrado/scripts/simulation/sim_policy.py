@@ -29,7 +29,7 @@
 """
 Simulate (with animation) a rollout in an environment.
 """
-import pprint
+from prettyprinter import pprint
 
 import pyrado
 from pyrado.domain_randomization.utils import print_domain_params
@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
     if args.verbose:
         print('Hyper-parameters of the experiment')
-        pprint.pprint(kwout.get('hparams', 'No hyperparams found!'))
+        pprint(kwout.get('hparams', 'No hyper-parameters found!'))
 
     if args.remove_dr_wrappers:
         env = remove_all_dr_wrappers(env, verbose=True)
