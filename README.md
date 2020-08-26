@@ -219,8 +219,9 @@ conda activate pyrado
 Build both html documentations
 ```
 cd PATH_TO/SimuRLacra
-./build_doc.sh
+./build_docs.sh
 ```
+This will fail if you did not set up RcsPySim.
 
 RcsPySim
 ```
