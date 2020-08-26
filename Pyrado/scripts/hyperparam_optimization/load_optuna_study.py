@@ -36,6 +36,7 @@ import os.path as osp
 from matplotlib.ticker import MaxNLocator
 from prettyprinter import pprint
 
+import pyrado
 from pyrado.logger.experiment import ask_for_experiment
 from matplotlib import pyplot as plt
 from pyrado.utils.input_output import print_cbt
@@ -49,26 +50,33 @@ if __name__ == '__main__':
     study, study_name = None, None
     for file in os.listdir(ex_dir):
         if file.endswith('.db'):
-            study_name = file[:-3]  # we named the file like the study
+            study_name = file[:-3]  # the file is named like the study, just need to cut the ending
             storage = f'sqlite:////{osp.join(ex_dir, file)}'
             study = optuna.load_study(study_name, storage)
             break  # assuming there is only one database
 
     if study is None:
-        print_cbt('No study found!', 'r', bright=True)
+        pyrado.PathErr(msg='No Optuna study found!')
 
-    # Extract the values of all trials (optuna was set to solve a minimization problem)
-    values = np.array([t.value for t in study.trials])
-    values = -1*values[values != np.array(None)]  # broken trials return None
+    # Extract the values of all trials (Optuna was set to solve a minimization problem)
+    trials = [t for t in study.trials if t.value is not None]  # broken trials return None
+    values = np.array([t.value for t in trials])
+    idcs_best = values.argsort()[::-1]
 
-    # Print the best parameter configuration
-    print_cbt(f'Best parameter set (trial_{study.best_trial.number}) from study {study_name} with average return '
-              f'{-study.best_value}', 'g', bright=True)
+    # Print the best parameter configurations
+    print_cbt(f'The best parameter set of study {study_name} was found in trial_{study.best_trial.number} with value '
+              f'{study.best_value} (average return on independent test rollouts).', 'g', bright=True)
     pprint(study.best_params, indent=4)
+
+    for i in idcs_best[1:]:
+        if not input('Print next best trial? [y / any other] ').lower() == 'y':
+            break
+        print(f'Next best parameter set was found in trial_{i} with value {trials[i].value}')
+        pprint(trials[i].params, indent=4)
 
     # Plot a histogram
     fig, ax = plt.subplots(1, figsize=(8, 6))
-    n, bins, patches = plt.hist(values, len(study.trials), density=False)
+    n, bins, patches = plt.hist(values, len(trials), density=False)
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
     plt.title('Histogram of the Returns')
     plt.xlabel('return')
