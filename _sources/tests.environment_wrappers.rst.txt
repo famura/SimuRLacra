@@ -50,6 +50,15 @@ test\_action\_normalization
    :show-inheritance:
 
 
+test\_combination
+-----------------
+
+.. automodule:: tests.environment_wrappers.test_combination
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 test\_domain\_randomization
 ---------------------------
 
