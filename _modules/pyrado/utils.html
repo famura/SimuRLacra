@@ -212,19 +212,6 @@
 <span class="sd">    :return: name of the class of the given object</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span></div>
-
-
-<div class="viewcode-block" id="issequence"><a class="viewcode-back" href="../../utils.html#pyrado.utils.issequence">[docs]</a><span class="k">def</span> <span class="nf">issequence</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Check if an object is a sequence / an iterable.</span>
-
-<span class="sd">    .. note::</span>
-<span class="sd">        Using against `isinstance(obj, collections.Sequence)` yields `False` for some types like `set` and `dict`.</span>
-
-<span class="sd">    :param obj: any object</span>
-<span class="sd">    :return: flag if the object is a sequence / an iterable</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="s1">&#39;__len__&#39;</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

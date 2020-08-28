@@ -104,6 +104,15 @@ optimizers
    :show-inheritance:
 
 
+order
+-----
+
+.. automodule:: pyrado.utils.order
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 properties
 ----------
 

@@ -123,6 +123,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.nn_layers">nn_layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.normalizing">normalizing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.optimizers">optimizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.order">order</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.properties">properties</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.standardizing">standardizing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.tensor">tensor</a></li>
@@ -518,37 +519,6 @@ not pass functions directly, we pass a sting.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pyrado.utils.experiments.filter_los_by_lok">
-<code class="sig-name descname">filter_los_by_lok</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">strs</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">keys</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pyrado/utils/experiments.html#filter_los_by_lok"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.filter_los_by_lok" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter a list of strings by a list of key strings.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>strs</strong> – list of strings to filter</p></li>
-<li><p><strong>keys</strong> – key-strings to filter by</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list with unique elements of the input list which contain at least one of the keys</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.utils.experiments.get_immediate_subdirs">
-<code class="sig-name descname">get_immediate_subdirs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parent_dir</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#get_immediate_subdirs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.get_immediate_subdirs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get all 1st level subdirectories of a specified directory (i.e. a path)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>parent_dir</strong> – directory in which to look for subdirectories</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list of names of all 1st level subdirectories</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt id="pyrado.utils.experiments.load_experiment">
 <code class="sig-name descname">load_experiment</code><span class="sig-paren">(</span><em class="sig-param">ex_dir: str, args: Any = None) -&gt; ([&lt;class 'pyrado.environments.sim_base.SimEnv'&gt;, &lt;class 'pyrado.environment_wrappers.base.EnvWrapper'&gt;], &lt;class 'pyrado.policies.base.Policy'&gt;, typing.Union[dict, NoneType]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#load_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.load_experiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load the (training) environment and the policy.
@@ -577,7 +547,7 @@ properties, i.e. <cite>df.prop_abc</cite> instead of <cite>df[‘prop abc’]</c
 <dd class="field-odd"><p><strong>path</strong> – path to the CSV file</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>data structure (e.g. Pandas <cite>DataFrame</cite>)</p>
+<dd class="field-even"><p>Pandas <cite>DataFrame</cite> with replaced chars in columns</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1086,6 +1056,58 @@ Choosing <cite>axis=1</cite> and <cite>norm_order=1</cite> makes all columns of 
 </dd></dl>
 
 </div>
+<div class="section" id="module-pyrado.utils.order">
+<span id="order"></span><h2>order<a class="headerlink" href="#module-pyrado.utils.order" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pyrado.utils.order.filter_los_by_lok">
+<code class="sig-name descname">filter_los_by_lok</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">strs</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">keys</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pyrado/utils/order.html#filter_los_by_lok"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.order.filter_los_by_lok" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter a list of strings by a list of key strings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>strs</strong> – list of strings to filter</p></li>
+<li><p><strong>keys</strong> – key-strings to filter by</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list with unique elements of the input list which contain at least one of the keys</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.order.get_immediate_subdirs">
+<code class="sig-name descname">get_immediate_subdirs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parent_dir</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/order.html#get_immediate_subdirs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.order.get_immediate_subdirs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all 1st level subdirectories of a specified directory (i.e. a path)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>parent_dir</strong> – directory in which to look for subdirectories</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of names of all 1st level subdirectories</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.order.natural_sort">
+<code class="sig-name descname">natural_sort</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lst</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/order.html#natural_sort"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.order.natural_sort" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sort a list like a human would do. Normal list sort does  1, 10, 11, 2, 3. But this function yields 1, 2, 3, 10, 11.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://stackoverflow.com/questions/4836710/is-there-a-built-in-function-for-string-natural-sort">https://stackoverflow.com/questions/4836710/is-there-a-built-in-function-for-string-natural-sort</a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>lst</strong> – input list</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>alpha-numerically sorted list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 <div class="section" id="module-pyrado.utils.properties">
 <span id="properties"></span><h2>properties<a class="headerlink" href="#module-pyrado.utils.properties" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
@@ -1295,24 +1317,6 @@ When the property is first accessed, the function is called to compute the value
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>name of the class of the given object</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.utils.issequence">
-<code class="sig-name descname">issequence</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils.html#issequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.issequence" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if an object is a sequence / an iterable.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Using against <cite>isinstance(obj, collections.Sequence)</cite> yields <cite>False</cite> for some types like <cite>set</cite> and <cite>dict</cite>.</p>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>obj</strong> – any object</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>flag if the object is a sequence / an iterable</p>
 </dd>
 </dl>
 </dd></dl>

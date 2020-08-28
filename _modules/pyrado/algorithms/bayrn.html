@@ -229,6 +229,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.sampling.bootstrapping</span> <span class="kn">import</span> <span class="n">bootstrap_ci</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_sampler</span> <span class="kn">import</span> <span class="n">ParallelSampler</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.order</span> <span class="kn">import</span> <span class="n">natural_sort</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.math</span> <span class="kn">import</span> <span class="n">UnitCubeProjector</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.standardizing</span> <span class="kn">import</span> <span class="n">standardize</span>
@@ -423,7 +424,7 @@
         <span class="n">cands_values</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">num_init_cand</span><span class="p">)</span>
 
         <span class="c1"># Load all found candidates to save them into a single tensor</span>
-        <span class="n">found_cands</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>  <span class="c1"># the order is important since it determines the rows of the tensor</span>
+        <span class="n">found_cands</span> <span class="o">=</span> <span class="n">natural_sort</span><span class="p">(</span><span class="n">found_cands</span><span class="p">)</span>  <span class="c1"># the order is important since it determines the rows of the tensor</span>
         <span class="n">cands</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">to</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">found_cands</span><span class="p">])</span>
 
         <span class="c1"># Evaluate learned policies from random candidates on the target environment (real-world) system</span>
@@ -591,7 +592,7 @@
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">found_policies</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="c1"># Load all found candidates to save them into a single tensor</span>
-                <span class="n">found_cands</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>  <span class="c1"># the order is important since it determines the rows of the tensor</span>
+                <span class="n">found_cands</span> <span class="o">=</span> <span class="n">natural_sort</span><span class="p">(</span><span class="n">found_cands</span><span class="p">)</span>  <span class="c1"># the order is important since it determines the tensor&#39;s rows</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">cands</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">to</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ld</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">found_cands</span><span class="p">])</span>
                 <span class="n">to</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cands</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="s1">&#39;candidates.pt&#39;</span><span class="p">))</span>
 
@@ -630,7 +631,8 @@
                 <span class="n">found_evals</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">ld</span><span class="p">):</span>
                     <span class="n">found_evals</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;_returns_real.pt&#39;</span><span class="p">)]</span>
-                <span class="n">found_evals</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>  <span class="c1"># the order is important since it determines the rows of the tensor</span>
+                <span class="n">found_evals</span> <span class="o">=</span> <span class="n">natural_sort</span><span class="p">(</span>
+                    <span class="n">found_evals</span><span class="p">)</span>  <span class="c1"># the order is important since it determines the rows of the tensor</span>
 
                 <span class="c1"># Reconstruct candidates_values.pt</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">cands_values</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cands</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
