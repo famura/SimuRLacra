@@ -221,6 +221,15 @@ sysid\_as\_rl
    :show-inheritance:
 
 
+udr
+---
+
+.. automodule:: pyrado.algorithms.udr
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 utils
 -----
 
