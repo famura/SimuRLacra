@@ -27,18 +27,18 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Quanser Ball-Balancer environment using Proximal Policy Optimization.
+Train an agent to solve the Qube swing-up task using Uniform Domain Randomization.
 """
 import torch as to
-from numpy import pi
-from torch.optim import lr_scheduler as scheduler
 
-from pyrado.algorithms.ppo import PPO2
 from pyrado.algorithms.advantage import GAE
+from pyrado.algorithms.udr import UDR
 from pyrado.spaces import ValueFunctionSpace
-from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
+from pyrado.algorithms.ppo import PPO
+from pyrado.domain_randomization.default_randomizers import get_default_randomizer
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.environment_wrappers.observation_noise import GaussianObsNoiseWrapper
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.fnn import FNNPolicy
 from pyrado.utils.data_types import EnvSpec
@@ -46,64 +46,60 @@ from pyrado.utils.data_types import EnvSpec
 
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QBallBalancerSim.name, f'{PPO2.name}_{FNNPolicy.name}', 'obsnoise_actnorm', seed=1001)
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{UDR.name}_{FNNPolicy.name}', '100Hz', seed=1001)
 
     # Environment
-    env_hparams = dict(dt=1/500., max_steps=2500)
-    env = QBallBalancerSim(**env_hparams)
-    env = GaussianObsNoiseWrapper(env, noise_std=[1/180*pi, 1/180*pi, 0.0025, 0.0025,  # [rad, rad, m, m, ...
-                                                  2/180*pi, 2/180*pi, 0.05, 0.05])  # ... rad/s, rad/s, m/s, m/s]
+    env_hparams = dict(dt=1/100., max_steps=600)
+    env = QQubeSwingUpSim(**env_hparams)
     env = ActNormWrapper(env)
 
+    randomizer = get_default_randomizer(env)
+    env = DomainRandWrapperLive(env, randomizer)
+
     # Policy
-    policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
+    policy_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)
     policy = FNNPolicy(spec=env.spec, **policy_hparam)
 
     # Critic
-    value_fcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)
+    value_fcn_hparam = dict(hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
     value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
     critic_hparam = dict(
-        gamma=0.999,
-        lamda=0.98,
-        num_epoch=3,
-        batch_size=100,
-        lr=5e-4,
-        max_grad_norm=5.,
-        # lr_scheduler=scheduler.StepLR,
-        # lr_scheduler_hparam=dict(step_size=10, gamma=0.9)
-        # lr_scheduler=scheduler.ExponentialLR,
-        # lr_scheduler_hparam=dict(gamma=0.99)
+        gamma=0.9885,
+        lamda=0.9648,
+        num_epoch=2,
+        batch_size=60,
+        standardize_adv=False,
+        lr=5.792e-4,
+        max_grad_norm=1.,
     )
     critic = GAE(value_fcn, **critic_hparam)
 
-    # Algorithm
-    algo_hparam = dict(
-        max_iter=1000,
-        min_steps=30*env.max_steps,
+    # Subroutine
+    subrtn_hparam = dict(
+        max_iter=600,
+        min_steps=23*env.max_steps,
+        num_epoch=7,
+        eps_clip=0.0744,
+        batch_size=60,
+        std_init=0.9074,
+        lr=3.446e-04,
+        max_grad_norm=1.,
         num_workers=4,
-        num_epoch=3,
-        value_fcn_coeff=0.7,
-        entropy_coeff=1e-4,
-        eps_clip=0.1,
-        batch_size=100,
-        std_init=0.8,
-        lr=2e-4,
-        max_grad_norm=5.,
-        # lr_scheduler=scheduler.StepLR,
-        # lr_scheduler_hparam=dict(step_size=10, gamma=0.9)
-        # lr_scheduler=scheduler.ExponentialLR,
-        # lr_scheduler_hparam=dict(gamma=0.99)
     )
-    algo = PPO2(ex_dir, env, policy, critic, **algo_hparam)
+    subrtn = PPO(ex_dir, env, policy, critic, **subrtn_hparam)
+
+    # Algorithm
+    algo = UDR(env, subrtn)
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml([
         dict(env=env_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
-        dict(algo=algo_hparam, algo_name=algo.name)],
+        dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
+        dict(algo_name=algo.name)],
         ex_dir
     )
 
     # Jeeeha
-    algo.train(snapshot_mode='best', seed=ex_dir.seed)
+    algo.train(snapshot_mode='latest', seed=ex_dir.seed)

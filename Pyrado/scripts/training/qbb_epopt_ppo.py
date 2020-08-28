@@ -89,7 +89,7 @@ if __name__ == '__main__':
     critic = GAE(value_fcn, **critic_hparam)
 
     # Subroutine
-    algo_hparam = dict(
+    subrtn_hparam = dict(
         max_iter=1000,
         min_steps=30*env.max_steps,
         num_workers=4,
@@ -100,19 +100,19 @@ if __name__ == '__main__':
         lr=2e-4,
         # max_grad_norm=1.,
     )
-    ppo = PPO(ex_dir, env, policy, critic, **algo_hparam)
+    subrtn = PPO(ex_dir, env, policy, critic, **subrtn_hparam)
 
     # Meta-Algorithm
-    epopt_hparam = dict(skip_iter=100, epsilon=0.2, gamma=critic.gamma)
-    algo = EPOpt(env, ppo, **epopt_hparam)
+    algo_hparam = dict(skip_iter=100, epsilon=0.2, gamma=critic.gamma)
+    algo = EPOpt(env, subrtn, **algo_hparam)
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml([
         dict(env=env_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
-        dict(algo=algo_hparam, algo_name=algo.name),
-        dict(EPOpt=epopt_hparam)],
+        dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
+        dict(algo=algo_hparam, algo_name=algo.name)],
         ex_dir
     )
 

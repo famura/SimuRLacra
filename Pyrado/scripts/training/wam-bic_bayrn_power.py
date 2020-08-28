@@ -94,7 +94,7 @@ if __name__ == '__main__':
         expl_std_min=0.02,
         num_workers=12,
     )
-    power = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
+    subrtn = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
 
     # Algorithm
     bayrn_hparam = dict(
@@ -113,12 +113,12 @@ if __name__ == '__main__':
     save_list_of_dicts_to_yaml([
         dict(env=env_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
-        dict(subrtn=subrtn_hparam, subrtn_name=PoWER.name),
+        dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
         dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map)],
         ex_dir
     )
 
-    algo = BayRn(ex_dir, env_sim, env_real, subrtn=power, bounds=bounds, **bayrn_hparam)
+    algo = BayRn(ex_dir, env_sim, env_real, subrtn=subrtn, bounds=bounds, **bayrn_hparam)
 
     # Jeeeha
     algo.train(snapshot_mode='latest', seed=ex_dir.seed)

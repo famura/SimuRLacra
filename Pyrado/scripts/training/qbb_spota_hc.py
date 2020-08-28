@@ -86,7 +86,7 @@ if __name__ == '__main__':
     sr_cand = HCNormal(ex_dir, env, policy, **subrtn_hparam_cand)
     sr_refs = HCNormal(ex_dir, env, deepcopy(policy), **subrtn_hparam_refs)
 
-    spota_hparam = dict(
+    algo_hparam = dict(
         max_iter=10,
         alpha=0.05,
         beta=0.1,
@@ -103,14 +103,14 @@ if __name__ == '__main__':
         num_bs_reps=1000,
         studentized_ci=False,
     )
-    algo = SPOTA(ex_dir, env, sr_cand, sr_refs, **spota_hparam)
+    algo = SPOTA(ex_dir, env, sr_cand, sr_refs, **algo_hparam)
 
     # Save the environments and the hyper-parameters
     save_list_of_dicts_to_yaml([
         dict(env=env_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
-        dict(subrtn_name=HCNormal.name, subrtn_cand=subrtn_hparam_cand, subrtn_refs=subrtn_hparam_refs),
-        dict(algo=spota_hparam, algo_name=SPOTA.name)],
+        dict(subrtn_name=sr_cand.name, subrtn_cand=subrtn_hparam_cand, subrtn_refs=subrtn_hparam_refs),
+        dict(algo=algo_hparam, algo_name=algo.name)],
         ex_dir
     )
 

@@ -27,8 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Learn the domain parameter distribution of masses and lengths of the Quanser Qube while using a handcrafted
-randomization for the remaining domain parameters
+Train an agent to solve the Qube swing-up task using Bayesian Domain Randomization.
 """
 import torch as to
 

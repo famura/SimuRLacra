@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Quanser Qube environment using Simulation Optimization running Cross-Entropy Method.
+Train an agent to solve the Qube swing-up teask using Simulation Optimization running Cross-Entropy Method.
 """
 import torch as to
 
@@ -147,10 +147,10 @@ if __name__ == '__main__':
         dict(env=env_hparams, seed=ex_dir.seed),
         dict(behav_policy=behav_policy_hparam),
         dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
-        dict(subsubrtn_distr=subsubrtn_distr_hparam, subsubrtn_distr_name=CEM.name),
+        dict(subsubrtn_distr=subsubrtn_distr_hparam, subsubrtn_distr_name=subrtn_distr.name),
         dict(subrtn_distr=subrtn_hparam, subrtn_distr_name=SysIdByEpisodicRL.name, dp_map=dp_map),
-        dict(subrtn_policy=subrtn_policy_hparam, subrtn_policy_name=CEM.name),
-        dict(algo=algo_hparam, algo_name=SimOpt.name)],
+        dict(subrtn_policy=subrtn_policy_hparam, subrtn_policy_name=subrtn_policy.name),
+        dict(algo=algo_hparam, algo_name=algo.name)],
         ex_dir
     )
 

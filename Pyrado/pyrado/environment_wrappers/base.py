@@ -31,6 +31,7 @@ from abc import abstractmethod
 from init_args_serializer import Serializable
 
 import pyrado
+from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environments.base import Env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.spaces.base import Space
@@ -133,6 +134,10 @@ class EnvWrapper(Env, Serializable):
         """
         self._load_domain_param(param)
         self._wrapped_env.domain_param = param
+
+    @property
+    def randomizer(self) -> [DomainRandomizer, None]:
+        getattr(self._wrapped_env, 'randomizer', None)
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         """

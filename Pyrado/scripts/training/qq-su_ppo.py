@@ -27,37 +27,29 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Learn the domain parameter distribution of masses and lengths of the Quanser Qube while using a handcrafted
-randomization for the remaining domain parameters
+Train an agent to solve the Qube swing-up task using Proximal Policy Optimization.
 """
 import torch as to
 
 from pyrado.algorithms.advantage import GAE
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.algorithms.ppo import PPO
-from pyrado.domain_randomization.default_randomizers import get_default_randomizer
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-from pyrado.algorithms.bayrn import BayRn
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.fnn import FNNPolicy
-from pyrado.policies.rnn import LSTMPolicy, GRUPolicy
+from pyrado.policies.rnn import RNNPolicy, LSTMPolicy, GRUPolicy
 from pyrado.utils.data_types import EnvSpec
 
 
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'udr_{FNNPolicy.name}', '100Hz', seed=111)
-    # ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{PPO.name}_{FNNPolicy.name}', '100Hz', seed=111)
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{PPO.name}_{FNNPolicy.name}', '100Hz', seed=111)
 
     # Environment
     env_hparams = dict(dt=1/100., max_steps=600)
     env = QQubeSwingUpSim(**env_hparams)
     env = ActNormWrapper(env)
-
-    randomizer = get_default_randomizer(env)
-    env = DomainRandWrapperLive(env, randomizer)
 
     # Policy
     policy_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh, use_cuda=True)  # FNN
@@ -71,6 +63,8 @@ if __name__ == '__main__':
     value_fcn_hparam = dict(hidden_sizes=[16, 16], hidden_nonlin=to.tanh, use_cuda=True)  # FNN
     # value_fcn_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
     value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
+    # value_fcn = RNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
+    # value_fcn = LSTMPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
     # value_fcn = GRUPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
     critic_hparam = dict(
         gamma=0.9885,

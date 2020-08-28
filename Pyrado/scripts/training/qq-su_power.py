@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Quanser Qube environment using Policy learning by Weighting Exploration with the Returns.
+Train an agent to solve the Qube swing-up task using Policy learning by Weighting Exploration with the Returns.
 """
 from pyrado.algorithms.power import PoWER
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper

@@ -1,5 +1,5 @@
 """
-Train an agent to solve the Quanser Qube environment using Adversarially Robust Policy Learning.
+Train an agent to solve the Qube swing-up task environment using Adversarially Robust Policy Learning.
 """
 import torch as to
 
@@ -51,7 +51,7 @@ if __name__ == '__main__':
     critic = GAE(value_fcn, **critic_hparam)
 
     # Algorithm
-    algo_hparam = dict(
+    subrtn_hparam = dict(
         max_iter=0,
         min_steps=23*env.max_steps,
         min_rollouts=None,
@@ -62,7 +62,7 @@ if __name__ == '__main__':
         std_init=0.994955464909253,
         lr=0.0001558850276649469,
     )
-    arpl_hparam = dict(
+    algo_hparam = dict(
         max_iter=500,
         steps_num=23*env.max_steps,
         halfspan=0.05,
@@ -74,16 +74,16 @@ if __name__ == '__main__':
         proc_eps=0.03,
         torch_observation=True
     )
-    ppo = PPO(ex_dir, env, policy, critic, **algo_hparam)
-    algo = ARPL(ex_dir, env, ppo, policy, ppo.expl_strat, **arpl_hparam)
+    subrtn = PPO(ex_dir, env, policy, critic, **subrtn_hparam)
+    algo = ARPL(ex_dir, env, subrtn, policy, subrtn.expl_strat, **algo_hparam)
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml([
         dict(env=env_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
-        dict(algo=algo_hparam, algo_name=algo.name),
-        dict(ARPL=arpl_hparam)],
+        dict(subrtn_hparam=subrtn_hparam, subrtn_name=subrtn.name),
+        dict(algo=algo_hparam, algo_name=algo.name)],
         ex_dir
     )
 

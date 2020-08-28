@@ -105,7 +105,7 @@ if __name__ == '__main__':
     cem = CEM(ex_dir, env_sim, policy, **subrtn_hparam)
 
     # Algorithm
-    bayrn_hparam = dict(
+    algo_hparam = dict(
         max_iter=15,
         acq_fc='EI',
         acq_restarts=500,
@@ -123,11 +123,11 @@ if __name__ == '__main__':
         dict(env=env_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
         dict(subrtn=subrtn_hparam, subrtn_name=CEM.name),
-        dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map)],
+        dict(algo=algo_hparam, algo_name=BayRn.name, dp_map=dp_map)],
         ex_dir
     )
 
-    algo = BayRn(ex_dir, env_sim, env_real, subrtn=cem, bounds=bounds, **bayrn_hparam)
+    algo = BayRn(ex_dir, env_sim, env_real, subrtn=cem, bounds=bounds, **algo_hparam)
 
     # Jeeeha
     algo.train(snapshot_mode='latest', seed=ex_dir.seed)
