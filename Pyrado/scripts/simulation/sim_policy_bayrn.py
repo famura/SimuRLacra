@@ -43,6 +43,7 @@ from pyrado.domain_randomization.utils import print_domain_params
 from pyrado.logger.experiment import ask_for_experiment, load_dict_from_yaml
 from pyrado.sampling.rollout import rollout, after_rollout_query
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.order import natural_sort
 from pyrado.utils.input_output import print_cbt
 from pyrado.utils.data_types import RenderMode
 
@@ -75,15 +76,15 @@ if __name__ == '__main__':
     if not len(found_policies) == len(found_cands):  # don't count the final policy
         raise pyrado.ValueErr(msg='Found a different number of initial policies than candidates!')
 
-    # Sort (actually does not sort properly, e.g. 1, 10, 11, 2, 3 ...)
-    found_policies.sort()
-    found_cands.sort()
+    # Sort
+    found_policies = natural_sort(found_policies)
+    found_cands = natural_sort(found_cands)
 
     # Plot the candidate values
     fig, ax = plt.subplots(1)
     for i in range(len(found_cands)):
         cand = to.load(osp.join(ex_dir, found_cands[i])).numpy()
-        ax.scatter(np.arange(cand.size), cand, label='$\phi_{' + str(i) + '}$', c=f'C{i%10}', s=16)
+        ax.scatter(np.arange(cand.size), cand, label=r'$\phi_{' + str(i) + '}$', c=f'C{i%10}', s=16)
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
     ax.set_ylabel('parameter value')
     ax.set_xlabel('parameter index')

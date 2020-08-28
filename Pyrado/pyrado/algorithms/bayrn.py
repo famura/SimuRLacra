@@ -52,6 +52,7 @@ from pyrado.policies.base import Policy
 from pyrado.sampling.bootstrapping import bootstrap_ci
 from pyrado.sampling.parallel_sampler import ParallelSampler
 from pyrado.sampling.rollout import rollout
+from pyrado.utils.order import natural_sort
 from pyrado.utils.input_output import print_cbt
 from pyrado.utils.math import UnitCubeProjector
 from pyrado.utils.standardizing import standardize
@@ -246,7 +247,7 @@ class BayRn(Algorithm):
         cands_values = to.empty(num_init_cand)
 
         # Load all found candidates to save them into a single tensor
-        found_cands.sort()  # the order is important since it determines the rows of the tensor
+        found_cands = natural_sort(found_cands)  # the order is important since it determines the rows of the tensor
         cands = to.stack([to.load(osp.join(self._save_dir, c)) for c in found_cands])
 
         # Evaluate learned policies from random candidates on the target environment (real-world) system
@@ -414,7 +415,7 @@ class BayRn(Algorithm):
 
             if len(found_policies) > 0:
                 # Load all found candidates to save them into a single tensor
-                found_cands.sort()  # the order is important since it determines the rows of the tensor
+                found_cands = natural_sort(found_cands)  # the order is important since it determines the tensor's rows
                 self.cands = to.stack([to.load(osp.join(ld, c)) for c in found_cands])
                 to.save(self.cands, osp.join(self._save_dir, 'candidates.pt'))
 
@@ -453,7 +454,8 @@ class BayRn(Algorithm):
                 found_evals = None
                 for root, dirs, files in os.walk(ld):
                     found_evals = [v for v in files if v.endswith('_returns_real.pt')]
-                found_evals.sort()  # the order is important since it determines the rows of the tensor
+                found_evals = natural_sort(
+                    found_evals)  # the order is important since it determines the rows of the tensor
 
                 # Reconstruct candidates_values.pt
                 self.cands_values = to.empty(self.cands.shape[0])

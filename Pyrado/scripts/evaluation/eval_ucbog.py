@@ -38,7 +38,7 @@ from matplotlib import pyplot as plt
 from pyrado.logger.experiment import load_dict_from_yaml
 from pyrado.plotting.curve import render_mean_std
 from pyrado.sampling.sequences import *
-from pyrado.utils.experiments import filter_los_by_lok
+from pyrado.utils.order import filter_los_by_lok
 
 
 if __name__ == '__main__':

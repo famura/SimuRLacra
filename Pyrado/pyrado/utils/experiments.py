@@ -26,7 +26,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import os
 import os.path as osp
 import joblib
 import pandas as pd
@@ -241,56 +240,6 @@ def wrap_like_other_env(env_targ: Env, env_src: [SimEnv, EnvWrapper]) -> Env:
     return env_targ
 
 
-def filter_los_by_lok(strs: list, keys: list) -> list:
-    """
-    Filter a list of strings by a list of key strings.
-
-    :param strs: list of strings to filter
-    :param keys: key-strings to filter by
-    :return: list with unique elements of the input list which contain at least one of the keys
-    """
-    if not isinstance(strs, list):
-        raise pyrado.TypeErr(given=strs, expected_type=list)
-    if not isinstance(keys, list):
-        raise pyrado.TypeErr(given=keys, expected_type=list)
-
-    # Collect all matches (multiple keys can match one string)
-    all_matches = []
-    for k in keys:
-        all_matches.extend(list(filter(lambda s: k in s, strs)))
-
-    # Remove non-unique element from the list
-    return list(set(all_matches))
-
-
-def read_csv_w_replace(path: str) -> pd.DataFrame:
-    """
-    Custom function to read a CSV file. Turns white paces into underscores for accessing the columns as exposed
-    properties, i.e. `df.prop_abc` instead of `df['prop abc']`.
-
-    :param path: path to the CSV file
-    :return: data structure (e.g. Pandas `DataFrame`)
-    """
-    df = pd.read_csv(path, index_col='iteration')
-    # Replace whitespaces in column names
-    df.columns = [c.replace(' ', '_') for c in df.columns]
-    df.columns = [c.replace('-', '_') for c in df.columns]
-    df.columns = [c.replace('(', '_') for c in df.columns]
-    df.columns = [c.replace(')', '_') for c in df.columns]
-    return df
-
-
-def get_immediate_subdirs(parent_dir: str):
-    """
-    Get all 1st level subdirectories of a specified directory (i.e. a path)
-
-    :param parent_dir: directory in which to look for subdirectories
-    :return: list of names of all 1st level subdirectories
-    """
-    return [name for name in os.listdir(parent_dir)
-            if os.path.isdir(os.path.join(parent_dir, name))]
-
-
 def fcn_from_str(name: str) -> Callable:
     """
     Get the matching function. This method is a workaround / utility tool to intended to work with optuna. Since we can
@@ -319,3 +268,20 @@ def fcn_from_str(name: str) -> Callable:
         return pd_capacity_32_abs
     else:
         raise pyrado.ValueErr(given=name, eq_constraint="'to_tanh', 'to_relu'")
+
+
+def read_csv_w_replace(path: str) -> pd.DataFrame:
+    """
+    Custom function to read a CSV file. Turns white paces into underscores for accessing the columns as exposed
+    properties, i.e. `df.prop_abc` instead of `df['prop abc']`.
+
+    :param path: path to the CSV file
+    :return: Pandas `DataFrame` with replaced chars in columns
+    """
+    df = pd.read_csv(path, index_col='iteration')
+    # Replace whitespaces in column names
+    df.columns = [c.replace(' ', '_') for c in df.columns]
+    df.columns = [c.replace('-', '_') for c in df.columns]
+    df.columns = [c.replace('(', '_') for c in df.columns]
+    df.columns = [c.replace(')', '_') for c in df.columns]
+    return df
