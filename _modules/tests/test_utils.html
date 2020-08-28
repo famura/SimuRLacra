@@ -213,6 +213,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.sampling.utils</span> <span class="kn">import</span> <span class="n">gen_batch_idcs</span><span class="p">,</span> <span class="n">gen_ordered_batch_idcs</span><span class="p">,</span> <span class="n">gen_ordered_batches</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.functions</span> <span class="kn">import</span> <span class="n">noisy_nonlin_fcn</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">completion_context</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.math</span> <span class="kn">import</span> <span class="n">cosine_similarity</span><span class="p">,</span> <span class="n">cov</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.ball_on_beam</span> <span class="kn">import</span> <span class="n">BallOnBeamSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.dummy</span> <span class="kn">import</span> <span class="n">DummyPolicy</span>
@@ -615,6 +616,16 @@
     <span class="n">o</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">i</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">o</span><span class="o">.</span><span class="n">shape</span></div>
+
+
+<div class="viewcode-block" id="test_check_prompt"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_check_prompt">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">visualization</span>
+<span class="k">def</span> <span class="nf">test_check_prompt</span><span class="p">():</span>
+    <span class="k">with</span> <span class="n">completion_context</span><span class="p">(</span><span class="s1">&#39;Works fine&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">):</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ZeroDivisionError</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">completion_context</span><span class="p">(</span><span class="s1">&#39;Works fine&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="mi">3</span><span class="o">/</span><span class="mi">0</span></div>
 </pre></div>
 
            </div>

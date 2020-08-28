@@ -212,7 +212,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.spaces.base</span> <span class="kn">import</span> <span class="n">Space</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.base</span> <span class="kn">import</span> <span class="n">Task</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">RenderMode</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span><span class="p">,</span> <span class="n">completion_context</span>
 
 
 <div class="viewcode-block" id="QuanserReal"><a class="viewcode-back" href="../../../../environments.quanser.html#pyrado.environments.quanser.base.QuanserReal">[docs]</a><span class="k">class</span> <span class="nc">QuanserReal</span><span class="p">(</span><span class="n">RealEnv</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
@@ -303,9 +303,9 @@
 <span class="sd">        :param kwargs: just for compatibility with SimEnv. All kwargs can be ignored.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Cancel and re-open the connection to the socket</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_qsoc</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_qsoc</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
-        <span class="n">print_cbt</span><span class="p">(</span><span class="s1">&#39;Opened the connection to the Quanser device.&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">completion_context</span><span class="p">(</span><span class="s1">&#39;Connecting to Quanser device&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_qsoc</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_qsoc</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
 
         <span class="c1"># Reset the task</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_task</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">env_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span></div>

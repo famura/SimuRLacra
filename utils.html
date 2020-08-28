@@ -651,6 +651,21 @@ properties, i.e. <cite>df.prop_abc</cite> instead of <cite>df[‘prop abc’]</c
 </dd></dl>
 
 <dl class="py function">
+<dt id="pyrado.utils.input_output.completion_context">
+<code class="sig-name descname">completion_context</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/input_output.html#completion_context"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.completion_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context manager that prints a message, executes the code, and then prints a symbol on success or failure (when an
+exception is raised).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> – message to print at the beginning, e.g. ‘Calibrating’</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments forwarded to <cite>print_cbt()</cite></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="pyrado.utils.input_output.ensure_math_mode">
 <code class="sig-name descname">ensure_math_mode</code><span class="sig-paren">(</span><em class="sig-param">inp: [&lt;class 'str'&gt;, typing.Sequence[str]], no_subscript: bool = False</em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘str’&gt;, &lt;class ‘list’&gt;]<a class="reference internal" href="_modules/pyrado/utils/input_output.html#ensure_math_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.ensure_math_mode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Naive way to ensure that a sting is compatible with LaTeX math mode for printing.</p>
@@ -718,7 +733,7 @@ properties, i.e. <cite>df.prop_abc</cite> instead of <cite>df[‘prop abc’]</c
 
 <dl class="py function">
 <dt id="pyrado.utils.input_output.print_cbt">
-<code class="sig-name descname">print_cbt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">color</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">bright</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">tag</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/input_output.html#print_cbt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.print_cbt" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">print_cbt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">color</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">bright</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">tag</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">end</span><span class="o">=</span><span class="default_value">'\n'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/input_output.html#print_cbt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.print_cbt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print a colored (and bright) message with a tag in the beginning.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -727,6 +742,7 @@ properties, i.e. <cite>df.prop_abc</cite> instead of <cite>df[‘prop abc’]</c
 <li><p><strong>color</strong> – color to print in, default <cite>‘’</cite> is the IDE’s/system’s default</p></li>
 <li><p><strong>bright</strong> – flag if the message should be printed bright</p></li>
 <li><p><strong>tag</strong> – tag to be printed in brackets in front of the message</p></li>
+<li><p><strong>end</strong> – endline symbol forwarded to <cite>print()</cite></p></li>
 </ul>
 </dd>
 </dl>
