@@ -26,12 +26,13 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 # EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Run this script on the local machine.
-# Two argument: 1) the target host; 2) the directory to sync
+# Usage:
+# (run this script on the local machine)
+# bash sync_to_host.sh TARGET_HOST_NAME DIR_TO_SYNC
 
 if [ "$#" -ne 2 ]
   then
-    echo "Missing host or directory argument"
+    echo "-- Missing host or directory argument!"
     exit
 fi
 # Store arguments
@@ -41,6 +42,7 @@ SYNCDIR="$2"
 SRC="$SYNCDIR/"
 DST="$DSTHOST:$SYNCDIR/"
 
+echo "-- Source path:"
 echo "$SRC"
 
 # Use rsync
@@ -49,10 +51,15 @@ echo "$SRC"
 rsync -azPe ssh --delete \
     --exclude "Pyrado/data/time_series" \
     --exclude "Pyrado/data/temp" \
-    --exclude "thirdParty/" \
-    --exclude "build/" \
-    --exclude ".git/" \
-    --exclude ".svn/" \
-    --exclude "__pycache__" \
+    --exclude "Pyrado/doc" \
+    --exclude "remotelaunch/logs" \
+    --exclude "thirdParty" \
+    --exclude "*build*" \
+    --exclude "*.git*" \
+    --exclude "*.svn*" \
+    --exclude "*.idea*" \
+    --exclude "*.egg-info*" \
+    --exclude "*.pytest_cache*" \
+    --exclude "*__pycache__*" \
     --exclude-from="$(git -C "$SRC" ls-files --exclude-standard -oi --directory > /tmp/excludes; echo /tmp/excludes)" \
     "$SRC" "$DST"

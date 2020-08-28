@@ -30,26 +30,21 @@
 # Equal user names and paths on both machines
 # Assuming you are in PROJECT_DIR/remotelaunch and want to run SCRIPT_NAME.py
 # Anaconda is installed at $HOME/Software/anaconda3/bin/conda
+#
+# YOU INSTALLED ACCORDING TO THE OPTION "Red Velvet", I.E. DO NOT USE RCS OR RCSPYSIM
 
 # Usage:
-# bash remotelaunch_TEMPLATE.sh python PROJECT_DIR/Pyrado/scripts/training/SCRIPT_NAME.py
+# (remotelaunch_slurm_cpu.sh is set up such that the required script path starts at Pyrado/scripts)
+# bash remotelaunch_slurm_cpu.sh training/SCRIPT_NAME.py
 
 CMD="$@"
 
-DSTHOST="..." # ADD NAME OF THE COMPUTER
-PROOT="..." # ADD PATH TO PROJECT ROOT DIR, I.E. PATH TO SimuRLacra
+DSTHOST="shannon"
+PROOT="$HOME/Software/SimuRLacra" # ADD PATH TO PROJECT ROOT DIR, I.E. PATH TO SimuRLacra
 
 RLAUNCH_DIR="$PROOT/remotelaunch"
 
-RCS_SRC_DIR="$PROOT/Rcs" # path to Rcs source dir
-RCS_BUILD_DIR="$PROOT/Rcs/build" # path to Rcs build dir
-
-RCSPYSIM_SRC_DIR="$PROOT/RcsPySim"
-RCSPYSIM_BUILD_DIR="$RCSPYSIM_SRC_DIR/build"
-
-CONDA_ENV_NAME="pyrado"
-# may need before activating
-# eval "$($HOME/Software/anaconda3/bin/conda shell.bash hook)"
+# The cluster node is taking care of activating the anaconda environment
 
 # Synchronize code
 $RLAUNCH_DIR/sync_to_host.sh $DSTHOST "$PROOT"
@@ -58,20 +53,8 @@ $RLAUNCH_DIR/sync_to_host.sh $DSTHOST "$PROOT"
 ssh -t -t $DSTHOST << EOF
 shopt -s expand_aliases
 
-mkdir -p "$RCS_BUILD_DIR"
-cd "$RCS_BUILD_DIR"
-cmake "$RCS_SRC_DIR"
-make -j8
-
-conda activate "$CONDA_ENV_NAME"
-
-cd "$PROOT"
-mkdir -p "$RCSPYSIM_BUILD_DIR"
-cd "$RCSPYSIM_BUILD_DIR"
-cmake "$RCSPYSIM_SRC_DIR/build"
-make -j8
-
-$CMD
+cd "$RLAUNCH_DIR"
+sbatch slurm_launcher_cpu.sh $CMD
 
 exit
 EOF
