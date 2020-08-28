@@ -102,7 +102,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">pysim</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.pysim.ball_on_beam">ball_on_beam</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.pysim.base">base</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.pysim.one_mass_oscillator">one_mass_oscillator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#one-mass-oscillator">one_mass_oscillator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.pysim.openai_classical_control">openai_classical_control</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.pysim.pendulum">pendulum</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.pysim.quanser_ball_balancer">quanser_ball_balancer</a></li>
@@ -338,62 +338,8 @@ When a terminal condition is met, the reset function is called.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-pyrado.environments.pysim.one_mass_oscillator">
-<span id="one-mass-oscillator"></span><h2>one_mass_oscillator<a class="headerlink" href="#module-pyrado.environments.pysim.one_mass_oscillator" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorDomainParamEstimator">
-<em class="property">class </em><code class="sig-name descname">OneMassOscillatorDomainParamEstimator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dt</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">dp_init</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">num_epoch</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/one_mass_oscillator.html#OneMassOscillatorDomainParamEstimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorDomainParamEstimator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
-<p>Class to estimate the domain parameters of the OneMassOscillator environment</p>
-<dl class="py method">
-<dt id="pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorDomainParamEstimator.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">act</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/environments/pysim/one_mass_oscillator.html#OneMassOscillatorDomainParamEstimator.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorDomainParamEstimator.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Defines the computation performed at every call.</p>
-<p>Should be overridden by all subclasses.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Although the recipe for forward pass needs to be defined within
-this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
-instead of this since the former takes care of running the
-registered hooks while the latter silently ignores them.</p>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorDomainParamEstimator.update">
-<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollouts</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/one_mass_oscillator.html#OneMassOscillatorDomainParamEstimator.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorDomainParamEstimator.update" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorDyn">
-<em class="property">class </em><code class="sig-name descname">OneMassOscillatorDyn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dt</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/one_mass_oscillator.html#OneMassOscillatorDyn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorDyn" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
-</dd></dl>
-
-<dl class="py class">
-<dt id="pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorSim">
-<em class="property">class </em><code class="sig-name descname">OneMassOscillatorSim</code><span class="sig-paren">(</span><em class="sig-param">dt: float</em>, <em class="sig-param">max_steps: int = inf</em>, <em class="sig-param">task_args: [&lt;class 'dict'&gt;</em>, <em class="sig-param">None] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/one_mass_oscillator.html#OneMassOscillatorSim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorSim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pyrado.environments.pysim.base.SimPyEnv" title="pyrado.environments.pysim.base.SimPyEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.pysim.base.SimPyEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
-<p>Model of a linear one-mass-oscillator (spring-mass-damper system) without gravity influence</p>
-<dl class="py method">
-<dt id="pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorSim.get_nominal_domain_param">
-<em class="property">classmethod </em><code class="sig-name descname">get_nominal_domain_param</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pyrado/environments/pysim/one_mass_oscillator.html#OneMassOscillatorSim.get_nominal_domain_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorSim.get_nominal_domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the nominal a.k.a. default domain parameters.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This function is used to check which domain parameters exist.</p>
-</div>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorSim.name">
-<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'omo'</em><a class="headerlink" href="#pyrado.environments.pysim.one_mass_oscillator.OneMassOscillatorSim.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="one-mass-oscillator">
+<h2>one_mass_oscillator<a class="headerlink" href="#one-mass-oscillator" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-pyrado.environments.pysim.openai_classical_control">
 <span id="openai-classical-control"></span><h2>openai_classical_control<a class="headerlink" href="#module-pyrado.environments.pysim.openai_classical_control" title="Permalink to this headline">¶</a></h2>

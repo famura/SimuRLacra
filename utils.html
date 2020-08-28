@@ -116,7 +116,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.averaging">averaging</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.data_types">data_types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.exceptions">exceptions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.experiments">experiments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#experiments">experiments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.functions">functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.input_output">input_output</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.math">math</a></li>
@@ -500,105 +500,8 @@ Convert a scalar to a float.
 </dd></dl>
 
 </div>
-<div class="section" id="module-pyrado.utils.experiments">
-<span id="experiments"></span><h2>experiments<a class="headerlink" href="#module-pyrado.utils.experiments" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="pyrado.utils.experiments.fcn_from_str">
-<code class="sig-name descname">fcn_from_str</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; Callable<a class="reference internal" href="_modules/pyrado/utils/experiments.html#fcn_from_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.fcn_from_str" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the matching function. This method is a workaround / utility tool to intended to work with optuna. Since we can
-not pass functions directly, we pass a sting.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>name</strong> – name of the function</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the function</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.utils.experiments.filter_los_by_lok">
-<code class="sig-name descname">filter_los_by_lok</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">strs</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">keys</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pyrado/utils/experiments.html#filter_los_by_lok"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.filter_los_by_lok" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter a list of strings by a list of key strings.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>strs</strong> – list of strings to filter</p></li>
-<li><p><strong>keys</strong> – key-strings to filter by</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list with unique elements of the input list which contain at least one of the keys</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.utils.experiments.get_immediate_subdirs">
-<code class="sig-name descname">get_immediate_subdirs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parent_dir</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#get_immediate_subdirs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.get_immediate_subdirs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get all 1st level subdirectories of a specified directory (i.e. a path)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>parent_dir</strong> – directory in which to look for subdirectories</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list of names of all 1st level subdirectories</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.utils.experiments.load_experiment">
-<code class="sig-name descname">load_experiment</code><span class="sig-paren">(</span><em class="sig-param">ex_dir: str, args: Any = None) -&gt; ([&lt;class 'pyrado.environments.sim_base.SimEnv'&gt;, &lt;class 'pyrado.environment_wrappers.base.EnvWrapper'&gt;], &lt;class 'pyrado.policies.base.Policy'&gt;, typing.Union[dict, NoneType]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#load_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.load_experiment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load the (training) environment and the policy.
-This helper function first tries to read the hyper-parameters yaml-file in the experiment’s directory to infer
-why entities should be loaded. If no file was found, we fall back to some heuristic and hope for the best.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ex_dir</strong> – experiment’s parent directory</p></li>
-<li><p><strong>args</strong> – arguments from the argument parser</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>environment, policy, and optional output (e.g. valuefcn)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.utils.experiments.read_csv_w_replace">
-<code class="sig-name descname">read_csv_w_replace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/pyrado/utils/experiments.html#read_csv_w_replace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.read_csv_w_replace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Custom function to read a CSV file. Turns white paces into underscores for accessing the columns as exposed
-properties, i.e. <cite>df.prop_abc</cite> instead of <cite>df[‘prop abc’]</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>path</strong> – path to the CSV file</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>data structure (e.g. Pandas <cite>DataFrame</cite>)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.utils.experiments.wrap_like_other_env">
-<code class="sig-name descname">wrap_like_other_env</code><span class="sig-paren">(</span><em class="sig-param">env_targ: pyrado.environments.base.Env, env_src: [&lt;class 'pyrado.environments.sim_base.SimEnv'&gt;, &lt;class 'pyrado.environment_wrappers.base.EnvWrapper'&gt;]</em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a><a class="reference internal" href="_modules/pyrado/utils/experiments.html#wrap_like_other_env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.wrap_like_other_env" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrap a given real environment like it’s simulated counterpart (except the domain randomization of course).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>env_targ</strong> – target environment e.g. environment representing the physical device</p></li>
-<li><p><strong>env_src</strong> – source environment e.g. simulation environment used for training</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>target environment</p>
-</dd>
-</dl>
-</dd></dl>
-
+<div class="section" id="experiments">
+<h2>experiments<a class="headerlink" href="#experiments" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-pyrado.utils.functions">
 <span id="functions"></span><h2>functions<a class="headerlink" href="#module-pyrado.utils.functions" title="Permalink to this headline">¶</a></h2>

@@ -114,7 +114,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.heatmap">heatmap</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.live_update">live_update</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.policy_parameters">policy_parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.rollout_based">rollout_based</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rollout-based">rollout_based</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.surface">surface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.utils">utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting">Module contents</a></li>
@@ -577,104 +577,8 @@ Every marked function will be called when the file changes to visualize the upda
 </dd></dl>
 
 </div>
-<div class="section" id="module-pyrado.plotting.rollout_based">
-<span id="rollout-based"></span><h2>rollout_based<a class="headerlink" href="#module-pyrado.plotting.rollout_based" title="Permalink to this headline">¶</a></h2>
-<p>Collection of plotting functions which take Rollouts as inputs and produce line plots</p>
-<dl class="py function">
-<dt id="pyrado.plotting.rollout_based.plot_actions">
-<code class="sig-name descname">plot_actions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ro</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_actions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot all action trajectories of the given rollout.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ro</strong> – input rollout</p></li>
-<li><p><strong>env</strong> – environment (used for getting the clipped action values)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.plotting.rollout_based.plot_features">
-<code class="sig-name descname">plot_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ro</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_features" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot all features given the policy and the observation trajectories.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>policy</strong> – linear policy used during the rollout</p></li>
-<li><p><strong>ro</strong> – input rollout</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.plotting.rollout_based.plot_observations">
-<code class="sig-name descname">plot_observations</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ro</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">idcs_sel</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_observations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_observations" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot all observation trajectories of the given rollout.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ro</strong> – input rollout</p></li>
-<li><p><strong>idcs_sel</strong> – indices of the selected selected observations, if <cite>None</cite> plot all</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.plotting.rollout_based.plot_observations_actions_rewards">
-<code class="sig-name descname">plot_observations_actions_rewards</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ro</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_observations_actions_rewards"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_observations_actions_rewards" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot all observation, action, and reward trajectories of the given rollout.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>ro</strong> – input rollout</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.plotting.rollout_based.plot_potentials">
-<code class="sig-name descname">plot_potentials</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ro</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">layout</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'joint'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_potentials"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_potentials" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot the trajectories specific to an Activation Dynamic Network (ADN) or a Neural Field (NF) policy.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ro</strong> – input rollout</p></li>
-<li><p><strong>layout</strong> – group jointly (default), or create a separate sub-figure for each plot</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.plotting.rollout_based.plot_rewards">
-<code class="sig-name descname">plot_rewards</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ro</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_rewards"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_rewards" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot the reward trajectories of the given rollout.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>ro</strong> – input rollout</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.plotting.rollout_based.plot_statistic_across_rollouts">
-<code class="sig-name descname">plot_statistic_across_rollouts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollouts</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">stat_fcn</span><span class="p">:</span> <span class="n">callable</span></em>, <em class="sig-param"><span class="n">stat_fcn_kwargs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">obs_idcs</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">act_idcs</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_statistic_across_rollouts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_statistic_across_rollouts" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot one statistic of interest (e.g. mean) across a list of rollouts.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>rollouts</strong> – list of rollouts, they can be of unequal length but are assumed to be from the same type of env</p></li>
-<li><p><strong>stat_fcn</strong> – function to calculate the statistic of interest (e.g. np.mean)</p></li>
-<li><p><strong>stat_fcn_kwargs</strong> – keyword arguments for the stat_fcn (e.g. {‘axis’: 0})</p></li>
-<li><p><strong>obs_idcs</strong> – indices of the observations to process and plot</p></li>
-<li><p><strong>act_idcs</strong> – indices of the actions to process and plot</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
+<div class="section" id="rollout-based">
+<h2>rollout_based<a class="headerlink" href="#rollout-based" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-pyrado.plotting.surface">
 <span id="surface"></span><h2>surface<a class="headerlink" href="#module-pyrado.plotting.surface" title="Permalink to this headline">¶</a></h2>
