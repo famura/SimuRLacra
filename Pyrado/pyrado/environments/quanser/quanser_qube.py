@@ -37,7 +37,7 @@ from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
 from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn
-from pyrado.utils.input_output import print_cbt
+from pyrado.utils.input_output import print_cbt, completion_context
 
 
 class QQubeReal(QuanserReal, Serializable):
@@ -116,38 +116,39 @@ class QQubeReal(QuanserReal, Serializable):
 
     def calibrate(self):
         """ Calibration routine to move to the init position and determine the sensor offset """
-        # Reset calibration
-        self._sens_offset = np.zeros(4)  # last two entries are never calibrated but useful for broadcasting
+        with completion_context('Estimating sensor offset', color='c', bright=True):
+            # Reset calibration
+            self._sens_offset = np.zeros(4)  # last two entries are never calibrated but useful for broadcasting
 
-        # Wait until Qube is at rest
-        cnt = 0
-        meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
-        while cnt < 1/self._dt:
-            if np.abs(meas[3]) < 1e-8 and np.abs(meas[2]) < 1e-8:
-                cnt += 1
-            else:
-                cnt = 0
+            # Wait until Qube is at rest
+            cnt = 0
             meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
+            while cnt < 1/self._dt:
+                if np.abs(meas[3]) < 1e-8 and np.abs(meas[2]) < 1e-8:
+                    cnt += 1
+                else:
+                    cnt = 0
+                meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
 
-        # Record alpha offset (e.g. alpha == k * 2pi)
-        self._sens_offset[1] = meas[1]
+            # Record alpha offset (e.g. alpha == k * 2pi)
+            self._sens_offset[1] = meas[1]
 
-        # Create parts of the calibration controller
-        go_right = QQubeGoToLimCtrl(positive=True, cnt_done=int(.5/self._dt))
-        go_left = QQubeGoToLimCtrl(positive=False, cnt_done=int(.5/self._dt))
-        go_center = QQubePDCtrl(self.spec, calibration_mode=True)
+            # Create parts of the calibration controller
+            go_right = QQubeGoToLimCtrl(positive=True, cnt_done=int(.5/self._dt))
+            go_left = QQubeGoToLimCtrl(positive=False, cnt_done=int(.5/self._dt))
+            go_center = QQubePDCtrl(self.spec, calibration_mode=True)
 
-        # Go to both limits for theta calibration
-        while not go_right.done:
-            meas = self._qsoc.snd_rcv(
-                go_right(to.from_numpy(meas - self._sens_offset)))  # already correct for alpha offset
-        while not go_left.done:
-            meas = self._qsoc.snd_rcv(
-                go_left(to.from_numpy(meas - self._sens_offset)))  # already correct for alpha offset
-        self._sens_offset[0] = (go_right.th_lim + go_left.th_lim)/2
+            # Go to both limits for theta calibration
+            while not go_right.done:
+                meas = self._qsoc.snd_rcv(
+                    go_right(to.from_numpy(meas - self._sens_offset)))  # already correct for alpha offset
+            while not go_left.done:
+                meas = self._qsoc.snd_rcv(
+                    go_left(to.from_numpy(meas - self._sens_offset)))  # already correct for alpha offset
+            self._sens_offset[0] = (go_right.th_lim + go_left.th_lim)/2
         print_cbt(f'Sensor offset: {self._sens_offset}', 'g')
 
-        while not go_center.done:
-            meas = self._qsoc.snd_rcv(
-                go_center(to.from_numpy(meas - self._sens_offset)))  # already correct for alpha offset
-        print_cbt('Calibration done.', 'g')
+        with completion_context('Centering cube', color='c', bright=True):
+            while not go_center.done:
+                meas = self._qsoc.snd_rcv(
+                    go_center(to.from_numpy(meas - self._sens_offset)))  # already correct for alpha offset

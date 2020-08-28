@@ -40,7 +40,7 @@ from pyrado.tasks.base import Task
 from pyrado.tasks.final_reward import FinalRewTask, FinalRewMode
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
 from pyrado.tasks.reward_functions import UnderActuatedSwingUpRewFcn, QuadrErrRewFcn
-from pyrado.utils.input_output import print_cbt
+from pyrado.utils.input_output import print_cbt, completion_context
 
 
 class QCartPoleReal(QuanserReal, Serializable):
@@ -98,34 +98,30 @@ class QCartPoleReal(QuanserReal, Serializable):
         print_cbt('Calibrating the cart-pole ...', 'c')
 
         # Go to the left
-        print('Going to the left ...', end=' ')
-        obs, _, _, _ = self.step(np.zeros(self.act_space.shape))
-        ctrl = QCartPoleGoToLimCtrl(obs, positive=True)
-        while not ctrl.done:
-            act = ctrl(obs)
-            obs, _, _, _ = self.step(act)
+        with completion_context('Going to the left', color='c', bright=True):
+            obs, _, _, _ = self.step(np.zeros(self.act_space.shape))
+            ctrl = QCartPoleGoToLimCtrl(obs, positive=True)
+            while not ctrl.done:
+                act = ctrl(obs)
+                obs, _, _, _ = self.step(act)
 
-        if ctrl.success:
-            self._norm_x_lim[1] = obs[0]
-            print(pyrado.sym_success)
-        else:
-            print(pyrado.sym_failure)
-            raise RuntimeError('Going to the left limit failed!')
+            if ctrl.success:
+                self._norm_x_lim[1] = obs[0]
+            else:
+                raise RuntimeError('Going to the left limit failed!')
 
         # Go to the right
-        print('Going to the right ...', end=' ')
-        obs, _, _, _ = self.step(np.zeros(self.act_space.shape))
-        ctrl = QCartPoleGoToLimCtrl(obs, positive=False)
-        while not ctrl.done:
-            act = ctrl(obs)
-            obs, _, _, _ = self.step(act)
+        with completion_context('Going to the right', color='c', bright=True):
+            obs, _, _, _ = self.step(np.zeros(self.act_space.shape))
+            ctrl = QCartPoleGoToLimCtrl(obs, positive=False)
+            while not ctrl.done:
+                act = ctrl(obs)
+                obs, _, _, _ = self.step(act)
 
-        if ctrl.success:
-            self._norm_x_lim[0] = obs[0]
-            print(pyrado.sym_success)
-        else:
-            print(pyrado.sym_failure)
-            raise RuntimeError('Going to the right limit failed!')
+            if ctrl.success:
+                self._norm_x_lim[0] = obs[0]
+            else:
+                raise RuntimeError('Going to the right limit failed!')
 
         # Activate the absolute cart position:
         self._calibrated = True
@@ -133,28 +129,25 @@ class QCartPoleReal(QuanserReal, Serializable):
     def _center_cart(self):
         """ Move the cart to the center (x = 0). """
         # Initialize
-        t_max, t0 = 10.0, time.time()
+        t_max, t_start = 10.0, time.time()
         obs, _, _, _ = self.step(np.zeros(self.act_space.shape))
 
-        print('Centering the cart ...', end=' ')
-        while (time.time() - t0) < t_max:
-            act = -np.sign(obs[0])*1.5*np.ones(self.act_space.shape)
-            obs, _, _, _ = self.step(act)
+        with completion_context('Centering the cart', color='c', bright=True):
+            while (time.time() - t_start) < t_max:
+                act = -np.sign(obs[0])*1.5*np.ones(self.act_space.shape)
+                obs, _, _, _ = self.step(act)
 
-            if np.abs(obs[0]) <= self._c_lim/10.:
-                break
+                if np.abs(obs[0]) <= self._c_lim/10.:
+                    break
 
-        # Stop the cart
-        obs, _, _, _ = self.step(np.zeros(self.act_space.shape))
-        time.sleep(0.5)
+            # Stop the cart
+            obs, _, _, _ = self.step(np.zeros(self.act_space.shape))
+            time.sleep(0.5)
 
-        if np.abs(obs[0]) > self._c_lim:
-            print(pyrado.sym_failure)
-            # time.sleep(0.1)
-            raise RuntimeError(
-                f'Centering of the cart failed: |x| = {np.abs(obs[0]):.2f} > {self._c_lim:.2f}')
-
-        print(pyrado.sym_success)
+            if np.abs(obs[0]) > self._c_lim:
+                # time.sleep(0.1)
+                raise RuntimeError(
+                    f'Centering of the cart failed: |x| = {np.abs(obs[0]):.2f} > {self._c_lim:.2f}')
 
     def _correct_sensor_offset(self, meas: np.ndarray) -> np.ndarray:
         # Transform the relative cart position to [-0.4, +0.4]
@@ -210,44 +203,36 @@ class QCartPoleStabReal(QCartPoleReal):
             mode=FinalRewMode(state_dependent=True, time_dependent=True)
         )
 
-    def _wait_for_upright_pole(self, verbose=False):
-        if verbose:
-            print('Centering the Pole:\t\t', end='')
+    def _wait_for_upright_pole(self):
+        """ Waiting until the user manually set the pole upright """
+        with completion_context('Centering the cart', color='c', bright=True):
+            # Initialize
+            t_max, t_start = 15.0, time.time()
+            upright = False
 
-        # Initialize
-        t_max, t0 = 15.0, time.time()
-        upright = False
+            pos_th = np.array([self._c_lim, 2.*np.pi/180.])
+            vel_th = 0.1*np.ones(2)
+            th = np.hstack((pos_th, vel_th))
 
-        pos_th = np.array([self._c_lim, 2.*np.pi/180.])
-        vel_th = 0.1*np.ones(2)
-        th = np.hstack((pos_th, vel_th))
+            # Wait until the pole is upright
+            while (time.time() - t_start) <= t_max:
+                obs, _, _, _ = self.step(np.zeros(self.act_space.shape))
+                time.sleep(1/550.)
 
-        # Wait until the pole is upright
-        while (time.time() - t0) <= t_max:
-            obs, _, _, _ = self.step(np.zeros(self.act_space.shape))
-            time.sleep(1/550.)
+                abs_err = np.abs(np.array([obs[1], obs[2]]) - np.array([[0., -1.]]))
+                err_th = np.array([np.sin(np.deg2rad(3.)), np.sin(np.deg2rad(3.))])
 
-            abs_err = np.abs(np.array([obs[1], obs[2]]) - np.array([[0., -1.]]))
-            err_th = np.array([np.sin(np.deg2rad(3.)), np.sin(np.deg2rad(3.))])
+                if np.all(abs_err <= err_th):
+                    upright = True
+                    break
 
-            if np.all(abs_err <= err_th):
-                upright = True
-                break
-
-        if not upright:
-            if verbose:
-                print(pyrado.sym_failure)
-            # time.sleep(0.1)
-            state_str = np.array2string(np.abs(obs), suppress_small=True, precision=2,
-                                        formatter={'float_kind': lambda x: '{0:+05.2f}'.format(x)})
-            th_str = np.array2string(th, suppress_small=True, precision=2,
-                                     formatter={'float_kind': lambda x: '{0:+05.2f}'.format(x)})
-            raise TimeoutError('The pole is not upright: {0} > {1}'.format(state_str, th_str))
-
-        elif verbose:
-            print(pyrado.sym_success)
-
-        return
+            if not upright:
+                # time.sleep(0.1)
+                state_str = np.array2string(np.abs(obs), suppress_small=True, precision=2,
+                                            formatter={'float_kind': lambda x: '{0:+05.2f}'.format(x)})
+                th_str = np.array2string(th, suppress_small=True, precision=2,
+                                         formatter={'float_kind': lambda x: '{0:+05.2f}'.format(x)})
+                raise TimeoutError('The pole is not upright: {0} > {1}'.format(state_str, th_str))
 
     def reset(self, *args, **kwargs):
         # Reset socket, task, and calibrate
@@ -260,7 +245,7 @@ class QCartPoleStabReal(QCartPoleReal):
         self._center_cart()
 
         # Wait until the human reset the pole properly
-        self._wait_for_upright_pole(verbose=True)
+        self._wait_for_upright_pole()
 
         # Start with a zero action and get the first sensor measurements
         meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))

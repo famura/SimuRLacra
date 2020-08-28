@@ -97,8 +97,8 @@ to.set_printoptions(precision=4, linewidth=200)
 # Set a uniform printing style for numpy
 np.set_printoptions(precision=4, sign=' ', linewidth=200)  # suppress=True
 
-sym_success = '\u2713'
-sym_failure = '\u274C'
+sym_success = '\u2714'
+sym_failure = '\u2716'
 
 # Include all error classes
 from pyrado.utils.exceptions import BaseErr, KeyErr, PathErr, ShapeErr, TypeErr, ValueErr

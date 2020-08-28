@@ -26,7 +26,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import contextlib
 import numpy as np
+import time
 from colorama import Fore, Style
 from typing import Sequence, Iterable
 
@@ -45,7 +47,7 @@ def insert_newlines(string: str, every: int) -> str:
     return '\n'.join(string[i:i + every] for i in range(0, len(string), every))
 
 
-def print_cbt(msg: str, color: str = '', bright: bool = False, tag: str = ''):
+def print_cbt(msg: str, color: str = '', bright: bool = False, tag: str = '', end='\n'):
     """
     Print a colored (and bright) message with a tag in the beginning.
 
@@ -53,6 +55,7 @@ def print_cbt(msg: str, color: str = '', bright: bool = False, tag: str = ''):
     :param color: color to print in, default `''` is the IDE's/system's default
     :param bright: flag if the message should be printed bright
     :param tag: tag to be printed in brackets in front of the message
+    :param end: endline symbol forwarded to `print()`
     """
     brgt = Style.BRIGHT if bright else ''
 
@@ -64,17 +67,17 @@ def print_cbt(msg: str, color: str = '', bright: bool = False, tag: str = ''):
 
     color = color.lower()
     if color in ['', 'w', 'white']:
-        print(brgt + tag + msg + Style.RESET_ALL)
+        print(brgt + tag + msg + Style.RESET_ALL, end=end)
     elif color in ['y', 'yellow']:
-        print(Fore.YELLOW + brgt + tag + msg + Style.RESET_ALL)
+        print(Fore.YELLOW + brgt + tag + msg + Style.RESET_ALL, end=end)
     elif color in ['b', 'blue']:
-        print(Fore.BLUE + brgt + tag + msg + Style.RESET_ALL)
+        print(Fore.BLUE + brgt + tag + msg + Style.RESET_ALL, end=end)
     elif color in ['g', 'green']:
-        print(Fore.GREEN + brgt + tag + msg + Style.RESET_ALL)
+        print(Fore.GREEN + brgt + tag + msg + Style.RESET_ALL, end=end)
     elif color in ['r', 'red']:
-        print(Fore.RED + brgt + tag + msg + Style.RESET_ALL)
+        print(Fore.RED + brgt + tag + msg + Style.RESET_ALL, end=end)
     elif color in ['c', 'cyan']:
-        print(Fore.CYAN + brgt + tag + msg + Style.RESET_ALL)
+        print(Fore.CYAN + brgt + tag + msg + Style.RESET_ALL, end=end)
     else:
         raise pyrado.ValueErr(given=color, eq_constraint="'y', 'b', 'g', 'r', or 'c'")
 
@@ -211,3 +214,30 @@ def color_validity(data: np.ndarray, valids: np.ndarray) -> list:
         return Fore.GREEN if v == 1 else Fore.RED
 
     return [color_validity(v) + str(ele) + Style.RESET_ALL for (ele, v) in zip(data, valids)]
+
+
+@contextlib.contextmanager
+def completion_context(msg: str, **kwargs):
+    """
+    Context manager that prints a message, executes the code, and then prints a symbol on success or failure (when an
+    exception is raised).
+
+    :param msg: message to print at the beginning, e.g. 'Calibrating'
+    :param kwargs: keyword arguments forwarded to `print_cbt()`
+    """
+    if not isinstance(msg, str):
+        raise pyrado.TypeErr(given=msg, expected_type=str)
+
+    try:
+        # Execute the code
+        print_cbt(msg, **kwargs, end=' ')
+        yield
+    except Exception as e:
+        # In case of any error
+        print_cbt(pyrado.sym_failure, color=kwargs.get('color', 'r'), bright=kwargs.get('bright', False))
+        raise e
+    else:
+        # No error
+        print_cbt(pyrado.sym_success, color=kwargs.get('color', 'g'), bright=kwargs.get('bright', False))
+    finally:
+        pass

@@ -40,7 +40,7 @@ from pyrado.tasks.final_reward import FinalRewTask, FinalRewMode
 from pyrado.tasks.goalless import GoallessTask
 from pyrado.tasks.reward_functions import ZeroPerStepRewFcn
 from pyrado.utils.data_types import RenderMode
-from pyrado.utils.input_output import print_cbt
+from pyrado.utils.input_output import print_cbt, completion_context
 
 
 class WAMBallInCupReal(RealEnv, Serializable):
@@ -79,8 +79,8 @@ class WAMBallInCupReal(RealEnv, Serializable):
         # Create the robcom client and connect to it
         self._client = robcom.Client()
         if ip is not None:
-            self._client.start(ip, 2013)  # IP address and port
-            print_cbt('Connected to the Barret WAM client.', 'c', bright=True)
+            with completion_context('Connecting to the Barret WAM client', color='c'):
+                self._client.start(ip, 2013)  # IP address and port
         self._dc = None  # Goto command
 
         # Number of controlled joints (dof)
@@ -156,12 +156,11 @@ class WAMBallInCupReal(RealEnv, Serializable):
 
         # Move to initial state within 5 seconds
         gt.add_step(5., self.init_pose_des)
-        print_cbt('Moving the Barret WAM to the initial position.', 'c', bright=True)
 
         # Start process and wait for completion
-        gt.start()
-        gt.wait_for_completion()
-        print_cbt('Reached the initial position.', 'c')
+        with completion_context('Moving the Barret WAM to the initial position', color='c', bright=True):
+            gt.start()
+            gt.wait_for_completion()
 
         # Reset the task which also resets the reward function if necessary
         self._task.reset(env_spec=self.spec)
@@ -186,7 +185,7 @@ class WAMBallInCupReal(RealEnv, Serializable):
 
     def step(self, act: np.ndarray) -> tuple:
         if self._curr_step == 0:
-            print_cbt('Pre-sampling policy.', 'w')
+            print_cbt('Pre-sampling policy...', 'w')
 
         info = dict(t=self._curr_step*self._dt, act_raw=act)
 
@@ -215,13 +214,13 @@ class WAMBallInCupReal(RealEnv, Serializable):
         # Only start execution of process when all desired poses have been sampled from the policy
         # i.e. `max_steps` has been reached
         if self._curr_step >= self._max_steps:
-            done = True
-            print_cbt('Executing trajectory on Barret WAM.', 'c', bright=True)
-            self._dc.start(False, 1, self._callback, ['POS', 'VEL'], [], [])
-            t_start = time.time()
-            self._dc.wait_for_completion()
-            t_stop = time.time()
-            print_cbt(f'Finished execution in {t_stop - t_start:1.5f} s.', 'g')
+            done = True  # exceeded max time steps
+            with completion_context('Executing trajectory on Barret WAM', color='c', bright=True):
+                self._dc.start(False, 1, self._callback, ['POS', 'VEL'], [], [])
+                t_start = time.time()
+                self._dc.wait_for_completion()
+                t_stop = time.time()
+            print_cbt(f'Execution took {t_stop - t_start:1.5f} s.', 'g')
 
         # Add final reward if done
         if done:

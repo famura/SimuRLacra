@@ -36,6 +36,7 @@ from tqdm import tqdm
 from pyrado.sampling.utils import gen_batch_idcs, gen_ordered_batch_idcs, gen_ordered_batches
 from pyrado.utils.data_types import *
 from pyrado.utils.functions import noisy_nonlin_fcn
+from pyrado.utils.input_output import completion_context
 from pyrado.utils.math import cosine_similarity, cov
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.policies.dummy import DummyPolicy
@@ -438,3 +439,13 @@ def test_indi_nonlin_layer(in_features, same_nonlin, bias, weight):
     o = layer(i)
     assert isinstance(o, to.Tensor)
     assert i.shape == o.shape
+
+
+@pytest.mark.visualization
+def test_check_prompt():
+    with completion_context('Works fine', color='g'):
+        a = 3
+
+    with pytest.raises(ZeroDivisionError):
+        with completion_context('Works fine', color='r', bright=True):
+            a = 3/0

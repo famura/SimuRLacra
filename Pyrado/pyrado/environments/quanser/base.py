@@ -35,7 +35,7 @@ from pyrado.environments.real_base import RealEnv
 from pyrado.spaces.base import Space
 from pyrado.tasks.base import Task
 from pyrado.utils.data_types import RenderMode
-from pyrado.utils.input_output import print_cbt
+from pyrado.utils.input_output import print_cbt, completion_context
 
 
 class QuanserReal(RealEnv, ABC):
@@ -126,9 +126,9 @@ class QuanserReal(RealEnv, ABC):
         :param kwargs: just for compatibility with SimEnv. All kwargs can be ignored.
         """
         # Cancel and re-open the connection to the socket
-        self._qsoc.close()
-        self._qsoc.open()
-        print_cbt('Opened the connection to the Quanser device.', 'c', bright=True)
+        with completion_context('Connecting to Quanser device', color='c'):
+            self._qsoc.close()
+            self._qsoc.open()
 
         # Reset the task
         self._task.reset(env_spec=self.spec)
