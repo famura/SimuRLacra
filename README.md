@@ -372,7 +372,7 @@ conda install -c conda-forge lapack
 and then rebuild PyTorch from scratch.
 
 ### Pyrado's policy export tests are skipped
-Set `USE_LIBTORCH = ON` for the cmake arguments of `RcsPySim`
+Run the `setup_deps.py` scripts again with `--local_torch`, or explicitly set `USE_LIBTORCH = ON` for the cmake arguments of `RcsPySim`
 ```
 cd PATH_TO/SimuRLacra/Rcs/build
 ccmake .  # set the option, configure (2x), and generate

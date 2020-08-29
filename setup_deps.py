@@ -57,11 +57,13 @@ IN_HRI = 'SIT' in os.environ
 
 parser = argparse.ArgumentParser(description='Setup RcsPySim dev env')
 parser.add_argument('tasks', metavar='task', type=str, nargs='*', help='Subtasks to execute. Suggested tasks are `all` (includes every feature) or `no_rcs` (excludes Rcs and RcsPysim). To get a list of all availibe tasks, run `python setup_deps.py`.')
-parser.add_argument('--vortex', action='store_true', default=False, help='Use vortex physics engine')
-parser.add_argument('--use-cuda', dest='usecuda', action='store_true', default=False, help='Use CUDA for PyTorch')
-parser.add_argument('--headless', action='store_true', help='Build in headless mode')
-parser.add_argument('--local-torch', dest='uselibtorch', action='store_true', default=True, help='Use the local libtorch from the thirdParty directory')
-parser.add_argument('--no-local-torch', dest='uselibtorch', action='store_false', help='Use the local libtorch from the thirdParty directory')
+parser.add_argument('--vortex', dest='vortex', action='store_true', default=False, help='Use vortex physics engine')
+parser.add_argument('--no_vortex', dest='vortex', action='store_false', help='Do not use vortex physics engine')
+parser.add_argument('--cuda', dest='usecuda', action='store_true', default=False, help='Use CUDA for PyTorch')
+parser.add_argument('--no_cuda', dest='usecuda', action='store_false', help='Do not use CUDA for PyTorch')
+parser.add_argument('--headless', action='store_true', default=False, help='Build in headless mode')
+parser.add_argument('--local_torch', dest='uselibtorch', action='store_true', default=True, help='Use the local libtorch from the thirdParty directory for RcsPySim')
+parser.add_argument('--no_local_torch', dest='uselibtorch', action='store_false', help='Do not use the local libtorch from the thirdParty directory for RcsPySim')
 parser.add_argument('-j', default=1, type=int, help='Number of make threads')
 
 args = parser.parse_args()
@@ -83,7 +85,7 @@ cmake_prefix_path = [
 
 # Required packages
 required_packages = [
-    "g++-4.8",
+    #"g++-4.8",
     "qt5-default",  # conda install -c dsdale24 qt5 _OR_ conda install -c anaconda qt  __OR__ HEADLESS BUILD
     "libqwt-qt5-dev",  # conda install -c dsdale24 qt5 _OR_ conda install -c anaconda qt  __OR__ HEADLESS BUILD
     "libbullet-dev",  # conda install -c conda-forge bullet
@@ -95,6 +97,7 @@ required_packages = [
     "libopenscenegraph-dev",  # conda install -c conda-forge openscenegraph __OR__ HEADLESS BUILD
     "openscenegraph",  #  conda install -c conda-forge openscenegraph __OR__ HEADLESS BUILD
     "liblapack-dev"  #  conda install -c conda-forge lapack 
+    "doxygen"
 ]
 # using --headless: conda install -c conda-forge bullet freetype libglu freeglut mesalib lapack
 
@@ -136,15 +139,16 @@ if args.headless:
 # Bullet
 if IN_HRI:
     # Use bullet double from SIT
-    rcs_cmake_vars["USE_BULLET"] = "2.83_float"
+    rcs_cmake_vars["USE_BULLET"] = "2.83_float"  # double causes errors due to soft bodies
 else:
-    # Bullet from package is in float mode
+    # Bullet from apt-get package is in float mode
     rcs_cmake_vars["USE_BULLET"] = "2.83_float"
 
 # Vortex
 if args.vortex:
-    # Add to rcs dependencies
     rcs_cmake_vars["USE_VORTEX"] = "ESSENTIALS"
+else:
+    rcs_cmake_vars["USE_VORTEX"] = "OFF"
 
 # WM5 collision library
 if not IN_HRI:
@@ -342,6 +346,9 @@ def setup_rcs():
 
 
 def setup_pytorch():
+    # Install dependencies
+    sp.check_call(["sudo", "apt-get", "install", "-y", "python3-distutils"])  # necessary for installing
+
     # Get PyTorch from git
     if not osp.exists(pytorch_src_dir):
         mkdir_p(pytorch_src_dir)

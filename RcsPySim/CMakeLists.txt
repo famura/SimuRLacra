@@ -65,7 +65,7 @@ IF (USE_LIBTORCH)
   )
   get_filename_component(TORCH_BASEDIR ${TORCH_INIT_FILE} DIRECTORY)
   
-  find_package(Torch 1.2 REQUIRED HINTS "${TORCH_BASEDIR}")
+  find_package(Torch 1.4 REQUIRED HINTS "${TORCH_BASEDIR}")
   message("-- Building libtorch policy support.")
 ENDIF ()
 
