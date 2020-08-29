@@ -69,7 +69,7 @@ def get_argparser() -> argparse.ArgumentParser:
     parser.add_argument('-n', '--num_ro_per_config', type=int, default=180,
                         help="number of rollouts per environment configuration / domain parameter set (default: 120)")
 
-    parser.add_argument('--num_envs', type=int, default=8,
+    parser.add_argument('--num_workers', type=int, default=8,
                         help="number of environments to sample from in parallel (default: 8)")
 
     parser.add_argument('--num_runs', type=int, default=1,
@@ -89,9 +89,6 @@ def get_argparser() -> argparse.ArgumentParser:
 
     parser.add_argument('--remove_dr_wrappers', action='store_true', default=False,
                         help="remove all domain randomization wrappers (default: False)")
-
-    parser.add_argument('--save_name', type=str, default='policy_conv',
-                        help="name for the converted module, saved as <name>.pt (default: 'policy_conv')")
 
     parser.add_argument('-s', '--save_figures', action='store_true', default=False,
                         help="save all generated figures (default: False)")

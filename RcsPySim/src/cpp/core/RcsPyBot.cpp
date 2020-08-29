@@ -29,15 +29,15 @@
 *******************************************************************************/
 
 #include "RcsPyBot.h"
-
 #include "action/ActionModel.h"
 #include "observation/ObservationModel.h"
 #include "control/ControlPolicy.h"
-#include "control/MLPPolicy.h"
+//#include "control/MLPPolicy.h"
 
 #include <Rcs_typedef.h>
 #include <Rcs_macros.h>
 #include <Rcs_timer.h>
+#include <ControllerBase.h>
 
 #include <cmath>
 
@@ -72,6 +72,17 @@ RcsPyBot::RcsPyBot(PropertySource* propertySource)
 {
     // Load experiment config
     config = ExperimentConfig::create(propertySource);
+    
+    // Check if all joints are position controlled for skipping a later inverse dynamics control (compliance)
+    unsigned int numPosCtrlJoints = 0;
+    RCSGRAPH_TRAVERSE_JOINTS(config->graph) {
+            if (JNT->jacobiIndex != -1) {
+                if (JNT->ctrlType == RCSJOINT_CTRL_TYPE::RCSJOINT_CTRL_POSITION) {
+                    numPosCtrlJoints++;
+                }
+            }
+        }
+    allJointsPosCtrl = config->graph->nJ == numPosCtrlJoints;
     
     // Set MotionControlLayer members
     currentGraph = config->graph;
@@ -120,33 +131,36 @@ void RcsPyBot::setControlPolicy(ControlPolicy* controlPolicy)
     std::unique_lock<std::mutex> lock(controlPolicyMutex);
     this->controlPolicy = controlPolicy;
     if (controlPolicy == NULL) {
-        // command initial state
+        // Command initial state
         RcsGraph_getDefaultState(desiredGraph, q_ctrl);
         MatNd_setZero(qd_ctrl);
         MatNd_setZero(T_ctrl);
     }
-    // reset model states
+    // Reset model states
     config->observationModel->reset();
     config->actionModel->reset();
 }
 
 void RcsPyBot::updateControl()
 {
-    // aggressive locking here is ok, setControlPolicy doesn't take long
+    // Aggressive locking here is ok, setControlPolicy doesn't take long
     std::unique_lock<std::mutex> lock(controlPolicyMutex);
-    // read observation from current graph
+    
+    // Read observation from current graph
     config->observationModel->computeObservation(observation, action, config->dt);
     
-    // compute action
+    // Compute action
     if (controlPolicy != NULL) {
         controlPolicy->computeAction(action, observation);
         
-        // run action through action model
-        config->actionModel->computeCommand(q_ctrl, qd_ctrl, T_ctrl, action,
-                                            getCallbackUpdatePeriod());
+        // Run action through action model
+        config->actionModel->computeCommand(q_ctrl, qd_ctrl, T_ctrl, action, getCallbackUpdatePeriod());
     }
-    // XXX TEST
-    //MatNd_printTranspose(action);
+    
+    //Inverse dynamics in joint space (compliance control)
+    if (!allJointsPosCtrl) {
+        Rcs::ControllerBase::computeInvDynJointSpace(T_ctrl, config->graph, q_ctrl, 1000.);
+    }
     
     // update desired state graph
     

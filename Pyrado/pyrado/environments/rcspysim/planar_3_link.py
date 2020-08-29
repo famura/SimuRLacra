@@ -142,7 +142,7 @@ class Planar3LinkSim(RcsSim, Serializable):
         task = FinalRewTask(
             SequentialTasks([subtask_1, subtask_2, subtask_3, subtask_4, subtask_5, subtask_6], hold_rew_when_done=True,
                             verbose=True),
-            mode=FinalRewMode(always_positive=True),
+            mode=FinalRewMode(always_positive=True), factor=5e3,
         )
         masked_task = MaskedTask(self.spec, task, idcs)
 

@@ -95,7 +95,7 @@ int main(int argc, char** argv)
     argP.getArgument("-f", xmlFileName, "Configuration file name");
     argP.getArgument("-dir", directory, "Configuration file directory");
     bool valgrind = argP.hasArgument("-valgrind",
-                                     "Start without Guis and graphics");
+                                     "Start without GUIs and graphics");
     bool trackBallZPos = argP.hasArgument("-trackBallZPos", "Set to obtain ball z position from vision");
     
     runLoop = true;

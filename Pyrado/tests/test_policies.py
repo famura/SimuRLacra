@@ -621,9 +621,9 @@ def test_hidden_state_packing_nobatch():
         lazy_fixture('fnn_policy'),
     ], ids=['lin', 'fnn']
 )
-def test_trace_feedforward(env, policy):
+def test_script_feedforward(env, policy):
     # Generate scripted version
-    scripted = policy.trace()
+    scripted = policy.script()
 
     # Compare results
     obs = to.from_numpy(policy.env_spec.obs_space.sample_uniform())
@@ -649,9 +649,9 @@ def test_trace_feedforward(env, policy):
         lazy_fixture('adn_policy'),
     ], ids=['rnn', 'lstm', 'gru', 'adn']
 )
-def test_trace_recurrent(env, policy):
+def test_script_recurrent(env, policy):
     # Generate scripted version
-    scripted = policy.trace()
+    scripted = policy.script()
 
     # Compare results, tracing hidden manually
     hidden = policy.init_hidden()
@@ -697,12 +697,15 @@ def test_trace_recurrent(env, policy):
         lazy_fixture('adn_policy'),
     ], ids=['lin', 'fnn', 'rnn', 'lstm', 'gru', 'adn']
 )
-def test_export_cpp(env, policy, tmpdir):
+@pytest.mark.parametrize(
+    'file_type', ['.pt', '.zip'], ids=['pt', 'zip']
+)
+def test_export_cpp(env, policy, tmpdir, file_type):
     # Generate scripted version (in double mode for CPP compatibility)
-    scripted = policy.double().trace()
+    scripted = policy.double().script()
 
     # Export
-    export_file = osp.join(tmpdir, 'policy.zip')
+    export_file = osp.join(tmpdir, 'policy' + file_type)
     scripted.save(export_file)
 
     # Import again
@@ -751,7 +754,7 @@ def test_export_rcspysim(env, policy, tmpdir):
     from rcsenv import ControlPolicy
 
     # Generate scripted version (in double mode for CPP compatibility)
-    scripted = policy.double().trace()
+    scripted = policy.double().script()
     print(scripted.graph)
 
     # Export

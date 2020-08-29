@@ -93,7 +93,7 @@ print(env.obs_space.labels)
 policy = TimePolicy(spec=env.spec, fcn_of_time=policy_fcn, dt=dt)
 
 # Create scripted version of the policy
-tm = policy.trace()
+tm = policy.script()
 print(tm.graph)
 print(tm.code)
 

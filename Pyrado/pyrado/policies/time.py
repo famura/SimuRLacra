@@ -73,7 +73,7 @@ class TimePolicy(Policy):
         self._curr_time += self._dt
         return act
 
-    def trace(self) -> ScriptModule:
+    def script(self) -> ScriptModule:
         return script(TraceableTimePolicy(self.env_spec, self._fcn_of_time, self._dt))
 
 

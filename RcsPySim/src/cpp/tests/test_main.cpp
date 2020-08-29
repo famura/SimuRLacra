@@ -1,4 +1,4 @@
-<!--
+/*******************************************************************************
  Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and
  Technical University of Darmstadt.
  All rights reserved.
@@ -26,15 +26,9 @@
  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
--->
+*******************************************************************************/
 
-<?xml version="1.0"?>
-<Experiment type="TargetTracking"
-            extraConfigDir="/home/muratore/localdisk/Software/SimuRLacra/RcsPySim/src/python/rcsenv/config/TargetTracking"
-            physicsEngine="Bullet" graphFileName="TargetTracking.xml" dt="0.01" max_steps="1000"
-            checkJointLimits="True">
-  <tasksLeft function="lin" errorDynamics="1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0" goal="0.5 0.25 1.0"/>
-  <tasksLeft function="lin" errorDynamics="1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0" goal="0.5 -0.5 1.0"/>
-  <tasksRight function="lin" errorDynamics="1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0" goal="0.25 0.25 1.0"/>
-  <collision file="collisionModel.xml"/>
-</Experiment>
+// Create the test main function in this file
+#define CATCH_CONFIG_MAIN
+
+#include <catch2/catch.hpp>

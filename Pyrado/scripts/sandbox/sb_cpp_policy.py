@@ -73,7 +73,7 @@ if __name__ == '__main__':
     # model = create_recurrent_policy()
 
     # Trace the Pyrado policy (inherits from PyTorch module)
-    traced_script_module = model.trace()
+    traced_script_module = model.script()
     print(traced_script_module.graph)
 
     # Save the scripted module

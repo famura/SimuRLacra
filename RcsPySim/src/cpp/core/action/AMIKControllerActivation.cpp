@@ -32,11 +32,21 @@
 #include "ActionModelIK.h"
 
 #include <Rcs_macros.h>
+#include <Rcs_basicMath.h>
 
 #include <sstream>
 
 namespace Rcs
 {
+
+void MatNd_clipEleSelf(MatNd* self, double lower, double upper)
+{
+    unsigned int i, mn = self->m*self->n;
+    for (i = 0; i < mn; i++) {
+        self->ele[i] = Math_clip(self->ele[i], lower, upper);
+    }
+}
+
 
 AMIKControllerActivation::AMIKControllerActivation(RcsGraph* graph, TaskCombinationMethod tcm) :
     AMIKGeneric(graph), taskCombinationMethod(tcm)
@@ -135,7 +145,12 @@ void AMIKControllerActivation::computeCommand(
     }
     
     // Stabilize actions. If an action is exactly zero, computeDX will discard that task, leading to a shape error.
-    MatNd_addConst(activation, 1e-9);
+    if (MatNd_minEle(activation) < 1e-6) {
+        MatNd_clipEleSelf(activation, 1e-6, 1e+6);
+        REXEC(5) {
+            std::cout << "Clipped the activations to [1e-6, 1e+6]" << std::endl;
+        }
+    }
     
     // Compute the differences in task space and weight them
     getController()->computeDX(dx_des, x_des, activation);

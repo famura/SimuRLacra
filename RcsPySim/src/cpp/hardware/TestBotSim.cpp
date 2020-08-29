@@ -32,17 +32,15 @@
 #include <action/ActionModel.h>
 #include <config/PropertySourceXml.h>
 #include <control/MLPPolicy.h>
-#include <physics/PhysicsParameterManager.h>
 #include <observation/ObservationModel.h>
+#include <physics/PhysicsParameterManager.h>
 
 #include <Rcs_macros.h>
 #include <Rcs_utils.h>
-#include <Rcs_utilsCPP.h>
 #include <Rcs_timer.h>
 #include <Rcs_parser.h>
 #include <Rcs_resourcePath.h>
 #include <Rcs_cmdLine.h>
-#include <Rcs_mesh.h>
 
 #include <KeyCatcherBase.h>
 #include <HUD.h>
@@ -74,41 +72,37 @@ static void quit(int /*sig*/)
 
 int main(int argc, char** argv)
 {
+    RMSG("Starting Rcs...");
+    
     Rcs::KeyCatcherBase::registerKey("q", "Quit");
     Rcs::KeyCatcherBase::registerKey("l", "Start/stop data logging");
     Rcs::KeyCatcherBase::registerKey("p", "Activate control policy");
     Rcs::KeyCatcherBase::registerKey("o", "Deactivate policy and return to initial state");
     
-    RMSG("Starting Rcs...");
-    char xmlFileName[128] = "exTargetTracking.xml", directory[128] = "config/TargetTracking";
-    
     // Ctrl-C callback handler
     signal(SIGINT, quit);
     
-    // This initialize the xml library and check potential mismatches between
-    // the version it was compiled for and the actual shared library used.
+    // This initialize the xml library and check potential mismatches between the version it was compiled for and
+    // the actual shared library used.
     LIBXML_TEST_VERSION;
     
     // Parse command line arguments
     Rcs::CmdLineParser argP(argc, argv);
+    char xmlFileName[128] = "ex_p3l-ika_export.xml";
+    char directory[128] = "../config/ENVIRONMENT_FOLDER";
     argP.getArgument("-dl", &RcsLogLevel, "Debug level (default is 0)");
     argP.getArgument("-f", xmlFileName, "Configuration file name");
     argP.getArgument("-dir", directory, "Configuration file directory");
-    bool valgrind = argP.hasArgument("-valgrind",
-                                     "Start without Guis and graphics");
-//    bool simpleGraphics = argP.hasArgument("-simpleGraphics", "OpenGL without "
-//                                                         "fancy stuff (shadows, anti-aliasing)");
-    
-    runLoop = true;
+    bool valgrind = argP.hasArgument("-valgrind", "Start without GUIs and graphics");
+//    bool simpleGraphics = argP.hasArgument("-simpleGraphics", "OpenGL without fancy stuff (shadows, anti-aliasing)");
     
     const char* hgr = getenv("SIT");
     if (hgr != NULL) {
-        std::string meshDir = std::string(hgr) +
-                              std::string("/Data/RobotMeshes/1.0/data");
+        std::string meshDir = std::string(hgr) + std::string("/Data/RobotMeshes/1.0/data");
         Rcs_addResourcePath(meshDir.c_str());
     }
-    
-    Rcs_addResourcePath("config");
+
+//    Rcs_addResourcePath("../config");
     Rcs_addResourcePath(directory);
     
     // show help if requested
@@ -119,14 +113,14 @@ int main(int argc, char** argv)
         return 0;
     }
     
+    // Create simulated robot from config file
     RMSG("Creating robot...");
-    // create bot
     Rcs::RcsPyBot bot(new Rcs::PropertySourceXml(xmlFileName));
     
     // TODO add hardware components (which I don't have currently)
-    // add physics sim for test
+    // Add physics simulator for testing
     Rcs::PhysicsParameterManager* ppmanager = bot.getConfig()->createPhysicsParameterManager();
-    Rcs::PhysicsBase* simImpl = ppmanager->createSimulator(bot.getConfig()->properties->getChild("initdomainParam"));
+    Rcs::PhysicsBase* simImpl = ppmanager->createSimulator(bot.getConfig()->properties->getChild("initDomainParam"));
     
     bot.getConfig()->actionModel->reset();
     bot.getConfig()->observationModel->reset();
@@ -134,10 +128,9 @@ int main(int argc, char** argv)
     Rcs::PhysicsSimulationComponent* sim = new Rcs::PhysicsSimulationComponent(simImpl);
     sim->setUpdateFrequency(1.0/bot.getConfig()->dt);
     bot.addHardwareComponent(sim);
-    // and it does drive the update loop
-    bot.setCallbackTriggerComponent(sim);
+    bot.setCallbackTriggerComponent(sim); // and it does drive the update loop
     
-    // add viewer component
+    // Add viewer component
     Rcs::ViewerComponent* vc = NULL;
     Rcs::HUD* hud = NULL;
     if (!valgrind) {
@@ -145,32 +138,39 @@ int main(int argc, char** argv)
         hud = new Rcs::HUD(0, 0, 1024, 140);
         vc->getViewer()->add(hud);
         
-        // experiment specific settings
         bot.getConfig()->initViewer(vc->getViewer());
-        
         bot.addHardwareComponent(vc);
     }
     
-    // load control policy
+    // Load control policy
     Rcs::ControlPolicy* controlPolicy = NULL;
     auto policyConfig = bot.getConfig()->properties->getChild("policy");
     if (policyConfig->exists()) {
         controlPolicy = Rcs::ControlPolicy::create(policyConfig);
+        REXEC(1) {
+            std::cout << "Loaded policy specified in the config file." << std::endl;
+        }
+    }
+    else {
+        REXEC(1) {
+            std::cout << "Could not load a policy!" << std::endl;
+        }
     }
 
 //    controlPolicy = Rcs::loadMLPPolicyFromXml(policyFile.c_str(),
 //            bot.getConfig()->observationModel->getDim(), bot.getConfig()
 //            ->actionModel->getDim());
     
-    // start
-    RMSG("Starting robot...");
+    // Start
     bot.startThreads();
-    
+    RMSG("Started robot.");
     bool startLoggerNextPolicyStart = false;
-    // main loop
-    RMSG("Rcs is running!");
+    
+    // Main loop
+    runLoop = true;
+    RMSG("Main loop is running ...");
     while (runLoop) {
-        // check keys
+        // Check keys
         if (vc && vc->getKeyCatcher()->getAndResetKey('q')) {
             runLoop = false;
         }
@@ -179,12 +179,11 @@ int main(int argc, char** argv)
                 bot.logger.stop();
             }
             else if (bot.getControlPolicy() != controlPolicy) {
-                // defer until policy start
+                // Defer until policy start
                 startLoggerNextPolicyStart = true;
-                RMSG("Deferring logger start until the policy is activated");
+                RMSG("Deferring logger start until the policy is activated.");
             }
             else {
-                
                 bot.logger.start(bot.getConfig()->observationModel->getSpace(),
                                  bot.getConfig()->actionModel->getSpace(), 500);
             }
@@ -206,21 +205,21 @@ int main(int argc, char** argv)
         }
         
         if (hud) {
-            auto hudText = bot.getConfig()->getHUDText(simImpl->time(), bot.getObservation(), bot.getAction(), simImpl,
-                                                       ppmanager, nullptr);
+            auto hudText = bot.getConfig()->getHUDText(
+                simImpl->time(), bot.getObservation(), bot.getAction(), simImpl, ppmanager, nullptr);
             hud->setText(hudText);
         }
-        // wait a bit till next update
-        Timer_waitDT(0.05);
+        
+        // Wait a bit till next update
+        Timer_waitDT(0.01);
     }
     
-    // terminate
+    // Terminate
     RMSG("Terminating...");
     bot.stopThreads();
     bot.disconnectCallback();
     
     delete controlPolicy;
-    
     delete ppmanager;
     
     // Clean up global stuff. From the libxml2 documentation:
