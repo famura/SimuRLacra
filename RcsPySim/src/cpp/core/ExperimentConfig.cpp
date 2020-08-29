@@ -33,6 +33,7 @@
 #include "action/AMNormalized.h"
 #include "observation/ObservationModel.h"
 #include "observation/OMNormalized.h"
+#include "observation/OMPartial.h"
 #include "physics/PhysicsParameterManager.h"
 
 #include <Rcs_resourcePath.h>
@@ -266,6 +267,18 @@ void ExperimentConfig::load(PropertySource* properties)
         // The temp var suppresses a wrong UNINIT.HEAP.MUST from klocwork
         auto inner = observationModel;
         observationModel = new OMNormalized(inner, minOverride, maxOverride);
+    }
+
+    // Add partial obbservation if desired
+    auto partialObs = properties->getChild("partialObservation");
+    if (partialObs) {
+        bool exclude = partialObs->getPropertyBool("exclude");
+        std::vector<std::string> names;
+        if (partialObs->getProperty(names, "names")) {
+            auto inner = observationModel;
+            bool autoSelectVelocity = partialObs->getPropertyBool("autoSelectVelocity");
+            observationModel = OMPartial::fromNames(inner, names, exclude, autoSelectVelocity);
+        }
     }
     
     // Load additional common properties

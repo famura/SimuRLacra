@@ -64,6 +64,16 @@ public:
      * @throws std::exception if the property exists, but couldn't be converted
      */
     virtual bool getProperty(std::string& out, const char* property) = 0;
+
+    /**
+     * Read a string list value.
+     *
+     * @param[out] out      storage for read value
+     * @param[in]  property name of property to read
+     * @return true if the property was read successfully
+     * @throws std::exception if the property exists, but couldn't be converted
+     */
+    virtual bool getProperty(std::vector<std::string>& out, const char* property) = 0;
     
     /**
      * Read a double value.

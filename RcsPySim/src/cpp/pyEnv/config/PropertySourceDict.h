@@ -73,7 +73,9 @@ public:
     virtual bool exists();
     
     virtual bool getProperty(std::string& out, const char* property);
-    
+
+    virtual bool getProperty(std::vector<std::string> &out, const char *property);
+
     virtual bool getProperty(double& out, const char* property);
     
     virtual bool getProperty(int& out, const char* property);

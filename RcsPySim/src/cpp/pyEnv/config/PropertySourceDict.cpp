@@ -90,6 +90,37 @@ bool PropertySourceDict::getProperty(std::string& out, const char* property)
     return true;
 }
 
+bool PropertySourceDict::getProperty(std::vector<std::string> &out, const char *property) {
+    if (!_exists) {
+        return false;
+    }
+    // try to retrieve
+    pybind11::handle elem;
+    if (!try_get(dict, property, elem) || elem.is_none()) {
+        return false;
+    }
+
+    if (py::isinstance<py::str>(elem)) {
+        py::str str(elem);
+        out.push_back(str);
+        return true;
+    } else if (py::isinstance<py::iterable>(elem)) {
+        for (auto part : elem) {
+            py::str str(part);
+            out.push_back(str);
+        }
+        return true;
+    } else {
+        std::ostringstream os;
+        os << "Unsupported value for property entry at ";
+        appendPrefix(os);
+        os << property << ": Expected string or iterable of string, but got ";
+        auto childType = py::str(elem.get_type());
+        os << childType.cast<std::string>();
+        throw std::invalid_argument(os.str());
+    }
+}
+
 bool PropertySourceDict::getProperty(double& out, const char* property)
 {
     if (!_exists) {

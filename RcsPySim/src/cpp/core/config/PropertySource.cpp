@@ -59,7 +59,11 @@ public:
     {
         return false;
     }
-    
+
+    bool getProperty(std::vector<std::string> &out, const char *property) override {
+        return false;
+    }
+
     virtual bool getProperty(double& out, const char* property)
     {
         return false;

@@ -45,4 +45,6 @@ __all__ = [
     "setVortexLogLevel",
     "RCSPYSIM_CONFIG_PATH",
     "JointLimitException",
+    "addResourcePath",
+    "saveExperimentParams",
 ]

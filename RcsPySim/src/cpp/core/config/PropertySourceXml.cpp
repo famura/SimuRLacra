@@ -101,6 +101,16 @@ bool PropertySourceXml::getProperty(std::string& out, const char* property)
     return true;
 }
 
+
+bool PropertySourceXml::getProperty(std::vector<std::string> &out, const char *property) {
+    // check if exists
+    if (!getXMLNodeProperty(node, property)) {
+        return false;
+    }
+    getXMLNodePropertyVecSTLString(node, property, out);
+    return true;
+}
+
 bool PropertySourceXml::getProperty(double& out, const char* property)
 {
     // check if exists
@@ -260,5 +270,6 @@ void PropertySourceXml::saveXML(const char* fileName, const char* rootNodeName)
         xmlFreeDoc(writeDoc);
     }
 }
+
 
 } /* namespace Rcs */

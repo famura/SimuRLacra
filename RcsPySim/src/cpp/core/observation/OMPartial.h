@@ -81,6 +81,20 @@ public:
     fromMask(
         ObservationModel* wrapped, const std::vector<bool>& stateMask, const std::vector<bool>& velocityMask,
         bool exclude = false);
+
+
+    /**
+     * Create a partial observation model using a boolean mask.
+     * @param wrapped wrapped observation model. takes ownership.
+     * @param names selected entry names
+     * @param exclude set to true to invert the mask
+     * @param autoSelectVelocity set to true to automatically exclude the velocity corresponding to a state name
+     */
+    static OMPartial*
+    fromNames(
+            ObservationModel* wrapped, const std::vector<std::string>& names,
+            bool exclude = false,
+            bool autoSelectVelocity = false);
     
     virtual ~OMPartial();
     

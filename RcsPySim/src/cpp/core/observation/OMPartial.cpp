@@ -130,6 +130,47 @@ OMPartial* OMPartial::fromMask(
                          loadMask(velocityMask, wrapped->getVelocityDim(), exclude, "velocity"));
 }
 
+OMPartial *OMPartial::fromNames(ObservationModel *wrapped, const std::vector<std::string> &names, bool exclude,
+                                bool autoSelectVelocity) {
+    IndexList states;
+    IndexList velocities;
+
+    auto stateNames = wrapped->getStateNames();
+    auto velocityNames = wrapped->getVelocityNames();
+
+    for (auto& name : names) {
+        // find in state
+        auto stateIter = std::find(stateNames.begin(), stateNames.end(), name);
+        if (stateIter != stateNames.end()) {
+            // add to index list
+            states.push_back(std::distance(stateNames.begin(), stateIter));
+
+            if (autoSelectVelocity) {
+                // select corresponding velocity
+                auto velIter = std::find(velocityNames.begin(), velocityNames.end(), name+"d");
+                if (velIter != velocityNames.end()) {
+                    // add to index list
+                    velocities.push_back(std::distance(velocityNames.begin(), velIter));
+                }
+            }
+        } else {
+            // find in velocity
+            auto velIter = std::find(velocityNames.begin(), velocityNames.end(), name);
+            if (velIter != velocityNames.end()) {
+                // add to index list
+                velocities.push_back(std::distance(velocityNames.begin(), velIter));
+            } else {
+                // not found
+                std::ostringstream os;
+                os << (exclude ? "Excluded " : "Selected ") << " name " << name
+                   << " was not found in the wrapped observation model";
+                throw std::invalid_argument(os.str());
+            }
+        }
+    }
+    return new OMPartial(wrapped, states, velocities, exclude);
+}
+
 OMPartial::~OMPartial()
 {
     delete wrapped;
@@ -227,6 +268,7 @@ std::vector<ObservationModel*> OMPartial::getNested() const
 {
     return {wrapped};
 }
+
 
 
 } /* namespace Rcs */

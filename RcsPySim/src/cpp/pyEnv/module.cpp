@@ -203,7 +203,12 @@ PYBIND11_MODULE(_rcsenv, m)
 //#ifdef GUI_AVAILABLE
 //    define_gui_classes(m);
 //#endif
-    
+
+    m.def("saveExperimentParams", [](py::dict& config, const char* filename){
+        std::unique_ptr<Rcs::PropertySource> ps(new Rcs::PropertySourceDict(config));
+        ps->saveXML(filename, "Experiment");
+    }, py::arg("config"), py::arg("filename"));
+
     // Define some utility functions for interacting with RCS
     
     // Sets the rcs log level
