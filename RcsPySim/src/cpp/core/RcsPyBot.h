@@ -106,6 +106,8 @@ protected:
     
     //! Experiment configuration
     ExperimentConfig* config;
+    bool allJointsPosCtrl;
+    
     //! Control policy
     ControlPolicy* controlPolicy;
     

@@ -116,13 +116,11 @@ set(CORE_SRCS
     util/integrator.cpp
     util/MatNd_based.cpp)
 
-# Add pytorch specific sources if available
+# Add PyTorch specific sources if available
 IF (TORCH_FOUND)
-  #IF(USE_LIBTORCH)
   LIST(APPEND CORE_SRCS
       control/TorchPolicy.cpp
       )
-  #ENDIF()
 ENDIF ()
 
 add_library(RcsEnvCore SHARED ${CORE_SRCS})

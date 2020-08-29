@@ -183,7 +183,7 @@ class Policy(nn.Module, ABC):
         self.eval()
         return self(rollout.get_data_values('observations', truncate_last=True))  # all observations at once
 
-    def trace(self) -> ScriptModule:
+    def script(self) -> ScriptModule:
         """
         Create a ScriptModule from this policy.
         The returned module will always have the signature `action = tm(observation)`.

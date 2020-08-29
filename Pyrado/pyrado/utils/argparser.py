@@ -90,9 +90,6 @@ def get_argparser() -> argparse.ArgumentParser:
     parser.add_argument('--remove_dr_wrappers', action='store_true', default=False,
                         help="remove all domain randomization wrappers (default: False)")
 
-    parser.add_argument('--save_name', type=str, default='policy_conv',
-                        help="name for the converted module, saved as <name>.pt (default: 'policy_conv')")
-
     parser.add_argument('-s', '--save_figures', action='store_true', default=False,
                         help="save all generated figures (default: False)")
 

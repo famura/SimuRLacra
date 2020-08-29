@@ -38,7 +38,7 @@
             physicsEngine="Bullet"
 >
 
-  <initdomainParam ball_mass="0.2"
+  <initDomainParam ball_mass="0.2"
                    ball_radius="0.05"
                    ball_friction="0.4"
                    ball_rollingfriction="0.003"

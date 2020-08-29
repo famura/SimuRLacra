@@ -53,22 +53,22 @@ void ControlPolicy::registerType(
 
 ControlPolicy* ControlPolicy::create(const char* name, const char* dataFile)
 {
-    // lookup factory for type
+    // Lookup factory for type
     auto iter = registry.find(name);
     if (iter == registry.end()) {
         std::ostringstream os;
-        os << "Unknown control policy type '" << name << "'.";
+        os << "Unknown control policy type '" << name << "'!";
         throw std::invalid_argument(os.str());
     }
     
-    // find data file
+    // Find data file
     char filepath[256];
     bool found = Rcs_getAbsoluteFileName(dataFile, filepath);
     if (!found) {
         // file does not exist
         Rcs_printResourcePath();
         std::ostringstream os;
-        os << "Policy file '" << dataFile << "' does not exist.";
+        os << "Policy file '" << dataFile << "' does not exist!";
         throw std::invalid_argument(os.str());
     }
     

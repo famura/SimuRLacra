@@ -89,7 +89,7 @@ class RecurrentPolicy(Policy, ABC):
         """
         raise NotImplementedError
 
-    def trace(self) -> ScriptModule:
+    def script(self) -> ScriptModule:
         """
         Create a ScriptModule from this policy.
         The returned module will always have the signature `action = tm(observation, hidden)`.
@@ -134,23 +134,22 @@ class StatefulRecurrentNetwork(nn.Module):
         inputs = {
             'forward': (
                 to.from_numpy(net.env_spec.obs_space.sample_uniform()).to(to.get_default_dtype()),
-                hidden
+                hidden.to(to.get_default_dtype())
             ),
-            'init_hidden': tuple()
+            'init_hidden': tuple()  # TODO @Felix: why tuple()?
         }
         self.net = trace_module(net, inputs)
 
     @export
     def reset(self):
         """ Reset the hidden states. """
-        # Zero out hidden state
-        self.hidden.copy_(self.net.init_hidden())
+        self.hidden.data.copy_(self.net.init_hidden())  # in most cases all zeros
 
     def forward(self, inp):
         # Run through network
         out, hid = self.net(inp, self.hidden)
 
         # Store new hidden state
-        self.hidden.copy_(hid)
+        self.hidden.data.copy_(hid.data)
 
         return out
