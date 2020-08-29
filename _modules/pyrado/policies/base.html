@@ -360,7 +360,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="p">(</span><span class="n">rollout</span><span class="o">.</span><span class="n">get_data_values</span><span class="p">(</span><span class="s1">&#39;observations&#39;</span><span class="p">,</span> <span class="n">truncate_last</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>  <span class="c1"># all observations at once</span></div>
 
-<div class="viewcode-block" id="Policy.trace"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base.Policy.trace">[docs]</a>    <span class="k">def</span> <span class="nf">trace</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ScriptModule</span><span class="p">:</span>
+<div class="viewcode-block" id="Policy.script"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base.Policy.script">[docs]</a>    <span class="k">def</span> <span class="nf">script</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ScriptModule</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a ScriptModule from this policy.</span>
 <span class="sd">        The returned module will always have the signature `action = tm(observation)`.</span>

@@ -784,7 +784,7 @@
     <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">up</span><span class="p">,</span> <span class="n">packed</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="test_trace_feedforward"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_trace_feedforward">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+<div class="viewcode-block" id="test_script_feedforward"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_script_feedforward">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">),</span>
         <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_qbb&#39;</span><span class="p">),</span>
@@ -798,9 +798,9 @@
         <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;fnn_policy&#39;</span><span class="p">),</span>
     <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">]</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_trace_feedforward</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_script_feedforward</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
     <span class="c1"># Generate scripted version</span>
-    <span class="n">scripted</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span>
+    <span class="n">scripted</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">script</span><span class="p">()</span>
 
     <span class="c1"># Compare results</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">policy</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">())</span>
@@ -810,7 +810,7 @@
     <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">act_reg</span><span class="p">,</span> <span class="n">act_script</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="test_trace_recurrent"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_trace_recurrent">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">recurrent_policy</span>
+<div class="viewcode-block" id="test_script_recurrent"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_script_recurrent">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">recurrent_policy</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">),</span>
@@ -826,9 +826,9 @@
         <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;adn_policy&#39;</span><span class="p">),</span>
     <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">]</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_trace_recurrent</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_script_recurrent</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
     <span class="c1"># Generate scripted version</span>
-    <span class="n">scripted</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span>
+    <span class="n">scripted</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">script</span><span class="p">()</span>
 
     <span class="c1"># Compare results, tracing hidden manually</span>
     <span class="n">hidden</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">init_hidden</span><span class="p">()</span>
@@ -874,12 +874,15 @@
         <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;adn_policy&#39;</span><span class="p">),</span>
     <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">]</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_export_cpp</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">tmpdir</span><span class="p">):</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;file_type&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;.pt&#39;</span><span class="p">,</span> <span class="s1">&#39;.zip&#39;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="s1">&#39;zip&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_export_cpp</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">tmpdir</span><span class="p">,</span> <span class="n">file_type</span><span class="p">):</span>
     <span class="c1"># Generate scripted version (in double mode for CPP compatibility)</span>
-    <span class="n">scripted</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">double</span><span class="p">()</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span>
+    <span class="n">scripted</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">double</span><span class="p">()</span><span class="o">.</span><span class="n">script</span><span class="p">()</span>
 
     <span class="c1"># Export</span>
-    <span class="n">export_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s1">&#39;policy.zip&#39;</span><span class="p">)</span>
+    <span class="n">export_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span> <span class="o">+</span> <span class="n">file_type</span><span class="p">)</span>
     <span class="n">scripted</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">export_file</span><span class="p">)</span>
 
     <span class="c1"># Import again</span>
@@ -928,7 +931,7 @@
     <span class="kn">from</span> <span class="nn">rcsenv</span> <span class="kn">import</span> <span class="n">ControlPolicy</span>
 
     <span class="c1"># Generate scripted version (in double mode for CPP compatibility)</span>
-    <span class="n">scripted</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">double</span><span class="p">()</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span>
+    <span class="n">scripted</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">double</span><span class="p">()</span><span class="o">.</span><span class="n">script</span><span class="p">()</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">scripted</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
 
     <span class="c1"># Export</span>

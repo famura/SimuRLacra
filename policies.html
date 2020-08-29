@@ -599,8 +599,8 @@ The default implementation does nothing.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyrado.policies.base.Policy.trace">
-<code class="sig-name descname">trace</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.jit.ScriptModule<a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.Policy.trace" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.policies.base.Policy.script">
+<code class="sig-name descname">script</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.jit.ScriptModule<a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.Policy.script" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a ScriptModule from this policy.
 The returned module will always have the signature <cite>action = tm(observation)</cite>.
 For recurrent networks, it returns a stateful module that keeps the hidden states internally.
@@ -714,8 +714,8 @@ Change this string for value functions.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyrado.policies.base_recurrent.RecurrentPolicy.trace">
-<code class="sig-name descname">trace</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.jit.ScriptModule<a class="reference internal" href="_modules/pyrado/policies/base_recurrent.html#RecurrentPolicy.trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base_recurrent.RecurrentPolicy.trace" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.policies.base_recurrent.RecurrentPolicy.script">
+<code class="sig-name descname">script</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.jit.ScriptModule<a class="reference internal" href="_modules/pyrado/policies/base_recurrent.html#RecurrentPolicy.script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base_recurrent.RecurrentPolicy.script" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a ScriptModule from this policy.
 The returned module will always have the signature <cite>action = tm(observation, hidden)</cite>.
 For recurrent networks, it returns a stateful module that keeps the hidden states internally.
@@ -1966,8 +1966,8 @@ The default implementation does nothing.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyrado.policies.time.TimePolicy.trace">
-<code class="sig-name descname">trace</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.jit.ScriptModule<a class="reference internal" href="_modules/pyrado/policies/time.html#TimePolicy.trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.time.TimePolicy.trace" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.policies.time.TimePolicy.script">
+<code class="sig-name descname">script</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.jit.ScriptModule<a class="reference internal" href="_modules/pyrado/policies/time.html#TimePolicy.script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.time.TimePolicy.script" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a ScriptModule from this policy.
 The returned module will always have the signature <cite>action = tm(observation)</cite>.
 For recurrent networks, it returns a stateful module that keeps the hidden states internally.
