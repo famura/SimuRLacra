@@ -49,7 +49,7 @@ class QQubeReal(QuanserReal, Serializable):
                  dt: float = 1/500.,
                  max_steps: int = pyrado.inf,
                  task_args: [dict, None] = None,
-                 ip: str = '192.168.2.40'):
+                 ip: str = '192.168.2.17'):
         """
         Constructor
 
@@ -114,31 +114,34 @@ class QQubeReal(QuanserReal, Serializable):
     def _correct_sensor_offset(self, meas: np.ndarray) -> np.ndarray:
         return meas - self._sens_offset
 
+    def _wait_for_pole_at_rest(self):
+        """ Wait until the Qube's rotating pole is at rest """
+        cnt = 0
+        while cnt < 1.5/self._dt:
+            # Get next measurement
+            meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
+
+            if np.abs(meas[2]) < 1e-6 and np.abs(meas[3]) < 1e-6 and (meas - self._sens_offset)[1] < 0.5/180*np.pi:
+                cnt += 1
+            else:
+                # Record alpha offset (e.g. alpha == k * 2pi)
+                self._sens_offset[1] = meas[1]
+                cnt = 0
+
     def calibrate(self):
         """ Calibration routine to move to the init position and determine the sensor offset """
         with completion_context('Estimating sensor offset', color='c', bright=True):
             # Reset calibration
             self._sens_offset = np.zeros(4)  # last two entries are never calibrated but useful for broadcasting
-
-            # Wait until Qube is at rest
-            cnt = 0
-            meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
-            while cnt < 1/self._dt:
-                if np.abs(meas[3]) < 1e-8 and np.abs(meas[2]) < 1e-8:
-                    cnt += 1
-                else:
-                    cnt = 0
-                meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
-
-            # Record alpha offset (e.g. alpha == k * 2pi)
-            self._sens_offset[1] = meas[1]
+            self._wait_for_pole_at_rest()
 
             # Create parts of the calibration controller
-            go_right = QQubeGoToLimCtrl(positive=True, cnt_done=int(.5/self._dt))
-            go_left = QQubeGoToLimCtrl(positive=False, cnt_done=int(.5/self._dt))
-            go_center = QQubePDCtrl(self.spec, calibration_mode=True)
+            go_right = QQubeGoToLimCtrl(positive=True, cnt_done=int(1.5/self._dt))
+            go_left = QQubeGoToLimCtrl(positive=False, cnt_done=int(1.5/self._dt))
+            go_center = QQubePDCtrl(self.spec)
 
             # Go to both limits for theta calibration
+            meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
             while not go_right.done:
                 meas = self._qsoc.snd_rcv(
                     go_right(to.from_numpy(meas - self._sens_offset)))  # already correct for alpha offset
@@ -146,9 +149,14 @@ class QQubeReal(QuanserReal, Serializable):
                 meas = self._qsoc.snd_rcv(
                     go_left(to.from_numpy(meas - self._sens_offset)))  # already correct for alpha offset
             self._sens_offset[0] = (go_right.th_lim + go_left.th_lim)/2
+
+            # Re-estimate alpha offset
+            self._wait_for_pole_at_rest()
+
         print_cbt(f'Sensor offset: {self._sens_offset}', 'g')
 
         with completion_context('Centering cube', color='c', bright=True):
+            meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
             while not go_center.done:
                 meas = self._qsoc.snd_rcv(
                     go_center(to.from_numpy(meas - self._sens_offset)))  # already correct for alpha offset

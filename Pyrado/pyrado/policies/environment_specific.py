@@ -315,16 +315,14 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
 
     name: str = 'qq_sub'
 
-    name: str = 'qq_sub'
-
     def __init__(self,
                  env_spec: EnvSpec,
-                 ref_energy: float = 0.04,  # Quanser's value: 0.02
-                 energy_gain: float = 30.,  # Quanser's value: 50
+                 ref_energy: float = 0.025,  # Quanser's value: 0.02
+                 energy_gain: float = 50.,  # Quanser's value: 50
                  energy_th_gain: float = 0.4,  # former: 0.4
                  acc_max: float = 5.,  # Quanser's value: 6
-                 alpha_max_pd_enable: float = 10.,  # Quanser's value: 20
-                 pd_gains: to.Tensor = to.tensor([-0.42, 18.45, -0.53, 1.53]),  # Quanser's value: [-2, 35, -1.5, 3]
+                 alpha_max_pd_enable: float = 20.,  # Quanser's value: 20
+                 pd_gains: to.Tensor = to.tensor([-2, 35, -1.5, 3]),  # Quanser's value: [-2, 35, -1.5, 3]
                  use_cuda: bool = False):
         """
         Constructor
@@ -339,6 +337,9 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
         :param alpha_max_pd_enable: angle threshold for enabling the PD -controller [deg]
         :param pd_gains: gains for the PD-controller
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
+
+        .. note::
+            The controller's parameters strongly depend on the frequency at which it is operating.
         """
         super().__init__(env_spec, use_cuda)
 
@@ -450,27 +451,25 @@ class QQubeEnergyCtrl(Policy):
 class QQubePDCtrl(Policy):
     r"""
     PD-controller for the Qunaser Qube.
-    Accepts th_des and drives Qube to $x_{des} = [\theta_{des}, \alpha_{des}, 0.0, 0.0]$.
+    Drives Qube to $x_{des} = [\theta_{des}, \alpha_{des}, 0.0, 0.0]$.
     Flag done is set when $|x_des - x| < tol$.
     """
 
     def __init__(self,
                  env_spec: EnvSpec,
-                 k: to.Tensor = to.tensor([3., 0., 0.5, 0.]),
+                 k: to.Tensor = to.tensor([3.0, 0, 0.5, 0]),
                  th_des: float = 0.,
                  al_des: float = 0.,
-                 tols: to.Tensor = to.tensor([1/180.*math.pi, 1./180.*math.pi]),
-                 calibration_mode: bool = False,
+                 tols: to.Tensor = to.tensor([1.5, 0.5, 0.01, 0.01], dtype=to.float64)/180.*math.pi,
                  use_cuda: bool = False):
-        """
+        r"""
         Constructor
 
         :param env_spec: environment specification
         :param k: controller gains, the default values stabilize the pendulum at the center hanging down
         :param th_des: desired rotary pole angle [rad]
         :param al_des: desired pendulum pole angle [rad]
-        :param tols: tolerances for the desired angles [rad]
-        :param calibration_mode: flag if the PD controller is used for calibration
+        :param tols: tolerances for the desired angles $\theta$ and $\alpha$ [rad]
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
         super().__init__(env_spec, use_cuda)
@@ -478,7 +477,6 @@ class QQubePDCtrl(Policy):
         self.k = nn.Parameter(k, requires_grad=True)
         self.state_des = to.tensor([th_des, al_des, 0., 0.])
         self.tols = tols
-        self.calibration_mode = calibration_mode
         self.done = False
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
@@ -487,13 +485,12 @@ class QQubePDCtrl(Policy):
     def forward(self, meas: to.Tensor) -> to.Tensor:
         # Unpack the raw measurement (is not an observation)
         err = self.state_des - meas  # th, al, thd, ald
-        k = self.k
 
-        if abs(err[0].item()) <= self.tols[0].item() and abs(err[1].item()) <= self.tols[1].item():
+        if all(to.abs(err) <= self.tols):
             self.done = True
 
         # PD control
-        return k.dot(err).unsqueeze(0)
+        return self.k.dot(err).unsqueeze(0)
 
 
 class QCartPoleGoToLimCtrl:
