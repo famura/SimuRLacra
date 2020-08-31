@@ -212,10 +212,10 @@ svpg
    :show-inheritance:
 
 
-sysid\_as\_rl
--------------
+sysid\_via\_episodic\_rl
+------------------------
 
-.. automodule:: pyrado.algorithms.sysid_as_rl
+.. automodule:: pyrado.algorithms.sysid_via_episodic_rl
    :members:
    :undoc-members:
    :show-inheritance:

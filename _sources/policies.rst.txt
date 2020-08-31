@@ -32,6 +32,15 @@ base\_recurrent
    :show-inheritance:
 
 
+domain\_distribution
+--------------------
+
+.. automodule:: pyrado.policies.domain_distribution
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 dummy
 -----
 

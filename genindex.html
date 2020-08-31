@@ -513,7 +513,7 @@
 </li>
       <li><a href="utils.html#pyrado.utils.math.clamp">clamp() (in module pyrado.utils.math)</a>
 </li>
-      <li><a href="algorithms.html#pyrado.algorithms.sysid_as_rl.DomainDistrParamPolicy.clamp_params">clamp_params() (DomainDistrParamPolicy method)</a>
+      <li><a href="policies.html#pyrado.policies.domain_distribution.DomainDistrParamPolicy.clamp_params">clamp_params() (DomainDistrParamPolicy method)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.math.clamp_symm">clamp_symm() (in module pyrado.utils.math)</a>
 </li>
@@ -697,6 +697,8 @@
 </li>
       <li><a href="tests.html#tests.conftest.default_hop">default_hop() (in module tests.conftest)</a>
 </li>
+      <li><a href="algorithms.html#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.default_metric">default_metric() (SysIdViaEpisodicRL static method)</a>
+</li>
       <li><a href="tests.html#tests.conftest.default_omo">default_omo() (in module tests.conftest)</a>
 </li>
       <li><a href="tests.html#tests.conftest.default_p3l_ik_bt">default_p3l_ik_bt() (in module tests.conftest)</a>
@@ -749,10 +751,10 @@
 </li>
       <li><a href="tasks.html#pyrado.tasks.desired_space.DesSpaceTask">DesSpaceTask (class in pyrado.tasks.desired_space)</a>
 </li>
-      <li><a href="tasks.html#pyrado.tasks.desired_state.DesStateTask">DesStateTask (class in pyrado.tasks.desired_state)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="tasks.html#pyrado.tasks.desired_state.DesStateTask">DesStateTask (class in pyrado.tasks.desired_state)</a>
+</li>
       <li><a href="exploration.html#pyrado.exploration.normal_noise.DiagNormalNoise.device">device() (DiagNormalNoise property)</a>
 
       <ul>
@@ -801,7 +803,7 @@
         <li><a href="environments.pysim.html#pyrado.environments.pysim.base.SimPyEnv.domain_param">(SimPyEnv property)</a>
 </li>
       </ul></li>
-      <li><a href="algorithms.html#pyrado.algorithms.sysid_as_rl.DomainDistrParamPolicy">DomainDistrParamPolicy (class in pyrado.algorithms.sysid_as_rl)</a>
+      <li><a href="policies.html#pyrado.policies.domain_distribution.DomainDistrParamPolicy">DomainDistrParamPolicy (class in pyrado.policies.domain_distribution)</a>
 </li>
       <li><a href="domain_randomization.html#pyrado.domain_randomization.domain_parameter.DomainParam">DomainParam (class in pyrado.domain_randomization.domain_parameter)</a>
 </li>
@@ -955,8 +957,6 @@
         <li><a href="policies.html#pyrado.policies.two_headed.TwoHeadedGRUPolicy.evaluate">(TwoHeadedGRUPolicy method)</a>
 </li>
       </ul></li>
-      <li><a href="tests.html#tests.test_algorithms.ex_dir">ex_dir() (in module tests.test_algorithms)</a>
-</li>
       <li><a href="logger.html#pyrado.logger.experiment.Experiment">Experiment (class in pyrado.logger.experiment)</a>
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.actor_critic.ActorCritic.expl_strat">expl_strat() (ActorCritic property)</a>
@@ -1046,7 +1046,7 @@
 </li>
         <li><a href="policies.html#pyrado.policies.fnn.DiscrActQValFNNPolicy.forward">(DiscrActQValFNNPolicy method)</a>
 </li>
-        <li><a href="algorithms.html#pyrado.algorithms.sysid_as_rl.DomainDistrParamPolicy.forward">(DomainDistrParamPolicy method)</a>
+        <li><a href="policies.html#pyrado.policies.domain_distribution.DomainDistrParamPolicy.forward">(DomainDistrParamPolicy method)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.environment_specific.DualRBFLinearPolicy.forward">(DualRBFLinearPolicy method)</a>
 </li>
@@ -1440,7 +1440,7 @@
       <ul>
         <li><a href="policies.html#pyrado.policies.fnn.DiscrActQValFNNPolicy.init_param">(DiscrActQValFNNPolicy method)</a>
 </li>
-        <li><a href="algorithms.html#pyrado.algorithms.sysid_as_rl.DomainDistrParamPolicy.init_param">(DomainDistrParamPolicy method)</a>
+        <li><a href="policies.html#pyrado.policies.domain_distribution.DomainDistrParamPolicy.init_param">(DomainDistrParamPolicy method)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.dummy.DummyPolicy.init_param">(DummyPolicy method)</a>
 </li>
@@ -1562,7 +1562,7 @@
 </li>
         <li><a href="algorithms.html#pyrado.algorithms.spota.SPOTA.iteration_key">(SPOTA attribute)</a>
 </li>
-        <li><a href="algorithms.html#pyrado.algorithms.sysid_as_rl.SysIdByEpisodicRL.iteration_key">(SysIdByEpisodicRL attribute)</a>
+        <li><a href="algorithms.html#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.iteration_key">(SysIdViaEpisodicRL attribute)</a>
 </li>
       </ul></li>
       <li><a href="logger.html#pyrado.logger.iteration.IterationTracker">IterationTracker (class in pyrado.logger.iteration)</a>
@@ -1650,7 +1650,7 @@
 </li>
         <li><a href="algorithms.html#pyrado.algorithms.svpg.SVPG.load_snapshot">(SVPG method)</a>
 </li>
-        <li><a href="algorithms.html#pyrado.algorithms.sysid_as_rl.SysIdByEpisodicRL.load_snapshot">(SysIdByEpisodicRL method)</a>
+        <li><a href="algorithms.html#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.load_snapshot">(SysIdViaEpisodicRL method)</a>
 </li>
         <li><a href="algorithms.html#pyrado.algorithms.udr.UDR.load_snapshot">(UDR method)</a>
 </li>
@@ -1674,7 +1674,7 @@
 </li>
         <li><a href="algorithms.html#pyrado.algorithms.ppo.PPO2.loss_fcn">(PPO2 method)</a>
 </li>
-        <li><a href="algorithms.html#pyrado.algorithms.sysid_as_rl.SysIdByEpisodicRL.loss_fcn">(SysIdByEpisodicRL method)</a>
+        <li><a href="algorithms.html#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.loss_fcn">(SysIdViaEpisodicRL method)</a>
 </li>
       </ul></li>
       <li><a href="algorithms.html#pyrado.algorithms.predefined_lqr.LQR">LQR (class in pyrado.algorithms.predefined_lqr)</a>
@@ -1799,7 +1799,7 @@
 </li>
         <li><a href="algorithms.html#module-pyrado.algorithms.svpg">pyrado.algorithms.svpg</a>
 </li>
-        <li><a href="algorithms.html#module-pyrado.algorithms.sysid_as_rl">pyrado.algorithms.sysid_as_rl</a>
+        <li><a href="algorithms.html#module-pyrado.algorithms.sysid_via_episodic_rl">pyrado.algorithms.sysid_via_episodic_rl</a>
 </li>
         <li><a href="algorithms.html#module-pyrado.algorithms.udr">pyrado.algorithms.udr</a>
 </li>
@@ -1959,6 +1959,8 @@
 </li>
         <li><a href="policies.html#module-pyrado.policies.base_recurrent">pyrado.policies.base_recurrent</a>
 </li>
+        <li><a href="policies.html#module-pyrado.policies.domain_distribution">pyrado.policies.domain_distribution</a>
+</li>
         <li><a href="policies.html#module-pyrado.policies.dummy">pyrado.policies.dummy</a>
 </li>
         <li><a href="policies.html#module-pyrado.policies.environment_specific">pyrado.policies.environment_specific</a>
@@ -2109,8 +2111,6 @@
 </li>
         <li><a href="tests.html#module-tests.test_algorithm_utils">tests.test_algorithm_utils</a>
 </li>
-        <li><a href="tests.html#module-tests.test_algorithms">tests.test_algorithms</a>
-</li>
         <li><a href="tests.html#module-tests.test_domain_randomization">tests.test_domain_randomization</a>
 </li>
         <li><a href="tests.html#module-tests.test_environments">tests.test_environments</a>
@@ -2207,7 +2207,7 @@
 </li>
         <li><a href="policies.html#pyrado.policies.fnn.DiscrActQValFNNPolicy.name">(DiscrActQValFNNPolicy attribute)</a>
 </li>
-        <li><a href="algorithms.html#pyrado.algorithms.sysid_as_rl.DomainDistrParamPolicy.name">(DomainDistrParamPolicy attribute)</a>
+        <li><a href="policies.html#pyrado.policies.domain_distribution.DomainDistrParamPolicy.name">(DomainDistrParamPolicy attribute)</a>
 </li>
         <li><a href="algorithms.html#pyrado.algorithms.dql.DQL.name">(DQL attribute)</a>
 </li>
@@ -2307,7 +2307,7 @@
 </li>
         <li><a href="algorithms.html#pyrado.algorithms.svpg.SVPG.name">(SVPG attribute)</a>
 </li>
-        <li><a href="algorithms.html#pyrado.algorithms.sysid_as_rl.SysIdByEpisodicRL.name">(SysIdByEpisodicRL attribute)</a>
+        <li><a href="algorithms.html#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.name">(SysIdViaEpisodicRL attribute)</a>
 </li>
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.target_tracking.TargetTrackingSim.name">(TargetTrackingSim attribute)</a>
 </li>
@@ -2812,10 +2812,10 @@
 </li>
       </ul></li>
       <li>
-    pyrado.algorithms.sysid_as_rl
+    pyrado.algorithms.sysid_via_episodic_rl
 
       <ul>
-        <li><a href="algorithms.html#module-pyrado.algorithms.sysid_as_rl">module</a>
+        <li><a href="algorithms.html#module-pyrado.algorithms.sysid_via_episodic_rl">module</a>
 </li>
       </ul></li>
       <li>
@@ -3371,6 +3371,13 @@
 
       <ul>
         <li><a href="policies.html#module-pyrado.policies.base_recurrent">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.policies.domain_distribution
+
+      <ul>
+        <li><a href="policies.html#module-pyrado.policies.domain_distribution">module</a>
 </li>
       </ul></li>
       <li>
@@ -4106,7 +4113,7 @@
 </li>
         <li><a href="algorithms.html#pyrado.algorithms.adr.SVPGAdapter.reset">(SVPGAdapter method)</a>
 </li>
-        <li><a href="algorithms.html#pyrado.algorithms.sysid_as_rl.SysIdByEpisodicRL.reset">(SysIdByEpisodicRL method)</a>
+        <li><a href="algorithms.html#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.reset">(SysIdViaEpisodicRL method)</a>
 </li>
         <li><a href="tasks.html#pyrado.tasks.base.Task.reset">(Task method)</a>
 </li>
@@ -4320,7 +4327,7 @@
 </li>
         <li><a href="algorithms.html#pyrado.algorithms.svpg.SVPG.save_snapshot">(SVPG method)</a>
 </li>
-        <li><a href="algorithms.html#pyrado.algorithms.sysid_as_rl.SysIdByEpisodicRL.save_snapshot">(SysIdByEpisodicRL method)</a>
+        <li><a href="algorithms.html#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.save_snapshot">(SysIdViaEpisodicRL method)</a>
 </li>
         <li><a href="algorithms.html#pyrado.algorithms.udr.UDR.save_snapshot">(UDR method)</a>
 </li>
@@ -4602,7 +4609,7 @@
 </li>
         <li><a href="algorithms.html#pyrado.algorithms.adr.SVPGAdapter.step">(SVPGAdapter method)</a>
 </li>
-        <li><a href="algorithms.html#pyrado.algorithms.sysid_as_rl.SysIdByEpisodicRL.step">(SysIdByEpisodicRL method)</a>
+        <li><a href="algorithms.html#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.step">(SysIdViaEpisodicRL method)</a>
 </li>
         <li><a href="algorithms.html#pyrado.algorithms.udr.UDR.step">(UDR method)</a>
 </li>
@@ -4679,7 +4686,7 @@
       </ul></li>
       <li><a href="algorithms.html#pyrado.algorithms.spota.SPOTA.subroutines">subroutines() (SPOTA property)</a>
 </li>
-      <li><a href="algorithms.html#pyrado.algorithms.sysid_as_rl.SysIdByEpisodicRL.subrtn">subrtn() (SysIdByEpisodicRL property)</a>
+      <li><a href="algorithms.html#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.subrtn">subrtn() (SysIdViaEpisodicRL property)</a>
 </li>
       <li><a href="spaces.html#pyrado.spaces.box.BoxSpace.subspace">subspace() (BoxSpace method)</a>
 
@@ -4701,7 +4708,7 @@
 </li>
       <li><a href="exploration.html#pyrado.exploration.stochastic_params.SymmParamExplStrat">SymmParamExplStrat (class in pyrado.exploration.stochastic_params)</a>
 </li>
-      <li><a href="algorithms.html#pyrado.algorithms.sysid_as_rl.SysIdByEpisodicRL">SysIdByEpisodicRL (class in pyrado.algorithms.sysid_as_rl)</a>
+      <li><a href="algorithms.html#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL">SysIdViaEpisodicRL (class in pyrado.algorithms.sysid_via_episodic_rl)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -4765,19 +4772,13 @@
 </li>
       <li><a href="tests.html#tests.test_algorithm_utils.test_action_statistics">test_action_statistics() (in module tests.test_algorithm_utils)</a>
 </li>
-      <li><a href="tests.html#tests.test_algorithms.test_actor_critic">test_actor_critic() (in module tests.test_algorithms)</a>
-</li>
       <li><a href="tests.html#tests.test_rollout_result.test_add_data">test_add_data() (in module tests.test_rollout_result)</a>
-</li>
-      <li><a href="tests.html#tests.test_algorithms.test_adr">test_adr() (in module tests.test_algorithms)</a>
 </li>
       <li><a href="tests.html#tests.test_algorithm_utils.test_adr_reward_generator">test_adr_reward_generator() (in module tests.test_algorithm_utils)</a>
 </li>
       <li><a href="tests.html#tests.test_rollout_result.test_advantage_calculation">test_advantage_calculation() (in module tests.test_rollout_result)</a>
 </li>
       <li><a href="tests.html#tests.test_policies.test_any_policy_batching">test_any_policy_batching() (in module tests.test_policies)</a>
-</li>
-      <li><a href="tests.html#tests.test_algorithms.test_arpl">test_arpl() (in module tests.test_algorithms)</a>
 </li>
       <li><a href="tests.html#tests.test_tensor_utils.test_atleast_2D">test_atleast_2D() (in module tests.test_tensor_utils)</a>
 </li>
@@ -4931,8 +4932,6 @@
 </li>
       <li><a href="tests.html#tests.test_tasks.test_parallel_task_function">test_parallel_task_function() (in module tests.test_tasks)</a>
 </li>
-      <li><a href="tests.html#tests.test_algorithms.test_param_expl">test_param_expl() (in module tests.test_algorithms)</a>
-</li>
       <li><a href="tests.html#tests.test_sampling.test_param_expl_sampler">test_param_expl_sampler() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_domain_randomization.test_param_grid">test_param_grid() (in module tests.test_domain_randomization)</a>
@@ -4985,12 +4984,12 @@
       </ul></li>
       <li><a href="tests.html#tests.test_tasks.test_rew_fcn_constructor">test_rew_fcn_constructor() (in module tests.test_tasks)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.test_policies.test_rfb_policy_batch">test_rfb_policy_batch() (in module tests.test_policies)</a>
 </li>
       <li><a href="tests.html#tests.test_policies.test_rfb_policy_serial">test_rfb_policy_serial() (in module tests.test_policies)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.test_policies.test_rff_feat_batched">test_rff_feat_batched() (in module tests.test_policies)</a>
 </li>
       <li><a href="tests.html#tests.test_policies.test_rff_feat_serial">test_rff_feat_serial() (in module tests.test_policies)</a>
@@ -5047,10 +5046,6 @@
 </li>
       <li><a href="tests.html#tests.test_rollout_result.test_slice">test_slice() (in module tests.test_rollout_result)</a>
 </li>
-      <li><a href="tests.html#tests.test_algorithms.test_snapshots_notmeta">test_snapshots_notmeta() (in module tests.test_algorithms)</a>
-</li>
-      <li><a href="tests.html#tests.test_algorithms.test_soft_update">test_soft_update() (in module tests.test_algorithms)</a>
-</li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_action_normalization.test_space">test_space() (in module tests.environment_wrappers.test_action_normalization)</a>
 
       <ul>
@@ -5060,8 +5055,6 @@
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_observation_partial.test_spaces">test_spaces() (in module tests.environment_wrappers.test_observation_partial)</a>
 </li>
       <li><a href="tests.html#tests.test_rollout_result.test_split_multi">test_split_multi() (in module tests.test_rollout_result)</a>
-</li>
-      <li><a href="tests.html#tests.test_algorithms.test_spota_ppo">test_spota_ppo() (in module tests.test_algorithms)</a>
 </li>
       <li><a href="tests.html#tests.test_tensor_utils.test_stack_tensor_dicts">test_stack_tensor_dicts() (in module tests.test_tensor_utils)</a>
 </li>
@@ -5077,10 +5070,6 @@
 </li>
       <li><a href="tests.html#tests.test_plotting.test_surface">test_surface() (in module tests.test_plotting)</a>
 </li>
-      <li><a href="tests.html#tests.test_algorithms.test_svpg">test_svpg() (in module tests.test_algorithms)</a>
-</li>
-      <li><a href="tests.html#tests.test_algorithms.test_sysidasrl">test_sysidasrl() (in module tests.test_algorithms)</a>
-</li>
       <li><a href="tests.html#tests.test_policies.test_time_policy_one_step">test_time_policy_one_step() (in module tests.test_policies)</a>
 </li>
       <li><a href="tests.html#tests.test_sampling.test_to_format">test_to_format() (in module tests.test_sampling)</a>
@@ -5088,8 +5077,6 @@
       <li><a href="tests.html#tests.test_spaces.test_torus2D">test_torus2D() (in module tests.test_spaces)</a>
 </li>
       <li><a href="tests.html#tests.test_tasks.test_tracking_task">test_tracking_task() (in module tests.test_tasks)</a>
-</li>
-      <li><a href="tests.html#tests.test_algorithms.test_training_parameter_exploring">test_training_parameter_exploring() (in module tests.test_algorithms)</a>
 </li>
       <li><a href="tests.html#tests.test_rollout_result.test_truncate_rollouts">test_truncate_rollouts() (in module tests.test_rollout_result)</a>
 </li>
@@ -5192,13 +5179,6 @@
 
       <ul>
         <li><a href="tests.html#module-tests.test_algorithm_utils">module</a>
-</li>
-      </ul></li>
-      <li>
-    tests.test_algorithms
-
-      <ul>
-        <li><a href="tests.html#module-tests.test_algorithms">module</a>
 </li>
       </ul></li>
       <li>
@@ -5338,7 +5318,7 @@
       </ul></li>
       <li><a href="algorithms.html#pyrado.algorithms.simopt.SimOpt.train_randomizer">train_randomizer() (SimOpt method)</a>
 </li>
-      <li><a href="algorithms.html#pyrado.algorithms.sysid_as_rl.SysIdByEpisodicRL.truncate_rollouts">truncate_rollouts() (SysIdByEpisodicRL static method)</a>
+      <li><a href="algorithms.html#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.truncate_rollouts">truncate_rollouts() (SysIdViaEpisodicRL static method)</a>
 </li>
       <li><a href="policies.html#pyrado.policies.two_headed.TwoHeadedFNNPolicy">TwoHeadedFNNPolicy (class in pyrado.policies.two_headed)</a>
 </li>

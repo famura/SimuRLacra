@@ -492,16 +492,14 @@
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;qq_sub&#39;</span>
 
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;qq_sub&#39;</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
-                 <span class="n">ref_energy</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.04</span><span class="p">,</span>  <span class="c1"># Quanser&#39;s value: 0.02</span>
-                 <span class="n">energy_gain</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.</span><span class="p">,</span>  <span class="c1"># Quanser&#39;s value: 50</span>
+                 <span class="n">ref_energy</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.025</span><span class="p">,</span>  <span class="c1"># Quanser&#39;s value: 0.02</span>
+                 <span class="n">energy_gain</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">50.</span><span class="p">,</span>  <span class="c1"># Quanser&#39;s value: 50</span>
                  <span class="n">energy_th_gain</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">,</span>  <span class="c1"># former: 0.4</span>
                  <span class="n">acc_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.</span><span class="p">,</span>  <span class="c1"># Quanser&#39;s value: 6</span>
-                 <span class="n">alpha_max_pd_enable</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.</span><span class="p">,</span>  <span class="c1"># Quanser&#39;s value: 20</span>
-                 <span class="n">pd_gains</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">0.42</span><span class="p">,</span> <span class="mf">18.45</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.53</span><span class="p">,</span> <span class="mf">1.53</span><span class="p">]),</span>  <span class="c1"># Quanser&#39;s value: [-2, 35, -1.5, 3]</span>
+                 <span class="n">alpha_max_pd_enable</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.</span><span class="p">,</span>  <span class="c1"># Quanser&#39;s value: 20</span>
+                 <span class="n">pd_gains</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span>  <span class="c1"># Quanser&#39;s value: [-2, 35, -1.5, 3]</span>
                  <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
@@ -516,6 +514,9 @@
 <span class="sd">        :param alpha_max_pd_enable: angle threshold for enabling the PD -controller [deg]</span>
 <span class="sd">        :param pd_gains: gains for the PD-controller</span>
 <span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            The controller&#39;s parameters strongly depend on the frequency at which it is operating.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">)</span>
 
@@ -627,27 +628,25 @@
 <div class="viewcode-block" id="QQubePDCtrl"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.environment_specific.QQubePDCtrl">[docs]</a><span class="k">class</span> <span class="nc">QQubePDCtrl</span><span class="p">(</span><span class="n">Policy</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    PD-controller for the Qunaser Qube.</span>
-<span class="sd">    Accepts th_des and drives Qube to $x_{des} = [\theta_{des}, \alpha_{des}, 0.0, 0.0]$.</span>
+<span class="sd">    Drives Qube to $x_{des} = [\theta_{des}, \alpha_{des}, 0.0, 0.0]$.</span>
 <span class="sd">    Flag done is set when $|x_des - x| &lt; tol$.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
-                 <span class="n">k</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span>
+                 <span class="n">k</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">3.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
                  <span class="n">th_des</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span>
                  <span class="n">al_des</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span>
-                 <span class="n">tols</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="o">/</span><span class="mf">180.</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mf">1.</span><span class="o">/</span><span class="mf">180.</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">]),</span>
-                 <span class="n">calibration_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">tols</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">/</span><span class="mf">180.</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span>
                  <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param env_spec: environment specification</span>
 <span class="sd">        :param k: controller gains, the default values stabilize the pendulum at the center hanging down</span>
 <span class="sd">        :param th_des: desired rotary pole angle [rad]</span>
 <span class="sd">        :param al_des: desired pendulum pole angle [rad]</span>
-<span class="sd">        :param tols: tolerances for the desired angles [rad]</span>
-<span class="sd">        :param calibration_mode: flag if the PD controller is used for calibration</span>
+<span class="sd">        :param tols: tolerances for the desired angles $\theta$ and $\alpha$ [rad]</span>
 <span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">)</span>
@@ -655,7 +654,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state_des</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">th_des</span><span class="p">,</span> <span class="n">al_des</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tols</span> <span class="o">=</span> <span class="n">tols</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">calibration_mode</span> <span class="o">=</span> <span class="n">calibration_mode</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="QQubePDCtrl.init_param"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.environment_specific.QQubePDCtrl.init_param">[docs]</a>    <span class="k">def</span> <span class="nf">init_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_values</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -664,13 +662,12 @@
 <div class="viewcode-block" id="QQubePDCtrl.forward"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.environment_specific.QQubePDCtrl.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="c1"># Unpack the raw measurement (is not an observation)</span>
         <span class="n">err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_des</span> <span class="o">-</span> <span class="n">meas</span>  <span class="c1"># th, al, thd, ald</span>
-        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span>
 
-        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">err</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">())</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tols</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">err</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">())</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tols</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tols</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="c1"># PD control</span>
-        <span class="k">return</span> <span class="n">k</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="QCartPoleGoToLimCtrl"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.environment_specific.QCartPoleGoToLimCtrl">[docs]</a><span class="k">class</span> <span class="nc">QCartPoleGoToLimCtrl</span><span class="p">:</span>

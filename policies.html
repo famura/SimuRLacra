@@ -111,6 +111,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.adn">adn</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.base">base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.base_recurrent">base_recurrent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.domain_distribution">domain_distribution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.dummy">dummy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.environment_specific">environment_specific</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.features">features</a></li>
@@ -766,6 +767,63 @@ registered hooks while the latter silently ignores them.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-pyrado.policies.domain_distribution">
+<span id="domain-distribution"></span><h2>domain_distribution<a class="headerlink" href="#module-pyrado.policies.domain_distribution" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.policies.domain_distribution.DomainDistrParamPolicy">
+<em class="property">class </em><code class="sig-name descname">DomainDistrParamPolicy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mapping</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>int<span class="p">, </span>Tuple<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">prior</span><span class="p">:</span> <span class="n"><a class="reference internal" href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/domain_distribution.html#DomainDistrParamPolicy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.domain_distribution.DomainDistrParamPolicy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a></p>
+<p>A proxy to the Policy class in order to use the policy’s parameters as domain distribution parameters</p>
+<dl class="py method">
+<dt id="pyrado.policies.domain_distribution.DomainDistrParamPolicy.clamp_params">
+<code class="sig-name descname">clamp_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/domain_distribution.html#DomainDistrParamPolicy.clamp_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.domain_distribution.DomainDistrParamPolicy.clamp_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Project the policy parameters a.k.a. the domain distribution parameters to valid a range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>params</strong> – parameter tensor with arbitrary values</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>parameters clipped to the bounds of the <cite>EnvSpec</cite> defined in the constructor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.policies.domain_distribution.DomainDistrParamPolicy.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/domain_distribution.html#DomainDistrParamPolicy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.domain_distribution.DomainDistrParamPolicy.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the action according to the policy and the observations (forward pass).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>obs</strong> – observation from the environment</p>
+</dd>
+<dt class="field-even">Return act</dt>
+<dd class="field-even"><p>action to be taken</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.policies.domain_distribution.DomainDistrParamPolicy.init_param">
+<code class="sig-name descname">init_param</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">init_values</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/domain_distribution.html#DomainDistrParamPolicy.init_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.domain_distribution.DomainDistrParamPolicy.init_param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
+<li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.policies.domain_distribution.DomainDistrParamPolicy.name">
+<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'ddp'</em><a class="headerlink" href="#pyrado.policies.domain_distribution.DomainDistrParamPolicy.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-pyrado.policies.dummy">
 <span id="dummy"></span><h2>dummy<a class="headerlink" href="#module-pyrado.policies.dummy" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
@@ -1088,10 +1146,10 @@ The only but significant difference of this controller to the other PD controlle
 
 <dl class="py class">
 <dt id="pyrado.policies.environment_specific.QQubePDCtrl">
-<em class="property">class </em><code class="sig-name descname">QQubePDCtrl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">k</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">tensor([3.0, 0.0, 0.5, 0.0])</span></em>, <em class="sig-param"><span class="n">th_des</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">al_des</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">tols</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">tensor([0.0175, 0.0175])</span></em>, <em class="sig-param"><span class="n">calibration_mode</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/environment_specific.html#QQubePDCtrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.environment_specific.QQubePDCtrl" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">QQubePDCtrl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">k</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">tensor([3.0, 0.0, 0.5, 0.0])</span></em>, <em class="sig-param"><span class="n">th_des</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">al_des</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">tols</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">tensor([0.0262, 0.0087, 0.0002, 0.0002])</span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/environment_specific.html#QQubePDCtrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.environment_specific.QQubePDCtrl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a></p>
 <p>PD-controller for the Qunaser Qube.
-Accepts th_des and drives Qube to <span class="math notranslate nohighlight">\(x_{des} = [\theta_{des}, \alpha_{des}, 0.0, 0.0]\)</span>.
+Drives Qube to <span class="math notranslate nohighlight">\(x_{des} = [\theta_{des}, \alpha_{des}, 0.0, 0.0]\)</span>.
 Flag done is set when <span class="math notranslate nohighlight">\(|x_des - x| &lt; tol\)</span>.</p>
 <dl class="py method">
 <dt id="pyrado.policies.environment_specific.QQubePDCtrl.forward">
@@ -1125,7 +1183,7 @@ Flag done is set when <span class="math notranslate nohighlight">\(|x_des - x| &
 
 <dl class="py class">
 <dt id="pyrado.policies.environment_specific.QQubeSwingUpAndBalanceCtrl">
-<em class="property">class </em><code class="sig-name descname">QQubeSwingUpAndBalanceCtrl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">ref_energy</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.04</span></em>, <em class="sig-param"><span class="n">energy_gain</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">30.0</span></em>, <em class="sig-param"><span class="n">energy_th_gain</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.4</span></em>, <em class="sig-param"><span class="n">acc_max</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">5.0</span></em>, <em class="sig-param"><span class="n">alpha_max_pd_enable</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">10.0</span></em>, <em class="sig-param"><span class="n">pd_gains</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">tensor([- 0.42, 18.45, - 0.53, 1.53])</span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/environment_specific.html#QQubeSwingUpAndBalanceCtrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.environment_specific.QQubeSwingUpAndBalanceCtrl" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">QQubeSwingUpAndBalanceCtrl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">ref_energy</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.025</span></em>, <em class="sig-param"><span class="n">energy_gain</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">50.0</span></em>, <em class="sig-param"><span class="n">energy_th_gain</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.4</span></em>, <em class="sig-param"><span class="n">acc_max</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">5.0</span></em>, <em class="sig-param"><span class="n">alpha_max_pd_enable</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">20.0</span></em>, <em class="sig-param"><span class="n">pd_gains</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">tensor([- 2.0, 35.0, - 1.5, 3.0])</span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/environment_specific.html#QQubeSwingUpAndBalanceCtrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.environment_specific.QQubeSwingUpAndBalanceCtrl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a></p>
 <p>Hybrid controller (QQubeEnergyCtrl, QQubePDCtrl) switching based on the pendulum pole angle alpha</p>
 <div class="admonition note">
