@@ -326,6 +326,7 @@ class SimOpt(Algorithm):
             # Crawl through the given directory and check how many policies and candidates there are
             found_policies, found_cands = None, None
             for root, dirs, files in os.walk(ld):
+                dirs.clear()  # prevents walk() from going into subdirectories
                 found_policies = [p for p in files if p.endswith('_policy.pt')]  # 'policy.pt' file should not be found
                 found_cands = [c for c in files if c.endswith('_candidate.pt')]
 
@@ -367,15 +368,17 @@ class SimOpt(Algorithm):
                 # Crawl through the load_dir and copy all previous evaluations.
                 # Not necessary if we are continuing in that directory.
                 if ld != self._save_dir:
-                    for root, dirs, files in os.walk(load_dir):
-                        [copyfile(osp.join(load_dir, c), osp.join(self._save_dir, c))
+                    for root, dirs, files in os.walk(ld):
+                        dirs.clear()  # prevents walk() from going into subdirectories
+                        [copyfile(osp.join(ld, c), osp.join(self._save_dir, c))
                          for c in files if c.endswith('_rollouts_real.pkl')]
 
                 # Get all previously done evaluations. If we don't find any, the exception is caught.
                 found_evals = None
                 for root, dirs, files in os.walk(ld):
+                    dirs.clear()  # prevents walk() from going into subdirectories
                     found_evals = [v for v in files if v.endswith('_rollouts_real.pkl')]
-                found_evals.sort()  # the order is important since it determines the rows of the tensor
+                found_evals.sort()  # the order determines the rows of the tensor
 
                 # Reconstruct candidates_values.pt
                 self.cands_values = to.empty(self.cands.shape[0])
@@ -403,6 +406,7 @@ class SimOpt(Algorithm):
             # Get current iteration count
             found_iter_policies = None
             for root, dirs, files in os.walk(ld):
+                dirs.clear()  # prevents walk() from going into subdirectories
                 found_iter_policies = [p for p in files if p.endswith('_policy.pt')]
 
             self._curr_iter = len(found_iter_policies)  # continue with next
