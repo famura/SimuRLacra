@@ -236,6 +236,7 @@ class BayRn(Algorithm):
         """
         # Crawl through the experiment's directory
         for root, dirs, files in os.walk(self._save_dir):
+            dirs.clear()  # prevents walk() from going into subdirectories
             found_policies = [p for p in files if p.startswith('init_') and p.endswith('_policy.pt')]
             found_cands = [c for c in files if c.startswith('init_') and c.endswith('_candidate.pt')]
         if not len(found_policies) == len(found_cands):
@@ -403,6 +404,7 @@ class BayRn(Algorithm):
             # Crawl through the given directory and check how many policies and candidates there are
             found_policies, found_cands = None, None
             for root, dirs, files in os.walk(ld):
+                dirs.clear()  # prevents walk() from going into subdirectories
                 found_policies = [p for p in files if p.endswith('_policy.pt')]  # 'policy.pt' file should not be found
                 found_cands = [c for c in files if c.endswith('_candidate.pt')]
 
@@ -446,16 +448,17 @@ class BayRn(Algorithm):
                 # Crawl through the load_dir and copy all previous evaluations.
                 # Not necessary if we are continuing in that directory.
                 if ld != self._save_dir:
-                    for root, dirs, files in os.walk(load_dir):
-                        [copyfile(osp.join(load_dir, c), osp.join(self._save_dir, c))
+                    for root, dirs, files in os.walk(ld):
+                        dirs.clear()  # prevents walk() from going into subdirectories
+                        [copyfile(osp.join(ld, c), osp.join(self._save_dir, c))
                          for c in files if c.endswith('_returns_real.pt')]
 
                 # Get all previously done evaluations. If we don't find any, the exception is caught.
                 found_evals = None
                 for root, dirs, files in os.walk(ld):
+                    dirs.clear()  # prevents walk() from going into subdirectories
                     found_evals = [v for v in files if v.endswith('_returns_real.pt')]
-                found_evals = natural_sort(
-                    found_evals)  # the order is important since it determines the rows of the tensor
+                found_evals = natural_sort(found_evals)  # the order determines the rows of the tensor
 
                 # Reconstruct candidates_values.pt
                 self.cands_values = to.empty(self.cands.shape[0])
@@ -498,6 +501,7 @@ class BayRn(Algorithm):
             # Get current iteration count
             found_iter_policies = None
             for root, dirs, files in os.walk(ld):
+                dirs.clear()  # prevents walk() from going into subdirectories
                 found_iter_policies = [p for p in files if p.startswith('iter_') and p.endswith('_policy.pt')]
 
             if not found_iter_policies:

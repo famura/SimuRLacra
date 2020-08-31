@@ -38,7 +38,7 @@ from typing import Sequence
 import pyrado
 from pyrado.algorithms.actor_critic import ActorCritic
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.sysid_as_rl import SysIdByEpisodicRL
+from pyrado.algorithms.sysid_via_episodic_rl import SysIdViaEpisodicRL
 from pyrado.algorithms.utils import until_thold_exceeded
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
@@ -71,7 +71,7 @@ class SimOpt(Algorithm):
                  env_sim: MetaDomainRandWrapper,
                  env_real: [RealEnv, EnvWrapper],
                  subrtn_policy: Algorithm,
-                 subrtn_distr: SysIdByEpisodicRL,
+                 subrtn_distr: SysIdViaEpisodicRL,
                  max_iter: int,
                  num_eval_rollouts: int = 5,
                  thold_succ: float = pyrado.inf,
@@ -107,8 +107,8 @@ class SimOpt(Algorithm):
             raise pyrado.TypeErr(given=env_sim, expected_type=MetaDomainRandWrapper)
         if not isinstance(subrtn_policy, Algorithm):
             raise pyrado.TypeErr(given=subrtn_policy, expected_type=Algorithm)
-        if not isinstance(subrtn_distr, SysIdByEpisodicRL):
-            raise pyrado.TypeErr(given=subrtn_distr, expected_type=SysIdByEpisodicRL)
+        if not isinstance(subrtn_distr, SysIdViaEpisodicRL):
+            raise pyrado.TypeErr(given=subrtn_distr, expected_type=SysIdViaEpisodicRL)
 
         # Call Algorithm's constructor
         super().__init__(save_dir, max_iter, subrtn_policy.policy, logger=None)
@@ -164,7 +164,7 @@ class SimOpt(Algorithm):
     def train_randomizer(self, rollouts_real: Sequence[StepSequence], prefix: str) -> float:
         """
         Train and evaluate the policy that parametrizes domain randomizer, such that the loss given by the instance of
-        `SysIdByEpisodicRL` is minimized.
+        `SysIdViaEpisodicRL` is minimized.
 
         :param rollouts_real: recorded real-world rollouts
         :param prefix: set a prefix to the saved file name by passing it to `meta_info`
@@ -202,8 +202,7 @@ class SimOpt(Algorithm):
                     for r, s in zip(ros_real_tr, ros_sim_tr)])
 
         # Return the average the loss
-        losses = [self._subrtn_distr.obs_dim_weight@self._subrtn_distr.loss_fcn(ro_r, ro_s)
-                  for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr)]
+        losses = [self._subrtn_distr.loss_fcn(ro_r, ro_s) for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr)]
         return float(np.mean(np.asarray(losses)))
 
     @staticmethod
@@ -327,6 +326,7 @@ class SimOpt(Algorithm):
             # Crawl through the given directory and check how many policies and candidates there are
             found_policies, found_cands = None, None
             for root, dirs, files in os.walk(ld):
+                dirs.clear()  # prevents walk() from going into subdirectories
                 found_policies = [p for p in files if p.endswith('_policy.pt')]  # 'policy.pt' file should not be found
                 found_cands = [c for c in files if c.endswith('_candidate.pt')]
 
@@ -368,15 +368,17 @@ class SimOpt(Algorithm):
                 # Crawl through the load_dir and copy all previous evaluations.
                 # Not necessary if we are continuing in that directory.
                 if ld != self._save_dir:
-                    for root, dirs, files in os.walk(load_dir):
-                        [copyfile(osp.join(load_dir, c), osp.join(self._save_dir, c))
+                    for root, dirs, files in os.walk(ld):
+                        dirs.clear()  # prevents walk() from going into subdirectories
+                        [copyfile(osp.join(ld, c), osp.join(self._save_dir, c))
                          for c in files if c.endswith('_rollouts_real.pkl')]
 
                 # Get all previously done evaluations. If we don't find any, the exception is caught.
                 found_evals = None
                 for root, dirs, files in os.walk(ld):
+                    dirs.clear()  # prevents walk() from going into subdirectories
                     found_evals = [v for v in files if v.endswith('_rollouts_real.pkl')]
-                found_evals.sort()  # the order is important since it determines the rows of the tensor
+                found_evals.sort()  # the order determines the rows of the tensor
 
                 # Reconstruct candidates_values.pt
                 self.cands_values = to.empty(self.cands.shape[0])
@@ -404,6 +406,7 @@ class SimOpt(Algorithm):
             # Get current iteration count
             found_iter_policies = None
             for root, dirs, files in os.walk(ld):
+                dirs.clear()  # prevents walk() from going into subdirectories
                 found_iter_policies = [p for p in files if p.endswith('_policy.pt')]
 
             self._curr_iter = len(found_iter_policies)  # continue with next

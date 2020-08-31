@@ -36,7 +36,7 @@ from typing import Callable
 from warnings import warn
 
 from pyrado.algorithms.parameter_exploring import ParameterExploring
-from pyrado.algorithms.sysid_as_rl import DomainDistrParamPolicy
+from pyrado.policies.domain_distribution import DomainDistrParamPolicy
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import NormalParamNoise, SymmParamExplStrat
 from pyrado.policies.linear import LinearPolicy

@@ -33,7 +33,8 @@ import numpy as np
 
 from pyrado.algorithms.cem import CEM
 from pyrado.algorithms.reps import REPS
-from pyrado.algorithms.sysid_as_rl import SysIdByEpisodicRL, DomainDistrParamPolicy
+from pyrado.algorithms.sysid_via_episodic_rl import SysIdViaEpisodicRL
+from pyrado.policies.domain_distribution import DomainDistrParamPolicy
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam, NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper, DomainRandWrapperLive
@@ -48,7 +49,7 @@ from pyrado.utils.input_output import print_cbt
 
 def create_qq_reps_setup():
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeStabSim.name, f'{SysIdByEpisodicRL.name}-{REPS.name}', seed=1001)
+    ex_dir = setup_experiment(QQubeStabSim.name, f'{SysIdViaEpisodicRL.name}-{REPS.name}', seed=1001)
 
     # Environments
     env_hparams = dict(dt=1/100., max_steps=500)
@@ -112,7 +113,7 @@ def create_qq_reps_setup():
 
 def create_qq_cem_setup():
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeStabSim.name, f'{SysIdByEpisodicRL.name}-{REPS.name}', seed=1001)
+    ex_dir = setup_experiment(QQubeStabSim.name, f'{SysIdViaEpisodicRL.name}-{REPS.name}', seed=1001)
 
     # Environments
     env_hparams = dict(dt=1/100., max_steps=600)
@@ -169,7 +170,7 @@ def create_qq_cem_setup():
 
 def create_bob_cem_setup():
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(BallOnBeamSim.name, f'{SysIdByEpisodicRL.name}-{CEM.name}', seed=1001)
+    ex_dir = setup_experiment(BallOnBeamSim.name, f'{SysIdViaEpisodicRL.name}-{CEM.name}', seed=1001)
 
     # Environments
     env_hparams = dict(dt=1/100., max_steps=500)
@@ -236,11 +237,11 @@ if __name__ == '__main__':
     save_list_of_dicts_to_yaml([
         dict(env=env_hparams, seed=ex_dir.seed),
         dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
-        dict(algo=algo_hparam, algo_name=SysIdByEpisodicRL.name, dp_map=dp_map)],
+        dict(algo=algo_hparam, algo_name=SysIdViaEpisodicRL.name, dp_map=dp_map)],
         ex_dir
     )
 
-    algo = SysIdByEpisodicRL(subrtn, behavior_policy, **algo_hparam)
+    algo = SysIdViaEpisodicRL(subrtn, behavior_policy, **algo_hparam)
 
     # Jeeeha
     while algo.curr_iter < algo.max_iter and not algo.stopping_criterion_met():
@@ -252,9 +253,7 @@ if __name__ == '__main__':
             ro_real.append(rollout(env_real, behavior_policy, eval=True))
 
         algo.step(snapshot_mode='latest', meta_info=dict(rollouts_real=ro_real))
-
         algo.logger.record_step()
-
         algo._curr_iter += 1
 
     if algo.stopping_criterion_met():
@@ -263,7 +262,7 @@ if __name__ == '__main__':
         stopping_reason = 'Maximum number of iterations reached!'
 
     if algo._policy is not None:
-        print_cbt(f'{SysIdByEpisodicRL.name} finished training a {ddp_policy.name} '
+        print_cbt(f'{SysIdViaEpisodicRL.name} finished training a {ddp_policy.name} '
                   f'with {ddp_policy.num_param} parameters. {stopping_reason}', 'g')
     else:
-        print_cbt(f'{SysIdByEpisodicRL.name} finished training. {stopping_reason}', 'g')
+        print_cbt(f'{SysIdViaEpisodicRL.name} finished training. {stopping_reason}', 'g')

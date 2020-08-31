@@ -66,15 +66,25 @@ if __name__ == '__main__':
         env_sim.dt = args.dt
 
     # Crawl through the given directory and check how many init policies and candidates there are
+    found_policies, found_cands = None, None
     for root, dirs, files in os.walk(ex_dir):
-        if args.load_all:
-            found_policies = [p for p in files if p.endswith('_policy.pt')]
-            found_cands = [c for c in files if c.endswith('_candidate.pt')]
-        else:
-            found_policies = [p for p in files if not p.startswith('init_') and p.endswith('_policy.pt')]
-            found_cands = [c for c in files if not c.startswith('init_') and c.endswith('_candidate.pt')]
-    if not len(found_policies) == len(found_cands):  # don't count the final policy
-        raise pyrado.ValueErr(msg='Found a different number of initial policies than candidates!')
+        dirs.clear()  # prevents walk() from going into subdirectories
+        found_policies = [p for p in files if p.endswith('_policy.pt')]
+        found_cands = [c for c in files if c.endswith('_candidate.pt')]
+
+    # Remove unwanted entries from the lists
+    found_policies = [p for p in found_policies if not p.startswith('ddp_')]
+    if not args.load_all:
+        found_policies = [p for p in found_policies if not p.startswith('init_') and p.endswith('_policy.pt')]
+        found_cands = [c for c in found_cands if not c.startswith('init_') and c.endswith('_candidate.pt')]
+
+    # Check
+    if not found_policies:
+        raise pyrado.ShapeErr(msg='No policies found!')
+    if not found_cands:
+        raise pyrado.ShapeErr(msg='No candidates found!')
+    if len(found_policies) != len(found_cands):  # don't count the final policy
+        raise pyrado.ShapeErr(msg=f'Found {len(found_policies)} initial policies but {len(found_cands)} candidates!')
 
     # Sort
     found_policies = natural_sort(found_policies)

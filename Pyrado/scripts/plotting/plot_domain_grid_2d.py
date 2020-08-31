@@ -35,6 +35,8 @@ import pandas as pd
 from matplotlib import colors
 
 from matplotlib import pyplot as plt
+
+import pyrado
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.heatmap import render_heatmap
 from pyrado.plotting.utils import AccNorm
@@ -80,7 +82,8 @@ if __name__ == '__main__':
     # Get the experiment's directory to load from
     exp_dir = ask_for_experiment()
     eval_parent_dir = osp.join(exp_dir, 'eval_domain_grid')
-    assert osp.isdir(eval_parent_dir)
+    if not osp.isdir(eval_parent_dir):
+        raise pyrado.PathErr(given=eval_parent_dir)
 
     if args.load_all:
         list_eval_dirs = [tmp[0] for tmp in os.walk(eval_parent_dir)][1:]

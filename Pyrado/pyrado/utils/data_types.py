@@ -288,4 +288,8 @@ def check_all_values_equal(iterable) -> bool:
         first = next(iterator)
     except StopIteration:
         return True
-    return all(first == rest for rest in iterator)
+
+    if isinstance(first, np.ndarray):
+        return all(np.allclose(first, rest) for rest in iterator)
+    else:
+        return all(first == rest for rest in iterator)

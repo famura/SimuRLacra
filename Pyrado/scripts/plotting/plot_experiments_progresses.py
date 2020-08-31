@@ -50,7 +50,7 @@ if __name__ == '__main__':
     # ex_dir = input('Enter a root directory that contains one or more experiment directories:\n')
 
     # Get all sub-directories (these should contain the policy files)
-    dirs = [x[0] for x in os.walk(ex_dir)][1:]
+    dirs = [tmp[0] for tmp in os.walk(ex_dir)][1:]
 
     # Collect average and best returns per iteration
     avg_returns = []

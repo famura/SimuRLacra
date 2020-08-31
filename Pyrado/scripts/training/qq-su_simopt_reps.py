@@ -27,12 +27,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Qube swing-up task using Simulation Optimization running Cross-Entropy Method.
+Train an agent to solve the Qube swing-up task using Simulation Optimization running Relative Entropy Policy Search.
 """
 import torch as to
 
 from pyrado.algorithms.advantage import GAE
-from pyrado.algorithms.cem import CEM
+from pyrado.algorithms.reps import REPS
 from pyrado.algorithms.ppo import PPO
 from pyrado.algorithms.simopt import SimOpt
 from pyrado.algorithms.sysid_via_episodic_rl import SysIdViaEpisodicRL
@@ -49,7 +49,7 @@ from pyrado.utils.data_types import EnvSpec
 
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{SimOpt.name}-{CEM.name}', seed=1001)
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{SimOpt.name}-{REPS.name}', seed=1001)
     num_workers = 16
 
     # Environments
@@ -117,24 +117,26 @@ if __name__ == '__main__':
     )
     ddp_policy = DomainDistrParamPolicy(mapping=dp_map, prior=prior)
     subsubrtn_distr_hparam = dict(
-        max_iter=5,
-        pop_size=200,
+        max_iter=10,
+        eps=0.1,
+        pop_size=500,
         num_rollouts=1,
-        num_is_samples=10,
-        expl_std_init=0.01,
-        expl_std_min=0.001,
-        extra_expl_std_init=0.01,
-        extra_expl_decay_iter=5,
+        expl_std_init=0.005,
+        expl_std_min=1e-4,
+        num_epoch_dual=1000,
+        grad_free_optim=False,
+        lr_dual=5e-4,
+        use_map=True,
         num_workers=num_workers,
     )
-    subsubrtn = CEM(ex_dir, env_sim, ddp_policy, **subsubrtn_distr_hparam)
-    subrtn_distr_hparam = dict(
+    subsubrtn = REPS(ex_dir, env_sim, ddp_policy, **subsubrtn_distr_hparam)
+    subrtn_hparam = dict(
         metric=None,
         obs_dim_weight=[1., 1., 1., 1., 2., 2.],
         num_rollouts_per_distr=50,
         num_workers=num_workers,
     )
-    subrtn_distr = SysIdViaEpisodicRL(subsubrtn, behavior_policy=behav_policy, **subrtn_distr_hparam)
+    subrtn_distr = SysIdViaEpisodicRL(subsubrtn, behavior_policy=behav_policy, **subrtn_hparam)
 
     # Algorithm
     algo_hparam = dict(
@@ -152,7 +154,7 @@ if __name__ == '__main__':
         dict(behav_policy=behav_policy_hparam),
         dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
         dict(subsubrtn_distr=subsubrtn_distr_hparam, subsubrtn_distr_name=subrtn_distr.name),
-        dict(subrtn_distr=subrtn_distr_hparam, subrtn_distr_name=subrtn_distr.name, dp_map=dp_map),
+        dict(subrtn_distr=subrtn_hparam, subrtn_distr_name=subrtn_distr.name, dp_map=dp_map),
         dict(subrtn_policy=subrtn_policy_hparam, subrtn_policy_name=subrtn_policy.name),
         dict(algo=algo_hparam, algo_name=algo.name)],
         ex_dir
