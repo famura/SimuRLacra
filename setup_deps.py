@@ -96,7 +96,7 @@ required_packages = [
     "mesa-common-dev",  #  conda install -c conda-forge mesalib
     "libopenscenegraph-dev",  # conda install -c conda-forge openscenegraph __OR__ HEADLESS BUILD
     "openscenegraph",  #  conda install -c conda-forge openscenegraph __OR__ HEADLESS BUILD
-    "liblapack-dev"  #  conda install -c conda-forge lapack 
+    "liblapack-dev",  #  conda install -c conda-forge lapack 
     "doxygen"
 ]
 # using --headless: conda install -c conda-forge bullet freetype libglu freeglut mesalib lapack
