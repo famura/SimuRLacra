@@ -25,133 +25,60 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+from functools import partial
 
 import joblib
 import numpy as np
 import os.path as osp
-import torch as to
-import torch.nn as nn
 from collections.abc import Iterable
 from itertools import product
-from typing import Callable, Sequence, Tuple, Dict
+from typing import Callable, Sequence, Tuple, Union
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.parameter_exploring import ParameterExploring
 from pyrado.algorithms.utils import save_prefix_suffix
-from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.policies.base import Policy
+from pyrado.policies.domain_distribution import DomainDistrParamPolicy
 from pyrado.sampling.parallel_sampler import ParallelSampler
 from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult, ParameterSample
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.sampling.utils import gen_ordered_batch_idcs
-from pyrado.spaces import BoxSpace
-from pyrado.spaces.empty import EmptySpace
-from pyrado.utils.data_types import EnvSpec
+from pyrado.utils.data_types import check_all_values_equal
 from pyrado.utils.input_output import print_cbt
-from pyrado.utils.math import UnitCubeProjector, clamp
+from pyrado.utils.math import UnitCubeProjector
 
 
-class DomainDistrParamPolicy(Policy):
-    """ A proxy to the Policy class in order to use the policy's parameters as domain distribution parameters """
-
-    name: str = 'ddp'
-
-    def __init__(self,
-                 mapping: Dict[int, Tuple[str, str]],
-                 prior: DomainRandomizer = None,
-                 use_cuda: bool = False):
-        """
-        Constructor
-
-        :param mapping: mapping from index of the numpy array (coming from the algorithm) to domain parameter name
-                        (e.g. mass, length) and the domain distribution parameter (e.g. mean, std)
-        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
-        """
-        if not isinstance(mapping, dict):
-            raise pyrado.TypeErr(given=mapping, expected_type=dict)
-
-        self._mapping = mapping
-
-        # Construct a valid space for the policy parameters aka domain distribution parameters
-        bound_lo = -pyrado.inf*np.ones(len(mapping))
-        bound_up = +pyrado.inf*np.ones(len(mapping))
-        lables = len(mapping)*['None']
-        for idx, ddp in self._mapping.items():
-            lables[idx] = f'{ddp[0]}_{ddp[1]}'
-            if ddp[1] in ['std', 'halfspan']:  # 2nd output is the name of the domain distribution param
-                bound_lo[idx] = 1e-4  # hard coded lower bound on all domain parameters variances
-
-        param_spec = EnvSpec(obs_space=EmptySpace(), act_space=BoxSpace(bound_lo, bound_up, labels=lables))
-
-        # Call Policy's constructor
-        super().__init__(param_spec, use_cuda)
-
-        self.params = nn.Parameter(to.Tensor(param_spec.act_space.flat_dim), requires_grad=True)
-        self.prior = prior
-        self.init_param(prior=prior)
-
-    def init_param(self, init_values: to.Tensor = None, **kwargs):
-        if init_values is not None:
-            # First check if there are some specific values to set
-            self.param_values = init_values
-
-        elif kwargs.get('prior', None) is not None:
-            # Prior information is expected to be in form of a DomainRandomizer since it holds the distributions
-            if not isinstance(kwargs['prior'], DomainRandomizer):
-                raise pyrado.TypeErr(given=kwargs['prior'], expected_type=DomainRandomizer)
-
-            # For every domain distribution parameter in the mapping, check if there is prior information
-            for idx, ddp in self._mapping.items():
-                for dp in kwargs['prior'].domain_params:
-                    if ddp[0] == dp.name and ddp[1] in dp.get_field_names():
-                        # The domain parameter exists in the prior and in the mapping
-                        self.params[idx].fill_(getattr(dp, f'{ddp[1]}'))
-
-        else:
-            # Last measure
-            self.params.data.normal_(0, 1)
-            print_cbt('Using uninformative random initialization for DomainDistrParamPolicy.', 'y')
-
-    def clamp_params(self, params: to.Tensor) -> to.Tensor:
-        """
-        Project the policy parameters a.k.a. the domain distribution parameters to valid a range.
-
-        :param params: parameter tensor with arbitrary values
-        :return: parameters clipped to the bounds of the `EnvSpec` defined in the constructor
-        """
-        return clamp(params,
-                     to.from_numpy(self.env_spec.act_space.bound_lo),
-                     to.from_numpy(self.env_spec.act_space.bound_up))
-
-    def forward(self, obs: to.Tensor = None) -> to.Tensor:
-        # Should never be used. I know this might seem like an extreme abuse of the policy class but it is worth it
-        raise NotImplementedError
-
-
-class SysIdByEpisodicRL(Algorithm):
+class SysIdViaEpisodicRL(Algorithm):
     """ Wrapper to frame black-box system identification as an episodic reinforcement learning problem """
 
-    name: str = 'rlsysid'
-    iteration_key: str = 'rlsysid_iteration'  # logger's iteration key
+    name: str = 'sysid-erl'
+    iteration_key: str = 'sysid_erl_iteration'  # logger's iteration key
 
     def __init__(self,
                  subrtn: Algorithm,
                  behavior_policy: Policy,
-                 metric: [Callable[[np.ndarray], np.ndarray], None],
-                 obs_dim_weight: [list, np.ndarray],
                  num_rollouts_per_distr: int,
-                 num_workers: int = 4):
+                 metric: Union[Callable[[np.ndarray], np.ndarray], None],
+                 obs_dim_weight: Union[list, np.ndarray],
+                 w_abs: float = 0.5,
+                 w_sq: float = 1.,
+                 num_workers: int = 4,
+                 base_seed: int = 1001):
         """
         Constructor
 
         :param subrtn: wrapped algorithm to fit the domain parameter distribution
         :param behavior_policy: lower level policy used to generate the rollouts
-        :param metric: from differences in observations to value
         :param num_rollouts_per_distr: number of rollouts per domain distribution parameter set
+        :param metric: functional mapping from differences in observations to value
+        :param w_abs: weight for the mean absolute errors for the default metric
+        :param w_sq: weight for the mean squared errors for the default metric
+        :param obs_dim_weight: (diagonal) weight matrix for the different observation dimensions for the default metric
         :param num_workers: number of environments for parallel sampling
+        :param base_seed: seed to set for the parallel sampler in every iteration
         """
         if not isinstance(subrtn, ParameterExploring):
             raise pyrado.TypeErr(given=subrtn, expected_type=ParameterExploring)
@@ -165,7 +92,7 @@ class SysIdByEpisodicRL(Algorithm):
             raise pyrado.ShapeErr(msg=f'Number of policy parameters {subrtn.policy.num_param} does not match the'
                                       f'number of domain distribution parameters {len(subrtn.env.mapping)}!')
         if subrtn.sampler.num_rollouts_per_param != 1:
-            # Only sample one rollout in every domain. This is possible since we are synchronizing the init state
+            # Only sample one rollout in every domain. This is possible since we are synchronizing the init state.
             raise pyrado.ValueErr(given=subrtn.sampler.num_rollouts_per_param, eq_constraint='1')
         if num_rollouts_per_distr < 2:
             raise pyrado.ValueErr(given=num_rollouts_per_distr, g_constraint='1')
@@ -178,11 +105,11 @@ class SysIdByEpisodicRL(Algorithm):
         # Store inputs
         self._subrtn = subrtn
         self._behavior_policy = behavior_policy
-        if metric is not None:
-            self.metric = metric
+        self.obs_dim_weight = np.diag(obs_dim_weight)  # weighting factor between the different observations
+        if metric is None:
+            self.metric = partial(self.default_metric, w_abs=w_abs, w_sq=w_sq, obs_dim_weight=self.obs_dim_weight)
         else:
-            w_l1, w_l2 = 0.5, 1.
-            self.metric = lambda e: w_l1*np.linalg.norm(e, ord=1, axis=0) + w_l2*np.linalg.norm(e, ord=2, axis=0)
+            self.metric = metric
 
         elb = ObsNormWrapper.override_bounds(
             subrtn.env.obs_space.bound_lo,
@@ -195,15 +122,15 @@ class SysIdByEpisodicRL(Algorithm):
             subrtn.env.obs_space.labels
         )
         self.uc_normalizer = UnitCubeProjector(bound_lo=elb, bound_up=eub)
-        self.obs_dim_weight = np.array(obs_dim_weight)  # weighting factor between the different observations
 
         # Create the sampler used to execute the same policy as on the real system in the meta-randomized env
+        self.base_seed = base_seed
         self.behavior_sampler = ParallelSampler(
             self._subrtn.env,
             self._behavior_policy,
             num_workers=num_workers,
-            min_rollouts=1,  # TODO think about this
-            seed=1001
+            min_rollouts=1,
+            seed=base_seed
         )
         self.num_rollouts_per_distr = num_rollouts_per_distr
 
@@ -250,21 +177,25 @@ class SysIdByEpisodicRL(Algorithm):
             sampled_domain_params = self._subrtn.env.randomizer.get_params()
 
             # Sample the rollouts
-            self.behavior_sampler.set_seed(1001)  # TODO
+            self.behavior_sampler.set_seed(self.base_seed)
             rollouts_sim = self.behavior_sampler.sample(init_states_real, sampled_domain_params, eval=True)
 
             # Iterate over simulated rollout with the same initial state
-            for idx_real, idcs_sim in enumerate(gen_ordered_batch_idcs(self.num_rollouts_per_distr, len(rollouts_sim),
-                                                                       sorted=True)):
+            for idx_real, idcs_sim in enumerate(gen_ordered_batch_idcs(self.num_rollouts_per_distr,
+                                                                       len(rollouts_sim), sorted=True)):
                 # Clip the rollouts rollouts yielding two lists of pairwise equally long rollouts
                 ros_real_tr, ros_sim_tr = self.truncate_rollouts([rollouts_real[idx_real]],
                                                                  rollouts_sim[slice(idcs_sim[0], idcs_sim[-1] + 1)])
+
+                # Check the validity of the initial states. The domain parameters will be different.
                 assert len(ros_real_tr) == len(ros_sim_tr) == len(idcs_sim)
+                assert check_all_values_equal([r.rollout_info['init_state'] for r in ros_real_tr])
+                assert check_all_values_equal([r.rollout_info['init_state'] for r in ros_sim_tr])
                 assert all([np.allclose(r.rollout_info['init_state'], s.rollout_info['init_state'])
                             for r, s in zip(ros_real_tr, ros_sim_tr)])
 
                 # Compute the losses
-                losses = [self.obs_dim_weight@self.loss_fcn(ro_r, ro_s) for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr)]
+                losses = [self.loss_fcn(ro_r, ro_s) for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr)]
                 loss_hist.extend(losses)
 
                 # We need to assign the loss value to the simulated rollout, but this one can be of a different
@@ -296,14 +227,34 @@ class SysIdByEpisodicRL(Algorithm):
         # Update the wrapped algorithm's update method
         self._subrtn.update(param_samp_res, ret_avg_curr=param_samp_res[0].mean_undiscounted_return)
 
-    def loss_fcn(self, rollout_real: StepSequence, rollout_sim: StepSequence) -> np.ndarray:
+    @staticmethod
+    def default_metric(err: np.ndarray, w_abs: float, w_sq: float, obs_dim_weight: np.ndarray):
+        """
+        Compute the weighted linear combination of the observation error's MAE and MSE, averaged over time
+
+        .. note::
+            In contrast to [1], we are using the mean absolute error and the mean squared error instead of the L1 and
+            the L2 norm. The reason for this is that longer time series would be punished otherwise.
+
+        :param err: error signal with time steps along the first dimension
+        :param w_abs: weight for the mean absolute errors
+        :param w_sq: weight for the mean squared errors
+        :param obs_dim_weight: (diagonal) weight matrix for the different observation dimensions
+        :return: weighted linear combination of the error's MAE and MSE, averaged over time
+        """
+        err_w = np.matmul(err, obs_dim_weight)
+        # err_norm = w_abs*np.linalg.norm(err_w, ord=1, axis=0) + w_sq*np.linalg.norm(err_w, ord=2, axis=0)
+        # return err_norm/err_w.shape[0]
+        return w_abs*np.mean(np.abs(err_w), axis=0) + w_sq*np.mean(np.power(err_w, 2), axis=0)
+
+    def loss_fcn(self, rollout_real: StepSequence, rollout_sim: StepSequence) -> float:
         """
         Compute the discrepancy between two time sequences of observations given metric.
         Be sure to align and truncate the rollouts beforehand.
 
         :param rollout_real: (concatenated) real-world rollout containing the observations
         :param rollout_sim: (concatenated) simulated rollout containing the observations
-        :return: (concatenated) discrepancy cost for every observation dimension
+        :return: discrepancy cost summed over the observation dimensions
         """
         if len(rollout_real) != len(rollout_sim):
             raise pyrado.ShapeErr(given=rollout_real, expected_match=rollout_sim)
@@ -317,9 +268,10 @@ class SysIdByEpisodicRL(Algorithm):
         sim_obs_norm = self.uc_normalizer.project_to(sim_obs)
 
         # Compute loss based on the error
-        loss = self.metric(real_obs_norm - sim_obs_norm)
-        assert all(loss >= 0)
-        return loss
+        loss_per_obs_dim = self.metric(real_obs_norm - sim_obs_norm)
+        assert len(loss_per_obs_dim) == real_obs.shape[1]
+        assert all(loss_per_obs_dim >= 0)
+        return sum(loss_per_obs_dim)
 
     @staticmethod
     def truncate_rollouts(rollouts_real: Sequence[StepSequence],

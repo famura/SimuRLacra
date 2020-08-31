@@ -37,7 +37,7 @@ import pickle
 from pytest_lazyfixture import lazy_fixture
 from typing import NamedTuple
 
-from pyrado.algorithms.sysid_as_rl import SysIdByEpisodicRL
+from pyrado.algorithms.sysid_via_episodic_rl import SysIdViaEpisodicRL
 from pyrado.algorithms.utils import ReplayMemory
 from pyrado.policies.dummy import DummyPolicy
 from pyrado.sampling.step_sequence import StepSequence
@@ -404,7 +404,7 @@ def test_truncate_rollouts(env, num_real_ros, num_sim_ros, max_real_steps, max_s
         ros_sim.append(rollout(env, policy, eval=True, max_steps=max_sim_steps, stop_on_done=True))
 
     # Truncate them
-    ros_real_tr, ros_sim_tr = SysIdByEpisodicRL.truncate_rollouts(ros_real, ros_sim)
+    ros_real_tr, ros_sim_tr = SysIdViaEpisodicRL.truncate_rollouts(ros_real, ros_sim)
 
     # Obtained the right number of rollouts
     assert len(ros_real_tr) == len(ros_sim_tr)

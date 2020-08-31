@@ -38,7 +38,7 @@ from typing import Sequence
 import pyrado
 from pyrado.algorithms.actor_critic import ActorCritic
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.sysid_as_rl import SysIdByEpisodicRL
+from pyrado.algorithms.sysid_via_episodic_rl import SysIdViaEpisodicRL
 from pyrado.algorithms.utils import until_thold_exceeded
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
@@ -71,7 +71,7 @@ class SimOpt(Algorithm):
                  env_sim: MetaDomainRandWrapper,
                  env_real: [RealEnv, EnvWrapper],
                  subrtn_policy: Algorithm,
-                 subrtn_distr: SysIdByEpisodicRL,
+                 subrtn_distr: SysIdViaEpisodicRL,
                  max_iter: int,
                  num_eval_rollouts: int = 5,
                  thold_succ: float = pyrado.inf,
@@ -107,8 +107,8 @@ class SimOpt(Algorithm):
             raise pyrado.TypeErr(given=env_sim, expected_type=MetaDomainRandWrapper)
         if not isinstance(subrtn_policy, Algorithm):
             raise pyrado.TypeErr(given=subrtn_policy, expected_type=Algorithm)
-        if not isinstance(subrtn_distr, SysIdByEpisodicRL):
-            raise pyrado.TypeErr(given=subrtn_distr, expected_type=SysIdByEpisodicRL)
+        if not isinstance(subrtn_distr, SysIdViaEpisodicRL):
+            raise pyrado.TypeErr(given=subrtn_distr, expected_type=SysIdViaEpisodicRL)
 
         # Call Algorithm's constructor
         super().__init__(save_dir, max_iter, subrtn_policy.policy, logger=None)
@@ -164,7 +164,7 @@ class SimOpt(Algorithm):
     def train_randomizer(self, rollouts_real: Sequence[StepSequence], prefix: str) -> float:
         """
         Train and evaluate the policy that parametrizes domain randomizer, such that the loss given by the instance of
-        `SysIdByEpisodicRL` is minimized.
+        `SysIdViaEpisodicRL` is minimized.
 
         :param rollouts_real: recorded real-world rollouts
         :param prefix: set a prefix to the saved file name by passing it to `meta_info`
@@ -202,8 +202,7 @@ class SimOpt(Algorithm):
                     for r, s in zip(ros_real_tr, ros_sim_tr)])
 
         # Return the average the loss
-        losses = [self._subrtn_distr.obs_dim_weight@self._subrtn_distr.loss_fcn(ro_r, ro_s)
-                  for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr)]
+        losses = [self._subrtn_distr.loss_fcn(ro_r, ro_s) for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr)]
         return float(np.mean(np.asarray(losses)))
 
     @staticmethod

@@ -46,7 +46,7 @@ from pyrado.utils.data_types import EnvSpec
 
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{UDR.name}_{FNNPolicy.name}', '100Hz', seed=1001)
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{UDR.name}-{PPO.name}_{FNNPolicy.name}', '100Hz', seed=1001)
 
     # Environment
     env_hparams = dict(dt=1/100., max_steps=600)
@@ -67,23 +67,23 @@ if __name__ == '__main__':
         gamma=0.9885,
         lamda=0.9648,
         num_epoch=2,
-        batch_size=60,
+        batch_size=10*60,
         standardize_adv=False,
         lr=5.792e-4,
-        max_grad_norm=1.,
+        max_grad_norm=5.,
     )
     critic = GAE(value_fcn, **critic_hparam)
 
     # Subroutine
     subrtn_hparam = dict(
-        max_iter=600,
-        min_steps=23*env.max_steps,
+        max_iter=1000,
+        min_steps=10*23*env.max_steps,
         num_epoch=7,
         eps_clip=0.0744,
-        batch_size=60,
+        batch_size=10*60,
         std_init=0.9074,
         lr=3.446e-04,
-        max_grad_norm=1.,
+        max_grad_norm=5.,
         num_workers=4,
     )
     subrtn = PPO(ex_dir, env, policy, critic, **subrtn_hparam)
