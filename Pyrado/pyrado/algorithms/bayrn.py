@@ -345,14 +345,14 @@ class BayRn(Algorithm):
             raise pyrado.ValueErr(given=self.acq_fcn_type, eq_constraint="'UCB', 'EI', 'PI'")
 
         # Optimize acquisition function and get new candidate point
-        cand, acq_value = optimize_acqf(
+        cand_norm, acq_value = optimize_acqf(
             acq_function=acq_fcn,
             bounds=to.stack([to.zeros(self.cand_dim), to.ones(self.cand_dim)]),
             q=1,
             num_restarts=self.acq_restarts,
             raw_samples=self.acq_samples
         )
-        next_cand = self.uc_normalizer.project_back(cand)
+        next_cand = self.uc_normalizer.project_back(cand_norm)
         print_cbt(f'Found the next candidate: {next_cand.numpy()}', 'g')
         self.cands = to.cat([self.cands, next_cand], dim=0)
         to.save(self.cands, osp.join(self._save_dir, 'candidates.pt'))
@@ -362,7 +362,7 @@ class BayRn(Algorithm):
         wrapped_trn_fcn = until_thold_exceeded(
             self.thold_succ_subrtn.item(), self.max_subrtn_rep
         )(self.train_policy_sim)
-        wrapped_trn_fcn(cand, prefix)
+        wrapped_trn_fcn(next_cand, prefix)
 
         # Evaluate the current policy in the target domain
         policy = to.load(osp.join(self._save_dir, f'{prefix}_policy.pt'))
