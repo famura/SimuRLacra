@@ -37,7 +37,7 @@ from pyrado.sampling.utils import gen_batch_idcs, gen_ordered_batch_idcs, gen_or
 from pyrado.utils.data_types import *
 from pyrado.utils.functions import noisy_nonlin_fcn
 from pyrado.utils.input_output import completion_context
-from pyrado.utils.math import cosine_similarity, cov
+from pyrado.utils.math import cosine_similarity, cov, rmse
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.policies.dummy import DummyPolicy
 from pyrado.sampling.rollout import rollout
@@ -99,6 +99,27 @@ def test_cosine_similarity(x, y):
     assert isinstance(d_cos, to.Tensor)
     # The examples are chosen to result in 0, 1, or -1
     assert to.isclose(d_cos, to.tensor(0.)) or to.isclose(d_cos, to.tensor(1.)) or to.isclose(d_cos, to.tensor(-1.))
+
+
+@pytest.mark.parametrize(
+    'type', ['numpy', 'torch'], ids=['numpy', 'torch']
+)
+@pytest.mark.parametrize(
+    'dim', [0, 1], ids=['dim0', 'dim1']
+)
+def test_rmse(type, dim):
+    shape = (42, 21)
+    if type == 'numpy':
+        x = np.random.randn(*shape)
+        y = np.random.randn(*shape)
+    else:
+        x = to.randn(*shape)
+        y = to.randn(*shape)
+    e = rmse(x, y)
+    if type == 'numpy':
+        assert isinstance(e, np.ndarray)
+    else:
+        assert isinstance(e, to.Tensor)
 
 
 @pytest.mark.parametrize(

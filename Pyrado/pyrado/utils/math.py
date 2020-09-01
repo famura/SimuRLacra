@@ -28,6 +28,7 @@
 
 import numpy as np
 import torch as to
+from typing import Union
 
 import pyrado
 from pyrado.utils.normalizing import normalize
@@ -36,7 +37,7 @@ from pyrado.utils.normalizing import normalize
 class UnitCubeProjector:
     """ Project to a unit qube $[0, 1]^d$ and back using explicit bounds """
 
-    def __init__(self, bound_lo: [np.ndarray, to.Tensor], bound_up: [np.ndarray, to.Tensor]):
+    def __init__(self, bound_lo: Union[np.ndarray, to.Tensor], bound_up: Union[np.ndarray, to.Tensor]):
         """
         Constructor
 
@@ -68,7 +69,7 @@ class UnitCubeProjector:
             bound_up, bound_lo = self.bound_up, self.bound_lo
         return bound_up, bound_lo
 
-    def project_to(self, data: [np.ndarray, to.Tensor]) -> [np.ndarray, to.Tensor]:
+    def project_to(self, data: Union[np.ndarray, to.Tensor]) -> Union[np.ndarray, to.Tensor]:
         """
         Normalize every dimension individually using the stored explicit bounds and the L_1 norm.
 
@@ -85,7 +86,7 @@ class UnitCubeProjector:
         span[span == 0] = 1.  # avoid division by 0
         return (data - self.bound_lo)/span
 
-    def project_back(self, data: [np.ndarray, to.Tensor]) -> [np.ndarray, to.Tensor]:
+    def project_back(self, data: Union[np.ndarray, to.Tensor]) -> Union[np.ndarray, to.Tensor]:
         """
         Revert the previous normalization using the stored explicit bounds
 
@@ -129,7 +130,7 @@ def cov(x: to.Tensor, data_along_rows: bool = False):
     return x.matmul(x.t()).squeeze()/(num_samples - 1)
 
 
-def explained_var(y_mdl: [np.ndarray, to.Tensor], y_obs: [np.ndarray, to.Tensor]) -> (np.ndarray, to.Tensor):
+def explained_var(y_mdl: Union[np.ndarray, to.Tensor], y_obs: Union[np.ndarray, to.Tensor]) -> (np.ndarray, to.Tensor):
     """
     Calculate proportion of the variance "explained" by the model (see coefficient of determination R^2)
     .. note:: R^2 = 0.49 implies that 49% of the variability of the dependent variable has been accounted for.
@@ -149,7 +150,7 @@ def explained_var(y_mdl: [np.ndarray, to.Tensor], y_obs: [np.ndarray, to.Tensor]
         return to.tensor(1.) - ss_res/ss_total
 
     else:
-        raise pyrado.TypeErr(given=y_mdl, expected_type=[np.ndarray, to.Tensor])
+        raise pyrado.TypeErr(given=y_mdl, expected_type=Union[np.ndarray, to.Tensor])
 
 
 def logmeanexp(x: to.Tensor, dim: int = 0) -> to.Tensor:
@@ -179,6 +180,28 @@ def cosine_similarity(x: to.Tensor, y: to.Tensor) -> to.Tensor:
     x_normed = normalize(x, order=2)
     y_normed = x_normed if y is x else normalize(y, order=2)
     return x_normed.dot(y_normed)
+
+
+def rmse(x: Union[np.ndarray, to.Tensor],
+         y: Union[np.ndarray, to.Tensor],
+         dim: int = 0) -> Union[np.ndarray, to.Tensor]:
+    """
+    Compute the root mean squared error between two inputs.
+
+    :param x: input data, e.g. output of a neural network
+    :param y: input data, e.g. target values for the output
+    :param dim: dimension to compute the RMSE along
+    :return:
+    """
+    if x.shape[dim] != y.shape[dim]:
+        raise pyrado.ShapeErr(given=x, expected_match=y)
+
+    if isinstance(x, to.Tensor) and isinstance(y, to.Tensor):
+        return to.sqrt(to.mean(to.pow(x, 2), dim=dim))
+    elif isinstance(x, np.ndarray) and isinstance(y, np.ndarray):
+        return np.sqrt(np.mean(np.power(x, 2), axis=dim))
+    else:
+        raise pyrado.TypeErr(msg='Both inputs need to be either a numpy array or a PyTorch tensor!')
 
 
 def clamp(inp: to.Tensor, lo: to.Tensor, up: to.Tensor) -> to.Tensor:
