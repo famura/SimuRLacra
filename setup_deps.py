@@ -97,7 +97,8 @@ required_packages = [
     "libopenscenegraph-dev",  # conda install -c conda-forge openscenegraph __OR__ HEADLESS BUILD
     "openscenegraph",  #  conda install -c conda-forge openscenegraph __OR__ HEADLESS BUILD
     "liblapack-dev",  #  conda install -c conda-forge lapack 
-    "doxygen"
+    "doxygen",  # necessary for building the Rcs documentation
+    "python3-distutils",  # necessary for installing PyTorch
 ]
 # using --headless: conda install -c conda-forge bullet freetype libglu freeglut mesalib lapack
 
@@ -346,9 +347,6 @@ def setup_rcs():
 
 
 def setup_pytorch():
-    # Install dependencies
-    sp.check_call(["sudo", "apt-get", "install", "-y", "python3-distutils"])  # necessary for installing
-
     # Get PyTorch from git
     if not osp.exists(pytorch_src_dir):
         mkdir_p(pytorch_src_dir)
