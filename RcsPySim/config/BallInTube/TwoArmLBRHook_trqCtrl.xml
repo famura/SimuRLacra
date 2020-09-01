@@ -92,7 +92,7 @@
   <Group name="_R" transform="0.125 0.247835 0.059 -134.01 -68.91 -135.99" prev="RailBot">
     <xi:include href="../common/LBR_trqCtrl.xml"/>
 
-    <Body name="Hook" prev="lbr_link_7_R" transform="0 0 0.1707 0 0 90" physics="dynamic" mass="1.">
+    <Body name="Hook" prev="lbr_link_7_R" transform="0 0 0.1707 0 0 90" physics="fixed" mass="1.">
       <Sensor type="LOADCELL" name="WristLoadCellLBR"/>
       <Shape type="CYLINDER" radius="0.02" length="0.26" transform="0 0 0.13 0 0 0" physics="true" graphics="true" distance="true" color="GRAY"/>
       <Shape type="CYLINDER" radius="0.02" length="0.1" transform="0.03 0 0.27 0 90 0" physics="true" graphics="true" distance="true" color="GRAY"/>
