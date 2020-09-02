@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build the Docker image
-        run: docker build . --file Dockerfile.blackforest --tag simurlacra
+        run: docker build . --file docker/Dockerfile.blackforest --tag simurlacra:blackforest
       - name: Execute tests
         env:
           CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
