@@ -11,13 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build the Docker image
-        run: docker build . --file Dockerfile.blackforest --tag simurlacra
+        run: docker build . --file Dockerfile.blackforest --tag simurlacra:blackforest
       - name: Build Docs
         continue-on-error: true
         run: |
           mkdir public
           export PUBLIC=$(realpath ./public)
-          docker run --rm -u 1000:1000 -v $PUBLIC:/var/www simurlacra conda run -n pyrado bash -c "./build_docs.sh;sudo cp -r Pyrado/doc/build/* /var/www"
+          docker run --rm -u 1000:1000 -v $PUBLIC:/var/www simurlacra:blackforest conda run -n pyrado bash -c "./build_docs.sh;sudo cp -r Pyrado/doc/build/* /var/www;mv RcsPySim/build/doc/html RcsPySim/build/doc/rcspysim; sudo cp -r RcsPySim/build/doc/rcspysim /var/www"
           echo $PUBLIC
           ls $PUBLIC
       - name: Deploy 🚀
