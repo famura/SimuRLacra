@@ -1,0 +1,8 @@
+<map id="Rcs::ActionModelIK" name="Rcs::ActionModelIK">
+<area shape="rect" id="node4" href="$classRcs_1_1AMIKGeneric.html" title="Rcs::AMIKGeneric" alt="" coords="40,229,172,256"/>
+<area shape="rect" id="node6" href="$classRcs_1_1AMPlateAngPos.html" title="Rcs::AMPlateAngPos" alt="" coords="196,229,347,256"/>
+<area shape="rect" id="node7" href="$classRcs_1_1AMPlatePos5D.html" title="Rcs::AMPlatePos5D" alt="" coords="371,229,515,256"/>
+<area shape="rect" id="node2" href="$classRcs_1_1ActionModel.html" title="Rcs::ActionModel" alt="" coords="208,80,335,107"/>
+<area shape="rect" id="node3" href="$classRcs_1_1BoxSpaceProvider.html" title="Rcs::BoxSpaceProvider" alt="" coords="190,5,353,32"/>
+<area shape="rect" id="node5" href="$classRcs_1_1AMIKControllerActivation.html" title="Rcs::AMIKControllerActivation" alt="" coords="5,304,207,331"/>
+</map>

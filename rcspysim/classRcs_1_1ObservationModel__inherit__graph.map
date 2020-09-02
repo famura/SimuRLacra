@@ -1,0 +1,22 @@
+<map id="Rcs::ObservationModel" name="Rcs::ObservationModel">
+<area shape="rect" id="node3" href="$classRcs_1_1OMCollisionCost.html" title="Rcs::OMCollisionCost" alt="" coords="473,5,627,32"/>
+<area shape="rect" id="node4" href="$classRcs_1_1OMCollisionCostPrediction.html" title="Rcs::OMCollisionCostPrediction" alt="" coords="445,56,655,83"/>
+<area shape="rect" id="node5" href="$classRcs_1_1OMCombined.html" title="Rcs::OMCombined" alt="" coords="483,107,617,133"/>
+<area shape="rect" id="node6" href="$classRcs_1_1OMComputedVelocity.html" title="Rcs::OMComputedVelocity" alt="" coords="459,157,641,184"/>
+<area shape="rect" id="node7" href="$classRcs_1_1OMDynamicalSystemDiscrepancy.html" title="Rcs::OMDynamicalSystemDiscrepancy" alt="" coords="423,208,677,235"/>
+<area shape="rect" id="node8" href="$classRcs_1_1OMDynamicalSystemGoalDistance.html" title="Rcs::OMDynamicalSystemGoal\lDistance" alt="" coords="445,259,655,301"/>
+<area shape="rect" id="node9" href="$classRcs_1_1OMForceTorque.html" title="Rcs::OMForceTorque" alt="" coords="476,325,624,352"/>
+<area shape="rect" id="node10" href="$classRcs_1_1OMJointState.html" title="Rcs::OMJointState" alt="" coords="483,376,617,403"/>
+<area shape="rect" id="node11" href="$classRcs_1_1OMManipulabilityIndex.html" title="Rcs::OMManipulabilityIndex" alt="" coords="457,427,643,453"/>
+<area shape="rect" id="node12" href="$classRcs_1_1OMNormalized.html" title="Rcs::OMNormalized" alt="" coords="479,477,621,504"/>
+<area shape="rect" id="node13" href="$classRcs_1_1OMPartial.html" title="Rcs::OMPartial" alt="" coords="494,528,606,555"/>
+<area shape="rect" id="node14" href="$classRcs_1_1OMTask.html" title="Rcs::OMTask" alt="" coords="498,579,602,605"/>
+<area shape="rect" id="node18" href="$classRcs_1_1OMTaskPositions.html" title="Rcs::OMTaskPositions" alt="" coords="471,629,629,656"/>
+<area shape="rect" id="node21" href="$classRcs_1_1OMTaskSpaceDiscrepancy.html" title="Rcs::OMTaskSpaceDiscrepancy" alt="" coords="443,680,657,707"/>
+<area shape="rect" id="node2" href="$classRcs_1_1BoxSpaceProvider.html" title="Rcs::BoxSpaceProvider" alt="" coords="5,351,168,377"/>
+<area shape="rect" id="node15" href="$classRcs_1_1OMBodyStateAngular.html" title="Rcs::OMBodyStateAngular" alt="" coords="753,528,933,555"/>
+<area shape="rect" id="node16" href="$classRcs_1_1OMBodyStateLinear.html" title="Rcs::OMBodyStateLinear" alt="" coords="757,579,928,605"/>
+<area shape="rect" id="node17" href="$classRcs_1_1OMBallPos.html" title="Rcs::OMBallPos" alt="" coords="1008,579,1128,605"/>
+<area shape="rect" id="node19" href="$classRcs_1_1OMBodyStateAngularPositions.html" title="Rcs::OMBodyStateAngularPositions" alt="" coords="725,629,960,656"/>
+<area shape="rect" id="node20" href="$classRcs_1_1OMBodyStateLinearPositions.html" title="Rcs::OMBodyStateLinearPositions" alt="" coords="730,680,955,707"/>
+</map>

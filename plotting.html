@@ -413,7 +413,7 @@ The plot is neither shown nor saved.</p>
 <span id="gaussian-process"></span><h2>gaussian_process<a class="headerlink" href="#module-pyrado.plotting.gaussian_process" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.plotting.gaussian_process.render_singletask_gp">
-<code class="sig-name descname">render_singletask_gp</code><span class="sig-paren">(</span><em class="sig-param">ax: [&lt;class 'matplotlib.axes._axes.Axes'&gt;, &lt;class 'mpl_toolkits.mplot3d.axes3d.Axes3D'&gt;, typing.Sequence[matplotlib.axes._axes.Axes]], data_x: torch.Tensor, data_y: torch.Tensor, idcs_sel: list, data_x_min: torch.Tensor = None, data_x_max: torch.Tensor = None, x_label: str = '', y_label: str = '', z_label: str = '', min_gp_obsnoise: float = None, resolution: int = 201, num_stds: int = 2, alpha: float = 0.3, color: chr = None, curve_label: str = 'mean', heatmap_cmap: matplotlib.colors.Colormap = None, show_legend_posterior: bool = True, show_legend_std: bool = False, show_legend_data: bool = True, legend_data_cmap: matplotlib.colors.Colormap = None, colorbar_label: str = None, title: str = None, render3D: bool = True</em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/pyrado/plotting/gaussian_process.html#render_singletask_gp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.gaussian_process.render_singletask_gp" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">render_singletask_gp</code><span class="sig-paren">(</span><em class="sig-param">ax: [&lt;class 'matplotlib.axes._axes.Axes'&gt;, &lt;class 'mpl_toolkits.mplot3d.axes3d.Axes3D'&gt;, typing.Sequence[matplotlib.axes._axes.Axes]], data_x: torch.Tensor, data_y: torch.Tensor, idcs_sel: list, data_x_min: torch.Tensor = None, data_x_max: torch.Tensor = None, x_label: str = '', y_label: str = '', z_label: str = '', min_gp_obsnoise: float = None, resolution: int = 201, num_stds: int = 2, alpha: float = 0.3, color: chr = None, curve_label: str = 'mean', heatmap_cmap: matplotlib.colors.Colormap = None, show_legend_posterior: bool = True, show_legend_std: bool = False, show_legend_data: bool = True, legend_data_cmap: matplotlib.colors.Colormap = None, colorbar_label: str = None, title: str = None, render_3D: bool = True</em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/pyrado/plotting/gaussian_process.html#render_singletask_gp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.gaussian_process.render_singletask_gp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit the GP posterior to the input data and plot the mean and std as well as the data points.
 There are 3 options: 1D plot (infered by data dimensions), 2D plot</p>
 <div class="admonition note">
@@ -446,7 +446,7 @@ There are 3 options: 1D plot (infered by data dimensions), 2D plot</p>
 <li><p><strong>legend_data_cmap</strong> – color map for the sampled points, default is ‘binary’</p></li>
 <li><p><strong>colorbar_label</strong> – label for the color bar (2D plot only)</p></li>
 <li><p><strong>title</strong> – title displayed above the figure, set to <cite>None</cite> to suppress the title</p></li>
-<li><p><strong>render3D</strong> – use 3D rendering if possible</p></li>
+<li><p><strong>render_3D</strong> – use 3D rendering if possible</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
