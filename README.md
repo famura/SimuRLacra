@@ -160,7 +160,7 @@ In case this process crashes, please first check the [Troubleshooting](#troubles
 
 <!--
 ### Docker Container (experimental)
-There is also a Dockerfile which can be used to spin up a docker container.
+There is also a Dockerfile.blackforest which can be used to spin up a docker container.
 Please note that the container is still experimental and not all features have been tested.
 Make sure you have Docker installed. If you have not there is a [guide](https://docs.docker.com/engine/install/) on how to install it.
 If you want to use cuda inside the container (this does not work on Windows) you need the nvidia-container toolkit which can be installed with one of the following commands depending on the linux distribution.
