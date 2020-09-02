@@ -29,6 +29,7 @@
 """
 Train an agent to solve the WAM Ball-in-cup environment using Bayesian Domain Randomization.
 """
+import numpy as np
 import os.path as osp
 import torch as to
 
@@ -44,13 +45,15 @@ from pyrado.policies.environment_specific import DualRBFLinearPolicy
 
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(WAMBallInCupSim.name, f'{BayRn.name}_{PoWER.name}_sim2sim', 'rand-cs', seed=111)
+    ex_dir = setup_experiment(WAMBallInCupSim.name, f'{BayRn.name}-{PoWER.name}_{DualRBFLinearPolicy.name}_sim2sim',
+                              '4dof_rand-rl-rd', seed=111)
 
     # Environments
     env_hparams = dict(
         num_dof=4,
-        max_steps=1500,
-        task_args=dict(final_factor=0.05)
+        max_steps=1750,
+        fixed_init_state=True,
+        task_args=dict(final_factor=0.2)
     )
     env_sim = WAMBallInCupSim(**env_hparams)
     env_sim = DomainRandWrapperLive(env_sim, get_zero_var_randomizer(env_sim))
@@ -77,7 +80,7 @@ if __name__ == '__main__':
 
     # Policy
     policy_hparam = dict(
-        rbf_hparam=dict(num_feat_per_dim=7, bounds=(0., 1.), scale=None),
+        rbf_hparam=dict(num_feat_per_dim=8, bounds=(0., 1.), scale=None),
         dim_mask=2
     )
     policy = DualRBFLinearPolicy(env_sim.spec, **policy_hparam)
@@ -86,13 +89,13 @@ if __name__ == '__main__':
 
     # Subroutine
     subrtn_hparam = dict(
-        max_iter=25,
+        max_iter=15,
         pop_size=100,
         num_rollouts=20,
-        num_is_samples=20,
-        expl_std_init=0.5,
-        expl_std_min=0.02,
-        num_workers=12,
+        num_is_samples=10,
+        expl_std_init=np.pi/24,
+        expl_std_min=0.01,
+        num_workers=8,
     )
     subrtn = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
 
@@ -102,11 +105,12 @@ if __name__ == '__main__':
         acq_fc='EI',
         acq_restarts=500,
         acq_samples=1000,
-        num_init_cand=3,
-        warmstart=False,
-        num_eval_rollouts_real=500 if isinstance(env_real, WAMBallInCupSim) else 5,
-        num_eval_rollouts_sim=500,
+        num_init_cand=5,
+        warmstart=True,
+        num_eval_rollouts_real=100 if isinstance(env_real, WAMBallInCupSim) else 5,
+        num_eval_rollouts_sim=100,
         # policy_param_init=policy_init.param_values.data,
+        subrtn_snapshot_mode='best'
     )
 
     # Save the environments and the hyper-parameters (do it before the init routine of BDR)

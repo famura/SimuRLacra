@@ -43,7 +43,8 @@ from pyrado.policies.environment_specific import DualRBFLinearPolicy
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
     # ex_dir = setup_experiment(WAMBallInCupSim.name, PoWER.name + '_' + DualRBFLinearPolicy.name, seed=None)
-    ex_dir = setup_experiment(WAMBallInCupSim.name, PoWER.name + '_' + DualRBFLinearPolicy.name, '4dof_rand', seed=None)
+    ex_dir = setup_experiment(WAMBallInCupSim.name, f'{PoWER.name}_{DualRBFLinearPolicy.name}',
+                              '4dof_rand-cs-rl-bm-jd-js', seed=None)
 
     # Environment
     env_hparams = dict(

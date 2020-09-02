@@ -35,7 +35,7 @@ import torch as to
 
 import pyrado
 from pyrado.algorithms.cem import CEM
-from pyrado.domain_randomization.default_randomizers import get_zero_var_randomizer, get_default_domain_param_map_wambic
+from pyrado.domain_randomization.default_randomizers import get_zero_var_randomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
 from pyrado.environments.barrett_wam.wam import WAMBallInCupReal
 from pyrado.environments.mujoco.wam import WAMBallInCupSim
@@ -47,33 +47,39 @@ from pyrado.policies.environment_specific import DualRBFLinearPolicy
 if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
     # ex_dir = setup_experiment(WAMBallInCupSim.name, f'{BayRn.name}_{CEM.name}', 'rand-rl-jd', seed=1001)
-    ex_dir = setup_experiment(WAMBallInCupSim.name, f'{BayRn.name}_{CEM.name}_sim2sim', 'rand-rl-jd', seed=1001)
+    ex_dir = setup_experiment(WAMBallInCupSim.name, f'{BayRn.name}-{CEM.name}_{DualRBFLinearPolicy.name}_sim2sim',
+                              '4dof_rand-rl-jd', seed=1001)
 
     # Environments
     env_hparams = dict(
         num_dof=4,
         max_steps=1500,
         fixed_init_state=False,
-        task_args=dict(final_factor=0.05)
+        task_args=dict(final_factor=0.2)
     )
     env_sim = WAMBallInCupSim(**env_hparams)
     env_sim = DomainRandWrapperLive(env_sim, get_zero_var_randomizer(env_sim))
-    # dp_map = get_default_domain_param_map_wambic()
     dp_map = {
-        0: ('rope_length', 'mean'),
-        1: ('rope_length', 'std'),
-        2: ('joint_damping', 'mean'),
-        3: ('joint_damping', 'halfspan'),
+        0: ('cup_scale', 'mean'),
+        1: ('cup_scale', 'std'),
+        2: ('rope_length', 'mean'),
+        3: ('rope_length', 'std'),
+        4: ('ball_mass', 'mean'),
+        5: ('ball_mass', 'std'),
     }
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
 
     # Set the boundaries for the GP (must be consistent with dp_map)
     dp_nom = WAMBallInCupSim.get_nominal_domain_param()
     bounds = to.tensor(
-        # [[0.7*dp_nom['cup_scale'], dp_nom['cup_scale']/100, 0.8*dp_nom['rope_length'], dp_nom['rope_length']/100],
-        #  [1.3*dp_nom['cup_scale'], dp_nom['cup_scale']/20, 1.2*dp_nom['rope_length'], dp_nom['rope_length']/10]]
-        [[0.9*dp_nom['rope_length'], dp_nom['rope_length']/100, 0*dp_nom['joint_damping'], dp_nom['joint_damping']/100],
-         [1.1*dp_nom['rope_length'], dp_nom['rope_length']/10, 4*dp_nom['joint_damping'], dp_nom['joint_damping']/10]]
+        [[0.85*dp_nom['cup_scale'], dp_nom['cup_scale']/100,
+          0.95*dp_nom['rope_length'], dp_nom['rope_length']/200,
+          0.85*dp_nom['ball_mass'], dp_nom['ball_mass']/100,
+          ],
+         [1.15*dp_nom['cup_scale'], dp_nom['cup_scale']/10,
+          1.05*dp_nom['rope_length'], dp_nom['rope_length']/50,
+          1.15*dp_nom['ball_mass'], dp_nom['ball_mass']/10,
+          ]]
     )
 
     # env_real = WAMBallInCupReal(ip=None)
@@ -90,17 +96,17 @@ if __name__ == '__main__':
 
     # Subroutine
     subrtn_hparam = dict(
-        max_iter=30,
+        max_iter=15,
         pop_size=100,
-        num_rollouts=100,
+        num_rollouts=30,
         num_is_samples=10,
-        expl_std_init=np.pi/6,
+        expl_std_init=np.pi/24,
         expl_std_min=0.02,
-        extra_expl_std_init=np.pi/6,
-        extra_expl_decay_iter=15,
+        extra_expl_std_init=np.pi/24,
+        extra_expl_decay_iter=5,
         full_cov=False,
         symm_sampling=False,
-        num_workers=16,
+        num_workers=8,
     )
     cem = CEM(ex_dir, env_sim, policy, **subrtn_hparam)
 
@@ -111,11 +117,11 @@ if __name__ == '__main__':
         acq_restarts=500,
         acq_samples=1000,
         num_init_cand=5,
-        warmstart=False,
+        warmstart=True,
         num_eval_rollouts_real=100 if isinstance(env_real, WAMBallInCupSim) else 5,
         num_eval_rollouts_sim=100,
         # policy_param_init=policy_init.param_values.data,
-        subrtn_snapshot_mode='latest'
+        subrtn_snapshot_mode='best'
     )
 
     # Save the environments and the hyper-parameters (do it before the init routine of BDR)
