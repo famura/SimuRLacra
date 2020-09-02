@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build the Docker image
-        run: docker build . --file Dockerfile.sacher --tag simurlacra:sacher
+        run: docker build . --file docker/Dockerfile.sacher --tag simurlacra:sacher
       - name: Build Docs
         continue-on-error: true
         run: |
