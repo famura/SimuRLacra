@@ -92,7 +92,7 @@ if __name__ == '__main__':
             [ax_hm_mean, ax_cb_mean, ax_hm_std, ax_cb_std], cands, cands_values, min_gp_obsnoise=1e-5,
             idcs_sel=args.idcs, x_label=f'$\phi_{args.idcs[0]}$', y_label=f'$\phi_{args.idcs[1]}$',
             z_label=r'$\hat{J}^{\textrm{real}}$', num_stds=2, resolution=51,
-            show_legend_posterior=True, show_legend_std=True, show_legend_data=args.verbose, render_3D=False
+            show_legend_posterior=True, show_legend_std=True, show_legend_data=args.verbose, render3D=False
         )
 
     elif args.mode == '3D':
@@ -101,7 +101,7 @@ if __name__ == '__main__':
             ax, cands, cands_values, min_gp_obsnoise=1e-5,
             idcs_sel=args.idcs, x_label=f'$\phi_{args.idcs[0]}$', y_label=f'$\phi_{args.idcs[1]}$',
             z_label=r'$\hat{J}^{\textrm{real}}$', num_stds=2, resolution=51,
-            show_legend_posterior=False, show_legend_std=True, show_legend_data=args.verbose, render_3D=True
+            show_legend_posterior=False, show_legend_std=True, show_legend_data=args.verbose, render3D=True
         )
 
     else:

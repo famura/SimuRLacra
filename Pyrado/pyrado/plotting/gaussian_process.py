@@ -69,7 +69,7 @@ def render_singletask_gp(
     legend_data_cmap: colors.Colormap = None,
     colorbar_label: str = None,
     title: str = None,
-    render_3D: bool = True,
+    render3D: bool = True,
 ) -> plt.Figure:
     """
     Fit the GP posterior to the input data and plot the mean and std as well as the data points.
@@ -101,7 +101,7 @@ def render_singletask_gp(
     :param legend_data_cmap: color map for the sampled points, default is 'binary'
     :param colorbar_label: label for the color bar (2D plot only)
     :param title: title displayed above the figure, set to `None` to suppress the title
-    :param render_3D: use 3D rendering if possible
+    :param render3D: use 3D rendering if possible
     :return: handle to the resulting figure
     """
     if data_x.ndim != 2:
@@ -206,7 +206,7 @@ def render_singletask_gp(
         mean_raw = mean*data_y_std + data_y_mean
         std_raw = std*data_y_std
 
-        if render_3D:
+        if render3D:
             # Project back from normalized input and standardized output (custom for 3D)
             x0_mesh = x0_mesh*(data_x_max[0] - data_x_min[0]) + data_x_min[0]
             x1_mesh = x1_mesh*(data_x_max[1] - data_x_min[1]) + data_x_min[1]
