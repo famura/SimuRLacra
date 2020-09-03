@@ -29,13 +29,49 @@
 """
 Only tested for 1-dim inputs, e.g. time series of rewards.
 """
+
 import numpy as np
 import torch as to
+from typing import Union
 
 import pyrado
 
 
-def standardize(data: [np.ndarray, to.Tensor], eps: float = 1e-8) -> [np.ndarray, to.Tensor]:
+def scale_min_max(data: Union[np.ndarray, to.Tensor],
+                  bound_lo: Union[int, float, np.ndarray, to.Tensor],
+                  bound_up: Union[int, float, np.ndarray, to.Tensor]) -> [np.ndarray, to.Tensor]:
+    r"""
+    Transform the input data to to be in $[a, b]$.
+
+    :param data: input ndarray or Tensor
+    :param bound_lo: lower bound for the transformed data
+    :param bound_up: upper bound for the transformed data
+    :param data: input ndarray or Tensor
+    :return: scaled ndarray or Tensor
+    """
+    if isinstance(bound_lo, (float, int)) and isinstance(data, np.ndarray):
+        bound_lo = bound_lo*np.ones_like(data, dtype=np.float64)
+    if isinstance(bound_up, (float, int)) and isinstance(data, np.ndarray):
+        bound_up = bound_up*np.ones_like(data, dtype=np.float64)
+    if isinstance(bound_lo, (float, int)) and isinstance(data, to.Tensor):
+        bound_lo = bound_lo*to.ones_like(data, dtype=to.get_default_dtype())
+    if isinstance(bound_up, (float, int)) and isinstance(data, to.Tensor):
+        bound_up = bound_up*to.ones_like(data, dtype=to.get_default_dtype())
+
+    if not (bound_lo < bound_up).all():
+        raise pyrado.ValueErr(given_name='lower bound', l_constraint='upper bound')
+
+    if isinstance(data, np.ndarray):
+        data_ = (data - np.min(data))/(np.max(data) - np.min(data))
+    elif isinstance(data, to.Tensor):
+        data_ = (data - to.min(data))/(to.max(data) - to.min(data))
+    else:
+        raise pyrado.TypeErr(given=data, expected_type=[np.ndarray, to.Tensor])
+
+    return data_*(bound_up - bound_lo) + bound_lo
+
+
+def standardize(data: Union[np.ndarray, to.Tensor], eps: float = 1e-8) -> [np.ndarray, to.Tensor]:
     r"""
     Standardize the input data to make it $~ N(0, 1)$.
 
@@ -58,7 +94,7 @@ class Standardizer:
         self.mean = None
         self.std = None
 
-    def standardize(self, data: [np.ndarray, to.Tensor], eps: float = 1e-8) -> [np.ndarray, to.Tensor]:
+    def standardize(self, data: Union[np.ndarray, to.Tensor], eps: float = 1e-8) -> [np.ndarray, to.Tensor]:
         r"""
         Standardize the input data to make it $~ N(0, 1)$ and store the input's mean and standard deviation.
 
@@ -77,7 +113,7 @@ class Standardizer:
         else:
             raise pyrado.TypeErr(given=data, expected_type=[np.ndarray, to.Tensor])
 
-    def unstandardize(self, data: [np.ndarray, to.Tensor]) -> [np.ndarray, to.Tensor]:
+    def unstandardize(self, data: Union[np.ndarray, to.Tensor]) -> [np.ndarray, to.Tensor]:
         r"""
         Revert the previous standardization of the input data to make it $~ N(\mu, \sigma)$.
 

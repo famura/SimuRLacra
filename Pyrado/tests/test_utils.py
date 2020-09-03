@@ -45,7 +45,7 @@ from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.nn_layers import IndiNonlinLayer
 from pyrado.utils.optimizers import GSS
 from pyrado.utils.averaging import RunningExpDecayingAverage, RunningMemoryAverage
-from pyrado.utils.standardizing import RunningStandardizer, Standardizer
+from pyrado.utils.standardizing import RunningStandardizer, Standardizer, scale_min_max
 from pyrado.utils.normalizing import RunningNormalizer, normalize
 
 
@@ -180,8 +180,12 @@ def test_gen_ordered_batches(data, batch_size):
             assert len(batch) <= batch_size
 
 
-@pytest.mark.parametrize('dtype', ['torch', 'numpy'], ids=['to', 'np'])
-@pytest.mark.parametrize('axis', [0, 1], ids=['ax_0', 'ax_1'])
+@pytest.mark.parametrize(
+    'dtype', ['torch', 'numpy'], ids=['to', 'np']
+)
+@pytest.mark.parametrize(
+    'axis', [0, 1], ids=['ax_0', 'ax_1']
+)
 def test_normalize(dtype, axis):
     for _ in range(10):
         x = to.rand(5, 3) if dtype == 'torch' else np.random.rand(5, 3)
@@ -189,6 +193,38 @@ def test_normalize(dtype, axis):
         if isinstance(x_norm, to.Tensor):
             x_norm = x_norm.numpy()  # for easier checking with pytest.approx
         assert np.sum(x_norm, axis=axis) == pytest.approx(1.)
+
+
+@pytest.mark.parametrize(
+    'dtype', ['torch', 'numpy', 'mixed'], ids=['to', 'np', 'mixed']
+)
+@pytest.mark.parametrize(
+    'lb, ub', [
+        (0, 1),
+        (-1, 1),
+        (-2.5, 0),
+    ], ids=['lb0_ub1', 'lb-1_ub1', 'lb-2.5_ub0']
+)
+def test_scale_min_max(dtype, lb, ub):
+    for _ in range(10):
+        if dtype == 'torch':
+            bound_lo = to.tensor([lb], dtype=to.float64)
+            bound_up = to.tensor([ub], dtype=to.float64)
+        elif dtype == 'numpy':
+            bound_lo = np.array(lb, dtype=np.float64)
+            bound_up = np.array(ub, dtype=np.float64)
+        else:
+            bound_lo = lb
+            bound_up = ub
+
+        x = to.rand(5, 3) if dtype == 'torch' else np.random.rand(5, 3)
+        x_scaled = scale_min_max(x, bound_lo, bound_up)
+        if isinstance(x_scaled, to.Tensor):
+            x_scaled = x_scaled.numpy()  # for easier checking with pytest.approx
+            bound_lo = bound_lo.numpy()
+            bound_up = bound_up.numpy()
+        assert np.all(bound_lo*np.ones_like(x_scaled) <= x_scaled)
+        assert np.all(x_scaled <= bound_up*np.ones_like(x_scaled))
 
 
 @pytest.mark.parametrize(
