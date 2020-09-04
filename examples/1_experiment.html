@@ -199,11 +199,14 @@ by passing any directory as <cite>base_dir</cite>. In Pyrado, the folders are st
 <cite>environment_name/algorithm_name/datetime_and_info</cite>. This rule is only required for the automatic search for experiments
 (e.g. used in <cite>sim_policy()</cite>). This search function requires the individual experiment folders to start with <cite>date_time</cite>.
 Aside from this, you can name your experiments and folders however you like. Use the <cite>load_experiment()</cite> function to
-later oad your results. It will look for an environment as well as a policy file in the provided path.
-Additionally, <cite>setup_experiment()</cite> can set a seed for the random number generators (see <cite>set_seed()</cite>. It is highly
-suggested to do so, if you want to compare changes of certain hyper-parameters to eliminate the effect of the initial
-state and the initial policy parameters (both are sampled randomly in most cases).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ex_dir</span> <span class="o">=</span> <span class="n">setup_experiment</span><span class="p">(</span><span class="n">BallOnBeamSim</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">HCNormal</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">LinearPolicy</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;ident-sin&#39;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1001</span><span class="p">)</span>
+later oad your results. It will look for an environment as well as a policy file in the provided path.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ex_dir</span> <span class="o">=</span> <span class="n">setup_experiment</span><span class="p">(</span><span class="n">BallOnBeamSim</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">HCNormal</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">LinearPolicy</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;ident-sin&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Additionally, you can set a seed for the random number generators. It is highly suggested to do so, if you want to
+compare changes of certain hyper-parameters to eliminate the effect of the initial state and the initial policy
+parameters (both are sampled randomly in most cases).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">1001</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Set up the environment a.k.a. domain to train in. After creating the environment, you can apply various wrappers which
