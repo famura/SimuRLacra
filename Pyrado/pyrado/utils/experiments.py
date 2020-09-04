@@ -209,15 +209,16 @@ def load_experiment(ex_dir: str, args: Any = None) -> ([SimEnv, EnvWrapper], Pol
     return env, policy, kwout
 
 
-def wrap_like_other_env(env_targ: Env, env_src: [SimEnv, EnvWrapper]) -> Env:
+def wrap_like_other_env(env_targ: Env, env_src: [SimEnv, EnvWrapper], use_downsampling: bool = False) -> Env:
     """
     Wrap a given real environment like it's simulated counterpart (except the domain randomization of course).
 
     :param env_targ: target environment e.g. environment representing the physical device
     :param env_src: source environment e.g. simulation environment used for training
+    :param use_downsampling: apply a wrapper that downsamples the actions if the sampling frequencies don't match
     :return: target environment
     """
-    if env_src.dt > env_targ.dt:
+    if use_downsampling and env_src.dt > env_targ.dt:
         ds_factor = int(env_src.dt/env_targ.dt)
         env_targ = DownsamplingWrapper(env_targ, ds_factor)
         print_cbt(f'Wrapped the env with an DownsamplingWrapper of factor {ds_factor}.', 'c')

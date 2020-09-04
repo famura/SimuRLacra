@@ -38,13 +38,15 @@ from pyrado.environments.real_base import RealEnv
 class DownsamplingWrapper(EnvWrapperAct, EnvWrapperObs, Serializable):
     """
     Environment wrapper which downsamples the actions coming from the rollout loop.
-    This wrapper is intended to be used with the real Quanser devices, since these are set up to always run on 500Hz,
-    i.e. one send-and-receive every 0.002s. When learning in simulation, this requires a lot of samples per rollout,
+    This wrapper is intended to be used with the real Quanser devices, since these are set up to usually run on 500Hz,
+    i.e. one send and receive every 0.002s. When learning in simulation, this requires a lot of samples per rollout,
     which makes learning more time-consuming and difficult (fine tuning the temporal discount factor). In order to
     be able to learn on a lower frequency, e.g. 100Hz, we downsample the actions passed to the real device, i.e. just
-    send every factor action.
-    .. note:: The observations are not affected! Thus the policy (and the velocity filter) still receive one observation
-    per environment step, i.e. send-and-receive when using the real device.
+    send every `factor` action.
+
+    .. note::
+        The observations are not affected! Thus the policy still receives one observation per environment step,
+        i.e. send and receive at the real device's sampling frequency.
     """
 
     def __init__(self,
