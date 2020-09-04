@@ -730,12 +730,12 @@ exception is raised).</p>
 <span id="math"></span><h2>math<a class="headerlink" href="#module-pyrado.utils.math" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.utils.math.UnitCubeProjector">
-<em class="property">class </em><code class="sig-name descname">UnitCubeProjector</code><span class="sig-paren">(</span><em class="sig-param">bound_lo: [&lt;class 'numpy.ndarray'&gt;, &lt;class 'torch.Tensor'&gt;], bound_up: [&lt;class 'numpy.ndarray'&gt;, &lt;class 'torch.Tensor'&gt;]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/math.html#UnitCubeProjector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.math.UnitCubeProjector" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">UnitCubeProjector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bound_lo</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">bound_up</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/math.html#UnitCubeProjector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.math.UnitCubeProjector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Project to a unit qube <span class="math notranslate nohighlight">\([0, 1]^d\)</span> and back using explicit bounds</p>
 <dl class="py method">
 <dt id="pyrado.utils.math.UnitCubeProjector.project_back">
-<code class="sig-name descname">project_back</code><span class="sig-paren">(</span><em class="sig-param">data: [&lt;class 'numpy.ndarray'&gt;, &lt;class 'torch.Tensor'&gt;]</em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘numpy.ndarray’&gt;, &lt;class ‘torch.Tensor’&gt;]<a class="reference internal" href="_modules/pyrado/utils/math.html#UnitCubeProjector.project_back"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.math.UnitCubeProjector.project_back" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">project_back</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span><a class="reference internal" href="_modules/pyrado/utils/math.html#UnitCubeProjector.project_back"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.math.UnitCubeProjector.project_back" title="Permalink to this definition">¶</a></dt>
 <dd><p>Revert the previous normalization using the stored explicit bounds</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -749,7 +749,7 @@ exception is raised).</p>
 
 <dl class="py method">
 <dt id="pyrado.utils.math.UnitCubeProjector.project_to">
-<code class="sig-name descname">project_to</code><span class="sig-paren">(</span><em class="sig-param">data: [&lt;class 'numpy.ndarray'&gt;, &lt;class 'torch.Tensor'&gt;]</em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘numpy.ndarray’&gt;, &lt;class ‘torch.Tensor’&gt;]<a class="reference internal" href="_modules/pyrado/utils/math.html#UnitCubeProjector.project_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.math.UnitCubeProjector.project_to" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">project_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span><a class="reference internal" href="_modules/pyrado/utils/math.html#UnitCubeProjector.project_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.math.UnitCubeProjector.project_to" title="Permalink to this definition">¶</a></dt>
 <dd><p>Normalize every dimension individually using the stored explicit bounds and the L_1 norm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -839,7 +839,7 @@ One use case of this function is if you want to clip the parameter update by a r
 
 <dl class="py function">
 <dt id="pyrado.utils.math.explained_var">
-<code class="sig-name descname">explained_var</code><span class="sig-paren">(</span><em class="sig-param">y_mdl: [&lt;class 'numpy.ndarray'&gt;, &lt;class 'torch.Tensor'&gt;], y_obs: [&lt;class 'numpy.ndarray'&gt;, &lt;class 'torch.Tensor'&gt;]) -&gt; (&lt;class 'numpy.ndarray'&gt;, &lt;class 'torch.Tensor'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/math.html#explained_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.math.explained_var" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">explained_var</code><span class="sig-paren">(</span><em class="sig-param">y_mdl: Union[numpy.ndarray, torch.Tensor], y_obs: Union[numpy.ndarray, torch.Tensor]) -&gt; (&lt;class 'numpy.ndarray'&gt;, &lt;class 'torch.Tensor'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/math.html#explained_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.math.explained_var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate proportion of the variance “explained” by the model (see coefficient of determination R^2)
 .. note:: R^2 = 0.49 implies that 49% of the variability of the dependent variable has been accounted for.</p>
 <dl class="field-list simple">
@@ -868,6 +868,24 @@ One use case of this function is if you want to clip the parameter update by a r
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><span class="math notranslate nohighlight">\(\log \left( 1/N \sum_{i=1}^N \exp(x) \right)\)</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.math.rmse">
+<code class="sig-name descname">rmse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">y</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">dim</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">0</span></em><span class="sig-paren">)</span> &#x2192; Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span><a class="reference internal" href="_modules/pyrado/utils/math.html#rmse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.math.rmse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the root mean squared error between two inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – input data, e.g. output of a neural network</p></li>
+<li><p><strong>y</strong> – input data, e.g. target values for the output</p></li>
+<li><p><strong>dim</strong> – dimension to compute the RMSE along</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1180,7 +1198,7 @@ When the property is first accessed, the function is called to compute the value
 <p>A stateful standardizer that remembers the mean and standard deviation for later un-standardization</p>
 <dl class="py method">
 <dt id="pyrado.utils.standardizing.Standardizer.standardize">
-<code class="sig-name descname">standardize</code><span class="sig-paren">(</span><em class="sig-param">data: [&lt;class 'numpy.ndarray'&gt;, &lt;class 'torch.Tensor'&gt;], eps: float = 1e-08</em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘numpy.ndarray’&gt;, &lt;class ‘torch.Tensor’&gt;]<a class="reference internal" href="_modules/pyrado/utils/standardizing.html#Standardizer.standardize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.standardizing.Standardizer.standardize" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">standardize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">eps</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1e-08</span></em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘numpy.ndarray’&gt;, &lt;class ‘torch.Tensor’&gt;]<a class="reference internal" href="_modules/pyrado/utils/standardizing.html#Standardizer.standardize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.standardizing.Standardizer.standardize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Standardize the input data to make it <span class="math notranslate nohighlight">\(~ N(0, 1)\)</span> and store the input’s mean and standard deviation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1197,7 +1215,7 @@ When the property is first accessed, the function is called to compute the value
 
 <dl class="py method">
 <dt id="pyrado.utils.standardizing.Standardizer.unstandardize">
-<code class="sig-name descname">unstandardize</code><span class="sig-paren">(</span><em class="sig-param">data: [&lt;class 'numpy.ndarray'&gt;, &lt;class 'torch.Tensor'&gt;]</em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘numpy.ndarray’&gt;, &lt;class ‘torch.Tensor’&gt;]<a class="reference internal" href="_modules/pyrado/utils/standardizing.html#Standardizer.unstandardize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.standardizing.Standardizer.unstandardize" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">unstandardize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘numpy.ndarray’&gt;, &lt;class ‘torch.Tensor’&gt;]<a class="reference internal" href="_modules/pyrado/utils/standardizing.html#Standardizer.unstandardize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.standardizing.Standardizer.unstandardize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Revert the previous standardization of the input data to make it <span class="math notranslate nohighlight">\(~ N(\mu, \sigma)\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1212,8 +1230,27 @@ When the property is first accessed, the function is called to compute the value
 </dd></dl>
 
 <dl class="py function">
+<dt id="pyrado.utils.standardizing.scale_min_max">
+<code class="sig-name descname">scale_min_max</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">bound_lo</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">, </span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">bound_up</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">, </span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘numpy.ndarray’&gt;, &lt;class ‘torch.Tensor’&gt;]<a class="reference internal" href="_modules/pyrado/utils/standardizing.html#scale_min_max"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.standardizing.scale_min_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform the input data to to be in <span class="math notranslate nohighlight">\([a, b]\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – input ndarray or Tensor</p></li>
+<li><p><strong>bound_lo</strong> – lower bound for the transformed data</p></li>
+<li><p><strong>bound_up</strong> – upper bound for the transformed data</p></li>
+<li><p><strong>data</strong> – input ndarray or Tensor</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>scaled ndarray or Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="pyrado.utils.standardizing.standardize">
-<code class="sig-name descname">standardize</code><span class="sig-paren">(</span><em class="sig-param">data: [&lt;class 'numpy.ndarray'&gt;, &lt;class 'torch.Tensor'&gt;], eps: float = 1e-08</em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘numpy.ndarray’&gt;, &lt;class ‘torch.Tensor’&gt;]<a class="reference internal" href="_modules/pyrado/utils/standardizing.html#standardize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.standardizing.standardize" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">standardize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">eps</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1e-08</span></em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘numpy.ndarray’&gt;, &lt;class ‘torch.Tensor’&gt;]<a class="reference internal" href="_modules/pyrado/utils/standardizing.html#standardize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.standardizing.standardize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Standardize the input data to make it <span class="math notranslate nohighlight">\(~ N(0, 1)\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
