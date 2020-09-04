@@ -38,11 +38,11 @@ from pyrado.utils.nn_layers import ScaleLayer, PositiveScaleLayer, IndiNonlinLay
 
 def _apply_weights_conf(m, ls, ks):
     dim_ch_out, dim_ch_in = m.weight.data.shape[0], m.weight.data.shape[1]
-    amp = to.rand(dim_ch_out * dim_ch_in)
+    amp = to.rand(dim_ch_out*dim_ch_in)
     for i in range(dim_ch_out):
         for j in range(dim_ch_in):
-            m.weight.data[i, j, :] = amp[i * dim_ch_in + j] * 2 * (
-                    to.exp(-to.pow(ls, 2) / (ks / 2) ** 2) - 0.5)
+            m.weight.data[i, j, :] = amp[i*dim_ch_in + j]*2*(
+                to.exp(-to.pow(ls, 2)/(ks/2)**2) - 0.5)
 
 
 def init_param(m, **kwargs):
@@ -50,7 +50,7 @@ def init_param(m, **kwargs):
     Initialize the parameters of the PyTorch Module / layer / network / cell according to its type.
 
     :param m: PyTorch Module / layer / network / cell to initialize
-    :param kwargs: optional keyword arguments, e.g. `t_max` for LSTM's chrono initialization [2]
+    :param kwargs: optional keyword arguments, e.g. `t_max` for LSTM's chrono initialization [2], or `uniform_bias`
 
     .. seealso::
         [1] A.M. Sachse, J. L. McClelland, S. Ganguli, "Exact solutions to the nonlinear dynamics of learning in
@@ -60,37 +60,22 @@ def init_param(m, **kwargs):
     """
     kwargs = kwargs if kwargs is not None else dict()
 
-    if isinstance(m, nn.Linear):
-        if m.weight.data.ndimension() >= 2:
-            # Most common case
-            init.orthogonal_(m.weight.data)  # former: init.xavier_normal_(m.weight.data)
-        else:
-            warn('Orthogonal initialization is not possible for tensors with less than 2 dimensions.'
-                 'Falling back to Gaussian initialization.')
-            init.normal_(m.weight.data)
-
-        if m.bias is not None:
-            if kwargs.get('uniform_bias', False):
-                init.uniform_(m.bias.data, a=-1. / sqrt(m.bias.data.nelement()), b=1. / sqrt(m.bias.data.nelement()))
+    if isinstance(m, (nn.Linear, nn.RNN, nn.GRU, nn.GRUCell)):
+        for name, param in m.named_parameters():
+            if 'weight' in name:
+                if len(param.shape) >= 2:
+                    # Most common case
+                    init.orthogonal_(param.data)  # former: init.xavier_normal_(param.data)
+                else:
+                    init.normal_(param.data)
+            elif 'bias' in name:
+                if kwargs.get('uniform_bias', False):
+                    init.uniform_(param.data, a=-1./sqrt(param.data.nelement()), b=1./sqrt(param.data.nelement()))
+                else:
+                    # Default case
+                    init.normal_(param.data, std=1./sqrt(param.data.nelement()))
             else:
-                # Most common case
-                init.normal_(m.bias.data)
-
-    elif isinstance(m, nn.RNN):
-        for param in m.parameters():
-            if len(param.shape) >= 2:
-                # Most common case
-                init.orthogonal_(param.data)
-            else:
-                init.normal_(param.data)
-
-    elif isinstance(m, (nn.GRU, nn.GRUCell)):
-        for param in m.parameters():
-            if len(param.shape) >= 2:
-                # Most common case
-                init.orthogonal_(param.data)
-            else:
-                init.normal_(param.data)
+                raise pyrado.KeyErr(key='weight or bias', container=param)
 
     elif isinstance(m, (nn.LSTM, nn.LSTMCell)):
         for name, param in m.named_parameters():
@@ -114,25 +99,25 @@ def init_param(m, **kwargs):
                         raise pyrado.TypeErr(given=kwargs['t_max'], expected_type=[float, int, to.Tensor])
                     # Initialize all biases to 0, but the bias of the forget and input gate using the chrono init
                     nn.init.constant_(param.data, val=0)
-                    param.data[m.hidden_size:m.hidden_size * 2] = to.log(nn.init.uniform_(  # forget gate
-                        param.data[m.hidden_size:m.hidden_size * 2], 1, kwargs['t_max'] - 1
+                    param.data[m.hidden_size:m.hidden_size*2] = to.log(nn.init.uniform_(  # forget gate
+                        param.data[m.hidden_size:m.hidden_size*2], 1, kwargs['t_max'] - 1
                     ))
-                    param.data[0: m.hidden_size] = -param.data[m.hidden_size: 2 * m.hidden_size]  # input gate
+                    param.data[0: m.hidden_size] = -param.data[m.hidden_size: 2*m.hidden_size]  # input gate
                 else:
                     # Initialize all biases to 0, but the bias of the forget gate to 1
                     nn.init.constant_(param.data, val=0)
-                    param.data[m.hidden_size:m.hidden_size * 2].fill_(1)
+                    param.data[m.hidden_size:m.hidden_size*2].fill_(1)
 
     elif isinstance(m, nn.Conv1d):
         if kwargs.get('bell', False):
             # Initialize the kernel weights with a shifted of shape exp(-x^2 / sigma^2).
             # The biases are left unchanged.
-            if m.weight.data.shape[2] % 2 == 0:
-                ks_half = m.weight.data.shape[2] // 2
+            if m.weight.data.shape[2]%2 == 0:
+                ks_half = m.weight.data.shape[2]//2
                 ls_half = to.linspace(ks_half, 0, ks_half)  # descending
                 ls = to.cat([ls_half, reversed(ls_half)])
             else:
-                ks_half = ceil(m.weight.data.shape[2] / 2)
+                ks_half = ceil(m.weight.data.shape[2]/2)
                 ls_half = to.linspace(ks_half, 0, ks_half)  # descending
                 ls = to.cat([ls_half, reversed(ls_half[:-1])])
             _apply_weights_conf(m, ls, ks_half)
