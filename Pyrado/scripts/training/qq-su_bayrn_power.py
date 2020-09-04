@@ -49,18 +49,24 @@ if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(QQubeSwingUpSim.name,
                               f'{BayRn.name}-{PoWER.name}_{QQubeSwingUpAndBalanceCtrl.name}_sim2sim',
-                              '100Hz_rand-Mp+Mr+', seed=1111)
+                              'rand-Mp-Mr', seed=1111)
 
     # Environments
-    env_hparams = dict(dt=1/100., max_steps=600)
-    env_sim = QQubeSwingUpSim(**env_hparams)
+    env_sim_hparams = dict(dt=1/100., max_steps=600)
+    env_sim = QQubeSwingUpSim(**env_sim_hparams)
     env_sim = DomainRandWrapperLive(env_sim, get_zero_var_randomizer(env_sim))
     dp_map = get_default_domain_param_map_qq()
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
 
-    env_real = QQubeSwingUpSim(**env_hparams)
-    env_real.domain_param = dict(Mp=0.026, Mr=0.097)
-    # env_real = QQubeReal(**env_hparams)
+    env_real = QQubeSwingUpSim(**env_sim_hparams)
+    env_real.domain_param = dict(
+        Mp=0.024*1.1,
+        Mr=0.095*0.9,
+        # Lp=0.129*1.10
+        # Lr=0.085*0.95,
+    )
+    env_real_hparams = env_sim_hparams
+    # env_real = QQubeReal(**env_real_hparams)
     env_real = wrap_like_other_env(env_real, env_sim)
 
     # Policy
@@ -74,46 +80,48 @@ if __name__ == '__main__':
 
     # Subroutine
     subrtn_hparam = dict(
-        max_iter=20,
+        max_iter=10,
         pop_size=50,
-        num_rollouts=10,
-        num_is_samples=25,
+        num_rollouts=20,
+        num_is_samples=10,
         expl_std_init=2.0,
         expl_std_min=0.02,
         symm_sampling=False,
-        num_workers=8,
+        num_workers=12,
     )
     power = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
 
     # Set the boundaries for the GP
     dp_nom = QQubeSwingUpSim.get_nominal_domain_param()
     # bounds = to.tensor(
-    #     [[0.8*dp_nom['Mp'], dp_nom['Mp']/2000],
-    #      [1.2*dp_nom['Mp'], dp_nom['Mp']/1000]])
+    #     [[0.8*dp_nom['Mp'], dp_nom['Mp']/5000],
+    #      [1.2*dp_nom['Mp'], dp_nom['Mp']/4999]])
     bounds = to.tensor(
-        [[0.9*dp_nom['Mp'], dp_nom['Mp']/5000, 0.9*dp_nom['Mr'], dp_nom['Mr']/5000],
-         [1.1*dp_nom['Mp'], dp_nom['Mp']/4999, 1.1*dp_nom['Mr'], dp_nom['Mr']/4999]])
+        [[0.8*dp_nom['Mp'], dp_nom['Mp']/5000,
+          0.8*dp_nom['Mr'], dp_nom['Mr']/5000],
+         [1.2*dp_nom['Mp'], dp_nom['Mp']/4999,
+          1.2*dp_nom['Mr'], dp_nom['Mr']/4999]])
     # bounds = to.tensor(
-    #     [[0.9*dp_nom['Mp'], dp_nom['Mp']/1000, 0.9*dp_nom['Mr'], dp_nom['Mr']/1000,
-    #       0.9*dp_nom['Lp'], dp_nom['Lp']/1000, 0.9*dp_nom['Lr'], dp_nom['Lr']/1000],
-    #      [1.1*dp_nom['Mp'], dp_nom['Mp']/20, 1.1*dp_nom['Mr'], dp_nom['Mr']/20,
-    #       1.1*dp_nom['Lp'], dp_nom['Lp']/20, 1.1*dp_nom['Lr'], dp_nom['Lr']/20]])
+    #     [[0.9*dp_nom['Mp'], dp_nom['Mp']/5000, 0.9*dp_nom['Mr'], dp_nom['Mr']/5000,
+    #       0.9*dp_nom['Lp'], dp_nom['Lp']/5000, 0.9*dp_nom['Lr'], dp_nom['Lr']/5000],
+    #      [1.1*dp_nom['Mp'], dp_nom['Mp']/4999, 1.1*dp_nom['Mr'], dp_nom['Mr']/4999,
+    #       1.1*dp_nom['Lp'], dp_nom['Lp']/4999, 1.1*dp_nom['Lr'], dp_nom['Lr']/4999]])
 
     # Algorithm
     bayrn_hparam = dict(
         max_iter=15,
-        acq_fc='UCB',
+        acq_fc='EI',
         acq_param=dict(beta=0.25),
         acq_restarts=500,
         acq_samples=1000,
-        num_init_cand=2,
+        num_init_cand=2*bounds.shape[1],
         warmstart=False,
         num_eval_rollouts_real=100 if isinstance(env_real, QQubeSwingUpSim) else 5,
     )
 
     # Save the environments and the hyper-parameters (do it before the init routine of BDR)
     save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=ex_dir.seed),
+        dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
         dict(subrtn=subrtn_hparam, subrtn_name=PoWER.name),
         dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map)],

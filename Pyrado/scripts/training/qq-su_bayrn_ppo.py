@@ -55,14 +55,15 @@ if __name__ == '__main__':
                               'rand-Mp-Mr-Lp-Lr', seed=111)
 
     # Environments
-    env_hparams = dict(dt=1/100., max_steps=600)
-    env_sim = QQubeSwingUpSim(**env_hparams)
+    env_sim_hparams = dict(dt=1/100., max_steps=600)
+    env_sim = QQubeSwingUpSim(**env_sim_hparams)
     env_sim = ActNormWrapper(env_sim)
     env_sim = DomainRandWrapperLive(env_sim, get_zero_var_randomizer(env_sim))
     dp_map = get_default_domain_param_map_qq()
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
 
-    env_real = QQubeReal(**env_hparams)
+    env_real_hparams = dict(dt=1/500., max_steps=3000)
+    env_real = QQubeReal(**env_real_hparams)
     env_real = wrap_like_other_env(env_real, env_sim)
 
     # Policy
@@ -133,7 +134,7 @@ if __name__ == '__main__':
 
     # Save the environments and the hyper-parameters
     save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=ex_dir.seed),
+        dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
         dict(subrtn=subrtn_hparam, subrtn_name=PPO.name),

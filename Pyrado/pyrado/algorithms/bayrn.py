@@ -46,6 +46,7 @@ from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.utils import until_thold_exceeded
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
+from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
@@ -288,18 +289,18 @@ class BayRn(Algorithm):
             print_cbt(f'Executing {prefix}_policy ...', 'c', bright=True)
 
         rets_real = to.zeros(num_rollouts)
-        if isinstance(env, RealEnv):
+        if isinstance(inner_env(env), RealEnv):
             # Evaluate sequentially when conducting a sim-to-real experiment
             for i in range(num_rollouts):
                 rets_real[i] = rollout(env, policy, eval=True, no_close=False).undiscounted_return()
-        elif isinstance(env, (SimEnv, MetaDomainRandWrapper)):
+        elif isinstance(inner_env(env), SimEnv):
             # Create a parallel sampler when conducting a sim-to-sim experiment
             sampler = ParallelSampler(env, policy, num_workers=1, min_rollouts=num_rollouts)
             ros = sampler.sample()
             for i in range(num_rollouts):
                 rets_real[i] = ros[i].undiscounted_return()
         else:
-            raise pyrado.TypeErr(given=env, expected_type=[RealEnv, SimEnv, MetaDomainRandWrapper])
+            raise pyrado.TypeErr(given=inner_env(env), expected_type=[RealEnv, SimEnv])
 
         if save_dir is not None:
             # Save the evaluation results

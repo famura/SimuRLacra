@@ -49,13 +49,13 @@ if __name__ == '__main__':
                               '4dof_rand-rl-rd', seed=111)
 
     # Environments
-    env_hparams = dict(
+    env_sim_hparams = dict(
         num_dof=4,
         max_steps=1750,
         fixed_init_state=True,
         task_args=dict(final_factor=0.2)
     )
-    env_sim = WAMBallInCupSim(**env_hparams)
+    env_sim = WAMBallInCupSim(**env_sim_hparams)
     env_sim = DomainRandWrapperLive(env_sim, get_zero_var_randomizer(env_sim))
     # dp_map = get_default_domain_param_map_wambic()
     dp_map = {
@@ -76,7 +76,8 @@ if __name__ == '__main__':
          [1.1*dp_nom['rope_length'], dp_nom['rope_length']/10, 2*dp_nom['joint_damping'], dp_nom['joint_damping']/10]]
     )
 
-    env_real = WAMBallInCupSim(**env_hparams)
+    env_real_hparams = env_sim_hparams
+    env_real = WAMBallInCupSim(**env_real_hparams)
 
     # Policy
     policy_hparam = dict(
@@ -115,7 +116,7 @@ if __name__ == '__main__':
 
     # Save the environments and the hyper-parameters (do it before the init routine of BDR)
     save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=ex_dir.seed),
+        dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
         dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
         dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map)],

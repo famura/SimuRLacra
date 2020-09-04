@@ -51,13 +51,13 @@ if __name__ == '__main__':
                               '4dof_rand-rl-jd', seed=1001)
 
     # Environments
-    env_hparams = dict(
+    env_sim_hparams = dict(
         num_dof=4,
         max_steps=1500,
         fixed_init_state=False,
         task_args=dict(final_factor=0.2)
     )
-    env_sim = WAMBallInCupSim(**env_hparams)
+    env_sim = WAMBallInCupSim(**env_sim_hparams)
     env_sim = DomainRandWrapperLive(env_sim, get_zero_var_randomizer(env_sim))
     dp_map = {
         0: ('cup_scale', 'mean'),
@@ -82,8 +82,9 @@ if __name__ == '__main__':
           ]]
     )
 
+    env_real_hparams = env_sim_hparams
     # env_real = WAMBallInCupReal(ip=None)
-    env_real = WAMBallInCupSim(**env_hparams)
+    env_real = WAMBallInCupSim(**env_real_hparams)
 
     # Policy
     policy_hparam = dict(
@@ -126,7 +127,7 @@ if __name__ == '__main__':
 
     # Save the environments and the hyper-parameters (do it before the init routine of BDR)
     save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=ex_dir.seed),
+        dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=ex_dir.seed),
         dict(policy=policy_hparam),
         dict(subrtn=subrtn_hparam, subrtn_name=CEM.name),
         dict(algo=algo_hparam, algo_name=BayRn.name, dp_map=dp_map)],
