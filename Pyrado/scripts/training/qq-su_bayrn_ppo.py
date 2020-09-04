@@ -45,14 +45,21 @@ from pyrado.algorithms.bayrn import BayRn
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.fnn import FNNPolicy
 from pyrado.policies.rnn import LSTMPolicy, GRUPolicy
+from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.experiments import wrap_like_other_env
 
 
 if __name__ == '__main__':
+    # Parse command line arguments
+    args = get_argparser().parse_args()
+
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{BayRn.name}-{PPO.name}_{FNNPolicy.name}',
-                              'rand-Mp-Mr-Lp-Lr', seed=111)
+                              'rand-Mp-Mr-Lp-Lr')
+
+    # Set seed if desired
+    pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
     env_sim_hparams = dict(dt=1/100., max_steps=600)
@@ -134,7 +141,7 @@ if __name__ == '__main__':
 
     # Save the environments and the hyper-parameters
     save_list_of_dicts_to_yaml([
-        dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=ex_dir.seed),
+        dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=args.seed),
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
         dict(subrtn=subrtn_hparam, subrtn_name=PPO.name),
@@ -147,7 +154,7 @@ if __name__ == '__main__':
     # Jeeeha
     algo.train(
         snapshot_mode='latest',
-        seed=ex_dir.seed,
+        seed=args.seed,
     )
 
     # Train the policy on the most lucrative domain

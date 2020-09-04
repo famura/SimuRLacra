@@ -21,11 +21,15 @@ by passing any directory as `base_dir`. In Pyrado, the folders are structured li
 (e.g. used in `sim_policy()`). This search function requires the individual experiment folders to start with `date_time`.
 Aside from this, you can name your experiments and folders however you like. Use the `load_experiment()` function to
 later oad your results. It will look for an environment as well as a policy file in the provided path.
-Additionally, `setup_experiment()` can set a seed for the random number generators (see `set_seed()`. It is highly
-suggested to do so, if you want to compare changes of certain hyper-parameters to eliminate the effect of the initial
-state and the initial policy parameters (both are sampled randomly in most cases).
 """
-ex_dir = setup_experiment(BallOnBeamSim.name, f'{HCNormal.name}_{LinearPolicy.name}', 'ident-sin', seed=1001)
+ex_dir = setup_experiment(BallOnBeamSim.name, f'{HCNormal.name}_{LinearPolicy.name}', 'ident-sin')
+
+"""
+Additionally, you can set a seed for the random number generators. It is highly suggested to do so, if you want to
+compare changes of certain hyper-parameters to eliminate the effect of the initial state and the initial policy
+parameters (both are sampled randomly in most cases).
+"""
+pyrado.set_seed(seed=1001, verbose=True)
 
 """
 Set up the environment a.k.a. domain to train in. After creating the environment, you can apply various wrappers which

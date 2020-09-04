@@ -31,6 +31,7 @@ Train an agent to solve the PlanarInsert task using Activation Dynamics Networks
 """
 import torch as to
 
+import pyrado
 from pyrado.algorithms.nes import NES
 from pyrado.domain_randomization.default_randomizers import get_empty_randomizer
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
@@ -41,11 +42,18 @@ from pyrado.environments.rcspysim.planar_insert import PlanarInsertTASim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.adn import ADNPolicy, pd_cubic
 from pyrado.policies.fnn import FNN
+from pyrado.utils.argparser import get_argparser
 
 
 if __name__ == '__main__':
+    # Parse command line arguments
+    args = get_argparser().parse_args()
+
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(PlanarInsertTASim.name, f'{NES.name}_{ADNPolicy.name}', 'obsnorm_actdelay-4', seed=1001)
+    ex_dir = setup_experiment(PlanarInsertTASim.name, f'{NES.name}_{ADNPolicy.name}', 'obsnorm_actdelay-4')
+
+    # Set seed if desired
+    pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
     env_hparams = dict(
@@ -117,7 +125,7 @@ if __name__ == '__main__':
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=ex_dir.seed),
+        dict(env=env_hparams, seed=args.seed),
         dict(policy=policy_hparam),
         dict(algo=algo_hparam, algo_name=algo.name)],
         ex_dir
@@ -125,4 +133,4 @@ if __name__ == '__main__':
 
     # Jeeeha
     print(env.obs_space.labels)
-    algo.train(snapshot_mode='latest', seed=ex_dir.seed)
+    algo.train(snapshot_mode='latest', seed=args.seed)

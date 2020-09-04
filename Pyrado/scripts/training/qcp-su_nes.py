@@ -29,16 +29,24 @@
 """
 Train an agent to solve the Quanser Cart-Pole swing-up task using Natural Evolution Strategies.
 """
+import pyrado
 from pyrado.algorithms.nes import NES
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.policies.rnn import LSTMPolicy, GRUPolicy
+from pyrado.utils.argparser import get_argparser
 
 
 if __name__ == '__main__':
+    # Parse command line arguments
+    args = get_argparser().parse_args()
+
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QCartPoleSwingUpSim.name, f'{NES.name}_{GRUPolicy.name}', seed=1001)
+    ex_dir = setup_experiment(QCartPoleSwingUpSim.name, f'{NES.name}_{GRUPolicy.name}')
+
+    # Set seed if desired
+    pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
     env_hparams = dict(dt=1/100., max_steps=1300, long=False)
@@ -70,11 +78,11 @@ if __name__ == '__main__':
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=ex_dir.seed),
+        dict(env=env_hparams, seed=args.seed),
         dict(policy=policy_hparam),
         dict(algo=algo_hparam, algo_name=algo.name)],
         ex_dir
     )
 
     # Jeeeha
-    algo.train(snapshot_mode='best', seed=ex_dir.seed)
+    algo.train(snapshot_mode='best', seed=args.seed)

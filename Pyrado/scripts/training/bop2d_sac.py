@@ -34,6 +34,7 @@ Train an agent to solve the Ball-on-Plate environment using Soft Actor-Critic.
 """
 import torch as to
 
+import pyrado
 from pyrado.algorithms.sac import SAC
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate2DSim
@@ -41,12 +42,19 @@ from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yam
 from pyrado.policies.fnn import FNNPolicy
 from pyrado.policies.two_headed import TwoHeadedFNNPolicy
 from pyrado.spaces import ValueFunctionSpace, BoxSpace
+from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 
 
 if __name__ == '__main__':
+    # Parse command line arguments
+    args = get_argparser().parse_args()
+
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(BallOnPlate2DSim.name, f'{SAC.name}_{TwoHeadedFNNPolicy.name}', seed=1001)
+    ex_dir = setup_experiment(BallOnPlate2DSim.name, f'{SAC.name}_{TwoHeadedFNNPolicy.name}')
+
+    # Set seed if desired
+    pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
     env_hparams = dict(
@@ -93,7 +101,7 @@ if __name__ == '__main__':
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=ex_dir.seed),
+        dict(env=env_hparams, seed=args.seed),
         dict(policy=policy_hparam),
         dict(q_fcn=q_fcn_hparam),
         dict(algo=algo_hparam, algo_name=algo.name)],
@@ -101,4 +109,4 @@ if __name__ == '__main__':
     )
 
     # Jeeeha
-    algo.train(seed=ex_dir.seed)
+    algo.train(seed=args.seed)

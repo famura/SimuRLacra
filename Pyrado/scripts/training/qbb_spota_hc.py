@@ -34,6 +34,7 @@ from copy import deepcopy
 from numpy import pi
 import torch as to
 
+import pyrado
 from pyrado.algorithms.hc import HCNormal
 from pyrado.algorithms.spota import SPOTA
 from pyrado.domain_randomization.default_randomizers import get_default_randomizer
@@ -47,12 +48,19 @@ from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yam
 from pyrado.policies.features import FeatureStack, identity_feat
 from pyrado.policies.linear import LinearPolicy
 from pyrado.sampling.sequences import *
+from pyrado.utils.argparser import get_argparser
 
 
 if __name__ == '__main__':
+    # Parse command line arguments
+    args = get_argparser().parse_args()
+
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(QBallBalancerSim.name, f'{SPOTA.name}-{HCNormal.name}_{LinearPolicy.name}',
-                              'obsnoise_actedlay-10', seed=1001)
+                              'obsnoise_actedlay-10')
+
+    # Set seed if desired
+    pyrado.set_seed(args.seed, verbose=True)
 
     # Environment and domain randomization
     env_hparams = dict(dt=1/100., max_steps=500)
@@ -107,7 +115,7 @@ if __name__ == '__main__':
 
     # Save the environments and the hyper-parameters
     save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=ex_dir.seed),
+        dict(env=env_hparams, seed=args.seed),
         dict(policy=policy_hparam),
         dict(subrtn_name=sr_cand.name, subrtn_cand=subrtn_hparam_cand, subrtn_refs=subrtn_hparam_refs),
         dict(algo=algo_hparam, algo_name=algo.name)],
@@ -115,4 +123,4 @@ if __name__ == '__main__':
     )
 
     # Jeeeha
-    algo.train(seed=ex_dir.seed)
+    algo.train(seed=args.seed)

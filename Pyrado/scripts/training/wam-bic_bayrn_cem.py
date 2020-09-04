@@ -42,13 +42,20 @@ from pyrado.environments.mujoco.wam import WAMBallInCupSim
 from pyrado.algorithms.bayrn import BayRn
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.environment_specific import DualRBFLinearPolicy
+from pyrado.utils.argparser import get_argparser
 
 
 if __name__ == '__main__':
+    # Parse command line arguments
+    args = get_argparser().parse_args()
+
     # Experiment (set seed before creating the modules)
-    # ex_dir = setup_experiment(WAMBallInCupSim.name, f'{BayRn.name}_{CEM.name}', 'rand-rl-jd', seed=1001)
+    # ex_dir = setup_experiment(WAMBallInCupSim.name, f'{BayRn.name}_{CEM.name}', 'rand-rl-jd')
     ex_dir = setup_experiment(WAMBallInCupSim.name, f'{BayRn.name}-{CEM.name}_{DualRBFLinearPolicy.name}_sim2sim',
-                              '4dof_rand-rl-jd', seed=1001)
+                              '4dof_rand-rl-jd')
+
+    # Set seed if desired
+    pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
     env_sim_hparams = dict(
@@ -127,7 +134,7 @@ if __name__ == '__main__':
 
     # Save the environments and the hyper-parameters (do it before the init routine of BDR)
     save_list_of_dicts_to_yaml([
-        dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=ex_dir.seed),
+        dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=args.seed),
         dict(policy=policy_hparam),
         dict(subrtn=subrtn_hparam, subrtn_name=CEM.name),
         dict(algo=algo_hparam, algo_name=BayRn.name, dp_map=dp_map)],
@@ -137,4 +144,4 @@ if __name__ == '__main__':
     algo = BayRn(ex_dir, env_sim, env_real, subrtn=cem, bounds=bounds, **algo_hparam)
 
     # Jeeeha
-    algo.train(snapshot_mode='latest', seed=ex_dir.seed)
+    algo.train(snapshot_mode='latest', seed=args.seed)

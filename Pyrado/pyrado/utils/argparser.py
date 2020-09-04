@@ -93,8 +93,8 @@ def get_argparser() -> argparse.ArgumentParser:
     parser.add_argument('-s', '--save_figures', action='store_true', default=False,
                         help="save all generated figures (default: False)")
 
-    parser.add_argument('--seed', type=int, default=1001,
-                        help='seed for the random number generators (default: 1001)')
+    parser.add_argument('--seed', type=int, default=None,
+                        help='seed for the random number generators (default: None for no seeding)')
 
     parser.add_argument('--use_tex', action='store_true', default=False,
                         help="use LaTeX fonts for plotting text with matplotlib (default: False)")

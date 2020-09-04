@@ -31,6 +31,7 @@ Train an agent to solve the Qube swing-up task using Uniform Domain Randomizatio
 """
 import torch as to
 
+import pyrado
 from pyrado.algorithms.advantage import GAE
 from pyrado.algorithms.udr import UDR
 from pyrado.spaces import ValueFunctionSpace
@@ -41,12 +42,19 @@ from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLi
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.fnn import FNNPolicy
+from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 
 
 if __name__ == '__main__':
+    # Parse command line arguments
+    args = get_argparser().parse_args()
+
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{UDR.name}-{PPO.name}_{FNNPolicy.name}', '100Hz', seed=1001)
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{UDR.name}-{PPO.name}_{FNNPolicy.name}', '100Hz')
+
+    # Set seed if desired
+    pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
     env_hparams = dict(dt=1/100., max_steps=600)
@@ -93,7 +101,7 @@ if __name__ == '__main__':
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=ex_dir.seed),
+        dict(env=env_hparams, seed=args.seed),
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
         dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
@@ -102,4 +110,4 @@ if __name__ == '__main__':
     )
 
     # Jeeeha
-    algo.train(snapshot_mode='latest', seed=ex_dir.seed)
+    algo.train(snapshot_mode='latest', seed=args.seed)

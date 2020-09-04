@@ -3,8 +3,8 @@ Train an agent to solve the Qube swing-up task environment using Adversarially R
 """
 import torch as to
 
+import pyrado
 from pyrado.algorithms.advantage import GAE
-from pyrado.spaces import ValueFunctionSpace
 from pyrado.algorithms.arpl import ARPL
 from pyrado.algorithms.ppo import PPO
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
@@ -12,14 +12,22 @@ from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrap
 from pyrado.environments.pysim.quanser_qube import QQubeSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.fnn import FNNPolicy
+from pyrado.policies.rnn import GRUPolicy
+from pyrado.spaces import ValueFunctionSpace
+from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 
 
 if __name__ == '__main__':
+    # Parse command line arguments
+    args = get_argparser().parse_args()
+
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSim.name, ARPL.name, 'fnn_actnorm', seed=1001)
-    # ex_dir = setup_experiment(QQubeSim.name, ARPL.name, 'lstm-lstm_actnorm', seed=1001)
-    # ex_dir = setup_experiment(QQubeSim.name, ARPL.name, 'gru-lstm_actnorm', seed=1001)
+    ex_dir = setup_experiment(QQubeSim.name, f'{ARPL.name}_{FNNPolicy.name}', 'actnorm')
+    # ex_dir = setup_experiment(QQubeSim.name, f'{ARPL.name}_{GRUPolicy.name}', 'actnorm')
+
+    # Set seed if desired
+    pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
     env_hparams = dict(dt=1/250., max_steps=1500)
@@ -79,7 +87,7 @@ if __name__ == '__main__':
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=ex_dir.seed),
+        dict(env=env_hparams, seed=args.seed),
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
         dict(subrtn_hparam=subrtn_hparam, subrtn_name=subrtn.name),
@@ -88,4 +96,4 @@ if __name__ == '__main__':
     )
 
     # Jeeeha
-    algo.train(snapshot_mode='best', seed=ex_dir.seed)
+    algo.train(snapshot_mode='best', seed=args.seed)

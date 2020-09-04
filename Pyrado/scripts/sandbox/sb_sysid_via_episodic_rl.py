@@ -31,6 +31,7 @@ Script to test the algorithm in a sim-to-sim toy task
 """
 import numpy as np
 
+import pyrado
 from pyrado.algorithms.cem import CEM
 from pyrado.algorithms.reps import REPS
 from pyrado.algorithms.sysid_via_episodic_rl import SysIdViaEpisodicRL
@@ -48,8 +49,9 @@ from pyrado.utils.input_output import print_cbt
 
 
 def create_qq_reps_setup():
-    # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeStabSim.name, f'{SysIdViaEpisodicRL.name}-{REPS.name}', seed=1001)
+    # Experiment
+    ex_dir = setup_experiment(QQubeStabSim.name, f'{SysIdViaEpisodicRL.name}-{REPS.name}')
+    pyrado.set_seed(1001, verbose=True)
 
     # Environments
     env_hparams = dict(dt=1/100., max_steps=500)
@@ -112,8 +114,9 @@ def create_qq_reps_setup():
 
 
 def create_qq_cem_setup():
-    # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeStabSim.name, f'{SysIdViaEpisodicRL.name}-{REPS.name}', seed=1001)
+    # Experiment
+    ex_dir = setup_experiment(QQubeStabSim.name, f'{SysIdViaEpisodicRL.name}-{REPS.name}')
+    pyrado.set_seed(1001, verbose=True)
 
     # Environments
     env_hparams = dict(dt=1/100., max_steps=600)
@@ -169,8 +172,9 @@ def create_qq_cem_setup():
 
 
 def create_bob_cem_setup():
-    # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(BallOnBeamSim.name, f'{SysIdViaEpisodicRL.name}-{CEM.name}', seed=1001)
+    # Experiment
+    ex_dir = setup_experiment(BallOnBeamSim.name, f'{SysIdViaEpisodicRL.name}-{CEM.name}')
+    pyrado.set_seed(1001, verbose=True)
 
     # Environments
     env_hparams = dict(dt=1/100., max_steps=500)

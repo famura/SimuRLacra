@@ -31,17 +31,25 @@ Train an agent to solve the Planar-3-Link task using Neural Fields and Hill Clim
 """
 import torch as to
 
+import pyrado
 from pyrado.algorithms.cem import CEM
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
 from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim, Planar3LinkTASim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.neural_fields import NFPolicy
+from pyrado.utils.argparser import get_argparser
 
 
 if __name__ == '__main__':
+    # Parse command line arguments
+    args = get_argparser().parse_args()
+
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(Planar3LinkIKActivationSim.name, f'{CEM.name}_{NFPolicy.name}', seed=101)
+
+    # Set seed if desired
+    pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
     env_hparams = dict(
@@ -110,11 +118,11 @@ if __name__ == '__main__':
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=ex_dir.seed),
+        dict(env=env_hparams, seed=args.seed),
         dict(policy=policy_hparam),
         dict(algo=algo_hparam, algo_name=algo.name)],
         ex_dir
     )
 
     # Jeeeha
-    algo.train(seed=ex_dir.seed)
+    algo.train(seed=args.seed)

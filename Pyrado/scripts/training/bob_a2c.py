@@ -32,6 +32,8 @@ Train an agent to solve the Ball-on-Beam environment using Asynchronous Actor-Cr
 import torch as to
 from torch.optim import lr_scheduler as scheduler
 
+import pyrado
+from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 from pyrado.algorithms.a2c import A2C
 from pyrado.algorithms.advantage import GAE
@@ -44,8 +46,14 @@ from pyrado.policies.linear import LinearPolicy
 
 
 if __name__ == '__main__':
-    # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(BallOnBeamSim.name, f'{A2C.name}_{LinearPolicy.name}', seed=1001)
+    # Parse command line arguments
+    args = get_argparser().parse_args()
+
+    # Experiment
+    ex_dir = setup_experiment(BallOnBeamSim.name, f'{A2C.name}_{LinearPolicy.name}')
+
+    # Set seed if desired
+    pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
     env_hparams = dict(dt=1/100., max_steps=500)
@@ -88,7 +96,7 @@ if __name__ == '__main__':
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=ex_dir.seed),
+        dict(env=env_hparams, seed=args.seed),
         dict(policy=policy_hparam),
         dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
         dict(algo=algo_hparam, algo_name=algo.name)],
@@ -96,4 +104,4 @@ if __name__ == '__main__':
     )
 
     # Jeeeha
-    algo.train(seed=ex_dir.seed)
+    algo.train(seed=args.seed)

@@ -32,16 +32,24 @@ Train an agent to solve the Ball-on-Beam environment using Relative Entropy Sear
 .. note::
     The hyper-parameters are not tuned at all!
 """
+import pyrado
 from pyrado.algorithms.reps import REPS
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.features import FeatureStack, RandFourierFeat, RBFFeat, identity_feat, sin_feat
 from pyrado.policies.linear import LinearPolicy
+from pyrado.utils.argparser import get_argparser
 
 
 if __name__ == '__main__':
+    # Parse command line arguments
+    args = get_argparser().parse_args()
+
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(BallOnBeamSim.name, f'{REPS.name}_{LinearPolicy.name}', seed=1001)
+    ex_dir = setup_experiment(BallOnBeamSim.name, f'{REPS.name}_{LinearPolicy.name}')
+
+    # Set seed if desired
+    pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
     env_hparams = dict(dt=1/100., max_steps=500)
@@ -73,11 +81,11 @@ if __name__ == '__main__':
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=ex_dir.seed),
+        dict(env=env_hparams, seed=args.seed),
         dict(policy=policy_hparam),
         dict(algo=algo_hparam, algo_name=algo.name)],
         ex_dir
     )
 
     # Jeeeha
-    algo.train(seed=ex_dir.seed)
+    algo.train(seed=args.seed)

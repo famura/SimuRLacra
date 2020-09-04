@@ -31,6 +31,7 @@ Train an agent to solve the Qube swing-up task using Bayesian Domain Randomizati
 """
 import torch as to
 
+import pyrado
 from pyrado.algorithms.power import PoWER
 from pyrado.domain_randomization.default_randomizers import get_zero_var_randomizer, get_default_domain_param_map_qq
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
@@ -42,14 +43,21 @@ from pyrado.policies.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.policies.features import FeatureStack, identity_feat, sign_feat, abs_feat, squared_feat, qubic_feat, \
     bell_feat, MultFeat
 from pyrado.policies.linear import LinearPolicy
+from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import wrap_like_other_env
 
 
 if __name__ == '__main__':
+    # Parse command line arguments
+    args = get_argparser().parse_args()
+
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(QQubeSwingUpSim.name,
                               f'{BayRn.name}-{PoWER.name}_{QQubeSwingUpAndBalanceCtrl.name}_sim2sim',
-                              'rand-Mp-Mr', seed=1111)
+                              'rand-Mp-Mr')
+
+    # Set seed if desired
+    pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
     env_sim_hparams = dict(dt=1/100., max_steps=600)
@@ -121,7 +129,7 @@ if __name__ == '__main__':
 
     # Save the environments and the hyper-parameters (do it before the init routine of BDR)
     save_list_of_dicts_to_yaml([
-        dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=ex_dir.seed),
+        dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=args.seed),
         dict(policy=policy_hparam),
         dict(subrtn=subrtn_hparam, subrtn_name=PoWER.name),
         dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map)],
@@ -131,4 +139,4 @@ if __name__ == '__main__':
     algo = BayRn(ex_dir, env_sim, env_real, subrtn=power, bounds=bounds, **bayrn_hparam)
 
     # Jeeeha
-    algo.train(snapshot_mode='best', seed=ex_dir.seed)
+    algo.train(snapshot_mode='best', seed=args.seed)

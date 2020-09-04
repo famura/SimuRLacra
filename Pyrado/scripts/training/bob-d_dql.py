@@ -34,15 +34,23 @@ Train an agent to solve the discrete Ball-on-Beam environment using Deep Q-Leani
 """
 import torch as to
 
+import pyrado
 from pyrado.algorithms.dql import DQL
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamDiscSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.fnn import DiscrActQValFNNPolicy
+from pyrado.utils.argparser import get_argparser
 
 
 if __name__ == '__main__':
-    # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(BallOnBeamDiscSim.name, f'{DQL.name}_{DiscrActQValFNNPolicy.name}', seed=1001)
+    # Parse command line arguments
+    args = get_argparser().parse_args()
+
+    # Experiment
+    ex_dir = setup_experiment(BallOnBeamDiscSim.name, f'{DQL.name}_{DiscrActQValFNNPolicy.name}')
+
+    # Set seed if desired
+    pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
     env_hparams = dict(dt=1/100., max_steps=500)
@@ -64,18 +72,18 @@ if __name__ == '__main__':
         max_grad_norm=0.5,
         min_steps=1,
         batch_size=256,
-        num_workers=4,
+        num_workers=1,
         lr=7.461e-4,
     )
     algo = DQL(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=ex_dir.seed),
+        dict(env=env_hparams, seed=args.seed),
         dict(policy=policy_hparam),
         dict(algo=algo_hparam, algo_name=algo.name)],
         ex_dir
     )
 
     # Jeeeha
-    algo.train(snapshot_mode='best', seed=ex_dir.seed)
+    algo.train(snapshot_mode='best', seed=args.seed)

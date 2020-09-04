@@ -66,8 +66,7 @@ class Experiment:
                  extra_info: str = None,
                  exp_id: str = None,
                  timestamp: datetime = None,
-                 base_dir: str = pyrado.TEMP_DIR,
-                 seed: int = None):
+                 base_dir: str = pyrado.TEMP_DIR):
         """
         Constructor
 
@@ -77,7 +76,6 @@ class Experiment:
         :param exp_id: combined timestamp and extra_info, usually the final folder name.
         :param timestamp: experiment creation timestamp
         :param base_dir: base storage directory
-        :param seed: seed value for the random number generators, pass `None` for no seeding
         """
         if exp_id is not None:
             # Try to parse extra_info from exp id
@@ -107,11 +105,6 @@ class Experiment:
         self.exp_id = exp_id
         self.timestamp = timestamp
         self.base_dir = base_dir
-        self.seed = seed
-
-        # Set all rngs' seeds
-        if seed is not None:
-            pyrado.set_seed(seed, verbose=True)
 
     def __fspath__(self):
         """ Allows to use the experiment object where the experiment path is needed. """
@@ -147,11 +140,10 @@ class Experiment:
 def setup_experiment(env_name: str,
                      algo_name: str,
                      extra_info: str = None,
-                     base_dir: str = pyrado.TEMP_DIR,
-                     seed: [int, None] = None):
+                     base_dir: str = pyrado.TEMP_DIR):
     """ Setup a new experiment for recording. """
     # Create experiment object
-    exp = Experiment(env_name, algo_name, extra_info, base_dir=base_dir, seed=seed)
+    exp = Experiment(env_name, algo_name, extra_info, base_dir=base_dir)
 
     # Create the folder
     os.makedirs(exp, exist_ok=True)

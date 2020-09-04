@@ -34,6 +34,7 @@ from copy import deepcopy
 from numpy import pi
 import torch as to
 
+import pyrado
 from pyrado.algorithms.advantage import GAE
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.algorithms.ppo import PPO
@@ -49,13 +50,20 @@ from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yam
 from pyrado.policies.fnn import FNNPolicy
 from pyrado.policies.rnn import RNNPolicy, LSTMPolicy, GRUPolicy
 from pyrado.sampling.sequences import *
+from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 
 
 if __name__ == '__main__':
+    # Parse command line arguments
+    args = get_argparser().parse_args()
+
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(QBallBalancerSim.name, f'{SPOTA.name}-{PPO.name}_{GRUPolicy.name}',
-                              'actnorm_obsnoise_actedlay-10_ws', seed=1001)
+                              'actnorm_obsnoise_actedlay-10_ws')
+
+    # Set seed if desired
+    pyrado.set_seed(args.seed, verbose=True)
 
     # Environment and domain randomization
     env_hparams = dict(dt=1/100., max_steps=500, load_experimental_tholds=True)
@@ -136,7 +144,7 @@ if __name__ == '__main__':
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=ex_dir.seed),
+        dict(env=env_hparams, seed=args.seed),
         dict(policy=policy_hparam),
         dict(critic_cand_and_ref=critic_hparam),
         dict(subrtn_name=sr_cand.name, subrtn_cand=subrtn_hparam_cand, subrtn_refs=subrtn_hparam_refs),
@@ -145,4 +153,4 @@ if __name__ == '__main__':
     )
 
     # Jeeeha
-    algo.train(seed=ex_dir.seed)
+    algo.train(seed=args.seed)

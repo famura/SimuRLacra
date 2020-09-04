@@ -32,6 +32,7 @@ import random
 import torch as to
 from colorama import init
 from os import _exit
+from typing import Union
 
 
 # Pyrado version number
@@ -115,18 +116,21 @@ def close_vpython():
     _exit(0)
 
 
-def set_seed(seed: int, verbose: bool = False):
+def set_seed(seed: Union[int, None], verbose: bool = False):
     """
     Set the seed for the random number generators
 
     :param seed: value for the random number generators' seeds
     :param verbose: if `True` the seed is printed
     """
-    random.seed(seed)
-    np.random.seed(seed)
-    to.manual_seed(seed)
-    if to.cuda.is_available():
-        to.cuda.manual_seed_all(seed)
-
-    if verbose:
-        print(f"Set the random number generators' seed to {seed}.")
+    if seed is not None:
+        random.seed(seed)
+        np.random.seed(seed)
+        to.manual_seed(seed)
+        if to.cuda.is_available():
+            to.cuda.manual_seed_all(seed)
+        if verbose:
+            print(f"Set the random number generators' seed to {seed}.")
+    else:
+        if verbose:
+            print(f"The random number generators' seeds were not set.")
