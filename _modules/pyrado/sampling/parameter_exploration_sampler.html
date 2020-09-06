@@ -208,6 +208,7 @@
 <span class="kn">import</span> <span class="nn">pickle</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+<span class="kn">from</span> <span class="nn">init_args_serializer</span> <span class="kn">import</span> <span class="n">Serializable</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">NamedTuple</span>
 
@@ -306,7 +307,7 @@
     <span class="p">})</span>
 
 
-<div class="viewcode-block" id="ParameterExplorationSampler"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler">[docs]</a><span class="k">class</span> <span class="nc">ParameterExplorationSampler</span><span class="p">:</span>
+<div class="viewcode-block" id="ParameterExplorationSampler"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler">[docs]</a><span class="k">class</span> <span class="nc">ParameterExplorationSampler</span><span class="p">(</span><span class="n">Serializable</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Parallel sampler for parameter exploration &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -328,6 +329,8 @@
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_rollouts_per_param</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">num_rollouts_per_param</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_rollouts_per_param</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+
+        <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
 
         <span class="c1"># Check environment for domain randomization wrappers (stops after finding the outermost)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dr_wrapper</span> <span class="o">=</span> <span class="n">typed_env</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">DomainRandWrapper</span><span class="p">)</span>
