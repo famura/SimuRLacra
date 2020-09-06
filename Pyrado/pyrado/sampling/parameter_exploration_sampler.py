@@ -31,6 +31,7 @@ import numpy as np
 import pickle
 import sys
 import torch as to
+from init_args_serializer import Serializable
 from tqdm import tqdm
 from typing import Sequence, List, NamedTuple
 
@@ -129,7 +130,7 @@ def _pes_sample_one(G, param):
     })
 
 
-class ParameterExplorationSampler:
+class ParameterExplorationSampler(Serializable):
     """ Parallel sampler for parameter exploration """
 
     def __init__(self,
@@ -151,6 +152,8 @@ class ParameterExplorationSampler:
             raise pyrado.TypeErr(given=num_rollouts_per_param, expected_type=int)
         if num_rollouts_per_param < 1:
             raise pyrado.ValueErr(given=num_rollouts_per_param, ge_constraint='1')
+
+        Serializable._init(self, locals())
 
         # Check environment for domain randomization wrappers (stops after finding the outermost)
         self._dr_wrapper = typed_env(env, DomainRandWrapper)
