@@ -247,23 +247,35 @@ class TensorBoardPrinter(StepLogPrinter):
 
         :param dir: folder path name
         """
-        file = resolve_log_path(dir)
-        self.writer = SummaryWriter(log_dir=dir)
+        self.dir = dir
         self.step = 0
+
+        self.writer = SummaryWriter(log_dir=dir)
 
     def print_values(self, values: dict, ordered_keys: list, first_step: bool):
         for k in ordered_keys:
             value = values[k]
             if isinstance(value, list):
                 for i, scalar in enumerate(value):
-                   self.writer.add_scalar(k + str(i), scalar, self.step)
+                    self.writer.add_scalar(k + str(i), scalar, self.step)
             elif isinstance(value, np.ndarray):
                 for i, scalar in enumerate(value.flat):
-                   self.writer.add_scalar(k + '/' + str(i), scalar, self.step)
+                    self.writer.add_scalar(k + '/' + str(i), scalar, self.step)
             else:
                 self.writer.add_scalar(k, values[k], self.step)
         self.step += 1
         self.writer.flush()
+
+    # Only serialize dir and step
+    def __getstate__(self):
+        return {'dir': self.dir, 'step': self.step}
+
+    # And reopen the writer on reload
+    def __setstate__(self, state):
+        self.dir = state['dir']
+        self.step = state['step']
+
+        self.writer = SummaryWriter(log_dir=self.dir)
 
 
 class LoggerAware:
