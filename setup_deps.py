@@ -85,7 +85,7 @@ cmake_prefix_path = [
 
 # Required packages
 required_packages = [
-    #"g++-4.8",
+    # "g++-4.8",  # necessary for Vortex
     "qt5-default",  # conda install -c dsdale24 qt5 _OR_ conda install -c anaconda qt  __OR__ HEADLESS BUILD
     "libqwt-qt5-dev",  # conda install -c dsdale24 qt5 _OR_ conda install -c anaconda qt  __OR__ HEADLESS BUILD
     "libbullet-dev",  # conda install -c conda-forge bullet
@@ -102,7 +102,11 @@ required_packages = [
 ]
 # using --headless: conda install -c conda-forge bullet freetype libglu freeglut mesalib lapack
 
-# Environment for build processes
+required_packages_mujocopy = [
+    "libglew-dev",
+    "libosmesa6-dev",
+]
+
 env_vars = {
     # Global cmake prefix path
     "CMAKE_PREFIX_PATH": ":".join(cmake_prefix_path)
@@ -322,7 +326,7 @@ def setup_dep_libraries():
     # Update
     sp.check_call(["sudo", "apt-get", "update", "-y"])
     # Install dependencies
-    sp.check_call(["sudo", "apt-get", "install", "-y"] + required_packages)
+    sp.check_call(["sudo", "apt-get", "install", "-y"] + required_packages + required_packages_mujocopy)
 
 
 def setup_wm5():
@@ -446,6 +450,18 @@ def setup_pytorch_based():
 
 
 def setup_cppsctp():
+    # Install dependencies
+    required_packages_sctp = [
+        "libsctp-dev",
+    ]
+    user_input = input(f"You are about to install SL which depends on the following libraries:"
+                       f"\n{required_packages_sctp}\nDo you really want this? [y / n] ")
+    if user_input.lower() == "y":
+        sp.check_call(["sudo", "apt-get", "install", "-y"] + required_packages_sctp)
+        print("Dependencies have been installed.")
+    else:
+        print("Dependencies have NOT been installed.")
+
     # Get it all GitLab
     if not osp.exists(cppsctp_dir):
         mkdir_p(cppsctp_dir)
@@ -473,8 +489,8 @@ def setup_sl():
         "clang",
         "xterm"
     ]
-    user_input = input(f"You are about to install SL which depends on the following libraries\n{required_packages_sl}\n"
-                       f"Do you really want this? [y / n] ")
+    user_input = input(f"You are about to install SL which depends on the following libraries:"
+                       f"\n{required_packages_sl}\nDo you really want this? [y / n] ")
     if user_input.lower() == "y":
         sp.check_call(["sudo", "apt-get", "install", "-y"] + required_packages_sl)
         print("Dependencies have been installed.")
