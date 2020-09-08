@@ -197,9 +197,9 @@ def rmse(x: Union[np.ndarray, to.Tensor],
         raise pyrado.ShapeErr(given=x, expected_match=y)
 
     if isinstance(x, to.Tensor) and isinstance(y, to.Tensor):
-        return to.sqrt(to.mean(to.pow(x, 2), dim=dim))
+        return to.sqrt(to.mean(to.pow(x - y, 2), dim=dim))
     elif isinstance(x, np.ndarray) and isinstance(y, np.ndarray):
-        return np.sqrt(np.mean(np.power(x, 2), axis=dim))
+        return np.sqrt(np.mean(np.power(x - y, 2), axis=dim))
     else:
         raise pyrado.TypeErr(msg='Both inputs need to be either a numpy array or a PyTorch tensor!')
 
