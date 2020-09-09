@@ -202,12 +202,12 @@
 <span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
 <span class="kn">import</span> <span class="nn">joblib</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">product</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
@@ -290,12 +290,12 @@
 
         <span class="n">elb</span> <span class="o">=</span> <span class="n">ObsNormWrapper</span><span class="o">.</span><span class="n">override_bounds</span><span class="p">(</span>
             <span class="n">subrtn</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">bound_lo</span><span class="p">,</span>
-            <span class="p">{</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}$&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">10.</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\dot{\alpha}$&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">10.</span><span class="p">},</span>
+            <span class="p">{</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}$&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">20.</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\dot{\alpha}$&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">20.</span><span class="p">},</span>
             <span class="n">subrtn</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">labels</span>
         <span class="p">)</span>
         <span class="n">eub</span> <span class="o">=</span> <span class="n">ObsNormWrapper</span><span class="o">.</span><span class="n">override_bounds</span><span class="p">(</span>
             <span class="n">subrtn</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">bound_up</span><span class="p">,</span>
-            <span class="p">{</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}$&#39;</span><span class="p">:</span> <span class="mf">10.</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\dot{\alpha}$&#39;</span><span class="p">:</span> <span class="mf">10.</span><span class="p">},</span>
+            <span class="p">{</span><span class="sa">r</span><span class="s1">&#39;$\dot{\theta}$&#39;</span><span class="p">:</span> <span class="mf">20.</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\dot{\alpha}$&#39;</span><span class="p">:</span> <span class="mf">20.</span><span class="p">},</span>
             <span class="n">subrtn</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">labels</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">uc_normalizer</span> <span class="o">=</span> <span class="n">UnitCubeProjector</span><span class="p">(</span><span class="n">bound_lo</span><span class="o">=</span><span class="n">elb</span><span class="p">,</span> <span class="n">bound_up</span><span class="o">=</span><span class="n">eub</span><span class="p">)</span>
@@ -398,11 +398,11 @@
         <span class="c1"># Extract the best policy parameter sample for saving it later</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">best_policy_param</span> <span class="o">=</span> <span class="n">param_samp_res</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">param_samp_res</span><span class="o">.</span><span class="n">mean_returns</span><span class="p">)]</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
 
-        <span class="c1"># Save snapshot data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">make_snapshot</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">param_samp_res</span><span class="o">.</span><span class="n">mean_returns</span><span class="p">)),</span> <span class="n">meta_info</span><span class="p">)</span>
-
         <span class="c1"># Update the wrapped algorithm&#39;s update method</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">param_samp_res</span><span class="p">,</span> <span class="n">ret_avg_curr</span><span class="o">=</span><span class="n">param_samp_res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mean_undiscounted_return</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">param_samp_res</span><span class="p">,</span> <span class="n">ret_avg_curr</span><span class="o">=</span><span class="n">param_samp_res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mean_undiscounted_return</span><span class="p">)</span>
+
+        <span class="c1"># Save snapshot data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">make_snapshot</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">param_samp_res</span><span class="o">.</span><span class="n">mean_returns</span><span class="p">)),</span> <span class="n">meta_info</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SysIdViaEpisodicRL.default_metric"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.default_metric">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">default_metric</span><span class="p">(</span><span class="n">err</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">w_abs</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">w_sq</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">obs_dim_weight</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>

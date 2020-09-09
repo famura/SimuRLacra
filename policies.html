@@ -771,7 +771,7 @@ registered hooks while the latter silently ignores them.</p>
 <span id="domain-distribution"></span><h2>domain_distribution<a class="headerlink" href="#module-pyrado.policies.domain_distribution" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.policies.domain_distribution.DomainDistrParamPolicy">
-<em class="property">class </em><code class="sig-name descname">DomainDistrParamPolicy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mapping</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>int<span class="p">, </span>Tuple<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">prior</span><span class="p">:</span> <span class="n"><a class="reference internal" href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/domain_distribution.html#DomainDistrParamPolicy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.domain_distribution.DomainDistrParamPolicy" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">DomainDistrParamPolicy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mapping</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>int<span class="p">, </span>Tuple<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">trafo_mask</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">prior</span><span class="p">:</span> <span class="n"><a class="reference internal" href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/domain_distribution.html#DomainDistrParamPolicy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.domain_distribution.DomainDistrParamPolicy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a></p>
 <p>A proxy to the Policy class in order to use the policy’s parameters as domain distribution parameters</p>
 <dl class="py method">
@@ -815,6 +815,11 @@ registered hooks while the latter silently ignores them.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.policies.domain_distribution.DomainDistrParamPolicy.min_dp_var">
+<code class="sig-name descname">min_dp_var</code><em class="property">: float</em><em class="property"> = 1e-06</em><a class="headerlink" href="#pyrado.policies.domain_distribution.DomainDistrParamPolicy.min_dp_var" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pyrado.policies.domain_distribution.DomainDistrParamPolicy.name">
