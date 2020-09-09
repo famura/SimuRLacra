@@ -33,6 +33,7 @@ import numpy as np
 
 import pyrado
 from pyrado.algorithms.cem import CEM
+from pyrado.algorithms.nes import NES
 from pyrado.algorithms.reps import REPS
 from pyrado.algorithms.sysid_via_episodic_rl import SysIdViaEpisodicRL
 from pyrado.policies.domain_distribution import DomainDistrParamPolicy
@@ -40,15 +41,16 @@ from pyrado.domain_randomization.domain_parameter import UniformDomainParam, Nor
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper, DomainRandWrapperLive
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
-from pyrado.environments.pysim.quanser_qube import QQubeStabSim
+from pyrado.environments.pysim.quanser_qube import QQubeStabSim, QQubeSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.policies.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.policies.features import FeatureStack, identity_feat, sign_feat, abs_feat
 from pyrado.policies.linear import LinearPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.input_output import print_cbt
 
 
-def create_qq_reps_setup():
+def create_qqst_reps_setup():
     # Experiment
     ex_dir = setup_experiment(QQubeStabSim.name, f'{SysIdViaEpisodicRL.name}-{REPS.name}')
     pyrado.set_seed(1001, verbose=True)
@@ -80,7 +82,7 @@ def create_qq_reps_setup():
         # NormalDomainParam(name='Rm', mean=8.4, std=8.4e-2),
         NormalDomainParam(name='Mp', mean=0.024, std=0.024e-2),
     )
-    ddp_policy = DomainDistrParamPolicy(mapping=dp_map, prior=prior)
+    ddp_policy = DomainDistrParamPolicy(mapping=dp_map, trafo_mask=[False, True, False, True], prior=prior)
 
     # Subroutine
     subrtn_hparam = dict(
@@ -113,14 +115,14 @@ def create_qq_reps_setup():
     return ex_dir, env_sim, env_real, env_hparams, subrtn, subrtn_hparam, dp_map, behavior_policy, ddp_policy
 
 
-def create_qq_cem_setup():
+def create_qqsu_cem_setup():
     # Experiment
     ex_dir = setup_experiment(QQubeStabSim.name, f'{SysIdViaEpisodicRL.name}-{REPS.name}')
     pyrado.set_seed(1001, verbose=True)
 
     # Environments
     env_hparams = dict(dt=1/100., max_steps=600)
-    env_real = QQubeStabSim(**env_hparams)
+    env_real = QQubeSwingUpSim(**env_hparams)
     env_real.domain_param = dict(
         Mr=0.095*0.85,
         Mp=0.024*1.15,
@@ -128,7 +130,7 @@ def create_qq_cem_setup():
         Lp=0.129*1.15,
     )
 
-    env_sim = QQubeStabSim(**env_hparams)
+    env_sim = QQubeSwingUpSim(**env_hparams)
     randomizer = DomainRandomizer(
         NormalDomainParam(name='Mr', mean=0., std=1e-9, clip_lo=1e-3),
         NormalDomainParam(name='Mp', mean=0., std=1e-9, clip_lo=1e-3),
@@ -142,17 +144,18 @@ def create_qq_cem_setup():
         4: ('Lr', 'mean'), 5: ('Lr', 'std'),
         6: ('Lp', 'mean'), 7: ('Lp', 'std')
     }
+    trafo_mask = [False, True, False, True, False, True, False, True]
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
 
     # Policies (the behavioral policy needs to be deterministic)
-    behavior_policy = LinearPolicy(env_sim.spec, feats=FeatureStack([identity_feat, sign_feat, abs_feat]))
+    behavior_policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec)
     prior = DomainRandomizer(
         NormalDomainParam(name='Mr', mean=0.095, std=0.095e-2, clip_lo=1e-3),
         NormalDomainParam(name='Mp', mean=0.024, std=0.024e-2, clip_lo=1e-3),
         NormalDomainParam(name='Lr', mean=0.085, std=0.085e-2, clip_lo=1e-3),
         NormalDomainParam(name='Lp', mean=0.129, std=0.129e-2, clip_lo=1e-3),
     )
-    ddp_policy = DomainDistrParamPolicy(mapping=dp_map, prior=prior)
+    ddp_policy = DomainDistrParamPolicy(mapping=dp_map, trafo_mask=trafo_mask, prior=prior)
 
     # Subroutine
     subrtn_hparam = dict(
@@ -171,6 +174,62 @@ def create_qq_cem_setup():
     return ex_dir, env_sim, env_real, env_hparams, subrtn, subrtn_hparam, dp_map, behavior_policy, ddp_policy
 
 
+def create_qqsu_nes_setup():
+    # Experiment
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{SysIdViaEpisodicRL.name}-{NES.name}')
+    pyrado.set_seed(1001, verbose=True)
+
+    # Environments
+    env_hparams = dict(dt=1/100., max_steps=600)
+    env_real = QQubeSwingUpSim(**env_hparams)
+    env_real.domain_param = dict(
+        Mr=0.095*0.9,
+        Mp=0.024*1.1,
+        Lr=0.085*0.9,
+        Lp=0.129*1.1,
+    )
+
+    env_sim = QQubeSwingUpSim(**env_hparams)
+    randomizer = DomainRandomizer(
+        NormalDomainParam(name='Mr', mean=0., std=1e3, clip_lo=1e-2),
+        NormalDomainParam(name='Mp', mean=0., std=1e3, clip_lo=1e-2),
+        NormalDomainParam(name='Lr', mean=0., std=1e3, clip_lo=1e-2),
+        NormalDomainParam(name='Lp', mean=0., std=1e3, clip_lo=1e-2),
+    )
+    env_sim = DomainRandWrapperLive(env_sim, randomizer)
+    dp_map = {
+        0: ('Mr', 'mean'), 1: ('Mr', 'std'),
+        2: ('Mp', 'mean'), 3: ('Mp', 'std'),
+        4: ('Lr', 'mean'), 5: ('Lr', 'std'),
+        6: ('Lp', 'mean'), 7: ('Lp', 'std')
+    }
+    trafo_mask = [False, True, False, True, False, True, False, True]
+    env_sim = MetaDomainRandWrapper(env_sim, dp_map)
+
+    # Policies (the behavioral policy needs to be deterministic)
+    behavior_policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec)
+    prior = DomainRandomizer(
+        NormalDomainParam(name='Mr', mean=0.095, std=0.095e-2, clip_lo=1e-3),
+        NormalDomainParam(name='Mp', mean=0.024, std=0.024e-2, clip_lo=1e-3),
+        NormalDomainParam(name='Lr', mean=0.085, std=0.085e-2, clip_lo=1e-3),
+        NormalDomainParam(name='Lp', mean=0.129, std=0.129e-2, clip_lo=1e-3),
+    )
+    ddp_policy = DomainDistrParamPolicy(mapping=dp_map, trafo_mask=trafo_mask, prior=prior)
+
+    # Subroutine
+    subrtn_hparam = dict(
+        max_iter=100,
+        pop_size=None,
+        num_rollouts=1,
+        expl_std_init=0.01,
+        expl_std_min=0.01,
+        num_workers=32,
+    )
+    subrtn = NES(ex_dir, env_sim, ddp_policy, **subrtn_hparam)
+
+    return ex_dir, env_sim, env_real, env_hparams, subrtn, subrtn_hparam, dp_map, behavior_policy, ddp_policy
+
+
 def create_bob_cem_setup():
     # Experiment
     ex_dir = setup_experiment(BallOnBeamSim.name, f'{SysIdViaEpisodicRL.name}-{CEM.name}')
@@ -181,12 +240,12 @@ def create_bob_cem_setup():
     env_real = BallOnBeamSim(**env_hparams)
     env_real.domain_param = dict(
         l_beam=2.1,
-        ang_offset=-2*np.pi/180
+        ang_offset=-0.03
     )
 
     env_sim = BallOnBeamSim(**env_hparams)
     randomizer = DomainRandomizer(
-        NormalDomainParam(name='l_beam', mean=0, std=1e-12, clip_lo=1, clip_up=4),
+        NormalDomainParam(name='l_beam', mean=0, std=1e-12, clip_lo=1.5, clip_up=3.5),
         UniformDomainParam(name='ang_offset', mean=0, halfspan=1e-12),
     )
     env_sim = DomainRandWrapperLive(env_sim, randomizer)
@@ -200,9 +259,9 @@ def create_bob_cem_setup():
     behavior_policy = LinearPolicy(env_sim.spec, feats=FeatureStack([identity_feat]))
     prior = DomainRandomizer(
         NormalDomainParam(name='l_beam', mean=1.9, std=1e-3),
-        UniformDomainParam(name='ang_offset', mean=1*np.pi/180, halfspan=1*np.pi/180),
+        UniformDomainParam(name='ang_offset', mean=-0.015, halfspan=0.015),
     )
-    ddp_policy = DomainDistrParamPolicy(mapping=dp_map, prior=prior)
+    ddp_policy = DomainDistrParamPolicy(mapping=dp_map, trafo_mask=[False, True, False, True], prior=prior)
 
     # Subroutine
     subrtn_hparam = dict(
@@ -210,11 +269,11 @@ def create_bob_cem_setup():
         pop_size=40,
         num_rollouts=1,
         num_is_samples=4,
-        expl_std_init=0.1,
+        expl_std_init=0.05,
         expl_std_min=0.001,
         extra_expl_std_init=0.,
         extra_expl_decay_iter=10,
-        num_workers=8,
+        num_workers=32,
     )
     subrtn = CEM(ex_dir, env_sim, ddp_policy, **subrtn_hparam)
 
@@ -223,12 +282,13 @@ def create_bob_cem_setup():
 
 if __name__ == '__main__':
     # Toggle experiments
-    # ex = create_qq_reps_setup()
-    ex = create_qq_cem_setup()
+    # ex = create_qqst_reps_setup()
+    # ex = create_qqsu_cem_setup()
+    ex = create_qqsu_nes_setup()
     # ex = create_bob_cem_setup()
 
     ex_dir, env_sim, env_real, env_hparams, subrtn, subrtn_hparam, dp_map, behavior_policy, ddp_policy = ex
-    num_eval_rollouts = 5
+    num_eval_rollouts = 7
 
     algo_hparam = dict(
         metric=None,

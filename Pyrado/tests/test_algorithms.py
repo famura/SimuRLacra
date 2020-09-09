@@ -516,7 +516,7 @@ def test_sysidasrl(ex_dir, env, num_eval_rollouts):
     prior = DomainRandomizer(
         UniformDomainParam(name='ang_offset', mean=1*np.pi/180, halfspan=1*np.pi/180),
     )
-    ddp_policy = DomainDistrParamPolicy(mapping=dp_map, prior=prior)
+    ddp_policy = DomainDistrParamPolicy(mapping=dp_map, trafo_mask=[False, True], prior=prior)
 
     # Subroutine
     subrtn_hparam = dict(

@@ -28,6 +28,7 @@
 
 import numpy as np
 import torch as to
+from math import sqrt
 from typing import Dict, Tuple
 from torch import nn as nn
 
@@ -45,9 +46,11 @@ class DomainDistrParamPolicy(Policy):
     """ A proxy to the Policy class in order to use the policy's parameters as domain distribution parameters """
 
     name: str = 'ddp'
+    min_dp_var: float = 1e-6  # hard coded lower bound on all domain parameters variances
 
     def __init__(self,
                  mapping: Dict[int, Tuple[str, str]],
+                 trafo_mask: list,
                  prior: DomainRandomizer = None,
                  use_cuda: bool = False):
         """
@@ -55,22 +58,31 @@ class DomainDistrParamPolicy(Policy):
 
         :param mapping: mapping from index of the numpy array (coming from the algorithm) to domain parameter name
                         (e.g. mass, length) and the domain distribution parameter (e.g. mean, std)
+        :param trafo_mask: every domain distribution parameter that is set to `True` in this mask will be exponentially
+                           transformed. This is useful to avoid setting negative variance.
+        :param prior: prior believe about the distribution parameters in from of a `DomainRandomizer`
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
         if not isinstance(mapping, dict):
             raise pyrado.TypeErr(given=mapping, expected_type=dict)
+        if not len(trafo_mask) == len(mapping):
+            raise pyrado.ShapeErr(given=trafo_mask, expected_match=mapping)
 
-        self._mapping = mapping
+        self.mapping = mapping
+        self.mask = to.tensor(trafo_mask, dtype=to.bool)
 
         # Construct a valid space for the policy parameters aka domain distribution parameters
         bound_lo = -pyrado.inf*np.ones(len(mapping))
         bound_up = +pyrado.inf*np.ones(len(mapping))
         lables = len(mapping)*['None']
-        for idx, ddp in self._mapping.items():
-            lables[idx] = f'{ddp[0]}_{ddp[1]}'
-            if ddp[1] in ['std', 'halfspan']:  # 2nd output is the name of the domain distribution param
-                bound_lo[idx] = 1e-4  # hard coded lower bound on all domain parameters variances
+        # for idx, ddp in self.mapping.items():
+        #     lables[idx] = f'{ddp[0]}_{ddp[1]}'
+        #     if ddp[1] == 'std':  # 2nd output is the name of the domain distribution param
+        #         bound_lo[idx] = sqrt(DomainDistrParamPolicy.min_dp_var)
+        #     elif ddp[1] == 'halfspan':  # 2nd output is the name of the domain distribution param
+        #         bound_lo[idx] = sqrt(12*DomainDistrParamPolicy.min_dp_var)/2  # var(U) = (2*halfspan)^2/12
 
+        # Define the parameter space by using the Policy.env_spec.act_space
         param_spec = EnvSpec(obs_space=EmptySpace(), act_space=BoxSpace(bound_lo, bound_up, labels=lables))
 
         # Call Policy's constructor
@@ -79,6 +91,17 @@ class DomainDistrParamPolicy(Policy):
         self.params = nn.Parameter(to.Tensor(param_spec.act_space.flat_dim), requires_grad=True)
         self.prior = prior
         self.init_param(prior=prior)
+
+    def masked_exp_transform(self, params: to.Tensor) -> to.Tensor:
+        """
+        Get the transformed domain distribution parameters. The policy's parameters are in log space.
+
+        :param params: policy parameters (can be the log of the actual domain distribution parameter value)
+        :return: policy parameters transformed according to the mask
+        """
+        ddp = params.clone()
+        ddp[self.mask] = to.exp(ddp[self.mask])
+        return ddp
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         if init_values is not None:
@@ -91,11 +114,16 @@ class DomainDistrParamPolicy(Policy):
                 raise pyrado.TypeErr(given=kwargs['prior'], expected_type=DomainRandomizer)
 
             # For every domain distribution parameter in the mapping, check if there is prior information
-            for idx, ddp in self._mapping.items():
+            for idx, ddp in self.mapping.items():
                 for dp in kwargs['prior'].domain_params:
                     if ddp[0] == dp.name and ddp[1] in dp.get_field_names():
                         # The domain parameter exists in the prior and in the mapping
-                        self.params[idx].fill_(getattr(dp, f'{ddp[1]}'))
+                        val = getattr(dp, f'{ddp[1]}')
+                        if self.mask[idx]:
+                            # Log-transform since it will later be exp-transformed
+                            self.params[idx].fill_(to.log(to.tensor(val)))
+                        else:
+                            self.params[idx].fill_(to.tensor(val))
 
         else:
             # Last measure

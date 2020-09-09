@@ -60,16 +60,17 @@ if __name__ == '__main__':
     env = ActNormWrapper(env)
 
     # Policy
-    policy_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh, use_cuda=True)  # FNN
-    # policy_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
+    init_param_kwargs = dict(uniform_bias=True)
+    policy_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh, init_param_kwargs=init_param_kwargs)
+    # policy_hparam = dict(hidden_size=32, num_recurrent_layers=1)
     policy = FNNPolicy(spec=env.spec, **policy_hparam)
     # policy = RNNPolicy(spec=env.spec, **policy_hparam)
     # policy = LSTMPolicy(spec=env.spec, **policy_hparam)
     # policy = GRUPolicy(spec=env.spec, **policy_hparam)
 
     # Critic
-    value_fcn_hparam = dict(hidden_sizes=[16, 16], hidden_nonlin=to.tanh, use_cuda=True)  # FNN
-    # value_fcn_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
+    value_fcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh, init_param_kwargs=init_param_kwargs)
+    # value_fcn_hparam = dict(hidden_size=32, num_recurrent_layers=1)
     value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
     # value_fcn = RNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
     # value_fcn = LSTMPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
@@ -95,7 +96,7 @@ if __name__ == '__main__':
         std_init=0.9074,
         lr=3.446e-04,
         max_grad_norm=1.,
-        num_workers=4,
+        num_workers=16,
     )
     algo = PPO(ex_dir, env, policy, critic, **algo_hparam)
 

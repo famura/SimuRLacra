@@ -27,13 +27,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Qube swing-up task using Simulation Optimization running Cross-Entropy Method.
+Train an agent to solve the Qube swing-up task using Simulation Optimization running Natural Evolution Strategies.
 """
 import torch as to
 
-import pyrado
 from pyrado.algorithms.advantage import GAE
-from pyrado.algorithms.cem import CEM
+from pyrado.algorithms.nes import NES
 from pyrado.algorithms.ppo import PPO
 from pyrado.algorithms.simopt import SimOpt
 from pyrado.algorithms.sysid_via_episodic_rl import SysIdViaEpisodicRL
@@ -45,20 +44,13 @@ from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.fnn import FNNPolicy
 from pyrado.spaces import ValueFunctionSpace
-from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 
 
 if __name__ == '__main__':
-    # Parse command line arguments
-    args = get_argparser().parse_args()
-
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{SimOpt.name}-{CEM.name}')
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{SimOpt.name}-{NES.name}', seed=1001)
     num_workers = 16
-
-    # Set seed if desired
-    pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
     env_hparams = dict(dt=1/100., max_steps=600)
@@ -136,7 +128,7 @@ if __name__ == '__main__':
         extra_expl_decay_iter=5,
         num_workers=num_workers,
     )
-    subsubrtn_distr = CEM(ex_dir, env_sim, ddp_policy, **subsubrtn_distr_hparam)
+    subsubrtn_distr = NES(ex_dir, env_sim, ddp_policy, **subsubrtn_distr_hparam)
     subrtn_distr_hparam = dict(
         metric=None,
         obs_dim_weight=[1., 1., 1., 1., 2., 2.],
@@ -157,7 +149,7 @@ if __name__ == '__main__':
 
     # Save the environments and the hyper-parameters
     save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
+        dict(env=env_hparams, seed=ex_dir.seed),
         dict(behav_policy=behav_policy_hparam),
         dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
         dict(subsubrtn_distr=subsubrtn_distr_hparam, subsubrtn_distr_name=subrtn_distr.name),
@@ -170,4 +162,4 @@ if __name__ == '__main__':
     )
 
     # Jeeeha
-    algo.train(seed=args.seed)
+    algo.train(seed=ex_dir.seed)

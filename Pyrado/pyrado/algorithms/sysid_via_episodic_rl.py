@@ -25,12 +25,12 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-from functools import partial
 
 import joblib
 import numpy as np
 import os.path as osp
 from collections.abc import Iterable
+from functools import partial
 from itertools import product
 from typing import Callable, Sequence, Tuple, Union
 
@@ -113,12 +113,12 @@ class SysIdViaEpisodicRL(Algorithm):
 
         elb = ObsNormWrapper.override_bounds(
             subrtn.env.obs_space.bound_lo,
-            {r'$\dot{\theta}$': -10., r'$\dot{\alpha}$': -10.},
+            {r'$\dot{\theta}$': -20., r'$\dot{\alpha}$': -20.},
             subrtn.env.obs_space.labels
         )
         eub = ObsNormWrapper.override_bounds(
             subrtn.env.obs_space.bound_up,
-            {r'$\dot{\theta}$': 10., r'$\dot{\alpha}$': 10.},
+            {r'$\dot{\theta}$': 20., r'$\dot{\alpha}$': 20.},
             subrtn.env.obs_space.labels
         )
         self.uc_normalizer = UnitCubeProjector(bound_lo=elb, bound_up=eub)
@@ -171,8 +171,10 @@ class SysIdViaEpisodicRL(Algorithm):
         loss_hist = []
         for idx_ps, ps in enumerate(param_sets):
             # Update the randomizer to use the new
-            ps = self._subrtn.policy.clamp_params(ps)
-            self._subrtn.env.adapt_randomizer(domain_distr_param_values=ps.detach().cpu().numpy())
+            new_ddp_vals = self._subrtn.policy.clamp_params(
+                self._subrtn.policy.masked_exp_transform(ps)
+            )
+            self._subrtn.env.adapt_randomizer(domain_distr_param_values=new_ddp_vals.detach().cpu().numpy())
             self._subrtn.env.randomizer.randomize(num_samples=self.num_rollouts_per_distr)
             sampled_domain_params = self._subrtn.env.randomizer.get_params()
 
@@ -221,11 +223,11 @@ class SysIdViaEpisodicRL(Algorithm):
         # Extract the best policy parameter sample for saving it later
         self._subrtn.best_policy_param = param_samp_res.parameters[np.argmax(param_samp_res.mean_returns)].clone()
 
-        # Save snapshot data
-        self.make_snapshot(snapshot_mode, float(np.max(param_samp_res.mean_returns)), meta_info)
-
         # Update the wrapped algorithm's update method
         self._subrtn.update(param_samp_res, ret_avg_curr=param_samp_res[0].mean_undiscounted_return)
+
+        # Save snapshot data
+        self.make_snapshot(snapshot_mode, float(np.max(param_samp_res.mean_returns)), meta_info)
 
     @staticmethod
     def default_metric(err: np.ndarray, w_abs: float, w_sq: float, obs_dim_weight: np.ndarray):
@@ -323,8 +325,13 @@ class SysIdViaEpisodicRL(Algorithm):
         self._subrtn.save_snapshot(meta_info=dict(prefix='ddp'))
 
         # Set the randomizer to best fitted domain distribution
-        self._subrtn.env.adapt_randomizer(
-            domain_distr_param_values=self._subrtn.best_policy_param.detach().cpu().numpy())
+        cpp = self._subrtn.policy.clamp_params(
+            self._subrtn.policy.masked_exp_transform(self._subrtn.policy.param_values)
+        )
+        self._subrtn.env.adapt_randomizer(domain_distr_param_values=cpp.detach().cpu().numpy())
+        print_cbt(f'Current policy domain parameter distribution\n{self._subrtn.env.randomizer}', 'g')
+        cbp = self._subrtn.policy.masked_exp_transform(self._subrtn.best_policy_param)
+        self._subrtn.env.adapt_randomizer(domain_distr_param_values=cbp.detach().cpu().numpy())
         print_cbt(f'Best fitted domain parameter distribution\n{self._subrtn.env.randomizer}', 'g')
         joblib.dump(self._subrtn.env, osp.join(self._save_dir, 'env_sim.pkl'))
 
