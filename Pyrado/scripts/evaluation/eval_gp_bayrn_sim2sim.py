@@ -31,6 +31,7 @@ Script for the paper plot the GP's posterior after a Bayesian Domain Randomizati
 """
 
 import joblib
+import os
 import os.path as osp
 import torch as to
 import seaborn as sns
@@ -40,7 +41,8 @@ from mpl_toolkits.mplot3d import Axes3D
 
 import pyrado
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
-from pyrado.environment_wrappers.utils import typed_env
+from pyrado.environment_wrappers.utils import typed_env, inner_env
+from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.gaussian_process import render_singletask_gp
 from pyrado.utils.argparser import get_argparser
@@ -57,9 +59,27 @@ if __name__ == '__main__':
     # Get the experiment's directory to load from
     ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
 
-    env = joblib.load(osp.join(ex_dir, 'env_sim.pkl'))
-    if not typed_env(env, MetaDomainRandWrapper):
-        raise pyrado.TypeErr(given_name=env, expected_type=MetaDomainRandWrapper)
+    env_sim = joblib.load(osp.join(ex_dir, 'env_sim.pkl'))
+    if not typed_env(env_sim, MetaDomainRandWrapper):
+        raise pyrado.TypeErr(given_name=env_sim, expected_type=MetaDomainRandWrapper)
+    labels_sel_dims = [env_sim.mapping[args.idcs[i]][0] for i in range(len(args.idcs))]
+
+    env_real = joblib.load(osp.join(ex_dir, 'env_real.pkl'))
+    if isinstance(inner_env(env_real), SimEnv):
+        # Use actual ground truth domain param if sim-2-sim setting
+        domain_params = env_real.domain_param
+    else:
+        # Use nominal domain param if sim-2-real setting
+        domain_params = inner_env(env_sim).get_nominal_domain_param()
+    for dp_name, dp_val in domain_params.items():
+        if dp_name in labels_sel_dims[0]:
+            gt_val_x = dp_val
+        try:
+            if dp_name == labels_sel_dims[1]:
+                gt_val_y = dp_val
+        except Exception:
+            gt_val_y = None
+
     cands = to.load(osp.join(ex_dir, 'candidates.pt'))
     cands_values = to.load(osp.join(ex_dir, 'candidates_values.pt')).unsqueeze(1)
     bounds = to.load(osp.join(ex_dir, 'bounds.pt'))
@@ -71,13 +91,13 @@ if __name__ == '__main__':
     # Select dimensions to plot (ignored for 1D mode)
     if len(args.idcs) == 1:
         # Plot 1D
-        x_label = ensure_no_subscript(env.mapping[args.idcs[0]][0])  # could override manually here
+        x_label = ensure_no_subscript(labels_sel_dims[0])  # could override manually here
         y_label = r'$\hat{J}^{\textrm{real}}$'
-        fig, ax = plt.subplots(1, figsize=(12, 8), constrained_layout=True)
+        fig, ax = plt.subplots(1, figsize=(6, 4), constrained_layout=True)
 
     elif len(args.idcs) == 2:
-        x_label = ensure_no_subscript(env.mapping[args.idcs[0]][0])  # could override manually here
-        y_label = ensure_no_subscript(env.mapping[args.idcs[1]][0])  # could override manually here
+        x_label = ensure_no_subscript(labels_sel_dims[0])  # could override manually here
+        y_label = ensure_no_subscript(labels_sel_dims[1])  # could override manually here
 
         if not args.render3D:
             # Plot 2D
@@ -109,25 +129,30 @@ if __name__ == '__main__':
 
     render_singletask_gp(
         ax, cands, cands_values, min_gp_obsnoise=1e-5,
-        # data_x_min=bounds[0, args.idcs], data_x_max=bounds[1, args.idcs],
+        data_x_min=bounds[0, args.idcs], data_x_max=bounds[1, args.idcs],
+        # data_x_min=bounds[0], data_x_max=bounds[1],
         idcs_sel=args.idcs, x_label=x_label, y_label=y_label, z_label=r'$\hat{J}^{\textrm{real}}$',
         heatmap_cmap=hm_cmap, num_stds=2, resolution=151, legend_data_cmap=scat_cmap, show_legend_data=args.verbose,
         show_legend_posterior=True, show_legend_std=True, render3D=args.render3D,
     )
 
+    if len(args.idcs) == 1:
+        ax.axvline(gt_val_x, c='firebrick', ls='--', lw=1.5, label='gt')
+
     if len(args.idcs) == 2 and not args.render3D:
         # Plot the ground truth domain parameter configuration
-        ax_hm_mean.scatter(0.026, 0.097, c='firebrick', marker='o', s=60)  # forestgreen
-        ax_hm_std.scatter(0.026, 0.097, c='firebrick', marker='o', s=60)  # forestgreen
+        ax_hm_mean.scatter(gt_val_x, gt_val_y, c='firebrick', marker='o', s=60)  # forestgreen
+        ax_hm_std.scatter(gt_val_x, gt_val_y, c='firebrick', marker='o', s=60)  # forestgreen
 
     if args.save_figures:
-        for fmt in ['pdf', 'pgf']:
+        os.makedirs(osp.join(ex_dir, 'plots'), exist_ok=True)
+        for fmt in ['pdf', 'pgf', 'png']:
             if len(args.idcs) == 1 or args.render3D:
-                fig.savefig(osp.join(ex_dir, f'gp-posterior-ret-mean.{fmt}'), dpi=500)
+                fig.savefig(osp.join(ex_dir, 'plots', f'gp-posterior-ret-mean.{fmt}'), dpi=500)
             if len(args.idcs) == 2 and not args.render3D:
-                fig_hm_mean.savefig(osp.join(ex_dir, f'gp-posterior-ret-mean-hm.{fmt}'), dpi=500)
-                fig_cb_mean.savefig(osp.join(ex_dir, f'gp-posterior-ret-mean-cb.{fmt}'), dpi=500)
-                fig_hm_std.savefig(osp.join(ex_dir, f'gp-posterior-ret-std-hm.{fmt}'), dpi=500)
-                fig_cb_std.savefig(osp.join(ex_dir, f'gp-posterior-ret-std-cb.{fmt}'), dpi=500)
+                fig_hm_mean.savefig(osp.join(ex_dir, 'plots', f'gp-posterior-ret-mean-hm.{fmt}'), dpi=500)
+                fig_cb_mean.savefig(osp.join(ex_dir, 'plots', f'gp-posterior-ret-mean-cb.{fmt}'), dpi=500)
+                fig_hm_std.savefig(osp.join(ex_dir, 'plots', f'gp-posterior-ret-std-hm.{fmt}'), dpi=500)
+                fig_cb_std.savefig(osp.join(ex_dir, 'plots', f'gp-posterior-ret-std-cb.{fmt}'), dpi=500)
 
     plt.show()

@@ -166,8 +166,6 @@ def render_singletask_gp(
         render_mean_std(ax, x_grid.numpy(), mean.numpy(), std.numpy(), x_label, y_label, curve_label,
                         num_stds=num_stds, alpha=alpha, color=color, show_legend_std=show_legend_std, title=title,
                         show_legend=False)  # keep disabled and do it in this function
-        if show_legend_posterior:
-            ax.add_artist(ax.legend())
 
         # Plot the queried data points
         scat_plot = ax.scatter(data_x.numpy().flatten(), data_y.numpy().flatten(),
@@ -175,17 +173,20 @@ def render_singletask_gp(
                                cmap=legend_data_cmap)
 
         if show_legend_data:
-            scat_legend = ax.legend(*scat_plot.egend_elements(fmt='{x:.0f}'),  # integer formatter
-                                    bbox_to_anchor=(0., 1.1, 1., -0.1), loc='upper center', ncol=data_x.shape[0],
-                                    mode='expand', borderaxespad=0., handletextpad=-0.5)
+            scat_legend = ax.legend(*scat_plot.legend_elements(fmt='{x:.0f}'),  # integer formatter
+                                    bbox_to_anchor=(0., 1.1, 1., -0.1), title='query points', ncol=data_x.shape[0],
+                                    loc='upper center', mode='expand', borderaxespad=0., handletextpad=-0.5)
             ax.add_artist(scat_legend)
             # Increase vertical space between subplots when printing the data labels
-            plt.tight_layout(pad=2.)  # ignore argument
-            plt.subplots_adjust(hspace=0.6)
+            # plt.tight_layout(pad=2.)  # ignore argument
+            # plt.subplots_adjust(hspace=0.6)
 
         # Plot the argmax of the posterior mean
-        ax.scatter(argmax_posterior.item(), argmax_pmean_val, c='steelblue', marker='o', s=60)
-        # ax.axvline(argmax_posterior.item(), c='k', ls='--', lw=1.5)
+        # ax.scatter(argmax_posterior.item(), argmax_pmean_val, c='darkorange', marker='o', s=60, label='argmax')
+        ax.axvline(argmax_posterior.item(), c='darkorange', lw=1.5, label='argmax')
+
+        if show_legend_posterior:
+            ax.add_artist(ax.legend(loc='lower right'))
 
     elif dim_x == 2:
         # Create mesh grid matrices from x and y vectors
@@ -227,14 +228,14 @@ def render_singletask_gp(
                                    cmap=legend_data_cmap)
 
             if show_legend_data:
-                scat_legend = ax.legend(*scat_plot.egend_elements(fmt='{x:.0f}'),  # integer formatter
+                scat_legend = ax.legend(*scat_plot.legend_elements(fmt='{x:.0f}'),  # integer formatter
                                         bbox_to_anchor=(0.05, 1.1, 0.95, -0.1), loc='upper center',
                                         ncol=data_x.shape[0], mode='expand', borderaxespad=0., handletextpad=-0.5)
                 ax.add_artist(scat_legend)
 
             # Plot the argmax of the posterior mean
             x, y = argmax_posterior[0, 0], argmax_posterior[0, 1]
-            ax.scatter(x, y, argmax_pmean_val, c='steelblue', marker='o', s=60)
+            ax.scatter(x, y, argmax_pmean_val, c='darkorange', marker='o', s=60)
             # ax.plot((x, x), (y, y), (data_y.min(), data_y.max()), c='k', ls='--', lw=1.5)
 
         else:

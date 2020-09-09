@@ -31,8 +31,6 @@ from pyrado import use_pgf
 
 if use_pgf:
     import matplotlib
-
-
     matplotlib.use('pgf')
 from matplotlib import font_manager
 from matplotlib import pyplot as plt
