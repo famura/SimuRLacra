@@ -295,7 +295,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_cnt</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="c1"># Call the reset function of the super class and forwards the arguments</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">)</span></div>
+        <span class="n">init_obs</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">)</span>
+
+        <span class="c1"># Init the observation buffer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obs_buffer</span> <span class="o">=</span> <span class="n">deque</span><span class="p">([</span><span class="n">init_obs</span><span class="o">.</span><span class="n">copy</span><span class="p">()],</span> <span class="n">maxlen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_factor</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">init_obs</span></div>
 
     <span class="k">def</span> <span class="nf">_process_act</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
