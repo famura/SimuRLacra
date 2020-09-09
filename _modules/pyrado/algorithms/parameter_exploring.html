@@ -347,11 +347,11 @@
         <span class="c1"># Extract the best policy parameter sample for saving it later</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">best_policy_param</span> <span class="o">=</span> <span class="n">param_samp_res</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">param_samp_res</span><span class="o">.</span><span class="n">mean_returns</span><span class="p">)]</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
 
-        <span class="c1"># Save snapshot data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">make_snapshot</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">param_samp_res</span><span class="o">.</span><span class="n">mean_returns</span><span class="p">)),</span> <span class="n">meta_info</span><span class="p">)</span>
-
         <span class="c1"># Update the policy</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">param_samp_res</span><span class="p">,</span> <span class="n">ret_avg_curr</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">param_samp_res</span><span class="p">,</span> <span class="n">ret_avg_curr</span><span class="p">)</span>
+
+        <span class="c1"># Save snapshot data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">make_snapshot</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">param_samp_res</span><span class="o">.</span><span class="n">mean_returns</span><span class="p">)),</span> <span class="n">meta_info</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ParameterExploring.update"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.parameter_exploring.ParameterExploring.update">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_results</span><span class="p">:</span> <span class="n">ParameterSamplingResult</span><span class="p">,</span> <span class="n">ret_avg_curr</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
