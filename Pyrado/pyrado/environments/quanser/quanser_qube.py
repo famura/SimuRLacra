@@ -121,11 +121,9 @@ class QQubeReal(QuanserReal, Serializable):
             # Get next measurement
             meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
 
-            if np.abs(meas[2]) < 1e-6 and np.abs(meas[3]) < 1e-6 and (meas - self._sens_offset)[1] < 0.5/180*np.pi:
+            if np.abs(meas[2]) < 1e-8 and np.abs(meas[3]) < 1e-8:
                 cnt += 1
             else:
-                # Record alpha offset (e.g. alpha == k * 2pi)
-                self._sens_offset[1] = meas[1]
                 cnt = 0
 
     def calibrate(self):
@@ -140,23 +138,25 @@ class QQubeReal(QuanserReal, Serializable):
             go_left = QQubeGoToLimCtrl(positive=False, cnt_done=int(1.5/self._dt))
             go_center = QQubePDCtrl(self.spec)
 
-            # Go to both limits for theta calibration
+            # Estimate alpha offset. Go to both limits for theta calibration.
             meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
             while not go_right.done:
-                meas = self._qsoc.snd_rcv(
-                    go_right(to.from_numpy(meas - self._sens_offset)))  # already correct for alpha offset
+                meas = self._qsoc.snd_rcv(go_right(to.from_numpy(meas)))
             while not go_left.done:
-                meas = self._qsoc.snd_rcv(
-                    go_left(to.from_numpy(meas - self._sens_offset)))  # already correct for alpha offset
+                meas = self._qsoc.snd_rcv(go_left(to.from_numpy(meas)))
             self._sens_offset[0] = (go_right.th_lim + go_left.th_lim)/2
 
-            # Re-estimate alpha offset
+            # Estimate alpha offset
             self._wait_for_pole_at_rest()
+            meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
+            self._sens_offset[1] = meas[1]
 
-        print_cbt(f'Sensor offset: {self._sens_offset}', 'g')
+        print_cbt(f'Sensor offset: '
+                  f'theta = {self._sens_offset[0]*180/np.pi:.3f} deg, '
+                  f'alpha = {self._sens_offset[1]*180/np.pi:.3f} deg', 'g')
 
         with completion_context('Centering cube', color='c', bright=True):
             meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
             while not go_center.done:
                 meas = self._qsoc.snd_rcv(
-                    go_center(to.from_numpy(meas - self._sens_offset)))  # already correct for alpha offset
+                    go_center(to.from_numpy(meas - self._sens_offset)))

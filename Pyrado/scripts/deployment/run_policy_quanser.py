@@ -73,6 +73,7 @@ if __name__ == '__main__':
     done = False
     print_cbt('Running loaded policy ...', 'c', bright=True)
     while not done:
-        ro = rollout(env_real, policy, eval=True, render_mode=RenderMode(text=False, video=args.animation))
+        ro = rollout(env_real, policy, eval=True, record_dts=True,
+                     render_mode=RenderMode(text=False, video=args.animation))
         print_cbt(f'Return: {ro.undiscounted_return()}', 'g', bright=True)
         done, _, _ = after_rollout_query(env_real, policy, ro)

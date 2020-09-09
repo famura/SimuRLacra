@@ -457,7 +457,7 @@ class QQubePDCtrl(Policy):
 
     def __init__(self,
                  env_spec: EnvSpec,
-                 k: to.Tensor = to.tensor([3.0, 0, 0.5, 0]),
+                 k: to.Tensor = to.tensor([4., 0, 0.5, 0]),
                  th_des: float = 0.,
                  al_des: float = 0.,
                  tols: to.Tensor = to.tensor([1.5, 0.5, 0.01, 0.01], dtype=to.float64)/180.*math.pi,
