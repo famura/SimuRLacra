@@ -816,6 +816,20 @@ registered hooks while the latter silently ignores them.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt id="pyrado.policies.domain_distribution.DomainDistrParamPolicy.masked_exp_transform">
+<code class="sig-name descname">masked_exp_transform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/domain_distribution.html#DomainDistrParamPolicy.masked_exp_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.domain_distribution.DomainDistrParamPolicy.masked_exp_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the transformed domain distribution parameters. The policy’s parameters are in log space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>params</strong> – policy parameters (can be the log of the actual domain distribution parameter value)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>policy parameters transformed according to the mask</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py attribute">
 <dt id="pyrado.policies.domain_distribution.DomainDistrParamPolicy.min_dp_var">
 <code class="sig-name descname">min_dp_var</code><em class="property">: float</em><em class="property"> = 1e-06</em><a class="headerlink" href="#pyrado.policies.domain_distribution.DomainDistrParamPolicy.min_dp_var" title="Permalink to this definition">¶</a></dt>
