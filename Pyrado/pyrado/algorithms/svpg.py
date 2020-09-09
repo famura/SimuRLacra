@@ -211,7 +211,6 @@ class SVPG(Algorithm):
                 self.particles[i].init_param()
                 self.particleSteps[i] = 0
 
-
         # Logging
         num_ros_all_prtcls = np.array([len(p) for p in ros_all_particles])
         len_ros_all_prtcls = np.array([np.mean([ro.length for ro in p]) for p in ros_all_particles])
@@ -237,6 +236,9 @@ class SVPG(Algorithm):
         self.logger.record_step()
 
         self.update(ros_all_particles)
+
+        # Save snapshot data
+        self.make_snapshot(snapshot_mode, float(np.mean(avg_rets_all_prtcls)), meta_info)
 
     def kernel(self, X: to.Tensor) -> (to.Tensor, to.Tensor):
         """

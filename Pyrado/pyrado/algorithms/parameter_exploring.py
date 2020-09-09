@@ -170,11 +170,11 @@ class ParameterExploring(Algorithm):
         # Extract the best policy parameter sample for saving it later
         self.best_policy_param = param_samp_res.parameters[np.argmax(param_samp_res.mean_returns)].clone()
 
-        # Save snapshot data
-        self.make_snapshot(snapshot_mode, float(np.max(param_samp_res.mean_returns)), meta_info)
-
         # Update the policy
         self.update(param_samp_res, ret_avg_curr)
+
+        # Save snapshot data
+        self.make_snapshot(snapshot_mode, float(np.max(param_samp_res.mean_returns)), meta_info)
 
     @abstractmethod
     def update(self, param_results: ParameterSamplingResult, ret_avg_curr: float):

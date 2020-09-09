@@ -380,6 +380,7 @@ class BayRn(Algorithm):
         self.argmax_cand = to.cat([self.argmax_cand, curr_argmax_cand], dim=0)
         to.save(self.argmax_cand, osp.join(self._save_dir, 'candidates_argmax.pt'))
 
+        # Save snapshot data
         self.make_snapshot(snapshot_mode, float(to.mean(self.cands_values)), meta_info)
 
     def save_snapshot(self, meta_info: dict = None):
