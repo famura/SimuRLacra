@@ -49,7 +49,7 @@ class QQubeReal(QuanserReal, Serializable):
                  dt: float = 1/500.,
                  max_steps: int = pyrado.inf,
                  task_args: [dict, None] = None,
-                 ip: str = '192.168.2.17'):
+                 ip: str = '192.168.2.40'):
         """
         Constructor
 
