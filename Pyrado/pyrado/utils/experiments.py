@@ -221,22 +221,22 @@ def wrap_like_other_env(env_targ: Env, env_src: [SimEnv, EnvWrapper], use_downsa
     if use_downsampling and env_src.dt > env_targ.dt:
         ds_factor = int(env_src.dt/env_targ.dt)
         env_targ = DownsamplingWrapper(env_targ, ds_factor)
-        print_cbt(f'Wrapped the env with an DownsamplingWrapper of factor {ds_factor}.', 'c')
+        print_cbt(f'Wrapped the env with an DownsamplingWrapper of factor {ds_factor}.', 'y')
 
     if typed_env(env_src, ActNormWrapper) is not None:
         env_targ = ActNormWrapper(env_targ)
-        print_cbt('Wrapped the env with an ActNormWrapper.', 'c')
+        print_cbt('Wrapped the env with an ActNormWrapper.', 'y')
 
     if typed_env(env_src, ObsNormWrapper) is not None:
         env_targ = ObsNormWrapper(env_targ)
-        print_cbt('Wrapped the env with an ObsNormWrapper.', 'c')
+        print_cbt('Wrapped the env with an ObsNormWrapper.', 'y')
     elif typed_env(env_src, ObsRunningNormWrapper) is not None:
         env_targ = ObsRunningNormWrapper(env_targ)
-        print_cbt('Wrapped the env with an ObsRunningNormWrapper.', 'c')
+        print_cbt('Wrapped the env with an ObsRunningNormWrapper.', 'y')
 
     if typed_env(env_src, ObsPartialWrapper) is not None:
         env_targ = ObsPartialWrapper(env_targ, mask=typed_env(env_src, ObsPartialWrapper).keep_mask, keep_selected=True)
-        print_cbt('Wrapped the env with an ObsPartialWrapper.', 'c')
+        print_cbt('Wrapped the env with an ObsPartialWrapper.', 'y')
 
     return env_targ
 

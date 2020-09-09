@@ -118,7 +118,12 @@ class DownsamplingWrapper(EnvWrapperAct, EnvWrapperObs, Serializable):
         self._cnt = 0
 
         # Call the reset function of the super class and forwards the arguments
-        return super().reset(init_state, domain_param)
+        init_obs = super().reset(init_state, domain_param)
+
+        # Init the observation buffer
+        self._obs_buffer = deque([init_obs.copy()], maxlen=self._factor)
+
+        return init_obs
 
     def _process_act(self, act: np.ndarray) -> np.ndarray:
         """
