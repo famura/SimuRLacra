@@ -99,9 +99,7 @@ if __name__ == '__main__':
         plt.plot(np.arange(len(df.median_return)), df.median_return, label='median')
         plt.xlabel('iteration')
         plt.ylabel('return')
-        if not _keys_in_columns(df, 'curr_policy_return', verbose=args.verbose):
-            return False
-        else:
+        if _keys_in_columns(df, 'curr_policy_return', verbose=args.verbose):
             # If the algorithm is a subclass of ParameterExploring
             plt.plot(np.arange(len(df.curr_policy_return)), df.curr_policy_return, label='current')
         plt.legend(loc='lower right')
