@@ -56,7 +56,7 @@ from pyrado.sampling.rollout import rollout
 from pyrado.utils.order import natural_sort
 from pyrado.utils.input_output import print_cbt
 from pyrado.utils.math import UnitCubeProjector
-from pyrado.utils.standardizing import standardize
+from pyrado.utils.data_processing import standardize
 
 
 class BayRn(Algorithm):

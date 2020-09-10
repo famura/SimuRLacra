@@ -34,7 +34,7 @@ import pyrado
 from pyrado.environment_wrappers.base import EnvWrapperObs
 from pyrado.environments.base import Env
 from pyrado.spaces.box import BoxSpace
-from pyrado.utils.normalizing import RunningNormalizer
+from pyrado.utils.data_processing import RunningNormalizer
 
 
 class ObsNormWrapper(EnvWrapperObs, Serializable):

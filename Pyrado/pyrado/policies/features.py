@@ -35,7 +35,7 @@ from typing import Sequence, Callable
 import pyrado
 from pyrado.utils import get_class_name
 from pyrado.utils.input_output import print_cbt
-from pyrado.utils.normalizing import normalize
+from pyrado.utils.data_processing import normalize
 from pyrado.utils.tensor import atleast_2D
 
 

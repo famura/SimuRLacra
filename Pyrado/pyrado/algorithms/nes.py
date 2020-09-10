@@ -35,7 +35,7 @@ from pyrado.exploration.stochastic_params import NormalParamNoise, SymmParamExpl
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult
-from pyrado.utils.standardizing import standardize
+from pyrado.utils.data_processing import standardize
 
 
 class NES(ParameterExploring):

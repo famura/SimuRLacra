@@ -48,7 +48,7 @@ from pyrado.policies.dummy import RecurrentDummyPolicy, DummyPolicy
 from pyrado.policies.two_headed import TwoHeadedPolicy
 from pyrado.sampling.parallel_sampler import ParallelSampler
 from pyrado.utils.input_output import print_cbt
-from pyrado.utils.standardizing import standardize
+from pyrado.utils.data_processing import standardize
 
 
 class SAC(Algorithm):

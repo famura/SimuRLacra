@@ -45,8 +45,8 @@ from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.nn_layers import IndiNonlinLayer
 from pyrado.utils.optimizers import GSS
 from pyrado.utils.averaging import RunningExpDecayingAverage, RunningMemoryAverage
-from pyrado.utils.standardizing import RunningStandardizer, Standardizer, scale_min_max
-from pyrado.utils.normalizing import RunningNormalizer, normalize
+from pyrado.utils.data_processing import RunningStandardizer, Standardizer, scale_min_max
+from pyrado.utils.data_processing import RunningNormalizer, normalize
 
 
 @pytest.mark.parametrize(
@@ -258,7 +258,7 @@ def test_running_standardizer(data_seq, axis):
         z = rs(data, axis)
         assert z is not None
     rs.reset()
-    assert rs._mean is None and rs._sum_sq_diffs is None and rs._iter == 0
+    assert rs.mean is None and rs.sum_sq_diffs is None and rs.iter == 0
 
 
 @pytest.mark.parametrize(

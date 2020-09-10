@@ -31,7 +31,7 @@ import torch as to
 from typing import Union
 
 import pyrado
-from pyrado.utils.normalizing import normalize
+from pyrado.utils.data_processing import normalize
 
 
 class UnitCubeProjector:

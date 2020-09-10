@@ -39,7 +39,7 @@ import pyrado
 
 def scale_min_max(data: Union[np.ndarray, to.Tensor],
                   bound_lo: Union[int, float, np.ndarray, to.Tensor],
-                  bound_up: Union[int, float, np.ndarray, to.Tensor]) -> [np.ndarray, to.Tensor]:
+                  bound_up: Union[int, float, np.ndarray, to.Tensor]) -> Union[np.ndarray, to.Tensor]:
     r"""
     Transform the input data to to be in $[a, b]$.
 
@@ -71,7 +71,7 @@ def scale_min_max(data: Union[np.ndarray, to.Tensor],
     return data_*(bound_up - bound_lo) + bound_lo
 
 
-def standardize(data: Union[np.ndarray, to.Tensor], eps: float = 1e-8) -> [np.ndarray, to.Tensor]:
+def standardize(data: Union[np.ndarray, to.Tensor], eps: float = 1e-8) -> Union[np.ndarray, to.Tensor]:
     r"""
     Standardize the input data to make it $~ N(0, 1)$.
 
@@ -87,6 +87,32 @@ def standardize(data: Union[np.ndarray, to.Tensor], eps: float = 1e-8) -> [np.nd
         raise pyrado.TypeErr(given=data, expected_type=[np.ndarray, to.Tensor])
 
 
+def normalize(x: Union[np.ndarray, to.Tensor],
+              axis: int = -1,
+              order: int = 1,
+              eps: float = 1e-8) -> Union[np.ndarray, to.Tensor]:
+    """
+    Normalize a numpy `ndarray` or a PyTroch `Tensor` without changing the input.
+    Choosing `axis=1` and `norm_order=1` makes all columns of sum to 1.
+
+    :param x: input to normalize
+    :param axis: axis of the array to normalize along
+    :param order: order of the norm (e.g., L1 norm: absolute values, L2 norm: quadratic values)
+    :param eps: lower bound on the norm, to avoid division by zero
+    :return: normalized array
+    """
+    if isinstance(x, np.ndarray):
+        norm_x = np.atleast_1d(np.linalg.norm(x, ord=order, axis=axis))  # calculate norm over axis
+        norm_x = np.where(norm_x > eps, norm_x, np.ones_like(norm_x))  # avoid division by 0
+        return x/np.expand_dims(norm_x, axis)  # element wise division
+    elif isinstance(x, to.Tensor):
+        norm_x = to.norm(x, p=order, dim=axis)  # calculate norm over axis
+        norm_x = to.where(norm_x > eps, norm_x, to.ones_like(norm_x))  # avoid division by 0
+        return x/norm_x.unsqueeze(axis)  # element wise division
+    else:
+        raise pyrado.TypeErr(given=x, expected_type=[np.array, to.Tensor])
+
+
 class Standardizer:
     """ A stateful standardizer that remembers the mean and standard deviation for later un-standardization """
 
@@ -94,7 +120,9 @@ class Standardizer:
         self.mean = None
         self.std = None
 
-    def standardize(self, data: Union[np.ndarray, to.Tensor], eps: float = 1e-8) -> [np.ndarray, to.Tensor]:
+    def standardize(self,
+                    data: Union[np.ndarray, to.Tensor],
+                    eps: float = 1e-8) -> Union[np.ndarray, to.Tensor]:
         r"""
         Standardize the input data to make it $~ N(0, 1)$ and store the input's mean and standard deviation.
 
@@ -113,7 +141,7 @@ class Standardizer:
         else:
             raise pyrado.TypeErr(given=data, expected_type=[np.ndarray, to.Tensor])
 
-    def unstandardize(self, data: Union[np.ndarray, to.Tensor]) -> [np.ndarray, to.Tensor]:
+    def unstandardize(self, data: Union[np.ndarray, to.Tensor]) -> Union[np.ndarray, to.Tensor]:
         r"""
         Revert the previous standardization of the input data to make it $~ N(\mu, \sigma)$.
 
@@ -144,21 +172,21 @@ class RunningStandardizer:
 
     def __init__(self):
         """ Constructor """
-        self._mean = None
-        self._sum_sq_diffs = None  # a.k.a M2
-        self._iter = 0
+        self.mean = None
+        self.sum_sq_diffs = None  # a.k.a M2
+        self.iter = 0
 
     def reset(self):
         """ Reset internal variables. """
-        self._mean = None
-        self._sum_sq_diffs = None
-        self._iter = 0
+        self.mean = None
+        self.sum_sq_diffs = None
+        self.iter = 0
 
     def __repr__(self):
         return f'RunningStandardizer ID: {id(self)}\n' \
-               f'mean: {self._mean}\nss_diffs: {self._sum_sq_diffs}\niter: {self._iter}'
+               f'mean: {self.mean}\nss_diffs: {self.sum_sq_diffs}\niter: {self.iter}'
 
-    def __call__(self, data: [np.ndarray, to.Tensor], axis: int = 0):
+    def __call__(self, data: Union[np.ndarray, to.Tensor], axis: int = 0):
         """
         Update the internal variables and standardize the input.
 
@@ -170,55 +198,135 @@ class RunningStandardizer:
             # Process element wise (keeps dim) or average along one axis
             mean = np.mean(data, axis=axis)
 
-            self._iter += 1
+            self.iter += 1
 
             # Handle first iteration separately
-            if self._iter <= 1:
+            if self.iter <= 1:
                 # delta = x
-                self._mean = mean
-                self._sum_sq_diffs = mean*mean
+                self.mean = mean
+                self.sum_sq_diffs = mean*mean
                 return data
             else:
                 # Update mean
-                delta_prev = mean - self._mean
-                self._mean += delta_prev/self._iter
+                delta_prev = mean - self.mean
+                self.mean += delta_prev/self.iter
 
                 # Update sum of squares of differences from the current mean
-                delta_curr = mean - self._mean
-                self._sum_sq_diffs += delta_prev*delta_curr
+                delta_curr = mean - self.mean
+                self.sum_sq_diffs += delta_prev*delta_curr
 
                 # Calculate the unbiased sample variance
-                var_sample = self._sum_sq_diffs/(self._iter - 1)
+                var_sample = self.sum_sq_diffs/(self.iter - 1)
 
                 # Return normalized data
-                return (data - self._mean)/np.sqrt(var_sample)
+                return (data - self.mean)/np.sqrt(var_sample)
 
         elif isinstance(data, to.Tensor):
             # Process element wise (keeps dim) or average along one axis
             mean = to.mean(data, dim=axis).to(to.get_default_dtype())
 
-            self._iter += 1
+            self.iter += 1
 
             # Handle first iteration separately
-            if self._iter <= 1:
+            if self.iter <= 1:
                 # delta = x
-                self._mean = mean
-                self._sum_sq_diffs = mean*mean
+                self.mean = mean
+                self.sum_sq_diffs = mean*mean
                 return data
             else:
                 # Update mean
-                delta_prev = mean - self._mean
-                self._mean += delta_prev/self._iter
+                delta_prev = mean - self.mean
+                self.mean += delta_prev/self.iter
 
                 # Update sum of squares of differences from the current mean
-                delta_curr = mean - self._mean
-                self._sum_sq_diffs += delta_prev*delta_curr
+                delta_curr = mean - self.mean
+                self.sum_sq_diffs += delta_prev*delta_curr
 
                 # Calculate the unbiased sample variance
-                var_sample = self._sum_sq_diffs/(self._iter - 1)
+                var_sample = self.sum_sq_diffs/(self.iter - 1)
 
                 # Return normalized data
-                return (data - self._mean)/to.sqrt(var_sample)
+                return (data - self.mean)/to.sqrt(var_sample)
 
         else:
             raise pyrado.TypeErr(given=data, expected_type=[np.ndarray, to.Tensor])
+
+
+class RunningNormalizer:
+    """ Normalizes given data based on the history of observed data, such that all outputs are in range [-1, 1] """
+
+    def __init__(self):
+        """ Constructor """
+        self.bound_lo = None
+        self.bound_up = None
+        self.eps = 1e-3
+        self.iter = 0
+
+    def reset(self):
+        """ Reset internal variables. """
+        self.bound_lo = None
+        self.bound_up = None
+        self.iter = 0
+
+    def __repr__(self):
+        return f'RunningNormalizer ID: {id(self)}\n' \
+               f'bound_lo: {self.bound_lo}\nbound_up: {self.bound_up}\niter: {self.iter}'
+
+    def __call__(self, data: Union[np.ndarray, to.Tensor]):
+        """
+        Update the internal variables and normalize the input.
+
+        :param data: input data to be standardized
+        :return: normalized data in [-1, 1]
+        """
+        if isinstance(data, np.ndarray):
+            data_2d = np.atleast_2d(data)
+            data_min = np.min(data_2d, axis=0)
+            data_max = np.max(data_2d, axis=0)
+            self.iter += 1
+
+            # Handle first iteration separately
+            if self.iter <= 1:
+                self.bound_lo = data_min
+                self.bound_up = data_max
+            else:
+                if not self.bound_lo.shape == data_min.shape:
+                    raise pyrado.ShapeErr(given=data_min, expected_match=self.bound_lo)
+
+                # Update bounds with element wise
+                self.bound_lo = np.fmin(self.bound_lo, data_min)
+                self.bound_up = np.fmax(self.bound_up, data_max)
+
+            # Make sure that the bounds do not collapse (e.g. for one sample)
+            if np.linalg.norm(self.bound_up - self.bound_lo, ord=1) < self.eps:
+                self.bound_lo -= self.eps/2
+                self.bound_up += self.eps/2
+
+        elif isinstance(data, to.Tensor):
+            data_2d = data.view(-1, 1) if data.ndim < 2 else data
+            data_min, _ = to.min(data_2d, dim=0)
+            data_max, _ = to.max(data_2d, dim=0)
+            self.iter += 1
+
+            # Handle first iteration separately
+            if self.iter <= 1:
+                self.bound_lo = data_min
+                self.bound_up = data_max
+            else:
+                if not self.bound_lo.shape == data_min.shape:
+                    raise pyrado.ShapeErr(given=data_min, expected_match=self.bound_lo)
+
+                # Update bounds with element wise
+                self.bound_lo = to.min(self.bound_lo, data_min)
+                self.bound_up = to.max(self.bound_up, data_max)
+
+            # Make sure that the bounds do not collapse (e.g. for one sample)
+            if to.norm(self.bound_up - self.bound_lo, p=1) < self.eps:
+                self.bound_lo -= self.eps/2
+                self.bound_up += self.eps/2
+
+        else:
+            raise pyrado.TypeErr(given=data, expected_type=[np.ndarray, to.Tensor])
+
+        # Return standardized data
+        return (data - self.bound_lo)/(self.bound_up - self.bound_lo)*2 - 1
