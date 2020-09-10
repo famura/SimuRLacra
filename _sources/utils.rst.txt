@@ -23,6 +23,15 @@ averaging
    :show-inheritance:
 
 
+data\_processing
+----------------
+
+.. automodule:: pyrado.utils.data_processing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 data\_types
 -----------
 
@@ -86,15 +95,6 @@ nn\_layers
    :show-inheritance:
 
 
-normalizing
------------
-
-.. automodule:: pyrado.utils.normalizing
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
 optimizers
 ----------
 
@@ -117,15 +117,6 @@ properties
 ----------
 
 .. automodule:: pyrado.utils.properties
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-standardizing
--------------
-
-.. automodule:: pyrado.utils.standardizing
    :members:
    :undoc-members:
    :show-inheritance:

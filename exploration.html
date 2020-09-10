@@ -106,9 +106,9 @@
 <li class="toctree-l1"><a class="reference internal" href="environment_wrappers.html">environment_wrappers</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">exploration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.exploration.normal_noise">normal_noise</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#stochastic-action">stochastic_action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.exploration.stochastic_action">stochastic_action</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.exploration.stochastic_params">stochastic_params</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#uniform-noise">uniform_noise</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.exploration.uniform_noise">uniform_noise</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.exploration">Module contents</a></li>
 </ul>
 </li>
@@ -196,7 +196,7 @@
 <p>Module for learnable additive Gaussian noise with a diagonal covariance matrix</p>
 <dl class="py method">
 <dt id="pyrado.exploration.normal_noise.DiagNormalNoise.adapt">
-<code class="sig-name descname">adapt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mean</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">std</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>torch.Tensor<span class="p">, </span>float<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/normal_noise.html#DiagNormalNoise.adapt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.normal_noise.DiagNormalNoise.adapt" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">adapt</code><span class="sig-paren">(</span><em class="sig-param">mean: torch.Tensor = None</em>, <em class="sig-param">std: [&lt;class 'torch.Tensor'&gt;</em>, <em class="sig-param">&lt;class 'float'&gt;] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/normal_noise.html#DiagNormalNoise.adapt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.normal_noise.DiagNormalNoise.adapt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adapt the mean and the variance of the noise on the action or parameters.
 Use <cite>None</cite> to leave one of the parameters at their current value.</p>
 <dl class="field-list simple">
@@ -262,7 +262,7 @@ The entropy of a normal distribution is independent of the mean.</p>
 <p>Module for learnable additive Gaussian noise with a full covariance matrix</p>
 <dl class="py method">
 <dt id="pyrado.exploration.normal_noise.FullNormalNoise.adapt">
-<code class="sig-name descname">adapt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mean</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cov</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>torch.Tensor<span class="p">, </span>float<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/normal_noise.html#FullNormalNoise.adapt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.normal_noise.FullNormalNoise.adapt" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">adapt</code><span class="sig-paren">(</span><em class="sig-param">mean: torch.Tensor = None</em>, <em class="sig-param">cov: [&lt;class 'torch.Tensor'&gt;</em>, <em class="sig-param">&lt;class 'float'&gt;] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/normal_noise.html#FullNormalNoise.adapt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.normal_noise.FullNormalNoise.adapt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adapt the mean and the variance of the noise on the action or parameters.
 Use <cite>None</cite> to leave one of the parameters at their current value.</p>
 <dl class="field-list simple">
@@ -322,8 +322,467 @@ The entropy of a normal distribution is independent of the mean.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="stochastic-action">
-<h2>stochastic_action<a class="headerlink" href="#stochastic-action" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyrado.exploration.stochastic_action">
+<span id="stochastic-action"></span><h2>stochastic_action<a class="headerlink" href="#module-pyrado.exploration.stochastic_action" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.exploration.stochastic_action.EpsGreedyExplStrat">
+<em class="property">class </em><code class="sig-name descname">EpsGreedyExplStrat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">eps</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">eps_schedule_gamma</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.99</span></em>, <em class="sig-param"><span class="n">eps_final</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.05</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#EpsGreedyExplStrat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.EpsGreedyExplStrat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat" title="pyrado.exploration.stochastic_action.StochasticActionExplStrat"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.exploration.stochastic_action.StochasticActionExplStrat</span></code></a></p>
+<p>Exploration strategy which selects discrete actions epsilon-greedily</p>
+<dl class="py method">
+<dt id="pyrado.exploration.stochastic_action.EpsGreedyExplStrat.action_dist_at">
+<code class="sig-name descname">action_dist_at</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy_output</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.distributions.distribution.Distribution<a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#EpsGreedyExplStrat.action_dist_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.EpsGreedyExplStrat.action_dist_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the action distribution for the given output from the wrapped policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>policy_output</strong> – output from the wrapped policy, i.e. the noise-free action values</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>action distribution</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.stochastic_action.EpsGreedyExplStrat.eval">
+<code class="sig-name descname">eval</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#EpsGreedyExplStrat.eval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.EpsGreedyExplStrat.eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call PyTorch’s eval function and set the deny every exploration.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.stochastic_action.EpsGreedyExplStrat.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">obs: torch.Tensor</em>, <em class="sig-param">*extra) -&gt; (&lt;class 'torch.Tensor'&gt;</em>, <em class="sig-param">&lt;class 'tuple'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#EpsGreedyExplStrat.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.EpsGreedyExplStrat.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the action according to the policy and the observations (forward pass).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>obs</strong> – observation from the environment</p>
+</dd>
+<dt class="field-even">Return act</dt>
+<dd class="field-even"><p>action to be taken</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.stochastic_action.EpsGreedyExplStrat.schedule_eps">
+<code class="sig-name descname">schedule_eps</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">steps</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#EpsGreedyExplStrat.schedule_eps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.EpsGreedyExplStrat.schedule_eps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.stochastic_action.EpsGreedyExplStrat.train">
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#EpsGreedyExplStrat.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.EpsGreedyExplStrat.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call PyTorch’s eval function and set the re-activate every exploration.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.exploration.stochastic_action.NormalActNoiseExplStrat">
+<em class="property">class </em><code class="sig-name descname">NormalActNoiseExplStrat</code><span class="sig-paren">(</span><em class="sig-param">policy: pyrado.policies.base.Policy, std_init: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;], std_min: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;] = 0.001, train_mean: bool = False, learnable: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#NormalActNoiseExplStrat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat" title="pyrado.exploration.stochastic_action.StochasticActionExplStrat"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.exploration.stochastic_action.StochasticActionExplStrat</span></code></a></p>
+<p>Exploration strategy which adds Gaussian noise to the continuous policy actions</p>
+<dl class="py method">
+<dt id="pyrado.exploration.stochastic_action.NormalActNoiseExplStrat.action_dist_at">
+<code class="sig-name descname">action_dist_at</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy_output</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.distributions.distribution.Distribution<a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#NormalActNoiseExplStrat.action_dist_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat.action_dist_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the action distribution for the given output from the wrapped policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>policy_output</strong> – output from the wrapped policy, i.e. the noise-free action values</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>action distribution</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.exploration.stochastic_action.NormalActNoiseExplStrat.get_entropy">
+<code class="sig-name descname">get_entropy</code><a class="headerlink" href="#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat.get_entropy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delegate to a class member object.</p>
+<p>Example:
+class Foo:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>def __init__(self, bar):</dt><dd><p>self.bar = bar</p>
+</dd>
+</dl>
+<p>baz = Delegate(“bar”)</p>
+</div></blockquote>
+<p>foo = Foo()
+foo.baz &lt;=&gt; foo.bar.baz</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.exploration.stochastic_action.NormalActNoiseExplStrat.mean">
+<code class="sig-name descname">mean</code><a class="headerlink" href="#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat.mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delegate to a class member object.</p>
+<p>Example:
+class Foo:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>def __init__(self, bar):</dt><dd><p>self.bar = bar</p>
+</dd>
+</dl>
+<p>baz = Delegate(“bar”)</p>
+</div></blockquote>
+<p>foo = Foo()
+foo.baz &lt;=&gt; foo.bar.baz</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.stochastic_action.NormalActNoiseExplStrat.noise">
+<em class="property">property </em><code class="sig-name descname">noise</code><a class="headerlink" href="#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat.noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the exploration noise.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.exploration.stochastic_action.NormalActNoiseExplStrat.reset_expl_params">
+<code class="sig-name descname">reset_expl_params</code><a class="headerlink" href="#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat.reset_expl_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delegate to a class member object.</p>
+<p>Example:
+class Foo:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>def __init__(self, bar):</dt><dd><p>self.bar = bar</p>
+</dd>
+</dl>
+<p>baz = Delegate(“bar”)</p>
+</div></blockquote>
+<p>foo = Foo()
+foo.baz &lt;=&gt; foo.bar.baz</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.exploration.stochastic_action.NormalActNoiseExplStrat.std">
+<code class="sig-name descname">std</code><a class="headerlink" href="#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat.std" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delegate to a class member object.</p>
+<p>Example:
+class Foo:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>def __init__(self, bar):</dt><dd><p>self.bar = bar</p>
+</dd>
+</dl>
+<p>baz = Delegate(“bar”)</p>
+</div></blockquote>
+<p>foo = Foo()
+foo.baz &lt;=&gt; foo.bar.baz</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.exploration.stochastic_action.SACExplStrat">
+<em class="property">class </em><code class="sig-name descname">SACExplStrat</code><span class="sig-paren">(</span><em class="sig-param">policy: pyrado.policies.base.Policy, std_init: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#SACExplStrat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.SACExplStrat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat" title="pyrado.exploration.stochastic_action.StochasticActionExplStrat"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.exploration.stochastic_action.StochasticActionExplStrat</span></code></a></p>
+<p>State-dependent exploration strategy which adds normal noise squashed into by a tanh to the continuous actions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This exploration strategy is specifically designed for SAC.
+Due to the tanh transformation, it returns action values within [-1,1].</p>
+</div>
+<dl class="py method">
+<dt id="pyrado.exploration.stochastic_action.SACExplStrat.action_dist_at">
+<code class="sig-name descname">action_dist_at</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy_output_1</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">policy_output_2</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.distributions.distribution.Distribution<a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#SACExplStrat.action_dist_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.SACExplStrat.action_dist_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the action distribution for the given output from the wrapped policy.
+This method is made for two-headed policies, e.g. used with SAC.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>policy_output_1</strong> – first head’s output from the wrapped policy, noise-free action values</p></li>
+<li><p><strong>policy_output_2</strong> – first head’s output from the wrapped policy, state-dependent log std values</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>action distribution</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.stochastic_action.SACExplStrat.evaluate">
+<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollout</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">hidden_states_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'hidden_states'</span></em><span class="sig-paren">)</span> &#x2192; torch.distributions.distribution.Distribution<a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#SACExplStrat.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.SACExplStrat.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-evaluate the given rollout using the policy wrapped by this exploration strategy.
+Use this method to get gradient data on the action distribution.
+This version is tailored to the two-headed policy architecture used for SAC, since it requires a two-headed
+policy, where the first head returns the mean action and the second head returns the state-dependent std.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollout</strong> – recorded, complete rollout</p></li>
+<li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>actions with gradient data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.stochastic_action.SACExplStrat.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">extra</span></em><span class="sig-paren">)</span> &#x2192; [(&lt;class ‘torch.Tensor’&gt;, &lt;class ‘torch.Tensor’&gt;), (&lt;class ‘torch.Tensor’&gt;, &lt;class ‘torch.Tensor’&gt;, &lt;class ‘torch.Tensor’&gt;)]<a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#SACExplStrat.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.SACExplStrat.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the action according to the policy and the observations (forward pass).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>obs</strong> – observation from the environment</p>
+</dd>
+<dt class="field-even">Return act</dt>
+<dd class="field-even"><p>action to be taken</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.exploration.stochastic_action.SACExplStrat.get_entropy">
+<code class="sig-name descname">get_entropy</code><a class="headerlink" href="#pyrado.exploration.stochastic_action.SACExplStrat.get_entropy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delegate to a class member object.</p>
+<p>Example:
+class Foo:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>def __init__(self, bar):</dt><dd><p>self.bar = bar</p>
+</dd>
+</dl>
+<p>baz = Delegate(“bar”)</p>
+</div></blockquote>
+<p>foo = Foo()
+foo.baz &lt;=&gt; foo.bar.baz</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.exploration.stochastic_action.SACExplStrat.mean">
+<code class="sig-name descname">mean</code><a class="headerlink" href="#pyrado.exploration.stochastic_action.SACExplStrat.mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delegate to a class member object.</p>
+<p>Example:
+class Foo:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>def __init__(self, bar):</dt><dd><p>self.bar = bar</p>
+</dd>
+</dl>
+<p>baz = Delegate(“bar”)</p>
+</div></blockquote>
+<p>foo = Foo()
+foo.baz &lt;=&gt; foo.bar.baz</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.stochastic_action.SACExplStrat.noise">
+<em class="property">property </em><code class="sig-name descname">noise</code><a class="headerlink" href="#pyrado.exploration.stochastic_action.SACExplStrat.noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the exploration noise.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.exploration.stochastic_action.SACExplStrat.reset_expl_params">
+<code class="sig-name descname">reset_expl_params</code><a class="headerlink" href="#pyrado.exploration.stochastic_action.SACExplStrat.reset_expl_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delegate to a class member object.</p>
+<p>Example:
+class Foo:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>def __init__(self, bar):</dt><dd><p>self.bar = bar</p>
+</dd>
+</dl>
+<p>baz = Delegate(“bar”)</p>
+</div></blockquote>
+<p>foo = Foo()
+foo.baz &lt;=&gt; foo.bar.baz</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.exploration.stochastic_action.SACExplStrat.std">
+<code class="sig-name descname">std</code><a class="headerlink" href="#pyrado.exploration.stochastic_action.SACExplStrat.std" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delegate to a class member object.</p>
+<p>Example:
+class Foo:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>def __init__(self, bar):</dt><dd><p>self.bar = bar</p>
+</dd>
+</dl>
+<p>baz = Delegate(“bar”)</p>
+</div></blockquote>
+<p>foo = Foo()
+foo.baz &lt;=&gt; foo.bar.baz</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.exploration.stochastic_action.StochasticActionExplStrat">
+<em class="property">class </em><code class="sig-name descname">StochasticActionExplStrat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#StochasticActionExplStrat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Explore by sampling actions from a distribution.</p>
+<dl class="py method">
+<dt id="pyrado.exploration.stochastic_action.StochasticActionExplStrat.action_dist_at">
+<code class="sig-name descname">action_dist_at</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy_output</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.distributions.distribution.Distribution<a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#StochasticActionExplStrat.action_dist_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat.action_dist_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the action distribution for the given output from the wrapped policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>policy_output</strong> – output from the wrapped policy, i.e. the noise-free action values</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>action distribution</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.stochastic_action.StochasticActionExplStrat.evaluate">
+<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollout</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">hidden_states_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'hidden_states'</span></em><span class="sig-paren">)</span> &#x2192; torch.distributions.distribution.Distribution<a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#StochasticActionExplStrat.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-evaluate the given rollout using the policy wrapped by this exploration strategy.
+Use this method to get gradient data on the action distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollout</strong> – recorded, complete rollout</p></li>
+<li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>actions with gradient data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.stochastic_action.StochasticActionExplStrat.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">obs: torch.Tensor</em>, <em class="sig-param">*extra) -&gt; (&lt;class 'torch.Tensor'&gt;</em>, <em class="sig-param">&lt;class 'tuple'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#StochasticActionExplStrat.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the action according to the policy and the observations (forward pass).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>obs</strong> – observation from the environment</p>
+</dd>
+<dt class="field-even">Return act</dt>
+<dd class="field-even"><p>action to be taken</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.stochastic_action.StochasticActionExplStrat.init_hidden">
+<code class="sig-name descname">init_hidden</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#StochasticActionExplStrat.init_hidden"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat.init_hidden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide initial values for the hidden parameters. This should usually be a zero tensor.
+The default implementation will raise an error, to enforce override this function for recurrent policies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>batch_size</strong> – number of states to track in parallel</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tensor of batch_size x hidden_size</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.stochastic_action.StochasticActionExplStrat.init_param">
+<code class="sig-name descname">init_param</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">init_values</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#StochasticActionExplStrat.init_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat.init_param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
+<li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.stochastic_action.StochasticActionExplStrat.is_recurrent">
+<em class="property">property </em><code class="sig-name descname">is_recurrent</code><a class="headerlink" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat.is_recurrent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bool to signalise it the policy has a recurrent architecture.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.stochastic_action.StochasticActionExplStrat.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#StochasticActionExplStrat.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the policy to it’s initial state.
+This should be called at the start of a rollout. Stateful policies should use it to reset the state variables.
+The default implementation does nothing.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.exploration.stochastic_action.UniformActNoiseExplStrat">
+<em class="property">class </em><code class="sig-name descname">UniformActNoiseExplStrat</code><span class="sig-paren">(</span><em class="sig-param">policy: pyrado.policies.base.Policy, halfspan_init: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;], halfspan_min: [&lt;class 'float'&gt;, &lt;class 'list'&gt;] = 0.01, train_mean: bool = False, learnable: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#UniformActNoiseExplStrat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.UniformActNoiseExplStrat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat" title="pyrado.exploration.stochastic_action.StochasticActionExplStrat"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.exploration.stochastic_action.StochasticActionExplStrat</span></code></a></p>
+<p>Exploration strategy which adds uniform noise to the continuous policy actions</p>
+<dl class="py method">
+<dt id="pyrado.exploration.stochastic_action.UniformActNoiseExplStrat.action_dist_at">
+<code class="sig-name descname">action_dist_at</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy_output</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.distributions.distribution.Distribution<a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#UniformActNoiseExplStrat.action_dist_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.UniformActNoiseExplStrat.action_dist_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the action distribution for the given output from the wrapped policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>policy_output</strong> – output from the wrapped policy, i.e. the noise-free action values</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>action distribution</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.exploration.stochastic_action.UniformActNoiseExplStrat.get_entropy">
+<code class="sig-name descname">get_entropy</code><a class="headerlink" href="#pyrado.exploration.stochastic_action.UniformActNoiseExplStrat.get_entropy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delegate to a class member object.</p>
+<p>Example:
+class Foo:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>def __init__(self, bar):</dt><dd><p>self.bar = bar</p>
+</dd>
+</dl>
+<p>baz = Delegate(“bar”)</p>
+</div></blockquote>
+<p>foo = Foo()
+foo.baz &lt;=&gt; foo.bar.baz</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.exploration.stochastic_action.UniformActNoiseExplStrat.halfspan">
+<code class="sig-name descname">halfspan</code><a class="headerlink" href="#pyrado.exploration.stochastic_action.UniformActNoiseExplStrat.halfspan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delegate to a class member object.</p>
+<p>Example:
+class Foo:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>def __init__(self, bar):</dt><dd><p>self.bar = bar</p>
+</dd>
+</dl>
+<p>baz = Delegate(“bar”)</p>
+</div></blockquote>
+<p>foo = Foo()
+foo.baz &lt;=&gt; foo.bar.baz</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.stochastic_action.UniformActNoiseExplStrat.noise">
+<em class="property">property </em><code class="sig-name descname">noise</code><a class="headerlink" href="#pyrado.exploration.stochastic_action.UniformActNoiseExplStrat.noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the exploration noise.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.exploration.stochastic_action.UniformActNoiseExplStrat.reset_expl_params">
+<code class="sig-name descname">reset_expl_params</code><a class="headerlink" href="#pyrado.exploration.stochastic_action.UniformActNoiseExplStrat.reset_expl_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delegate to a class member object.</p>
+<p>Example:
+class Foo:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>def __init__(self, bar):</dt><dd><p>self.bar = bar</p>
+</dd>
+</dl>
+<p>baz = Delegate(“bar”)</p>
+</div></blockquote>
+<p>foo = Foo()
+foo.baz &lt;=&gt; foo.bar.baz</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyrado.exploration.stochastic_params">
 <span id="stochastic-params"></span><h2>stochastic_params<a class="headerlink" href="#module-pyrado.exploration.stochastic_params" title="Permalink to this headline">¶</a></h2>
@@ -580,8 +1039,74 @@ policy parameters</p>
 </dd></dl>
 
 </div>
-<div class="section" id="uniform-noise">
-<h2>uniform_noise<a class="headerlink" href="#uniform-noise" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyrado.exploration.uniform_noise">
+<span id="uniform-noise"></span><h2>uniform_noise<a class="headerlink" href="#module-pyrado.exploration.uniform_noise" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.exploration.uniform_noise.UniformNoise">
+<em class="property">class </em><code class="sig-name descname">UniformNoise</code><span class="sig-paren">(</span><em class="sig-param">use_cuda: bool, noise_dim: [&lt;class 'int'&gt;, &lt;class 'tuple'&gt;], halfspan_init: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;], halfspan_min: [&lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;] = 0.01, train_mean: bool = False, learnable: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/uniform_noise.html#UniformNoise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.uniform_noise.UniformNoise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Module for learnable additive uniform noise</p>
+<dl class="py method">
+<dt id="pyrado.exploration.uniform_noise.UniformNoise.adapt">
+<code class="sig-name descname">adapt</code><span class="sig-paren">(</span><em class="sig-param">mean: torch.Tensor = None</em>, <em class="sig-param">halfspan: [&lt;class 'torch.Tensor'&gt;</em>, <em class="sig-param">&lt;class 'float'&gt;] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/uniform_noise.html#UniformNoise.adapt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.uniform_noise.UniformNoise.adapt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adapt the mean and the half interval span of the noise on the action or parameters.
+Use <cite>None</cite> to leave one of the parameters at their current value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mean</strong> – exploration strategy’s new mean</p></li>
+<li><p><strong>halfspan</strong> – exploration strategy’s new half interval span</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.uniform_noise.UniformNoise.device">
+<em class="property">property </em><code class="sig-name descname">device</code><a class="headerlink" href="#pyrado.exploration.uniform_noise.UniformNoise.device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the device (CPU or GPU) on which the policy is stored.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.uniform_noise.UniformNoise.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.distributions.uniform.Uniform<a class="reference internal" href="_modules/pyrado/exploration/uniform_noise.html#UniformNoise.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.uniform_noise.UniformNoise.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the noise distribution for a specific noise-free value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> – value to evaluate the distribution around</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>noise distribution</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.uniform_noise.UniformNoise.get_entropy">
+<code class="sig-name descname">get_entropy</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/exploration/uniform_noise.html#UniformNoise.get_entropy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.uniform_noise.UniformNoise.get_entropy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the exploration distribution’s entropy.
+The entropy of a uniform distribution is independent of the mean.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>entropy value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.uniform_noise.UniformNoise.halfspan">
+<em class="property">property </em><code class="sig-name descname">halfspan</code><a class="headerlink" href="#pyrado.exploration.uniform_noise.UniformNoise.halfspan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the untransformed standard deviation vector given the log-transformed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.exploration.uniform_noise.UniformNoise.reset_expl_params">
+<code class="sig-name descname">reset_expl_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/uniform_noise.html#UniformNoise.reset_expl_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.uniform_noise.UniformNoise.reset_expl_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset all parameters of the exploration strategy.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyrado.exploration">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.exploration" title="Permalink to this headline">¶</a></h2>
