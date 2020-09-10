@@ -32,7 +32,7 @@ from torch.distributions.uniform import Uniform
 from torch.distributions.normal import Normal
 from torch.distributions.multivariate_normal import MultivariateNormal
 from torch.distributions.bernoulli import Bernoulli
-from typing import Sequence
+from typing import Sequence, Union
 
 import pyrado
 from pyrado.utils.input_output import print_cbt
@@ -78,7 +78,7 @@ class DomainParam(ABC):
         """ Get union of all hyper-parameters of all domain parameter distributions. """
         raise NotImplementedError
 
-    def adapt(self, domain_distr_param: str, domain_distr_param_value: [float, int]):
+    def adapt(self, domain_distr_param: str, domain_distr_param_value: Union[float, int]):
         """
         Update this domain parameter.
 
@@ -139,7 +139,7 @@ class UniformDomainParam(DomainParam):
     def get_field_names() -> Sequence[str]:
         return ['name', 'mean', 'halfspan', 'clip_lo', 'clip_up', 'roundint']
 
-    def adapt(self, domain_distr_param: str, domain_distr_param_value: [float, int]):
+    def adapt(self, domain_distr_param: str, domain_distr_param_value: Union[float, int]):
         # Set the attributes
         super().adapt(domain_distr_param, domain_distr_param_value)
 
@@ -156,7 +156,7 @@ class UniformDomainParam(DomainParam):
 class NormalDomainParam(DomainParam):
     """ Domain parameter sampled from a normal distribution """
 
-    def __init__(self, std: [float, to.Tensor], **kwargs):
+    def __init__(self, std: Union[float, to.Tensor], **kwargs):
         """
         Constructor
 
@@ -172,7 +172,7 @@ class NormalDomainParam(DomainParam):
     def get_field_names() -> Sequence[str]:
         return ['name', 'mean', 'std', 'clip_lo', 'clip_up', 'roundint']
 
-    def adapt(self, domain_distr_param: str, domain_distr_param_value: [float, int]):
+    def adapt(self, domain_distr_param: str, domain_distr_param_value: Union[float, int]):
         # Set the attributes
         super().adapt(domain_distr_param, domain_distr_param_value)
 
@@ -188,7 +188,7 @@ class NormalDomainParam(DomainParam):
 class MultivariateNormalDomainParam(DomainParam):
     """ Domain parameter sampled from a normal distribution """
 
-    def __init__(self, cov: [to.Tensor], **kwargs):
+    def __init__(self, cov: to.Tensor, **kwargs):
         """
         Constructor
 
@@ -225,7 +225,7 @@ class MultivariateNormalDomainParam(DomainParam):
 class BernoulliDomainParam(DomainParam):
     """ Domain parameter sampled from a Bernoulli distribution """
 
-    def __init__(self, val_0: [int, float], val_1: [int, float], prob_1: float, **kwargs):
+    def __init__(self, val_0: Union[int, float], val_1: Union[int, float], prob_1: float, **kwargs):
         """
         Constructor
 
@@ -247,7 +247,7 @@ class BernoulliDomainParam(DomainParam):
     def get_field_names() -> Sequence[str]:
         return ['name', 'mean', 'val_0', 'val_1', 'prob_1', 'clip_lo', 'clip_up', 'roundint']
 
-    def adapt(self, domain_distr_param: str, domain_distr_param_value: [float, int]):
+    def adapt(self, domain_distr_param: str, domain_distr_param_value: Union[float, int]):
         # Set the attributes
         super().adapt(domain_distr_param, domain_distr_param_value)
 

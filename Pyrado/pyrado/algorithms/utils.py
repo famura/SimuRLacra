@@ -32,7 +32,7 @@ import os.path as osp
 import torch as to
 from copy import deepcopy
 from torch.distributions import Distribution
-from typing import NamedTuple
+from typing import NamedTuple, Optional, Union
 
 import pyrado
 from pyrado.sampling.step_sequence import StepSequence
@@ -116,7 +116,7 @@ def until_thold_exceeded(thold: float, max_iter: int = None):
     return actual_decorator
 
 
-def save_prefix_suffix(obj, name: str, file_ext: str, save_dir: str, meta_info: [dict, None]):
+def save_prefix_suffix(obj, name: str, file_ext: str, save_dir: str, meta_info: Optional[dict]):
     """
     Save an arbitrary object object using a prefix or suffix, depending on the meta information.
 
@@ -165,7 +165,7 @@ def save_prefix_suffix(obj, name: str, file_ext: str, save_dir: str, meta_info: 
                 joblib.dump(obj, osp.join(save_dir, f"{name}.{file_ext}"))
 
 
-def load_prefix_suffix(obj, name: str, file_ext: str, load_dir: str, meta_info: [dict, None]):
+def load_prefix_suffix(obj, name: str, file_ext: str, load_dir: str, meta_info: Optional[dict]):
     """
     Load an arbitrary object object using a prefix or suffix, depending on the meta information.
 
@@ -248,7 +248,7 @@ class ReplayMemory:
         """ Get the number of transitions stored in the buffer. """
         return self._memory.length
 
-    def push(self, ros: [list, StepSequence], truncate_last: bool = True):
+    def push(self, ros: Union[list, StepSequence], truncate_last: bool = True):
         """
         Save a sequence of steps and drop of steps if the capacity is exceeded.
 

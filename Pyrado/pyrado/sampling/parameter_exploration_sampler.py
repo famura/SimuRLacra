@@ -72,7 +72,7 @@ class ParameterSamplingResult(Sequence[ParameterSample]):
     On the other hand, this allows to query combined tensors of parameters and mean returns.
     """
 
-    def __init__(self, samples: List[ParameterSample]):
+    def __init__(self, samples: Sequence[ParameterSample]):
         """
         Constructor
 

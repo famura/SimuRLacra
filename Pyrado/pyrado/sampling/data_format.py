@@ -25,6 +25,7 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+from typing import Union
 
 import numpy as np
 import torch as to
@@ -100,7 +101,7 @@ def to_format(data, data_format, data_type=None):
         raise pyrado.ValueErr(given=data_format, eq_constraint="'numpy' or 'torch'")
 
 
-def stack_to_format(data: [dict, tuple, Sequence], data_format: str):
+def stack_to_format(data: Union[dict, tuple, Sequence[dict, tuple]], data_format: str):
     """
     Stack the generic data in the given data format.
     For dicts, the dict elements are stacked individually. A list of dicts is treated as a dict of lists.
@@ -143,7 +144,7 @@ def stack_to_format(data: [dict, tuple, Sequence], data_format: str):
         return to_format(data, data_format)
 
 
-def cat_to_format(data: [dict, tuple, Sequence], data_format: str):
+def cat_to_format(data: Union[dict, tuple, Sequence[dict, tuple]], data_format: str):
     """
     Concatenate the generic data in the given data format.
     For dicts, the dict elements are stacked individually. A list of dicts is treated as a dict of lists.

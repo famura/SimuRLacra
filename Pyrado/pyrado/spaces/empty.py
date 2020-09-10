@@ -28,7 +28,7 @@
 
 import numpy as np
 from tabulate import tabulate
-from typing import Sequence
+from typing import Sequence, Union
 
 import pyrado
 from pyrado.spaces.base import Space
@@ -75,11 +75,11 @@ class EmptySpace(Space):
     def project_to(self, ele: np.ndarray) -> np.ndarray:
         return np.array([])
 
-    def subspace(self, idcs: [np.ndarray, int, slice] = None):
+    def subspace(self, idcs: Union[np.ndarray, int, slice] = None):
         return self
 
     @staticmethod
-    def cat(spaces: [list, tuple]):
+    def cat(spaces: Union[list, tuple]):
         if not all(isinstance(s, EmptySpace) for s in spaces):
             raise pyrado.TypeErr(given=spaces, expected_type=Sequence[EmptySpace])
         return EmptySpace

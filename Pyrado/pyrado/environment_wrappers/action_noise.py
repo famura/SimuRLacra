@@ -25,6 +25,7 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+from typing import Union
 
 import numpy as np
 from init_args_serializer import Serializable
@@ -40,7 +41,7 @@ class GaussianActNoiseWrapper(EnvWrapperAct, Serializable):
     This noise is independent for the potentially applied action-based exploration strategy.
     """
 
-    def __init__(self, wrapped_env: Env, noise_mean: [float, np.ndarray] = None, noise_std: [float, np.ndarray] = None):
+    def __init__(self, wrapped_env: Env, noise_mean: Union[float, np.ndarray] = None, noise_std: Union[float, np.ndarray] = None):
         """
         Constructor
 

@@ -207,7 +207,7 @@ class QBallBalancerPDCtrl(Policy):
         if verbose:
             print(f"Set Kp to\n{self.Kp.numpy()}\nand Kd to\n{self.Kd.numpy()}")
 
-    def reset(self, state_des: [np.ndarray, to.Tensor] = None):
+    def reset(self, state_des: Union[np.ndarray, to.Tensor] = None):
         """
         Set the controller's desired state.
 

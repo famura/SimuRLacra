@@ -28,7 +28,7 @@
 
 import numpy as np
 from copy import deepcopy
-from typing import Sequence
+from typing import Sequence, Union
 
 from pyrado.spaces.base import Space
 from pyrado.utils.input_output import print_cbt
@@ -57,7 +57,7 @@ class CompoundSpace(Space):
     def project_to(self, ele: np.ndarray):
         raise NotImplementedError
 
-    def subspace(self, idcs: [int, slice]):
+    def subspace(self, idcs: Union[int, slice]):
         # Subspace of this CompoundSpace and not of the individual spaces
         return self._spaces[idcs]
 
@@ -65,7 +65,7 @@ class CompoundSpace(Space):
         raise NotImplementedError
 
     @staticmethod
-    def cat(spaces: [list, tuple]):
+    def cat(spaces: Union[list, tuple]):
         raise NotImplementedError
 
     def contains(self, cand: np.ndarray, verbose: bool = False) -> bool:

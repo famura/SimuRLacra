@@ -31,7 +31,7 @@ import pandas as pd
 import torch as to
 import torch.nn as nn
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Optional
 
 import pyrado
 from pyrado.algorithms.utils import save_prefix_suffix, load_prefix_suffix
@@ -54,7 +54,7 @@ class Algorithm(ABC, LoggerAware):
     name: str = None  # unique identifier
     iteration_key: str = 'iteration'
 
-    def __init__(self, save_dir: str, max_iter: int, policy: [Policy, None], logger: StepLogger = None):
+    def __init__(self, save_dir: str, max_iter: int, policy: Optional[Policy], logger: Optional[StepLogger] = None):
         """
         Constructor
 

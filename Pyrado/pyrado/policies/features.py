@@ -171,7 +171,7 @@ def sincos_feat(inp: to.Tensor):
 class MultFeat:
     """ Feature that multiplies two dimensions of the given input / observation """
 
-    def __init__(self, idcs: [tuple, list]):
+    def __init__(self, idcs: Sequence[int]):
         """
         Constructor
 
@@ -203,7 +203,7 @@ class RandFourierFeat:
         [1] A. Rahimi and B. Recht "Random Features for Large-Scale Kernel Machines", NIPS, 2007
     """
 
-    def __init__(self, inp_dim: int, num_feat_per_dim: int, bandwidth: [float, np.ndarray, to.Tensor]):
+    def __init__(self, inp_dim: int, num_feat_per_dim: int, bandwidth: Union[float, np.ndarray, to.Tensor]):
         r"""
         Gaussian kernel: $k(x,y) = \exp(-\sigma**2 / (2*d) * ||x-y||^2)$
                          Sample from $\mathcal{N}(0,1)$ and scale the result by $\sigma / \sqrt{2*d}$

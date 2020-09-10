@@ -28,7 +28,7 @@
 
 import collections
 import numpy as np
-from typing import Sequence, NamedTuple
+from typing import Sequence, NamedTuple, Union
 from copy import deepcopy
 
 import pyrado
@@ -55,7 +55,7 @@ class DSSpec(dict):
     We are directly subclassing dict beacuse `PropertySource` in `RcsPySim` extracts information from dicts.
     """
 
-    def __init__(self, function: str, goal: [np.ndarray, float, int], **kwargs):
+    def __init__(self, function: str, goal: Union[np.ndarray, float, int], **kwargs):
         """
         Constructor
 

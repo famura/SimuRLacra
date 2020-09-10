@@ -28,7 +28,7 @@
 
 import inspect
 import torch as to
-from typing import Callable, List
+from typing import Callable, List, Sequence
 from torch.jit import ScriptModule, script, export
 from torch.nn import Module
 
@@ -41,7 +41,7 @@ class TimePolicy(Policy):
 
     name: str = 'time'
 
-    def __init__(self, spec: EnvSpec, fcn_of_time: Callable[[float], List[float]], dt: float, use_cuda: bool = False):
+    def __init__(self, spec: EnvSpec, fcn_of_time: Callable[[float], Sequence[float]], dt: float, use_cuda: bool = False):
         """
         Constructor
 
@@ -91,7 +91,7 @@ class TraceableTimePolicy(Module):
     dt: float
     current_time: float
 
-    def __init__(self, spec: EnvSpec, fcn_of_time: Callable[[float], List[float]], dt: float):
+    def __init__(self, spec: EnvSpec, fcn_of_time: Callable[[float], Sequence[float]], dt: float):
         super().__init__()
 
         # Setup attributes

@@ -29,13 +29,15 @@
 """
 A small collection of well-known functions for testing or benchmarking
 """
+from typing import Union
+
 import numpy as np
 import torch as to
 
 import pyrado
 
 
-def rosenbrock(x: [to.Tensor, np.ndarray]) -> (to.Tensor, np.ndarray):
+def rosenbrock(x: Union[to.Tensor, np.ndarray]) -> (to.Tensor, np.ndarray):
     """
     The Rosenbrock function
     (consistent with https://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html)
