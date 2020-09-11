@@ -203,10 +203,10 @@ later oad your results. It will look for an environment as well as a policy file
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ex_dir</span> <span class="o">=</span> <span class="n">setup_experiment</span><span class="p">(</span><span class="n">BallOnBeamSim</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">HCNormal</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">LinearPolicy</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;ident-sin&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Additionally, you can set a seed for the random number generators. It is highly suggested to do so, if you want to
+<p>Additionally, you can set a seed for the random number generators. It is suggested to do so, if you want to
 compare changes of certain hyper-parameters to eliminate the effect of the initial state and the initial policy
 parameters (both are sampled randomly in most cases).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">1001</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Set up the environment a.k.a. domain to train in. After creating the environment, you can apply various wrappers which
@@ -260,7 +260,7 @@ algorithm has different hyper-parameters. However, they all use the same <cite>r
 <p>Save the hyper-parameters before staring the training in a YAML-file. This step is not strictly necessary, but it helps
 you to later see which hyper-parameters you used, i.e. which setting leads to a successfully trained policy.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">save_list_of_dicts_to_yaml</span><span class="p">([</span>
-    <span class="nb">dict</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="n">env_hparams</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">ex_dir</span><span class="o">.</span><span class="n">seed</span><span class="p">),</span>
+    <span class="nb">dict</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="n">env_hparams</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
     <span class="nb">dict</span><span class="p">(</span><span class="n">policy</span><span class="o">=</span><span class="n">policy_hparam</span><span class="p">),</span>
     <span class="nb">dict</span><span class="p">(</span><span class="n">algo</span><span class="o">=</span><span class="n">algo_hparam</span><span class="p">,</span> <span class="n">algo_name</span><span class="o">=</span><span class="n">algo</span><span class="o">.</span><span class="n">name</span><span class="p">)],</span>
     <span class="n">ex_dir</span>
