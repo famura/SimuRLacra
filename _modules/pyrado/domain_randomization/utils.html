@@ -205,7 +205,7 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
@@ -230,7 +230,7 @@
     <span class="k">return</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">param_values</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">pvals</span><span class="p">))</span> <span class="k">for</span> <span class="n">pvals</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">mg_flat</span><span class="p">)]</span></div>
 
 
-<div class="viewcode-block" id="print_domain_params"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.utils.print_domain_params">[docs]</a><span class="k">def</span> <span class="nf">print_domain_params</span><span class="p">(</span><span class="n">domain_params</span><span class="p">:</span> <span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]):</span>
+<div class="viewcode-block" id="print_domain_params"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.utils.print_domain_params">[docs]</a><span class="k">def</span> <span class="nf">print_domain_params</span><span class="p">(</span><span class="n">domain_params</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print a list of (domain parameter) dicts / a dict (of domain parameters) prettily.</span>
 

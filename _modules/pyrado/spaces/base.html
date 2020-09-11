@@ -210,7 +210,7 @@
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
 <span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils</span> <span class="kn">import</span> <span class="n">get_class_name</span>
@@ -307,7 +307,7 @@
         <span class="sd">&quot;&quot;&quot; Create a deep copy (recursively copy values of a compound object). &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Space.subspace"><a class="viewcode-back" href="../../../spaces.html#pyrado.spaces.base.Space.subspace">[docs]</a>    <span class="k">def</span> <span class="nf">subspace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idcs</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">slice</span><span class="p">]):</span>
+<div class="viewcode-block" id="Space.subspace"><a class="viewcode-back" href="../../../spaces.html#pyrado.spaces.base.Space.subspace">[docs]</a>    <span class="k">def</span> <span class="nf">subspace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idcs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">slice</span><span class="p">]):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Select a subspace by passing an array or a list of indices. The oder is preserved.</span>
 
@@ -364,7 +364,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="Space.cat"><a class="viewcode-back" href="../../../spaces.html#pyrado.spaces.base.Space.cat">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">cat</span><span class="p">(</span><span class="n">spaces</span><span class="p">:</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">]):</span>
+    <span class="k">def</span> <span class="nf">cat</span><span class="p">(</span><span class="n">spaces</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">]):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Concatenate a sequence of spaces in the given order. This creates a new Space object.</span>
 
