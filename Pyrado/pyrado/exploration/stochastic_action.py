@@ -25,6 +25,7 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+from typing import Union
 
 import torch as to
 import torch.nn as nn
@@ -217,7 +218,7 @@ class SACExplStrat(StochasticActionExplStrat):
         Due to the tanh transformation, it returns action values within [-1,1].
     """
 
-    def __init__(self, policy: Policy, std_init: [float, to.Tensor]):
+    def __init__(self, policy: Policy, std_init: Union[float, to.Tensor]):
         """
         Constructor
 

@@ -27,6 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os.path as osp
+from typing import Optional
+
 import numpy as np
 from init_args_serializer import Serializable
 
@@ -53,7 +55,7 @@ class HopperSim(MujocoSimEnv, Serializable):
 
     name: str = 'hop'
 
-    def __init__(self, frame_skip: int = 5, max_steps: int = 500, task_args: [dict, None] = None):
+    def __init__(self, frame_skip: int = 5, max_steps: int = 500, task_args: Optional[dict] = None):
         """
         Constructor
 

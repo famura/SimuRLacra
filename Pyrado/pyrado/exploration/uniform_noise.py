@@ -121,7 +121,7 @@ class UniformNoise(nn.Module):
             self.mean.data.zero_()
         self.log_halfspan.data.copy_(self.log_halfspan_init)
 
-    def adapt(self, mean: to.Tensor = None, halfspan: [to.Tensor, float] = None):
+    def adapt(self, mean: to.Tensor = None, halfspan: Union[to.Tensor, float] = None):
         """
         Adapt the mean and the half interval span of the noise on the action or parameters.
         Use `None` to leave one of the parameters at their current value.

@@ -28,7 +28,7 @@
 
 import numpy as np
 from copy import deepcopy
-from typing import Sequence
+from typing import Sequence, Union
 
 import pyrado
 from pyrado.utils.data_types import EnvSpec
@@ -88,7 +88,7 @@ class ParallelTasks(Task):
         return [task.state_des for task in self._tasks if hasattr(task, 'state_des')]
 
     @state_des.setter
-    def state_des(self, states_des: [list, tuple]):
+    def state_des(self, states_des: Union[list, tuple]):
         """ Set all desired states from a list of desired states. """
         if not isinstance(states_des, (list, tuple)):
             # Explicitly require to use a list or tuple to avoid setting just one desired state

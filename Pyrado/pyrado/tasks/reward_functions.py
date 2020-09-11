@@ -28,7 +28,7 @@
 
 import numpy as np
 from abc import ABC, abstractmethod
-from typing import Callable, Sequence
+from typing import Callable, Sequence, Union
 
 import pyrado
 from pyrado.spaces.base import Space
@@ -171,7 +171,7 @@ class AbsErrRewFcn(RewFcn):
 class QuadrErrRewFcn(RewFcn):
     """ Reward function that returns the exp of the weighted sum of squared errors. """
 
-    def __init__(self, Q: [np.ndarray, list], R: [np.ndarray, list]):
+    def __init__(self, Q: Union[np.ndarray, list], R: Union[np.ndarray, list]):
         """
         Constructor
 
@@ -217,7 +217,7 @@ class QuadrErrRewFcn(RewFcn):
 class ExpQuadrErrRewFcn(QuadrErrRewFcn):
     """ Reward function that returns the exp of the weighted sum of squared errors """
 
-    def __init__(self, Q: [np.ndarray, list], R: [np.ndarray, list]):
+    def __init__(self, Q: Union[np.ndarray, list], R: Union[np.ndarray, list]):
         """
         Constructor
 

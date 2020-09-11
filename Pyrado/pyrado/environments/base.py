@@ -25,6 +25,7 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+from typing import Optional, Union
 
 import numpy as np
 from abc import ABC, abstractmethod
@@ -43,7 +44,7 @@ class Env(ABC, Serializable):
 
     name: str = None  # unique identifier
 
-    def __init__(self, dt: [float, None], max_steps: int = pyrado.inf):
+    def __init__(self, dt: Optional[float], max_steps: int = pyrado.inf):
         """
         Constructor
 
@@ -97,7 +98,7 @@ class Env(ABC, Serializable):
         return self._dt
 
     @dt.setter
-    def dt(self, dt: [int, float]):
+    def dt(self, dt: Union[int, float]):
         """ Set the time step size. """
         if not dt > 0:
             raise pyrado.ValueErr(given=dt, g_constraint='0')
@@ -119,7 +120,7 @@ class Env(ABC, Serializable):
         return self._max_steps
 
     @max_steps.setter
-    def max_steps(self, num_steps: [int, float]):
+    def max_steps(self, num_steps: Union[int, float]):
         """
         Set the maximal number of dynamic steps in the environment
 

@@ -31,7 +31,7 @@ import sys
 import torch as to
 import torch.nn as nn
 from tqdm import tqdm
-from typing import Sequence
+from typing import Sequence, Union
 from contextlib import ExitStack
 
 import pyrado
@@ -121,7 +121,7 @@ class GAE(LoggerAware, nn.Module):
         return self._value_fcn
 
     @value_fcn.setter
-    def value_fcn(self, value_fcn: [nn.Module, Policy]):
+    def value_fcn(self, value_fcn: Union[nn.Module, Policy]):
         """ Set the value function approximator. """
         if not isinstance(value_fcn, (nn.Module, Policy)):
             raise pyrado.TypeErr(given=value_fcn, expected_type=[nn.Module, Policy])

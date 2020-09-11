@@ -28,7 +28,7 @@
 
 import numpy as np
 from copy import deepcopy
-from typing import Sequence
+from typing import Sequence, Union
 from tabulate import tabulate
 
 import pyrado
@@ -53,7 +53,7 @@ def param_grid(param_values: dict) -> list:
     return [dict(zip(param_values.keys(), pvals)) for pvals in zip(*mg_flat)]
 
 
-def print_domain_params(domain_params: [dict, Sequence[dict]]):
+def print_domain_params(domain_params: Union[dict, Sequence[dict]]):
     """
     Print a list of (domain parameter) dicts / a dict (of domain parameters) prettily.
 

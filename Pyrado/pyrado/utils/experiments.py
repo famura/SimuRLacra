@@ -30,7 +30,7 @@ import os.path as osp
 import joblib
 import pandas as pd
 import torch as to
-from typing import Callable, Any, Optional
+from typing import Callable, Any, Optional, Union
 
 import pyrado
 from pyrado.algorithms.a2c import A2C
@@ -61,7 +61,7 @@ from pyrado.policies.base import Policy
 from pyrado.utils.input_output import print_cbt
 
 
-def load_experiment(ex_dir: str, args: Any = None) -> ([SimEnv, EnvWrapper], Policy, Optional[dict]):
+def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper], Policy, Optional[dict]):
     """
     Load the (training) environment and the policy.
     This helper function first tries to read the hyper-parameters yaml-file in the experiment's directory to infer

@@ -27,6 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import math
+from typing import Union
+
 import torch as to
 import torch.nn as nn
 from torch.distributions import Normal, MultivariateNormal
@@ -119,7 +121,7 @@ class DiagNormalNoise(nn.Module):
             self.mean.data.zero_()
         self.log_std.data.copy_(self.log_std_init)
 
-    def adapt(self, mean: to.Tensor = None, std: [to.Tensor, float] = None):
+    def adapt(self, mean: to.Tensor = None, std: Union[to.Tensor, float] = None):
         """
         Adapt the mean and the variance of the noise on the action or parameters.
         Use `None` to leave one of the parameters at their current value.
@@ -242,7 +244,7 @@ class FullNormalNoise(nn.Module):
             self.mean.data.zero_()
         self.cov.data.copy_(self.cov_init)
 
-    def adapt(self, mean: to.Tensor = None, cov: [to.Tensor, float] = None):
+    def adapt(self, mean: to.Tensor = None, cov: Union[to.Tensor, float] = None):
         """
         Adapt the mean and the variance of the noise on the action or parameters.
         Use `None` to leave one of the parameters at their current value.

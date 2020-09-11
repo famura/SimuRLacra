@@ -28,7 +28,7 @@
 
 import numpy as np
 from tabulate import tabulate
-from typing import Sequence
+from typing import Sequence, Union
 
 import pyrado
 from pyrado.spaces.base import Space
@@ -38,7 +38,7 @@ from pyrado.utils.input_output import color_validity
 class DiscreteSpace(Space):
     """ Discrete space implemented as a ndarray containing all possible integer-valued elements (unsorted) """
 
-    def __init__(self, eles: [np.ndarray, list], labels: Sequence[str] = None):
+    def __init__(self, eles: Union[np.ndarray, list], labels: Sequence[str] = None):
         """
         Constructor
 
@@ -122,7 +122,7 @@ class DiscreteSpace(Space):
             return ele
 
     @staticmethod
-    def cat(spaces: [list, tuple]):
+    def cat(spaces: Union[list, tuple]):
         """
         Concatenate multiple instances of `DiscreteSpace`.
 

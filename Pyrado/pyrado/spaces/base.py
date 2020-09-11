@@ -33,7 +33,7 @@ from colorama import Style
 from copy import deepcopy
 from functools import reduce
 from tabulate import tabulate
-from typing import Tuple
+from typing import Tuple, Union
 
 import pyrado
 from pyrado.utils import get_class_name
@@ -130,7 +130,7 @@ class Space(ABC):
         """ Create a deep copy (recursively copy values of a compound object). """
         return deepcopy(self)
 
-    def subspace(self, idcs: [np.ndarray, int, slice]):
+    def subspace(self, idcs: Union[np.ndarray, int, slice]):
         """
         Select a subspace by passing an array or a list of indices. The oder is preserved.
 
@@ -187,7 +187,7 @@ class Space(ABC):
         raise NotImplementedError
 
     @staticmethod
-    def cat(spaces: [list, tuple]):
+    def cat(spaces: Union[list, tuple]):
         """
         Concatenate a sequence of spaces in the given order. This creates a new Space object.
 

@@ -25,6 +25,7 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+from typing import Union
 
 import joblib
 import os.path as osp
@@ -45,7 +46,7 @@ from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt
 
 
-def sim_policy_fixed_env(env: SimEnv, policy: Policy, domain_param: [dict, list]):
+def sim_policy_fixed_env(env: SimEnv, policy: Policy, domain_param: Union[dict, list]):
     """
     Simulate (with animation) a rollout in a environment with fixed domain parameters.
 

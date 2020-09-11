@@ -28,7 +28,7 @@
 
 import numpy as np
 from tabulate import tabulate
-from typing import Sequence
+from typing import Sequence, Union
 
 import pyrado
 from pyrado.spaces.base import Space
@@ -91,7 +91,7 @@ class BoxSpace(Space):
     def labels(self) -> np.ndarray:
         return self._labels
 
-    def subspace(self, idcs: [np.ndarray, int, slice]):
+    def subspace(self, idcs: Union[np.ndarray, int, slice]):
         if not isinstance(idcs, np.ndarray) or idcs.dtype != np.dtype(np.bool_):
             # Interpret as index list
             mask = self.create_mask(idcs)
@@ -177,7 +177,7 @@ class BoxSpace(Space):
             return ele
 
     @staticmethod
-    def cat(spaces: [list, tuple]):
+    def cat(spaces: Union[list, tuple]):
         """
         Concatenate BoxSpaces.
 

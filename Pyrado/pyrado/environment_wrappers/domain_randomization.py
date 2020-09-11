@@ -28,7 +28,7 @@
 
 import numpy as np
 from init_args_serializer import Serializable
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional, Union, Mapping
 
 import pyrado
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
@@ -41,7 +41,7 @@ from pyrado.utils.input_output import print_cbt
 class DomainRandWrapper(EnvWrapper, Serializable):
     """ Base class for environment wrappers which call a `DomainRandomizer` to randomize the domain parameters """
 
-    def __init__(self, wrapped_env: [SimEnv, EnvWrapper], randomizer: [DomainRandomizer, None]):
+    def __init__(self, wrapped_env: Union[SimEnv, EnvWrapper], randomizer: Optional[DomainRandomizer, None]):
         """
         Constructor
 
@@ -79,7 +79,7 @@ class MetaDomainRandWrapper(DomainRandWrapper, Serializable):
     called domain distribution parameters.
     """
 
-    def __init__(self, wrapped_rand_env: [DomainRandWrapper], mapping: Dict[int, Tuple[str, str]]):
+    def __init__(self, wrapped_rand_env: DomainRandWrapper, mapping: Mapping[int, Tuple[str, str]]):
         """
         Constructor
 
