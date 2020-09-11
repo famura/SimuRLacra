@@ -25,3 +25,21 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+
+import numpy as np
+
+from pyrado.spaces import BoxSpace
+
+
+# 4 DoF arm, 2 DoF actuated
+act_min_wam_4dof = np.array([-1.985, -0.9, -10*np.pi, -10*np.pi])
+act_max_wam_4dof = np.array([1.985, np.pi, 10*np.pi, 10*np.pi])
+labels_4dof = [r'$q_{1,des}$', r'$q_{3,des}$', r'$\dot{q}_{1,des}$', r'$\dot{q}_{3,des}$']
+act_space_wam_4dof = BoxSpace(act_min_wam_4dof, act_max_wam_4dof, labels=labels_4dof)
+
+# 7 DoF arm, 3 DoF actuated
+act_min_wam_7dof = np.array([-1.985, -0.9, -np.pi/2, -10*np.pi, -10*np.pi, -10*np.pi])
+act_max_wam_7dof = np.array([1.985, np.pi, np.pi/2, 10*np.pi, 10*np.pi, 10*np.pi])
+labels_7dof = [r'$q_{1,des}$', r'$q_{3,des}$', r'$q_{5,des}$',
+               r'$\dot{q}_{1,des}$', r'$\dot{q}_{3,des}$', r'$\dot{q}_{5,des}$']
+act_space_wam_7dof = BoxSpace(act_min_wam_7dof, act_max_wam_7dof, labels=labels_7dof)

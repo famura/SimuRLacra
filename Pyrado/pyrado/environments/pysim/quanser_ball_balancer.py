@@ -35,6 +35,7 @@ from init_args_serializer.serializable import Serializable
 import pyrado
 from matplotlib import pyplot as plt
 from pyrado.environments.pysim.base import SimPyEnv
+from pyrado.environments.quanser import max_act_qbb
 from pyrado.spaces.box import BoxSpace
 from pyrado.spaces.polar import Polar2DPosVelSpace
 from pyrado.tasks.base import Task
@@ -93,7 +94,6 @@ class QBallBalancerSim(SimPyEnv, Serializable):
                               5*np.pi, 5*np.pi, 0.5, 0.5])  # ... rad/s, rad/s, m/s, m/s]
         min_init_state = np.array([0.75*l_plate/2, -np.pi, -0.05*max_state[6], -0.05*max_state[7]])
         max_init_state = np.array([0.8*l_plate/2, np.pi, 0.05*max_state[6], 0.05*max_state[7]])
-        max_act = np.array([3.0, 3.0])  # [V]
 
         self._state_space = BoxSpace(-max_state, max_state,
                                      labels=[r'$\theta_x$', r'$\theta_y$', '$x$', '$y$',
@@ -101,9 +101,9 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         self._obs_space = self._state_space.copy()
         self._init_space = Polar2DPosVelSpace(min_init_state, max_init_state,
                                               labels=['$r$', r'$\phi$', '$\dot{x}$', '$\dot{y}$'])
-        self._act_space = BoxSpace(-max_act, max_act, labels=['$V_x$', '$V_y$'])
+        self._act_space = BoxSpace(-max_act_qbb, max_act_qbb, labels=['$V_x$', '$V_y$'])
 
-        self._curr_act = np.zeros_like(max_act)  # just for usage in render function
+        self._curr_act = np.zeros_like(max_act_qbb)  # just for usage in render function
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function

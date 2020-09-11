@@ -32,6 +32,7 @@ from abc import abstractmethod
 from init_args_serializer.serializable import Serializable
 
 from pyrado.environments.pysim.base import SimPyEnv
+from pyrado.environments.quanser import max_act_qq
 from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
@@ -59,8 +60,7 @@ class QQubeSim(SimPyEnv, Serializable):
                     Dr=5e-6,  # rotary arm viscous damping [N*m*s/rad], original: 0.0015, identified: 5e-6
                     Mp=0.024,  # pendulum link mass [kg]
                     Lp=0.129,  # pendulum link length [m]
-                    Dp=1e-6,  # pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6
-                    max_volt=4.)  # max action [V]
+                    Dp=1e-6)  # pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6
 
     def _calc_constants(self):
         Mr = self.domain_param['Mr']
@@ -220,8 +220,6 @@ class QQubeSwingUpSim(QQubeSim):
     name: str = 'qq-su'
 
     def _create_spaces(self):
-        max_volt = self.domain_param['max_volt']
-
         # Define the spaces
         max_state = np.array([115./180*np.pi, 4*np.pi, 20*np.pi, 20*np.pi])  # [rad, rad, rad/s, rad/s]
         max_obs = np.array([1., 1., 1., 1., np.inf, np.inf])  # [-, -, -, -, rad/s, rad/s]
@@ -234,7 +232,7 @@ class QQubeSwingUpSim(QQubeSim):
                                            r'$\dot{\theta}$', r'$\dot{\alpha}$'])
         self._init_space = BoxSpace(-max_init_state, max_init_state,
                                     labels=[r'$\theta$', r'$\alpha$', r'$\dot{\theta}$', r'$\dot{\alpha}$'])
-        self._act_space = BoxSpace(-max_volt, max_volt, labels=['$V$'])
+        self._act_space = BoxSpace(-max_act_qq, max_act_qq, labels=['$V$'])
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
@@ -267,8 +265,6 @@ class QQubeStabSim(QQubeSim):
     name: str = 'qq-st'
 
     def _create_spaces(self):
-        max_volt = self.domain_param['max_volt']
-
         # Define the spaces
         max_state = np.array([120./180*np.pi, 4*np.pi, 20*np.pi, 20*np.pi])  # [rad, rad, rad/s, rad/s]
         min_init_state = np.array([-5./180*np.pi, 175./180*np.pi, 0, 0])  # [rad, rad, rad/s, rad/s]
@@ -279,7 +275,7 @@ class QQubeStabSim(QQubeSim):
         self._obs_space = self._state_space
         self._init_space = BoxSpace(min_init_state, max_init_state,
                                     labels=[r'$\theta$', r'$\alpha$', r'$\dot{\theta}$', r'$\dot{\alpha}$'])
-        self._act_space = BoxSpace(-max_volt, max_volt, labels=['$V$'])
+        self._act_space = BoxSpace(-max_act_qq, max_act_qq, labels=['$V$'])
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function

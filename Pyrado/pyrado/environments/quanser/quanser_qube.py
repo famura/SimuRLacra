@@ -31,6 +31,7 @@ import torch as to
 from init_args_serializer import Serializable
 
 import pyrado
+from pyrado.environments.quanser import max_act_qq
 from pyrado.environments.quanser.base import QuanserReal
 from pyrado.policies.environment_specific import QQubePDCtrl, QQubeGoToLimCtrl
 from pyrado.spaces.box import BoxSpace
@@ -77,13 +78,12 @@ class QQubeReal(QuanserReal, Serializable):
         # Define the spaces
         max_state = np.array([120./180*np.pi, 4*np.pi, 20*np.pi, 20*np.pi])  # [rad, rad, rad/s, rad/s]
         max_obs = np.array([1., 1., 1., 1., pyrado.inf, pyrado.inf])  # [-, -, -, -, rad/s, rad/s]
-        max_act = np.array([4.])  # should be the same as QQubeSim [V]
         self._state_space = BoxSpace(-max_state, max_state,
                                      labels=[r'$\theta$', r'$\alpha$', r'$\dot{\theta}$', r'$\dot{\alpha}$'])
         self._obs_space = BoxSpace(-max_obs, max_obs,
                                    labels=[r'$\sin\theta$', r'$\cos\theta$', r'$\sin\alpha$', r'$\cos\alpha$',
                                            r'$\dot{\theta}$', r'$\dot{\alpha}$'])
-        self._act_space = BoxSpace(-max_act, max_act, labels=['$V$'])
+        self._act_space = BoxSpace(-max_act_qq, max_act_qq, labels=['$V$'])
 
     @property
     def task(self) -> Task:

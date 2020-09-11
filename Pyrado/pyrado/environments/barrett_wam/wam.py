@@ -32,6 +32,7 @@ import robcom_python as robcom
 from init_args_serializer import Serializable
 
 import pyrado
+from pyrado.environments.barrett_wam import act_space_wam_7dof, act_space_wam_4dof
 from pyrado.environments.real_base import RealEnv
 from pyrado.spaces import BoxSpace
 from pyrado.spaces.base import Space
@@ -134,18 +135,11 @@ class WAMBallInCupReal(RealEnv, Serializable):
         # State space (normalized time, since we do not have a simulation)
         self._state_space = BoxSpace(np.array([0.]), np.array([1.]))
 
-        # Action space (PD controller on 3 joint positions and velocities)
+        # Action space (PD controller on joint positions and velocities)
         if self.num_dof == 4:
-            labels = [r'$q_{1,des}$', r'$q_{3,des}$', r'$\dot{q}_{1,des}$', r'$\dot{q}_{3,des}$']
-            act_up = np.array([1.985, np.pi, 10*np.pi, 10*np.pi])
-            act_lo = np.array([-1.985, -0.9, -10*np.pi, -10*np.pi])
-            self._act_space = BoxSpace(act_lo, act_up, labels=labels)
+            self._act_space = act_space_wam_4dof
         elif self.num_dof == 7:
-            labels = [r'$q_{1,des}$', r'$q_{3,des}$', r'$q_{5,des}$',
-                      r'$\dot{q}_{1,des}$', r'$\dot{q}_{3,des}$', r'$\dot{q}_{5,des}$']
-            act_up = np.array([1.985, np.pi, np.pi/2, 10*np.pi, 10*np.pi, 10*np.pi])
-            act_lo = np.array([-1.985, -0.9, -np.pi/2, -10*np.pi, -10*np.pi, -10*np.pi])
-            self._act_space = BoxSpace(act_lo, act_up, labels=labels)
+            self._act_space = act_space_wam_7dof
 
         # Observation space (normalized time)
         self._obs_space = BoxSpace(np.array([0.]), np.array([1.]), labels=['$t$'])

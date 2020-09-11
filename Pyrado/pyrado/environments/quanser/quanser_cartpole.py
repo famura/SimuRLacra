@@ -32,6 +32,7 @@ from abc import abstractmethod
 from init_args_serializer import Serializable
 
 import pyrado
+from pyrado.environments.quanser import max_act_qcp
 from pyrado.environments.quanser.base import QuanserReal
 from pyrado.policies.environment_specific import QCartPoleGoToLimCtrl
 from pyrado.spaces.box import BoxSpace
@@ -76,10 +77,9 @@ class QCartPoleReal(QuanserReal, Serializable):
         # Define the spaces
         self._state_space = None  # needs to be set in subclasses
         max_obs = np.array([0.814/2., 1., 1., pyrado.inf, pyrado.inf])
-        max_act = np.array([8.])  # [V], original: 24
         self._obs_space = BoxSpace(-max_obs, max_obs,
                                    labels=['$x$', r'$\sin\theta$', r'$\cos\theta$', r'$\dot{x}$', r'$\dot{\theta}$'])
-        self._act_space = BoxSpace(-max_act, max_act, labels=['$V$'])
+        self._act_space = BoxSpace(-max_act_qcp, max_act_qcp, labels=['$V$'])
 
     @abstractmethod
     def _create_task(self, task_args: dict):

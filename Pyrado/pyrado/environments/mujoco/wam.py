@@ -32,6 +32,7 @@ import os.path as osp
 from init_args_serializer import Serializable
 
 import pyrado
+from pyrado.environments.barrett_wam import act_space_wam_4dof, act_space_wam_7dof
 from pyrado.spaces.base import Space
 from pyrado.spaces.singular import SingularStateSpace
 from pyrado.tasks.base import Task
@@ -248,19 +249,11 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         max_torque = np.array([150.0, 125.0, 40.0, 60.0, 5.0, 5.0, 2.0])[:self.num_dof]
         self._torque_space = BoxSpace(-max_torque, max_torque)
 
-        # Action space (PD controller on 3 joint positions and velocities)
+        # Action space (PD controller on joint positions and velocities)
         if self.num_dof == 4:
-            act_labels = [r'$q_{1,des}$', r'$q_{3,des}$', r'$\dot{q}_{1,des}$', r'$\dot{q}_{3,des}$']
-            act_up = np.array([1.985, np.pi, 10*np.pi, 10*np.pi])
-            act_lo = np.array([-1.985, -0.9, -10*np.pi, -10*np.pi])
-            self._act_space = BoxSpace(act_lo, act_up, labels=act_labels)
-
+            self._act_space = act_space_wam_4dof
         elif self.num_dof == 7:
-            act_labels = [r'$q_{1,des}$', r'$q_{3,des}$', r'$q_{5,des}$',
-                          r'$\dot{q}_{1,des}$', r'$\dot{q}_{3,des}$', r'$\dot{q}_{5,des}$']
-            act_up = np.array([1.985, np.pi, np.pi/2, 10*np.pi, 10*np.pi, 10*np.pi])
-            act_lo = np.array([-1.985, -0.9, -np.pi/2, -10*np.pi, -10*np.pi, -10*np.pi])
-            self._act_space = BoxSpace(act_lo, act_up, labels=act_labels)
+            self._act_space = act_space_wam_7dof
 
         # Observation space (normalized time)
         self._obs_space = BoxSpace(np.array([0.]), np.array([1.]), labels=['$t$'])
@@ -385,9 +378,9 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         err_pos = qpos_des - self.state[:self.num_dof]
         err_vel = qvel_des - self.state[self.model.nq:self.model.nq + self.num_dof]
 
-        # Compute the torques (PD controller)
+        # Compute the torques for the PD controller and clip them to their max values
         torque = self.p_gains*err_pos + self.d_gains*err_vel
-        torque = self.torque_space.project_to(torque)
+        torque = self._torque_space.project_to(torque)
 
         # Apply the torques to the robot
         self.sim.data.qfrc_applied[:self.num_dof] = torque
