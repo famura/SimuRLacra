@@ -45,7 +45,7 @@ from pyrado.algorithms.reps import REPS
 from pyrado.algorithms.sac import SAC
 from pyrado.algorithms.spota import SPOTA
 from pyrado.algorithms.svpg import SVPG
-from pyrado.algorithms.sysid_as_rl import DomainDistrParamPolicy, SysIdByEpisodicRL
+from pyrado.algorithms.sysid_via_episodic_rl import DomainDistrParamPolicy, SysIdViaEpisodicRL
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper

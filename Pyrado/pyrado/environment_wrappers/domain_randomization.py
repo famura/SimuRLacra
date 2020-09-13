@@ -41,7 +41,7 @@ from pyrado.utils.input_output import print_cbt
 class DomainRandWrapper(EnvWrapper, Serializable):
     """ Base class for environment wrappers which call a `DomainRandomizer` to randomize the domain parameters """
 
-    def __init__(self, wrapped_env: Union[SimEnv, EnvWrapper], randomizer: Optional[DomainRandomizer, None]):
+    def __init__(self, wrapped_env: Union[SimEnv, EnvWrapper], randomizer: Optional[DomainRandomizer]):
         """
         Constructor
 
