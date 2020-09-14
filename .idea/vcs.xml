@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Rcs" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/thirdParty/catch2" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/thirdParty/eigen3" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/thirdParty/mujoco-py" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/thirdParty/pybind11" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/thirdParty/pybind11/tools/clang" vcs="Git" />
+  </component>
+</project>
