@@ -38,7 +38,7 @@ RUN apt-get update && apt-get install -y \
     gcc g++ make cmake zlib1g-dev swig libsm6 libxext6 \
     build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
     wget llvm libncurses5-dev xz-utils tk-dev libxrender1\
-    libxml2-dev libxmlsec1-dev libffi-dev libcairo2-dev libjpeg-dev libgif-dev chromium-browser
+    libxml2-dev libxmlsec1-dev libffi-dev libcairo2-dev libjpeg-dev libgif-dev chromium-browser doxygen graphviz
 
 RUN adduser --disabled-password --gecos '' --shell /bin/bash user && chown -R user:user /home/user
 RUN echo 'user ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/90-pyrado
@@ -54,7 +54,7 @@ ENV PATH /home/user/miniconda3/bin:$PATH
 RUN conda update conda \
  && conda update --all
 
-COPY --chown=user:user . SimuRLacra
+COPY --chown=user:user setup_env.sh SimuRLacra
 
 WORKDIR /home/user/SimuRLacra
 RUN bash setup_env.sh
@@ -63,10 +63,10 @@ SHELL ["conda", "run", "-n", "pyrado", "/bin/bash", "-c"]
 RUN echo "export PATH=/home/user/miniconda3/bin:$PATH" >> ~/.bashrc
 RUN echo "conda activate pyrado" >> ~/.bashrc
 
-# Option Sacher (pip compiles PyTorch with CUDA support; we are not using torchvision)
-RUN python setup_deps.py dep_libraries -j8
+COPY --chown=user:user . .
+
 RUN pip install torch==1.4.0
-RUN python setup_deps.py w_rcs_wo_pytorch -j8
+RUN python setup_deps.py wo_rcs_wo_pytorch -j8
 
 ENV PATH /opt/conda/envs/pyrado/bin:$PATH
 ENV PYTHONPATH /home/user/SimuRLacra/RcsPySim/build/lib:/home/user/SimuRLacra/Pyrado/:$PYTHONPATH
