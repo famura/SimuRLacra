@@ -1,0 +1,734 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>tests.test_utils &mdash; Pyrado 0.2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/3_algorithm.html">How to create an algorithm</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Package Overview:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../domain_randomization.html">domain_randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments.rcspysim.html">rcspysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environment_wrappers.html">environment_wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../exploration.html">exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../logger.html">logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plotting.html">plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sampling.html">sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../spaces.html">spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tasks.html">tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tests.html">tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>tests.test_utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tests.test_utils</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">ceil</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">pyrado.sampling.utils</span> <span class="kn">import</span> <span class="n">gen_batch_idcs</span><span class="p">,</span> <span class="n">gen_ordered_batch_idcs</span><span class="p">,</span> <span class="n">gen_ordered_batches</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.functions</span> <span class="kn">import</span> <span class="n">noisy_nonlin_fcn</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">completion_context</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.math</span> <span class="kn">import</span> <span class="n">cosine_similarity</span><span class="p">,</span> <span class="n">cov</span><span class="p">,</span> <span class="n">rmse</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.pysim.ball_on_beam</span> <span class="kn">import</span> <span class="n">BallOnBeamSim</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.dummy</span> <span class="kn">import</span> <span class="n">DummyPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.nn_layers</span> <span class="kn">import</span> <span class="n">IndiNonlinLayer</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.optimizers</span> <span class="kn">import</span> <span class="n">GSS</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.averaging</span> <span class="kn">import</span> <span class="n">RunningExpDecayingAverage</span><span class="p">,</span> <span class="n">RunningMemoryAverage</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_processing</span> <span class="kn">import</span> <span class="n">RunningStandardizer</span><span class="p">,</span> <span class="n">Standardizer</span><span class="p">,</span> <span class="n">scale_min_max</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_processing</span> <span class="kn">import</span> <span class="n">RunningNormalizer</span><span class="p">,</span> <span class="n">normalize</span>
+
+
+<div class="viewcode-block" id="test_cov"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_cov">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;x, data_along_rows&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;100_4&#39;</span><span class="p">,</span> <span class="s1">&#39;4_100&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_cov</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">data_along_rows</span><span class="p">):</span>
+    <span class="n">rowvar</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">data_along_rows</span>
+    <span class="n">cov_np</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">rowvar</span><span class="o">=</span><span class="n">rowvar</span><span class="p">)</span>
+    <span class="n">cov_pyrado</span> <span class="o">=</span> <span class="n">cov</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">data_along_rows</span><span class="o">=</span><span class="n">data_along_rows</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">cov_pyrado</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">cov_pyrado</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">data_along_rows</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">cov_np</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">cov_pyrado</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">cov_np</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">cov_pyrado</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">cov_np</span><span class="p">,</span> <span class="n">cov_pyrado</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_concat_rollouts"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_concat_rollouts">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;env, expl_strat&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">BallOnBeamSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">),</span>
+         <span class="n">DummyPolicy</span><span class="p">(</span><span class="n">BallOnBeamSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">spec</span><span class="p">)),</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob_dummy&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_concat_rollouts</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">expl_strat</span><span class="p">):</span>
+    <span class="n">ro1</span> <span class="o">=</span> <span class="n">rollout</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">expl_strat</span><span class="p">)</span>
+    <span class="n">ro2</span> <span class="o">=</span> <span class="n">rollout</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">expl_strat</span><span class="p">)</span>
+    <span class="n">ro_cat</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">ro1</span><span class="p">,</span> <span class="n">ro2</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ro_cat</span><span class="p">,</span> <span class="n">StepSequence</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">ro_cat</span><span class="o">.</span><span class="n">length</span> <span class="o">==</span> <span class="n">ro1</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="n">ro2</span><span class="o">.</span><span class="n">length</span></div>
+
+
+<div class="viewcode-block" id="test_cosine_similarity"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_cosine_similarity">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;x, y&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">])),</span>
+        <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1e12</span><span class="p">,</span> <span class="mf">1.</span><span class="p">])),</span>
+        <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">3.</span><span class="p">])),</span>
+        <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">])),</span>
+        <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.</span><span class="p">])),</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;same&#39;</span><span class="p">,</span> <span class="s1">&#39;similarity_1&#39;</span><span class="p">,</span> <span class="s1">&#39;similarity_0&#39;</span><span class="p">,</span> <span class="s1">&#39;colinear_scaled&#39;</span><span class="p">,</span> <span class="s1">&#39;colinear_opposite&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_cosine_similarity</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="c1"># Only tested for vector inputs</span>
+    <span class="n">d_cos</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d_cos</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+    <span class="c1"># The examples are chosen to result in 0, 1, or -1</span>
+    <span class="k">assert</span> <span class="n">to</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">d_cos</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.</span><span class="p">))</span> <span class="ow">or</span> <span class="n">to</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">d_cos</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.</span><span class="p">))</span> <span class="ow">or</span> <span class="n">to</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">d_cos</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="o">-</span><span class="mf">1.</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="test_rmse"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_rmse">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;numpy&#39;</span><span class="p">,</span> <span class="s1">&#39;torch&#39;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;numpy&#39;</span><span class="p">,</span> <span class="s1">&#39;torch&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;dim&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;dim0&#39;</span><span class="p">,</span> <span class="s1">&#39;dim1&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_rmse</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="mi">21</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;numpy&#39;</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">rmse</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;numpy&#39;</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_merge_lod_var_dtype"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_merge_lod_var_dtype">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;x, y&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">({</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}),</span>
+        <span class="p">({</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}),</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;disjoint&#39;</span><span class="p">,</span> <span class="s1">&#39;overlapping&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_merge_lod_var_dtype</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">merge_lod_var_dtype</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">z</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">z</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># disjoint</span>
+        <span class="k">assert</span> <span class="n">z</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">z</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>  <span class="c1"># overlapping</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="kc">False</span>
+    <span class="k">assert</span> <span class="n">z</span><span class="p">[</span><span class="s1">&#39;d&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span></div>
+
+
+<div class="viewcode-block" id="test_gen_batch_idcs"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_gen_batch_idcs">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;batch_size, data_size&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">29</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">28</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;division_mod0&#39;</span><span class="p">,</span> <span class="s1">&#39;division_mod1&#39;</span><span class="p">,</span> <span class="s1">&#39;division_mod2&#39;</span><span class="p">,</span> <span class="s1">&#39;edge_case&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;sorted&#39;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sorted&#39;</span><span class="p">,</span> <span class="s1">&#39;unsorted&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_gen_batch_idcs</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">data_size</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">):</span>
+    <span class="n">generator</span> <span class="o">=</span> <span class="n">gen_batch_idcs</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">data_size</span><span class="p">)</span>
+    <span class="n">unordered_batches</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">generator</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">unordered_batches</span><span class="p">)</span> <span class="o">==</span> <span class="n">ceil</span><span class="p">(</span><span class="n">data_size</span><span class="o">/</span><span class="n">batch_size</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">uob</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">batch_size</span> <span class="k">for</span> <span class="n">uob</span> <span class="ow">in</span> <span class="n">unordered_batches</span><span class="p">)</span>
+
+    <span class="n">generator</span> <span class="o">=</span> <span class="n">gen_ordered_batch_idcs</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">data_size</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">)</span>
+    <span class="n">ordered_batches</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">generator</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ordered_batches</span><span class="p">)</span> <span class="o">==</span> <span class="n">ceil</span><span class="p">(</span><span class="n">data_size</span><span class="o">/</span><span class="n">batch_size</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ob</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">batch_size</span> <span class="k">for</span> <span class="n">ob</span> <span class="ow">in</span> <span class="n">ordered_batches</span><span class="p">)</span>
+    <span class="c1"># Check if each mini-batch is sorted</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="n">ob</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">ob</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ob</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">ob</span> <span class="ow">in</span> <span class="n">ordered_batches</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_gen_ordered_batches"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_gen_ordered_batches">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;data, batch_size&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">)),</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)),</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;division_mod0&#39;</span><span class="p">,</span> <span class="s1">&#39;division_mod1&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_gen_ordered_batches</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">ceil</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">/</span><span class="n">batch_size</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gen_ordered_batches</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">==</span> <span class="n">batch_size</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">batch_size</span></div>
+
+
+<div class="viewcode-block" id="test_normalize"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_normalize">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;dtype&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;torch&#39;</span><span class="p">,</span> <span class="s1">&#39;numpy&#39;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;to&#39;</span><span class="p">,</span> <span class="s1">&#39;np&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;axis&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ax_0&#39;</span><span class="p">,</span> <span class="s1">&#39;ax_1&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_normalize</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">axis</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s1">&#39;torch&#39;</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">x_norm</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x_norm</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="n">x_norm</span> <span class="o">=</span> <span class="n">x_norm</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>  <span class="c1"># for easier checking with pytest.approx</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x_norm</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">1.</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_scale_min_max"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_scale_min_max">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;dtype&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;torch&#39;</span><span class="p">,</span> <span class="s1">&#39;numpy&#39;</span><span class="p">,</span> <span class="s1">&#39;mixed&#39;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;to&#39;</span><span class="p">,</span> <span class="s1">&#39;np&#39;</span><span class="p">,</span> <span class="s1">&#39;mixed&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;lb, ub&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">(</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lb0_ub1&#39;</span><span class="p">,</span> <span class="s1">&#39;lb-1_ub1&#39;</span><span class="p">,</span> <span class="s1">&#39;lb-2.5_ub0&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_scale_min_max</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s1">&#39;torch&#39;</span><span class="p">:</span>
+            <span class="n">bound_lo</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">lb</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">bound_up</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">ub</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s1">&#39;numpy&#39;</span><span class="p">:</span>
+            <span class="n">bound_lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lb</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">bound_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ub</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bound_lo</span> <span class="o">=</span> <span class="n">lb</span>
+            <span class="n">bound_up</span> <span class="o">=</span> <span class="n">ub</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s1">&#39;torch&#39;</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">x_scaled</span> <span class="o">=</span> <span class="n">scale_min_max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bound_lo</span><span class="p">,</span> <span class="n">bound_up</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="n">x_scaled</span> <span class="o">=</span> <span class="n">x_scaled</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>  <span class="c1"># for easier checking with pytest.approx</span>
+            <span class="n">bound_lo</span> <span class="o">=</span> <span class="n">bound_lo</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+            <span class="n">bound_up</span> <span class="o">=</span> <span class="n">bound_up</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">bound_lo</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">x_scaled</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">x_scaled</span> <span class="o">&lt;=</span> <span class="n">bound_up</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x_scaled</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="test_running_standardizer"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_running_standardizer">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;data_seq, axis&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">])],</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">])],</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">])],</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">])],</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="p">(</span>
+            <span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]),</span>
+             <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">10.</span><span class="p">,</span> <span class="o">-</span><span class="mf">20.</span><span class="p">,</span> <span class="mf">20.</span><span class="p">])],</span>
+            <span class="mi">0</span><span class="p">),</span>
+        <span class="p">(</span>
+            <span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]),</span>
+             <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">10.</span><span class="p">,</span> <span class="o">-</span><span class="mf">20.</span><span class="p">,</span> <span class="mf">20.</span><span class="p">])],</span>
+            <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="p">(</span>
+            <span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span>
+             <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">10.</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">])],</span>
+            <span class="mi">0</span><span class="p">),</span>
+        <span class="p">(</span>
+            <span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span>
+             <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">10.</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">])],</span>
+            <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;np_same_length_0&#39;</span><span class="p">,</span> <span class="s1">&#39;np_same_length_None&#39;</span><span class="p">,</span> <span class="s1">&#39;np_mixed_length_0&#39;</span><span class="p">,</span> <span class="s1">&#39;np_mixed_length_None&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;to_same_length_0&#39;</span><span class="p">,</span> <span class="s1">&#39;to_same_length_-1&#39;</span><span class="p">,</span> <span class="s1">&#39;to_mixed_length_0&#39;</span><span class="p">,</span> <span class="s1">&#39;to_mixed_length_-1&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_running_standardizer</span><span class="p">(</span><span class="n">data_seq</span><span class="p">,</span> <span class="n">axis</span><span class="p">):</span>
+    <span class="n">rs</span> <span class="o">=</span> <span class="n">RunningStandardizer</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">data_seq</span><span class="p">:</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">rs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">z</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">rs</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">rs</span><span class="o">.</span><span class="n">mean</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">rs</span><span class="o">.</span><span class="n">sum_sq_diffs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">rs</span><span class="o">.</span><span class="n">iter</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="test_running_expdecay_average"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_running_expdecay_average">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;data_seq, alpha&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span>
+            <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">])],</span>
+            <span class="mf">0.9</span>
+        <span class="p">),</span>
+        <span class="p">(</span>
+            <span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">10.</span><span class="p">,</span> <span class="o">-</span><span class="mf">20.</span><span class="p">,</span> <span class="mf">20.</span><span class="p">])],</span>
+            <span class="mf">0.1</span>
+        <span class="p">),</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;np&#39;</span><span class="p">,</span> <span class="s1">&#39;to&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_running_expdecay_average</span><span class="p">(</span><span class="n">data_seq</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+    <span class="n">reda</span> <span class="o">=</span> <span class="n">RunningExpDecayingAverage</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">data_seq</span><span class="p">:</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">reda</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">z</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">reda</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">reda</span><span class="o">.</span><span class="n">_alpha</span> <span class="o">==</span> <span class="mf">0.5</span> <span class="ow">and</span> <span class="n">reda</span><span class="o">.</span><span class="n">_prev_est</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="test_running_mem_average"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_running_mem_average">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;data_seq, capacity&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span>
+            <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">2.</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">])],</span>
+            <span class="mi">3</span>
+        <span class="p">),</span>
+        <span class="p">(</span>
+            <span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">2.</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">])],</span>
+            <span class="mi">3</span>
+        <span class="p">),</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;np&#39;</span><span class="p">,</span> <span class="s1">&#39;to&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_running_mem_average</span><span class="p">(</span><span class="n">data_seq</span><span class="p">,</span> <span class="n">capacity</span><span class="p">):</span>
+    <span class="n">rma</span> <span class="o">=</span> <span class="n">RunningMemoryAverage</span><span class="p">(</span><span class="n">capacity</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data_seq</span><span class="p">):</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">rma</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span>  <span class="c1"># works with PyTorch Tensors and numpy arrays</span>
+        <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>  <span class="c1"># works with PyTorch Tensors and numpy arrays</span>
+    <span class="n">rma</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">capacity</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">rma</span><span class="o">.</span><span class="n">capacity</span> <span class="o">==</span> <span class="mi">5</span> <span class="ow">and</span> <span class="n">rma</span><span class="o">.</span><span class="n">memory</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="test_running_normalizer"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_running_normalizer">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;data_seq&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">[</span><span class="mi">5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mf">0.1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">20</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="mi">3</span><span class="p">)],</span>
+        <span class="p">[</span><span class="mi">5</span><span class="o">*</span><span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mf">0.1</span><span class="o">*</span><span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">20</span><span class="o">*</span><span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="mi">3</span><span class="p">)]</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;np&#39;</span><span class="p">,</span> <span class="s1">&#39;to&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_running_normalizer</span><span class="p">(</span><span class="n">data_seq</span><span class="p">):</span>
+    <span class="n">rn</span> <span class="o">=</span> <span class="n">RunningNormalizer</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">data_seq</span><span class="p">:</span>
+        <span class="n">data_norm</span> <span class="o">=</span> <span class="n">rn</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">data_norm</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">data_norm</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="test_stateful_standardizer"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_stateful_standardizer">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;to_1x1000&#39;</span><span class="p">,</span> <span class="s1">&#39;to_1000x1&#39;</span><span class="p">,</span> <span class="s1">&#39;to_1000x1000&#39;</span><span class="p">,</span> <span class="s1">&#39;np_1x1000&#39;</span><span class="p">,</span> <span class="s1">&#39;np_1000x1&#39;</span><span class="p">,</span> <span class="s1">&#39;np_1000x1000&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_stateful_standardizer</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">ss</span> <span class="o">=</span> <span class="n">Standardizer</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+        <span class="n">x_stdized</span> <span class="o">=</span> <span class="n">ss</span><span class="o">.</span><span class="n">standardize</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">x_stdized</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">assert</span> <span class="n">to</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">x_stdized</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">to</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">x_stdized</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span> <span class="n">to</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="n">x_restrd</span> <span class="o">=</span> <span class="n">ss</span><span class="o">.</span><span class="n">unstandardize</span><span class="p">(</span><span class="n">x_stdized</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">x_restrd</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">assert</span> <span class="n">to</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">x_restrd</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-02</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-05</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">x_stdized</span> <span class="o">=</span> <span class="n">ss</span><span class="o">.</span><span class="n">standardize</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">x_stdized</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">x_stdized</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">x_stdized</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="n">x_restrd</span> <span class="o">=</span> <span class="n">ss</span><span class="o">.</span><span class="n">unstandardize</span><span class="p">(</span><span class="n">x_stdized</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">x_restrd</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">x_restrd</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-02</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-05</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_ds_spec"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_ds_spec">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;g, ed&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;scalar&#39;</span><span class="p">,</span> <span class="s1">&#39;array&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_ds_spec</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">ed</span><span class="p">):</span>
+    <span class="c1"># Base class</span>
+    <span class="n">dss</span> <span class="o">=</span> <span class="n">DSSpec</span><span class="p">(</span><span class="n">function</span><span class="o">=</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">goal</span><span class="o">=</span><span class="n">g</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dss</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">dss</span><span class="p">[</span><span class="s1">&#39;function&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;name&#39;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">dss</span><span class="p">[</span><span class="s1">&#39;goal&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">g</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">dss</span><span class="p">[</span><span class="s1">&#39;goal&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">g</span>
+
+    <span class="c1"># Linear first order subclass</span>
+    <span class="n">lds</span> <span class="o">=</span> <span class="n">LinDSSpec</span><span class="p">(</span><span class="n">function</span><span class="o">=</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="n">goal</span><span class="o">=</span><span class="n">g</span><span class="p">,</span> <span class="n">errorDynamics</span><span class="o">=</span><span class="n">ed</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dss</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">lds</span><span class="p">[</span><span class="s1">&#39;function&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;lin&#39;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">lds</span><span class="p">[</span><span class="s1">&#39;goal&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">g</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">lds</span><span class="p">[</span><span class="s1">&#39;errorDynamics&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ed</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">lds</span><span class="p">[</span><span class="s1">&#39;goal&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">g</span>
+        <span class="k">assert</span> <span class="n">lds</span><span class="p">[</span><span class="s1">&#39;errorDynamics&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ed</span>
+
+    <span class="c1"># Mass-Spring-Damper subclass</span>
+    <span class="n">msds</span> <span class="o">=</span> <span class="n">MSDDSSpec</span><span class="p">(</span><span class="n">function</span><span class="o">=</span><span class="s1">&#39;msd&#39;</span><span class="p">,</span> <span class="n">goal</span><span class="o">=</span><span class="n">g</span><span class="p">,</span> <span class="n">damping</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span> <span class="n">attractorStiffness</span><span class="o">=</span><span class="mf">3.</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="mf">4.</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dss</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">msds</span><span class="p">[</span><span class="s1">&#39;function&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;msd&#39;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">msds</span><span class="p">[</span><span class="s1">&#39;goal&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">g</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">msds</span><span class="p">[</span><span class="s1">&#39;goal&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">g</span>
+    <span class="k">assert</span> <span class="n">msds</span><span class="p">[</span><span class="s1">&#39;damping&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">2.</span>
+    <span class="k">assert</span> <span class="n">msds</span><span class="p">[</span><span class="s1">&#39;attractorStiffness&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">3.</span>
+    <span class="k">assert</span> <span class="n">msds</span><span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">4.</span></div>
+
+
+<div class="viewcode-block" id="test_gss_optimizer_identical_bounds"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_gss_optimizer_identical_bounds">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">visualization</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;identical_bounds&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;identical&#39;</span><span class="p">,</span> <span class="s1">&#39;separate&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_gss_optimizer_identical_bounds</span><span class="p">(</span><span class="n">identical_bounds</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Dummy</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">loss_fcn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="c1"># Some function to minimize</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="c1"># Test with different lower and upper bounds</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">4.</span><span class="p">])</span>
+            <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">10.</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">5.</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">identical_bounds</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optim</span> <span class="o">=</span> <span class="n">GSS</span><span class="p">([{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">}],</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">x_min_override</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">6.</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optim</span> <span class="o">=</span> <span class="n">GSS</span><span class="p">([{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;param_min&#39;</span><span class="p">:</span> <span class="n">x_min_override</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">}],</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="p">)</span>
+
+    <span class="n">dummy</span> <span class="o">=</span> <span class="n">Dummy</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">dummy</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">dummy</span><span class="o">.</span><span class="n">loss_fcn</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">dummy</span><span class="o">.</span><span class="n">x</span> <span class="o">!=</span> <span class="n">dummy</span><span class="o">.</span><span class="n">y</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;x = </span><span class="si">{</span><span class="n">dummy</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s1"> </span><span class="se">\t</span><span class="s1"> y = </span><span class="si">{</span><span class="n">dummy</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_gss_optimizer_functional"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_gss_optimizer_functional">[docs]</a><span class="k">def</span> <span class="nf">test_gss_optimizer_functional</span><span class="p">():</span>
+    <span class="k">class</span> <span class="nc">Dummy</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">loss_fcn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="c1"># Some function to minimize</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="c1"># Test with different lower and upper bounds</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.</span><span class="p">])</span>
+            <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">10.</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">10.</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optim</span> <span class="o">=</span> <span class="n">GSS</span><span class="p">([{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">}],</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">)</span>
+
+    <span class="n">dummy</span> <span class="o">=</span> <span class="n">Dummy</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+        <span class="n">dummy</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">dummy</span><span class="o">.</span><span class="n">loss_fcn</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">to</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">dummy</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-4</span></div>
+
+
+<div class="viewcode-block" id="test_gss_optimizer_nlin_fcn"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_gss_optimizer_nlin_fcn">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">visualization</span>
+<span class="k">def</span> <span class="nf">test_gss_optimizer_nlin_fcn</span><span class="p">():</span>
+    <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+    <span class="c1"># Parameters</span>
+    <span class="n">x_grid</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="mf">1.</span>
+    <span class="n">noise_std</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+    <span class="c1"># Init param and optimizer</span>
+    <span class="n">x_init</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x_grid</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">x_grid</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="n">x_grid</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">+</span> <span class="p">(</span><span class="n">x_grid</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">x_grid</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="o">/</span><span class="mi">4</span>  <span class="c1"># [.25, .75]</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">x_init</span><span class="p">]),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">optim</span> <span class="o">=</span> <span class="n">GSS</span><span class="p">([</span><span class="n">x</span><span class="p">],</span> <span class="n">param_min</span><span class="o">=</span><span class="n">x_grid</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">param_max</span><span class="o">=</span><span class="n">x_grid</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">obj_fcn</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">noisy_nonlin_fcn</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">noise_std</span><span class="o">=</span><span class="n">noise_std</span><span class="p">)</span>
+    <span class="n">num_epochs</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="c1"># Init plotting</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_grid</span><span class="p">,</span> <span class="n">noisy_nonlin_fcn</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_grid</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">f</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;noise free fcn&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">obj_fcn</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">s</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;init guess&#39;</span><span class="p">)</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;inferno&#39;</span><span class="p">)(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num_epochs</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_epochs</span><span class="p">),</span> <span class="n">total</span><span class="o">=</span><span class="n">num_epochs</span><span class="p">):</span>
+        <span class="c1"># Evaluate at a the current point</span>
+        <span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">obj_fcn</span><span class="p">)</span>
+
+        <span class="c1"># Plot current evaluation</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_grid</span><span class="p">,</span> <span class="n">noisy_nonlin_fcn</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_grid</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">noise_std</span><span class="o">=</span><span class="n">noise_std</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">obj_fcn</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">s</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">e</span><span class="p">])</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;$x$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$f(x)$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">noisy_nonlin_fcn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">noise_std</span><span class="o">=</span><span class="n">noise_std</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">noisy_nonlin_fcn</span><span class="p">(</span><span class="n">x_init</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">noise_std</span><span class="o">=</span><span class="n">noise_std</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_indi_nonlin_layer"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_indi_nonlin_layer">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;in_features&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1dim&#39;</span><span class="p">,</span> <span class="s1">&#39;3dim&#39;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;same_nonlin&#39;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;same_nonlin&#39;</span><span class="p">,</span> <span class="s1">&#39;different_nonlin&#39;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;bias&#39;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bias&#39;</span><span class="p">,</span> <span class="s1">&#39;no_bias&#39;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;weight&#39;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">,</span> <span class="s1">&#39;no_weight&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_indi_nonlin_layer</span><span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="n">same_nonlin</span><span class="p">,</span> <span class="n">bias</span><span class="p">,</span> <span class="n">weight</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">same_nonlin</span> <span class="ow">and</span> <span class="n">in_features</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">nonlin</span> <span class="o">=</span> <span class="n">in_features</span><span class="o">*</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">nonlin</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">sigmoid</span>
+    <span class="n">layer</span> <span class="o">=</span> <span class="n">IndiNonlinLayer</span><span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="n">nonlin</span><span class="p">,</span> <span class="n">bias</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">in_features</span><span class="p">)</span>
+    <span class="n">o</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">i</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">o</span><span class="o">.</span><span class="n">shape</span></div>
+
+
+<div class="viewcode-block" id="test_check_prompt"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_check_prompt">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">visualization</span>
+<span class="k">def</span> <span class="nf">test_check_prompt</span><span class="p">():</span>
+    <span class="k">with</span> <span class="n">completion_context</span><span class="p">(</span><span class="s1">&#39;Works fine&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">):</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ZeroDivisionError</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">completion_context</span><span class="p">(</span><span class="s1">&#39;Works fine&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="mi">3</span><span class="o">/</span><span class="mi">0</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

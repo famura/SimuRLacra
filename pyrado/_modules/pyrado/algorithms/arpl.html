@@ -1,0 +1,382 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyrado.algorithms.arpl &mdash; Pyrado 0.2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm.html">How to create an algorithm</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Package Overview:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../domain_randomization.html">domain_randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.rcspysim.html">rcspysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environment_wrappers.html">environment_wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../exploration.html">exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../logger.html">logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plotting.html">plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sampling.html">sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../spaces.html">spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tasks.html">tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tests.html">tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pyrado.algorithms.arpl</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyrado.algorithms.arpl</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+<span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.adversarial</span> <span class="kn">import</span> <span class="n">AdversarialDynamicsWrapper</span><span class="p">,</span> <span class="n">AdversarialStateWrapper</span><span class="p">,</span> \
+    <span class="n">AdversarialObservationWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.state_augmentation</span> <span class="kn">import</span> <span class="n">StateAugmentationWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
+<span class="kn">from</span> <span class="nn">pyrado.exploration.stochastic_action</span> <span class="kn">import</span> <span class="n">StochasticActionExplStrat</span>
+<span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_sampler</span> <span class="kn">import</span> <span class="n">ParallelSampler</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.sequences</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="ARPL"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.arpl.ARPL">[docs]</a><span class="k">class</span> <span class="nc">ARPL</span><span class="p">(</span><span class="n">Algorithm</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adversarially Robust Policy Learning (ARPL)</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        A. Mandlekar, Y. Zhu, A. Garg, L. Fei-Fei, S. Savarese, &quot;Adversarially Robust Policy Learning:</span>
+<span class="sd">        Active Construction of Physically-Plausible Perturbations&quot;, IROS, 2017</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;arpl&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">env</span><span class="p">:</span> <span class="p">[</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">StateAugmentationWrapper</span><span class="p">],</span>
+                 <span class="n">subrtn</span><span class="p">:</span> <span class="n">Algorithm</span><span class="p">,</span>
+                 <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
+                 <span class="n">expl_strat</span><span class="p">:</span> <span class="n">StochasticActionExplStrat</span><span class="p">,</span>
+                 <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">num_rollouts</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">steps_num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">apply_dynamics_noise</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">dyn_eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+                 <span class="n">dyn_phi</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+                 <span class="n">halfspan</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span>
+                 <span class="n">apply_proccess_noise</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">proc_eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+                 <span class="n">proc_phi</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+                 <span class="n">apply_observation_noise</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">obs_eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+                 <span class="n">obs_phi</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+                 <span class="n">torch_observation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+                 <span class="n">logger</span><span class="p">:</span> <span class="n">StepLogger</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
+<span class="sd">        :param env: the environment in which the agent should be trained</span>
+<span class="sd">        :param subrtn: algorithm which performs the policy / value-function optimization</span>
+<span class="sd">        :param policy: policy to be updated</span>
+<span class="sd">        :param expl_strat: the exploration strategy</span>
+<span class="sd">        :param max_iter: the maximum number of iterations</span>
+<span class="sd">        :param num_rollouts: the number of rollouts to be performed for each update step</span>
+<span class="sd">        :param steps_num: the number of steps to be performed for each update step</span>
+<span class="sd">        :param apply_dynamics_noise: whether adversarially generated dynamics noise should be applied</span>
+<span class="sd">        :param dyn_eps: the intensity of generated dynamics noise</span>
+<span class="sd">        :param dyn_phi: the probability of applying dynamics noise</span>
+<span class="sd">        :param halfspan: the halfspan of the uniform random distribution used to sample</span>
+<span class="sd">        :param apply_proccess_noise: whether adversarially generated process noise should be applied</span>
+<span class="sd">        :param proc_eps: the intensity of generated process noise</span>
+<span class="sd">        :param proc_phi: the probability of applying process noise</span>
+<span class="sd">        :param apply_observation_noise: whether adversarially generated observation noise should be applied</span>
+<span class="sd">        :param obs_eps: the intensity of generated observation noise</span>
+<span class="sd">        :param obs_phi: the probability of applying observation noise</span>
+<span class="sd">        :param torch_observation: a function to provide a differentiable observation</span>
+<span class="sd">        :param num_workers: number of environments for parallel sampling</span>
+<span class="sd">        :param logger: the logger</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subrtn</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_iter</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">max_iter</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+        <span class="c1"># Get the randomized environment (recommended to make it the most outer one in the chain)</span>
+
+        <span class="c1"># Initialize adversarial wrappers</span>
+        <span class="k">if</span> <span class="n">apply_dynamics_noise</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">StateAugmentationWrapper</span><span class="p">)</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">AdversarialDynamicsWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">dyn_eps</span><span class="p">,</span> <span class="n">dyn_phi</span><span class="p">,</span> <span class="n">halfspan</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">apply_proccess_noise</span><span class="p">:</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">AdversarialStateWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">proc_eps</span><span class="p">,</span> <span class="n">proc_phi</span><span class="p">,</span> <span class="n">torch_observation</span><span class="o">=</span><span class="n">torch_observation</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">apply_observation_noise</span><span class="p">:</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">AdversarialObservationWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">obs_eps</span><span class="p">,</span> <span class="n">obs_phi</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_rollouts</span> <span class="o">=</span> <span class="n">num_rollouts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">ParallelSampler</span><span class="p">(</span>
+            <span class="n">env</span><span class="p">,</span>
+            <span class="n">expl_strat</span><span class="p">,</span>
+            <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
+            <span class="n">min_steps</span><span class="o">=</span><span class="n">steps_num</span><span class="p">,</span>
+            <span class="n">min_rollouts</span><span class="o">=</span><span class="n">num_rollouts</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span> <span class="o">=</span> <span class="n">subrtn</span>
+
+<div class="viewcode-block" id="ARPL.step"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.arpl.ARPL.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">rollouts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+        <span class="n">rets</span> <span class="o">=</span> <span class="p">[</span><span class="n">ro</span><span class="o">.</span><span class="n">undiscounted_return</span><span class="p">()</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rollouts</span><span class="p">]</span>
+        <span class="n">ret_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rets</span><span class="p">)</span>
+        <span class="n">ret_med</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">rets</span><span class="p">)</span>
+        <span class="n">ret_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rets</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;num rollouts&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rollouts</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;avg rollout len&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">ro</span><span class="o">.</span><span class="n">length</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rollouts</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;avg return&#39;</span><span class="p">,</span> <span class="n">ret_avg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;median return&#39;</span><span class="p">,</span> <span class="n">ret_med</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;std return&#39;</span><span class="p">,</span> <span class="n">ret_std</span><span class="p">)</span>
+
+        <span class="c1"># Sub-routine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">rollouts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">record_step</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">make_snapshot</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="p">,</span> <span class="n">ret_avg</span><span class="o">.</span><span class="n">item</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="ARPL.save_snapshot"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.arpl.ARPL.save_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">save_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># This algorithm instance is not a subroutine of a meta-algorithm</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> is not supposed be run as a subroutine!&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ARPL.load_snapshot"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.arpl.ARPL.load_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">load_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">load_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Get the directory to load from</span>
+        <span class="n">ld</span> <span class="o">=</span> <span class="n">load_dir</span> <span class="k">if</span> <span class="n">load_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span>
+
+        <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># This algorithm instance is not a subroutine of a meta-algorithm</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">load_snapshot</span><span class="p">(</span><span class="n">ld</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> is not supposed be run as a subroutine!&#39;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

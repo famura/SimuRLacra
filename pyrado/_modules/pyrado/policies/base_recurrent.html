@@ -1,0 +1,381 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyrado.policies.base_recurrent &mdash; Pyrado 0.2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm.html">How to create an algorithm</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Package Overview:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../domain_randomization.html">domain_randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.rcspysim.html">rcspysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environment_wrappers.html">environment_wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../exploration.html">exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../logger.html">logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plotting.html">plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sampling.html">sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../spaces.html">spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tasks.html">tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tests.html">tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pyrado.policies.base_recurrent</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyrado.policies.base_recurrent</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">torch.jit</span> <span class="kn">import</span> <span class="n">ScriptModule</span><span class="p">,</span> <span class="n">export</span><span class="p">,</span> <span class="n">trace_module</span><span class="p">,</span> <span class="n">script</span>
+
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
+
+
+<div class="viewcode-block" id="RecurrentPolicy"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base_recurrent.RecurrentPolicy">[docs]</a><span class="k">class</span> <span class="nc">RecurrentPolicy</span><span class="p">(</span><span class="n">Policy</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for recurrent policies.</span>
+<span class="sd">    The policy does not store the hidden state on it&#39;s own, so it requires two arguments: (observation, hidden) and</span>
+<span class="sd">    returns two values: (action, new_hidden).</span>
+<span class="sd">    The hidden tensor is an 1-dim vector of state variables with unspecified meaning. In the batching case,</span>
+<span class="sd">    it should be a 2-dim array, where the first dimension is the batch size matching that of the observations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_recurrent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">hidden_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Get the number of hidden state variables. &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+<div class="viewcode-block" id="RecurrentPolicy.init_hidden"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base_recurrent.RecurrentPolicy.init_hidden">[docs]</a>    <span class="k">def</span> <span class="nf">init_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Provide initial values for the hidden parameters. This should usually be a zero tensor.</span>
+
+<span class="sd">        :param batch_size: number of states to track in parallel</span>
+<span class="sd">        :return: Tensor of batch_size x hidden_size</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RecurrentPolicy.forward"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base_recurrent.RecurrentPolicy.forward">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param obs: observation from the environment</span>
+
+<span class="sd">        :param hidden: the network&#39;s hidden state. If None, use init_hidden()</span>
+<span class="sd">        :return: action to be taken and new hidden state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="RecurrentPolicy.evaluate"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base_recurrent.RecurrentPolicy.evaluate">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rollout</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">hidden_states_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;hidden_states&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Re-evaluate the given rollout and return a derivable action tensor.</span>
+<span class="sd">        This method makes sure that the gradient is propagated through the hidden state.</span>
+
+<span class="sd">        :param rollout: complete rollout</span>
+<span class="sd">        :param hidden_states_name: name of hidden states rollout entry, used for recurrent networks.</span>
+<span class="sd">                                   Change this string for value functions.</span>
+<span class="sd">        :return: actions with gradient data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="RecurrentPolicy.script"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base_recurrent.RecurrentPolicy.script">[docs]</a>    <span class="k">def</span> <span class="nf">script</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ScriptModule</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a ScriptModule from this policy.</span>
+<span class="sd">        The returned module will always have the signature `action = tm(observation, hidden)`.</span>
+<span class="sd">        For recurrent networks, it returns a stateful module that keeps the hidden states internally.</span>
+<span class="sd">        Such modules have a `reset()` method to reset the hidden states.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">script</span><span class="p">(</span><span class="n">StatefulRecurrentNetwork</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="StatefulRecurrentNetwork"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base_recurrent.StatefulRecurrentNetwork">[docs]</a><span class="k">class</span> <span class="nc">StatefulRecurrentNetwork</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A scripted wrapper for a recurrent neural network that stores the hidden state.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Use this for transfer to C++.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Attributes</span>
+    <span class="n">input_size</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">output_size</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">net</span><span class="p">:</span> <span class="n">RecurrentPolicy</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param net: non-recurrent network to wrap</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Must not be a script module</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># Setup attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_size</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">flat_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_size</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span>
+
+        <span class="c1"># Setup hidden state buffer</span>
+        <span class="n">hidden</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">init_hidden</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;hidden&#39;</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
+
+        <span class="c1"># Trace network (using random observation and init hidden state)</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;forward&#39;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">())</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
+                <span class="n">hidden</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
+            <span class="p">),</span>
+            <span class="s1">&#39;init_hidden&#39;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">()</span>  <span class="c1"># TODO @Felix: why tuple()?</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">trace_module</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="StatefulRecurrentNetwork.reset"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base_recurrent.StatefulRecurrentNetwork.reset">[docs]</a>    <span class="nd">@export</span>
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Reset the hidden states. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">init_hidden</span><span class="p">())</span>  <span class="c1"># in most cases all zeros</span></div>
+
+<div class="viewcode-block" id="StatefulRecurrentNetwork.forward"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base_recurrent.StatefulRecurrentNetwork.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
+        <span class="c1"># Run through network</span>
+        <span class="n">out</span><span class="p">,</span> <span class="n">hid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden</span><span class="p">)</span>
+
+        <span class="c1"># Store new hidden state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">hid</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">out</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

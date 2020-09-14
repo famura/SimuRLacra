@@ -1,0 +1,23 @@
+
+
+barrett\_wam
+============
+
+
+
+wam
+---
+
+.. automodule:: pyrado.environments.barrett_wam.wam
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyrado.environments.barrett_wam
+   :members:
+   :undoc-members:
+   :show-inheritance:

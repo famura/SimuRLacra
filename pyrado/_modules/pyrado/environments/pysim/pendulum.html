@@ -1,0 +1,372 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyrado.environments.pysim.pendulum &mdash; Pyrado 0.2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm.html">How to create an algorithm</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Package Overview:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../domain_randomization.html">domain_randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.rcspysim.html">rcspysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environment_wrappers.html">environment_wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../exploration.html">exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../logger.html">logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plotting.html">plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sampling.html">sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../spaces.html">spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tasks.html">tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tests.html">tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pyrado.environments.pysim.pendulum</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyrado.environments.pysim.pendulum</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">init_args_serializer.serializable</span> <span class="kn">import</span> <span class="n">Serializable</span>
+
+<span class="kn">from</span> <span class="nn">pyrado.environments.pysim.base</span> <span class="kn">import</span> <span class="n">SimPyEnv</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces.box</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces.singular</span> <span class="kn">import</span> <span class="n">SingularStateSpace</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.base</span> <span class="kn">import</span> <span class="n">Task</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.desired_state</span> <span class="kn">import</span> <span class="n">RadiallySymmDesStateTask</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.reward_functions</span> <span class="kn">import</span> <span class="n">ExpQuadrErrRewFcn</span>
+
+
+<div class="viewcode-block" id="PendulumSim"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.pendulum.PendulumSim">[docs]</a><span class="k">class</span> <span class="nc">PendulumSim</span><span class="p">(</span><span class="n">SimPyEnv</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Under-actuated inverted pendulum environment similar to the one from OpenAI Gym &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;pend&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_create_spaces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">tau_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s1">&#39;tau_max&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Define the spaces</span>
+        <span class="n">max_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">])</span>  <span class="c1"># [rad, rad/s]</span>
+        <span class="n">max_obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">])</span>  <span class="c1"># [-, -, rad/s]</span>
+        <span class="n">init_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># [rad, rad/s]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="n">max_state</span><span class="p">,</span> <span class="n">max_state</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$\theta$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\dot{\theta}$&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obs_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="n">max_obs</span><span class="p">,</span> <span class="n">max_obs</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$\sin\theta$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\cos\theta$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\dot{\theta}$&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_space</span> <span class="o">=</span> <span class="n">SingularStateSpace</span><span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$\theta$&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$\dot{\theta}$&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_act_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="n">tau_max</span><span class="p">,</span> <span class="n">tau_max</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="sa">r</span><span class="s1">&#39;$\tau$&#39;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">_create_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Task</span><span class="p">:</span>
+        <span class="c1"># Define the task including the reward function</span>
+        <span class="n">state_des</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;state_des&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]))</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Q&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">1e-0</span><span class="p">,</span> <span class="mf">5e-3</span><span class="p">]))</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">1e-3</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">RadiallySymmDesStateTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">state_des</span><span class="p">,</span> <span class="n">ExpQuadrErrRewFcn</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">),</span> <span class="n">idcs</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+<div class="viewcode-block" id="PendulumSim.observe"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.pendulum.PendulumSim.observe">[docs]</a>    <span class="k">def</span> <span class="nf">observe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span></div>
+
+<div class="viewcode-block" id="PendulumSim.get_nominal_domain_param"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.pendulum.PendulumSim.get_nominal_domain_param">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_nominal_domain_param</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">g</span><span class="o">=</span><span class="mf">9.81</span><span class="p">,</span>  <span class="c1"># gravity constant [m/s**2]</span>
+                    <span class="n">m_pole</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>  <span class="c1"># mass of the pole [kg]</span>
+                    <span class="n">l_pole</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>  <span class="c1"># half pole length [m]</span>
+                    <span class="n">d_pole</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>  <span class="c1"># rotational damping of the pole [kg*m**2/s]</span>
+                    <span class="n">tau_max</span><span class="o">=</span><span class="mf">3.5</span><span class="p">)</span>  <span class="c1"># maximum applicable torque [N*m] (if &lt; m*g/2, then under-actuated for sure)</span></div>
+
+    <span class="k">def</span> <span class="nf">_step_dynamics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">]</span>
+        <span class="n">m_pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s1">&#39;m_pole&#39;</span><span class="p">]</span>
+        <span class="n">l_pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s1">&#39;l_pole&#39;</span><span class="p">]</span>
+        <span class="n">d_pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s1">&#39;d_pole&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Dynamics (pendulum modeled as a rod)</span>
+        <span class="n">th</span><span class="p">,</span> <span class="n">th_dot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span>
+        <span class="n">th_ddot</span> <span class="o">=</span> <span class="p">(</span><span class="n">act</span> <span class="o">-</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">m_pole</span><span class="o">*</span><span class="n">g</span><span class="o">*</span><span class="n">l_pole</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">th</span><span class="p">)</span> <span class="o">-</span> <span class="n">d_pole</span><span class="o">*</span><span class="n">th_dot</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">m_pole</span><span class="o">*</span><span class="n">l_pole</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mf">3.</span><span class="p">)</span>
+
+        <span class="c1"># Integration step (symplectic Euler)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">th_ddot</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_dt</span>  <span class="c1"># next velocity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_dt</span>  <span class="c1"># next position</span>
+
+    <span class="k">def</span> <span class="nf">_init_anim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">vpython</span> <span class="k">as</span> <span class="nn">vp</span>
+
+        <span class="n">l_pole</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s1">&#39;l_pole&#39;</span><span class="p">])</span>
+        <span class="n">r_pole</span> <span class="o">=</span> <span class="mf">0.05</span>
+        <span class="n">th</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span>
+
+        <span class="c1"># Init render objects on first call</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s1">&#39;canvas&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vp</span><span class="o">.</span><span class="n">canvas</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Pendulum&quot;</span><span class="p">)</span>
+        <span class="c1"># Joint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s1">&#39;joint&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vp</span><span class="o">.</span><span class="n">sphere</span><span class="p">(</span>
+            <span class="n">pos</span><span class="o">=</span><span class="n">vp</span><span class="o">.</span><span class="n">vec</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">r_pole</span><span class="p">),</span>
+            <span class="n">radius</span><span class="o">=</span><span class="n">r_pole</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">vp</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">white</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># Pole</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s1">&#39;pole&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vp</span><span class="o">.</span><span class="n">cylinder</span><span class="p">(</span>
+            <span class="n">pos</span><span class="o">=</span><span class="n">vp</span><span class="o">.</span><span class="n">vec</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">r_pole</span><span class="p">),</span>
+            <span class="n">axis</span><span class="o">=</span><span class="n">vp</span><span class="o">.</span><span class="n">vec</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">l_pole</span><span class="o">*</span><span class="n">vp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">th</span><span class="p">),</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">l_pole</span><span class="o">*</span><span class="n">vp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">th</span><span class="p">),</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">radius</span><span class="o">=</span><span class="n">r_pole</span><span class="p">,</span>
+            <span class="n">length</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">l_pole</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">vp</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">blue</span><span class="p">,</span>
+            <span class="n">canvas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s1">&#39;canvas&#39;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">_update_anim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">vpython</span> <span class="k">as</span> <span class="nn">vp</span>
+
+        <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">]</span>
+        <span class="n">m_pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s1">&#39;m_pole&#39;</span><span class="p">]</span>
+        <span class="n">l_pole</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s1">&#39;l_pole&#39;</span><span class="p">])</span>
+        <span class="n">d_pole</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s1">&#39;d_pole&#39;</span><span class="p">]</span>
+        <span class="n">tau_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="s1">&#39;tau_max&#39;</span><span class="p">]</span>
+        <span class="n">r_pole</span> <span class="o">=</span> <span class="mf">0.05</span>
+        <span class="n">th</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span>
+
+        <span class="c1"># Cart</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s1">&#39;joint&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">vp</span><span class="o">.</span><span class="n">vec</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">r_pole</span><span class="p">)</span>
+
+        <span class="c1"># Pole</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s1">&#39;pole&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">vp</span><span class="o">.</span><span class="n">vec</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">r_pole</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s1">&#39;pole&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="n">vp</span><span class="o">.</span><span class="n">vec</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">l_pole</span><span class="o">*</span><span class="n">vp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">th</span><span class="p">),</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">l_pole</span><span class="o">*</span><span class="n">vp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">th</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Set caption text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_anim</span><span class="p">[</span><span class="s1">&#39;canvas&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">caption</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            theta: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">180</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="si">:</span><span class="s2"> 2.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            sin theta: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            cos theta: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            theta_dot: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">180</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="si">:</span><span class="s2"> 2.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            tau: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_act</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            dt: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="si">:</span><span class="s2">1.4f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            g: </span><span class="si">{</span><span class="n">g</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            m_pole: </span><span class="si">{</span><span class="n">m_pole</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            l_pole: </span><span class="si">{</span><span class="n">l_pole</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            d_pole: </span><span class="si">{</span><span class="n">d_pole</span> <span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            tau_max: </span><span class="si">{</span><span class="n">tau_max</span><span class="si">:</span><span class="s2"> 1.3f</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">            &quot;&quot;&quot;</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

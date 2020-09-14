@@ -1,0 +1,599 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyrado.policies.neural_fields &mdash; Pyrado 0.2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm.html">How to create an algorithm</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Package Overview:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../domain_randomization.html">domain_randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.rcspysim.html">rcspysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environment_wrappers.html">environment_wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../exploration.html">exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../logger.html">logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plotting.html">plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sampling.html">sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../spaces.html">spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tasks.html">tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tests.html">tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pyrado.policies.neural_fields</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyrado.policies.neural_fields</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and</span>
+<span class="c1"># Technical University of Darmstadt.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1"># 1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># 2. Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#    documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,</span>
+<span class="c1">#    or Technical University of Darmstadt, nor the names of its contributors may</span>
+<span class="c1">#    be used to endorse or promote products derived from this software without</span>
+<span class="c1">#    specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND</span>
+<span class="c1"># ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span>
+<span class="c1"># WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,</span>
+<span class="c1"># OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="c1"># SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</span>
+<span class="c1"># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</span>
+<span class="c1"># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER</span>
+<span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+
+<span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base_recurrent</span> <span class="kn">import</span> <span class="n">RecurrentPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.initialization</span> <span class="kn">import</span> <span class="n">init_param</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.nn_layers</span> <span class="kn">import</span> <span class="n">MirrConv1d</span><span class="p">,</span> <span class="n">IndiNonlinLayer</span>
+
+
+<div class="viewcode-block" id="NFPolicy"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.neural_fields.NFPolicy">[docs]</a><span class="k">class</span> <span class="nc">NFPolicy</span><span class="p">(</span><span class="n">RecurrentPolicy</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Neural Fields (NF)</span>
+<span class="sd">    </span>
+<span class="sd">    .. seealso::</span>
+<span class="sd">        [1] S.-I. Amari &quot;Dynamics of Pattern Formation in Lateral-Inhibition Type Neural Fields&quot;,</span>
+<span class="sd">        Biological Cybernetics, 1977</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;nf&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
+                 <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">hidden_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">obs_layer</span><span class="p">:</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">Policy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">activation_nonlin</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">,</span>
+                 <span class="n">mirrored_conv_weights</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">conv_out_channels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="n">conv_kernel_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">conv_padding_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;circular&#39;</span><span class="p">,</span>
+                 <span class="n">tau_init</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
+                 <span class="n">tau_learnable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">kappa_init</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">kappa_learnable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">potential_init_learnable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">init_param_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param spec: environment specification</span>
+<span class="sd">        :param dt: time step size</span>
+<span class="sd">        :param hidden_size: number of neurons with potential</span>
+<span class="sd">        :param obs_layer: specify a custom PyTorch Module;</span>
+<span class="sd">                          by default (`None`) a linear layer with biases is used</span>
+<span class="sd">        :param activation_nonlin: nonlinearity to compute the activations from the potential levels</span>
+<span class="sd">        :param mirrored_conv_weights: re-use weights for the second half of the kernel to create a &quot;symmetric&quot; kernel</span>
+<span class="sd">        :param conv_out_channels: number of filter for the 1-dim convolution along the potential-based neurons</span>
+<span class="sd">        :param conv_kernel_size: size of the kernel for the 1-dim convolution along the potential-based neurons</span>
+<span class="sd">        :param tau_init: initial value for the shared time constant of the potentials</span>
+<span class="sd">        :param tau_learnable: flag to determine if the time constant is a learnable parameter or fixed</span>
+<span class="sd">        :param kappa_init: initial value for the cubic decay, pass `None` (default) to disable cubic decay</span>
+<span class="sd">        :param kappa_learnable: flag to determine if cubic decay is a learnable parameter or fixed</span>
+<span class="sd">        :param potential_init_learnable: flag to determine if the initial potentials are a learnable parameter or fixed</span>
+<span class="sd">        :param init_param_kwargs: additional keyword arguments for the policy parameter initialization</span>
+<span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">dt</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">hidden_size</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">g_constraint</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">conv_kernel_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">conv_kernel_size</span> <span class="o">=</span> <span class="n">hidden_size</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">conv_kernel_size</span><span class="o">%</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Increased the kernel size </span><span class="si">{</span><span class="n">conv_kernel_size</span><span class="si">}</span><span class="s1"> the next odd number (</span><span class="si">{</span><span class="n">conv_kernel_size</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s1">) &#39;</span>
+                      <span class="sa">f</span><span class="s1">&#39;in order to obtain shape-conserving padding.&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span>
+            <span class="n">conv_kernel_size</span> <span class="o">=</span> <span class="n">conv_kernel_size</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">conv_padding_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;circular&#39;</span><span class="p">,</span> <span class="s1">&#39;reflected&#39;</span><span class="p">,</span> <span class="s1">&#39;zeros&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">conv_padding_mode</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s1">&#39;circular, reflected, or zeros&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">activation_nonlin</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">activation_nonlin</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Callable</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">)</span>
+
+        <span class="c1"># Store inputs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">dt</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_input_size</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">flat_dim</span>  <span class="c1"># observations include goal distance, prediction error, ect.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span> <span class="o">=</span> <span class="n">hidden_size</span>  <span class="c1"># number of potential neurons</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_recurrent_layers</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mirrored_conv_weights</span> <span class="o">=</span> <span class="n">mirrored_conv_weights</span>
+
+        <span class="c1"># Create the layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obs_layer</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">if</span> <span class="n">obs_layer</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">obs_layer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resting_level</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">padding</span> <span class="o">=</span> <span class="n">conv_kernel_size</span><span class="o">//</span><span class="mi">2</span> <span class="k">if</span> <span class="n">conv_padding_mode</span> <span class="o">!=</span> <span class="s1">&#39;circular&#39;</span> <span class="k">else</span> <span class="n">conv_kernel_size</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># 1 means no padding</span>
+        <span class="n">conv1d_class</span> <span class="o">=</span> <span class="n">MirrConv1d</span> <span class="k">if</span> <span class="n">mirrored_conv_weights</span> <span class="k">else</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv1d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv_layer</span> <span class="o">=</span> <span class="n">conv1d_class</span><span class="p">(</span>
+            <span class="n">in_channels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># treat potentials as a time series of values (convolutions is over the &quot;time&quot; axis)</span>
+            <span class="n">out_channels</span><span class="o">=</span><span class="n">conv_out_channels</span><span class="p">,</span>
+            <span class="n">kernel_size</span><span class="o">=</span><span class="n">conv_kernel_size</span><span class="p">,</span> <span class="n">padding_mode</span><span class="o">=</span><span class="n">conv_padding_mode</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">padding</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dilation</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="mi">1</span>  <span class="c1"># defaults</span>
+        <span class="p">)</span>
+        <span class="c1"># self.post_conv_layer = nn.Linear(conv_out_channels, spec.act_space.flat_dim, bias=False)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nonlin_layer</span> <span class="o">=</span> <span class="n">IndiNonlinLayer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">,</span> <span class="n">nonlin</span><span class="o">=</span><span class="n">activation_nonlin</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">act_layer</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Call custom initialization function after PyTorch network parameter initialization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_potentials_max</span> <span class="o">=</span> <span class="mf">100.</span>  <span class="c1"># clip potentials symmetrically at a very large value (for debugging)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_external</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_internal</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">potential_init_learnable</span> <span class="o">=</span> <span class="n">potential_init_learnable</span>
+        <span class="k">if</span> <span class="n">potential_init_learnable</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_potentials_init</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">randn_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">activation_nonlin</span> <span class="ow">is</span> <span class="n">to</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_potentials_init</span> <span class="o">=</span> <span class="o">-</span><span class="mf">7.</span><span class="o">*</span><span class="n">to</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_potentials_init</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span><span class="p">)</span>
+
+        <span class="c1"># Potential dynamics&#39;s time constant</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau_learnable</span> <span class="o">=</span> <span class="n">tau_learnable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_tau_init</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">tau_init</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_tau</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_tau_init</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> \
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau_learnable</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_tau_init</span>
+
+        <span class="k">if</span> <span class="n">kappa_init</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kappa_learnable</span> <span class="o">=</span> <span class="n">kappa_learnable</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log_kappa_init</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">kappa_init</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log_kappa</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_kappa_init</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> \
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kappa_learnable</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_kappa_init</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log_kappa</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Initialize policy parameters</span>
+        <span class="n">init_param_kwargs</span> <span class="o">=</span> <span class="n">init_param_kwargs</span> <span class="k">if</span> <span class="n">init_param_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">init_param_kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NFPolicy.extra_repr"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.neural_fields.NFPolicy.extra_repr">[docs]</a>    <span class="k">def</span> <span class="nf">extra_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;tau_learnable=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">tau_learnable</span><span class="si">}</span><span class="s1">, use_kappa=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_kappa</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="si">}</span><span class="s1">, learn_init_potentials=&#39;</span> \
+               <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_potentials_init</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">hidden_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_recurrent_layers</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span>
+
+<div class="viewcode-block" id="NFPolicy.init_hidden"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.neural_fields.NFPolicy.init_hidden">[docs]</a>    <span class="k">def</span> <span class="nf">init_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_potentials_init</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_potentials_init</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">potentials</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Get the neurons&#39; potentials. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stimuli_external</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the neurons&#39; external stimuli, resulting from the current observations.</span>
+<span class="sd">        This is used for recording during a rollout.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_external</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stimuli_internal</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the neurons&#39; internal stimuli, resulting from the previous activations of the neurons.</span>
+<span class="sd">        This is used for recording during a rollout.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_internal</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tau</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Get the time scale parameter (exists for all potential dynamics functions). &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_tau</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">kappa</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot; Get the cubic decay parameter if specified in the constructor, else return zero. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_kappa</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_kappa</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NFPolicy.potentials_dot"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.neural_fields.NFPolicy.potentials_dot">[docs]</a>    <span class="k">def</span> <span class="nf">potentials_dot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the derivative of the neurons&#39; potentials per time step.</span>
+<span class="sd">        $/tau /dot{u} = s + h - u + /kappa (h - u)^3,</span>
+<span class="sd">        /quad /text{with} s = s_{int} + s_{ext} = W*o + /int{w(u, v) f(u) dv}$</span>
+
+<span class="sd">        :param stimuli: sum of external and internal stimuli at the current point in time</span>
+<span class="sd">        :return: time derivative of the potentials</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rhs</span> <span class="o">=</span> <span class="n">stimuli</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">resting_level</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_kappa</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rhs</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kappa</span><span class="o">*</span><span class="n">to</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resting_level</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rhs</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">tau</span></div>
+
+<div class="viewcode-block" id="NFPolicy.init_param"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.neural_fields.NFPolicy.init_param">[docs]</a>    <span class="k">def</span> <span class="nf">init_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_values</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">init_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Initialize RNN layers</span>
+            <span class="n">init_param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_layer</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="c1"># self.obs_layer.weight.data /= 100.</span>
+            <span class="c1"># self.obs_layer.bias.data /= 100.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resting_level</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">randn_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resting_level</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">init_param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conv_layer</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="c1"># init_param(self.post_conv_layer, **kwargs)</span>
+            <span class="n">init_param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nonlin_layer</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">init_param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">act_layer</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="c1"># Initialize time constant if learnable</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau_learnable</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_log_tau</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_tau_init</span>
+            <span class="c1"># Initialize the potentials if learnable</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">potential_init_learnable</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_potentials_init</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">randn_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">param_values</span> <span class="o">=</span> <span class="n">init_values</span></div>
+
+    <span class="k">def</span> <span class="nf">_unpack_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Unpack the flat hidden state vector into a form the actual network module can use.</span>
+<span class="sd">        Since hidden usually comes from some outer source, this method should validate it&#39;s shape.</span>
+
+<span class="sd">        :param hidden: flat hidden state</span>
+<span class="sd">        :param batch_size: if not `None`, hidden is 2-dim and the first dim represents parts of a data batch</span>
+<span class="sd">        :return: unpacked hidden state of shape batch_size x channels_in x length_in, ready for the `Conv1d` module</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_recurrent_layers</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">,</span> \
+                <span class="s2">&quot;Passed hidden variable&#39;s size doesn&#39;t match the one required by the network.&quot;</span>
+            <span class="k">assert</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;Cannot use batched observations with unbatched hidden state&#39;</span>
+            <span class="k">return</span> <span class="n">hidden</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_recurrent_layers</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_recurrent_layers</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">,</span> \
+                <span class="s2">&quot;Passed hidden variable&#39;s size doesn&#39;t match the one required by the network.&quot;</span>
+            <span class="k">assert</span> <span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">batch_size</span><span class="p">,</span> \
+                <span class="sa">f</span><span class="s1">&#39;Batch size of hidden state (</span><span class="si">{</span><span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">) must match batch size of observations (</span><span class="si">{</span><span class="n">batch_size</span><span class="si">}</span><span class="s1">)&#39;</span>
+            <span class="k">return</span> <span class="n">hidden</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_recurrent_layers</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Improper shape of &#39;hidden&#39;. Policy received </span><span class="si">{</span><span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, &quot;</span>
+                               <span class="sa">f</span><span class="s2">&quot;but shape should be 1- or 2-dim&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_pack_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pack the hidden state returned by the network into an 1-dim state vector.</span>
+<span class="sd">        This should be the reverse operation of `_unpack_hidden`.</span>
+
+<span class="sd">        :param hidden: hidden state as returned by the network</span>
+<span class="sd">        :param batch_size: if not `None`, the result should be 2-dim and the first dim represents parts of a data batch</span>
+<span class="sd">        :return: packed hidden state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Simply flatten the hidden state</span>
+            <span class="k">return</span> <span class="n">hidden</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_recurrent_layers</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Make sure that the batch dimension is the first element</span>
+            <span class="k">return</span> <span class="n">hidden</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_recurrent_layers</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NFPolicy.forward"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.neural_fields.NFPolicy.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the goal distance, prediction error, and predicted cost.</span>
+<span class="sd">        Then pass it to the wrapped RNN.</span>
+
+<span class="sd">        :param obs: observations coming from the environment i.e. noisy</span>
+<span class="sd">        :param hidden: current hidden states, in this case action and potentials of the last time step</span>
+<span class="sd">        :return: current action and new hidden states</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="c1"># We assume flattened observations, if they are 2d, they&#39;re batched.</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">batch_size</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">batch_size</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Improper shape of &#39;obs&#39;. Policy received </span><span class="si">{</span><span class="n">obs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">,&quot;</span>
+                                      <span class="sa">f</span><span class="s2">&quot;but shape should be 1- or 2-dim&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Unpack hidden tensor (i.e. the potentials of the last step) if specified, else initialize them</span>
+        <span class="n">potentials</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unpack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span> <span class="k">if</span> <span class="n">hidden</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_hidden</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span>
+
+        <span class="c1"># Don&#39;t track the gradient through the potentials</span>
+        <span class="n">potentials</span> <span class="o">=</span> <span class="n">potentials</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span> <span class="o">=</span> <span class="n">potentials</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>  <span class="c1"># saved in rollout()</span>
+
+        <span class="c1"># Scale the previous potentials, subtract a bias, and pass them through a nonlinearity</span>
+        <span class="n">activations_prev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nonlin_layer</span><span class="p">(</span><span class="n">potentials</span><span class="p">)</span>
+
+        <span class="c1"># ----------------</span>
+        <span class="c1"># Activation Logic</span>
+        <span class="c1"># ----------------</span>
+
+        <span class="c1"># Combine the current inputs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_external</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_layer</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+        <span class="c1"># self._stimuli_external = to.zeros_like(self._potentials)</span>
+
+        <span class="c1"># Reshape and convolve</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">batch_size</span> <span class="k">if</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_internal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv_layer</span><span class="p">(</span><span class="n">activations_prev</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_internal</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_internal</span><span class="p">,</span>
+                                        <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># TODO do multiple out channels makes sense if just summed up?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_internal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_internal</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+
+        <span class="c1"># Combine the different output channels of the convolution</span>
+        <span class="c1"># stimulus_pot = self.post_conv_layer(stimulus_pot)</span>
+
+        <span class="c1"># Check the shapes before adding the resting level since the broadcasting could mask errors from the convolution</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_external</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_internal</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_internal</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_external</span><span class="p">)</span>
+
+        <span class="c1"># Potential dynamics forward integration</span>
+        <span class="n">potentials</span> <span class="o">=</span> <span class="n">potentials</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">potentials_dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_external</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_internal</span><span class="p">)</span>
+
+        <span class="c1"># Clip the potentials</span>
+        <span class="n">potentials</span> <span class="o">=</span> <span class="n">potentials</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="nb">min</span><span class="o">=-</span><span class="bp">self</span><span class="o">.</span><span class="n">_potentials_max</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_potentials_max</span><span class="p">)</span>
+
+        <span class="c1"># Scale the potentials, subtract a bias, and pass them through a nonlinearity</span>
+        <span class="n">activations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nonlin_layer</span><span class="p">(</span><span class="n">potentials</span><span class="p">)</span>
+
+        <span class="c1"># Compute the actions from the activations</span>
+        <span class="n">act</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">act_layer</span><span class="p">(</span><span class="n">activations</span><span class="p">)</span>
+
+        <span class="c1"># Pack hidden state</span>
+        <span class="n">hidden_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pack_hidden</span><span class="p">(</span><span class="n">potentials</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
+
+        <span class="c1"># Return the next action and store the current potentials as a hidden variable</span>
+        <span class="k">return</span> <span class="n">act</span><span class="p">,</span> <span class="n">hidden_out</span></div>
+
+<div class="viewcode-block" id="NFPolicy.evaluate"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.neural_fields.NFPolicy.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rollout</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">hidden_states_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;hidden_states&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="n">act_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rollout</span><span class="o">.</span><span class="n">iterate_rollouts</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">hidden_states_name</span> <span class="ow">in</span> <span class="n">rollout</span><span class="o">.</span><span class="n">data_names</span><span class="p">:</span>
+                <span class="c1"># Get initial hidden state from first step</span>
+                <span class="n">hs</span> <span class="o">=</span> <span class="n">ro</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">hidden_states_name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Let the network pick the default hidden state</span>
+                <span class="n">hs</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="c1"># Run each step separately</span>
+            <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">ro</span><span class="p">:</span>
+                <span class="n">act</span><span class="p">,</span> <span class="n">hs</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">observation</span><span class="p">,</span> <span class="n">hs</span><span class="p">)</span>
+                <span class="n">act_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">act_list</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

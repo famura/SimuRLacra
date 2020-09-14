@@ -1,0 +1,637 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>logger &mdash; Pyrado 0.2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="plotting" href="plotting.html" />
+    <link rel="prev" title="exploration" href="exploration.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm.html">How to create an algorithm</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Package Overview:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="domain_randomization.html">domain_randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.rcspysim.html">rcspysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environment_wrappers.html">environment_wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exploration.html">exploration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">logger</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.logger.experiment">experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.logger.iteration">iteration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.logger.step">step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.logger">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sampling.html">sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spaces.html">spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tasks.html">tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>logger</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/logger.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="logger">
+<h1>logger<a class="headerlink" href="#logger" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-pyrado.logger.experiment">
+<span id="experiment"></span><h2>experiment<a class="headerlink" href="#module-pyrado.logger.experiment" title="Permalink to this headline">¶</a></h2>
+<p>Log storage management</p>
+<p>Experiment folder path:
+&lt;prefix&gt;/&lt;env&gt;/&lt;algo&gt;/&lt;timestamp&gt;–&lt;info&gt;</p>
+<dl class="py class">
+<dt id="pyrado.logger.experiment.AugmentedSafeLoader">
+<em class="property">class </em><code class="sig-name descname">AugmentedSafeLoader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stream</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#AugmentedSafeLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.AugmentedSafeLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">yaml.loader.SafeLoader</span></code></p>
+<dl class="py method">
+<dt id="pyrado.logger.experiment.AugmentedSafeLoader.construct_python_tuple">
+<code class="sig-name descname">construct_python_tuple</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">node</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#AugmentedSafeLoader.construct_python_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.AugmentedSafeLoader.construct_python_tuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use PyYAML method for constructing a sequence to construct a tuple.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.logger.experiment.AugmentedSafeLoader.yaml_constructors">
+<code class="sig-name descname">yaml_constructors</code><em class="property"> = {'tag:yaml.org,2002:null': &lt;function SafeConstructor.construct_yaml_null&gt;, 'tag:yaml.org,2002:bool': &lt;function SafeConstructor.construct_yaml_bool&gt;, 'tag:yaml.org,2002:int': &lt;function SafeConstructor.construct_yaml_int&gt;, 'tag:yaml.org,2002:float': &lt;function SafeConstructor.construct_yaml_float&gt;, 'tag:yaml.org,2002:binary': &lt;function SafeConstructor.construct_yaml_binary&gt;, 'tag:yaml.org,2002:timestamp': &lt;function SafeConstructor.construct_yaml_timestamp&gt;, 'tag:yaml.org,2002:omap': &lt;function SafeConstructor.construct_yaml_omap&gt;, 'tag:yaml.org,2002:pairs': &lt;function SafeConstructor.construct_yaml_pairs&gt;, 'tag:yaml.org,2002:set': &lt;function SafeConstructor.construct_yaml_set&gt;, 'tag:yaml.org,2002:str': &lt;function SafeConstructor.construct_yaml_str&gt;, 'tag:yaml.org,2002:seq': &lt;function SafeConstructor.construct_yaml_seq&gt;, 'tag:yaml.org,2002:map': &lt;function SafeConstructor.construct_yaml_map&gt;, None: &lt;function SafeConstructor.construct_undefined&gt;, 'tag:yaml.org,2002:python/tuple': &lt;function AugmentedSafeLoader.construct_python_tuple&gt;}</em><a class="headerlink" href="#pyrado.logger.experiment.AugmentedSafeLoader.yaml_constructors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.logger.experiment.Experiment">
+<em class="property">class </em><code class="sig-name descname">Experiment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">algo_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">extra_info</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">exp_id</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">timestamp</span><span class="p">:</span> <span class="n">datetime.datetime</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">base_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'/home/user/SimuRLacra/Pyrado/pyrado/../data/temp'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#Experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.Experiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for defining experiments
+This is a path-like object, and as such it can be used everywhere a normal path would be used.</p>
+<dl class="py method">
+<dt id="pyrado.logger.experiment.Experiment.matches">
+<code class="sig-name descname">matches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hint</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/logger/experiment.html#Experiment.matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.Experiment.matches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if this experiment matches the given hint.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.logger.experiment.Experiment.prefix">
+<em class="property">property </em><code class="sig-name descname">prefix</code><a class="headerlink" href="#pyrado.logger.experiment.Experiment.prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combination of experiment and algorithm</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.logger.experiment.ask_for_experiment">
+<code class="sig-name descname">ask_for_experiment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#ask_for_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.ask_for_experiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ask for an experiment on the console. This is the go-to entry point for evaluation scripts.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.logger.experiment.list_experiments">
+<code class="sig-name descname">list_experiments</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">algo_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">base_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">temp</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">perma</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#list_experiments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.list_experiments" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all stored experiments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_name</strong> – filter by env name</p></li>
+<li><p><strong>algo_name</strong> – filter by algorithm name. Requires env_name to be used too</p></li>
+<li><p><strong>base_dir</strong> – explicit base dir if desired. May also be a list of bases. Uses temp and perm dir if not specified.</p></li>
+<li><p><strong>temp</strong> – set to <cite>False</cite> to not look in the <cite>pyrado.TEMP</cite> directory</p></li>
+<li><p><strong>perma</strong> – set to <cite>False</cite> to not look in the <cite>pyrado.PERMA</cite> directory</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.logger.experiment.load_dict_from_yaml">
+<code class="sig-name descname">load_dict_from_yaml</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">yaml_file</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pyrado/logger/experiment.html#load_dict_from_yaml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.load_dict_from_yaml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a list of dicts (e.g. hyper-parameters) of an experiment from a YAML-file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>yaml_file</strong> – path to the YAML-file that</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a dict containing names as keys and a dict of parameter values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.logger.experiment.save_list_of_dicts_to_yaml">
+<code class="sig-name descname">save_list_of_dicts_to_yaml</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lod</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>dict<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">save_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">file_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'hyperparams'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#save_list_of_dicts_to_yaml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.save_list_of_dicts_to_yaml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a list of dicts (e.g. hyper-parameters) of an experiment a YAML-file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lod</strong> – list of dicts each containing 1 key (name) and 1 value (a dict with the hyper-parameters)</p></li>
+<li><p><strong>save_dir</strong> – directory to save the results in</p></li>
+<li><p><strong>file_name</strong> – name of the YAML-file without suffix</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.logger.experiment.select_by_hint">
+<code class="sig-name descname">select_by_hint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">exps</span></em>, <em class="sig-param"><span class="n">hint</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#select_by_hint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.select_by_hint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select experiment by hint.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.logger.experiment.select_latest">
+<code class="sig-name descname">select_latest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">exps</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#select_latest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.select_latest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select the most recent experiment from an iterable of experiments.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.logger.experiment.setup_experiment">
+<code class="sig-name descname">setup_experiment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">algo_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">extra_info</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">base_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'/home/user/SimuRLacra/Pyrado/pyrado/../data/temp'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#setup_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.setup_experiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup a new experiment for recording.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.logger.iteration">
+<span id="iteration"></span><h2>iteration<a class="headerlink" href="#module-pyrado.logger.iteration" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.logger.iteration.IterationTracker">
+<em class="property">class </em><code class="sig-name descname">IterationTracker</code><a class="reference internal" href="_modules/pyrado/logger/iteration.html#IterationTracker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.iteration.IterationTracker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Track the current iteration/step number on multiple levels (for meta-algorithms)</p>
+<dl class="py method">
+<dt id="pyrado.logger.iteration.IterationTracker.format">
+<code class="sig-name descname">format</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">scope_sep</span><span class="o">=</span><span class="default_value">'-'</span></em>, <em class="sig-param"><span class="n">label_num_sep</span><span class="o">=</span><span class="default_value">'_'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/iteration.html#IterationTracker.format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.iteration.IterationTracker.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format the current iteration stack into a string. Two parts can be customized:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scope_sep</strong> – string separating the label and the number</p></li>
+<li><p><strong>label_num_sep</strong> – string separating each label/number pair</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>string with custom separators</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.logger.iteration.IterationTracker.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">label</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/iteration.html#IterationTracker.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.iteration.IterationTracker.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the iteration number for a labeled scope.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>label</strong> – scope label</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>iteration index</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.logger.iteration.IterationTracker.iteration">
+<code class="sig-name descname">iteration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">num</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/iteration.html#IterationTracker.iteration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.iteration.IterationTracker.iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context with active iteration scope.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label</strong> – scope label</p></li>
+<li><p><strong>num</strong> – iteration index</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.logger.iteration.IterationTracker.pop">
+<code class="sig-name descname">pop</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; tuple<a class="reference internal" href="_modules/pyrado/logger/iteration.html#IterationTracker.pop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.iteration.IterationTracker.pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the last iteration scope.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.logger.iteration.IterationTracker.push">
+<code class="sig-name descname">push</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">num</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/iteration.html#IterationTracker.push"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.iteration.IterationTracker.push" title="Permalink to this definition">¶</a></dt>
+<dd><p>Push an iteration scope.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label</strong> – scope label</p></li>
+<li><p><strong>num</strong> – iteration index</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.logger.step">
+<span id="step"></span><h2>step<a class="headerlink" href="#module-pyrado.logger.step" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.logger.step.CSVPrinter">
+<em class="property">class </em><code class="sig-name descname">CSVPrinter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#CSVPrinter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.CSVPrinter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.logger.step.StepLogPrinter" title="pyrado.logger.step.StepLogPrinter"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.logger.step.StepLogPrinter</span></code></a></p>
+<p>Logs step data to a CSV file</p>
+<dl class="py method">
+<dt id="pyrado.logger.step.CSVPrinter.print_values">
+<code class="sig-name descname">print_values</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">values</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">ordered_keys</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">first_step</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#CSVPrinter.print_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.CSVPrinter.print_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the values for a step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> – named progress values</p></li>
+<li><p><strong>ordered_keys</strong> – value keys in a consistent order</p></li>
+<li><p><strong>first_step</strong> – <cite>True</cite> for the first recorded step</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.logger.step.ConsolePrinter">
+<em class="property">class </em><code class="sig-name descname">ConsolePrinter</code><a class="reference internal" href="_modules/pyrado/logger/step.html#ConsolePrinter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.ConsolePrinter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.logger.step.StepLogPrinter" title="pyrado.logger.step.StepLogPrinter"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.logger.step.StepLogPrinter</span></code></a></p>
+<p>Prints step data to the console</p>
+<dl class="py method">
+<dt id="pyrado.logger.step.ConsolePrinter.print_values">
+<code class="sig-name descname">print_values</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">values</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">ordered_keys</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">first_step</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#ConsolePrinter.print_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.ConsolePrinter.print_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the values for a step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> – named progress values</p></li>
+<li><p><strong>ordered_keys</strong> – value keys in a consistent order</p></li>
+<li><p><strong>first_step</strong> – <cite>True</cite> for the first recorded step</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.logger.step.LoggerAware">
+<em class="property">class </em><code class="sig-name descname">LoggerAware</code><a class="reference internal" href="_modules/pyrado/logger/step.html#LoggerAware"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.LoggerAware" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base for objects holding a StepLogger.
+Features automatic detection of child LoggerAware objects. Override to customize.</p>
+<dl class="py method">
+<dt id="pyrado.logger.step.LoggerAware.logger">
+<em class="property">property </em><code class="sig-name descname">logger</code><a class="headerlink" href="#pyrado.logger.step.LoggerAware.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or create the step logger to use for this object.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.logger.step.StepLogPrinter">
+<em class="property">class </em><code class="sig-name descname">StepLogPrinter</code><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogPrinter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.StepLogPrinter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Base class for log printers. Formats progress values for a step.</p>
+<dl class="py method">
+<dt id="pyrado.logger.step.StepLogPrinter.print_values">
+<em class="property">abstract </em><code class="sig-name descname">print_values</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">values</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">ordered_keys</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">first_step</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogPrinter.print_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.StepLogPrinter.print_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the values for a step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> – named progress values</p></li>
+<li><p><strong>ordered_keys</strong> – value keys in a consistent order</p></li>
+<li><p><strong>first_step</strong> – <cite>True</cite> for the first recorded step</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.logger.step.StepLogger">
+<em class="property">class </em><code class="sig-name descname">StepLogger</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">print_interval</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.StepLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Step-based progress logger.
+This class collects progress values during a step. At the end, the record_step function will pass the collected
+values to one or more StepLogPrinters.
+The logger also validates that no values  are added unexpectedly, which i.e. a csv printer would not support.</p>
+<dl class="py method">
+<dt id="pyrado.logger.step.StepLogger.add_value">
+<code class="sig-name descname">add_value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogger.add_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.StepLogger.add_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a column value to the current step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – data key</p></li>
+<li><p><strong>value</strong> – value to record, pass ‘’ to print nothing</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.logger.step.StepLogger.pop_prefix">
+<code class="sig-name descname">pop_prefix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogger.pop_prefix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.StepLogger.pop_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the last string from the key prefix stack.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.logger.step.StepLogger.prefix">
+<code class="sig-name descname">prefix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pfx</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogger.prefix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.StepLogger.prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context manager to add a prefix to the key prefix stack during use.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pfx</strong> – prefix string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.logger.step.StepLogger.push_prefix">
+<code class="sig-name descname">push_prefix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pfx</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogger.push_prefix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.StepLogger.push_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Push a string onto the key prefix stack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pfx</strong> – prefix string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.logger.step.StepLogger.record_step">
+<code class="sig-name descname">record_step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogger.record_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.StepLogger.record_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the currently stored values as step and print them at the end.
+To properly support nesting, this method does nothing if called twice in a row without an add_value in between.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.logger.step.TensorBoardPrinter">
+<em class="property">class </em><code class="sig-name descname">TensorBoardPrinter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dir</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#TensorBoardPrinter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.TensorBoardPrinter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.logger.step.StepLogPrinter" title="pyrado.logger.step.StepLogPrinter"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.logger.step.StepLogPrinter</span></code></a></p>
+<p>Class for writing tensorboard logs</p>
+<dl class="py method">
+<dt id="pyrado.logger.step.TensorBoardPrinter.print_values">
+<code class="sig-name descname">print_values</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">values</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">ordered_keys</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">first_step</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#TensorBoardPrinter.print_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.TensorBoardPrinter.print_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the values for a step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> – named progress values</p></li>
+<li><p><strong>ordered_keys</strong> – value keys in a consistent order</p></li>
+<li><p><strong>first_step</strong> – <cite>True</cite> for the first recorded step</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.logger.step.create_csv_step_logger">
+<code class="sig-name descname">create_csv_step_logger</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">file_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'progress.csv'</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger">pyrado.logger.step.StepLogger</a><a class="reference internal" href="_modules/pyrado/logger/step.html#create_csv_step_logger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.create_csv_step_logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a step-based logger which only safes to a csv-file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> – parent directory to save the results in (usually the algorithm’s <cite>save_dir</cite>)</p></li>
+<li><p><strong>file_name</strong> – name of the cvs-file (with ending)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>step-based logger</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.logger">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.logger" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pyrado.logger.get_log_prefix_dir">
+<code class="sig-name descname">get_log_prefix_dir</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger.html#get_log_prefix_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.get_log_prefix_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the log prefix directory for this session.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.logger.resolve_log_path">
+<code class="sig-name descname">resolve_log_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger.html#resolve_log_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.resolve_log_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resolve path against the global log dir if path is relative.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.logger.set_log_prefix_dir">
+<code class="sig-name descname">set_log_prefix_dir</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">log_dir</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger.html#set_log_prefix_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.set_log_prefix_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the log prefix directory for this session.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="plotting.html" class="btn btn-neutral float-right" title="plotting" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="exploration.html" class="btn btn-neutral float-left" title="exploration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

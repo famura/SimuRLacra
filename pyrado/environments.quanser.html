@@ -1,0 +1,593 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>quanser &mdash; Pyrado 0.2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="environment_wrappers" href="environment_wrappers.html" />
+    <link rel="prev" title="rcspysim" href="environments.rcspysim.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm.html">How to create an algorithm</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Package Overview:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="domain_randomization.html">domain_randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.rcspysim.html">rcspysim</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">quanser</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.quanser.base">base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.quanser.quanser_ball_balancer">quanser_ball_balancer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.quanser.quanser_cartpole">quanser_cartpole</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.quanser.quanser_common">quanser_common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.quanser.quanser_qube">quanser_qube</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.environments.quanser">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="environment_wrappers.html">environment_wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exploration.html">exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sampling.html">sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spaces.html">spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tasks.html">tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>quanser</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/environments.quanser.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="quanser">
+<h1>quanser<a class="headerlink" href="#quanser" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-pyrado.environments.quanser.base">
+<span id="base"></span><h2>base<a class="headerlink" href="#module-pyrado.environments.quanser.base" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.environments.quanser.base.QuanserReal">
+<em class="property">class </em><code class="sig-name descname">QuanserReal</code><span class="sig-paren">(</span><em class="sig-param">ip: str</em>, <em class="sig-param">rcv_dim: int</em>, <em class="sig-param">snd_dim: int</em>, <em class="sig-param">dt: float = 0.002</em>, <em class="sig-param">max_steps: int = inf</em>, <em class="sig-param">task_args: [&lt;class 'dict'&gt;</em>, <em class="sig-param">None] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/base.html#QuanserReal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.base.QuanserReal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="environments.html#pyrado.environments.real_base.RealEnv" title="pyrado.environments.real_base.RealEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.real_base.RealEnv</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Base class of all real-world Quanser environments in Pyrado</p>
+<dl class="py method">
+<dt id="pyrado.environments.quanser.base.QuanserReal.act_space">
+<em class="property">property </em><code class="sig-name descname">act_space</code><a class="headerlink" href="#pyrado.environments.quanser.base.QuanserReal.act_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the space of the actions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.quanser.base.QuanserReal.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/base.html#QuanserReal.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.base.QuanserReal.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a zero-step and closes the communication.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.quanser.base.QuanserReal.obs_space">
+<em class="property">property </em><code class="sig-name descname">obs_space</code><a class="headerlink" href="#pyrado.environments.quanser.base.QuanserReal.obs_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the space of the observations (agent’s perception of the environment).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.quanser.base.QuanserReal.render">
+<code class="sig-name descname">render</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.RenderMode" title="pyrado.utils.data_types.RenderMode">pyrado.utils.data_types.RenderMode</a></span> <span class="o">=</span> <span class="default_value">RenderMode(text=True, video=False)</span></em>, <em class="sig-param"><span class="n">render_step</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/base.html#QuanserReal.render"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.base.QuanserReal.render" title="Permalink to this definition">¶</a></dt>
+<dd><p>Visualize one time step of the real-world device.
+The base version prints to console when the state exceeds its boundaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mode</strong> – render mode: console, video, or both</p></li>
+<li><p><strong>render_step</strong> – interval for rendering</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.quanser.base.QuanserReal.reset">
+<em class="property">abstract </em><code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/base.html#QuanserReal.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.base.QuanserReal.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the environment.
+The base version (re-)opens the socket and resets the task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – just for compatibility with SimEnv. All args can be ignored.</p></li>
+<li><p><strong>kwargs</strong> – just for compatibility with SimEnv. All kwargs can be ignored.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.quanser.base.QuanserReal.state_space">
+<em class="property">property </em><code class="sig-name descname">state_space</code><a class="headerlink" href="#pyrado.environments.quanser.base.QuanserReal.state_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the space of the states (used for describing the environment).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.quanser.base.QuanserReal.step">
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">act</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/base.html#QuanserReal.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.base.QuanserReal.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform one time step of the simulation or on the real-world device.
+When a terminal condition is met, the reset function is called.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function is responsible for limiting the actions, i.e. has to call <cite>limit_act()</cite>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>act</strong> – action to be taken in the step</p>
+</dd>
+<dt class="field-even">Return obs</dt>
+<dd class="field-even"><p>current observation of the environment</p>
+</dd>
+<dt class="field-odd">Return reward</dt>
+<dd class="field-odd"><p>reward depending on the selected reward function</p>
+</dd>
+<dt class="field-even">Return done</dt>
+<dd class="field-even"><p>indicates whether the episode has ended</p>
+</dd>
+<dt class="field-odd">Return env_info</dt>
+<dd class="field-odd"><p>contains diagnostic information about the environment</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.quanser.base.QuanserReal.task">
+<em class="property">property </em><code class="sig-name descname">task</code><a class="headerlink" href="#pyrado.environments.quanser.base.QuanserReal.task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the task describing what the agent should do in the environment.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.environments.quanser.quanser_ball_balancer">
+<span id="quanser-ball-balancer"></span><h2>quanser_ball_balancer<a class="headerlink" href="#module-pyrado.environments.quanser.quanser_ball_balancer" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.environments.quanser.quanser_ball_balancer.QBallBalancerReal">
+<em class="property">class </em><code class="sig-name descname">QBallBalancerReal</code><span class="sig-paren">(</span><em class="sig-param">dt: float = 0.002</em>, <em class="sig-param">max_steps: int = inf</em>, <em class="sig-param">task_args: [&lt;class 'dict'&gt;</em>, <em class="sig-param">None] = None</em>, <em class="sig-param">ip: str = '192.168.2.5'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_ball_balancer.html#QBallBalancerReal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_ball_balancer.QBallBalancerReal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environments.quanser.base.QuanserReal" title="pyrado.environments.quanser.base.QuanserReal"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.quanser.base.QuanserReal</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
+<p>Class for the real Quanser Ball-Balancer</p>
+<dl class="py attribute">
+<dt id="pyrado.environments.quanser.quanser_ball_balancer.QBallBalancerReal.name">
+<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'qbb'</em><a class="headerlink" href="#pyrado.environments.quanser.quanser_ball_balancer.QBallBalancerReal.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.quanser.quanser_ball_balancer.QBallBalancerReal.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_ball_balancer.html#QBallBalancerReal.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_ball_balancer.QBallBalancerReal.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the environment.
+The base version (re-)opens the socket and resets the task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – just for compatibility with SimEnv. All args can be ignored.</p></li>
+<li><p><strong>kwargs</strong> – just for compatibility with SimEnv. All kwargs can be ignored.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.environments.quanser.quanser_cartpole">
+<span id="quanser-cartpole"></span><h2>quanser_cartpole<a class="headerlink" href="#module-pyrado.environments.quanser.quanser_cartpole" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.environments.quanser.quanser_cartpole.QCartPoleReal">
+<em class="property">class </em><code class="sig-name descname">QCartPoleReal</code><span class="sig-paren">(</span><em class="sig-param">dt: float</em>, <em class="sig-param">max_steps: int</em>, <em class="sig-param">task_args: [&lt;class 'dict'&gt;</em>, <em class="sig-param">None] = None</em>, <em class="sig-param">ip: str = '192.168.2.17'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_cartpole.html#QCartPoleReal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_cartpole.QCartPoleReal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environments.quanser.base.QuanserReal" title="pyrado.environments.quanser.base.QuanserReal"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.quanser.base.QuanserReal</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
+<p>Base class for the real Quanser Cart-Pole</p>
+<dl class="py method">
+<dt id="pyrado.environments.quanser.quanser_cartpole.QCartPoleReal.calibrate">
+<code class="sig-name descname">calibrate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_cartpole.html#QCartPoleReal.calibrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_cartpole.QCartPoleReal.calibrate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.quanser.quanser_cartpole.QCartPoleReal.observe">
+<code class="sig-name descname">observe</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_cartpole.html#QCartPoleReal.observe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_cartpole.QCartPoleReal.observe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the (noise-free) observation from the current state.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method should be overwritten if the environment has a distinct observation space.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> – current state of the environment</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>observation perceived to the agent</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.quanser.quanser_cartpole.QCartPoleReal.task">
+<em class="property">property </em><code class="sig-name descname">task</code><a class="headerlink" href="#pyrado.environments.quanser.quanser_cartpole.QCartPoleReal.task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the task describing what the agent should do in the environment.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.environments.quanser.quanser_cartpole.QCartPoleStabReal">
+<em class="property">class </em><code class="sig-name descname">QCartPoleStabReal</code><span class="sig-paren">(</span><em class="sig-param">dt: float = 0.002</em>, <em class="sig-param">max_steps: int = inf</em>, <em class="sig-param">task_args: [&lt;class 'dict'&gt;</em>, <em class="sig-param">None] = None</em>, <em class="sig-param">ip: str = '192.168.2.17'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_cartpole.html#QCartPoleStabReal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_cartpole.QCartPoleStabReal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environments.quanser.quanser_cartpole.QCartPoleReal" title="pyrado.environments.quanser.quanser_cartpole.QCartPoleReal"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.quanser.quanser_cartpole.QCartPoleReal</span></code></a></p>
+<p>Stabilization task on the real Quanser Cart-Pole</p>
+<dl class="py attribute">
+<dt id="pyrado.environments.quanser.quanser_cartpole.QCartPoleStabReal.name">
+<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'qcp-st'</em><a class="headerlink" href="#pyrado.environments.quanser.quanser_cartpole.QCartPoleStabReal.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.quanser.quanser_cartpole.QCartPoleStabReal.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_cartpole.html#QCartPoleStabReal.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_cartpole.QCartPoleStabReal.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the environment.
+The base version (re-)opens the socket and resets the task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – just for compatibility with SimEnv. All args can be ignored.</p></li>
+<li><p><strong>kwargs</strong> – just for compatibility with SimEnv. All kwargs can be ignored.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.environments.quanser.quanser_cartpole.QCartPoleSwingUpReal">
+<em class="property">class </em><code class="sig-name descname">QCartPoleSwingUpReal</code><span class="sig-paren">(</span><em class="sig-param">dt: float = 0.002</em>, <em class="sig-param">max_steps: int = inf</em>, <em class="sig-param">task_args: [&lt;class 'dict'&gt;</em>, <em class="sig-param">None] = None</em>, <em class="sig-param">ip: str = '192.168.2.17'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_cartpole.html#QCartPoleSwingUpReal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_cartpole.QCartPoleSwingUpReal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environments.quanser.quanser_cartpole.QCartPoleReal" title="pyrado.environments.quanser.quanser_cartpole.QCartPoleReal"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.quanser.quanser_cartpole.QCartPoleReal</span></code></a></p>
+<p>Swing-up task on the real Quanser Cart-Pole</p>
+<dl class="py attribute">
+<dt id="pyrado.environments.quanser.quanser_cartpole.QCartPoleSwingUpReal.name">
+<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'qcp-su'</em><a class="headerlink" href="#pyrado.environments.quanser.quanser_cartpole.QCartPoleSwingUpReal.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.quanser.quanser_cartpole.QCartPoleSwingUpReal.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_cartpole.html#QCartPoleSwingUpReal.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_cartpole.QCartPoleSwingUpReal.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the environment.
+The base version (re-)opens the socket and resets the task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – just for compatibility with SimEnv. All args can be ignored.</p></li>
+<li><p><strong>kwargs</strong> – just for compatibility with SimEnv. All kwargs can be ignored.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.environments.quanser.quanser_common">
+<span id="quanser-common"></span><h2>quanser_common<a class="headerlink" href="#module-pyrado.environments.quanser.quanser_common" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.environments.quanser.quanser_common.QSocket">
+<em class="property">class </em><code class="sig-name descname">QSocket</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ip</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">x_len</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">u_len</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_common.html#QSocket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_common.QSocket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Handles the communication with Quarc (TCP/IP connection)</p>
+<dl class="py method">
+<dt id="pyrado.environments.quanser.quanser_common.QSocket.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_common.html#QSocket.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_common.QSocket.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.quanser.quanser_common.QSocket.is_open">
+<code class="sig-name descname">is_open</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_common.html#QSocket.is_open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_common.QSocket.is_open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True is the socket connection os open and False if not.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.quanser.quanser_common.QSocket.open">
+<code class="sig-name descname">open</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_common.html#QSocket.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_common.QSocket.open" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.quanser.quanser_common.QSocket.snd_rcv">
+<code class="sig-name descname">snd_rcv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_common.html#QSocket.snd_rcv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_common.QSocket.snd_rcv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send u and receive x.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>u</strong> – control vector</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>x: vector of measured states</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.environments.quanser.quanser_common.VelocityFilter">
+<em class="property">class </em><code class="sig-name descname">VelocityFilter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x_len</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num</span><span class="p">:</span> <span class="n">tuple</span> <span class="o">=</span> <span class="default_value">50, 0</span></em>, <em class="sig-param"><span class="n">den</span><span class="p">:</span> <span class="n">tuple</span> <span class="o">=</span> <span class="default_value">1, 50</span></em>, <em class="sig-param"><span class="n">dt</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.002</span></em>, <em class="sig-param"><span class="n">x_init</span><span class="p">:</span> <span class="n">numpy.ndarray</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_common.html#VelocityFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_common.VelocityFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Discrete velocity filter derived from a continuous one</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This velocity filter class is currently not used since we now get the velocities from the Simulink model.</p>
+</div>
+<dl class="py method">
+<dt id="pyrado.environments.quanser.quanser_common.VelocityFilter.set_initial_state">
+<code class="sig-name descname">set_initial_state</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x_init</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_common.html#VelocityFilter.set_initial_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_common.VelocityFilter.set_initial_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method can be used to set the initial state of the velocity filter. This is useful when the initial
+(position) observation has been retrieved and it is non-zero.
+Otherwise the filter would assume a very high velocity.
+:param x_init: initial observation</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.environments.quanser.quanser_qube">
+<span id="quanser-qube"></span><h2>quanser_qube<a class="headerlink" href="#module-pyrado.environments.quanser.quanser_qube" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.environments.quanser.quanser_qube.QQubeReal">
+<em class="property">class </em><code class="sig-name descname">QQubeReal</code><span class="sig-paren">(</span><em class="sig-param">dt: float = 0.002</em>, <em class="sig-param">max_steps: int = inf</em>, <em class="sig-param">task_args: [&lt;class 'dict'&gt;</em>, <em class="sig-param">None] = None</em>, <em class="sig-param">ip: str = '192.168.2.40'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_qube.html#QQubeReal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_qube.QQubeReal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.environments.quanser.base.QuanserReal" title="pyrado.environments.quanser.base.QuanserReal"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environments.quanser.base.QuanserReal</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
+<p>Class for the real Quanser Qube a.k.a. Furuta pendulum</p>
+<dl class="py method">
+<dt id="pyrado.environments.quanser.quanser_qube.QQubeReal.calibrate">
+<code class="sig-name descname">calibrate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_qube.html#QQubeReal.calibrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_qube.QQubeReal.calibrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calibration routine to move to the init position and determine the sensor offset</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.environments.quanser.quanser_qube.QQubeReal.name">
+<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'qq'</em><a class="headerlink" href="#pyrado.environments.quanser.quanser_qube.QQubeReal.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.quanser.quanser_qube.QQubeReal.observe">
+<code class="sig-name descname">observe</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_qube.html#QQubeReal.observe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_qube.QQubeReal.observe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the (noise-free) observation from the current state.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method should be overwritten if the environment has a distinct observation space.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> – current state of the environment</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>observation perceived to the agent</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.quanser.quanser_qube.QQubeReal.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_qube.html#QQubeReal.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_qube.QQubeReal.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the environment.
+The base version (re-)opens the socket and resets the task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – just for compatibility with SimEnv. All args can be ignored.</p></li>
+<li><p><strong>kwargs</strong> – just for compatibility with SimEnv. All kwargs can be ignored.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.quanser.quanser_qube.QQubeReal.task">
+<em class="property">property </em><code class="sig-name descname">task</code><a class="headerlink" href="#pyrado.environments.quanser.quanser_qube.QQubeReal.task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the task describing what the agent should do in the environment.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.environments.quanser">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.environments.quanser" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="environment_wrappers.html" class="btn btn-neutral float-right" title="environment_wrappers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="environments.rcspysim.html" class="btn btn-neutral float-left" title="rcspysim" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

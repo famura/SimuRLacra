@@ -1,0 +1,557 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyrado.environments.rcspysim.planar_3_link &mdash; Pyrado 0.2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> Pyrado
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm.html">How to create an algorithm</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Package Overview:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../algorithms.html">algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../domain_randomization.html">domain_randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.html">environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.pysim.html">pysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.mujoco.html">mujoco</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.rcspysim.html">rcspysim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environment_wrappers.html">environment_wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../exploration.html">exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../logger.html">logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../plotting.html">plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sampling.html">sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../spaces.html">spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tasks.html">tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tests.html">tests</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Pyrado</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pyrado.environments.rcspysim.planar_3_link</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyrado.environments.rcspysim.planar_3_link</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
+<span class="kn">from</span> <span class="nn">init_args_serializer</span> <span class="kn">import</span> <span class="n">Serializable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
+
+<span class="kn">import</span> <span class="nn">rcsenv</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.base</span> <span class="kn">import</span> <span class="n">RcsSim</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces.singular</span> <span class="kn">import</span> <span class="n">SingularStateSpace</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.base</span> <span class="kn">import</span> <span class="n">Task</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.masked</span> <span class="kn">import</span> <span class="n">MaskedTask</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.predefined</span> <span class="kn">import</span> <span class="n">create_check_all_boundaries_task</span><span class="p">,</span> <span class="n">create_task_space_discrepancy_task</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.utils</span> <span class="kn">import</span> <span class="n">proximity_succeeded</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.final_reward</span> <span class="kn">import</span> <span class="n">FinalRewTask</span><span class="p">,</span> <span class="n">FinalRewMode</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.desired_state</span> <span class="kn">import</span> <span class="n">DesStateTask</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.reward_functions</span> <span class="kn">import</span> <span class="n">ExpQuadrErrRewFcn</span><span class="p">,</span> <span class="n">ZeroPerStepRewFcn</span><span class="p">,</span> <span class="n">AbsErrRewFcn</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.sequential</span> <span class="kn">import</span> <span class="n">SequentialTasks</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.parallel</span> <span class="kn">import</span> <span class="n">ParallelTasks</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
+
+
+<span class="n">rcsenv</span><span class="o">.</span><span class="n">addResourcePath</span><span class="p">(</span><span class="n">rcsenv</span><span class="o">.</span><span class="n">RCSPYSIM_CONFIG_PATH</span><span class="p">)</span>
+<span class="n">rcsenv</span><span class="o">.</span><span class="n">addResourcePath</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rcsenv</span><span class="o">.</span><span class="n">RCSPYSIM_CONFIG_PATH</span><span class="p">,</span> <span class="s1">&#39;Planar3Link&#39;</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="Planar3LinkSim"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.planar_3_link.Planar3LinkSim">[docs]</a><span class="k">class</span> <span class="nc">Planar3LinkSim</span><span class="p">(</span><span class="n">RcsSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Base class for the Planar 3-link environments simulated in Rcs using the Vortex or Bullet physics engine &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">max_dist_force</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            This constructor should only be called via the subclasses.</span>
+
+<span class="sd">        :param task_args: arguments for the task construction</span>
+<span class="sd">        :param max_dist_force: maximum disturbance force, pass `None` for no disturbance</span>
+<span class="sd">        :param kwargs: keyword arguments forwarded to `RcsSim`</span>
+<span class="sd">                       collisionConfig: specification of the Rcs CollisionModel</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;collisionConfig&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">collision_config</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;pairs&#39;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span><span class="s1">&#39;body1&#39;</span><span class="p">:</span> <span class="s1">&#39;Effector&#39;</span><span class="p">,</span> <span class="s1">&#39;body2&#39;</span><span class="p">:</span> <span class="s1">&#39;Link2&#39;</span><span class="p">},</span>
+                    <span class="p">{</span><span class="s1">&#39;body1&#39;</span><span class="p">:</span> <span class="s1">&#39;Effector&#39;</span><span class="p">,</span> <span class="s1">&#39;body2&#39;</span><span class="p">:</span> <span class="s1">&#39;Link1&#39;</span><span class="p">},</span>
+                <span class="p">],</span>
+                <span class="s1">&#39;threshold&#39;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span>
+                <span class="s1">&#39;predCollHorizon&#39;</span><span class="p">:</span> <span class="mi">20</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">collision_config</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;collisionConfig&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Forward to RcsSim&#39;s constructor</span>
+        <span class="n">RcsSim</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">task_args</span><span class="o">=</span><span class="n">task_args</span><span class="p">,</span>
+            <span class="n">envType</span><span class="o">=</span><span class="s1">&#39;Planar3Link&#39;</span><span class="p">,</span>
+            <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gPlanar3Link_trqCtrl.xml&#39;</span><span class="p">,</span>
+            <span class="n">collisionConfig</span><span class="o">=</span><span class="n">collision_config</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Initial state space definition</span>
+        <span class="n">upright_init_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])</span>  <span class="c1"># [rad, rad, rad]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_space</span> <span class="o">=</span> <span class="n">SingularStateSpace</span><span class="p">(</span><span class="n">upright_init_state</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;$q_1$&#39;</span><span class="p">,</span> <span class="s1">&#39;$q_2$&#39;</span><span class="p">,</span> <span class="s1">&#39;$q_3$&#39;</span><span class="p">])</span>
+
+        <span class="c1"># Setup disturbance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_dist_force</span> <span class="o">=</span> <span class="n">max_dist_force</span>
+
+    <span class="k">def</span> <span class="nf">_disturbance_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_dist_force</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="c1"># Sample angle and force uniformly</span>
+        <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="n">force</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_dist_force</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">force</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">force</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">)])</span>
+
+<div class="viewcode-block" id="Planar3LinkSim.get_nominal_domain_param"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.planar_3_link.Planar3LinkSim.get_nominal_domain_param">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_nominal_domain_param</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="c1"># Needs to be implemented by subclasses</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+    <span class="k">def</span> <span class="nf">_create_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Task</span><span class="p">:</span>
+        <span class="c1"># Define the indices for selection. This needs to match the observations&#39; names in RcsPySim.</span>
+        <span class="k">if</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;consider_velocities&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="n">idcs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Effector_X&#39;</span><span class="p">,</span> <span class="s1">&#39;Effector_Z&#39;</span><span class="p">,</span> <span class="s1">&#39;Effector_Xd&#39;</span><span class="p">,</span> <span class="s1">&#39;Effector_Zd&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">idcs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Effector_X&#39;</span><span class="p">,</span> <span class="s1">&#39;Effector_Z&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Get the masked environment specification</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">idcs</span><span class="p">))</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Get and set goal position in world coordinates for all three sub-goals</span>
+        <span class="n">p1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_body_position</span><span class="p">(</span><span class="s1">&#39;Goal1&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">p2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_body_position</span><span class="p">(</span><span class="s1">&#39;Goal2&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">p3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_body_position</span><span class="p">(</span><span class="s1">&#39;Goal3&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">state_des1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p1</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">state_des2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p2</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">state_des3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p3</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p3</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;consider_velocities&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">5e-1</span><span class="p">,</span> <span class="mf">5e-1</span><span class="p">,</span> <span class="mf">2e-1</span><span class="p">,</span> <span class="mf">2e-1</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">1e0</span><span class="p">,</span> <span class="mf">1e0</span><span class="p">])</span>
+            <span class="n">state_des1</span> <span class="o">=</span> <span class="n">state_des1</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">state_des2</span> <span class="o">=</span> <span class="n">state_des2</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">state_des3</span> <span class="o">=</span> <span class="n">state_des3</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="n">success_fcn</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">proximity_succeeded</span><span class="p">,</span> <span class="n">thold_dist</span><span class="o">=</span><span class="mf">7.5e-2</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># min distance = 7cm</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">))</span>
+
+        <span class="c1"># Create the tasks</span>
+        <span class="n">subtask_1</span> <span class="o">=</span> <span class="n">FinalRewTask</span><span class="p">(</span>
+            <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">state_des1</span><span class="p">,</span> <span class="n">ExpQuadrErrRewFcn</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">),</span> <span class="n">success_fcn</span><span class="p">),</span>
+            <span class="n">mode</span><span class="o">=</span><span class="n">FinalRewMode</span><span class="p">(</span><span class="n">time_dependent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">subtask_2</span> <span class="o">=</span> <span class="n">FinalRewTask</span><span class="p">(</span>
+            <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">state_des2</span><span class="p">,</span> <span class="n">ExpQuadrErrRewFcn</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">),</span> <span class="n">success_fcn</span><span class="p">),</span>
+            <span class="n">mode</span><span class="o">=</span><span class="n">FinalRewMode</span><span class="p">(</span><span class="n">time_dependent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">subtask_3</span> <span class="o">=</span> <span class="n">FinalRewTask</span><span class="p">(</span>
+            <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">state_des3</span><span class="p">,</span> <span class="n">ExpQuadrErrRewFcn</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">),</span> <span class="n">success_fcn</span><span class="p">),</span>
+            <span class="n">mode</span><span class="o">=</span><span class="n">FinalRewMode</span><span class="p">(</span><span class="n">time_dependent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">subtask_4</span> <span class="o">=</span> <span class="n">FinalRewTask</span><span class="p">(</span>
+            <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">state_des1</span><span class="p">,</span> <span class="n">ExpQuadrErrRewFcn</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">),</span> <span class="n">success_fcn</span><span class="p">),</span>
+            <span class="n">mode</span><span class="o">=</span><span class="n">FinalRewMode</span><span class="p">(</span><span class="n">time_dependent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">subtask_5</span> <span class="o">=</span> <span class="n">FinalRewTask</span><span class="p">(</span>
+            <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">state_des2</span><span class="p">,</span> <span class="n">ExpQuadrErrRewFcn</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">),</span> <span class="n">success_fcn</span><span class="p">),</span>
+            <span class="n">mode</span><span class="o">=</span><span class="n">FinalRewMode</span><span class="p">(</span><span class="n">time_dependent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">subtask_6</span> <span class="o">=</span> <span class="n">FinalRewTask</span><span class="p">(</span>
+            <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">state_des3</span><span class="p">,</span> <span class="n">ExpQuadrErrRewFcn</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">),</span> <span class="n">success_fcn</span><span class="p">),</span>
+            <span class="n">mode</span><span class="o">=</span><span class="n">FinalRewMode</span><span class="p">(</span><span class="n">time_dependent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">FinalRewTask</span><span class="p">(</span>
+            <span class="n">SequentialTasks</span><span class="p">([</span><span class="n">subtask_1</span><span class="p">,</span> <span class="n">subtask_2</span><span class="p">,</span> <span class="n">subtask_3</span><span class="p">,</span> <span class="n">subtask_4</span><span class="p">,</span> <span class="n">subtask_5</span><span class="p">,</span> <span class="n">subtask_6</span><span class="p">],</span> <span class="n">hold_rew_when_done</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">mode</span><span class="o">=</span><span class="n">FinalRewMode</span><span class="p">(</span><span class="n">always_positive</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">factor</span><span class="o">=</span><span class="mf">5e3</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">masked_task</span> <span class="o">=</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">idcs</span><span class="p">)</span>
+
+        <span class="c1"># Additional tasks</span>
+        <span class="n">task_check_bounds</span> <span class="o">=</span> <span class="n">create_check_all_boundaries_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">penalty</span><span class="o">=</span><span class="mf">1e3</span><span class="p">)</span>
+        <span class="n">task_ts_discrepancy</span> <span class="o">=</span> <span class="n">create_task_space_discrepancy_task</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">AbsErrRewFcn</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="mf">0.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">r</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Return the masked task and and additional task that ends the episode if the unmasked state is out of bound</span>
+        <span class="k">return</span> <span class="n">ParallelTasks</span><span class="p">([</span><span class="n">masked_task</span><span class="p">,</span> <span class="n">task_check_bounds</span><span class="p">,</span> <span class="n">task_ts_discrepancy</span><span class="p">],</span> <span class="n">easily_satisfied</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Planar3LinkJointCtrlSim"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.planar_3_link.Planar3LinkJointCtrlSim">[docs]</a><span class="k">class</span> <span class="nc">Planar3LinkJointCtrlSim</span><span class="p">(</span><span class="n">Planar3LinkSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Planar 3-link robot controlled by directly setting the joint angles &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;p3l-jt&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param kwargs: keyword arguments forwarded to `RcsSim`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+
+        <span class="c1"># Forward to the Planar3LinkSim&#39;s constructor, specifying the characteristic action model</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">()</span> <span class="k">if</span> <span class="n">task_args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">task_args</span><span class="p">,</span>
+            <span class="n">actionModelType</span><span class="o">=</span><span class="s1">&#39;joint_pos&#39;</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Planar3LinkIKActivationSim"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.planar_3_link.Planar3LinkIKActivationSim">[docs]</a><span class="k">class</span> <span class="nc">Planar3LinkIKActivationSim</span><span class="p">(</span><span class="n">Planar3LinkSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Planar 3-link robot environment controlled by setting the input to an Rcs IK-based controller &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;p3l-ika&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param kwargs: keyword arguments forwarded to `RcsSim`</span>
+<span class="sd">                       positionTasks: bool = True,</span>
+<span class="sd">                       checkJointLimits: bool = False,</span>
+<span class="sd">                       collisionAvoidanceIK: bool = True,</span>
+<span class="sd">                       observeVelocities: bool = True,</span>
+<span class="sd">                       observeForceTorque: bool = True,</span>
+<span class="sd">                       observeCollisionCost: bool = False,</span>
+<span class="sd">                       observePredictedCollisionCost: bool = False,</span>
+<span class="sd">                       observeManipulabilityIndex: bool = False,</span>
+<span class="sd">                       observeCurrentManipulability: bool = True,</span>
+<span class="sd">                       observeDynamicalSystemGoalDistance: bool = False,</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+
+        <span class="n">task_spec_ik</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">dict</span><span class="p">(</span><span class="n">x_des</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])),</span>
+            <span class="nb">dict</span><span class="p">(</span><span class="n">x_des</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])),</span>
+            <span class="nb">dict</span><span class="p">(</span><span class="n">x_des</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]))</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Forward to the Planar3LinkSim&#39;s constructor, specifying the characteristic action model</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">()</span> <span class="k">if</span> <span class="n">task_args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">task_args</span><span class="p">,</span>
+            <span class="n">actionModelType</span><span class="o">=</span><span class="s1">&#39;ik_activation&#39;</span><span class="p">,</span>
+            <span class="n">positionTasks</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;positionTasks&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="n">taskSpecIK</span><span class="o">=</span><span class="n">task_spec_ik</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Planar3LinkTASim"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.planar_3_link.Planar3LinkTASim">[docs]</a><span class="k">class</span> <span class="nc">Planar3LinkTASim</span><span class="p">(</span><span class="n">Planar3LinkSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Planar 3-link robot controlled by setting the task activation of a Rcs control task &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;p3l-ta&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">mps</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">position_mps</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param mps: movement primitives holding the dynamical systems and the goal states</span>
+<span class="sd">        :param position_mps: if `True` use movement primitives specified on position-level, if `False` velocity-level</span>
+<span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
+<span class="sd">                       taskCombinationMethod: str = &#39;sum&#39;,  # or &#39;mean&#39;, &#39;softmax&#39;, &#39;product&#39;</span>
+<span class="sd">                       checkJointLimits: bool = False,</span>
+<span class="sd">                       collisionAvoidanceIK: bool = True,</span>
+<span class="sd">                       observeVelocities: bool = True,</span>
+<span class="sd">                       observeForceTorque: bool = True,</span>
+<span class="sd">                       observeCollisionCost: bool = False,</span>
+<span class="sd">                       observePredictedCollisionCost: bool = False,</span>
+<span class="sd">                       observeManipulabilityIndex: bool = False,</span>
+<span class="sd">                       observeCurrentManipulability: bool = True,</span>
+<span class="sd">                       observeDynamicalSystemGoalDistance: bool = False,</span>
+<span class="sd">                       observeDynamicalSystemDiscrepancy: bool = False,</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">        mps = [{&#39;function&#39;: &#39;lin&#39;,</span>
+<span class="sd">                &#39;errorDynamics&#39;: np.eye(dim_mp_state),</span>
+<span class="sd">                &#39;goal&#39;: np.zeros(dim_mp_state)</span>
+<span class="sd">               },</span>
+<span class="sd">               {&#39;function&#39;: &#39;lin&#39;,</span>
+<span class="sd">                &#39;errorDynamics&#39;:  np.zeros(dim_mp_state),</span>
+<span class="sd">                &#39;goal&#39;: np.ones(dim_mp_state)</span>
+<span class="sd">               }]</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        mps = [{&#39;function&#39;: &#39;msd_nlin&#39;,</span>
+<span class="sd">                &#39;attractorStiffness&#39;: 100.,</span>
+<span class="sd">                &#39;mass&#39;: 1.,</span>
+<span class="sd">                &#39;damping&#39;: 50.,</span>
+<span class="sd">                &#39;goal&#39;: state_des[dim_mp_state]</span>
+<span class="sd">               },</span>
+<span class="sd">               {&#39;function&#39;: &#39;msd&#39;,</span>
+<span class="sd">                &#39;attractorStiffness&#39;: 100.,</span>
+<span class="sd">                &#39;mass&#39;: 1.,</span>
+<span class="sd">                &#39;damping&#39;: 50.,</span>
+<span class="sd">                &#39;goal&#39;: np.ones(dim_mp_state)</span>
+<span class="sd">                }]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+
+        <span class="c1"># Define the movement primitives</span>
+        <span class="k">if</span> <span class="n">mps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">position_mps</span><span class="p">:</span>
+                <span class="n">mps</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s1">&#39;function&#39;</span><span class="p">:</span> <span class="s1">&#39;msd_nlin&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;attractorStiffness&#39;</span><span class="p">:</span> <span class="mf">30.</span><span class="p">,</span>
+                        <span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+                        <span class="s1">&#39;damping&#39;</span><span class="p">:</span> <span class="mf">50.</span><span class="p">,</span>
+                        <span class="s1">&#39;goal&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]),</span>  <span class="c1"># position of the left sphere</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s1">&#39;function&#39;</span><span class="p">:</span> <span class="s1">&#39;msd_nlin&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;attractorStiffness&#39;</span><span class="p">:</span> <span class="mf">30.</span><span class="p">,</span>
+                        <span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+                        <span class="s1">&#39;damping&#39;</span><span class="p">:</span> <span class="mf">50.</span><span class="p">,</span>
+                        <span class="s1">&#39;goal&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">+</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]),</span>  <span class="c1"># position of the lower right sphere</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s1">&#39;function&#39;</span><span class="p">:</span> <span class="s1">&#39;msd_nlin&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;attractorStiffness&#39;</span><span class="p">:</span> <span class="mf">30.</span><span class="p">,</span>
+                        <span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+                        <span class="s1">&#39;damping&#39;</span><span class="p">:</span> <span class="mf">50.</span><span class="p">,</span>
+                        <span class="s1">&#39;goal&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]),</span>  <span class="c1"># position of the upper right sphere</span>
+                    <span class="p">}</span>
+                <span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dt</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dt&#39;</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>  <span class="c1"># 100 Hz is the default</span>
+                <span class="n">mps</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s1">&#39;function&#39;</span><span class="p">:</span> <span class="s1">&#39;lin&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;errorDynamics&#39;</span><span class="p">:</span> <span class="mf">5.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
+                        <span class="s1">&#39;goal&#39;</span><span class="p">:</span> <span class="n">dt</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.06</span><span class="p">,</span> <span class="mf">0.06</span><span class="p">])</span>  <span class="c1"># X and Z [m/s]</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s1">&#39;function&#39;</span><span class="p">:</span> <span class="s1">&#39;lin&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;errorDynamics&#39;</span><span class="p">:</span> <span class="mf">5.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
+                        <span class="s1">&#39;goal&#39;</span><span class="p">:</span> <span class="n">dt</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.04</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.04</span><span class="p">])</span>  <span class="c1"># X and Z [m/s]</span>
+                    <span class="p">}</span>
+                <span class="p">]</span>
+
+        <span class="c1"># Forward to the Planar3LinkSim&#39;s constructor, specifying the characteristic action model</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">()</span> <span class="k">if</span> <span class="n">task_args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">task_args</span><span class="p">,</span>
+            <span class="n">actionModelType</span><span class="o">=</span><span class="s1">&#39;ds_activation&#39;</span><span class="p">,</span>
+            <span class="n">tasks</span><span class="o">=</span><span class="n">mps</span><span class="p">,</span>
+            <span class="n">positionTasks</span><span class="o">=</span><span class="n">position_mps</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
+
+        <span class="c1"># # State space definition</span>
+        <span class="c1"># if kwargs.get(&#39;observeVelocities&#39;, True):</span>
+        <span class="c1">#     self.state_mask = self.obs_space.create_mask(</span>
+        <span class="c1">#         &#39;Effector_X&#39;, &#39;Effector_Z&#39;, &#39;Effector_Xd&#39;, &#39;Effector_Zd&#39;,</span>
+        <span class="c1">#     )</span>
+        <span class="c1"># else:</span>
+        <span class="c1">#     self.state_mask = self.obs_space.create_mask(</span>
+        <span class="c1">#         &#39;Effector_X&#39;, &#39;Effector_Z&#39;</span>
+        <span class="c1">#     )</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
