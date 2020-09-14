@@ -76,7 +76,7 @@ if __name__ == '__main__':
 
     # Run on device
     done = False
+    print_cbt('Running predefined controller ...', 'c', bright=True)
     while not done:
-        print_cbt('Running predefined controller ...', 'c', bright=True)
         ro = rollout(env, policy, eval=True, render_mode=RenderMode(text=args.verbose))
         done, _, _ = after_rollout_query(env, policy, ro)

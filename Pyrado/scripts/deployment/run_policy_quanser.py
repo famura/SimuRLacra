@@ -50,10 +50,10 @@ if __name__ == '__main__':
     args = get_argparser().parse_args()
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment()
+    ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
 
     # Load the policy (trained in simulation) and the environment (for constructing the real-world counterpart)
-    env_sim, policy, _ = load_experiment(ex_dir)
+    env_sim, policy, _ = load_experiment(ex_dir, args)
 
     # Detect the correct real-world counterpart and create it
     if isinstance(inner_env(env_sim), QBallBalancerSim):
@@ -64,9 +64,8 @@ if __name__ == '__main__':
         env_real = QQubeReal(dt=args.dt, max_steps=args.max_steps)
     else:
         raise pyrado.TypeErr(given=env_sim, expected_type=[QBallBalancerSim, QCartPoleSim, QQubeSim])
-    print_cbt(f'Set up env {env_real.name}.', 'c')
 
-    # Finally wrap the env in the same as done during training
+    # Wrap the real environment in the same way as done during training
     env_real = wrap_like_other_env(env_real, env_sim)
 
     # Run on device

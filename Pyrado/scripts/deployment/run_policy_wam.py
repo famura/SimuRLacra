@@ -47,10 +47,10 @@ if __name__ == '__main__':
     args = get_argparser().parse_args()
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment()
+    ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
 
     # Load the policy (trained in simulation) and the environment (for constructing the real-world counterpart)
-    env_sim, policy, _ = load_experiment(ex_dir)
+    env_sim, policy, _ = load_experiment(ex_dir, args)
 
     # Detect the correct real-world counterpart and create it
     if env_sim.name == 'wam-bic':  # use hard-coded name to avoid loading mujoco_py by loading WAMBallInCupSim
@@ -61,11 +61,12 @@ if __name__ == '__main__':
     else:
         raise pyrado.ValueErr(given=env_sim.name, eq_constraint='wam-bic')
 
-    # Finally wrap the env in the same as done during training
+    # Wrap the real environment in the same way as done during training
     env_real = wrap_like_other_env(env_real, env_sim)
 
     # Run on device
     done = False
+    print_cbt('Running loaded policy ...', 'c', bright=True)
     while not done:
         ro = rollout(env_real, policy, eval=True)
         print_cbt(f'Return: {ro.undiscounted_return()}', 'g', bright=True)

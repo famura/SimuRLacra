@@ -33,6 +33,7 @@ import os
 import os.path as osp
 from datetime import datetime
 
+import pyrado
 from pyrado.algorithms.bayrn import BayRn
 from pyrado.environments.quanser.quanser_qube import QQubeReal
 from pyrado.logger.experiment import ask_for_experiment, timestamp_format
@@ -49,17 +50,25 @@ if __name__ == '__main__':
     ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
 
     # Load the policy and the environment (for constructing the real-world counterpart)
-    env_sim, policy, _ = load_experiment(ex_dir)
+    env_sim, policy, _ = load_experiment(ex_dir, args)
 
-    # Create real-world counterpart (without domain randomization)
-    env_real = QQubeReal(env_sim.dt, env_sim.max_steps)
+    # Create real-world counterpart
+    # If `max_steps` (or `dt`) are not explicitly set using `args`, use the same as in the simulation
+    max_steps = args.max_steps if args.max_steps < pyrado.inf else env_sim.max_steps
+    dt = args.dt if args.dt is not None else env_sim.dt
+    env_real = QQubeReal(dt, max_steps)
     print_cbt(f'Set up the QQubeReal environment with dt={env_real.dt} max_steps={env_real.max_steps}.', 'c')
+
+    # Wrap the real environment in the same way as done during training
     env_real = wrap_like_other_env(env_real, env_sim)
 
-    # Run the policy on the real system
     ex_ts = datetime.now().strftime(timestamp_format)
     save_dir = osp.join(ex_dir, 'evaluation')
     os.makedirs(save_dir, exist_ok=True)
-    est_ret = BayRn.eval_policy(save_dir, env_real, policy, mc_estimator=True, prefix=ex_ts, num_rollouts=5)
 
+    # Run the policy on the real system
+    num_ro_per_config = args.num_ro_per_config if args.num_ro_per_config is not None else 5
+    est_ret = BayRn.eval_policy(
+        save_dir, env_real, policy, mc_estimator=True, prefix=ex_ts, num_rollouts=num_ro_per_config
+    )
     print_cbt(f'Estimated return: {est_ret.item()}', 'g')

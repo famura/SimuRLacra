@@ -66,8 +66,8 @@ def get_argparser() -> argparse.ArgumentParser:
     parser.add_argument('-m', '--mode', type=str, nargs='?',
                         help="general argument to specify different modes of various scripts (e.g. '2D')")
 
-    parser.add_argument('-n', '--num_ro_per_config', type=int, default=180,
-                        help="number of rollouts per environment configuration / domain parameter set (default: 120)")
+    parser.add_argument('-n', '--num_ro_per_config', type=int,
+                        help="number of rollouts per environment configuration / domain parameter set")
 
     parser.add_argument('--num_workers', type=int, default=8,
                         help="number of environments to sample from in parallel (default: 8)")

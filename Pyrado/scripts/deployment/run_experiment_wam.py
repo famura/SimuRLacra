@@ -27,123 +27,52 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Execute a trajectory on the real WAM using robcom's GoTo command
-
-Dependencies:
-    https://git.ias.informatik.tu-darmstadt.de/robcom-2/robcom-2.0
-
-Additional reading:
-    Ball-in-a-cup demo:
-    https://git.ias.informatik.tu-darmstadt.de/klink/ball-in-a-cup-demo/-/blob/master/bic-new.py
+Run a policy (trained in simulation) on real Barret WAM.
 """
-
+import os
 import os.path as osp
-import numpy as np
-import robcom_python as r
+from datetime import datetime
 
 import pyrado
-from pyrado.logger.experiment import ask_for_experiment
-from pyrado.utils.argparser import get_argparser
+from pyrado.algorithms.bayrn import BayRn
+from pyrado.environment_wrappers.utils import inner_env
+from pyrado.environments.barrett_wam.wam import WAMBallInCupReal
+from pyrado.logger.experiment import ask_for_experiment, timestamp_format
+from pyrado.utils.experiments import wrap_like_other_env, load_experiment
 from pyrado.utils.input_output import print_cbt
-
-
-def run_direct_control(ex_dir, qpos_des, qvel_des, start_pos):
-    def callback(jg, eg, data_provider):
-        nonlocal n
-        nonlocal time_step
-        nonlocal qpos
-        nonlocal qvel
-
-        if time_step >= n:
-            return True
-
-        dpos = qpos_des[time_step].tolist()
-        dvel = qvel_des[time_step].tolist()
-
-        pos = np.array(jg.get(r.JointState.POS))
-        vel = np.array(jg.get(r.JointState.VEL))
-        qpos.append(pos)
-        qvel.append(vel)
-
-        jg.set(r.JointDesState.POS, dpos)
-        jg.set(r.JointDesState.VEL, dvel)
-
-        time_step += 1
-
-        return False
-
-    if not len(start_pos) == 7:
-        raise pyrado.ShapeErr(given=start_pos, expected_match=np.empty(7))
-
-    # Connect to client
-    c = r.Client()
-    c.start('192.168.2.2', 2013)  # ip adress and port
-    print("Connected to client.")
-
-    # Reset the robot to the initial position
-    gt = c.create(r.Goto, "RIGHT_ARM", "")
-    gt.add_step(5.0, start_pos)
-    print("Moving to initial position")
-    gt.start()
-    gt.wait_for_completion()
-    print("Reached initial position")
-
-    # Read out some states
-    group = c.robot.get_group(["RIGHT_ARM"])
-    home_qpos = np.array(group.get(r.JointState.POS))
-    p_gains = np.array(group.get(r.JointState.P_GAIN))
-    d_gains = np.array(group.get(r.JointState.D_GAIN))
-    print("Initial (actual) qpos:", home_qpos)
-    print("P gain:", p_gains)
-    print("D gain:", d_gains)
-
-    input('Hit enter to continue.')
-
-    # Global callback attributes
-    n = qpos_des.shape[0]
-    time_step = 0
-    qpos = []
-    qvel = []
-
-    # Start the direct control
-    dc = c.create(r.ClosedLoopDirectControl, "RIGHT_ARM", "")
-    print("Executing trajectory")
-    dc.start(False, 1, callback, ['POS', 'VEL'], [], [])
-    dc.wait_for_completion()
-    print("Finished execution.")
-
-    print('Measured positions:', np.array(qpos).shape)
-    print('Measured velocities:', np.array(qvel).shape)
-
-    np.save(osp.join(ex_dir, 'qpos_real.npy'), qpos)
-    np.save(osp.join(ex_dir, 'qvel_real.npy'), qvel)
-
-    c.stop()
-    print('Connection closed.')
+from pyrado.utils.argparser import get_argparser
 
 
 if __name__ == '__main__':
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    # Get the experiment's directory to load from if not given as command line argument
+    # Get the experiment's directory to load from
     ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
 
-    # Get desired positions and velocities
-    if args.mode == 'des':
-        # If using the PD controller
-        print_cbt('Running desired trajectory ...', 'c', bright=True)
-        qpos_exec = np.load(osp.join(ex_dir, 'qpos_des.npy'))
-        qvel_exec = np.load(osp.join(ex_dir, 'qvel_des.npy'))
-        print_cbt('Saved trajectory into qpos_des.npy and qvel_des.npy', 'g')
-    elif args.mode == 'rec':
-        # If using WAM's feedforward controller
-        print_cbt('Running recorded trajectory ...', 'c', bright=True)
-        qpos_exec = np.load(osp.join(ex_dir, 'qpos.npy'))
-        qvel_exec = np.load(osp.join(ex_dir, 'qvel.npy'))
-        print_cbt('Saved trajectory into qpos.npy and qvel.npy', 'g')
-    else:
-        raise pyrado.ValueErr(given=args.mode, eq_constraint='des or rec')
+    # Load the policy (trained in simulation) and the environment (for constructing the real-world counterpart)
+    env_sim, policy, _ = load_experiment(ex_dir, args)
 
-    # Run on real WAM
-    run_direct_control(ex_dir, qpos_exec, qvel_exec, start_pos=qpos_exec[0, :])
+    # Detect the correct real-world counterpart and create it
+    if env_sim.name == 'wam-bic':  # use hard-coded name to avoid loading mujoco_py by loading WAMBallInCupSim
+        # If `max_steps` (or `dt`) are not explicitly set using `args`, use the same as in the simulation
+        max_steps = args.max_steps if args.max_steps < pyrado.inf else env_sim.max_steps
+        dt = args.dt if args.dt is not None else env_sim.dt
+        env_real = WAMBallInCupReal(dt=dt, max_steps=max_steps, num_dof=inner_env(env_sim).num_dof)
+        print_cbt(f'Set up the WAMBallInCupReal environment with dt={env_real.dt} max_steps={env_real.max_steps}.', 'c')
+    else:
+        raise pyrado.ValueErr(given=env_sim.name, eq_constraint='wam-bic')
+
+    # Wrap the environment in the same as done during training
+    env_real = wrap_like_other_env(env_real, env_sim)
+
+    ex_ts = datetime.now().strftime(timestamp_format)
+    save_dir = osp.join(ex_dir, 'evaluation')
+    os.makedirs(save_dir, exist_ok=True)
+
+    # Run the policy on the real system
+    num_ro_per_config = args.num_ro_per_config if args.num_ro_per_config is not None else 5
+    est_ret = BayRn.eval_policy(
+        save_dir, env_real, policy, mc_estimator=True, prefix=ex_ts, num_rollouts=num_ro_per_config
+    )
+    print_cbt(f'Estimated return: {est_ret.item()}', 'g')

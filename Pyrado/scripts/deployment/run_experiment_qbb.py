@@ -51,7 +51,7 @@ if __name__ == '__main__':
     args = get_argparser().parse_args()
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment()
+    ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
     ex_tag = ex_dir.split('--', 1)[1]
 
     # Load the policy and the environment (for constructing the real-world counterpart)
@@ -95,7 +95,7 @@ if __name__ == '__main__':
         rollout(env_real, pdctrl, eval=True, max_steps=2000, render_mode=RenderMode())
         env_real.reset()
 
-        # Finally wrap the env in the same as done during training (do this after the PD controller finished)
+        # Wrap the real environment in the same way as done during training (do this after the PD controller finished)
         env_real = wrap_like_other_env(env_real, env_sim)
 
         # Run learned policy on the device
