@@ -115,13 +115,13 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.argparser">argparser</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.averaging">averaging</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.data_processing">data_processing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#data-types">data_types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.data_types">data_types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.exceptions">exceptions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#experiments">experiments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.experiments">experiments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.functions">functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#input-output">input_output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.input_output">input_output</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.math">math</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#nn-layers">nn_layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.nn_layers">nn_layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.optimizers">optimizers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.order">order</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.properties">properties</a></li>
@@ -365,8 +365,197 @@ Choosing <cite>axis=1</cite> and <cite>norm_order=1</cite> makes all columns of 
 </dd></dl>
 
 </div>
-<div class="section" id="data-types">
-<h2>data_types<a class="headerlink" href="#data-types" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyrado.utils.data_types">
+<span id="data-types"></span><h2>data_types<a class="headerlink" href="#module-pyrado.utils.data_types" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.utils.data_types.DSSpec">
+<em class="property">class </em><code class="sig-name descname">DSSpec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">function</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">goal</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>float<span class="p">, </span>int<span class="p">]</span></span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/data_types.html#DSSpec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.DSSpec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<p>The specification of a dynamical system implemented in <cite>RcsPySim</cite> and used in combination with ADN
+We are directly subclassing dict beacuse <cite>PropertySource</cite> in <cite>RcsPySim</cite> extracts information from dicts.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.utils.data_types.EnvSpec">
+<em class="property">class </em><code class="sig-name descname">EnvSpec</code><span class="sig-paren">(</span><em class="sig-param">obs_space: pyrado.spaces.base.Space</em>, <em class="sig-param">act_space: pyrado.spaces.base.Space</em>, <em class="sig-param">state_space: pyrado.spaces.base.Space = &lt;class 'pyrado.spaces.empty.EmptySpace'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/data_types.html#EnvSpec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.EnvSpec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>The specification of an environment’s input and output space</p>
+<dl class="py method">
+<dt id="pyrado.utils.data_types.EnvSpec.act_space">
+<em class="property">property </em><code class="sig-name descname">act_space</code><a class="headerlink" href="#pyrado.utils.data_types.EnvSpec.act_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.utils.data_types.EnvSpec.obs_space">
+<em class="property">property </em><code class="sig-name descname">obs_space</code><a class="headerlink" href="#pyrado.utils.data_types.EnvSpec.obs_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.utils.data_types.EnvSpec.state_space">
+<em class="property">property </em><code class="sig-name descname">state_space</code><a class="headerlink" href="#pyrado.utils.data_types.EnvSpec.state_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.utils.data_types.LinDSSpec">
+<em class="property">class </em><code class="sig-name descname">LinDSSpec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">function</span><span class="o">=</span><span class="default_value">'lin'</span></em>, <em class="sig-param"><span class="n">goal</span><span class="o">=</span><span class="default_value">np.array([- 1.0, 2.0])</span></em>, <em class="sig-param"><span class="n">errorDynamics</span><span class="o">=</span><span class="default_value">np.eye(2)</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/data_types.html#LinDSSpec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.LinDSSpec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.utils.data_types.DSSpec" title="pyrado.utils.data_types.DSSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.utils.data_types.DSSpec</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.utils.data_types.MSDDSSpec">
+<em class="property">class </em><code class="sig-name descname">MSDDSSpec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">function</span><span class="o">=</span><span class="default_value">'msd_nlin'</span></em>, <em class="sig-param"><span class="n">goal</span><span class="o">=</span><span class="default_value">np.array([- 1.0, 2.0])</span></em>, <em class="sig-param"><span class="n">attractorStiffness</span><span class="o">=</span><span class="default_value">50.0</span></em>, <em class="sig-param"><span class="n">damping</span><span class="o">=</span><span class="default_value">10.0</span></em>, <em class="sig-param"><span class="n">mass</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/data_types.html#MSDDSSpec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.MSDDSSpec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.utils.data_types.DSSpec" title="pyrado.utils.data_types.DSSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.utils.data_types.DSSpec</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.utils.data_types.RenderMode">
+<em class="property">class </em><code class="sig-name descname">RenderMode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">video</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/data_types.html#RenderMode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.RenderMode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>The specification of a render mode, do not print or render anything by default</p>
+<dl class="py method">
+<dt id="pyrado.utils.data_types.RenderMode.text">
+<em class="property">property </em><code class="sig-name descname">text</code><a class="headerlink" href="#pyrado.utils.data_types.RenderMode.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.utils.data_types.RenderMode.video">
+<em class="property">property </em><code class="sig-name descname">video</code><a class="headerlink" href="#pyrado.utils.data_types.RenderMode.video" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.data_types.check_all_shapes_equal">
+<code class="sig-name descname">check_all_shapes_equal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iterable</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/data_types.html#check_all_shapes_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.check_all_shapes_equal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the shape attribute of all elements of an iterable (e.g., list) are equal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>iterable</strong> – iterable to check</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool saying if all elements are equal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.data_types.check_all_types_equal">
+<code class="sig-name descname">check_all_types_equal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iterable</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/data_types.html#check_all_types_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.check_all_types_equal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if all elements of an iterable (e.g., list) are if the same type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>iterable</strong> – iterable to check</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool saying if all elements are of equal type</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.data_types.check_all_values_equal">
+<code class="sig-name descname">check_all_values_equal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iterable</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/data_types.html#check_all_values_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.check_all_values_equal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if all elements of an iterable (e.g., list) are equal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>iterable</strong> – iterable to check</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool saying if all elements are equal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.data_types.dict_arraylike_to_float">
+<code class="sig-name descname">dict_arraylike_to_float</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/data_types.html#dict_arraylike_to_float"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.dict_arraylike_to_float" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert every scalar array-like entry the provided dict to to a float.
+This function is useful when the metrics (e.g., calculated with numpy) should be saved in a YAML-file.
+:param d: input dict with 1-element arrays
+:return d: output dict with float entries where conversion was possible</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.data_types.fill_list_of_arrays">
+<code class="sig-name descname">fill_list_of_arrays</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">loa</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>numpy.ndarray<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">des_len</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">fill_ele</span><span class="o">=</span><span class="default_value">nan</span></em><span class="sig-paren">)</span> &#x2192; Sequence<span class="p">[</span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/pyrado/utils/data_types.html#fill_list_of_arrays"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.fill_list_of_arrays" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fill a list of arrays with potential unequal length (first axis) will provided elements</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loa</strong> – list of ndarrays</p></li>
+<li><p><strong>des_len</strong> – desired length of the resulting arrays</p></li>
+<li><p><strong>fill_ele</strong> – element to fill the arrays with</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of ndarrays with equal length</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.data_types.is_iterable">
+<code class="sig-name descname">is_iterable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/data_types.html#is_iterable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.is_iterable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the input is iterable by trying to create an iterator from the input.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inp</strong> – any object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if input is iterable, else <cite>False</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.data_types.is_iterator">
+<code class="sig-name descname">is_iterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/data_types.html#is_iterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.is_iterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the input is an iterator by trying to call <cite>next()</cite> on it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inp</strong> – any object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if input is an iterator, else <cite>False</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.data_types.merge_lod_same_dtype">
+<code class="sig-name descname">merge_lod_same_dtype</code><span class="sig-paren">(</span><em class="sig-param">lod: Sequence[dict], dtpye=&lt;class 'set'&gt;</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pyrado/utils/data_types.html#merge_lod_same_dtype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.merge_lod_same_dtype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Marge a list of dicts in to one dict.
+The resulting dict has only one value type for all entries, but the dicts do not override each other.
+:param lod: list of dicts
+:return: merged dict</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.data_types.merge_lod_var_dtype">
+<code class="sig-name descname">merge_lod_var_dtype</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lod</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>dict<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pyrado/utils/data_types.html#merge_lod_var_dtype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.merge_lod_var_dtype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Marge a list of dicts in to one dict.
+The resulting dict can have different value types, but the dicts later in the list override earlier ones.
+:param lod: list of dicts
+:return: merged dict</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.data_types.to_float_relentless">
+<code class="sig-name descname">to_float_relentless</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/data_types.html#to_float_relentless"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.to_float_relentless" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a ndarray to a list of floats or to only one float.
+Convert a list of numerical values to a list of floats to only one float.
+Convert a scalar to a float.
+:param inp: ndarray, or list, or scalar
+:return: scalar number or list of floats</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyrado.utils.exceptions">
 <span id="exceptions"></span><h2>exceptions<a class="headerlink" href="#module-pyrado.utils.exceptions" title="Permalink to this headline">¶</a></h2>
@@ -435,8 +624,75 @@ Choosing <cite>axis=1</cite> and <cite>norm_order=1</cite> makes all columns of 
 </dd></dl>
 
 </div>
-<div class="section" id="experiments">
-<h2>experiments<a class="headerlink" href="#experiments" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyrado.utils.experiments">
+<span id="experiments"></span><h2>experiments<a class="headerlink" href="#module-pyrado.utils.experiments" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pyrado.utils.experiments.fcn_from_str">
+<code class="sig-name descname">fcn_from_str</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; Callable<a class="reference internal" href="_modules/pyrado/utils/experiments.html#fcn_from_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.fcn_from_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the matching function. This method is a workaround / utility tool to intended to work with optuna. Since we can
+not pass functions directly, we pass a sting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> – name of the function</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.experiments.load_experiment">
+<code class="sig-name descname">load_experiment</code><span class="sig-paren">(</span><em class="sig-param">ex_dir: str, args: Any = None) -&gt; (typing.Union[pyrado.environments.sim_base.SimEnv, pyrado.environment_wrappers.base.EnvWrapper], &lt;class 'pyrado.policies.base.Policy'&gt;, typing.Union[dict, NoneType]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#load_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.load_experiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the (training) environment and the policy.
+This helper function first tries to read the hyper-parameters yaml-file in the experiment’s directory to infer
+why entities should be loaded. If no file was found, we fall back to some heuristic and hope for the best.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ex_dir</strong> – experiment’s parent directory</p></li>
+<li><p><strong>args</strong> – arguments from the argument parser</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>environment, policy, and optional output (e.g. valuefcn)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.experiments.read_csv_w_replace">
+<code class="sig-name descname">read_csv_w_replace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="_modules/pyrado/utils/experiments.html#read_csv_w_replace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.read_csv_w_replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom function to read a CSV file. Turns white paces into underscores for accessing the columns as exposed
+properties, i.e. <cite>df.prop_abc</cite> instead of <cite>df[‘prop abc’]</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> – path to the CSV file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Pandas <cite>DataFrame</cite> with replaced chars in columns</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.experiments.wrap_like_other_env">
+<code class="sig-name descname">wrap_like_other_env</code><span class="sig-paren">(</span><em class="sig-param">env_targ: pyrado.environments.base.Env, env_src: [&lt;class 'pyrado.environments.sim_base.SimEnv'&gt;, &lt;class 'pyrado.environment_wrappers.base.EnvWrapper'&gt;], use_downsampling: bool = False</em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a><a class="reference internal" href="_modules/pyrado/utils/experiments.html#wrap_like_other_env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.wrap_like_other_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrap a given real environment like it’s simulated counterpart (except the domain randomization of course).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_targ</strong> – target environment e.g. environment representing the physical device</p></li>
+<li><p><strong>env_src</strong> – source environment e.g. simulation environment used for training</p></li>
+<li><p><strong>use_downsampling</strong> – apply a wrapper that downsamples the actions if the sampling frequencies don’t match</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>target environment</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyrado.utils.functions">
 <span id="functions"></span><h2>functions<a class="headerlink" href="#module-pyrado.utils.functions" title="Permalink to this headline">¶</a></h2>
@@ -469,8 +725,129 @@ Choosing <cite>axis=1</cite> and <cite>norm_order=1</cite> makes all columns of 
 </dd></dl>
 
 </div>
-<div class="section" id="input-output">
-<h2>input_output<a class="headerlink" href="#input-output" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyrado.utils.input_output">
+<span id="input-output"></span><h2>input_output<a class="headerlink" href="#module-pyrado.utils.input_output" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pyrado.utils.input_output.color_validity">
+<code class="sig-name descname">color_validity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">valids</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pyrado/utils/input_output.html#color_validity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.color_validity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Color the entries of an data array red or green depending on the if the entries are valid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – ndarray containing the data to print</p></li>
+<li><p><strong>valids</strong> – ndarray containing boolian integer values deciding gor the color (1 –&gt; green, 0 –&gt; red)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of stings</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.input_output.completion_context">
+<code class="sig-name descname">completion_context</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/input_output.html#completion_context"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.completion_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context manager that prints a message, executes the code, and then prints a symbol on success or failure (when an
+exception is raised).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> – message to print at the beginning, e.g. ‘Calibrating’</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments forwarded to <cite>print_cbt()</cite></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.input_output.ensure_math_mode">
+<code class="sig-name descname">ensure_math_mode</code><span class="sig-paren">(</span><em class="sig-param">inp: [&lt;class 'str'&gt;, typing.Sequence[str]], no_subscript: bool = False</em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘str’&gt;, &lt;class ‘list’&gt;]<a class="reference internal" href="_modules/pyrado/utils/input_output.html#ensure_math_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.ensure_math_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Naive way to ensure that a sting is compatible with LaTeX math mode for printing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inp</strong> – input string</p></li>
+<li><p><strong>no_subscript</strong> – force no subscript (sometimes there might be problems due to double subscript</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return s</dt>
+<dd class="field-even"><p>sting in math mode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.input_output.ensure_no_subscript">
+<code class="sig-name descname">ensure_no_subscript</code><span class="sig-paren">(</span><em class="sig-param">inp: [&lt;class 'str'&gt;, typing.Sequence[str]]</em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘str’&gt;, &lt;class ‘list’&gt;]<a class="reference internal" href="_modules/pyrado/utils/input_output.html#ensure_no_subscript"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.ensure_no_subscript" title="Permalink to this definition">¶</a></dt>
+<dd><p>Naive way to ensure that a sting is compatible with LaTeX for printing by removing the math mode symbols.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inp</strong> – input string or iterable of stings</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>sting without subscript</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.input_output.insert_newlines">
+<code class="sig-name descname">insert_newlines</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">every</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pyrado/utils/input_output.html#insert_newlines"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.insert_newlines" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserts multiple line breaks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>string</strong> – input string to be broken into multiple lines</p></li>
+<li><p><strong>every</strong> – gap in number of characters between every line break</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the input sting with line breaks</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.input_output.num_iter_from_rollouts">
+<code class="sig-name descname">num_iter_from_rollouts</code><span class="sig-paren">(</span><em class="sig-param">ros: [typing.Sequence[pyrado.sampling.step_sequence.StepSequence], None], concat_ros: [&lt;class 'pyrado.sampling.step_sequence.StepSequence'&gt;, None], batch_size: int</em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/pyrado/utils/input_output.html#num_iter_from_rollouts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.num_iter_from_rollouts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of iterations from the given rollout data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ros</strong> – multiple rollouts</p></li>
+<li><p><strong>concat_ros</strong> – concatenated rollouts</p></li>
+<li><p><strong>batch_size</strong> – number of samples per batch</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>number of iterations (e.g. used for the progress bar)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.input_output.print_cbt">
+<code class="sig-name descname">print_cbt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">color</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">bright</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">tag</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">end</span><span class="o">=</span><span class="default_value">'\n'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/input_output.html#print_cbt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.print_cbt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a colored (and bright) message with a tag in the beginning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> – string to print</p></li>
+<li><p><strong>color</strong> – color to print in, default <cite>‘’</cite> is the IDE’s/system’s default</p></li>
+<li><p><strong>bright</strong> – flag if the message should be printed bright</p></li>
+<li><p><strong>tag</strong> – tag to be printed in brackets in front of the message</p></li>
+<li><p><strong>end</strong> – endline symbol forwarded to <cite>print()</cite></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.input_output.select_query">
+<code class="sig-name descname">select_query</code><span class="sig-paren">(</span><em class="sig-param">items</em>, <em class="sig-param">max_display=10</em>, <em class="sig-param">fallback=None</em>, <em class="sig-param">item_formatter=&lt;class 'str'&gt;</em>, <em class="sig-param">header: str = 'Available options:'</em>, <em class="sig-param">footer: str = 'Please enter the number of the option to use.'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/input_output.html#select_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.select_query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ask the user to select an item out of the given list.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyrado.utils.math">
 <span id="math"></span><h2>math<a class="headerlink" href="#module-pyrado.utils.math" title="Permalink to this headline">¶</a></h2>
@@ -637,8 +1014,124 @@ One use case of this function is if you want to clip the parameter update by a r
 </dd></dl>
 
 </div>
-<div class="section" id="nn-layers">
-<h2>nn_layers<a class="headerlink" href="#nn-layers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyrado.utils.nn_layers">
+<span id="nn-layers"></span><h2>nn_layers<a class="headerlink" href="#module-pyrado.utils.nn_layers" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.utils.nn_layers.IndiNonlinLayer">
+<em class="property">class </em><code class="sig-name descname">IndiNonlinLayer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">in_features</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">nonlin</span><span class="p">:</span> <span class="n"><span class="p">[</span>typing.Callable<span class="p">, </span>typing.Sequence<span class="p">[</span>typing.Callable<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">bias</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">weight</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">init_weight</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">init_bias</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/nn_layers.html#IndiNonlinLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.nn_layers.IndiNonlinLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Layer subtracts a bias from the input, multiplies the result with a strictly positive scaling factor, and then
+applies the provided nonlinearity. If a list of nonlinearities is provided, every dimension will be processed
+separately. The scaling and the bias are learnable parameters.</p>
+<dl class="py method">
+<dt id="pyrado.utils.nn_layers.IndiNonlinLayer.extra_repr">
+<code class="sig-name descname">extra_repr</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pyrado/utils/nn_layers.html#IndiNonlinLayer.extra_repr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.nn_layers.IndiNonlinLayer.extra_repr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the extra representation of the module</p>
+<p>To print customized extra information, you should reimplement
+this method in your own modules. Both single-line and multi-line
+strings are acceptable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.utils.nn_layers.IndiNonlinLayer.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/utils/nn_layers.html#IndiNonlinLayer.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.nn_layers.IndiNonlinLayer.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.utils.nn_layers.MirrConv1d">
+<em class="property">class </em><code class="sig-name descname">MirrConv1d</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">in_channels</span></em>, <em class="sig-param"><span class="n">out_channels</span></em>, <em class="sig-param"><span class="n">kernel_size</span></em>, <em class="sig-param"><span class="n">stride</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">padding</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">dilation</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">groups</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">bias</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">padding_mode</span><span class="o">=</span><span class="default_value">'zeros'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/nn_layers.html#MirrConv1d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.nn_layers.MirrConv1d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.conv._ConvNd</span></code></p>
+<p>Overriding <cite>Conv1d</cite> module implementation from PyTorch 1.4 to re-use parts of the convolution weights by mirroring
+the first half of the kernel (along the columns). This way we can save (close to) half of the parameters, under
+the assumption that we have a kernel that obeys this kind of symmetry.
+The biases are left unchanged.</p>
+<dl class="py method">
+<dt id="pyrado.utils.nn_layers.MirrConv1d.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/utils/nn_layers.html#MirrConv1d.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.nn_layers.MirrConv1d.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.utils.nn_layers.PositiveScaleLayer">
+<em class="property">class </em><code class="sig-name descname">PositiveScaleLayer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">in_features</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">init_weight</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/nn_layers.html#PositiveScaleLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.nn_layers.PositiveScaleLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Layer which scales (strictly positive) the input using a learnable scaling factor</p>
+<dl class="py method">
+<dt id="pyrado.utils.nn_layers.PositiveScaleLayer.extra_repr">
+<code class="sig-name descname">extra_repr</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pyrado/utils/nn_layers.html#PositiveScaleLayer.extra_repr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.nn_layers.PositiveScaleLayer.extra_repr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the extra representation of the module</p>
+<p>To print customized extra information, you should reimplement
+this method in your own modules. Both single-line and multi-line
+strings are acceptable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.utils.nn_layers.PositiveScaleLayer.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/utils/nn_layers.html#PositiveScaleLayer.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.nn_layers.PositiveScaleLayer.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.utils.nn_layers.ScaleLayer">
+<em class="property">class </em><code class="sig-name descname">ScaleLayer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">in_features</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">init_weight</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/nn_layers.html#ScaleLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.nn_layers.ScaleLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Layer which scales the output of the input using a learnable scaling factor</p>
+<dl class="py method">
+<dt id="pyrado.utils.nn_layers.ScaleLayer.extra_repr">
+<code class="sig-name descname">extra_repr</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pyrado/utils/nn_layers.html#ScaleLayer.extra_repr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.nn_layers.ScaleLayer.extra_repr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the extra representation of the module</p>
+<p>To print customized extra information, you should reimplement
+this method in your own modules. Both single-line and multi-line
+strings are acceptable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.utils.nn_layers.ScaleLayer.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/utils/nn_layers.html#ScaleLayer.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.nn_layers.ScaleLayer.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyrado.utils.optimizers">
 <span id="optimizers"></span><h2>optimizers<a class="headerlink" href="#module-pyrado.utils.optimizers" title="Permalink to this headline">¶</a></h2>

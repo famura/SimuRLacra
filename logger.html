@@ -106,7 +106,7 @@
 <li class="toctree-l1"><a class="reference internal" href="environment_wrappers.html">environment_wrappers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exploration.html">exploration</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">logger</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#experiment">experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.logger.experiment">experiment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.logger.iteration">iteration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.logger.step">step</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.logger">Module contents</a></li>
@@ -186,8 +186,118 @@
             
   <div class="section" id="logger">
 <h1>logger<a class="headerlink" href="#logger" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="experiment">
-<h2>experiment<a class="headerlink" href="#experiment" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyrado.logger.experiment">
+<span id="experiment"></span><h2>experiment<a class="headerlink" href="#module-pyrado.logger.experiment" title="Permalink to this headline">¶</a></h2>
+<p>Log storage management</p>
+<p>Experiment folder path:
+&lt;prefix&gt;/&lt;env&gt;/&lt;algo&gt;/&lt;timestamp&gt;–&lt;info&gt;</p>
+<dl class="py class">
+<dt id="pyrado.logger.experiment.AugmentedSafeLoader">
+<em class="property">class </em><code class="sig-name descname">AugmentedSafeLoader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stream</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#AugmentedSafeLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.AugmentedSafeLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">yaml.loader.SafeLoader</span></code></p>
+<dl class="py method">
+<dt id="pyrado.logger.experiment.AugmentedSafeLoader.construct_python_tuple">
+<code class="sig-name descname">construct_python_tuple</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">node</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#AugmentedSafeLoader.construct_python_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.AugmentedSafeLoader.construct_python_tuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use PyYAML method for constructing a sequence to construct a tuple.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.logger.experiment.AugmentedSafeLoader.yaml_constructors">
+<code class="sig-name descname">yaml_constructors</code><em class="property"> = {'tag:yaml.org,2002:null': &lt;function SafeConstructor.construct_yaml_null&gt;, 'tag:yaml.org,2002:bool': &lt;function SafeConstructor.construct_yaml_bool&gt;, 'tag:yaml.org,2002:int': &lt;function SafeConstructor.construct_yaml_int&gt;, 'tag:yaml.org,2002:float': &lt;function SafeConstructor.construct_yaml_float&gt;, 'tag:yaml.org,2002:binary': &lt;function SafeConstructor.construct_yaml_binary&gt;, 'tag:yaml.org,2002:timestamp': &lt;function SafeConstructor.construct_yaml_timestamp&gt;, 'tag:yaml.org,2002:omap': &lt;function SafeConstructor.construct_yaml_omap&gt;, 'tag:yaml.org,2002:pairs': &lt;function SafeConstructor.construct_yaml_pairs&gt;, 'tag:yaml.org,2002:set': &lt;function SafeConstructor.construct_yaml_set&gt;, 'tag:yaml.org,2002:str': &lt;function SafeConstructor.construct_yaml_str&gt;, 'tag:yaml.org,2002:seq': &lt;function SafeConstructor.construct_yaml_seq&gt;, 'tag:yaml.org,2002:map': &lt;function SafeConstructor.construct_yaml_map&gt;, None: &lt;function SafeConstructor.construct_undefined&gt;, 'tag:yaml.org,2002:python/tuple': &lt;function AugmentedSafeLoader.construct_python_tuple&gt;}</em><a class="headerlink" href="#pyrado.logger.experiment.AugmentedSafeLoader.yaml_constructors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.logger.experiment.Experiment">
+<em class="property">class </em><code class="sig-name descname">Experiment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">algo_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">extra_info</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">exp_id</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">timestamp</span><span class="p">:</span> <span class="n">datetime.datetime</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">base_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'/home/user/SimuRLacra/Pyrado/pyrado/../data/temp'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#Experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.Experiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for defining experiments
+This is a path-like object, and as such it can be used everywhere a normal path would be used.</p>
+<dl class="py method">
+<dt id="pyrado.logger.experiment.Experiment.matches">
+<code class="sig-name descname">matches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hint</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/logger/experiment.html#Experiment.matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.Experiment.matches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if this experiment matches the given hint.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.logger.experiment.Experiment.prefix">
+<em class="property">property </em><code class="sig-name descname">prefix</code><a class="headerlink" href="#pyrado.logger.experiment.Experiment.prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combination of experiment and algorithm</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.logger.experiment.ask_for_experiment">
+<code class="sig-name descname">ask_for_experiment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#ask_for_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.ask_for_experiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ask for an experiment on the console. This is the go-to entry point for evaluation scripts.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.logger.experiment.list_experiments">
+<code class="sig-name descname">list_experiments</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">algo_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">base_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">temp</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">perma</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#list_experiments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.list_experiments" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all stored experiments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_name</strong> – filter by env name</p></li>
+<li><p><strong>algo_name</strong> – filter by algorithm name. Requires env_name to be used too</p></li>
+<li><p><strong>base_dir</strong> – explicit base dir if desired. May also be a list of bases. Uses temp and perm dir if not specified.</p></li>
+<li><p><strong>temp</strong> – set to <cite>False</cite> to not look in the <cite>pyrado.TEMP</cite> directory</p></li>
+<li><p><strong>perma</strong> – set to <cite>False</cite> to not look in the <cite>pyrado.PERMA</cite> directory</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.logger.experiment.load_dict_from_yaml">
+<code class="sig-name descname">load_dict_from_yaml</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">yaml_file</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pyrado/logger/experiment.html#load_dict_from_yaml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.load_dict_from_yaml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a list of dicts (e.g. hyper-parameters) of an experiment from a YAML-file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>yaml_file</strong> – path to the YAML-file that</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a dict containing names as keys and a dict of parameter values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.logger.experiment.save_list_of_dicts_to_yaml">
+<code class="sig-name descname">save_list_of_dicts_to_yaml</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lod</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>dict<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">save_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">file_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'hyperparams'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#save_list_of_dicts_to_yaml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.save_list_of_dicts_to_yaml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a list of dicts (e.g. hyper-parameters) of an experiment a YAML-file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lod</strong> – list of dicts each containing 1 key (name) and 1 value (a dict with the hyper-parameters)</p></li>
+<li><p><strong>save_dir</strong> – directory to save the results in</p></li>
+<li><p><strong>file_name</strong> – name of the YAML-file without suffix</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.logger.experiment.select_by_hint">
+<code class="sig-name descname">select_by_hint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">exps</span></em>, <em class="sig-param"><span class="n">hint</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#select_by_hint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.select_by_hint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select experiment by hint.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.logger.experiment.select_latest">
+<code class="sig-name descname">select_latest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">exps</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#select_latest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.select_latest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select the most recent experiment from an iterable of experiments.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.logger.experiment.setup_experiment">
+<code class="sig-name descname">setup_experiment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">algo_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">extra_info</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">base_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'/home/user/SimuRLacra/Pyrado/pyrado/../data/temp'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#setup_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.setup_experiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup a new experiment for recording.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyrado.logger.iteration">
 <span id="iteration"></span><h2>iteration<a class="headerlink" href="#module-pyrado.logger.iteration" title="Permalink to this headline">¶</a></h2>

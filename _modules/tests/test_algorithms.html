@@ -222,7 +222,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.sac</span> <span class="kn">import</span> <span class="n">SAC</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.spota</span> <span class="kn">import</span> <span class="n">SPOTA</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.svpg</span> <span class="kn">import</span> <span class="n">SVPG</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.sysid_as_rl</span> <span class="kn">import</span> <span class="n">DomainDistrParamPolicy</span><span class="p">,</span> <span class="n">SysIdByEpisodicRL</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.sysid_via_episodic_rl</span> <span class="kn">import</span> <span class="n">DomainDistrParamPolicy</span><span class="p">,</span> <span class="n">SysIdViaEpisodicRL</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="n">UniformDomainParam</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_randomizer</span> <span class="kn">import</span> <span class="n">DomainRandomizer</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_normalization</span> <span class="kn">import</span> <span class="n">ActNormWrapper</span>
@@ -693,7 +693,7 @@
     <span class="n">prior</span> <span class="o">=</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
         <span class="n">UniformDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;ang_offset&#39;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">,</span> <span class="n">halfspan</span><span class="o">=</span><span class="mi">1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">),</span>
     <span class="p">)</span>
-    <span class="n">ddp_policy</span> <span class="o">=</span> <span class="n">DomainDistrParamPolicy</span><span class="p">(</span><span class="n">mapping</span><span class="o">=</span><span class="n">dp_map</span><span class="p">,</span> <span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">)</span>
+    <span class="n">ddp_policy</span> <span class="o">=</span> <span class="n">DomainDistrParamPolicy</span><span class="p">(</span><span class="n">mapping</span><span class="o">=</span><span class="n">dp_map</span><span class="p">,</span> <span class="n">trafo_mask</span><span class="o">=</span><span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">)</span>
 
     <span class="c1"># Subroutine</span>
     <span class="n">subrtn_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>

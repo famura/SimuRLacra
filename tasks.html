@@ -111,18 +111,18 @@
 <li class="toctree-l1"><a class="reference internal" href="sampling.html">sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spaces.html">spaces</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">tasks</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#base">base</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#condition-only">condition_only</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#desired-space">desired_space</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#desired-state">desired_state</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#endless-flipping">endless_flipping</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#final-reward">final_reward</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#goalless">goalless</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#masked">masked</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#parallel">parallel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#predefined">predefined</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.tasks.base">base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.tasks.condition_only">condition_only</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.tasks.desired_space">desired_space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.tasks.desired_state">desired_state</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.tasks.endless_flipping">endless_flipping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.tasks.final_reward">final_reward</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.tasks.goalless">goalless</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.tasks.masked">masked</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.tasks.parallel">parallel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.tasks.predefined">predefined</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.tasks.reward_functions">reward_functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#sequential">sequential</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.tasks.sequential">sequential</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.tasks.utils">utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.tasks">Module contents</a></li>
 </ul>
@@ -196,35 +196,1243 @@
             
   <div class="section" id="tasks">
 <h1>tasks<a class="headerlink" href="#tasks" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="base">
-<h2>base<a class="headerlink" href="#base" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyrado.tasks.base">
+<span id="base"></span><h2>base<a class="headerlink" href="#module-pyrado.tasks.base" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.tasks.base.Task">
+<em class="property">class </em><code class="sig-name descname">Task</code><a class="reference internal" href="_modules/pyrado/tasks/base.html#Task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.base.Task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Base class for all tasks in Pyrado.
+A task contains a desired state, a reward function, and a step function.
+The task also checks if the environment is done. Every environment should have exactly one task at a time.</p>
+<dl class="py method">
+<dt id="pyrado.tasks.base.Task.compute_final_rew">
+<code class="sig-name descname">compute_final_rew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">remaining_steps</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/tasks/base.html#Task.compute_final_rew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.base.Task.compute_final_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the final reward, e.g. bonus for success or a malus for failure, for a single task.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function should only be overwritten by tasks that manipulate the final reward.</p>
 </div>
-<div class="section" id="condition-only">
-<h2>condition_only<a class="headerlink" href="#condition-only" title="Permalink to this headline">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state</p></li>
+<li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>final reward</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.base.Task.env_spec">
+<em class="property">property </em><code class="sig-name descname">env_spec</code><a class="headerlink" href="#pyrado.tasks.base.Task.env_spec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the specification of environment the task is in.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.base.Task.final_rew">
+<code class="sig-name descname">final_rew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">remaining_steps</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/tasks/base.html#Task.final_rew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.base.Task.final_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the final reward, e.g. bonus for success or a malus for failure.
+This function loops through all tasks (unfolding the wrappers) and calls their <cite>compute_final_rew</cite> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state forwarded to <cite>compute_final_rew</cite></p></li>
+<li><p><strong>remaining_steps</strong> – number of time steps left in the episode forwarded to <cite>compute_final_rew</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return rew</dt>
+<dd class="field-even"><p>summed final reward</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.base.Task.has_failed">
+<code class="sig-name descname">has_failed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/tasks/base.html#Task.has_failed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.base.Task.has_failed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the environment if the agent failed.
+The default implementation checks if the state is out of bounds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> – environments current state</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if failed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.base.Task.has_succeeded">
+<em class="property">abstract </em><code class="sig-name descname">has_succeeded</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/tasks/base.html#Task.has_succeeded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.base.Task.has_succeeded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the environment if the agent succeeded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> – environments current state</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if succeeded</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.base.Task.is_done">
+<code class="sig-name descname">is_done</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/tasks/base.html#Task.is_done"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.base.Task.is_done" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a final state is reached.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is strongly recommended to call this method every environment step.</p>
 </div>
-<div class="section" id="desired-space">
-<h2>desired_space<a class="headerlink" href="#desired-space" title="Permalink to this headline">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state</p></li>
+<li><p><strong>act</strong> – current action</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return done</dt>
+<dd class="field-even"><p>done flag</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.base.Task.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/base.html#Task.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.base.Task.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the task.
+Since the environment specification may change at every reset of the environment, we have to reset the task.
+This might also include resetting the members of the reward function if there are any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> – optional arguments e.g. environment specification or new desired state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.base.Task.rew_fcn">
+<em class="property">abstract property </em><code class="sig-name descname">rew_fcn</code><a class="headerlink" href="#pyrado.tasks.base.Task.rew_fcn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the reward function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.base.Task.space_des">
+<em class="property">property </em><code class="sig-name descname">space_des</code><a class="headerlink" href="#pyrado.tasks.base.Task.space_des" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the desired state (same dimensions as the environment’s state).
+Only override this if the task has a desired state.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.base.Task.state_des">
+<em class="property">property </em><code class="sig-name descname">state_des</code><a class="headerlink" href="#pyrado.tasks.base.Task.state_des" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the desired state (same dimensions as the environment’s state).
+Only override this if the task has a desired state.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.base.Task.step_rew">
+<em class="property">abstract </em><code class="sig-name descname">step_rew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">act</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">remaining_steps</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/tasks/base.html#Task.step_rew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.base.Task.step_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the step reward, e.g. from a function of the states and actions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is strongly recommended to call this method every environment step.</p>
 </div>
-<div class="section" id="desired-state">
-<h2>desired_state<a class="headerlink" href="#desired-state" title="Permalink to this headline">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state</p></li>
+<li><p><strong>act</strong> – current action</p></li>
+<li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return rew</dt>
+<dd class="field-even"><p>current reward</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.tasks.base.TaskWrapper">
+<em class="property">class </em><code class="sig-name descname">TaskWrapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wrapped_task</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task">pyrado.tasks.base.Task</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/base.html#TaskWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.base.TaskWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.tasks.base.Task</span></code></a></p>
+<p>Base for all task wrappers. Delegates all environment methods to the wrapped environment.</p>
+<dl class="py method">
+<dt id="pyrado.tasks.base.TaskWrapper.env_spec">
+<em class="property">property </em><code class="sig-name descname">env_spec</code><a class="headerlink" href="#pyrado.tasks.base.TaskWrapper.env_spec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the specification of environment the task is in.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.base.TaskWrapper.has_failed">
+<code class="sig-name descname">has_failed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/tasks/base.html#TaskWrapper.has_failed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.base.TaskWrapper.has_failed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the environment if the agent failed.
+The default implementation checks if the state is out of bounds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> – environments current state</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if failed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.base.TaskWrapper.has_succeeded">
+<code class="sig-name descname">has_succeeded</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/tasks/base.html#TaskWrapper.has_succeeded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.base.TaskWrapper.has_succeeded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the environment if the agent succeeded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> – environments current state</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if succeeded</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.base.TaskWrapper.is_done">
+<code class="sig-name descname">is_done</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/tasks/base.html#TaskWrapper.is_done"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.base.TaskWrapper.is_done" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a final state is reached.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is strongly recommended to call this method every environment step.</p>
 </div>
-<div class="section" id="endless-flipping">
-<h2>endless_flipping<a class="headerlink" href="#endless-flipping" title="Permalink to this headline">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state</p></li>
+<li><p><strong>act</strong> – current action</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return done</dt>
+<dd class="field-even"><p>done flag</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.base.TaskWrapper.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/base.html#TaskWrapper.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.base.TaskWrapper.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the task.
+Since the environment specification may change at every reset of the environment, we have to reset the task.
+This might also include resetting the members of the reward function if there are any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> – optional arguments e.g. environment specification or new desired state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.base.TaskWrapper.rew_fcn">
+<em class="property">property </em><code class="sig-name descname">rew_fcn</code><a class="headerlink" href="#pyrado.tasks.base.TaskWrapper.rew_fcn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the reward function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.base.TaskWrapper.space_des">
+<em class="property">property </em><code class="sig-name descname">space_des</code><a class="headerlink" href="#pyrado.tasks.base.TaskWrapper.space_des" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the desired state (same dimensions as the environment’s state).
+Only override this if the task has a desired state.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.base.TaskWrapper.state_des">
+<em class="property">property </em><code class="sig-name descname">state_des</code><a class="headerlink" href="#pyrado.tasks.base.TaskWrapper.state_des" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the desired state (same dimensions as the environment’s state).
+Only override this if the task has a desired state.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.base.TaskWrapper.step_rew">
+<code class="sig-name descname">step_rew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">act</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">remaining_steps</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/tasks/base.html#TaskWrapper.step_rew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.base.TaskWrapper.step_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the step reward, e.g. from a function of the states and actions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is strongly recommended to call this method every environment step.</p>
 </div>
-<div class="section" id="final-reward">
-<h2>final_reward<a class="headerlink" href="#final-reward" title="Permalink to this headline">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state</p></li>
+<li><p><strong>act</strong> – current action</p></li>
+<li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return rew</dt>
+<dd class="field-even"><p>current reward</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.base.TaskWrapper.wrapped_task">
+<em class="property">property </em><code class="sig-name descname">wrapped_task</code><a class="headerlink" href="#pyrado.tasks.base.TaskWrapper.wrapped_task" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.tasks.base.all_tasks">
+<code class="sig-name descname">all_tasks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">task</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/base.html#all_tasks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.base.all_tasks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterates over the task chain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>task</strong> – outermost task of the chain</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>an iterable over the whole chain from outermost to innermost</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
-<div class="section" id="goalless">
-<h2>goalless<a class="headerlink" href="#goalless" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyrado.tasks.condition_only">
+<span id="condition-only"></span><h2>condition_only<a class="headerlink" href="#module-pyrado.tasks.condition_only" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.tasks.condition_only.ConditionOnlyTask">
+<em class="property">class </em><code class="sig-name descname">ConditionOnlyTask</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">condition_fcn</span><span class="p">:</span> <span class="n">Callable</span></em>, <em class="sig-param"><span class="n">is_success_condition</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/condition_only.html#ConditionOnlyTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.condition_only.ConditionOnlyTask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.tasks.base.Task</span></code></a></p>
+<p>Task class which yields zero reward at every time and terminates if the given function is true.
+This class is intended to be wrapped by <cite>FinalRewTask</cite>.</p>
+<dl class="py method">
+<dt id="pyrado.tasks.condition_only.ConditionOnlyTask.env_spec">
+<em class="property">property </em><code class="sig-name descname">env_spec</code><a class="headerlink" href="#pyrado.tasks.condition_only.ConditionOnlyTask.env_spec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the specification of environment the task is in.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.condition_only.ConditionOnlyTask.has_failed">
+<code class="sig-name descname">has_failed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/tasks/condition_only.html#ConditionOnlyTask.has_failed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.condition_only.ConditionOnlyTask.has_failed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the environment if the agent failed.
+The default implementation checks if the state is out of bounds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> – environments current state</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if failed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.condition_only.ConditionOnlyTask.has_succeeded">
+<code class="sig-name descname">has_succeeded</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/tasks/condition_only.html#ConditionOnlyTask.has_succeeded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.condition_only.ConditionOnlyTask.has_succeeded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the environment if the agent succeeded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> – environments current state</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if succeeded</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.condition_only.ConditionOnlyTask.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">condition_fcn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">is_success_condition</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/condition_only.html#ConditionOnlyTask.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.condition_only.ConditionOnlyTask.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_spec</strong> – environment specification</p></li>
+<li><p><strong>condition_fcn</strong> – function to determine if the task was solved, by default (<cite>None</cite>) this task runs endlessly</p></li>
+<li><p><strong>is_success_condition</strong> – if <cite>True</cite> the <cite>condition_fcn</cite> returns <cite>True</cite> for a success,
+if <cite>False</cite> the <cite>condition_fcn</cite> returns <cite>True</cite> for a failure</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.condition_only.ConditionOnlyTask.rew_fcn">
+<em class="property">property </em><code class="sig-name descname">rew_fcn</code><a class="headerlink" href="#pyrado.tasks.condition_only.ConditionOnlyTask.rew_fcn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the reward function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.condition_only.ConditionOnlyTask.step_rew">
+<code class="sig-name descname">step_rew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">act</span><span class="p">:</span> <span class="n">numpy.ndarray</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">remaining_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/tasks/condition_only.html#ConditionOnlyTask.step_rew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.condition_only.ConditionOnlyTask.step_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the step reward, e.g. from a function of the states and actions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is strongly recommended to call this method every environment step.</p>
 </div>
-<div class="section" id="masked">
-<h2>masked<a class="headerlink" href="#masked" title="Permalink to this headline">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state</p></li>
+<li><p><strong>act</strong> – current action</p></li>
+<li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return rew</dt>
+<dd class="field-even"><p>current reward</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="parallel">
-<h2>parallel<a class="headerlink" href="#parallel" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyrado.tasks.desired_space">
+<span id="desired-space"></span><h2>desired_space<a class="headerlink" href="#module-pyrado.tasks.desired_space" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.tasks.desired_space.DesSpaceTask">
+<em class="property">class </em><code class="sig-name descname">DesSpaceTask</code><span class="sig-paren">(</span><em class="sig-param">env_spec: pyrado.utils.data_types.EnvSpec</em>, <em class="sig-param">space_des: pyrado.spaces.base.Space</em>, <em class="sig-param">rew_fcn: pyrado.tasks.reward_functions.RewFcn = &lt;class 'pyrado.tasks.reward_functions.ZeroPerStepRewFcn'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/desired_space.html#DesSpaceTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.desired_space.DesSpaceTask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.tasks.base.Task</span></code></a></p>
+<p>Task class for moving to a (fixed) desired state space.
+This task is designed with the idea in mind that it is only important if the state is in the desired (sub)space.
+If the state is in the desired space, the <cite>done</cite> flag is raised. Until then, the step reward is returned.</p>
+<dl class="py method">
+<dt id="pyrado.tasks.desired_space.DesSpaceTask.env_spec">
+<em class="property">property </em><code class="sig-name descname">env_spec</code><a class="headerlink" href="#pyrado.tasks.desired_space.DesSpaceTask.env_spec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the specification of environment the task is in.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.desired_space.DesSpaceTask.has_succeeded">
+<code class="sig-name descname">has_succeeded</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/tasks/desired_space.html#DesSpaceTask.has_succeeded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.desired_space.DesSpaceTask.has_succeeded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the environment if the agent succeeded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> – environments current state</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if succeeded</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.desired_space.DesSpaceTask.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">space_des</span><span class="p">:</span> <span class="n"><a class="reference internal" href="spaces.html#pyrado.spaces.base.Space" title="pyrado.spaces.base.Space">pyrado.spaces.base.Space</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/desired_space.html#DesSpaceTask.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.desired_space.DesSpaceTask.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_spec</strong> – environment specification</p></li>
+<li><p><strong>space_des</strong> – new desired state a.k.a. goal state</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments forwarded to the reward function, e.g. the initial state</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.desired_space.DesSpaceTask.rew_fcn">
+<em class="property">property </em><code class="sig-name descname">rew_fcn</code><a class="headerlink" href="#pyrado.tasks.desired_space.DesSpaceTask.rew_fcn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the reward function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.desired_space.DesSpaceTask.space_des">
+<em class="property">property </em><code class="sig-name descname">space_des</code><a class="headerlink" href="#pyrado.tasks.desired_space.DesSpaceTask.space_des" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the desired state (same dimensions as the environment’s state).
+Only override this if the task has a desired state.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.desired_space.DesSpaceTask.step_rew">
+<code class="sig-name descname">step_rew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">act</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">remaining_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/tasks/desired_space.html#DesSpaceTask.step_rew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.desired_space.DesSpaceTask.step_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the step reward, e.g. from a function of the states and actions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is strongly recommended to call this method every environment step.</p>
 </div>
-<div class="section" id="predefined">
-<h2>predefined<a class="headerlink" href="#predefined" title="Permalink to this headline">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state</p></li>
+<li><p><strong>act</strong> – current action</p></li>
+<li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return rew</dt>
+<dd class="field-even"><p>current reward</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.tasks.desired_state">
+<span id="desired-state"></span><h2>desired_state<a class="headerlink" href="#module-pyrado.tasks.desired_state" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.tasks.desired_state.DesStateTask">
+<em class="property">class </em><code class="sig-name descname">DesStateTask</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">state_des</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rew_fcn</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.tasks.reward_functions.RewFcn" title="pyrado.tasks.reward_functions.RewFcn">pyrado.tasks.reward_functions.RewFcn</a></span></em>, <em class="sig-param"><span class="n">success_fcn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/desired_state.html#DesStateTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.desired_state.DesStateTask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.tasks.base.Task</span></code></a></p>
+<p>Task class for moving to a desired state. Operates on the error in state and action.</p>
+<dl class="py method">
+<dt id="pyrado.tasks.desired_state.DesStateTask.env_spec">
+<em class="property">property </em><code class="sig-name descname">env_spec</code><a class="headerlink" href="#pyrado.tasks.desired_state.DesStateTask.env_spec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the specification of environment the task is in.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.desired_state.DesStateTask.has_succeeded">
+<code class="sig-name descname">has_succeeded</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/tasks/desired_state.html#DesStateTask.has_succeeded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.desired_state.DesStateTask.has_succeeded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the environment if the agent succeeded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> – environments current state</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if succeeded</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.desired_state.DesStateTask.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">state_des</span><span class="p">:</span> <span class="n">numpy.ndarray</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/desired_state.html#DesStateTask.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.desired_state.DesStateTask.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_spec</strong> – environment specification</p></li>
+<li><p><strong>state_des</strong> – new desired state a.k.a. goal state</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments forwarded to the reward function, e.g. the initial state</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.desired_state.DesStateTask.rew_fcn">
+<em class="property">property </em><code class="sig-name descname">rew_fcn</code><a class="headerlink" href="#pyrado.tasks.desired_state.DesStateTask.rew_fcn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the reward function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.desired_state.DesStateTask.state_des">
+<em class="property">property </em><code class="sig-name descname">state_des</code><a class="headerlink" href="#pyrado.tasks.desired_state.DesStateTask.state_des" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the desired state (same dimensions as the environment’s state).
+Only override this if the task has a desired state.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.desired_state.DesStateTask.step_rew">
+<code class="sig-name descname">step_rew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">act</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">remaining_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/tasks/desired_state.html#DesStateTask.step_rew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.desired_state.DesStateTask.step_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the step reward, e.g. from a function of the states and actions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is strongly recommended to call this method every environment step.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state</p></li>
+<li><p><strong>act</strong> – current action</p></li>
+<li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return rew</dt>
+<dd class="field-even"><p>current reward</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.tasks.desired_state.RadiallySymmDesStateTask">
+<em class="property">class </em><code class="sig-name descname">RadiallySymmDesStateTask</code><span class="sig-paren">(</span><em class="sig-param">env_spec: pyrado.utils.data_types.EnvSpec, state_des: numpy.ndarray, rew_fcn: pyrado.tasks.reward_functions.RewFcn, idcs: Sequence[int], modulation: [&lt;class 'float'&gt;, &lt;class 'numpy.ndarray'&gt;] = 6.283185307179586, success_fcn: Callable = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/desired_state.html#RadiallySymmDesStateTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.desired_state.RadiallySymmDesStateTask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.tasks.desired_state.DesStateTask" title="pyrado.tasks.desired_state.DesStateTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.tasks.desired_state.DesStateTask</span></code></a></p>
+<p>Task class for moving to a desired state. Operates on the error in state and action.
+In contrast to DesStateTask, a subset of the state is radially symmetric, e.g. and angular position.</p>
+<dl class="py method">
+<dt id="pyrado.tasks.desired_state.RadiallySymmDesStateTask.step_rew">
+<code class="sig-name descname">step_rew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">act</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">remaining_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/tasks/desired_state.html#RadiallySymmDesStateTask.step_rew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.desired_state.RadiallySymmDesStateTask.step_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the step reward, e.g. from a function of the states and actions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is strongly recommended to call this method every environment step.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state</p></li>
+<li><p><strong>act</strong> – current action</p></li>
+<li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return rew</dt>
+<dd class="field-even"><p>current reward</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.tasks.endless_flipping">
+<span id="endless-flipping"></span><h2>endless_flipping<a class="headerlink" href="#module-pyrado.tasks.endless_flipping" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.tasks.endless_flipping.EndlessFlippingTask">
+<em class="property">class </em><code class="sig-name descname">EndlessFlippingTask</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">rew_fcn</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.tasks.reward_functions.RewFcn" title="pyrado.tasks.reward_functions.RewFcn">pyrado.tasks.reward_functions.RewFcn</a></span></em>, <em class="sig-param"><span class="n">init_angle</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">des_angle_delta</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.5707963267948966</span></em>, <em class="sig-param"><span class="n">angle_tol</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.017453292519943295</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/endless_flipping.html#EndlessFlippingTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.endless_flipping.EndlessFlippingTask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.tasks.base.Task</span></code></a></p>
+<p>Task class for flipping an object around one axis about a desired angle. Once the new angle is equal to the
+old angle plus/minus a given angle delta, the new angle becomes the old one and the flipping continues.</p>
+<dl class="py method">
+<dt id="pyrado.tasks.endless_flipping.EndlessFlippingTask.env_spec">
+<em class="property">property </em><code class="sig-name descname">env_spec</code><a class="headerlink" href="#pyrado.tasks.endless_flipping.EndlessFlippingTask.env_spec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the specification of environment the task is in.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.endless_flipping.EndlessFlippingTask.has_succeeded">
+<code class="sig-name descname">has_succeeded</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/tasks/endless_flipping.html#EndlessFlippingTask.has_succeeded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.endless_flipping.EndlessFlippingTask.has_succeeded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the environment if the agent succeeded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> – environments current state</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if succeeded</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.endless_flipping.EndlessFlippingTask.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">init_angle</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/endless_flipping.html#EndlessFlippingTask.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.endless_flipping.EndlessFlippingTask.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_spec</strong> – environment specification</p></li>
+<li><p><strong>init_angle</strong> – override initial angle</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments forwarded to the reward function, e.g. the initial state</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.endless_flipping.EndlessFlippingTask.rew_fcn">
+<em class="property">property </em><code class="sig-name descname">rew_fcn</code><a class="headerlink" href="#pyrado.tasks.endless_flipping.EndlessFlippingTask.rew_fcn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the reward function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.endless_flipping.EndlessFlippingTask.step_rew">
+<code class="sig-name descname">step_rew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">act</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">remaining_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/tasks/endless_flipping.html#EndlessFlippingTask.step_rew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.endless_flipping.EndlessFlippingTask.step_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the step reward, e.g. from a function of the states and actions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is strongly recommended to call this method every environment step.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state</p></li>
+<li><p><strong>act</strong> – current action</p></li>
+<li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return rew</dt>
+<dd class="field-even"><p>current reward</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.tasks.final_reward">
+<span id="final-reward"></span><h2>final_reward<a class="headerlink" href="#module-pyrado.tasks.final_reward" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.tasks.final_reward.BestStateFinalRewTask">
+<em class="property">class </em><code class="sig-name descname">BestStateFinalRewTask</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wrapped_task</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task">pyrado.tasks.base.Task</a></span></em>, <em class="sig-param"><span class="n">max_steps</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">factor</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/final_reward.html#BestStateFinalRewTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.final_reward.BestStateFinalRewTask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.tasks.base.TaskWrapper" title="pyrado.tasks.base.TaskWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.tasks.base.TaskWrapper</span></code></a></p>
+<p>Wrapper for tasks which yields a reward / cost on success / failure based on the best reward / cost observed in the
+current trajectory that is scaled by the number of taken / remaining time steps.</p>
+<dl class="py method">
+<dt id="pyrado.tasks.final_reward.BestStateFinalRewTask.compute_final_rew">
+<code class="sig-name descname">compute_final_rew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">remaining_steps</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/tasks/final_reward.html#BestStateFinalRewTask.compute_final_rew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.final_reward.BestStateFinalRewTask.compute_final_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the reward / cost on task completion / fail of this task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state of the environment</p></li>
+<li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>final reward of this task</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.final_reward.BestStateFinalRewTask.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/final_reward.html#BestStateFinalRewTask.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.final_reward.BestStateFinalRewTask.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the task.
+Since the environment specification may change at every reset of the environment, we have to reset the task.
+This might also include resetting the members of the reward function if there are any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> – optional arguments e.g. environment specification or new desired state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.final_reward.BestStateFinalRewTask.step_rew">
+<code class="sig-name descname">step_rew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">act</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">remaining_steps</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/tasks/final_reward.html#BestStateFinalRewTask.step_rew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.final_reward.BestStateFinalRewTask.step_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the step reward, e.g. from a function of the states and actions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is strongly recommended to call this method every environment step.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state</p></li>
+<li><p><strong>act</strong> – current action</p></li>
+<li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return rew</dt>
+<dd class="field-even"><p>current reward</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.final_reward.BestStateFinalRewTask.yielded_final_rew">
+<em class="property">property </em><code class="sig-name descname">yielded_final_rew</code><a class="headerlink" href="#pyrado.tasks.final_reward.BestStateFinalRewTask.yielded_final_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the flag that signals if this instance already yielded its final reward.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.tasks.final_reward.FinalRewMode">
+<em class="property">class </em><code class="sig-name descname">FinalRewMode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state_dependent</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">time_dependent</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">always_positive</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">always_negative</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">user_input</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/final_reward.html#FinalRewMode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.final_reward.FinalRewMode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>The specification of how the final state should be rewarded or punished</p>
+<dl class="py method">
+<dt id="pyrado.tasks.final_reward.FinalRewMode.always_negative">
+<em class="property">property </em><code class="sig-name descname">always_negative</code><a class="headerlink" href="#pyrado.tasks.final_reward.FinalRewMode.always_negative" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.final_reward.FinalRewMode.always_positive">
+<em class="property">property </em><code class="sig-name descname">always_positive</code><a class="headerlink" href="#pyrado.tasks.final_reward.FinalRewMode.always_positive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.final_reward.FinalRewMode.state_dependent">
+<em class="property">property </em><code class="sig-name descname">state_dependent</code><a class="headerlink" href="#pyrado.tasks.final_reward.FinalRewMode.state_dependent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.final_reward.FinalRewMode.time_dependent">
+<em class="property">property </em><code class="sig-name descname">time_dependent</code><a class="headerlink" href="#pyrado.tasks.final_reward.FinalRewMode.time_dependent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.final_reward.FinalRewMode.user_input">
+<em class="property">property </em><code class="sig-name descname">user_input</code><a class="headerlink" href="#pyrado.tasks.final_reward.FinalRewMode.user_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.tasks.final_reward.FinalRewTask">
+<em class="property">class </em><code class="sig-name descname">FinalRewTask</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wrapped_task</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task">pyrado.tasks.base.Task</a></span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.tasks.final_reward.FinalRewMode" title="pyrado.tasks.final_reward.FinalRewMode">pyrado.tasks.final_reward.FinalRewMode</a></span></em>, <em class="sig-param"><span class="n">factor</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1000.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/final_reward.html#FinalRewTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.final_reward.FinalRewTask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.tasks.base.TaskWrapper" title="pyrado.tasks.base.TaskWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.tasks.base.TaskWrapper</span></code></a></p>
+<p>Wrapper for tasks which yields a reward / cost on success / failure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Usage</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">task</span> <span class="o">=</span> <span class="n">FinalRewTask</span><span class="p">(</span><span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">state_des</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">,</span> <span class="n">success_fcn</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="n">FinalRewMode</span><span class="p">(),</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1e3</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="pyrado.tasks.final_reward.FinalRewTask.compute_final_rew">
+<code class="sig-name descname">compute_final_rew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">remaining_steps</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/tasks/final_reward.html#FinalRewTask.compute_final_rew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.final_reward.FinalRewTask.compute_final_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the reward / cost on task completion / fail of this task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state of the environment</p></li>
+<li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>final reward of this task</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.final_reward.FinalRewTask.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/final_reward.html#FinalRewTask.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.final_reward.FinalRewTask.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the task.
+Since the environment specification may change at every reset of the environment, we have to reset the task.
+This might also include resetting the members of the reward function if there are any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> – optional arguments e.g. environment specification or new desired state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.final_reward.FinalRewTask.yielded_final_rew">
+<em class="property">property </em><code class="sig-name descname">yielded_final_rew</code><a class="headerlink" href="#pyrado.tasks.final_reward.FinalRewTask.yielded_final_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the flag that signals if this instance already yielded its final reward.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.tasks.goalless">
+<span id="goalless"></span><h2>goalless<a class="headerlink" href="#module-pyrado.tasks.goalless" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.tasks.goalless.GoallessTask">
+<em class="property">class </em><code class="sig-name descname">GoallessTask</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">rew_fcn</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.tasks.reward_functions.RewFcn" title="pyrado.tasks.reward_functions.RewFcn">pyrado.tasks.reward_functions.RewFcn</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/goalless.html#GoallessTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.goalless.GoallessTask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.tasks.base.Task</span></code></a></p>
+<p>Task which has no desired state or desired space, this runs endlessly</p>
+<dl class="py method">
+<dt id="pyrado.tasks.goalless.GoallessTask.env_spec">
+<em class="property">property </em><code class="sig-name descname">env_spec</code><a class="headerlink" href="#pyrado.tasks.goalless.GoallessTask.env_spec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the specification of environment the task is in.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.goalless.GoallessTask.has_succeeded">
+<code class="sig-name descname">has_succeeded</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/tasks/goalless.html#GoallessTask.has_succeeded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.goalless.GoallessTask.has_succeeded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the environment if the agent succeeded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> – environments current state</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if succeeded</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.goalless.GoallessTask.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/goalless.html#GoallessTask.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.goalless.GoallessTask.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_spec</strong> – environment specification</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments forwarded to the reward function, e.g. the initial state</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.goalless.GoallessTask.rew_fcn">
+<em class="property">property </em><code class="sig-name descname">rew_fcn</code><a class="headerlink" href="#pyrado.tasks.goalless.GoallessTask.rew_fcn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the reward function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.goalless.GoallessTask.step_rew">
+<code class="sig-name descname">step_rew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">act</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">remaining_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/tasks/goalless.html#GoallessTask.step_rew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.goalless.GoallessTask.step_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the step reward, e.g. from a function of the states and actions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is strongly recommended to call this method every environment step.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state</p></li>
+<li><p><strong>act</strong> – current action</p></li>
+<li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return rew</dt>
+<dd class="field-even"><p>current reward</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.tasks.goalless.OptimProxyTask">
+<em class="property">class </em><code class="sig-name descname">OptimProxyTask</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">rew_fcn</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.tasks.reward_functions.StateBasedRewFcn" title="pyrado.tasks.reward_functions.StateBasedRewFcn">pyrado.tasks.reward_functions.StateBasedRewFcn</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/goalless.html#OptimProxyTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.goalless.OptimProxyTask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.tasks.base.Task</span></code></a></p>
+<p>Task for wrapping classical optimization problems a.k.a. (nonlinear) programming into Pyrado</p>
+<dl class="py method">
+<dt id="pyrado.tasks.goalless.OptimProxyTask.env_spec">
+<em class="property">property </em><code class="sig-name descname">env_spec</code><a class="headerlink" href="#pyrado.tasks.goalless.OptimProxyTask.env_spec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the specification of environment the task is in.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.goalless.OptimProxyTask.has_succeeded">
+<code class="sig-name descname">has_succeeded</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/tasks/goalless.html#OptimProxyTask.has_succeeded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.goalless.OptimProxyTask.has_succeeded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the environment if the agent succeeded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> – environments current state</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if succeeded</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.goalless.OptimProxyTask.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/goalless.html#OptimProxyTask.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.goalless.OptimProxyTask.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the task.
+Since the environment specification may change at every reset of the environment, we have to reset the task.
+This might also include resetting the members of the reward function if there are any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> – optional arguments e.g. environment specification or new desired state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.goalless.OptimProxyTask.rew_fcn">
+<em class="property">property </em><code class="sig-name descname">rew_fcn</code><a class="headerlink" href="#pyrado.tasks.goalless.OptimProxyTask.rew_fcn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the reward function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.goalless.OptimProxyTask.step_rew">
+<code class="sig-name descname">step_rew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">act</span><span class="p">:</span> <span class="n">numpy.ndarray</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">remaining_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/tasks/goalless.html#OptimProxyTask.step_rew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.goalless.OptimProxyTask.step_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the step reward, e.g. from a function of the states and actions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is strongly recommended to call this method every environment step.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state</p></li>
+<li><p><strong>act</strong> – current action</p></li>
+<li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return rew</dt>
+<dd class="field-even"><p>current reward</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.tasks.masked">
+<span id="masked"></span><h2>masked<a class="headerlink" href="#module-pyrado.tasks.masked" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.tasks.masked.MaskedTask">
+<em class="property">class </em><code class="sig-name descname">MaskedTask</code><span class="sig-paren">(</span><em class="sig-param">env_spec: pyrado.utils.data_types.EnvSpec, wrapped_task: pyrado.tasks.base.Task, state_idcs: [&lt;class 'str'&gt;, &lt;class 'int'&gt;], action_idcs: [&lt;class 'str'&gt;, &lt;class 'int'&gt;] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/masked.html#MaskedTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.masked.MaskedTask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.tasks.base.Task</span></code></a></p>
+<p>Task using only a subset of state and actions</p>
+<dl class="py method">
+<dt id="pyrado.tasks.masked.MaskedTask.env_spec">
+<em class="property">property </em><code class="sig-name descname">env_spec</code><a class="headerlink" href="#pyrado.tasks.masked.MaskedTask.env_spec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the specification of environment the task is in.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.masked.MaskedTask.final_rew">
+<code class="sig-name descname">final_rew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">remaining_steps</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/tasks/masked.html#MaskedTask.final_rew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.masked.MaskedTask.final_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the final reward, e.g. bonus for success or a malus for failure.
+This function loops through all tasks (unfolding the wrappers) and calls their <cite>compute_final_rew</cite> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state forwarded to <cite>compute_final_rew</cite></p></li>
+<li><p><strong>remaining_steps</strong> – number of time steps left in the episode forwarded to <cite>compute_final_rew</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return rew</dt>
+<dd class="field-even"><p>summed final reward</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.masked.MaskedTask.has_failed">
+<code class="sig-name descname">has_failed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/tasks/masked.html#MaskedTask.has_failed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.masked.MaskedTask.has_failed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the environment if the agent failed.
+The default implementation checks if the state is out of bounds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> – environments current state</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if failed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.masked.MaskedTask.has_succeeded">
+<code class="sig-name descname">has_succeeded</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/tasks/masked.html#MaskedTask.has_succeeded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.masked.MaskedTask.has_succeeded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the environment if the agent succeeded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> – environments current state</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if succeeded</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.masked.MaskedTask.is_done">
+<code class="sig-name descname">is_done</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/tasks/masked.html#MaskedTask.is_done"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.masked.MaskedTask.is_done" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a final state is reached.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is strongly recommended to call this method every environment step.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state</p></li>
+<li><p><strong>act</strong> – current action</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return done</dt>
+<dd class="field-even"><p>done flag</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.masked.MaskedTask.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/masked.html#MaskedTask.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.masked.MaskedTask.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the task.
+Since the environment specification may change at every reset of the environment, we have to reset the task.
+This might also include resetting the members of the reward function if there are any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> – optional arguments e.g. environment specification or new desired state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.masked.MaskedTask.rew_fcn">
+<em class="property">property </em><code class="sig-name descname">rew_fcn</code><a class="headerlink" href="#pyrado.tasks.masked.MaskedTask.rew_fcn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the reward function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.masked.MaskedTask.state_des">
+<em class="property">property </em><code class="sig-name descname">state_des</code><a class="headerlink" href="#pyrado.tasks.masked.MaskedTask.state_des" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the desired state (same dimensions as the environment’s state).
+Only override this if the task has a desired state.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.masked.MaskedTask.step_rew">
+<code class="sig-name descname">step_rew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">act</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">remaining_steps</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/tasks/masked.html#MaskedTask.step_rew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.masked.MaskedTask.step_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the step reward, e.g. from a function of the states and actions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is strongly recommended to call this method every environment step.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state</p></li>
+<li><p><strong>act</strong> – current action</p></li>
+<li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return rew</dt>
+<dd class="field-even"><p>current reward</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.masked.MaskedTask.wrapped_task">
+<em class="property">property </em><code class="sig-name descname">wrapped_task</code><a class="headerlink" href="#pyrado.tasks.masked.MaskedTask.wrapped_task" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.tasks.parallel">
+<span id="parallel"></span><h2>parallel<a class="headerlink" href="#module-pyrado.tasks.parallel" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.tasks.parallel.ParallelTasks">
+<em class="property">class </em><code class="sig-name descname">ParallelTasks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tasks</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference internal" href="#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task">pyrado.tasks.base.Task</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">hold_rew_when_done</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">allow_failures</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">easily_satisfied</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/parallel.html#ParallelTasks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.parallel.ParallelTasks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.tasks.base.Task</span></code></a></p>
+<p>Task class for a set of tasks a.k.a. goals which can be achieved in any order or parallel</p>
+<dl class="py method">
+<dt id="pyrado.tasks.parallel.ParallelTasks.compute_final_rew">
+<code class="sig-name descname">compute_final_rew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">remaining_steps</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/tasks/parallel.html#ParallelTasks.compute_final_rew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.parallel.ParallelTasks.compute_final_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the reward / cost on task completion / fail of this task.
+Since this task holds multiple sub-tasks, the final reward / cost is computed for them, too.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <cite>ParallelTasks</cite> class is not a subclass of <cite>TaskWrapper</cite>, i.e. this function only looks at the
+immediate sub-tasks.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state of the environment</p></li>
+<li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>final reward of all sub-tasks</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.parallel.ParallelTasks.env_spec">
+<em class="property">property </em><code class="sig-name descname">env_spec</code><a class="headerlink" href="#pyrado.tasks.parallel.ParallelTasks.env_spec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the specification of environment the task is in.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.parallel.ParallelTasks.has_failed">
+<code class="sig-name descname">has_failed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/tasks/parallel.html#ParallelTasks.has_failed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.parallel.ParallelTasks.has_failed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if this task has failed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.parallel.ParallelTasks.has_succeeded">
+<code class="sig-name descname">has_succeeded</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/tasks/parallel.html#ParallelTasks.has_succeeded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.parallel.ParallelTasks.has_succeeded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if this tasks is done. The ParallelTasks is successful if all sub-tasks are successful.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> – environments current state</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if succeeded</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.parallel.ParallelTasks.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/parallel.html#ParallelTasks.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.parallel.ParallelTasks.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset all tasks.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.parallel.ParallelTasks.rew_fcn">
+<em class="property">property </em><code class="sig-name descname">rew_fcn</code><a class="headerlink" href="#pyrado.tasks.parallel.ParallelTasks.rew_fcn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all reward functions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.parallel.ParallelTasks.space_des">
+<em class="property">property </em><code class="sig-name descname">space_des</code><a class="headerlink" href="#pyrado.tasks.parallel.ParallelTasks.space_des" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all desired spaces.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.parallel.ParallelTasks.state_des">
+<em class="property">property </em><code class="sig-name descname">state_des</code><a class="headerlink" href="#pyrado.tasks.parallel.ParallelTasks.state_des" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of all desired states.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.parallel.ParallelTasks.step_rew">
+<code class="sig-name descname">step_rew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">act</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">remaining_steps</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/tasks/parallel.html#ParallelTasks.step_rew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.parallel.ParallelTasks.step_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the step reward accumulated from every non-done task.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.parallel.ParallelTasks.tasks">
+<em class="property">property </em><code class="sig-name descname">tasks</code><a class="headerlink" href="#pyrado.tasks.parallel.ParallelTasks.tasks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the list of tasks.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.tasks.predefined">
+<span id="predefined"></span><h2>predefined<a class="headerlink" href="#module-pyrado.tasks.predefined" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pyrado.tasks.predefined.create_check_all_boundaries_task">
+<code class="sig-name descname">create_check_all_boundaries_task</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">penalty</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.tasks.final_reward.FinalRewTask" title="pyrado.tasks.final_reward.FinalRewTask">pyrado.tasks.final_reward.FinalRewTask</a><a class="reference internal" href="_modules/pyrado/tasks/predefined.html#create_check_all_boundaries_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.predefined.create_check_all_boundaries_task" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.tasks.predefined.create_collision_task">
+<code class="sig-name descname">create_collision_task</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">factor</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.tasks.masked.MaskedTask" title="pyrado.tasks.masked.MaskedTask">pyrado.tasks.masked.MaskedTask</a><a class="reference internal" href="_modules/pyrado/tasks/predefined.html#create_collision_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.predefined.create_collision_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a task which punishes collision costs given a collision model with pairs of bodies.
+This task only looks at the instantaneous collision cost.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_spec</strong> – environment specification</p></li>
+<li><p><strong>factor</strong> – cost / reward function scaling factor</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>masked task</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.tasks.predefined.create_goal_dist_distvel_task">
+<code class="sig-name descname">create_goal_dist_distvel_task</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">ds_index</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rew_fcn</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.tasks.reward_functions.RewFcn" title="pyrado.tasks.reward_functions.RewFcn">pyrado.tasks.reward_functions.RewFcn</a></span></em>, <em class="sig-param"><span class="n">succ_thold</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.01</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.tasks.masked.MaskedTask" title="pyrado.tasks.masked.MaskedTask">pyrado.tasks.masked.MaskedTask</a><a class="reference internal" href="_modules/pyrado/tasks/predefined.html#create_goal_dist_distvel_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.predefined.create_goal_dist_distvel_task" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.tasks.predefined.create_goal_dist_task">
+<code class="sig-name descname">create_goal_dist_task</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">ds_index</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rew_fcn</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.tasks.reward_functions.RewFcn" title="pyrado.tasks.reward_functions.RewFcn">pyrado.tasks.reward_functions.RewFcn</a></span></em>, <em class="sig-param"><span class="n">succ_thold</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.01</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.tasks.masked.MaskedTask" title="pyrado.tasks.masked.MaskedTask">pyrado.tasks.masked.MaskedTask</a><a class="reference internal" href="_modules/pyrado/tasks/predefined.html#create_goal_dist_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.predefined.create_goal_dist_task" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.tasks.predefined.create_task_space_discrepancy_task">
+<code class="sig-name descname">create_task_space_discrepancy_task</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">rew_fcn</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.tasks.reward_functions.RewFcn" title="pyrado.tasks.reward_functions.RewFcn">pyrado.tasks.reward_functions.RewFcn</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.tasks.masked.MaskedTask" title="pyrado.tasks.masked.MaskedTask">pyrado.tasks.masked.MaskedTask</a><a class="reference internal" href="_modules/pyrado/tasks/predefined.html#create_task_space_discrepancy_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.predefined.create_task_space_discrepancy_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a task which punishes the discrepancy between the actual and the commanded state of the observed body.
+The observed body is specified in in the associated experiment configuration file in RcsPySim.
+This task only looks at the X and Z coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_spec</strong> – environment specification</p></li>
+<li><p><strong>rew_fcn</strong> – reward function</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>masked task</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyrado.tasks.reward_functions">
 <span id="reward-functions"></span><h2>reward_functions<a class="headerlink" href="#module-pyrado.tasks.reward_functions" title="Permalink to this headline">¶</a></h2>
@@ -378,8 +1586,100 @@ A positive or negative final reward can be specified on the Task-level.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="sequential">
-<h2>sequential<a class="headerlink" href="#sequential" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyrado.tasks.sequential">
+<span id="sequential"></span><h2>sequential<a class="headerlink" href="#module-pyrado.tasks.sequential" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.tasks.sequential.SequentialTasks">
+<em class="property">class </em><code class="sig-name descname">SequentialTasks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tasks</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference internal" href="#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task">pyrado.tasks.base.Task</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">start_idx</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">0</span></em>, <em class="sig-param"><span class="n">hold_rew_when_done</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/sequential.html#SequentialTasks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.sequential.SequentialTasks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.tasks.base.Task</span></code></a></p>
+<p>Task class for a sequence of tasks a.k.a. goals</p>
+<dl class="py method">
+<dt id="pyrado.tasks.sequential.SequentialTasks.compute_final_rew">
+<code class="sig-name descname">compute_final_rew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">remaining_steps</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/tasks/sequential.html#SequentialTasks.compute_final_rew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.sequential.SequentialTasks.compute_final_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the reward / cost on task completion / fail of this task.
+Since this task holds multiple sub-tasks, the final reward / cost is computed for them, too.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <cite>ParallelTasks</cite> class is not a subclass of <cite>TaskWrapper</cite>, i.e. this function only looks at the
+immediate sub-tasks.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – current state of the environment</p></li>
+<li><p><strong>remaining_steps</strong> – number of time steps left in the episode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>final reward of all sub-tasks</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.sequential.SequentialTasks.env_spec">
+<em class="property">property </em><code class="sig-name descname">env_spec</code><a class="headerlink" href="#pyrado.tasks.sequential.SequentialTasks.env_spec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the specification of environment the task is in.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.sequential.SequentialTasks.has_succeeded">
+<code class="sig-name descname">has_succeeded</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/tasks/sequential.html#SequentialTasks.has_succeeded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.sequential.SequentialTasks.has_succeeded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if this tasks is done. The SequentialTasks is successful if all sub-tasks are successful.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> – environments current state</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if succeeded</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.sequential.SequentialTasks.idx_curr">
+<em class="property">property </em><code class="sig-name descname">idx_curr</code><a class="headerlink" href="#pyrado.tasks.sequential.SequentialTasks.idx_curr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the index of the currently active task.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.sequential.SequentialTasks.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/sequential.html#SequentialTasks.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.sequential.SequentialTasks.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset all tasks.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.sequential.SequentialTasks.rew_fcn">
+<em class="property">property </em><code class="sig-name descname">rew_fcn</code><a class="headerlink" href="#pyrado.tasks.sequential.SequentialTasks.rew_fcn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the reward function of the current task.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.sequential.SequentialTasks.space_des">
+<em class="property">property </em><code class="sig-name descname">space_des</code><a class="headerlink" href="#pyrado.tasks.sequential.SequentialTasks.space_des" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the desired space the current task.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.sequential.SequentialTasks.state_des">
+<em class="property">property </em><code class="sig-name descname">state_des</code><a class="headerlink" href="#pyrado.tasks.sequential.SequentialTasks.state_des" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the desired state the current task.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.sequential.SequentialTasks.step_rew">
+<code class="sig-name descname">step_rew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">act</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">remaining_steps</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/tasks/sequential.html#SequentialTasks.step_rew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.sequential.SequentialTasks.step_rew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the step reward from the current task.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.tasks.sequential.SequentialTasks.tasks">
+<em class="property">property </em><code class="sig-name descname">tasks</code><a class="headerlink" href="#pyrado.tasks.sequential.SequentialTasks.tasks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the list of tasks.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyrado.tasks.utils">
 <span id="utils"></span><h2>utils<a class="headerlink" href="#module-pyrado.tasks.utils" title="Permalink to this headline">¶</a></h2>

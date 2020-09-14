@@ -202,6 +202,7 @@
 <span class="c1"># IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
@@ -277,7 +278,7 @@
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">data_format</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;&#39;numpy&#39; or &#39;torch&#39;&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="stack_to_format"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.data_format.stack_to_format">[docs]</a><span class="k">def</span> <span class="nf">stack_to_format</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">],</span> <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="stack_to_format"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.data_format.stack_to_format">[docs]</a><span class="k">def</span> <span class="nf">stack_to_format</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">],</span> <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Stack the generic data in the given data format.</span>
 <span class="sd">    For dicts, the dict elements are stacked individually. A list of dicts is treated as a dict of lists.</span>
@@ -320,7 +321,7 @@
         <span class="k">return</span> <span class="n">to_format</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">data_format</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="cat_to_format"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.data_format.cat_to_format">[docs]</a><span class="k">def</span> <span class="nf">cat_to_format</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">],</span> <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="cat_to_format"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.data_format.cat_to_format">[docs]</a><span class="k">def</span> <span class="nf">cat_to_format</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">],</span> <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Concatenate the generic data in the given data format.</span>
 <span class="sd">    For dicts, the dict elements are stacked individually. A list of dicts is treated as a dict of lists.</span>
