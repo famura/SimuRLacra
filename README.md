@@ -17,6 +17,7 @@ It features __randomizable simulations__ written __in standalone Python__ (no li
 [![Maintainability](https://api.codeclimate.com/v1/badges/73ad23bdf05361b022b4/maintainability)](https://codeclimate.com/github/famura/SimuRLacra/maintainability)
 ![Documentation](https://github.com/famura/SimuRLacra/workflows/Documentation/badge.svg?branch=master)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![codecov](https://codecov.io/gh/famura/SimuRLacra/branch/master/graph/badge.svg)](https://codecov.io/gh/famura/SimuRLacra)
 
 __Pros__  
 * __Exceptionally modular treatment of environments via wrappers.__ The key idea behind this was to be able to quickly modify and randomize all available simulation environments. Moreover, SimuRLacra contains unique environments that either run completely in Python or allow you to switch between the Bullet or Vortex (requires license) physics engine.
