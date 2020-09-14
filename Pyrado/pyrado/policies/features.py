@@ -30,7 +30,7 @@ import numpy as np
 import torch as to
 from copy import deepcopy
 from functools import reduce
-from typing import Sequence, Callable
+from typing import Sequence, Callable, Union
 
 import pyrado
 from pyrado.utils import get_class_name

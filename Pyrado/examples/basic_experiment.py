@@ -25,7 +25,7 @@ later oad your results. It will look for an environment as well as a policy file
 ex_dir = setup_experiment(BallOnBeamSim.name, f'{HCNormal.name}_{LinearPolicy.name}', 'ident-sin')
 
 """
-Additionally, you can set a seed for the random number generators. It is highly suggested to do so, if you want to
+Additionally, you can set a seed for the random number generators. It is suggested to do so, if you want to
 compare changes of certain hyper-parameters to eliminate the effect of the initial state and the initial policy
 parameters (both are sampled randomly in most cases).
 """
@@ -87,7 +87,7 @@ Save the hyper-parameters before staring the training in a YAML-file. This step 
 you to later see which hyper-parameters you used, i.e. which setting leads to a successfully trained policy.
 """
 save_list_of_dicts_to_yaml([
-    dict(env=env_hparams, seed=ex_dir.seed),
+    dict(env=env_hparams, seed=0),
     dict(policy=policy_hparam),
     dict(algo=algo_hparam, algo_name=algo.name)],
     ex_dir

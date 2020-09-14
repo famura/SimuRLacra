@@ -30,6 +30,7 @@ import torch as to
 import torch.nn as nn
 from torch.distributions import Uniform
 from warnings import warn
+from typing import Union
 
 import pyrado
 
