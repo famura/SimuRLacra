@@ -27,6 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import math
+from typing import Union
+
 import numpy as np
 import time
 import torch as to
