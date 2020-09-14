@@ -1,0 +1,4 @@
+ignore:
+  - "Pyrado/tests"
+  - "Pyrado/doc"
+  - "Pyrado/scripts"
