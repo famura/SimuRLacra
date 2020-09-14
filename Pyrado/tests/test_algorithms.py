@@ -145,7 +145,7 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
 @pytest.mark.parametrize(
     'env', [
         lazy_fixture('default_bob'),
-        lazy_fixture('default_bop2d_bt')
+        pytest.param(lazy_fixture('default_bop2d_bt'), marks=m_needs_bullet),
     ], ids=['bob', 'bop2d_bt']
 )
 @pytest.mark.parametrize(
@@ -163,7 +163,7 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
     ],
     ids=['hc_normal', 'hc_hyper', 'nes', 'nes_tr', 'nes_symm', 'pepg', 'power', 'cem-fcov', 'cem-dcov', 'reps']
 )
-def test_param_expl(env, linear_policy, ex_dir, algo_class, algo_hparam):
+def test_param_expl(ex_dir, env, linear_policy, algo_class, algo_hparam):
     # Hyper-parameters
     common_hparam = dict(max_iter=3, num_rollouts=4)
     common_hparam.update(algo_hparam)
@@ -193,7 +193,7 @@ def test_param_expl(env, linear_policy, ex_dir, algo_class, algo_hparam):
 @pytest.mark.parametrize(
     'algo_hparam', [dict(max_iter=3, num_particles=3, temperature=10, lr=1e-3, horizon=50)], ids=['casual']
 )
-def test_svpg(env, linear_policy, ex_dir, actor_hparam, value_fcn_hparam, critic_hparam, algo_hparam):
+def test_svpg(ex_dir, env, linear_policy, actor_hparam, value_fcn_hparam, critic_hparam, algo_hparam):
     # Create algorithm and train
     particle_hparam = dict(actor=actor_hparam, value_fcn=value_fcn_hparam, critic=critic_hparam)
     algo = SVPG(ex_dir, env, particle_hparam, **algo_hparam)
@@ -223,7 +223,7 @@ def test_svpg(env, linear_policy, ex_dir, actor_hparam, value_fcn_hparam, critic
     'adr_hparam', [dict(max_iter=3, num_svpg_particles=3, num_discriminator_epoch=3, batch_size=100,
                         num_workers=1, randomized_params=[])], ids=['casual']
 )
-def test_adr(env, ex_dir, subrtn_hparam, actor_hparam, value_fcn_hparam, critic_hparam, adr_hparam):
+def test_adr(ex_dir, env, subrtn_hparam, actor_hparam, value_fcn_hparam, critic_hparam, adr_hparam):
     # Create the subroutine for the meta-algorithm
     actor = FNNPolicy(spec=env.spec, **actor_hparam)
     value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
@@ -251,7 +251,7 @@ def test_adr(env, ex_dir, subrtn_hparam, actor_hparam, value_fcn_hparam, critic_
              warmstart_refs=True, num_bs_reps=1000, studentized_ci=False),
     ], ids=['casual_hparam']
 )
-def test_spota_ppo(env, spota_hparam, ex_dir):
+def test_spota_ppo(ex_dir, env, spota_hparam):
     # Environment and domain randomization
     randomizer = get_default_randomizer(env)
     env = DomainRandWrapperBuffer(env, randomizer)
@@ -301,7 +301,7 @@ def test_spota_ppo(env, spota_hparam, ex_dir):
     ids=['vf_fnn_plain', 'vf_fnn', 'vf_rnn']
 )
 @pytest.mark.parametrize('use_cuda', [False, True], ids=['cpu', 'cuda'])
-def test_actor_critic(env, linear_policy, ex_dir, algo, algo_hparam, value_fcn_type, use_cuda):
+def test_actor_critic(ex_dir, env, linear_policy, algo, algo_hparam, value_fcn_type, use_cuda):
     # Create value function
     if value_fcn_type == 'fnn-plain':
         value_fcn = FNN(
@@ -357,16 +357,16 @@ def test_actor_critic(env, linear_policy, ex_dir, algo, algo_hparam, value_fcn_t
 )
 @pytest.mark.parametrize(
     'algo, algo_hparam', [
-        (HCNormal, dict(max_iter=5, pop_size=None, num_rollouts=8, expl_std_init=0.5, expl_factor=1.1)),
-        (NES, dict(max_iter=50, pop_size=None, num_rollouts=8, expl_std_init=0.5, symm_sampling=True)),
-        (PEPG, dict(max_iter=50, pop_size=None, num_rollouts=8, expl_std_init=0.5, lr=1e-2, normalize_update=False)),
-        (PoWER, dict(max_iter=10, pop_size=100, num_rollouts=8, num_is_samples=10, expl_std_init=0.5)),
-        (CEM, dict(max_iter=10, pop_size=100, num_rollouts=8, num_is_samples=10, expl_std_init=0.5, full_cov=False)),
-        (REPS, dict(max_iter=50, pop_size=500, num_rollouts=8, eps=0.1, expl_std_init=0.5,
+        (HCNormal, dict(max_iter=5, pop_size=None, num_rollouts=6, expl_std_init=0.5, expl_factor=1.1)),
+        (NES, dict(max_iter=50, pop_size=None, num_rollouts=6, expl_std_init=0.5, symm_sampling=True)),
+        (PEPG, dict(max_iter=50, pop_size=100, num_rollouts=6, expl_std_init=0.5, lr=1e-2, normalize_update=False)),
+        (PoWER, dict(max_iter=10, pop_size=100, num_rollouts=6, num_is_samples=10, expl_std_init=0.5)),
+        (CEM, dict(max_iter=10, pop_size=100, num_rollouts=6, num_is_samples=10, expl_std_init=0.5, full_cov=False)),
+        (REPS, dict(max_iter=50, pop_size=500, num_rollouts=6, eps=0.1, expl_std_init=0.5,
                     use_map=True, grad_free_optim=False)),
     ], ids=['hc_normal', 'nes', 'pepg', 'power', 'cem', 'reps']
 )
-def test_training_parameter_exploring(env, algo, algo_hparam, ex_dir):
+def test_training_parameter_exploring(ex_dir, env, algo, algo_hparam):
     # Environment and policy
     env = ActNormWrapper(env)
     policy_hparam = dict(feats=FeatureStack([const_feat, identity_feat]))
@@ -494,7 +494,7 @@ def test_sysidasrl(ex_dir, env, num_eval_rollouts):
                     for r, s in zip(ros_real_tr, ros_sim_tr)])
 
         # Return the average the loss
-        losses = [algo.obs_dim_weight@algo.loss_fcn(ro_r, ro_s) for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr)]
+        losses = [algo.loss_fcn(ro_r, ro_s) for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr)]
         return float(np.mean(np.asarray(losses)))
 
     # Environments
@@ -539,7 +539,7 @@ def test_sysidasrl(ex_dir, env, num_eval_rollouts):
         num_workers=subrtn_hparam['num_workers']
     )
 
-    algo = SysIdByEpisodicRL(subrtn, behavior_policy, **algo_hparam)
+    algo = SysIdViaEpisodicRL(subrtn, behavior_policy, **algo_hparam)
 
     rollouts_real_tst = []
     for _ in range(num_eval_rollouts):

@@ -36,6 +36,7 @@ from pyrado.domain_randomization.domain_parameter import UniformDomainParam, Nor
 from pyrado.environments.one_step.catapult import CatapultSim
 from pyrado.environments.one_step.rosenbrock import RosenSim
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
+from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleStabSim, QCartPoleSwingUpSim
@@ -125,7 +126,7 @@ def default_bob():
 
 @pytest.fixture(scope='function')
 def default_omo():
-    return BallOnBeamSim(dt=0.02, max_steps=300)
+    return OneMassOscillatorSim(dt=0.02, max_steps=300)
 
 
 @pytest.fixture(scope='function')
