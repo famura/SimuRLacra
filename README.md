@@ -26,7 +26,7 @@ __Pros__
 * __Separation of the exploration strategies and the policy.__ Instead of having a GaussianFNN and a GaussianRNN ect. policy, you can wrap your policy architectures with (almost) any exploration scheme. At test time, you simple strip the exploration wrapper.
 * __Tested integration of real-world Quanser platforms__. This feature is extremely valuable if you want to conduct sim-to-real research, since you can simply replace the simulated environment with the physical one by changing one line of code.
 * __Tested integration of [BoTorch](https://botorch.org/), and [Optuna](https://optuna.org/)__.
-* __Detailed documentation__.
+* __Detailed [documentation](https://famura.github.io/SimuRLacra/)__.
 
 __Cons__  
 * __No vision-based environments/tasks.__ In principle there is nothing stopping you from integrating computer vision into SimuRLacra. However, I assume there are better suited frameworks out there.
