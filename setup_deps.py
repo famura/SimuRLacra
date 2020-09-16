@@ -116,7 +116,8 @@ env_vars = {
 make_parallelity = args.j
 
 # WM5
-wm5_download_url = 'https://www.geometrictools.com/Downloads/WildMagic5p17.zip'
+# wm5_download_url = 'https://www.geometrictools.com/Downloads/WildMagic5p17.zip'  # deprecated
+wm5_download_url = 'https://github.com/zhouxs1023/WildMagic/archive/master.zip'
 wm5_src_dir = osp.join(dependency_dir, "WildMagic5")
 
 wm5_config = "ReleaseDynamic"
@@ -331,7 +332,7 @@ def setup_dep_libraries():
 
 def setup_wm5():
     # Download the sources
-    downloadAndExtract(wm5_download_url, wm5_src_dir, "GeometricTools/WildMagic5")
+    downloadAndExtract(wm5_download_url, wm5_src_dir, "WildMagic-master")
     
     # Build relevant modules
     for module in wm5_modules:
