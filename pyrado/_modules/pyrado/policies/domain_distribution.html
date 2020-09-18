@@ -203,9 +203,7 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
-<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span> <span class="k">as</span> <span class="n">nn</span>
 
@@ -214,16 +212,15 @@
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces.empty</span> <span class="kn">import</span> <span class="n">EmptySpace</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_processing</span> <span class="kn">import</span> <span class="n">MinMaxScaler</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.math</span> <span class="kn">import</span> <span class="n">clamp</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.math</span> <span class="kn">import</span> <span class="n">clamp</span><span class="p">,</span> <span class="n">UnitCubeProjector</span>
 
 
 <div class="viewcode-block" id="DomainDistrParamPolicy"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.domain_distribution.DomainDistrParamPolicy">[docs]</a><span class="k">class</span> <span class="nc">DomainDistrParamPolicy</span><span class="p">(</span><span class="n">Policy</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A proxy to the Policy class in order to use the policy&#39;s parameters as domain distribution parameters &quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;ddp&#39;</span>
-    <span class="n">min_dp_var</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span>  <span class="c1"># hard coded lower bound on all domain parameters variances</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">mapping</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
@@ -247,29 +244,19 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="n">mapping</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">trafo_mask</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
-
-        <span class="c1"># Construct a valid space for the policy parameters aka domain distribution parameters</span>
-        <span class="n">bound_lo</span> <span class="o">=</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mapping</span><span class="p">))</span>
-        <span class="n">bound_up</span> <span class="o">=</span> <span class="o">+</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mapping</span><span class="p">))</span>
-        <span class="n">lables</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span><span class="o">*</span><span class="p">[</span><span class="s1">&#39;None&#39;</span><span class="p">]</span>
-        <span class="c1"># for idx, ddp in self.mapping.items():</span>
-        <span class="c1">#     lables[idx] = f&#39;{ddp[0]}_{ddp[1]}&#39;</span>
-        <span class="c1">#     if ddp[1] == &#39;std&#39;:  # 2nd output is the name of the domain distribution param</span>
-        <span class="c1">#         bound_lo[idx] = sqrt(DomainDistrParamPolicy.min_dp_var)</span>
-        <span class="c1">#     elif ddp[1] == &#39;halfspan&#39;:  # 2nd output is the name of the domain distribution param</span>
-        <span class="c1">#         bound_lo[idx] = sqrt(12*DomainDistrParamPolicy.min_dp_var)/2  # var(U) = (2*halfspan)^2/12</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">prior</span>
 
         <span class="c1"># Define the parameter space by using the Policy.env_spec.act_space</span>
-        <span class="n">param_spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span><span class="n">obs_space</span><span class="o">=</span><span class="n">EmptySpace</span><span class="p">(),</span> <span class="n">act_space</span><span class="o">=</span><span class="n">BoxSpace</span><span class="p">(</span><span class="n">bound_lo</span><span class="p">,</span> <span class="n">bound_up</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">lables</span><span class="p">))</span>
+        <span class="n">param_spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span><span class="n">obs_space</span><span class="o">=</span><span class="n">EmptySpace</span><span class="p">(),</span> <span class="n">act_space</span><span class="o">=</span><span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">mapping</span><span class="p">)))</span>
 
         <span class="c1"># Call Policy&#39;s constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">param_spec</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">param_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">prior</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">param_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_scaler</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># initialized during init_param()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_param</span><span class="p">(</span><span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DomainDistrParamPolicy.masked_exp_transform"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.domain_distribution.DomainDistrParamPolicy.masked_exp_transform">[docs]</a>    <span class="k">def</span> <span class="nf">masked_exp_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<div class="viewcode-block" id="DomainDistrParamPolicy.transform_to_ddp_space"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.domain_distribution.DomainDistrParamPolicy.transform_to_ddp_space">[docs]</a>    <span class="k">def</span> <span class="nf">transform_to_ddp_space</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the transformed domain distribution parameters. The policy&#39;s parameters are in log space.</span>
 
@@ -277,7 +264,21 @@
 <span class="sd">        :return: policy parameters transformed according to the mask</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ddp</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
-        <span class="n">ddp</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">ddp</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">ddp</span><span class="o">.</span><span class="n">ndimension</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Only one set of domain distribution parameters</span>
+            <span class="n">ddp</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_scaler</span><span class="o">.</span><span class="n">scale_back</span><span class="p">(</span><span class="n">ddp</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">ddp</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">ddp</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">])</span>
+
+        <span class="k">elif</span> <span class="n">ddp</span><span class="o">.</span><span class="n">ndimension</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># Multiple sets of domain distribution parameters along the first axis</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ddp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">ddp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_scaler</span><span class="o">.</span><span class="n">scale_back</span><span class="p">(</span><span class="n">ddp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">ddp</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">ddp</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">])</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Inputs must not have more than 2 dimensions!&#39;</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">ddp</span></div>
 
 <div class="viewcode-block" id="DomainDistrParamPolicy.init_param"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.domain_distribution.DomainDistrParamPolicy.init_param">[docs]</a>    <span class="k">def</span> <span class="nf">init_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_values</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -298,28 +299,22 @@
                         <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ddp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
                         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">[</span><span class="n">idx</span><span class="p">]:</span>
                             <span class="c1"># Log-transform since it will later be exp-transformed</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">val</span><span class="p">)))</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">val</span><span class="p">)))</span>
                         <span class="k">else</span><span class="p">:</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Last measure</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">print_cbt</span><span class="p">(</span><span class="s1">&#39;Using uninformative random initialization for DomainDistrParamPolicy.&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;DomainDistrParamPolicy needs to be initialized! Either with a set of policy&#39;</span>
+                                      <span class="s1">&#39;parameters, or with a prior in form of a DomainRandomizer!&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DomainDistrParamPolicy.clamp_params"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.domain_distribution.DomainDistrParamPolicy.clamp_params">[docs]</a>    <span class="k">def</span> <span class="nf">clamp_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Project the policy parameters a.k.a. the domain distribution parameters to valid a range.</span>
-
-<span class="sd">        :param params: parameter tensor with arbitrary values</span>
-<span class="sd">        :return: parameters clipped to the bounds of the `EnvSpec` defined in the constructor</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">clamp</span><span class="p">(</span><span class="n">params</span><span class="p">,</span>
-                     <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">bound_lo</span><span class="p">),</span>
-                     <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">bound_up</span><span class="p">))</span></div>
+        <span class="c1"># After initializing, we have an estimate on the magnitude of the policy parameters. Usually, the</span>
+        <span class="c1"># non-transformed means are a magnitude smaller than e.g. the transformed stds. Thus, we will approximately</span>
+        <span class="c1"># project them to [-1, 1]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_scaler</span> <span class="o">=</span> <span class="n">MinMaxScaler</span><span class="p">(</span><span class="n">bound_lo</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">bound_up</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_scaler</span><span class="o">.</span><span class="n">scale_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># params now in [-1, 1]</span></div>
 
 <div class="viewcode-block" id="DomainDistrParamPolicy.forward"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.domain_distribution.DomainDistrParamPolicy.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="c1"># Should never be used. I know this might seem like an extreme abuse of the policy class but it is worth it.</span>
+        <span class="c1"># Should never be used. This is an abuse of the policy class but it is worth it.</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
 </pre></div>
 

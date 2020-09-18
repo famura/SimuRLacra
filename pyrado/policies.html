@@ -775,20 +775,6 @@ registered hooks while the latter silently ignores them.</p>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a></p>
 <p>A proxy to the Policy class in order to use the policy’s parameters as domain distribution parameters</p>
 <dl class="py method">
-<dt id="pyrado.policies.domain_distribution.DomainDistrParamPolicy.clamp_params">
-<code class="sig-name descname">clamp_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/domain_distribution.html#DomainDistrParamPolicy.clamp_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.domain_distribution.DomainDistrParamPolicy.clamp_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Project the policy parameters a.k.a. the domain distribution parameters to valid a range.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>params</strong> – parameter tensor with arbitrary values</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>parameters clipped to the bounds of the <cite>EnvSpec</cite> defined in the constructor</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="pyrado.policies.domain_distribution.DomainDistrParamPolicy.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/domain_distribution.html#DomainDistrParamPolicy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.domain_distribution.DomainDistrParamPolicy.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the action according to the policy and the observations (forward pass).</p>
@@ -816,9 +802,14 @@ registered hooks while the latter silently ignores them.</p>
 </dl>
 </dd></dl>
 
+<dl class="py attribute">
+<dt id="pyrado.policies.domain_distribution.DomainDistrParamPolicy.name">
+<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'ddp'</em><a class="headerlink" href="#pyrado.policies.domain_distribution.DomainDistrParamPolicy.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
-<dt id="pyrado.policies.domain_distribution.DomainDistrParamPolicy.masked_exp_transform">
-<code class="sig-name descname">masked_exp_transform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/domain_distribution.html#DomainDistrParamPolicy.masked_exp_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.domain_distribution.DomainDistrParamPolicy.masked_exp_transform" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.policies.domain_distribution.DomainDistrParamPolicy.transform_to_ddp_space">
+<code class="sig-name descname">transform_to_ddp_space</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/domain_distribution.html#DomainDistrParamPolicy.transform_to_ddp_space"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.domain_distribution.DomainDistrParamPolicy.transform_to_ddp_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the transformed domain distribution parameters. The policy’s parameters are in log space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -829,16 +820,6 @@ registered hooks while the latter silently ignores them.</p>
 </dd>
 </dl>
 </dd></dl>
-
-<dl class="py attribute">
-<dt id="pyrado.policies.domain_distribution.DomainDistrParamPolicy.min_dp_var">
-<code class="sig-name descname">min_dp_var</code><em class="property">: float</em><em class="property"> = 1e-06</em><a class="headerlink" href="#pyrado.policies.domain_distribution.DomainDistrParamPolicy.min_dp_var" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pyrado.policies.domain_distribution.DomainDistrParamPolicy.name">
-<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'ddp'</em><a class="headerlink" href="#pyrado.policies.domain_distribution.DomainDistrParamPolicy.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 

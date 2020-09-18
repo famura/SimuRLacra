@@ -513,8 +513,6 @@
 </li>
       <li><a href="utils.html#pyrado.utils.math.clamp">clamp() (in module pyrado.utils.math)</a>
 </li>
-      <li><a href="policies.html#pyrado.policies.domain_distribution.DomainDistrParamPolicy.clamp_params">clamp_params() (DomainDistrParamPolicy method)</a>
-</li>
       <li><a href="utils.html#pyrado.utils.math.clamp_symm">clamp_symm() (in module pyrado.utils.math)</a>
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.clip_grad">clip_grad() (Algorithm static method)</a>
@@ -565,10 +563,10 @@
 </li>
       <li><a href="tasks.html#pyrado.tasks.condition_only.ConditionOnlyTask">ConditionOnlyTask (class in pyrado.tasks.condition_only)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="logger.html#pyrado.logger.step.ConsolePrinter">ConsolePrinter (class in pyrado.logger.step)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="policies.html#pyrado.policies.features.const_feat">const_feat() (in module pyrado.policies.features)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.experiment.AugmentedSafeLoader.construct_python_tuple">construct_python_tuple() (AugmentedSafeLoader method)</a>
@@ -1697,8 +1695,6 @@
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.state_augmentation.StateAugmentationWrapper.mask">mask() (StateAugmentationWrapper property)</a>
 </li>
-      <li><a href="policies.html#pyrado.policies.domain_distribution.DomainDistrParamPolicy.masked_exp_transform">masked_exp_transform() (DomainDistrParamPolicy method)</a>
-</li>
       <li><a href="tasks.html#pyrado.tasks.masked.MaskedTask">MaskedTask (class in pyrado.tasks.masked)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.experiment.Experiment.matches">matches() (Experiment method)</a>
@@ -1739,9 +1735,9 @@
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper">MetaDomainRandWrapper (class in pyrado.environment_wrappers.domain_randomization)</a>
 </li>
-      <li><a href="policies.html#pyrado.policies.domain_distribution.DomainDistrParamPolicy.min_dp_var">min_dp_var (DomainDistrParamPolicy attribute)</a>
-</li>
       <li><a href="algorithms.html#pyrado.algorithms.reps.REPS.minimize">minimize() (REPS method)</a>
+</li>
+      <li><a href="utils.html#pyrado.utils.data_processing.MinMaxScaler">MinMaxScaler (class in pyrado.utils.data_processing)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.MinusOnePerStepRewFcn">MinusOnePerStepRewFcn (class in pyrado.tasks.reward_functions)</a>
 </li>
@@ -4333,7 +4329,11 @@
         <li><a href="algorithms.html#pyrado.algorithms.udr.UDR.save_snapshot">(UDR method)</a>
 </li>
       </ul></li>
+      <li><a href="utils.html#pyrado.utils.data_processing.MinMaxScaler.scale_back">scale_back() (MinMaxScaler method)</a>
+</li>
       <li><a href="utils.html#pyrado.utils.data_processing.scale_min_max">scale_min_max() (in module pyrado.utils.data_processing)</a>
+</li>
+      <li><a href="utils.html#pyrado.utils.data_processing.MinMaxScaler.scale_to">scale_to() (MinMaxScaler method)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.ScaledExpQuadrErrRewFcn">ScaledExpQuadrErrRewFcn (class in pyrado.tasks.reward_functions)</a>
 </li>
@@ -4467,10 +4467,10 @@
 </li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.split_shuffled_batches">split_shuffled_batches() (StepSequence method)</a>
 </li>
-      <li><a href="algorithms.html#pyrado.algorithms.spota.SPOTA">SPOTA (class in pyrado.algorithms.spota)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="algorithms.html#pyrado.algorithms.spota.SPOTA">SPOTA (class in pyrado.algorithms.spota)</a>
+</li>
       <li><a href="policies.html#pyrado.policies.features.squared_feat">squared_feat() (in module pyrado.policies.features)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.SSCosOfOneEleRewFcn">SSCosOfOneEleRewFcn (class in pyrado.tasks.reward_functions)</a>
@@ -4919,6 +4919,8 @@
 </li>
       <li><a href="tests.html#tests.test_utils.test_merge_lod_var_dtype">test_merge_lod_var_dtype() (in module tests.test_utils)</a>
 </li>
+      <li><a href="tests.html#tests.test_utils.test_minmaxscaler">test_minmaxscaler() (in module tests.test_utils)</a>
+</li>
       <li><a href="tests.html#tests.test_tasks.test_modulated_rew_fcn">test_modulated_rew_fcn() (in module tests.test_tasks)</a>
 </li>
       <li><a href="tests.html#tests.test_environments.test_mujoco_animations">test_mujoco_animations() (in module tests.test_environments)</a>
@@ -5351,6 +5353,8 @@
 </li>
       </ul></li>
       <li><a href="algorithms.html#pyrado.algorithms.simopt.SimOpt.train_randomizer">train_randomizer() (SimOpt method)</a>
+</li>
+      <li><a href="policies.html#pyrado.policies.domain_distribution.DomainDistrParamPolicy.transform_to_ddp_space">transform_to_ddp_space() (DomainDistrParamPolicy method)</a>
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.truncate_rollouts">truncate_rollouts() (SysIdViaEpisodicRL static method)</a>
 </li>

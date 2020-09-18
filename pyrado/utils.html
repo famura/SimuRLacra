@@ -245,6 +245,41 @@
 <span id="data-processing"></span><h2>data_processing<a class="headerlink" href="#module-pyrado.utils.data_processing" title="Permalink to this headline">¶</a></h2>
 <p>Only tested for 1-dim inputs, e.g. time series of rewards.</p>
 <dl class="py class">
+<dt id="pyrado.utils.data_processing.MinMaxScaler">
+<em class="property">class </em><code class="sig-name descname">MinMaxScaler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bound_lo</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">, </span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">bound_up</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">, </span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/data_processing.html#MinMaxScaler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_processing.MinMaxScaler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A stateful min-max scaler that remembers the lower and upper bound for later un-unscaling</p>
+<dl class="py method">
+<dt id="pyrado.utils.data_processing.MinMaxScaler.scale_back">
+<code class="sig-name descname">scale_back</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span><a class="reference internal" href="_modules/pyrado/utils/data_processing.html#MinMaxScaler.scale_back"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_processing.MinMaxScaler.scale_back" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rescale the input data back to its original value range</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – input ndarray or Tensor scaled to be in <span class="math notranslate nohighlight">\([a, b]\)</span></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>unscaled ndarray or Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.utils.data_processing.MinMaxScaler.scale_to">
+<code class="sig-name descname">scale_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span><a class="reference internal" href="_modules/pyrado/utils/data_processing.html#MinMaxScaler.scale_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_processing.MinMaxScaler.scale_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform the input data to be in <span class="math notranslate nohighlight">\([a, b]\)</span>, where <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span> are defined during construction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – unscaled input ndarray or Tensor</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>ndarray or Tensor scaled to be in <span class="math notranslate nohighlight">\([a, b]\)</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt id="pyrado.utils.data_processing.RunningNormalizer">
 <em class="property">class </em><code class="sig-name descname">RunningNormalizer</code><a class="reference internal" href="_modules/pyrado/utils/data_processing.html#RunningNormalizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_processing.RunningNormalizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -335,14 +370,13 @@ Choosing <cite>axis=1</cite> and <cite>norm_order=1</cite> makes all columns of 
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> – input ndarray or Tensor</p></li>
+<li><p><strong>data</strong> – unscaled input ndarray or Tensor</p></li>
 <li><p><strong>bound_lo</strong> – lower bound for the transformed data</p></li>
 <li><p><strong>bound_up</strong> – upper bound for the transformed data</p></li>
-<li><p><strong>data</strong> – input ndarray or Tensor</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>scaled ndarray or Tensor</p>
+<dd class="field-even"><p>ndarray or Tensor scaled to be in <span class="math notranslate nohighlight">\([a, b]\)</span></p>
 </dd>
 </dl>
 </dd></dl>

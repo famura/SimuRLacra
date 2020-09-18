@@ -114,7 +114,7 @@ you want to continue from a previous experiment multiple times.
 
     algo.train(load_dir=None, snapshot_mode='latest', seed=None)
 
-    input('Finished training. Hit any key to simulate the policy.')
+    input('Finished training. Hit enter to simulate the policy.')
 
 Simulate the learned policy in the environment it has been trained in. The following is a part of
 `scripts/sim_policy.py` which can be executed to simulate any policy given the experiment's directory. 

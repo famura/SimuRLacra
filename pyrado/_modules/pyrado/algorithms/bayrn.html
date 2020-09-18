@@ -366,7 +366,7 @@
         <span class="n">to</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">cand</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s1">_candidate.pt&#39;</span><span class="p">))</span>
 
         <span class="c1"># Set the domain randomizer</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_env_sim</span><span class="o">.</span><span class="n">adapt_randomizer</span><span class="p">(</span><span class="n">cand</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_sim</span><span class="o">.</span><span class="n">adapt_randomizer</span><span class="p">(</span><span class="n">cand</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
 
         <span class="c1"># Reset the subroutine&#39;s algorithm which includes resetting the exploration</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
@@ -460,8 +460,6 @@
 <span class="sd">        :param num_rollouts: number of rollouts to collect on the target system</span>
 <span class="sd">        :return: estimated return in the target domain</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">RealEnv</span><span class="p">):</span>
-            <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;Evaluating in the target domain. Hit any key to continue.&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">save_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Executing </span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s1">_policy ...&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 

@@ -265,7 +265,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qsoc</span><span class="o">.</span><span class="n">is_open</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_qsoc</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="n">print_cbt</span><span class="p">(</span><span class="s1">&#39;Closed the connection to the Quanser device.&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="s1">&#39;Closed the connection to the Quanser device.&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">state_space</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Space</span><span class="p">:</span>
