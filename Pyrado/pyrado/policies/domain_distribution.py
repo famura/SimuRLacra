@@ -26,9 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
 import torch as to
-from math import sqrt
 from typing import Dict, Tuple
 from torch import nn as nn
 
@@ -37,16 +35,15 @@ from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.policies.base import Policy
 from pyrado.spaces import BoxSpace
 from pyrado.spaces.empty import EmptySpace
+from pyrado.utils.data_processing import MinMaxScaler
 from pyrado.utils.data_types import EnvSpec
-from pyrado.utils.input_output import print_cbt
-from pyrado.utils.math import clamp
+from pyrado.utils.math import clamp, UnitCubeProjector
 
 
 class DomainDistrParamPolicy(Policy):
     """ A proxy to the Policy class in order to use the policy's parameters as domain distribution parameters """
 
     name: str = 'ddp'
-    min_dp_var: float = 1e-6  # hard coded lower bound on all domain parameters variances
 
     def __init__(self,
                  mapping: Dict[int, Tuple[str, str]],
@@ -70,29 +67,19 @@ class DomainDistrParamPolicy(Policy):
 
         self.mapping = mapping
         self.mask = to.tensor(trafo_mask, dtype=to.bool)
-
-        # Construct a valid space for the policy parameters aka domain distribution parameters
-        bound_lo = -pyrado.inf*np.ones(len(mapping))
-        bound_up = +pyrado.inf*np.ones(len(mapping))
-        lables = len(mapping)*['None']
-        # for idx, ddp in self.mapping.items():
-        #     lables[idx] = f'{ddp[0]}_{ddp[1]}'
-        #     if ddp[1] == 'std':  # 2nd output is the name of the domain distribution param
-        #         bound_lo[idx] = sqrt(DomainDistrParamPolicy.min_dp_var)
-        #     elif ddp[1] == 'halfspan':  # 2nd output is the name of the domain distribution param
-        #         bound_lo[idx] = sqrt(12*DomainDistrParamPolicy.min_dp_var)/2  # var(U) = (2*halfspan)^2/12
+        self.prior = prior
 
         # Define the parameter space by using the Policy.env_spec.act_space
-        param_spec = EnvSpec(obs_space=EmptySpace(), act_space=BoxSpace(bound_lo, bound_up, labels=lables))
+        param_spec = EnvSpec(obs_space=EmptySpace(), act_space=BoxSpace(-pyrado.inf, pyrado.inf, shape=len(mapping)))
 
         # Call Policy's constructor
         super().__init__(param_spec, use_cuda)
 
-        self.params = nn.Parameter(to.Tensor(param_spec.act_space.flat_dim), requires_grad=True)
-        self.prior = prior
+        self.params = nn.Parameter(to.empty(param_spec.act_space.flat_dim), requires_grad=True)
+        self.param_scaler = None  # initialized during init_param()
         self.init_param(prior=prior)
 
-    def masked_exp_transform(self, params: to.Tensor) -> to.Tensor:
+    def transform_to_ddp_space(self, params: to.Tensor) -> to.Tensor:
         """
         Get the transformed domain distribution parameters. The policy's parameters are in log space.
 
@@ -100,7 +87,21 @@ class DomainDistrParamPolicy(Policy):
         :return: policy parameters transformed according to the mask
         """
         ddp = params.clone()
-        ddp[self.mask] = to.exp(ddp[self.mask])
+
+        if ddp.ndimension() == 1:
+            # Only one set of domain distribution parameters
+            ddp.data = self.param_scaler.scale_back(ddp.data)
+            ddp.data[self.mask] = to.exp(ddp.data[self.mask])
+
+        elif ddp.ndimension() == 2:
+            # Multiple sets of domain distribution parameters along the first axis
+            for i in range(ddp.shape[0]):
+                ddp[i].data = self.param_scaler.scale_back(ddp[i].data)
+            ddp.data[:, self.mask] = to.exp(ddp.data[:, self.mask])
+
+        else:
+            raise pyrado.ShapeErr(msg='Inputs must not have more than 2 dimensions!')
+
         return ddp
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
@@ -121,26 +122,20 @@ class DomainDistrParamPolicy(Policy):
                         val = getattr(dp, f'{ddp[1]}')
                         if self.mask[idx]:
                             # Log-transform since it will later be exp-transformed
-                            self.params[idx].fill_(to.log(to.tensor(val)))
+                            self.params[idx].data.fill_(to.log(to.tensor(val)))
                         else:
-                            self.params[idx].fill_(to.tensor(val))
+                            self.params[idx].data.fill_(to.tensor(val))
 
         else:
-            # Last measure
-            self.params.data.normal_(0, 1)
-            print_cbt('Using uninformative random initialization for DomainDistrParamPolicy.', 'y')
+            raise pyrado.ValueErr(msg='DomainDistrParamPolicy needs to be initialized! Either with a set of policy'
+                                      'parameters, or with a prior in form of a DomainRandomizer!')
 
-    def clamp_params(self, params: to.Tensor) -> to.Tensor:
-        """
-        Project the policy parameters a.k.a. the domain distribution parameters to valid a range.
-
-        :param params: parameter tensor with arbitrary values
-        :return: parameters clipped to the bounds of the `EnvSpec` defined in the constructor
-        """
-        return clamp(params,
-                     to.from_numpy(self.env_spec.act_space.bound_lo),
-                     to.from_numpy(self.env_spec.act_space.bound_up))
+        # After initializing, we have an estimate on the magnitude of the policy parameters. Usually, the
+        # non-transformed means are a magnitude smaller than e.g. the transformed stds. Thus, we will approximately
+        # project them to [-1, 1]
+        self.param_scaler = MinMaxScaler(bound_lo=-1, bound_up=1)
+        self.params.data = self.param_scaler.scale_to(self.params.data)  # params now in [-1, 1]
 
     def forward(self, obs: to.Tensor = None) -> to.Tensor:
-        # Should never be used. I know this might seem like an extreme abuse of the policy class but it is worth it.
+        # Should never be used. This is an abuse of the policy class but it is worth it.
         raise NotImplementedError

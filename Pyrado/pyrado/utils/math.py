@@ -28,7 +28,7 @@
 
 import numpy as np
 import torch as to
-from typing import Union
+from typing import Union, Tuple
 
 import pyrado
 from pyrado.utils.data_processing import normalize
@@ -54,7 +54,8 @@ class UnitCubeProjector:
         self.bound_lo = bound_lo
         self.bound_up = bound_up
 
-    def _convert_bounds(self, data: [to.Tensor, np.ndarray]) -> [(to.Tensor, to.Tensor), (np.ndarray, np.ndarray)]:
+    def _convert_bounds(self, data: Union[to.Tensor, np.ndarray]
+                        ) -> Union[Tuple[to.Tensor, to.Tensor], Tuple[np.ndarray, np.ndarray]]:
         """
         Convert the bounds into the right type
 

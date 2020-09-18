@@ -32,7 +32,7 @@ Only tested for 1-dim inputs, e.g. time series of rewards.
 
 import numpy as np
 import torch as to
-from typing import Union
+from typing import Union, Tuple
 
 import pyrado
 
@@ -43,20 +43,30 @@ def scale_min_max(data: Union[np.ndarray, to.Tensor],
     r"""
     Transform the input data to to be in $[a, b]$.
 
-    :param data: input ndarray or Tensor
+    :param data: unscaled input ndarray or Tensor
     :param bound_lo: lower bound for the transformed data
     :param bound_up: upper bound for the transformed data
-    :param data: input ndarray or Tensor
-    :return: scaled ndarray or Tensor
+    :return: ndarray or Tensor scaled to be in $[a, b]$
     """
+    # Lower bound
     if isinstance(bound_lo, (float, int)) and isinstance(data, np.ndarray):
         bound_lo = bound_lo*np.ones_like(data, dtype=np.float64)
+    elif isinstance(bound_lo, (float, int)) and isinstance(data, to.Tensor):
+        bound_lo = bound_lo*to.ones_like(data, dtype=to.get_default_dtype())
+    elif isinstance(bound_lo, np.ndarray) and isinstance(data, to.Tensor):
+        bound_lo = to.from_numpy(bound_lo)
+    elif isinstance(bound_lo, to.Tensor) and isinstance(data, np.ndarray):
+        bound_lo = bound_lo.numpy()
+
+    # Upper bound
     if isinstance(bound_up, (float, int)) and isinstance(data, np.ndarray):
         bound_up = bound_up*np.ones_like(data, dtype=np.float64)
-    if isinstance(bound_lo, (float, int)) and isinstance(data, to.Tensor):
-        bound_lo = bound_lo*to.ones_like(data, dtype=to.get_default_dtype())
-    if isinstance(bound_up, (float, int)) and isinstance(data, to.Tensor):
+    elif isinstance(bound_up, (float, int)) and isinstance(data, to.Tensor):
         bound_up = bound_up*to.ones_like(data, dtype=to.get_default_dtype())
+    elif isinstance(bound_up, np.ndarray) and isinstance(data, to.Tensor):
+        bound_up = to.from_numpy(bound_up)
+    elif isinstance(bound_up, to.Tensor) and isinstance(data, np.ndarray):
+        bound_up = bound_up.numpy()
 
     if not (bound_lo < bound_up).all():
         raise pyrado.ValueErr(given_name='lower bound', l_constraint='upper bound')
@@ -165,6 +175,108 @@ class Standardizer:
 
         x_unstd = data*self.std + self.mean
         return x_unstd
+
+
+class MinMaxScaler:
+    """ A stateful min-max scaler that remembers the lower and upper bound for later un-unscaling """
+
+    def __init__(self,
+                 bound_lo: Union[int, float, np.ndarray, to.Tensor],
+                 bound_up: Union[int, float, np.ndarray, to.Tensor]):
+        """
+        Constructor
+
+        :param bound_lo: lower bound for the transformed data
+        :param bound_up: upper bound for the transformed data
+        """
+        # Store the values as private members since they are not directly used
+        self._bound_lo = bound_lo
+        self._bound_up = bound_up
+
+        # Initialize in scale_to()
+        self.data_min = None
+        self.data_span = None
+
+    def _convert_bounds(self, data: Union[to.Tensor, np.ndarray]
+                        ) -> Union[Tuple[to.Tensor, to.Tensor], Tuple[np.ndarray, np.ndarray]]:
+        """
+        Convert the bounds into the right type
+
+        :param data: data that is later used for projecting
+        :return: bounds casted to the type of data
+        """
+        # Lower bound
+        if isinstance(self._bound_lo, (float, int)) and isinstance(data, np.ndarray):
+            bound_lo = self._bound_lo*np.ones_like(data, dtype=np.float64)
+        elif isinstance(self._bound_lo, (float, int)) and isinstance(data, to.Tensor):
+            bound_lo = self._bound_lo*to.ones_like(data, dtype=to.get_default_dtype())
+        elif isinstance(self._bound_lo, np.ndarray) and isinstance(data, to.Tensor):
+            bound_lo = to.from_numpy(self._bound_lo)
+        elif isinstance(self._bound_lo, to.Tensor) and isinstance(data, np.ndarray):
+            bound_lo = self._bound_lo.numpy()
+        else:
+            bound_lo = self._bound_lo
+
+        # Upper bound
+        if isinstance(self._bound_up, (float, int)) and isinstance(data, np.ndarray):
+            bound_up = self._bound_up*np.ones_like(data, dtype=np.float64)
+        elif isinstance(self._bound_up, (float, int)) and isinstance(data, to.Tensor):
+            bound_up = self._bound_up*to.ones_like(data, dtype=to.get_default_dtype())
+        elif isinstance(self._bound_up, np.ndarray) and isinstance(data, to.Tensor):
+            bound_up = to.from_numpy(self._bound_up)
+        elif isinstance(self._bound_up, to.Tensor) and isinstance(data, np.ndarray):
+            bound_up = self._bound_up.numpy()
+        else:
+            bound_up = self._bound_up
+
+        return bound_lo, bound_up
+
+    def scale_to(self, data: Union[np.ndarray, to.Tensor]) -> Union[np.ndarray, to.Tensor]:
+        r"""
+        Transform the input data to be in $[a, b]$, where $a$ and $b$ are defined during construction.
+
+        :param data: unscaled input ndarray or Tensor
+        :return: ndarray or Tensor scaled to be in $[a, b]$
+        """
+        # Convert to the right type if necessary
+        bound_lo, bound_up = self._convert_bounds(data)
+
+        if not (bound_lo < bound_up).all():
+            raise pyrado.ValueErr(given_name='lower bound', l_constraint='upper bound')
+
+        if isinstance(data, np.ndarray):
+            self._data_min = np.min(data)
+            self._data_span = np.max(data) - np.min(data)
+        elif isinstance(data, to.Tensor):
+            self._data_min = to.min(data)
+            self._data_span = to.max(data) - to.min(data)
+        else:
+            raise pyrado.TypeErr(given=data, expected_type=[np.ndarray, to.Tensor])
+
+        data_ = (data - self._data_min)/self._data_span
+        return data_*(bound_up - bound_lo) + bound_lo
+
+    def scale_back(self, data: Union[np.ndarray, to.Tensor]) -> Union[np.ndarray, to.Tensor]:
+        r"""
+        Rescale the input data back to its original value range
+
+        :param data: input ndarray or Tensor scaled to be in $[a, b]$
+        :return: unscaled ndarray or Tensor
+        """
+        if self._data_min is None or self._data_span is None:
+            raise pyrado.ValueErr(msg='Call scale_to before scale_back!')
+
+        if not (isinstance(data, np.ndarray) or isinstance(data, to.Tensor)):
+            raise pyrado.TypeErr(given=data, expected_type=[np.ndarray, to.Tensor])
+
+        # Convert to the right type if necessary
+        bound_lo, bound_up = self._convert_bounds(data)
+
+        # Scale data to be in [0, 1]
+        data_ = (data - bound_lo)/(bound_up - bound_lo)
+
+        # Return data in original value range
+        return data_*self._data_span + self._data_min
 
 
 class RunningStandardizer:

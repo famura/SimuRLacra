@@ -88,7 +88,7 @@ class QuanserReal(RealEnv, ABC):
         if self._qsoc.is_open():
             self.step(np.zeros(self.act_space.shape))
             self._qsoc.close()
-            print_cbt('Closed the connection to the Quanser device.', 'c', bright=True)
+            print_cbt('Closed the connection to the Quanser device.', 'c')
 
     @property
     def state_space(self) -> Space:

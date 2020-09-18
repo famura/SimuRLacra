@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{SimOpt.name}-{CEM.name}')
-    num_workers = 16
+    num_workers = 12
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
@@ -64,18 +64,18 @@ if __name__ == '__main__':
     env_hparams = dict(dt=1/100., max_steps=600)
     env_real = QQubeSwingUpSim(**env_hparams)
     env_real.domain_param = dict(
-        Mr=0.095*0.9,
-        Mp=0.024*1.1,
-        Lr=0.085*0.9,
-        Lp=0.129*1.1,
+        Mr=0.095*0.9,  # 0.095*0.9 = 0.0855
+        Mp=0.024*1.1,  # 0.024*1.1 = 0.0264
+        Lr=0.085*0.9,  # 0.085*0.9 = 0.0765
+        Lp=0.129*1.1,  # 0.129*1.1 = 0.1419
     )
 
     env_sim = QQubeSwingUpSim(**env_hparams)
     randomizer = DomainRandomizer(
-        NormalDomainParam(name='Mr', mean=0., std=1e-9, clip_lo=1e-3),
-        NormalDomainParam(name='Mp', mean=0., std=1e-9, clip_lo=1e-3),
-        NormalDomainParam(name='Lr', mean=0., std=1e-9, clip_lo=1e-3),
-        NormalDomainParam(name='Lp', mean=0., std=1e-9, clip_lo=1e-3),
+        NormalDomainParam(name='Mr', mean=0., std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name='Mp', mean=0., std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name='Lr', mean=0., std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name='Lp', mean=0., std=1e6, clip_lo=1e-3),
     )
     env_sim = DomainRandWrapperLive(env_sim, randomizer)
     dp_map = {
@@ -86,7 +86,8 @@ if __name__ == '__main__':
         # 0: ('Lr', 'mean'), 1: ('Lr', 'std'),
         # 2: ('Lp', 'mean'), 3: ('Lp', 'std')
     }
-    trafo_mask = [False, True, False, True, False, True, False, True]
+    trafo_mask = [True]*8
+    # trafo_mask = [False, True, False, True, False, True, False, True]
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
 
     # Subroutine for policy improvement
@@ -119,10 +120,10 @@ if __name__ == '__main__':
 
     # Subroutine for system identification
     prior = DomainRandomizer(
-        NormalDomainParam(name='Mr', mean=0.095, std=0.095e-2, clip_lo=1e-3),
-        NormalDomainParam(name='Mp', mean=0.024, std=0.024e-2, clip_lo=1e-3),
-        NormalDomainParam(name='Lr', mean=0.085, std=0.085e-2, clip_lo=1e-3),
-        NormalDomainParam(name='Lp', mean=0.129, std=0.129e-2, clip_lo=1e-3),
+        NormalDomainParam(name='Mr', mean=0.095, std=0.095/10),
+        NormalDomainParam(name='Mp', mean=0.024, std=0.024/10),
+        NormalDomainParam(name='Lr', mean=0.085, std=0.085/10),
+        NormalDomainParam(name='Lp', mean=0.129, std=0.129/10),
     )
     ddp_policy = DomainDistrParamPolicy(mapping=dp_map, trafo_mask=trafo_mask, prior=prior)
     subsubrtn_distr_hparam = dict(
@@ -130,24 +131,24 @@ if __name__ == '__main__':
         pop_size=200,
         num_rollouts=1,
         num_is_samples=10,
-        expl_std_init=0.01,
-        expl_std_min=0.001,
-        extra_expl_std_init=0.01,
+        expl_std_init=0.2,
+        expl_std_min=0.01,
+        extra_expl_std_init=0.05,
         extra_expl_decay_iter=5,
         num_workers=num_workers,
     )
     subsubrtn_distr = CEM(ex_dir, env_sim, ddp_policy, **subsubrtn_distr_hparam)
     subrtn_distr_hparam = dict(
         metric=None,
-        obs_dim_weight=[1., 1., 1., 1., 2., 2.],
-        num_rollouts_per_distr=50,
+        obs_dim_weight=[1., 1., 1., 1., 5., 5.],
+        num_rollouts_per_distr=100,
         num_workers=num_workers,
     )
     subrtn_distr = SysIdViaEpisodicRL(subsubrtn_distr, behavior_policy=behav_policy, **subrtn_distr_hparam)
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=10,
+        max_iter=15,
         num_eval_rollouts=5,
         warmstart=True,
         thold_succ_subrtn=50,
@@ -160,7 +161,6 @@ if __name__ == '__main__':
         dict(env=env_hparams, seed=args.seed),
         dict(behav_policy=behav_policy_hparam),
         dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
-        dict(subsubrtn_distr=subsubrtn_distr_hparam, subsubrtn_distr_name=subrtn_distr.name),
         dict(subrtn_distr=subrtn_distr_hparam, subrtn_distr_name=subrtn_distr.name,
              dp_map=dp_map, trafo_mask=trafo_mask),
         dict(subsubrtn_distr=subsubrtn_distr_hparam, subsubrtn_distr_name=subsubrtn_distr.name),

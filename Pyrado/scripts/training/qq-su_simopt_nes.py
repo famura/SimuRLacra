@@ -72,10 +72,10 @@ if __name__ == '__main__':
 
     env_sim = QQubeSwingUpSim(**env_hparams)
     randomizer = DomainRandomizer(
-        NormalDomainParam(name='Mr', mean=0., std=1e-9, clip_lo=1e-3),
-        NormalDomainParam(name='Mp', mean=0., std=1e-9, clip_lo=1e-3),
-        NormalDomainParam(name='Lr', mean=0., std=1e-9, clip_lo=1e-3),
-        NormalDomainParam(name='Lp', mean=0., std=1e-9, clip_lo=1e-3),
+        NormalDomainParam(name='Mr', mean=0., std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name='Mp', mean=0., std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name='Lr', mean=0., std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name='Lp', mean=0., std=1e6, clip_lo=1e-3),
     )
     env_sim = DomainRandWrapperLive(env_sim, randomizer)
     dp_map = {
@@ -119,10 +119,10 @@ if __name__ == '__main__':
 
     # Subroutine for system identification
     prior = DomainRandomizer(
-        NormalDomainParam(name='Mr', mean=0.095, std=0.095e-2, clip_lo=1e-3),
-        NormalDomainParam(name='Mp', mean=0.024, std=0.024e-2, clip_lo=1e-3),
-        NormalDomainParam(name='Lr', mean=0.085, std=0.085e-2, clip_lo=1e-3),
-        NormalDomainParam(name='Lp', mean=0.129, std=0.129e-2, clip_lo=1e-3),
+        NormalDomainParam(name='Mr', mean=0.095, std=0.095e-1),
+        NormalDomainParam(name='Mp', mean=0.024, std=0.024e-1),
+        NormalDomainParam(name='Lr', mean=0.085, std=0.085e-1),
+        NormalDomainParam(name='Lp', mean=0.129, std=0.129e-1),
     )
     ddp_policy = DomainDistrParamPolicy(mapping=dp_map, trafo_mask=trafo_mask, prior=prior)
     subsubrtn_distr_hparam = dict(
@@ -160,7 +160,6 @@ if __name__ == '__main__':
         dict(env=env_hparams, seed=args.seed),
         dict(behav_policy=behav_policy_hparam),
         dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
-        dict(subsubrtn_distr=subsubrtn_distr_hparam, subsubrtn_distr_name=subrtn_distr.name),
         dict(subrtn_distr=subrtn_distr_hparam, subrtn_distr_name=subrtn_distr.name,
              dp_map=dp_map, trafo_mask=trafo_mask),
         dict(subsubrtn_distr=subsubrtn_distr_hparam, subsubrtn_distr_name=subsubrtn_distr.name),

@@ -299,7 +299,7 @@ if __name__ == '__main__':
 
     # Save the environments and the hyper-parameters
     save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, ),
+        dict(env=env_hparams),
         dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
         dict(algo=algo_hparam, algo_name=SysIdViaEpisodicRL.name, dp_map=dp_map)],
         ex_dir

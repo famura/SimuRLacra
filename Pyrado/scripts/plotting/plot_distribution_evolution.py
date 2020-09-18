@@ -83,7 +83,8 @@ if __name__ == '__main__':
             print_cbt(f'Did not remove the {num_init_cand} (randomly sampled) initial candidates.', 'c')
 
     elif hparams['algo_name'] == SimOpt.name:
-        pass
+        ddp_policy = to.load(osp.join(ex_dir, 'ddp_policy.py'))
+        cands = ddp_policy.transform_to_ddp_space(cands)
 
     else:
         raise pyrado.ValueErr(given=hparams['algo_name'], eq_constraint=f'{BayRn.name} or {SimOpt.name}')

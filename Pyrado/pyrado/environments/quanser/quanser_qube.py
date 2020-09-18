@@ -121,7 +121,7 @@ class QQubeReal(QuanserReal, Serializable):
             # Get next measurement
             meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
 
-            if np.abs(meas[2]) < 1e-8 and np.abs(meas[3]) < 1e-8:
+            if np.abs(meas[2]) < 1e-6 and np.abs(meas[3]) < 1e-6:
                 cnt += 1
             else:
                 cnt = 0

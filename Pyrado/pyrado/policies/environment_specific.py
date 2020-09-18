@@ -33,6 +33,7 @@ import numpy as np
 import time
 import torch as to
 import torch.nn as nn
+from typing import Union
 
 import pyrado
 from pyrado.utils.data_types import EnvSpec

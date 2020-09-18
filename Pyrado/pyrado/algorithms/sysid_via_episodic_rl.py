@@ -121,7 +121,7 @@ class SysIdViaEpisodicRL(Algorithm):
             {r'$\dot{\theta}$': 20., r'$\dot{\alpha}$': 20.},
             subrtn.env.obs_space.labels
         )
-        self.uc_normalizer = UnitCubeProjector(bound_lo=elb, bound_up=eub)
+        self.obs_normalizer = UnitCubeProjector(bound_lo=elb, bound_up=eub)
 
         # Create the sampler used to execute the same policy as on the real system in the meta-randomized env
         self.base_seed = base_seed
@@ -171,9 +171,7 @@ class SysIdViaEpisodicRL(Algorithm):
         loss_hist = []
         for idx_ps, ps in enumerate(param_sets):
             # Update the randomizer to use the new
-            new_ddp_vals = self._subrtn.policy.clamp_params(
-                self._subrtn.policy.masked_exp_transform(ps)
-            )
+            new_ddp_vals = self._subrtn.policy.transform_to_ddp_space(ps)
             self._subrtn.env.adapt_randomizer(domain_distr_param_values=new_ddp_vals.detach().cpu().numpy())
             self._subrtn.env.randomizer.randomize(num_samples=self.num_rollouts_per_distr)
             sampled_domain_params = self._subrtn.env.randomizer.get_params()
@@ -266,8 +264,8 @@ class SysIdViaEpisodicRL(Algorithm):
         sim_obs = rollout_sim.get_data_values('observations', truncate_last=True)
 
         # Normalize the signals
-        real_obs_norm = self.uc_normalizer.project_to(real_obs)
-        sim_obs_norm = self.uc_normalizer.project_to(sim_obs)
+        real_obs_norm = self.obs_normalizer.project_to(real_obs)
+        sim_obs_norm = self.obs_normalizer.project_to(sim_obs)
 
         # Compute loss based on the error
         loss_per_obs_dim = self.metric(real_obs_norm - sim_obs_norm)
@@ -324,13 +322,13 @@ class SysIdViaEpisodicRL(Algorithm):
         # ParameterExploring subroutine saves the best policy (in this case a DomainDistrParamPolicy)
         self._subrtn.save_snapshot(meta_info=dict(prefix='ddp'))
 
-        # Set the randomizer to best fitted domain distribution
-        cpp = self._subrtn.policy.clamp_params(
-            self._subrtn.policy.masked_exp_transform(self._subrtn.policy.param_values)
-        )
+        # Print the current search distribution's mean
+        cpp = self._subrtn.policy.transform_to_ddp_space(self._subrtn.policy.param_values)
         self._subrtn.env.adapt_randomizer(domain_distr_param_values=cpp.detach().cpu().numpy())
         print_cbt(f'Current policy domain parameter distribution\n{self._subrtn.env.randomizer}', 'g')
-        cbp = self._subrtn.policy.masked_exp_transform(self._subrtn.best_policy_param)
+
+        # Set the randomizer to best fitted domain distribution
+        cbp = self._subrtn.policy.transform_to_ddp_space(self._subrtn.best_policy_param)
         self._subrtn.env.adapt_randomizer(domain_distr_param_values=cbp.detach().cpu().numpy())
         print_cbt(f'Best fitted domain parameter distribution\n{self._subrtn.env.randomizer}', 'g')
         joblib.dump(self._subrtn.env, osp.join(self._save_dir, 'env_sim.pkl'))

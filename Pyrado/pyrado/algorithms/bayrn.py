@@ -189,7 +189,7 @@ class BayRn(Algorithm):
         to.save(cand.view(-1), osp.join(self._save_dir, f'{prefix}_candidate.pt'))
 
         # Set the domain randomizer
-        self._env_sim.adapt_randomizer(cand.numpy())
+        self._env_sim.adapt_randomizer(cand.detach().cpu().numpy())
 
         # Reset the subroutine's algorithm which includes resetting the exploration
         self._subrtn.reset()
@@ -283,8 +283,6 @@ class BayRn(Algorithm):
         :param num_rollouts: number of rollouts to collect on the target system
         :return: estimated return in the target domain
         """
-        if isinstance(env, RealEnv):
-            input('Evaluating in the target domain. Hit any key to continue.')
         if save_dir is not None:
             print_cbt(f'Executing {prefix}_policy ...', 'c', bright=True)
 

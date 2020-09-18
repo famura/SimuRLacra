@@ -141,8 +141,8 @@ class SimOpt(Algorithm):
         to.save(cand.view(-1), osp.join(self._save_dir, f'{prefix}_candidate.pt'))
 
         # Set the domain randomizer
-        cand = self._subrtn_distr.subrtn.policy.masked_exp_transform(cand)
-        self._env_sim.adapt_randomizer(cand.numpy())
+        cand = self._subrtn_distr.subrtn.policy.transform_to_ddp_space(cand)
+        self._env_sim.adapt_randomizer(cand.detach().cpu().numpy())
 
         # Reset the subroutine algorithm which includes resetting the exploration
         self._subrtn_policy.reset()
@@ -227,8 +227,6 @@ class SimOpt(Algorithm):
         :param seed: seed value for the random number generators, only used when evaluating in simulation
         :return: rollouts
         """
-        if isinstance(env, RealEnv):
-            input('Evaluating in the target domain. Hit any key to continue.')
         if save_dir is not None:
             print_cbt(f'Executing {prefix}_policy ...', 'c', bright=True)
 
@@ -268,7 +266,7 @@ class SimOpt(Algorithm):
 
     def step(self, snapshot_mode: str = 'latest', meta_info: dict = None):
         if self._curr_iter == 0:
-            # First iteration, use the random policy parameters
+            # First iteration, use the policy parameters (initialized from a prior)
             cand = self._subrtn_distr.policy.param_values.detach()
             self.cands = cand.clone().unsqueeze(0)
         else:
@@ -276,8 +274,8 @@ class SimOpt(Algorithm):
             assert isinstance(self.cands, to.Tensor)
             cand = self.cands[-1, :]
 
-        print_cbt(f'Current domain distribution parameters:'
-                  f'{self._subrtn_distr.subrtn.policy.masked_exp_transform(cand).detach().cpu().numpy()}', 'g')
+        print_cbt(f'Current domain distribution parameters: '
+                  f'{self._subrtn_distr.subrtn.policy.transform_to_ddp_space(cand).detach().cpu().numpy()}', 'g')
 
         # Train and evaluate the behavioral policy, repeat if the resulting policy did not exceed the success threshold
         prefix = f'iter_{self._curr_iter}'
