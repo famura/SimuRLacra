@@ -497,7 +497,10 @@
             <span class="c1"># Setup as child</span>
             <span class="n">value</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;_logger_parent&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LoggerAware.register_as_logger_parent"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.LoggerAware.register_as_logger_parent">[docs]</a>    <span class="k">def</span> <span class="nf">register_as_logger_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
+        <span class="n">child</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;_logger_parent&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span></div></div>
 </pre></div>
 
            </div>

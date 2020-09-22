@@ -207,6 +207,8 @@
 <span class="sd">This file is found by pytest and contains fixtures (i.e., common defaults) that can be used for all tests.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
+
 
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="n">UniformDomainParam</span><span class="p">,</span> <span class="n">NormalDomainParam</span><span class="p">,</span> \
     <span class="n">MultivariateNormalDomainParam</span><span class="p">,</span> <span class="n">DomainParam</span>
@@ -228,6 +230,8 @@
 <span class="kn">from</span> <span class="nn">pyrado.policies.time</span> <span class="kn">import</span> <span class="n">TimePolicy</span><span class="p">,</span> <span class="n">TraceableTimePolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.two_headed</span> <span class="kn">import</span> <span class="n">TwoHeadedFNNPolicy</span><span class="p">,</span> <span class="n">TwoHeadedGRUPolicy</span>
 
+<span class="c1"># set spawn method to spawn for parallel test runs</span>
+<span class="n">mp</span><span class="o">.</span><span class="n">set_start_method</span><span class="p">(</span><span class="s1">&#39;spawn&#39;</span><span class="p">)</span>
 
 <span class="c1"># Set default torch dtype globally to avoid inconsistent errors depending on the test run order</span>
 <span class="n">to</span><span class="o">.</span><span class="n">set_default_dtype</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
