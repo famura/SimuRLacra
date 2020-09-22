@@ -203,6 +203,8 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+
 
 <div class="viewcode-block" id="get_class_name"><a class="viewcode-back" href="../../utils.html#pyrado.utils.get_class_name">[docs]</a><span class="k">def</span> <span class="nf">get_class_name</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -212,6 +214,26 @@
 <span class="sd">    :return: name of the class of the given object</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span></div>
+
+
+<div class="viewcode-block" id="run_once"><a class="viewcode-back" href="../../utils.html#pyrado.utils.run_once">[docs]</a><span class="k">def</span> <span class="nf">run_once</span><span class="p">(</span><span class="n">fcn</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper to ensure that a function is only called once.</span>
+
+<span class="sd">    :param fcn: function that should only be called once</span>
+<span class="sd">    :return: wrapped function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">fcn</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">wrapper</span><span class="o">.</span><span class="n">has_run</span><span class="p">:</span>
+            <span class="c1"># First and last execution</span>
+            <span class="n">wrapper</span><span class="o">.</span><span class="n">has_run</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="n">fcn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># Initialize runnable</span>
+    <span class="n">wrapper</span><span class="o">.</span><span class="n">has_run</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">wrapper</span></div>
 </pre></div>
 
            </div>

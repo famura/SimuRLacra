@@ -219,7 +219,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.tasks.desired_state</span> <span class="kn">import</span> <span class="n">DesStateTask</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.reward_functions</span> <span class="kn">import</span> <span class="n">ScaledExpQuadrErrRewFcn</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">RenderMode</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt_once</span>
 
 
 <div class="viewcode-block" id="QBallBalancerSim"><a class="viewcode-back" href="../../../../environments.pysim.html#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerSim">[docs]</a><span class="k">class</span> <span class="nc">QBallBalancerSim</span><span class="p">(</span><span class="n">SimPyEnv</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
@@ -310,7 +310,7 @@
             <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">measured_tholds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">ex_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pyrado</span><span class="o">.</span><span class="n">EVAL_DIR</span><span class="p">,</span> <span class="s1">&#39;volt_thold_qbb&#39;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">)</span> <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">):</span>
-                    <span class="n">print_cbt</span><span class="p">(</span><span class="s1">&#39;Found measured thresholds, using the averages.&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">)</span>
+                    <span class="n">print_cbt_once</span><span class="p">(</span><span class="s1">&#39;Found measured thresholds, using the averages.&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">)</span>
                     <span class="c1"># Calculate cumulative running average</span>
                     <span class="n">cma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
                     <span class="n">i</span> <span class="o">=</span> <span class="mf">0.</span>
@@ -323,7 +323,7 @@
                     <span class="n">tholds</span><span class="p">[</span><span class="s1">&#39;V_thold_y_pos&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cma</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
                     <span class="n">tholds</span><span class="p">[</span><span class="s1">&#39;V_thold_y_neg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cma</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">print_cbt</span><span class="p">(</span><span class="s1">&#39;No measured thresholds found, falling back to default values.&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span>
+                    <span class="n">print_cbt_once</span><span class="p">(</span><span class="s1">&#39;No measured thresholds found, falling back to default values.&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span>
 
                 <span class="c1"># Cache results for future calls</span>
                 <span class="bp">cls</span><span class="o">.</span><span class="n">measured_tholds</span> <span class="o">=</span> <span class="n">tholds</span>

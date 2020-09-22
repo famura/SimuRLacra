@@ -212,6 +212,7 @@
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils</span> <span class="kn">import</span> <span class="n">run_once</span>
 
 
 <div class="viewcode-block" id="insert_newlines"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.input_output.insert_newlines">[docs]</a><span class="k">def</span> <span class="nf">insert_newlines</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">every</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -258,6 +259,12 @@
         <span class="nb">print</span><span class="p">(</span><span class="n">Fore</span><span class="o">.</span><span class="n">CYAN</span> <span class="o">+</span> <span class="n">brgt</span> <span class="o">+</span> <span class="n">tag</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">RESET_ALL</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;&#39;y&#39;, &#39;b&#39;, &#39;g&#39;, &#39;r&#39;, or &#39;c&#39;&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="print_cbt_once"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.input_output.print_cbt_once">[docs]</a><span class="nd">@run_once</span>
+<span class="k">def</span> <span class="nf">print_cbt_once</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">bright</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Wrapped version of `print_cbt` that only prints once. &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">print_cbt</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">bright</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="select_query"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.input_output.select_query">[docs]</a><span class="k">def</span> <span class="nf">select_query</span><span class="p">(</span><span class="n">items</span><span class="p">,</span>

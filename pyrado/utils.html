@@ -877,6 +877,12 @@ exception is raised).</p>
 </dd></dl>
 
 <dl class="py function">
+<dt id="pyrado.utils.input_output.print_cbt_once">
+<code class="sig-name descname">print_cbt_once</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">color</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">bright</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">tag</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">end</span><span class="o">=</span><span class="default_value">'\n'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/input_output.html#print_cbt_once"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.print_cbt_once" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapped version of <cite>print_cbt</cite> that only prints once.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt id="pyrado.utils.input_output.select_query">
 <code class="sig-name descname">select_query</code><span class="sig-paren">(</span><em class="sig-param">items</em>, <em class="sig-param">max_display=10</em>, <em class="sig-param">fallback=None</em>, <em class="sig-param">item_formatter=&lt;class 'str'&gt;</em>, <em class="sig-param">header: str = 'Available options:'</em>, <em class="sig-param">footer: str = 'Please enter the number of the option to use.'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/input_output.html#select_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.select_query" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ask the user to select an item out of the given list.</p>
@@ -1385,6 +1391,20 @@ When the property is first accessed, the function is called to compute the value
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>name of the class of the given object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.run_once">
+<code class="sig-name descname">run_once</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fcn</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils.html#run_once"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.run_once" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper to ensure that a function is only called once.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fcn</strong> – function that should only be called once</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>wrapped function</p>
 </dd>
 </dl>
 </dd></dl>
