@@ -43,7 +43,7 @@ from pyrado.exploration.stochastic_action import EpsGreedyExplStrat
 from pyrado.logger.step import StepLogger, ConsolePrinter, CSVPrinter, TensorBoardPrinter
 from pyrado.policies.fnn import DiscrActQValFNNPolicy
 from pyrado.sampling.parallel_sampler import ParallelSampler
-from pyrado.utils.input_output import print_cbt
+from pyrado.utils.input_output import print_cbt, print_cbt_once
 
 
 class DQL(Algorithm):
@@ -164,7 +164,7 @@ class DQL(Algorithm):
 
         while len(self._memory) < self.memory.capacity:
             # Warm-up phase
-            print_cbt('Collecting samples until replay memory contains if full.', 'w')
+            print_cbt_once('Collecting samples until replay memory contains if full.', 'w')
             # Sample steps and store them in the replay memory
             ros = self.sampler.sample()
             self._memory.push(ros)

@@ -26,6 +26,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from functools import wraps
+
 
 def get_class_name(obj) -> str:
     """
@@ -35,3 +37,23 @@ def get_class_name(obj) -> str:
     :return: name of the class of the given object
     """
     return obj.__class__.__name__
+
+
+def run_once(fcn):
+    """
+    Wrapper to ensure that a function is only called once.
+
+    :param fcn: function that should only be called once
+    :return: wrapped function
+    """
+
+    @wraps(fcn)
+    def wrapper(*args, **kwargs):
+        if not wrapper.has_run:
+            # First and last execution
+            wrapper.has_run = True
+            return fcn(*args, **kwargs)
+
+    # Initialize runnable
+    wrapper.has_run = False
+    return wrapper

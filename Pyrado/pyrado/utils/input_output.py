@@ -33,6 +33,7 @@ from typing import Sequence, Iterable
 
 import pyrado
 from pyrado.sampling.step_sequence import StepSequence
+from pyrado.utils import run_once
 
 
 def insert_newlines(string: str, every: int) -> str:
@@ -79,6 +80,12 @@ def print_cbt(msg: str, color: str = '', bright: bool = False, tag: str = '', en
         print(Fore.CYAN + brgt + tag + msg + Style.RESET_ALL, end=end)
     else:
         raise pyrado.ValueErr(given=color, eq_constraint="'y', 'b', 'g', 'r', or 'c'")
+
+
+@run_once
+def print_cbt_once(msg: str, color: str = '', bright: bool = False, tag: str = '', end='\n'):
+    """ Wrapped version of `print_cbt` that only prints once. """
+    return print_cbt(msg, color, bright, tag, end)
 
 
 def select_query(items,

@@ -36,7 +36,7 @@ from tqdm import tqdm
 from pyrado.sampling.utils import gen_batch_idcs, gen_ordered_batch_idcs, gen_ordered_batches
 from pyrado.utils.data_types import *
 from pyrado.utils.functions import noisy_nonlin_fcn
-from pyrado.utils.input_output import completion_context
+from pyrado.utils.input_output import completion_context, print_cbt_once
 from pyrado.utils.math import cosine_similarity, cov, rmse
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.policies.dummy import DummyPolicy
@@ -226,6 +226,7 @@ def test_scale_min_max(dtype, lb, ub):
             bound_up = bound_up.numpy()
         assert np.all(bound_lo*np.ones_like(x_scaled) <= x_scaled)
         assert np.all(x_scaled <= bound_up*np.ones_like(x_scaled))
+
 
 @pytest.mark.parametrize(
     'dtype', ['torch', 'numpy'], ids=['to', 'np']
@@ -532,3 +533,16 @@ def test_check_prompt():
     with pytest.raises(ZeroDivisionError):
         with completion_context('Works fine', color='r', bright=True):
             a = 3/0
+
+
+@pytest.mark.parametrize('color', ['w', 'g', 'y', 'c', 'r', 'b'], ids=['w', 'g', 'y', 'c', 'r', 'b'])
+@pytest.mark.parametrize('bright', [True, False], ids=['bright', 'not_bright'])
+def test_print_cbt_once(color, bright):
+    # Reset the flag for this test
+    print_cbt_once.has_run = False
+
+    msg = 'You should only read this once per color and brightness'
+    for i in range(10):
+        print_cbt_once(msg, color, bright, tag='tag', end='\n')
+        if i > 0:
+            assert print_cbt_once.has_run

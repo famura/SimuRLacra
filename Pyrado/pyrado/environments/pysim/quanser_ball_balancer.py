@@ -42,7 +42,7 @@ from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import DesStateTask
 from pyrado.tasks.reward_functions import ScaledExpQuadrErrRewFcn
 from pyrado.utils.data_types import RenderMode
-from pyrado.utils.input_output import print_cbt
+from pyrado.utils.input_output import print_cbt_once
 
 
 class QBallBalancerSim(SimPyEnv, Serializable):
@@ -133,7 +133,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
             if cls.measured_tholds is None:
                 ex_dir = osp.join(pyrado.EVAL_DIR, 'volt_thold_qbb')
                 if osp.exists(ex_dir) and osp.isdir(ex_dir) and os.listdir(ex_dir):
-                    print_cbt('Found measured thresholds, using the averages.', 'g')
+                    print_cbt_once('Found measured thresholds, using the averages.', 'g')
                     # Calculate cumulative running average
                     cma = np.zeros((2, 2))
                     i = 0.
@@ -146,7 +146,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
                     tholds['V_thold_y_pos'] = cma[1, 1]
                     tholds['V_thold_y_neg'] = cma[1, 0]
                 else:
-                    print_cbt('No measured thresholds found, falling back to default values.', 'y')
+                    print_cbt_once('No measured thresholds found, falling back to default values.', 'y')
 
                 # Cache results for future calls
                 cls.measured_tholds = tholds
