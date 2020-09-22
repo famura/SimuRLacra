@@ -152,7 +152,7 @@ class PPO(ActorCritic):
         """
         prob_ratio = to.exp(log_probs - log_probs_old)
         pr_clip = prob_ratio.clamp(1 - self.eps_clip, 1 + self.eps_clip)
-        return -to.mean(to.min(prob_ratio*adv, pr_clip*adv))  # former prob_ratio*adv.cpu(), pr_clip*adv.cpu()
+        return -to.mean(to.min(prob_ratio*adv.to(self.policy.device), pr_clip*adv.to(self.policy.device)))
 
     def update(self, rollouts: Sequence[StepSequence]):
         # Turn the batch of rollouts into a list of steps
@@ -186,10 +186,10 @@ class PPO(ActorCritic):
                 self.optim.zero_grad()
 
                 # Compute log of the action probabilities for the mini-batch
-                log_probs = compute_action_statistics(batch, self._expl_strat).log_probs
+                log_probs = compute_action_statistics(batch, self._expl_strat).log_probs.to(self.policy.device)
 
                 # Compute policy loss and backpropagate
-                loss = self.loss_fcn(log_probs, batch.log_probs_old, batch.adv)
+                loss = self.loss_fcn(log_probs, batch.log_probs_old.to(self.policy.device), batch.adv.to(self.policy.device))
                 loss.backward()
 
                 # Clip the gradients if desired

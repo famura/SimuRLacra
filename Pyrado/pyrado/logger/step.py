@@ -319,3 +319,6 @@ class LoggerAware:
             value.__dict__['_logger_parent'] = self
 
         super().__setattr__(key, value)
+
+    def register_as_logger_parent(self, child):
+        child.__dict__['_logger_parent'] = self

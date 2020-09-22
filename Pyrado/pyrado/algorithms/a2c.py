@@ -134,7 +134,7 @@ class A2C(ActorCritic):
         """
         # Policy, value function, and entropy losses
         policy_loss = -to.mean(adv.to(self.policy.device)*log_probs)
-        value_fcn_loss = 0.5*to.mean(to.pow(v_targ - v_pred, 2))  # former v_targ.cpu() - v_pred.cpu()
+        value_fcn_loss = 0.5*to.mean(to.pow(v_targ.to(self.policy.device) - v_pred.to(self.policy.device), 2))  # former v_targ.cpu() - v_pred.cpu()
         entropy_mean = to.mean(self.expl_strat.noise.get_entropy())
 
         # Return the combined loss
@@ -147,7 +147,7 @@ class A2C(ActorCritic):
 
         # Compute the value targets (empirical discounted returns) for all samples before fitting the V-fcn parameters
         adv = self._critic.gae(concat_ros)  # done with to.no_grad()
-        v_targ = discounted_values(rollouts, self._critic.gamma).view(-1, 1)  # empirical discounted returns
+        v_targ = discounted_values(rollouts, self._critic.gamma).view(-1, 1).to(self.policy.device)  # empirical discounted returns
 
         with to.no_grad():
             # Compute value predictions and the GAE using the old (before the updates) value function approximator
@@ -201,7 +201,7 @@ class A2C(ActorCritic):
         # Logging
         with to.no_grad():
             # Compute value predictions and the GAE using the new (after the updates) value function approximator
-            v_pred = self._critic.values(concat_ros)
+            v_pred = self._critic.values(concat_ros).to(self.policy.device)
             adv = self._critic.gae(concat_ros)  # done with to.no_grad()
 
             # Compute the action probabilities using the new (after the updates) policy

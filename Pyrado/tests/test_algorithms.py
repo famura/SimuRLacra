@@ -247,8 +247,8 @@ def test_adr(ex_dir, env, subrtn_hparam, actor_hparam, value_fcn_hparam, critic_
 @pytest.mark.parametrize(
     'spota_hparam', [
         dict(max_iter=3, alpha=0.05, beta=0.01, nG=2, nJ=10, ntau=5, nc_init=1, nr_init=1,
-             sequence_cand=sequence_add_init, sequence_refs=sequence_const, warmstart_cand=True,
-             warmstart_refs=True, num_bs_reps=1000, studentized_ci=False),
+             sequence_cand=sequence_add_init, sequence_refs=sequence_const, warmstart_cand=False,
+             warmstart_refs=False, num_bs_reps=1000, studentized_ci=False),
     ], ids=['casual_hparam']
 )
 def test_spota_ppo(ex_dir, env, spota_hparam):
@@ -360,8 +360,8 @@ def test_actor_critic(ex_dir, env, linear_policy, algo, algo_hparam, value_fcn_t
         (HCNormal, dict(max_iter=5, pop_size=None, num_rollouts=6, expl_std_init=0.5, expl_factor=1.1)),
         (NES, dict(max_iter=50, pop_size=None, num_rollouts=6, expl_std_init=0.5, symm_sampling=True)),
         (PEPG, dict(max_iter=50, pop_size=100, num_rollouts=6, expl_std_init=0.5, lr=1e-2, normalize_update=False)),
-        (PoWER, dict(max_iter=10, pop_size=100, num_rollouts=6, num_is_samples=10, expl_std_init=0.5)),
-        (CEM, dict(max_iter=10, pop_size=100, num_rollouts=6, num_is_samples=10, expl_std_init=0.5, full_cov=False)),
+        (PoWER, dict(max_iter=20, pop_size=100, num_rollouts=6, num_is_samples=10, expl_std_init=0.5)),
+        (CEM, dict(max_iter=20, pop_size=100, num_rollouts=6, num_is_samples=10, expl_std_init=0.5, full_cov=False)),
         (REPS, dict(max_iter=50, pop_size=500, num_rollouts=6, eps=0.1, expl_std_init=0.5,
                     use_map=True, grad_free_optim=False)),
     ], ids=['hc_normal', 'nes', 'pepg', 'power', 'cem', 'reps']

@@ -30,6 +30,8 @@
 This file is found by pytest and contains fixtures (i.e., common defaults) that can be used for all tests.
 """
 import pytest
+import multiprocessing as mp
+
 
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam, NormalDomainParam, \
     MultivariateNormalDomainParam, DomainParam
@@ -51,6 +53,8 @@ from pyrado.policies.rnn import RNNPolicy, GRUPolicy, LSTMPolicy
 from pyrado.policies.time import TimePolicy, TraceableTimePolicy
 from pyrado.policies.two_headed import TwoHeadedFNNPolicy, TwoHeadedGRUPolicy
 
+# set spawn method to spawn for parallel test runs
+mp.set_start_method('spawn')
 
 # Set default torch dtype globally to avoid inconsistent errors depending on the test run order
 to.set_default_dtype(to.double)
