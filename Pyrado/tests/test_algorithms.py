@@ -144,9 +144,8 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
 
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_bob'),
-        pytest.param(lazy_fixture('default_bop2d_bt'), marks=m_needs_bullet),
-    ], ids=['bob', 'bop2d_bt']
+        lazy_fixture('default_bob')
+    ], ids=['bob']
 )
 @pytest.mark.parametrize(
     'algo_class, algo_hparam', [
@@ -177,9 +176,8 @@ def test_param_expl(ex_dir, env, linear_policy, algo_class, algo_hparam):
 
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_bob'),
-        pytest.param(lazy_fixture('default_bop2d_bt'), marks=m_needs_bullet),
-    ], ids=['bob', 'bop2d_bt']
+        lazy_fixture('default_bob')
+    ], ids=['bob']
 )
 @pytest.mark.parametrize(
     'actor_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)], ids=['casual']
