@@ -321,9 +321,8 @@
 
 <div class="viewcode-block" id="test_param_expl"><a class="viewcode-back" href="../../tests.html#tests.test_algorithms.test_param_expl">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_bop2d_bt&#39;</span><span class="p">),</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;bop2d_bt&#39;</span><span class="p">]</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">)</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;algo_class, algo_hparam&#39;</span><span class="p">,</span> <span class="p">[</span>
@@ -354,9 +353,8 @@
 
 <div class="viewcode-block" id="test_svpg"><a class="viewcode-back" href="../../tests.html#tests.test_algorithms.test_svpg">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_bop2d_bt&#39;</span><span class="p">),</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;bop2d_bt&#39;</span><span class="p">]</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">)</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;actor_hparam&#39;</span><span class="p">,</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;casual&#39;</span><span class="p">]</span>
