@@ -266,7 +266,7 @@ def test_spota_ppo(ex_dir, env, spota_hparam):
     subrtn_hparam_cand = dict(
         # min_rollouts=0,  # will be overwritten by SPOTA
         min_steps=0,  # will be overwritten by SPOTA
-        max_iter=2, num_epoch=3, eps_clip=0.1, batch_size=64, num_workers=4, std_init=0.5, lr=1e-2)
+        max_iter=2, num_epoch=3, eps_clip=0.1, batch_size=64, num_workers=1, std_init=0.5, lr=1e-2)
     subrtn_hparam_cand = subrtn_hparam_cand
 
     sr_cand = PPO(ex_dir, env, policy, critic_cand, **subrtn_hparam_cand)
@@ -446,7 +446,7 @@ def test_arpl(ex_dir, env):
         max_iter=0,
         min_steps=23*env.max_steps,
         min_rollouts=None,
-        num_workers=12,
+        num_workers=1,
         num_epoch=5,
         eps_clip=0.085,
         batch_size=150,
@@ -528,7 +528,7 @@ def test_sysidasrl(ex_dir, env, num_eval_rollouts):
         expl_std_min=0.001,
         extra_expl_std_init=0.,
         extra_expl_decay_iter=5,
-        num_workers=4,
+        num_workers=1,
     )
     subrtn = CEM(ex_dir, env_sim, ddp_policy, **subrtn_hparam)
 
