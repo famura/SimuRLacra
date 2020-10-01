@@ -64,13 +64,14 @@ if __name__ == '__main__':
     num_epoch = 500
     num_layers = 1
     hidden_size = 20  # targ_size
-    batch_size = 50
     lr = 1e-3
 
     # Create the recurrent neural network
     # net = RNNPolicy(env.spec, hidden_size, num_layers, hidden_nonlin='relu')
     # net = GRUPolicy(env.spec, hidden_size, num_layers)
     net = LSTMPolicy(env.spec, hidden_size, num_layers)
+
+    # Create the optimizer
     optim = optim.Adam([{'params': net.parameters()}], lr=lr, eps=1e-8)
 
     # --------
@@ -83,22 +84,23 @@ if __name__ == '__main__':
         optim.zero_grad()
 
         # Evaluate network
-        output = net.evaluate(inp_ro)
-        loss = loss_fcn(targ, output[:, -targ_size])
+        output = net.evaluate(inp_ro)  # resets the hidden state
+        loss = loss_fcn(targ, output.squeeze())
 
         # Call optimizer
         loss.backward()
         optim.step()
 
         if e%10 == 0:
-            print(f'Epoch {e:4d}: avg loss {loss.item()/num_trn_samples}')
+            loss_avg = loss.item()/num_trn_samples
+            print(f'Epoch {e:4d} | avg loss {loss_avg:.3e}')
 
     # -------
     # Testing
     # -------
 
     pred = []
-    informative_hidden_init = True
+    informative_hidden_init = False
     num_init_steps = 10  # num_layers * hidden_size
 
     hidden = net.init_hidden()
@@ -117,6 +119,5 @@ if __name__ == '__main__':
     inp = inp[int(informative_hidden_init)*num_init_steps:].numpy()
     plt.plot(targ, label='target')
     plt.plot(pred, label='prediction')
-    # plt.plot(inp, label='trn input')
     plt.legend()
     plt.show()

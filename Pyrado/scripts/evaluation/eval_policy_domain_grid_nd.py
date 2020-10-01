@@ -110,9 +110,9 @@ if __name__ == '__main__':
     pool = SamplerPool(args.num_workers)
     if args.seed is not None:
         pool.set_seed(args.seed)
-        print_cbt(f'Set seed to {args.seed}', 'y')
+        print_cbt(f"Set the random number generators' seed to {args.seed}.", 'w')
     else:
-        print_cbt('No seed was set', 'r', bright=True)
+        print_cbt('No seed was set', 'y')
 
     # Sample rollouts
     ros = eval_domain_params(pool, env, policy, param_list, init_state)

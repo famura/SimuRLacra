@@ -34,6 +34,7 @@ import optuna
 import os
 import os.path as osp
 from matplotlib.ticker import MaxNLocator
+from optuna.structs import StudyDirection
 from prettyprinter import pprint
 
 import pyrado
@@ -61,7 +62,10 @@ if __name__ == '__main__':
     # Extract the values of all trials (Optuna was set to solve a minimization problem)
     trials = [t for t in study.trials if t.value is not None]  # broken trials return None
     values = np.array([t.value for t in trials])
-    idcs_best = values.argsort()[::-1]
+    if study.direction == StudyDirection.MINIMIZE:
+        idcs_best = values.argsort()
+    else:
+        idcs_best = values.argsort()[::-1]
 
     # Print the best parameter configurations
     print_cbt(f'The best parameter set of study {study_name} was found in trial_{study.best_trial.number} with value '
@@ -74,12 +78,19 @@ if __name__ == '__main__':
         print(f'Next best parameter set was found in trial_{i} with value {trials[i].value}')
         pprint(trials[i].params, indent=4)
 
-    # Plot a histogram
-    fig, ax = plt.subplots(1, figsize=(8, 6))
-    n, bins, patches = plt.hist(values, len(trials), density=False)
-    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-    plt.title('Histogram of the Returns')
-    plt.xlabel('return')
-    plt.ylabel('count')
-    plt.grid(True)
+    # Plot the normal histogram and with log-scaled axis
+    fig, axs = plt.subplots(nrows=2, figsize=(12, 6))
+    n, bins, patches = axs[0].hist(values, bins=len(trials), density=False)
+    logbins = np.logspace(np.log10(bins[0]), np.log10(bins[-1]), len(bins))
+    _, _, _ = axs[1].hist(values, bins=logbins, density=False)
+    axs[0].yaxis.set_major_locator(MaxNLocator(integer=True))
+    axs[1].yaxis.set_major_locator(MaxNLocator(integer=True))
+    axs[0].set_xlabel('value')
+    axs[1].set_xlabel('log_10 value')
+    axs[1].set_xscale('log')
+    axs[0].set_ylabel('count')
+    axs[1].set_ylabel('count')
+    axs[0].grid(True)
+    axs[1].grid(True)
+    plt.suptitle('Histogram of the Values (Returns)')
     plt.show()

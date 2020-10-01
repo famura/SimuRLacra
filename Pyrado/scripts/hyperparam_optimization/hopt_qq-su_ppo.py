@@ -33,7 +33,7 @@ import functools
 import optuna
 import os.path as osp
 from optuna.pruners import MedianPruner
-from torch.optim import lr_scheduler as scheduler
+from torch.optim import lr_scheduler
 
 import pyrado
 from pyrado.algorithms.ppo import PPO
@@ -45,7 +45,7 @@ from pyrado.logger.experiment import save_list_of_dicts_to_yaml, setup_experimen
 from pyrado.logger.step import create_csv_step_logger
 from pyrado.policies.fnn import FNNPolicy
 from pyrado.policies.rnn import GRUPolicy
-from pyrado.sampling.parallel_sampler import ParallelSampler
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.experiments import fcn_from_str
@@ -72,12 +72,12 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
     env = ActNormWrapper(env)
 
     # Learning rate scheduler
-    lrs_gamma = trial.suggest_categorical('exp_lr_scheduler_gamma', [None, 0.99, 0.995, 0.999])
+    lrs_gamma = trial.suggest_categorical('exp_lr_scheduler_gamma', [None, 0.995, 0.999])
     if lrs_gamma is not None:
-        lr_scheduler = scheduler.ExponentialLR
-        lr_scheduler_hparam = dict(gamma=lrs_gamma)
+        lr_sched = lr_scheduler.ExponentialLR
+        lr_sched_hparam = dict(gamma=lrs_gamma)
     else:
-        lr_scheduler, lr_scheduler_hparam = None, dict()
+        lr_sched, lr_scheduler_hparam = None, dict()
 
     # Policy
     policy_hparam = dict(
@@ -103,15 +103,15 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
     value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
     # value_fcn = GRUPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
     critic_hparam = dict(
-        batch_size=250,
+        batch_size=500,
         gamma=trial.suggest_uniform('gamma_critic', 0.98, 1.),
         lamda=trial.suggest_uniform('lamda_critic', 0.95, 1.),
         num_epoch=trial.suggest_int('num_epoch_critic', 1, 10),
         lr=trial.suggest_loguniform('lr_critic', 1e-5, 1e-3),
         standardize_adv=trial.suggest_categorical('standardize_adv_critic', [False]),
         max_grad_norm=trial.suggest_categorical('max_grad_norm_critic', [None, 1., 5.]),
-        lr_scheduler=lr_scheduler,
-        lr_scheduler_hparam=lr_scheduler_hparam
+        lr_scheduler=lr_sched,
+        lr_scheduler_hparam=lr_sched_hparam
     )
     critic = GAE(value_fcn, **critic_hparam)
 
@@ -119,15 +119,15 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
     algo_hparam = dict(
         num_workers=1,  # parallelize via optuna n_jobs
         max_iter=200,
-        batch_size=250,
+        batch_size=500,
         min_steps=trial.suggest_int('num_rollouts_algo', 10, 30)*env.max_steps,
         num_epoch=trial.suggest_int('num_epoch_algo', 1, 10),
         eps_clip=trial.suggest_uniform('eps_clip_algo', 0.05, 0.2),
         std_init=trial.suggest_uniform('std_init_algo', 0.5, 1.0),
         lr=trial.suggest_loguniform('lr_algo', 1e-5, 1e-3),
         max_grad_norm=trial.suggest_categorical('max_grad_norm_algo', [None, 1., 5.]),
-        lr_scheduler=lr_scheduler,
-        lr_scheduler_hparam=lr_scheduler_hparam
+        lr_scheduler=lr_sched,
+        lr_scheduler_hparam=lr_sched_hparam
     )
     csv_logger = create_csv_step_logger(osp.join(ex_dir, f'trial_{trial.number}'))
     algo = PPO(osp.join(ex_dir, f'trial_{trial.number}'), env, policy, critic, **algo_hparam, logger=csv_logger)
@@ -137,7 +137,8 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
 
     # Evaluate
     min_rollouts = 1000
-    sampler = ParallelSampler(env, policy, num_workers=1, min_rollouts=min_rollouts)  # parallelize via optuna n_jobs
+    sampler = ParallelRolloutSampler(env, policy, num_workers=1,
+                                     min_rollouts=min_rollouts)  # parallelize via optuna n_jobs
     ros = sampler.sample()
     mean_ret = sum([r.undiscounted_return() for r in ros])/min_rollouts
 
@@ -149,8 +150,7 @@ if __name__ == '__main__':
     args = get_argparser().parse_args()
 
     # Set up experiment
-    ex_dir = setup_experiment('hyperparams', QQubeSwingUpSim.name, f'{PPO.name}_{FNNPolicy.name}_100Hz_actnorm',
-                              seed=args.seed)
+    ex_dir = setup_experiment('hyperparams', QQubeSwingUpSim.name, f'{PPO.name}_{FNNPolicy.name}_100Hz_actnorm')
 
     # Run hyper-parameter optimization
     name = f'{ex_dir.algo_name}_{ex_dir.extra_info}'  # e.g. qq-su_ppo_fnn_100Hz_actnorm

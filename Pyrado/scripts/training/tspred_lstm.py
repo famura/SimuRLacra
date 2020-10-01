@@ -27,22 +27,21 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Quanser Ball-Balancer environment using Proximal Policy Optimization.
+Train a recurrent neural network to predict a time series of data
 """
+import os.path as osp
+import pandas as pd
 import torch as to
-from numpy import pi
-from torch.optim import lr_scheduler
+import torch.nn as nn
+import torch.optim as optim
 
 import pyrado
-from pyrado.algorithms.ppo import PPO2
-from pyrado.algorithms.advantage import GAE
-from pyrado.spaces import ValueFunctionSpace
-from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
-from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.environment_wrappers.observation_noise import GaussianObsNoiseWrapper
+from pyrado.algorithms.timeseries_prediction import TSPred
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.fnn import FNNPolicy
+from pyrado.policies.rnn import LSTMPolicy
+from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.data_sets import TimeSeriesDataSet
 from pyrado.utils.data_types import EnvSpec
 
 
@@ -50,64 +49,59 @@ if __name__ == '__main__':
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QBallBalancerSim.name, f'{PPO2.name}_{FNNPolicy.name}', 'obsnoise_actnorm')
+    data_set_name = 'monthly_sunspots'
+
+    # Experiment
+    ex_dir = setup_experiment(TSPred.name, LSTMPolicy.name)
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
-    # Environment
-    env_hparams = dict(dt=1/500., max_steps=2500)
-    env = QBallBalancerSim(**env_hparams)
-    env = GaussianObsNoiseWrapper(env, noise_std=[1/180*pi, 1/180*pi, 0.0025, 0.0025,  # [rad, rad, m, m, ...
-                                                  2/180*pi, 2/180*pi, 0.05, 0.05])  # ... rad/s, rad/s, m/s, m/s]
-    env = ActNormWrapper(env)
+    # Load the data
+    data = pd.read_csv(osp.join(pyrado.PERMA_DIR, 'time_series', f'{data_set_name}.csv'))
+    if data_set_name == 'daily_min_temperatures':
+        data = to.tensor(data['Temp'].values, dtype=to.get_default_dtype()).view(-1, 1)
+    elif data_set_name == 'monthly_sunspots':
+        data = to.tensor(data['Sunspots'].values, dtype=to.get_default_dtype()).view(-1, 1)
+    elif 'oscillation' in data_set_name:
+        data = to.tensor(data['Positions'].values, dtype=to.get_default_dtype()).view(-1, 1)
+    else:
+        raise pyrado.ValueErr(
+            given=data_set_name, eq_constraint="'daily_min_temperatures', 'monthly_sunspots', "
+                                               "'oscillation_50Hz_initpos-0.5', or 'oscillation_100Hz_initpos-0.4")
+
+    # Dataset
+    data_set_hparam = dict(
+        name=data_set_name,
+        ratio_train=0.8,
+        window_size=20,
+        standardize_data=False,
+        scale_min_max_data=True
+    )
+    dataset = TimeSeriesDataSet(data, **data_set_hparam)
 
     # Policy
-    policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
-    policy = FNNPolicy(spec=env.spec, **policy_hparam)
-
-    # Critic
-    value_fcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)
-    value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
-    critic_hparam = dict(
-        gamma=0.999,
-        lamda=0.98,
-        num_epoch=3,
-        batch_size=100,
-        lr=5e-4,
-        max_grad_norm=5.,
-        lr_scheduler=lr_scheduler.StepLR,
-        lr_scheduler_hparam=dict(step_size=10, gamma=0.9)
-    )
-    critic = GAE(value_fcn, **critic_hparam)
+    infspace = BoxSpace(-pyrado.inf, pyrado.inf, shape=data.unsqueeze(1).shape[1])
+    policy_hparam = dict(hidden_size=20, num_recurrent_layers=1)
+    policy = LSTMPolicy(spec=EnvSpec(act_space=infspace, obs_space=infspace), **policy_hparam)
 
     # Algorithm
     algo_hparam = dict(
         max_iter=1000,
-        min_steps=30*env.max_steps,
-        num_workers=4,
-        num_epoch=3,
-        value_fcn_coeff=0.7,
-        entropy_coeff=1e-4,
-        eps_clip=0.1,
-        batch_size=100,
-        std_init=0.8,
-        lr=2e-4,
-        max_grad_norm=5.,
-        lr_scheduler=lr_scheduler.StepLR,
-        lr_scheduler_hparam=dict(step_size=10, gamma=0.9)
+        windowed_mode=False,
+        optim_class=optim.Adam,
+        optim_hparam=dict(lr=1e-2, eps=1e-8, weight_decay=1e-4),  # momentum=0.7
+        loss_fcn=nn.MSELoss(),
     )
-    algo = PPO2(ex_dir, env, policy, critic, **algo_hparam)
+    algo = TSPred(ex_dir, dataset, policy, **algo_hparam)
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
+        dict(data_set=data_set_hparam, data_set_name=data_set_name, seed=args.seed),
         dict(policy=policy_hparam),
-        dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
         dict(algo=algo_hparam, algo_name=algo.name)],
         ex_dir
     )
 
     # Jeeeha
-    algo.train(snapshot_mode='best', seed=args.seed)
+    algo.train()

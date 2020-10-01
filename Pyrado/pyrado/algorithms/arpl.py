@@ -34,7 +34,7 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.exploration.stochastic_action import StochasticActionExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.sampling.parallel_sampler import ParallelSampler
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.sequences import *
 
 
@@ -112,7 +112,7 @@ class ARPL(Algorithm):
             env = AdversarialObservationWrapper(env, self.policy, obs_eps, obs_phi)
 
         self.num_rollouts = num_rollouts
-        self.sampler = ParallelSampler(
+        self.sampler = ParallelRolloutSampler(
             env,
             expl_strat,
             num_workers=num_workers,

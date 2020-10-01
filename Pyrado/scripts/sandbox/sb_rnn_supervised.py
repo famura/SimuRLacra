@@ -39,6 +39,10 @@ from pyrado import set_seed
 
 
 if __name__ == '__main__':
+    # -----
+    # Setup
+    # -----
+
     # Generate the data
     set_seed(1001)
     env = OneMassOscillatorSim(dt=0.01, max_steps=500)
@@ -57,7 +61,6 @@ if __name__ == '__main__':
     num_epoch = 1000
     num_layers = 1
     hidden_size = 20  # targ_size
-    batch_size = num_trn_samples//50
     lr = 1e-3
 
     # Create the recurrent neural network
@@ -68,6 +71,8 @@ if __name__ == '__main__':
         nonlinearity='tanh',
         # batch_first=True
     )
+
+    # Create the optimizer
     optim = optim.Adam([{'params': net.parameters()}], lr=lr, eps=1e-8, weight_decay=1e-5)
 
     # --------
@@ -76,24 +81,22 @@ if __name__ == '__main__':
 
     # Iterations over the whole data set
     for e in range(num_epoch):
-        # Init the loss for logging
-        loss = to.zeros(1)
-        # Reset the gradients
+        # Reset the gradients and the hidden states
         optim.zero_grad()
-        # Reset hidden
         hidden = to.zeros(num_layers, 1, hidden_size)
 
         # Make predictions (complete trajectory)
         output, _ = net(inp.view(num_trn_samples, 1, -1), hidden)
         # Compute policy loss (complete trajectory)
-        loss += loss_fcn(targ, output[:, 0, -targ_size])
+        loss = loss_fcn(targ, output[:, 0, -targ_size])
 
         # Call optimizer
         loss.backward()
         optim.step()
 
         if e%10 == 0:
-            print(f'Epoch {e:4d}: avg loss {loss.item()/num_trn_samples}')
+            loss_avg = loss.item()/num_trn_samples
+            print(f'Epoch {e:4d} | avg loss {loss_avg:.3e}')
 
     # -------
     # Testing
@@ -117,6 +120,5 @@ if __name__ == '__main__':
     inp = inp[int(informative_hidden_init)*num_init_steps:].numpy()
     plt.plot(targ, label='target')
     plt.plot(pred, label='prediction')
-    plt.plot(inp, label='trn input')
     plt.legend()
     plt.show()

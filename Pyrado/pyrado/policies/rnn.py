@@ -115,8 +115,7 @@ class RNNPolicyBase(RecurrentPolicy):
         super().__init__(spec, use_cuda)
 
         self._hidden_size = hidden_size
-        self._num_recurrent_layers = num_recurrent_layers
-        self._output_nonlin = output_nonlin
+        self.num_recurrent_layers = num_recurrent_layers
 
         # Create RNN layers
         assert self.recurrent_network_type is not None, 'Can not instantiate RNNPolicyBase!'
@@ -133,6 +132,7 @@ class RNNPolicyBase(RecurrentPolicy):
 
         # Create output layer
         self.output_layer = nn.Linear(hidden_size, spec.act_space.flat_dim)
+        self.output_nonlin = output_nonlin
 
         # Call custom initialization function after PyTorch network parameter initialization
         init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()
@@ -150,7 +150,7 @@ class RNNPolicyBase(RecurrentPolicy):
     @property
     def hidden_size(self) -> int:
         # The total number of hidden parameters is the hidden layer size times the hidden layer count
-        return self._num_recurrent_layers*self._hidden_size
+        return self.num_recurrent_layers*self._hidden_size
 
     def forward(self, obs: to.Tensor, hidden: to.Tensor = None) -> (to.Tensor, to.Tensor):
         obs = obs.to(self.device)
@@ -172,12 +172,12 @@ class RNNPolicyBase(RecurrentPolicy):
             hidden = self._unpack_hidden(hidden, batch_size)
 
         # Pass the input through hidden RNN layers
-        output, new_hidden = self.rnn_layers(obs, hidden)
+        out, new_hidden = self.rnn_layers(obs, hidden)
 
         # And through the output layer
-        act = self.output_layer(output)
-        if self._output_nonlin is not None:
-            act = self._output_nonlin(act)
+        act = self.output_layer(out)
+        if self.output_nonlin is not None:
+            act = self.output_nonlin(act)
 
         # Adjust the outputs' shape to be compatible with the space of the environment
         if batch_size is None:
@@ -191,6 +191,7 @@ class RNNPolicyBase(RecurrentPolicy):
         return act, new_hidden
 
     def evaluate(self, rollout: StepSequence, hidden_states_name: str = 'hidden_states') -> to.Tensor:
+        self.eval()
         if not rollout.data_format == 'torch':
             raise pyrado.TypeErr(msg='The rollout data passed to evaluate() must be of type torch.Tensor!')
         if not rollout.continuous:
@@ -204,21 +205,21 @@ class RNNPolicyBase(RecurrentPolicy):
         for ro in rollout.iterate_rollouts():
             if hidden_states_name in rollout.data_names:
                 # Get initial hidden state from first step
-                init_hs = self._unpack_hidden(ro[0][hidden_states_name])
+                hidden = self._unpack_hidden(ro[0][hidden_states_name])
             else:
                 # Let the network pick the default hidden state
-                init_hs = None
+                hidden = None
 
-            # Reshape observations to match torch's rnn sequence protocol
+            # Reshape observations to match PyTorchs's RNN sequence protocol
             obs = ro.get_data_values('observations', True).unsqueeze(1).to(self.device)
 
             # Run them through the network
-            output, _ = self.rnn_layers(obs, init_hs)
+            out, _ = self.rnn_layers(obs, hidden)
 
             # And through the output layer
-            act = self.output_layer(output.squeeze(1))
-            if self._output_nonlin is not None:
-                act = self._output_nonlin(act)
+            act = self.output_layer(out.squeeze(1))
+            if self.output_nonlin is not None:
+                act = self.output_nonlin(act)
 
             # Collect the actions
             act_list.append(act)
@@ -235,7 +236,7 @@ class RNNPolicyBase(RecurrentPolicy):
         :param batch_size: if not `None`, hidden is 2-dim and the first dim represents parts of a data batch
         :return: unpacked hidden state, ready for the network
         """
-        return default_unpack_hidden(hidden, self._num_recurrent_layers, self._hidden_size, batch_size)
+        return default_unpack_hidden(hidden, self.num_recurrent_layers, self._hidden_size, batch_size)
 
     def _pack_hidden(self, hidden: to.Tensor, batch_size: int = None):
         """
@@ -247,7 +248,7 @@ class RNNPolicyBase(RecurrentPolicy):
         :param batch_size: if not `None`, the result should be 2-dim and the first dim represents parts of a data batch
         :return: packed hidden state
         """
-        return default_pack_hidden(hidden, self._num_recurrent_layers, self._hidden_size, batch_size)
+        return default_pack_hidden(hidden, self.num_recurrent_layers, self._hidden_size, batch_size)
 
 
 class RNNPolicy(RNNPolicyBase):
@@ -309,7 +310,7 @@ class LSTMPolicy(RNNPolicyBase):
     @property
     def hidden_size(self) -> int:
         # LSTM has two hidden variables per layer
-        return self._num_recurrent_layers*self._hidden_size*2
+        return self.num_recurrent_layers*self._hidden_size*2
 
     def _unpack_hidden(self, hidden: to.Tensor, batch_size: int = None):
         # Special case - need to split into hidden and cell term memory
@@ -322,7 +323,7 @@ class LSTMPolicy(RNNPolicyBase):
                 'Cannot use batched observations with unbatched hidden state'
 
             # Reshape to hid/cell x nrl x batch x hs
-            hd = hidden.view(2, self._num_recurrent_layers, 1, self._hidden_size)
+            hd = hidden.view(2, self.num_recurrent_layers, 1, self._hidden_size)
             # Split hidden and cell state
             return hd[0, ...], hd[1, ...]
 
@@ -333,7 +334,7 @@ class LSTMPolicy(RNNPolicyBase):
                 f'Batch size of hidden state ({hidden.shape[0]}) must match batch size of observations ({batch_size})'
 
             # Reshape to hid/cell x nrl x batch x hs
-            hd = hidden.view(batch_size, 2, self._num_recurrent_layers, self._hidden_size).permute(1, 2, 0, 3)
+            hd = hidden.view(batch_size, 2, self.num_recurrent_layers, self._hidden_size).permute(1, 2, 0, 3)
             # Split hidden and cell state
             return hd[0, ...], hd[1, ...]
 

@@ -27,102 +27,97 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Planar-3-Link task using Neural Fields and Hill Climbing.
+Train a recurrent neural network to predict a time series of data
 """
+import os.path as osp
+import pandas as pd
 import torch as to
+import torch.nn as nn
+import torch.optim as optim
+from pyrado.policies.neural_fields import NFPolicy
 
 import pyrado
-from pyrado.algorithms.cem import CEM
-from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
-from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
-from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim, Planar3LinkTASim
+from pyrado.algorithms.timeseries_prediction import TSPred
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.neural_fields import NFPolicy
+from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.data_sets import TimeSeriesDataSet
+from pyrado.utils.data_types import EnvSpec
 
 
 if __name__ == '__main__':
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(Planar3LinkIKActivationSim.name, f'{CEM.name}_{NFPolicy.name}')
+    data_set_name = 'monthly_sunspots'
+
+    # Experiment
+    ex_dir = setup_experiment(TSPred.name, NFPolicy.name)
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
-    # Environment
-    env_hparams = dict(
-        physicsEngine='Bullet',  # Bullet or Vortex
-        dt=1/50.,
-        max_steps=1200,
-        task_args=dict(consider_velocities=True),
-        max_dist_force=None,
-        taskCombinationMethod='sum',
-        checkJointLimits=True,
-        collisionAvoidanceIK=True,
-        observeVelocities=True,
-        observeForceTorque=True,
-        observeCollisionCost=False,
-        observePredictedCollisionCost=False,
-        observeManipulabilityIndex=False,
-        observeCurrentManipulability=True,
-        observeDynamicalSystemGoalDistance=True,
-        observeDynamicalSystemDiscrepancy=False,
-        observeTaskSpaceDiscrepancy=True,
+    # Load the data
+    data = pd.read_csv(osp.join(pyrado.PERMA_DIR, 'time_series', f'{data_set_name}.csv'))
+    if data_set_name == 'daily_min_temperatures':
+        data = to.tensor(data['Temp'].values, dtype=to.get_default_dtype()).view(-1, 1)
+    elif data_set_name == 'monthly_sunspots':
+        data = to.tensor(data['Sunspots'].values, dtype=to.get_default_dtype()).view(-1, 1)
+    elif 'oscillation' in data_set_name:
+        data = to.tensor(data['Positions'].values, dtype=to.get_default_dtype()).view(-1, 1)
+    else:
+        raise pyrado.ValueErr(
+            given=data_set_name, eq_constraint="'daily_min_temperatures', 'monthly_sunspots', "
+                                               "'oscillation_50Hz_initpos-0.5', or 'oscillation_100Hz_initpos-0.4")
+
+    # Dataset
+    data_set_hparam = dict(
+        name=data_set_name,
+        ratio_train=0.8,
+        window_size=20,
+        standardize_data=False,
+        scale_min_max_data=True
     )
-    env = Planar3LinkTASim(**env_hparams)
-    # env = Planar3LinkIKActivationSim(**env_hparams)
-    # eub = {
-    #     'GD_DS0': 2.,
-    #     'GD_DS1': 2.,
-    #     'GD_DS2': 2.,
-    # }
-    # env = ObsNormWrapper(env, explicit_ub=eub)
-    env = ObsPartialWrapper(env, idcs=['Effector_DiscrepTS_X', 'Effector_DiscrepTS_Z'])
-    # env = ObsPartialWrapper(env, idcs=['Effector_DiscrepTS_X', 'Effector_DiscrepTS_Z', 'Effector_Xd', 'Effector_Zd'])
+    dataset = TimeSeriesDataSet(data, **data_set_hparam)
 
     # Policy
+    infspace = BoxSpace(-pyrado.inf, pyrado.inf, shape=data.unsqueeze(1).shape[1])
     policy_hparam = dict(
-        hidden_size=3,
-        conv_out_channels=1,
-        mirrored_conv_weights=True,
-        conv_kernel_size=1,
-        conv_padding_mode='circular',
-        init_param_kwargs=dict(bell=True),
+        dt=0.02 if 'oscillation' in data_set_name else 1.,
+        hidden_size=21,
+        obs_layer=None,
         activation_nonlin=to.sigmoid,
-        tau_init=1e-1,
+        mirrored_conv_weights=True,
+        conv_out_channels=1,
+        conv_kernel_size=None,
+        conv_padding_mode='circular',
+        tau_init=0.2 if 'oscillation' in data_set_name else 1.,
         tau_learnable=True,
         kappa_init=None,
         kappa_learnable=True,
         potential_init_learnable=True,
+        # init_param_kwargs=dict(bell=True),
+        use_cuda=False
     )
-    policy = NFPolicy(spec=env.spec, dt=env.dt, **policy_hparam)
-    print(policy)
+    policy = NFPolicy(spec=EnvSpec(act_space=infspace, obs_space=infspace), **policy_hparam)
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=50,
-        pop_size=policy.num_param,
-        num_rollouts=1,
-        num_is_samples=policy.num_param//10,
-        expl_std_init=1.0,
-        expl_std_min=0.02,
-        extra_expl_std_init=0.5,
-        extra_expl_decay_iter=5,
-        full_cov=False,
-        symm_sampling=False,
-        num_workers=6,
+        max_iter=1000,
+        windowed_mode=False,
+        optim_class=optim.Adam,
+        optim_hparam=dict(lr=1e-2, eps=1e-8, weight_decay=1e-4),  # momentum=0.7
+        loss_fcn=nn.MSELoss(),
     )
-    algo = CEM(ex_dir, env, policy, **algo_hparam)
+    algo = TSPred(ex_dir, dataset, policy, **algo_hparam)
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
+        dict(data_set=data_set_hparam, data_set_name=data_set_name, seed=args.seed),
         dict(policy=policy_hparam),
         dict(algo=algo_hparam, algo_name=algo.name)],
         ex_dir
     )
 
     # Jeeeha
-    algo.train(seed=args.seed)
+    algo.train()

@@ -46,7 +46,7 @@ if __name__ == '__main__':
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(Planar3LinkIKActivationSim.name, f'{HCNormal.name}_{NFPolicy.name}', seed=101)
+    ex_dir = setup_experiment(Planar3LinkIKActivationSim.name, f'{HCNormal.name}_{NFPolicy.name}')
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)

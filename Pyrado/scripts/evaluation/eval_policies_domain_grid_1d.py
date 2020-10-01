@@ -45,6 +45,7 @@ from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yam
 from pyrado.sampling.parallel_evaluation import eval_domain_params, conditional_actnorm_wrapper
 from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.checks import check_all_lengths_equal
 from pyrado.utils.data_types import dict_arraylike_to_float
 from pyrado.utils.experiments import load_experiment
 from pyrado.utils.input_output import print_cbt
@@ -88,12 +89,12 @@ if __name__ == '__main__':
 
         # Get the experiments' directories to load from
         prefixes = [
-            osp.join(pyrado.EXP_DIR, 'FILL_IN', 'FILL_IN'),
+            osp.join(pyrado.EXP_DIR, 'ENV_NAME', 'ALGO_NAME'),
         ]
-        exp_names = [
+        ex_names = [
             '',
         ]
-        exp_labels = [
+        ex_labels = [
             '',
         ]
 
@@ -121,12 +122,12 @@ if __name__ == '__main__':
 
         # Get the experiments' directories to load from
         prefixes = [
-            osp.join(pyrado.EXP_DIR, 'FILL_IN', 'FILL_IN'),
+            osp.join(pyrado.EXP_DIR, 'ENV_NAME', 'ALGO_NAME'),
         ]
-        exp_names = [
+        ex_names = [
             '',
         ]
-        exp_labels = [
+        ex_labels = [
             '',
         ]
 
@@ -145,12 +146,12 @@ if __name__ == '__main__':
 
         # Get the experiments' directories to load from
         prefixes = [
-            osp.join(pyrado.EXP_DIR, 'FILL_IN', 'FILL_IN'),
+            osp.join(pyrado.EXP_DIR, 'ENV_NAME', 'ALGO_NAME'),
         ]
-        exp_names = [
+        ex_names = [
             '',
         ]
-        exp_labels = [
+        ex_labels = [
             '',
         ]
 
@@ -167,12 +168,12 @@ if __name__ == '__main__':
         raise pyrado.ValueErr(msg='Do not vary more than one domain parameter for this script! (Check action delay.)')
     varied_param_key = ''.join(param_spec.keys())  # to get a str
 
-    if not (len(prefixes) == len(exp_names) and len(prefixes) == len(exp_labels)):
-        raise pyrado.ShapeErr(msg=f'The lengths of prefixes, exp_names, and exp_labels must be equal, '
-                                  f'but they are {len(prefixes)}, {len(exp_names)}, and {len(exp_labels)}!')
+    if not check_all_lengths_equal([prefixes, ex_names, ex_labels]):
+        raise pyrado.ShapeErr(msg=f'The lengths of prefixes, ex_names, and ex_labels must be equal, '
+                                  f'but they are {len(prefixes)}, {len(ex_names)}, and {len(ex_labels)}!')
 
-    # Load the policies
-    ex_dirs = [osp.join(p, e) for p, e in zip(prefixes, exp_names)]
+    # Loading the policies
+    ex_dirs = [osp.join(p, e) for p, e in zip(prefixes, ex_names)]
     policies = []
     for ex_dir in ex_dirs:
         _, policy, _ = load_experiment(ex_dir)
@@ -196,9 +197,9 @@ if __name__ == '__main__':
         # Seed the sampler
         if args.seed is not None:
             pool.set_seed(args.seed)
-            print_cbt(f'Set seed to {args.seed}', 'y')
+            print_cbt(f"Set the random number generators' seed to {args.seed}.", 'w')
         else:
-            print_cbt('No seed was set', 'r', bright=True)
+            print_cbt('No seed was set', 'y')
 
         # Add an action normalization wrapper if the policy was trained with one
         env = conditional_actnorm_wrapper(env, ex_dirs, i)
@@ -211,7 +212,7 @@ if __name__ == '__main__':
         lengths = [float(ro.length) for ro in ros]  # int values are not numeric in pandas
         vaired_param_values = [ro.rollout_info['domain_param'][varied_param_key] for ro in ros]
         varied_param = {varied_param_key: vaired_param_values}
-        df = df.append(pd.DataFrame(dict(policy=exp_labels[i], ret=rets, len=lengths, **varied_param)),
+        df = df.append(pd.DataFrame(dict(policy=ex_labels[i], ret=rets, len=lengths, **varied_param)),
                        ignore_index=True)
 
     metrics = dict(
@@ -224,7 +225,7 @@ if __name__ == '__main__':
         quantile5_ret=df.groupby('policy').quantile(q=0.05)['ret'].to_dict(),
         quantile95_ret=df.groupby('policy').quantile(q=0.95)['ret'].to_dict()
     )
-    pprint(metrics, indnet=4)
+    pprint(metrics, indent=4)
 
     # Create subfolder and save
     save_dir = setup_experiment('multiple_policies', args.env_name, varied_param_key, base_dir=pyrado.EVAL_DIR)

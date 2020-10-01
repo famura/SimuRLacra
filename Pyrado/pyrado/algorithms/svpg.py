@@ -46,7 +46,7 @@ from pyrado.utils.data_types import EnvSpec
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.sampling.parallel_sampler import ParallelSampler
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.step_sequence import StepSequence
 
 
@@ -190,7 +190,7 @@ class SVPG(Algorithm):
             self.particleSteps[i] = 0
 
             if self.serial:
-                self.samplers[i] = ParallelSampler(
+                self.samplers[i] = ParallelRolloutSampler(
                     env, self.expl_strats[i], num_workers, min_rollouts=min_rollouts, min_steps=min_steps
                 )
 

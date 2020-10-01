@@ -28,8 +28,9 @@
 
 import collections
 import numpy as np
-from typing import Sequence, NamedTuple, Union
+import torch as to
 from copy import deepcopy
+from typing import Sequence, NamedTuple, Union
 
 import pyrado
 from pyrado.spaces.base import Space
@@ -47,6 +48,12 @@ class RenderMode(NamedTuple):
     """ The specification of a render mode, do not print or render anything by default """
     text: bool = False
     video: bool = False
+
+
+class TimeSeriesDataPair(NamedTuple):
+    """ Pair of an input sequence and an associated target value for training time series prediction. """
+    inp_seq: to.Tensor
+    targ: to.Tensor
 
 
 class DSSpec(dict):
@@ -216,80 +223,3 @@ def fill_list_of_arrays(loa: Sequence[np.ndarray], des_len: int, fill_ele=np.nan
 
     # Return the modified copy
     return loa_c
-
-
-def is_iterable(inp) -> bool:
-    """
-    Check if the input is iterable by trying to create an iterator from the input.
-
-    :param inp: any object
-    :return: `True` if input is iterable, else `False`
-    """
-    try:
-        _ = iter(inp)
-        return True
-    except TypeError:
-        return False
-
-
-def is_iterator(inp) -> bool:
-    """
-    Check if the input is an iterator by trying to call `next()` on it.
-
-    :param inp: any object
-    :return: `True` if input is an iterator, else `False`
-    """
-    try:
-        next(inp, None)
-        return True
-    except TypeError:
-        return False
-
-
-def check_all_types_equal(iterable) -> bool:
-    """
-    Check if all elements of an iterable (e.g., list) are if the same type.
-
-    :param iterable: iterable to check
-    :return: bool saying if all elements are of equal type
-    """
-    iterator = iter(iterable)
-    try:
-        first = next(iterator)
-    except StopIteration:
-        return True
-    return all(type(first) == type(rest) for rest in iterator)
-
-
-def check_all_shapes_equal(iterable) -> bool:
-    """
-    Check if the shape attribute of all elements of an iterable (e.g., list) are equal.
-
-    :param iterable: iterable to check
-    :return: bool saying if all elements are equal
-    """
-    iterator = iter(iterable)
-    try:
-        first = next(iterator)
-    except StopIteration:
-        return True
-    return all(first.shape == rest.shape for rest in iterator)
-
-
-def check_all_values_equal(iterable) -> bool:
-    """
-    Check if all elements of an iterable (e.g., list) are equal.
-
-    :param iterable: iterable to check
-    :return: bool saying if all elements are equal
-    """
-    iterator = iter(iterable)
-    try:
-        first = next(iterator)
-    except StopIteration:
-        return True
-
-    if isinstance(first, np.ndarray):
-        return all(np.allclose(first, rest) for rest in iterator)
-    else:
-        return all(first == rest for rest in iterator)

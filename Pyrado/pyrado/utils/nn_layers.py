@@ -36,7 +36,7 @@ from torch.nn.modules.utils import _single
 from typing import Callable, Sequence
 
 import pyrado
-from pyrado.utils.data_types import is_iterable
+from pyrado.utils.checks import is_iterable
 
 
 class ScaleLayer(nn.Module):

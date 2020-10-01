@@ -101,8 +101,8 @@ class StochasticActionExplStrat(Policy, ABC):
         Re-evaluate the given rollout using the policy wrapped by this exploration strategy.
         Use this method to get gradient data on the action distribution.
 
-        :param rollout: recorded, complete rollout
-        :param hidden_states_name: name of hidden states rollout entry, used for recurrent networks.
+        :param rollout: complete rollout
+        :param hidden_states_name: name of hidden states rollout entry, used for recurrent networks
         :return: actions with gradient data
         """
         self.policy.eval()
@@ -320,8 +320,8 @@ class SACExplStrat(StochasticActionExplStrat):
         This version is tailored to the two-headed policy architecture used for SAC, since it requires a two-headed
         policy, where the first head returns the mean action and the second head returns the state-dependent std.
 
-        :param rollout: recorded, complete rollout
-        :param hidden_states_name: name of hidden states rollout entry, used for recurrent networks.
+        :param rollout: complete rollout
+        :param hidden_states_name: name of hidden states rollout entry, used for recurrent networks
         :return: actions with gradient data
         """
         self.policy.eval()

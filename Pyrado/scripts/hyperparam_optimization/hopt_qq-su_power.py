@@ -43,7 +43,7 @@ from pyrado.logger.step import create_csv_step_logger
 from pyrado.policies.features import FeatureStack, identity_feat, sign_feat, abs_feat, squared_feat, \
     bell_feat, MultFeat
 from pyrado.policies.linear import LinearPolicy
-from pyrado.sampling.parallel_sampler import ParallelSampler
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.argparser import get_argparser
 
 
@@ -91,7 +91,8 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
 
     # Evaluate
     min_rollouts = 1000
-    sampler = ParallelSampler(env, policy, num_workers=1, min_rollouts=min_rollouts)  # parallelize via optuna n_jobs
+    sampler = ParallelRolloutSampler(env, policy, num_workers=1,
+                                     min_rollouts=min_rollouts)  # parallelize via optuna n_jobs
     ros = sampler.sample()
     mean_ret = sum([r.undiscounted_return() for r in ros])/min_rollouts
 
@@ -102,8 +103,7 @@ if __name__ == '__main__':
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    ex_dir = setup_experiment('hyperparams', QQubeSwingUpSim.name, f'{PoWER.name}_{LinearPolicy.name}_250Hz_actnorm',
-                              seed=args.seed)
+    ex_dir = setup_experiment('hyperparams', QQubeSwingUpSim.name, f'{PoWER.name}_{LinearPolicy.name}_250Hz_actnorm')
 
     # Run hyper-parameter optimization
     name = f'{ex_dir.algo_name}_{ex_dir.extra_info}'  # e.g. qq-su_power_lin_250Hz_actnorm

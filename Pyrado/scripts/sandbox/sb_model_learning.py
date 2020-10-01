@@ -31,7 +31,7 @@ Test model learning using PyTorch and the One Mass Oscillator setup.
 """
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim, OneMassOscillatorDomainParamEstimator
 from pyrado.policies.dummy import IdlePolicy, DummyPolicy
-from pyrado.sampling.parallel_sampler import ParallelSampler
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.input_output import print_cbt
 
 
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     policy = DummyPolicy(env.spec)
 
     # Sample
-    sampler = ParallelSampler(env, policy, num_workers=4, min_rollouts=50, seed=1)
+    sampler = ParallelRolloutSampler(env, policy, num_workers=4, min_rollouts=50, seed=1)
     ros = sampler.sample()
 
     # Create a model for learning the domain parameters

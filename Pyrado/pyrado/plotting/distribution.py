@@ -34,7 +34,7 @@ from torch.distributions import Distribution
 from typing import Sequence, Iterable
 
 import pyrado
-from pyrado.utils.data_types import check_all_types_equal
+from pyrado.utils.checks import check_all_types_equal
 
 
 def render_distr_evo(

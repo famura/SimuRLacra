@@ -89,7 +89,7 @@ if __name__ == '__main__':
         list_eval_dirs = [tmp[0] for tmp in os.walk(eval_parent_dir)][1:]
     else:
         list_eval_dirs = [
-            osp.join(eval_parent_dir, 'FILL_IN'),
+            osp.join(eval_parent_dir, 'ENV_NAME', 'ALGO_NAME'),
         ]
 
     # Loop over all evaluations

@@ -30,7 +30,7 @@
 Train an agent to solve the Ball-on-Beam environment using Asynchronous Actor-Critic.
 """
 import torch as to
-from torch.optim import lr_scheduler as scheduler
+from torch.optim import lr_scheduler
 
 import pyrado
 from pyrado.utils.argparser import get_argparser
@@ -74,7 +74,7 @@ if __name__ == '__main__':
         lamda=0.95,
         batch_size=100,
         standardize_adv=False,
-        lr_scheduler=scheduler.ExponentialLR,
+        lr_scheduler=lr_scheduler.ExponentialLR,
         lr_scheduler_hparam=dict(gamma=0.99)
     )
     critic = GAE(value_fcn, **critic_hparam)
@@ -89,7 +89,7 @@ if __name__ == '__main__':
         batch_size=100,
         std_init=0.8,
         lr=2e-3,
-        lr_scheduler=scheduler.ExponentialLR,
+        lr_scheduler=lr_scheduler.ExponentialLR,
         lr_scheduler_hparam=dict(gamma=0.99)
     )
     algo = A2C(ex_dir, env, policy, critic, **algo_hparam)

@@ -217,7 +217,7 @@ class ADNPolicy(RecurrentPolicy):
         self._dt = to.tensor([dt], dtype=to.get_default_dtype())
         self._input_size = spec.obs_space.flat_dim  # observations include goal distance, prediction error, ect.
         self._hidden_size = spec.act_space.flat_dim  # hidden_size = output_size = num actions
-        self._num_recurrent_layers = 1
+        self.num_recurrent_layers = 1
         self.potentials_dot_fcn = potentials_dyn_fcn
 
         # Create the layers
@@ -286,7 +286,7 @@ class ADNPolicy(RecurrentPolicy):
 
     @property
     def hidden_size(self) -> int:
-        return self._num_recurrent_layers*self._hidden_size
+        return self.num_recurrent_layers*self._hidden_size
 
     @property
     def potentials(self) -> to.Tensor:
@@ -321,7 +321,7 @@ class ADNPolicy(RecurrentPolicy):
 
     @property
     def capacity(self) -> [None, to.Tensor]:
-        """ Get the time scale parameter (exists for capacity-based dynamics functions), else return `None`. """
+        """ Get the capacity parameter (exists for capacity-based dynamics functions), else return `None`. """
         return None if self._log_capacity is None else to.exp(self._log_capacity)
 
     def potentials_dot(self, stimuli: to.Tensor) -> to.Tensor:
@@ -367,9 +367,9 @@ class ADNPolicy(RecurrentPolicy):
 
     def init_hidden(self, batch_size: int = None) -> to.Tensor:
         if batch_size is None:
-            return self._potentials_init.clone()
+            return self._potentials_init
         else:
-            return self._potentials_init.repeat(batch_size, 1).clone()
+            return self._potentials_init.repeat(batch_size, 1)
 
     def _unpack_hidden(self, hidden: to.Tensor, batch_size: int = None):
         """
@@ -381,17 +381,17 @@ class ADNPolicy(RecurrentPolicy):
         :return: unpacked hidden state of shape batch_size x channels_in x length_in, ready for the `Conv1d` module
         """
         if len(hidden.shape) == 1:
-            assert hidden.shape[0] == self._num_recurrent_layers*self._hidden_size, \
+            assert hidden.shape[0] == self.num_recurrent_layers*self._hidden_size, \
                 "Passed hidden variable's size doesn't match the one required by the network."
             assert batch_size is None, 'Cannot use batched observations with unbatched hidden state'
-            return hidden.view(self._num_recurrent_layers*self._hidden_size)
+            return hidden.view(self.num_recurrent_layers*self._hidden_size)
 
         elif len(hidden.shape) == 2:
-            assert hidden.shape[1] == self._num_recurrent_layers*self._hidden_size, \
+            assert hidden.shape[1] == self.num_recurrent_layers*self._hidden_size, \
                 "Passed hidden variable's size doesn't match the one required by the network."
             assert hidden.shape[0] == batch_size, \
                 f'Batch size of hidden state ({hidden.shape[0]}) must match batch size of observations ({batch_size})'
-            return hidden.view(batch_size, self._num_recurrent_layers*self._hidden_size)
+            return hidden.view(batch_size, self.num_recurrent_layers*self._hidden_size)
 
         else:
             raise RuntimeError(f"Improper shape of 'hidden'. Policy received {hidden.shape}, "
@@ -408,10 +408,10 @@ class ADNPolicy(RecurrentPolicy):
         """
         if batch_size is None:
             # Simply flatten the hidden state
-            return hidden.view(self._num_recurrent_layers*self._hidden_size)
+            return hidden.view(self.num_recurrent_layers*self._hidden_size)
         else:
             # Make sure that the batch dimension is the first element
-            return hidden.view(batch_size, self._num_recurrent_layers*self._hidden_size)
+            return hidden.view(batch_size, self.num_recurrent_layers*self._hidden_size)
 
     def forward(self, obs: to.Tensor, hidden: to.Tensor = None) -> (to.Tensor, to.Tensor):
         """
@@ -440,7 +440,7 @@ class ADNPolicy(RecurrentPolicy):
         potentials = potentials.detach()
         self._potentials = potentials.clone()  # saved in rollout()
 
-        # Scale the previous potentials, subtract a bias, and pass them through a nonlinearity
+        # Scale the previous potentials, and pass them through a nonlinearity. Could also subtract a bias.
         act_prev = self.nonlin_layer(potentials)
 
         # ----------------
@@ -457,7 +457,7 @@ class ADNPolicy(RecurrentPolicy):
         # Clip the potentials
         potentials = potentials.clamp(min=-self._potentials_max, max=self._potentials_max)
 
-        # Scale the potentials, subtract a bias, and pass them through a nonlinearity
+        # Scale the potentials, and pass them through a nonlinearity. Could also subtract a bias.
         act = self.nonlin_layer(potentials)
 
         # Pack hidden state
@@ -467,18 +467,20 @@ class ADNPolicy(RecurrentPolicy):
         return act, hidden_out
 
     def evaluate(self, rollout: StepSequence, hidden_states_name: str = 'hidden_states') -> to.Tensor:
+        self.eval()
         act_list = []
+
         for ro in rollout.iterate_rollouts():
             if hidden_states_name in rollout.data_names:
                 # Get initial hidden state from first step
-                hs = ro[0][hidden_states_name]
+                hidden = ro[0][hidden_states_name]
             else:
                 # Let the network pick the default hidden state
-                hs = None
+                hidden = None
 
-            # Run each step separately
+            # Run steps consecutively reusing the hidden state
             for step in ro:
-                act, hs = self(step.observation, hs)
+                act, hidden = self(step.observation, hidden)
                 act_list.append(act)
 
         return to.stack(act_list)

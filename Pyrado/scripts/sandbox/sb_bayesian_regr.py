@@ -42,7 +42,7 @@ from tqdm import tqdm
 
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim, OneMassOscillatorDyn
 from pyrado.policies.dummy import DummyPolicy
-from pyrado.sampling.parallel_sampler import ParallelSampler
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 
 
 def model(states, actions, observations, prior):
@@ -120,7 +120,7 @@ def train(svi, rollouts, prior, num_epoch=2000, print_iter=100):
     sigma_hist = []
 
     # Train
-    for i in tqdm(range(num_epoch), total=num_epoch, desc='Training', unit='epochs', file=sys.stdout, leave=False):
+    for i in tqdm(range(num_epoch), total=num_epoch, desc='Training', unit='epoch', file=sys.stdout, leave=False):
         # The args of step are forwarded to the model and the guide
         elbo_hist.append(svi.step(states_cat, actions_cat, targets_cat, prior))
 
@@ -180,7 +180,7 @@ if __name__ == '__main__':
     policy = DummyPolicy(env.spec)
 
     # Sample
-    sampler = ParallelSampler(env, policy, num_workers=1, min_rollouts=50, seed=1)
+    sampler = ParallelRolloutSampler(env, policy, num_workers=1, min_rollouts=50, seed=1)
     ros = sampler.sample()
 
     # Pyro

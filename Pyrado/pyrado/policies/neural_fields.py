@@ -74,8 +74,7 @@ class NFPolicy(RecurrentPolicy):
         :param spec: environment specification
         :param dt: time step size
         :param hidden_size: number of neurons with potential
-        :param obs_layer: specify a custom PyTorch Module;
-                          by default (`None`) a linear layer with biases is used
+        :param obs_layer: specify a custom PyTorch Module, by default (`None`) a linear layer with biases is used
         :param activation_nonlin: nonlinearity to compute the activations from the potential levels
         :param mirrored_conv_weights: re-use weights for the second half of the kernel to create a "symmetric" kernel
         :param conv_out_channels: number of filter for the 1-dim convolution along the potential-based neurons
@@ -111,7 +110,7 @@ class NFPolicy(RecurrentPolicy):
         self._dt = to.tensor([dt], dtype=to.get_default_dtype())
         self._input_size = spec.obs_space.flat_dim  # observations include goal distance, prediction error, ect.
         self._hidden_size = hidden_size  # number of potential neurons
-        self._num_recurrent_layers = 1
+        self.num_recurrent_layers = 1
         self.mirrored_conv_weights = mirrored_conv_weights
 
         # Create the layers
@@ -168,13 +167,13 @@ class NFPolicy(RecurrentPolicy):
 
     @property
     def hidden_size(self) -> int:
-        return self._num_recurrent_layers*self._hidden_size
+        return self.num_recurrent_layers*self._hidden_size
 
     def init_hidden(self, batch_size: int = None) -> to.Tensor:
         if batch_size is None:
-            return self._potentials_init.clone()
+            return self._potentials_init
         else:
-            return self._potentials_init.repeat(batch_size, 1).clone()
+            return self._potentials_init.repeat(batch_size, 1)
 
     @property
     def potentials(self) -> to.Tensor:
@@ -225,8 +224,6 @@ class NFPolicy(RecurrentPolicy):
         if init_values is None:
             # Initialize RNN layers
             init_param(self.obs_layer, **kwargs)
-            # self.obs_layer.weight.data /= 100.
-            # self.obs_layer.bias.data /= 100.
             self.resting_level.data = to.randn_like(self.resting_level.data)
             init_param(self.conv_layer, **kwargs)
             # init_param(self.post_conv_layer, **kwargs)
@@ -253,17 +250,17 @@ class NFPolicy(RecurrentPolicy):
         :return: unpacked hidden state of shape batch_size x channels_in x length_in, ready for the `Conv1d` module
         """
         if len(hidden.shape) == 1:
-            assert hidden.shape[0] == self._num_recurrent_layers*self._hidden_size, \
+            assert hidden.shape[0] == self.num_recurrent_layers*self._hidden_size, \
                 "Passed hidden variable's size doesn't match the one required by the network."
             assert batch_size is None, 'Cannot use batched observations with unbatched hidden state'
-            return hidden.view(self._num_recurrent_layers*self._hidden_size)
+            return hidden.view(self.num_recurrent_layers*self._hidden_size)
 
         elif len(hidden.shape) == 2:
-            assert hidden.shape[1] == self._num_recurrent_layers*self._hidden_size, \
+            assert hidden.shape[1] == self.num_recurrent_layers*self._hidden_size, \
                 "Passed hidden variable's size doesn't match the one required by the network."
             assert hidden.shape[0] == batch_size, \
                 f'Batch size of hidden state ({hidden.shape[0]}) must match batch size of observations ({batch_size})'
-            return hidden.view(batch_size, self._num_recurrent_layers*self._hidden_size)
+            return hidden.view(batch_size, self.num_recurrent_layers*self._hidden_size)
 
         else:
             raise RuntimeError(f"Improper shape of 'hidden'. Policy received {hidden.shape}, "
@@ -280,10 +277,10 @@ class NFPolicy(RecurrentPolicy):
         """
         if batch_size is None:
             # Simply flatten the hidden state
-            return hidden.view(self._num_recurrent_layers*self._hidden_size)
+            return hidden.view(self.num_recurrent_layers*self._hidden_size)
         else:
             # Make sure that the batch dimension is the first element
-            return hidden.view(batch_size, self._num_recurrent_layers*self._hidden_size)
+            return hidden.view(batch_size, self.num_recurrent_layers*self._hidden_size)
 
     def forward(self, obs: to.Tensor, hidden: to.Tensor = None) -> (to.Tensor, to.Tensor):
         """
@@ -321,7 +318,6 @@ class NFPolicy(RecurrentPolicy):
 
         # Combine the current inputs
         self._stimuli_external = self.obs_layer(obs)
-        # self._stimuli_external = to.zeros_like(self._potentials)
 
         # Reshape and convolve
         b = batch_size if batch_size is not None else 1
@@ -356,18 +352,20 @@ class NFPolicy(RecurrentPolicy):
         return act, hidden_out
 
     def evaluate(self, rollout: StepSequence, hidden_states_name: str = 'hidden_states') -> to.Tensor:
+        self.eval()
         act_list = []
+
         for ro in rollout.iterate_rollouts():
             if hidden_states_name in rollout.data_names:
                 # Get initial hidden state from first step
-                hs = ro[0][hidden_states_name]
+                hidden = ro[0][hidden_states_name]
             else:
                 # Let the network pick the default hidden state
-                hs = None
+                hidden = None
 
-            # Run each step separately
+            # Run steps consecutively reusing the hidden state
             for step in ro:
-                act, hs = self(step.observation, hs)
+                act, hidden = self(step.observation, hidden)
                 act_list.append(act)
 
         return to.stack(act_list)

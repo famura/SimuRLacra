@@ -51,7 +51,7 @@ from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
 from pyrado.sampling.bootstrapping import bootstrap_ci
-from pyrado.sampling.parallel_sampler import ParallelSampler
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.order import natural_sort
 from pyrado.utils.input_output import print_cbt
@@ -293,7 +293,7 @@ class BayRn(Algorithm):
                 rets_real[i] = rollout(env, policy, eval=True, no_close=False).undiscounted_return()
         elif isinstance(inner_env(env), SimEnv):
             # Create a parallel sampler when conducting a sim-to-sim experiment
-            sampler = ParallelSampler(env, policy, num_workers=1, min_rollouts=num_rollouts)
+            sampler = ParallelRolloutSampler(env, policy, num_workers=1, min_rollouts=num_rollouts)
             ros = sampler.sample()
             for i in range(num_rollouts):
                 rets_real[i] = ros[i].undiscounted_return()

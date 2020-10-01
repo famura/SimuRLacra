@@ -33,7 +33,7 @@ import functools
 import optuna
 import os.path as osp
 from optuna.pruners import MedianPruner
-from torch.optim import lr_scheduler as scheduler
+from torch.optim import lr_scheduler
 
 import pyrado
 from pyrado.algorithms.ppo import PPO
@@ -42,7 +42,7 @@ from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.logger.experiment import save_list_of_dicts_to_yaml, setup_experiment
 from pyrado.policies.fnn import FNNPolicy, FNN
-from pyrado.sampling.parallel_sampler import ParallelSampler
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import fcn_from_str
 
@@ -69,10 +69,10 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
     # Learning rate scheduler
     lrs_gamma = trial.suggest_categorical('exp_lr_scheduler_gamma', [None, 0.99, 0.995, 0.999])
     if lrs_gamma is not None:
-        lr_scheduler = scheduler.ExponentialLR
-        lr_scheduler_hparam = dict(gamma=lrs_gamma)
+        lr_sched = lr_scheduler.ExponentialLR
+        lr_sched_hparam = dict(gamma=lrs_gamma)
     else:
-        lr_scheduler, lr_scheduler_hparam = None, dict()
+        lr_sched, lr_sched_hparam = None, dict()
 
     # Policy
     policy = FNNPolicy(
@@ -96,8 +96,8 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
         lr=trial.suggest_loguniform('lr_critic', 1e-5, 1e-3),
         standardize_adv=trial.suggest_categorical('standardize_adv_critic', [True, False]),
         max_grad_norm=trial.suggest_categorical('max_grad_norm_critic', [None, 1., 5.]),
-        lr_scheduler=lr_scheduler,
-        lr_scheduler_hparam=lr_scheduler_hparam
+        lr_scheduler=lr_sched,
+        lr_scheduler_hparam=lr_sched_hparam
     )
     critic = GAE(value_fcn, **critic_hparam)
 
@@ -112,8 +112,8 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
         std_init=trial.suggest_uniform('std_init_algo', 0.5, 1.0),
         lr=trial.suggest_loguniform('lr_algo', 1e-5, 1e-3),
         max_grad_norm=trial.suggest_categorical('max_grad_norm_algo', [None, 1., 5.]),
-        lr_scheduler=lr_scheduler,
-        lr_scheduler_hparam=lr_scheduler_hparam
+        lr_scheduler=lr_sched,
+        lr_scheduler_hparam=lr_sched_hparam
     )
     algo = PPO(osp.join(ex_dir, f'trial_{trial.number}'), env, policy, critic, **algo_hparam)
 
@@ -122,7 +122,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
 
     # Evaluate
     min_rollouts = 1000
-    sampler = ParallelSampler(env, policy, num_workers=1, min_rollouts=min_rollouts)
+    sampler = ParallelRolloutSampler(env, policy, num_workers=1, min_rollouts=min_rollouts)
     ros = sampler.sample()
     mean_ret = sum([r.undiscounted_return() for r in ros])/min_rollouts
 
@@ -133,8 +133,7 @@ if __name__ == '__main__':
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    ex_dir = setup_experiment('hyperparams', QBallBalancerSim.name, f'{PPO.name}_{FNNPolicy.name}_250Hz_actnorm',
-                              seed=args.seed)
+    ex_dir = setup_experiment('hyperparams', QBallBalancerSim.name, f'{PPO.name}_{FNNPolicy.name}_250Hz_actnorm')
 
     # Run hyper-parameter optimization
     name = f'{ex_dir.algo_name}_{ex_dir.extra_info}'  # e.g. qbb_ppo_fnn_250Hz_actnorm

@@ -79,7 +79,7 @@ def gen_ordered_batch_idcs(batch_size: int, data_size: int, sorted: bool = False
 
 def gen_ordered_batches(inp: Iterable, batch_size: int):
     """
-    Helper function that cuts the input into equal spaced chunks
+    Helper function that cuts the input into equal sized chunks
 
     :param inp: iterable input
     :param batch_size: number of samples in each mini-batch
@@ -87,3 +87,16 @@ def gen_ordered_batches(inp: Iterable, batch_size: int):
     """
     it = iter(inp)
     return iter(lambda: list(islice(it, batch_size)), [])
+
+
+def shuffled_ordered_batches(inp: Iterable, batch_size: int):
+    """
+    Helper function that cuts the input into equal sized chunks with the original ordering, but shuffled order among the
+    chunks
+
+    :param inp: iterable input
+    :param batch_size: number of samples in each mini-batch
+    :return: list of randomly ordered mini-batches which within themselves have the original ordering
+    """
+    ordered_batches = list(gen_ordered_batches(inp, batch_size))
+    return random.sample(ordered_batches, len(ordered_batches))

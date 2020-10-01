@@ -45,7 +45,7 @@ from pyrado.sampling.sampler import SamplerBase
 
 
 def _ps_init(G, env, policy):
-    """ Store pickled (and thus copied) environment as well as policy. """
+    """ Store pickled (and thus copied) environment and policy. """
     G.env = pickle.loads(env)
     G.policy = pickle.loads(policy)
 
@@ -89,7 +89,7 @@ def _ps_run_one_reset_kwargs(G, reset_kwargs: tuple, eval: bool):
                    reset_kwargs=dict(init_state=reset_kwargs[0], domain_param=reset_kwargs[1]))
 
 
-class ParallelSampler(SamplerBase, Serializable):
+class ParallelRolloutSampler(SamplerBase, Serializable):
     """ Class for sampling from multiple environments in parallel """
 
     def __init__(self,

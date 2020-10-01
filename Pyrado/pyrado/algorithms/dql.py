@@ -42,7 +42,7 @@ from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import EpsGreedyExplStrat
 from pyrado.logger.step import StepLogger, ConsolePrinter, CSVPrinter, TensorBoardPrinter
 from pyrado.policies.fnn import DiscrActQValFNNPolicy
-from pyrado.sampling.parallel_sampler import ParallelSampler
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.input_output import print_cbt, print_cbt_once
 
 
@@ -130,13 +130,13 @@ class DQL(Algorithm):
         # Initialize
         self._expl_strat = EpsGreedyExplStrat(self._policy, eps_init, eps_schedule_gamma)
         self._memory = ReplayMemory(memory_size)
-        self.sampler = ParallelSampler(
+        self.sampler = ParallelRolloutSampler(
             self._env, self._expl_strat,
             num_workers=1,
             min_steps=min_steps,
             min_rollouts=min_rollouts
         )
-        self.sampler_eval = ParallelSampler(
+        self.sampler_eval = ParallelRolloutSampler(
             self._env, self._policy,
             num_workers=num_workers,
             min_steps=100*env.max_steps,

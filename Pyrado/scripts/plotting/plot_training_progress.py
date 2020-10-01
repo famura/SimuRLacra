@@ -282,5 +282,20 @@ if __name__ == '__main__':
         plt.legend(loc='best')
 
 
+    """ TSPred specific """
+
+
+    @lfm.figure('Training and Testing Loss')
+    def importance_samples(fig, df, args):
+        if not _keys_in_columns(df, 'trn_loss', 'tst_loss', verbose=args.verbose):
+            return False
+        plt.plot(np.arange(len(df.trn_loss)), df.trn_loss, label='train')
+        plt.plot(np.arange(len(df.tst_loss)), df.tst_loss, label='test')
+        plt.yscale('log')
+        plt.xlabel('iteration')
+        plt.ylabel('loss')
+        plt.legend(loc='best')
+
+
     # Start update loop
     lfm.spin()

@@ -32,20 +32,19 @@ Optimize the hyper-parameters of the Proximal Policy Optimization algorithm for 
 import functools
 import optuna
 import os.path as osp
-from optuna.pruners import MedianPruner
-from torch.optim import lr_scheduler
+import pandas as pd
+import torch as to
+import torch.nn as nn
+import torch.optim as optim
 
 import pyrado
-from pyrado.algorithms.ppo import PPO2
-from pyrado.algorithms.advantage import GAE
-from pyrado.spaces import ValueFunctionSpace
-from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
+from pyrado.algorithms.timeseries_prediction import TSPred
 from pyrado.logger.experiment import save_list_of_dicts_to_yaml, setup_experiment
 from pyrado.logger.step import create_csv_step_logger
-from pyrado.policies.fnn import FNNPolicy
-from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
+from pyrado.policies.adn import ADNPolicy, pd_linear
+from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.data_sets import TimeSeriesDataSet
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.experiments import fcn_from_str
 
@@ -65,74 +64,75 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
     # Synchronize seeds between Optuna trials
     pyrado.set_seed(seed)
 
-    # Environment
-    env_hparams = dict(dt=1/100., max_steps=600)
-    env = QQubeSwingUpSim(**env_hparams)
-    env = ActNormWrapper(env)
-
-    # Learning rate scheduler
-    lrs_gamma = trial.suggest_categorical('exp_lr_scheduler_gamma', [None, 0.995, 0.999])
-    if lrs_gamma is not None:
-        lr_sched = lr_scheduler.ExponentialLR
-        lr_sched_hparam = dict(gamma=lrs_gamma)
+    # Load the data
+    data_set_name = 'oscillation_50Hz_initpos-0.5'
+    data = pd.read_csv(osp.join(pyrado.PERMA_DIR, 'time_series', f'{data_set_name}.csv'))
+    if data_set_name == 'daily_min_temperatures':
+        data = to.tensor(data['Temp'].values, dtype=to.get_default_dtype()).view(-1, 1)
+    elif data_set_name == 'monthly_sunspots':
+        data = to.tensor(data['Sunspots'].values, dtype=to.get_default_dtype()).view(-1, 1)
+    elif 'oscillation' in data_set_name:
+        data = to.tensor(data['Positions'].values, dtype=to.get_default_dtype()).view(-1, 1)
     else:
-        lr_sched, lr_sched_hparam = None, dict()
+        raise pyrado.ValueErr(
+            given=data_set_name, eq_constraint="'daily_min_temperatures', 'monthly_sunspots', "
+                                               "'oscillation_50Hz_initpos-0.5', or 'oscillation_100Hz_initpos-0.4")
+
+    # Dataset
+    data_set_hparam = dict(
+        name=data_set_name,
+        ratio_train=0.7,
+        window_size=trial.suggest_int('dataset_window_size', 1, 100),
+        standardize_data=False,
+        scale_min_max_data=True
+    )
+    dataset = TimeSeriesDataSet(data, **data_set_hparam)
 
     # Policy
+    infspace = BoxSpace(-pyrado.inf, pyrado.inf, shape=data.unsqueeze(1).shape[1])
     policy_hparam = dict(
-        hidden_sizes=trial.suggest_categorical('hidden_sizes_policy', [32, 64, (32, 32), (64, 64)]),
-        hidden_nonlin=fcn_from_str(trial.suggest_categorical('hidden_nonlin_policy', ['to_tanh', 'to_relu'])),
+        dt=0.02 if 'oscillation' in data_set_name else 1.,
+        obs_layer=None,
+        activation_nonlin=to.tanh,
+        potentials_dyn_fcn=fcn_from_str(
+            trial.suggest_categorical('policy_potentials_dyn_fcn', ['pd_linear', 'pd_cubic'])),
+        tau_init=trial.suggest_uniform('policy_tau_init', 1., 10.),
+        tau_learnable=True,
+        kappa_init=trial.suggest_categorical('policy_kappa_init', [1e-4, 1e-2]),
+        kappa_learnable=True,
+        capacity_learnable=True,
+        potential_init_learnable=trial.suggest_categorical('policy_potential_init_learnable', [True, False]),
+        init_param_kwargs=trial.suggest_categorical('policy_init_param_kwargs', [None]),
+        use_cuda=False
     )
-    policy = FNNPolicy(spec=env.spec, **policy_hparam)
-
-    # Critic
-    value_fcn_hparam = dict(
-        hidden_sizes=trial.suggest_categorical('hidden_sizes_critic', [32, 64, (32, 32), (64, 64)]),
-        hidden_nonlin=fcn_from_str(trial.suggest_categorical('hidden_nonlin_critic', ['to_tanh', 'to_relu'])),
-    )
-    value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
-    critic_hparam = dict(
-        batch_size=250,
-        gamma=trial.suggest_loguniform('gamma_critic', 0.98, 1.),
-        lamda=trial.suggest_uniform('lamda_critic', 0.95, 1.),
-        num_epoch=trial.suggest_int('num_epoch_critic', 1, 10),
-        lr=trial.suggest_loguniform('lr_critic', 1e-5, 1e-2),
-        max_grad_norm=trial.suggest_categorical('max_grad_norm_critic', [None, 1., 5., 10.]),
-        lr_scheduler=lr_sched,
-        lr_scheduler_hparam=lr_sched_hparam
-    )
-    critic = GAE(value_fcn, **critic_hparam)
+    policy = ADNPolicy(spec=EnvSpec(act_space=infspace, obs_space=infspace), **policy_hparam)
 
     # Algorithm
     algo_hparam = dict(
-        num_workers=1,  # parallelize via optuna n_jobs
-        max_iter=250,
-        batch_size=250,
-        min_steps=trial.suggest_int('num_rollouts_algo', 10, 40)*env.max_steps,
-        num_epoch=trial.suggest_int('num_epoch_algo', 1, 10),
-        value_fcn_coeff=trial.suggest_uniform('value_fcn_coeff_algo', 0.2, 2.),
-        entropy_coeff=trial.suggest_loguniform('entropy_coeff_algo', 1e-6, 1e-2),
-        eps_clip=trial.suggest_uniform('eps_clip_algo', 0.05, 0.2),
-        std_init=trial.suggest_uniform('std_init_algo', 0.5, 1.0),
-        lr=trial.suggest_loguniform('lr_algo', 1e-5, 1e-3),
-        max_grad_norm=trial.suggest_categorical('max_grad_norm_algo', [None, 1., 5.]),
-        lr_scheduler=lr_sched,
-        lr_scheduler_hparam=lr_sched_hparam
+        windowed_mode=trial.suggest_categorical('algo_windowed_mode', [True, False]),
+        max_iter=1000,
+        optim_class=optim.Adam,
+        optim_hparam=dict(
+            lr=trial.suggest_uniform('optim_lr', 5e-4, 5e-2),
+            eps=trial.suggest_uniform('optim_eps', 1e-8, 1e-5),
+            weight_decay=trial.suggest_uniform('optim_weight_decay', 5e-5, 5e-3)
+        ),
+        loss_fcn=nn.MSELoss(),
     )
     csv_logger = create_csv_step_logger(osp.join(ex_dir, f'trial_{trial.number}'))
-    algo = PPO2(osp.join(ex_dir, f'trial_{trial.number}'), env, policy, critic, **algo_hparam, logger=csv_logger)
+    algo = TSPred(ex_dir, dataset, policy, **algo_hparam, logger=csv_logger)
 
     # Train without saving the results
     algo.train(snapshot_mode='latest', seed=seed)
 
     # Evaluate
-    min_rollouts = 100
-    sampler = ParallelRolloutSampler(env, policy, num_workers=1,
-                                     min_rollouts=min_rollouts)  # parallelize via optuna n_jobs
-    ros = sampler.sample()
-    mean_ret = sum([r.undiscounted_return() for r in ros])/min_rollouts
+    num_init_samples = dataset.window_size
+    _, loss_trn = TSPred.evaluate(policy, dataset.data_trn_inp, dataset.data_trn_targ, windowed_mode=algo.windowed_mode,
+                                  num_init_samples=num_init_samples, cascaded_predictions=False)
+    _, loss_tst = TSPred.evaluate(policy, dataset.data_tst_inp, dataset.data_tst_targ, windowed_mode=algo.windowed_mode,
+                                  num_init_samples=num_init_samples, cascaded_predictions=False)
 
-    return mean_ret
+    return loss_trn
 
 
 if __name__ == '__main__':
@@ -140,15 +140,14 @@ if __name__ == '__main__':
     args = get_argparser().parse_args()
 
     # Set up experiment
-    ex_dir = setup_experiment('hyperparams', QQubeSwingUpSim.name, f'{PPO2.name}_{FNNPolicy.name}_100Hz_actnorm')
+    ex_dir = setup_experiment('hyperparams', TSPred.name, f'{TSPred.name}_{ADNPolicy.name}')
 
     # Run hyper-parameter optimization
-    name = f'{ex_dir.algo_name}_{ex_dir.extra_info}'  # e.g. qq-su_ppo2_fnn_100Hz_actnorm
+    name = f'{ex_dir.algo_name}_{ex_dir.extra_info}'  # e.g. tspred_adn
     study = optuna.create_study(
         study_name=name,
         storage=f"sqlite:////{osp.join(pyrado.TEMP_DIR, ex_dir, f'{name}.db')}",
-        direction='maximize',
-        pruner=MedianPruner(),
+        direction='minimize',
         load_if_exists=True
     )
     study.optimize(functools.partial(train_and_eval, ex_dir=ex_dir, seed=args.seed), n_trials=100, n_jobs=16)

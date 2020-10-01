@@ -39,7 +39,7 @@ from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.policies.fnn import FNNPolicy
 from pyrado.sampling.data_format import to_format
 from pyrado.sampling.hyper_sphere import sample_from_hyper_sphere_surface
-from pyrado.sampling.parallel_sampler import ParallelSampler
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.parameter_exploration_sampler import ParameterExplorationSampler
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
@@ -373,7 +373,7 @@ def test_cuda_sampling_w_dr(default_bob, bob_pert):
     policy = FNNPolicy(env.spec, hidden_sizes=[8], hidden_nonlin=to.tanh, use_cuda=True)
 
     # Create the sampler
-    sampler = ParallelSampler(env, policy, num_workers=2, min_rollouts=10)
+    sampler = ParallelRolloutSampler(env, policy, num_workers=2, min_rollouts=10)
 
     samples = sampler.sample()
     assert samples is not None

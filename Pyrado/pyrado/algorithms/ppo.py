@@ -42,7 +42,7 @@ from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.policies.base_recurrent import RecurrentPolicy
-from pyrado.sampling.parallel_sampler import ParallelSampler
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.step_sequence import StepSequence, discounted_values
 from pyrado.utils.input_output import num_iter_from_rollouts
 from pyrado.utils.math import explained_var
@@ -121,7 +121,7 @@ class PPO(ActorCritic):
         # Initialize
         self.log_loss = True
         self._expl_strat = NormalActNoiseExplStrat(self._policy, std_init=std_init)
-        self.sampler = ParallelSampler(
+        self.sampler = ParallelRolloutSampler(
             env, self._expl_strat,
             num_workers=num_workers,
             min_steps=min_steps,
@@ -310,7 +310,7 @@ class PPO2(ActorCritic):
         # Initialize
         self.log_loss = True
         self._expl_strat = NormalActNoiseExplStrat(self._policy, std_init=std_init)
-        self.sampler = ParallelSampler(
+        self.sampler = ParallelRolloutSampler(
             env, self._expl_strat,
             num_workers=num_workers,
             min_steps=min_steps,

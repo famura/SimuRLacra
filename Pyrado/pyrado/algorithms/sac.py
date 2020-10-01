@@ -46,7 +46,7 @@ from pyrado.logger.step import StepLogger, ConsolePrinter, CSVPrinter
 from pyrado.policies.base import Policy
 from pyrado.policies.dummy import RecurrentDummyPolicy, DummyPolicy
 from pyrado.policies.two_headed import TwoHeadedPolicy
-from pyrado.sampling.parallel_sampler import ParallelSampler
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.input_output import print_cbt, print_cbt_once
 from pyrado.utils.data_processing import standardize
 
@@ -162,19 +162,19 @@ class SAC(Algorithm):
             init_expl_policy = RecurrentDummyPolicy(env.spec, policy.hidden_size)
         else:
             init_expl_policy = DummyPolicy(env.spec)
-        self.sampler_init = ParallelSampler(
+        self.sampler_init = ParallelRolloutSampler(
             self._env, init_expl_policy,  # samples uniformly random from the action space
             num_workers=num_workers,
             min_steps=memory_size,
         )
         self._expl_strat = SACExplStrat(self._policy, std_init=1.)  # std_init will be overwritten by 2nd policy head
-        self.sampler = ParallelSampler(
+        self.sampler = ParallelRolloutSampler(
             self._env, self._expl_strat,
             num_workers=1,
             min_steps=min_steps,  # in [2] this would be 1
             min_rollouts=min_rollouts  # in [2] this would be None
         )
-        self.sampler_eval = ParallelSampler(
+        self.sampler_eval = ParallelRolloutSampler(
             self._env, self._policy,
             num_workers=num_workers,
             min_steps=100*env.max_steps,

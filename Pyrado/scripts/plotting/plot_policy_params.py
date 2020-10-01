@@ -47,14 +47,14 @@ if __name__ == '__main__':
     ex_dir = ask_for_experiment()
 
     # Load the policy
-    env, policy, _ = load_experiment(ex_dir, args)
+    _, policy, _ = load_experiment(ex_dir, args)
 
     # Print the policy structure
     for name, param in policy.named_parameters():
         print(f'{name}\n{param.detach().cpu().numpy()}')
 
     # Visualize the parameters
-    fig = render_policy_params(policy, env.spec, annotate=args.verbose)
+    fig = render_policy_params(policy, policy.env_spec, annotate=args.verbose)
 
     if args.save_figures:
         for fmt in ['pdf', 'pgf', 'png']:

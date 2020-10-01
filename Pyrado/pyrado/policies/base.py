@@ -175,7 +175,7 @@ class Policy(nn.Module, ABC):
         Re-evaluate the given rollout and return a derivable action tensor.
         The default implementation simply calls `forward()`.
 
-        :param rollout: recorded, complete rollout
+        :param rollout: complete rollout
         :param hidden_states_name: name of hidden states rollout entry, used for recurrent networks.
                                    Defaults to 'hidden_states'. Change for value functions.
         :return: actions with gradient data

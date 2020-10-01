@@ -42,11 +42,11 @@ from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapp
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.policies.base import Policy
 from pyrado.policies.domain_distribution import DomainDistrParamPolicy
-from pyrado.sampling.parallel_sampler import ParallelSampler
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult, ParameterSample
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.sampling.utils import gen_ordered_batch_idcs
-from pyrado.utils.data_types import check_all_values_equal
+from pyrado.utils.checks import check_all_equal
 from pyrado.utils.input_output import print_cbt
 from pyrado.utils.math import UnitCubeProjector
 
@@ -125,7 +125,7 @@ class SysIdViaEpisodicRL(Algorithm):
 
         # Create the sampler used to execute the same policy as on the real system in the meta-randomized env
         self.base_seed = base_seed
-        self.behavior_sampler = ParallelSampler(
+        self.behavior_sampler = ParallelRolloutSampler(
             self._subrtn.env,
             self._behavior_policy,
             num_workers=num_workers,
@@ -189,8 +189,8 @@ class SysIdViaEpisodicRL(Algorithm):
 
                 # Check the validity of the initial states. The domain parameters will be different.
                 assert len(ros_real_tr) == len(ros_sim_tr) == len(idcs_sim)
-                assert check_all_values_equal([r.rollout_info['init_state'] for r in ros_real_tr])
-                assert check_all_values_equal([r.rollout_info['init_state'] for r in ros_sim_tr])
+                assert check_all_equal([r.rollout_info['init_state'] for r in ros_real_tr])
+                assert check_all_equal([r.rollout_info['init_state'] for r in ros_sim_tr])
                 assert all([np.allclose(r.rollout_info['init_state'], s.rollout_info['init_state'])
                             for r, s in zip(ros_real_tr, ros_sim_tr)])
 

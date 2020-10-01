@@ -42,7 +42,7 @@ from pyrado.policies.fnn import FNNPolicy
 from pyrado.policies.two_headed import TwoHeadedPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
-from pyrado.sampling.parallel_sampler import ParallelSampler
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 
 
 @to.no_grad()
@@ -125,8 +125,8 @@ def test_adr_reward_generator(env):
     dr = get_default_randomizer_omo()
     dr.randomize(num_samples=1)
     random_env.domain_param = dr.get_params(format='dict', dtype='numpy')
-    reference_sampler = ParallelSampler(reference_env, policy, num_workers=4, min_steps=10000)
-    random_sampler = ParallelSampler(random_env, policy, num_workers=4, min_steps=10000)
+    reference_sampler = ParallelRolloutSampler(reference_env, policy, num_workers=4, min_steps=10000)
+    random_sampler = ParallelRolloutSampler(random_env, policy, num_workers=4, min_steps=10000)
 
     losses = []
     for i in range(200):

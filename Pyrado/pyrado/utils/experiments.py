@@ -32,6 +32,8 @@ import pandas as pd
 import torch as to
 from typing import Callable, Any, Optional, Union
 
+from pyrado.algorithms.timeseries_prediction import TSPred
+
 import pyrado
 from pyrado.algorithms.a2c import A2C
 from pyrado.algorithms.bayrn import BayRn
@@ -160,6 +162,12 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
             policy = to.load(osp.join(ex_dir, 'policy.pt'))
             print_cbt(f"Loaded {osp.join(ex_dir, 'policy.pt')}", 'g')
 
+        elif TSPred.name in hparams.get('algo_name', ''):
+            # Dataset
+            kwout['dataset'] = to.load(osp.join(ex_dir, 'dataset.pt'))
+            # Policy
+            policy = to.load(osp.join(ex_dir, 'policy.pt'))
+
         else:
             raise KeyError('No matching algorithm name found during loading the experiment.'
                            'Check for the algo_name field in the yaml-file.')
@@ -200,10 +208,10 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
                     policy = to.load(osp.join(ex_dir, f'iter_{args.iter}_policy.pt'))
                     print_cbt(f'Loaded iter_{args.iter}_policy.pt', 'g')
 
-    # Check if the return types are correct
-    if not isinstance(env, (SimEnv, EnvWrapper)):
+    # Check if the return types are correct. They can be None, too.
+    if env is not None and not isinstance(env, (SimEnv, EnvWrapper)):
         raise pyrado.TypeErr(given=env, expected_type=[SimEnv, EnvWrapper])
-    if not isinstance(policy, Policy):
+    if policy is not None and not isinstance(policy, Policy):
         raise pyrado.TypeErr(given=policy, expected_type=Policy)
 
     return env, policy, kwout

@@ -49,7 +49,7 @@ if __name__ == '__main__':
 
     # Get the experiments' directories to load from
     ex_dirs = []
-    ex_dirs.extend([tmp[0] for tmp in os.walk(osp.join(pyrado.EXP_DIR, 'FILL_IN', 'FILL_IN'))][1:])
+    ex_dirs.extend([tmp[0] for tmp in os.walk(osp.join(pyrado.EXP_DIR, 'ENV_NAME', 'ALGO_NAME'))][1:])
     ex_dirs = filter_los_by_lok(ex_dirs, filter_key)
     print(f'Number of loaded experiments: {len(ex_dirs)}')
 

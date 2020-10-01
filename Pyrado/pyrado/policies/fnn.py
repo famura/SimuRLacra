@@ -71,7 +71,7 @@ class FNN(nn.Module):
         self._hidden_nonlin = hidden_nonlin if isinstance(hidden_nonlin, Iterable) else len(hidden_sizes)*[
             hidden_nonlin]
         self._dropout = dropout
-        self._output_nonlin = output_nonlin
+        self.output_nonlin = output_nonlin
         # TODO One day replace legacy above with below
         # self.hidden_nonlin = hidden_nonlin if isinstance(hidden_nonlin, Iterable) else len(hidden_sizes)*[hidden_nonlin]
         # self.dropout = dropout
@@ -117,7 +117,7 @@ class FNN(nn.Module):
     @property
     def output_nonlin(self):
         """ For legacy compatibility """
-        return self._output_nonlin
+        return self.output_nonlin
 
     @property
     def param_values(self) -> to.Tensor:

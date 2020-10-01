@@ -42,7 +42,7 @@ from pyrado.logger.experiment import save_list_of_dicts_to_yaml, setup_experimen
 from pyrado.logger.step import create_csv_step_logger
 from pyrado.policies.fnn import FNNPolicy
 from pyrado.policies.two_headed import TwoHeadedFNNPolicy
-from pyrado.sampling.parallel_sampler import ParallelSampler
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.spaces import BoxSpace, ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
@@ -116,7 +116,8 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
 
     # Evaluate
     min_rollouts = 1000
-    sampler = ParallelSampler(env, policy, num_workers=1, min_rollouts=min_rollouts)  # parallelize via optuna n_jobs
+    sampler = ParallelRolloutSampler(env, policy, num_workers=1,
+                                     min_rollouts=min_rollouts)  # parallelize via optuna n_jobs
     ros = sampler.sample()
     mean_ret = sum([r.undiscounted_return() for r in ros])/min_rollouts
 

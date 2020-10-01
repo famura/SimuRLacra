@@ -40,8 +40,7 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.policies.linear import LinearPolicy
-from pyrado.sampling.parallel_sampler import ParallelSampler
-from pyrado.sampling.sampler import SamplerBase
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.tasks.reward_functions import QuadrErrRewFcn
 from pyrado.utils.tensor import insert_tensor_col
 
@@ -59,7 +58,6 @@ class LQR(Algorithm):
                  min_steps: int = None,
                  num_workers: int = 4,
                  logger: StepLogger = None,
-                 sampler: SamplerBase = None,
                  ball_z_dim_mismatch: bool = True):
         """
         Constructor
@@ -86,15 +84,12 @@ class LQR(Algorithm):
         self._env = env
         self.ball_z_dim_mismatch = ball_z_dim_mismatch
 
-        # Initialize variables for checking and evaluating
-        if sampler is None:
-            sampler = ParallelSampler(
-                env, self._policy,
-                num_workers=num_workers,
-                min_steps=min_steps,
-                min_rollouts=min_rollouts
-            )
-        self.sampler = sampler
+        self.sampler = ParallelRolloutSampler(
+            env, self._policy,
+            num_workers=num_workers,
+            min_steps=min_steps,
+            min_rollouts=min_rollouts
+        )
         self.eigvals = np.array([pyrado.inf])  # initialize with sth positive
 
     def step(self, snapshot_mode: str, meta_info: dict = None):

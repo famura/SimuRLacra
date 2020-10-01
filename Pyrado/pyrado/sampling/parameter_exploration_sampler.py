@@ -114,7 +114,7 @@ class ParameterSamplingResult(Sequence[ParameterSample]):
 
 
 def _pes_init(G, env, policy):
-    """ Store pickled (and thus copied) env/policy. """
+    """ Store pickled (and thus copied) environment and policy. """
     G.env = pickle.loads(env)
     G.policy = pickle.loads(policy)
 
