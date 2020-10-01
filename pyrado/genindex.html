@@ -505,11 +505,13 @@
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.cem.CEM">CEM (class in pyrado.algorithms.cem)</a>
 </li>
-      <li><a href="utils.html#pyrado.utils.data_types.check_all_shapes_equal">check_all_shapes_equal() (in module pyrado.utils.data_types)</a>
+      <li><a href="utils.html#pyrado.utils.checks.check_all_equal">check_all_equal() (in module pyrado.utils.checks)</a>
 </li>
-      <li><a href="utils.html#pyrado.utils.data_types.check_all_types_equal">check_all_types_equal() (in module pyrado.utils.data_types)</a>
+      <li><a href="utils.html#pyrado.utils.checks.check_all_lengths_equal">check_all_lengths_equal() (in module pyrado.utils.checks)</a>
 </li>
-      <li><a href="utils.html#pyrado.utils.data_types.check_all_values_equal">check_all_values_equal() (in module pyrado.utils.data_types)</a>
+      <li><a href="utils.html#pyrado.utils.checks.check_all_shapes_equal">check_all_shapes_equal() (in module pyrado.utils.checks)</a>
+</li>
+      <li><a href="utils.html#pyrado.utils.checks.check_all_types_equal">check_all_types_equal() (in module pyrado.utils.checks)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.math.clamp">clamp() (in module pyrado.utils.math)</a>
 </li>
@@ -565,10 +567,10 @@
 </li>
       <li><a href="logger.html#pyrado.logger.step.ConsolePrinter">ConsolePrinter (class in pyrado.logger.step)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="policies.html#pyrado.policies.features.const_feat">const_feat() (in module pyrado.policies.features)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="logger.html#pyrado.logger.experiment.AugmentedSafeLoader.construct_python_tuple">construct_python_tuple() (AugmentedSafeLoader method)</a>
 </li>
       <li><a href="spaces.html#pyrado.spaces.box.BoxSpace.contains">contains() (BoxSpace method)</a>
@@ -631,6 +633,10 @@
 </li>
       <li><a href="spaces.html#pyrado.spaces.base.Space.create_mask">create_mask() (Space method)</a>
 </li>
+      <li><a href="utils.html#pyrado.utils.data_sets.create_sequences">create_sequences() (in module pyrado.utils.data_sets)</a>
+</li>
+      <li><a href="utils.html#pyrado.utils.data_sets.create_shuffled_sequences">create_shuffled_sequences() (in module pyrado.utils.data_sets)</a>
+</li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_flipping.create_task_space_discrepancy_task">create_task_space_discrepancy_task() (in module pyrado.environments.rcspysim.box_flipping)</a>
 
       <ul>
@@ -654,6 +660,8 @@
 </li>
       </ul></li>
       <li><a href="policies.html#pyrado.policies.time.TraceableTimePolicy.current_time">current_time (TraceableTimePolicy attribute)</a>
+</li>
+      <li><a href="utils.html#pyrado.utils.data_sets.TimeSeriesDataSet.cut_to_window_size">cut_to_window_size() (TimeSeriesDataSet static method)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.cvar_sampler.CVaRSampler">CVaRSampler (class in pyrado.sampling.cvar_sampler)</a>
 </li>
@@ -917,10 +925,10 @@
 </li>
       <li><a href="exploration.html#pyrado.exploration.stochastic_action.EpsGreedyExplStrat.eval">eval() (EpsGreedyExplStrat method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms.html#pyrado.algorithms.simopt.SimOpt.eval_behav_policy">eval_behav_policy() (SimOpt static method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms.html#pyrado.algorithms.simopt.SimOpt.eval_ddp_policy">eval_ddp_policy() (SimOpt method)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.parallel_evaluation.eval_domain_params">eval_domain_params() (in module pyrado.sampling.parallel_evaluation)</a>
@@ -951,6 +959,8 @@
         <li><a href="exploration.html#pyrado.exploration.stochastic_action.SACExplStrat.evaluate">(SACExplStrat method)</a>
 </li>
         <li><a href="exploration.html#pyrado.exploration.stochastic_action.StochasticActionExplStrat.evaluate">(StochasticActionExplStrat method)</a>
+</li>
+        <li><a href="algorithms.html#pyrado.algorithms.timeseries_prediction.TSPred.evaluate">(TSPred static method)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.two_headed.TwoHeadedGRUPolicy.evaluate">(TwoHeadedGRUPolicy method)</a>
 </li>
@@ -1507,6 +1517,8 @@
       </ul></li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.utils.inner_env">inner_env() (in module pyrado.environment_wrappers.utils)</a>
 </li>
+      <li><a href="utils.html#pyrado.utils.data_types.TimeSeriesDataPair.inp_seq">inp_seq() (TimeSeriesDataPair property)</a>
+</li>
       <li><a href="policies.html#pyrado.policies.base_recurrent.StatefulRecurrentNetwork.input_size">input_size (StatefulRecurrentNetwork attribute)</a>
 
       <ul>
@@ -1533,9 +1545,9 @@
         <li><a href="tasks.html#pyrado.tasks.base.TaskWrapper.is_done">(TaskWrapper method)</a>
 </li>
       </ul></li>
-      <li><a href="utils.html#pyrado.utils.data_types.is_iterable">is_iterable() (in module pyrado.utils.data_types)</a>
+      <li><a href="utils.html#pyrado.utils.checks.is_iterable">is_iterable() (in module pyrado.utils.checks)</a>
 </li>
-      <li><a href="utils.html#pyrado.utils.data_types.is_iterator">is_iterator() (in module pyrado.utils.data_types)</a>
+      <li><a href="utils.html#pyrado.utils.checks.is_iterator">is_iterator() (in module pyrado.utils.checks)</a>
 </li>
       <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_common.QSocket.is_open">is_open() (QSocket method)</a>
 </li>
@@ -1803,6 +1815,8 @@
 </li>
         <li><a href="algorithms.html#module-pyrado.algorithms.sysid_via_episodic_rl">pyrado.algorithms.sysid_via_episodic_rl</a>
 </li>
+        <li><a href="algorithms.html#module-pyrado.algorithms.timeseries_prediction">pyrado.algorithms.timeseries_prediction</a>
+</li>
         <li><a href="algorithms.html#module-pyrado.algorithms.udr">pyrado.algorithms.udr</a>
 </li>
         <li><a href="algorithms.html#module-pyrado.algorithms.utils">pyrado.algorithms.utils</a>
@@ -1995,7 +2009,7 @@
 </li>
         <li><a href="sampling.html#module-pyrado.sampling.parallel_evaluation">pyrado.sampling.parallel_evaluation</a>
 </li>
-        <li><a href="sampling.html#module-pyrado.sampling.parallel_sampler">pyrado.sampling.parallel_sampler</a>
+        <li><a href="sampling.html#module-pyrado.sampling.parallel_rollout_sampler">pyrado.sampling.parallel_rollout_sampler</a>
 </li>
         <li><a href="sampling.html#module-pyrado.sampling.parameter_exploration_sampler">pyrado.sampling.parameter_exploration_sampler</a>
 </li>
@@ -2061,7 +2075,11 @@
 </li>
         <li><a href="utils.html#module-pyrado.utils.averaging">pyrado.utils.averaging</a>
 </li>
+        <li><a href="utils.html#module-pyrado.utils.checks">pyrado.utils.checks</a>
+</li>
         <li><a href="utils.html#module-pyrado.utils.data_processing">pyrado.utils.data_processing</a>
+</li>
+        <li><a href="utils.html#module-pyrado.utils.data_sets">pyrado.utils.data_sets</a>
 </li>
         <li><a href="utils.html#module-pyrado.utils.data_types">pyrado.utils.data_types</a>
 </li>
@@ -2315,6 +2333,8 @@
 </li>
         <li><a href="policies.html#pyrado.policies.time.TimePolicy.name">(TimePolicy attribute)</a>
 </li>
+        <li><a href="algorithms.html#pyrado.algorithms.timeseries_prediction.TSPred.name">(TSPred attribute)</a>
+</li>
         <li><a href="policies.html#pyrado.policies.two_headed.TwoHeadedFNNPolicy.name">(TwoHeadedFNNPolicy attribute)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.two_headed.TwoHeadedGRUPolicy.name">(TwoHeadedGRUPolicy attribute)</a>
@@ -2374,6 +2394,10 @@
         <li><a href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult.num_rollouts">(ParameterSamplingResult method)</a>
 </li>
       </ul></li>
+      <li><a href="utils.html#pyrado.utils.data_sets.TimeSeriesDataSet.num_samples_trn">num_samples_trn() (TimeSeriesDataSet property)</a>
+</li>
+      <li><a href="utils.html#pyrado.utils.data_sets.TimeSeriesDataSet.num_samples_tst">num_samples_tst() (TimeSeriesDataSet property)</a>
+</li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.numpy">numpy() (StepSequence method)</a>
 </li>
   </ul></td>
@@ -2470,7 +2494,7 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="sampling.html#pyrado.sampling.parallel_sampler.ParallelSampler">ParallelSampler (class in pyrado.sampling.parallel_sampler)</a>
+      <li><a href="sampling.html#pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler">ParallelRolloutSampler (class in pyrado.sampling.parallel_rollout_sampler)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.parallel.ParallelTasks">ParallelTasks (class in pyrado.tasks.parallel)</a>
 </li>
@@ -2591,6 +2615,8 @@
       <li><a href="algorithms.html#pyrado.algorithms.ppo.PPO">PPO (class in pyrado.algorithms.ppo)</a>
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.ppo.PPO2">PPO2 (class in pyrado.algorithms.ppo)</a>
+</li>
+      <li><a href="algorithms.html#pyrado.algorithms.timeseries_prediction.TSPred.predict">predict() (TSPred static method)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.experiment.Experiment.prefix">prefix() (Experiment property)</a>
 
@@ -2820,6 +2846,13 @@
 
       <ul>
         <li><a href="algorithms.html#module-pyrado.algorithms.sysid_via_episodic_rl">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.algorithms.timeseries_prediction
+
+      <ul>
+        <li><a href="algorithms.html#module-pyrado.algorithms.timeseries_prediction">module</a>
 </li>
       </ul></li>
       <li>
@@ -3088,8 +3121,6 @@
         <li><a href="environments.quanser.html#module-pyrado.environments.quanser.quanser_ball_balancer">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.quanser.quanser_cartpole
 
@@ -3097,6 +3128,8 @@
         <li><a href="environments.quanser.html#module-pyrado.environments.quanser.quanser_cartpole">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.quanser.quanser_common
 
@@ -3497,10 +3530,10 @@
 </li>
       </ul></li>
       <li>
-    pyrado.sampling.parallel_sampler
+    pyrado.sampling.parallel_rollout_sampler
 
       <ul>
-        <li><a href="sampling.html#module-pyrado.sampling.parallel_sampler">module</a>
+        <li><a href="sampling.html#module-pyrado.sampling.parallel_rollout_sampler">module</a>
 </li>
       </ul></li>
       <li>
@@ -3728,10 +3761,24 @@
 </li>
       </ul></li>
       <li>
+    pyrado.utils.checks
+
+      <ul>
+        <li><a href="utils.html#module-pyrado.utils.checks">module</a>
+</li>
+      </ul></li>
+      <li>
     pyrado.utils.data_processing
 
       <ul>
         <li><a href="utils.html#module-pyrado.utils.data_processing">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.utils.data_sets
+
+      <ul>
+        <li><a href="utils.html#module-pyrado.utils.data_sets">module</a>
 </li>
       </ul></li>
       <li>
@@ -3901,6 +3948,8 @@
       </ul></li>
       <li><a href="algorithms.html#pyrado.algorithms.pepg.rank_transform">rank_transform() (in module pyrado.algorithms.pepg)</a>
 </li>
+      <li><a href="utils.html#pyrado.utils.data_sets.TimeSeriesDataSet.ratio_train">ratio_train() (TimeSeriesDataSet property)</a>
+</li>
       <li><a href="policies.html#pyrado.policies.features.RBFFeat">RBFFeat (class in pyrado.policies.features)</a>
 </li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.base.RcsSim">RcsSim (class in pyrado.environments.rcspysim.base)</a>
@@ -3934,7 +3983,7 @@
       <li><a href="sampling.html#pyrado.sampling.cvar_sampler.CVaRSampler.reinit">reinit() (CVaRSampler method)</a>
 
       <ul>
-        <li><a href="sampling.html#pyrado.sampling.parallel_sampler.ParallelSampler.reinit">(ParallelSampler method)</a>
+        <li><a href="sampling.html#pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler.reinit">(ParallelRolloutSampler method)</a>
 </li>
         <li><a href="sampling.html#pyrado.sampling.sampler.SamplerBase.reinit">(SamplerBase method)</a>
 </li>
@@ -4242,7 +4291,7 @@
 </li>
         <li><a href="domain_randomization.html#pyrado.domain_randomization.domain_parameter.DomainParam.sample">(DomainParam method)</a>
 </li>
-        <li><a href="sampling.html#pyrado.sampling.parallel_sampler.ParallelSampler.sample">(ParallelSampler method)</a>
+        <li><a href="sampling.html#pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler.sample">(ParallelRolloutSampler method)</a>
 </li>
         <li><a href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler.sample">(ParameterExplorationSampler method)</a>
 </li>
@@ -4332,6 +4381,8 @@
 </li>
         <li><a href="algorithms.html#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.save_snapshot">(SysIdViaEpisodicRL method)</a>
 </li>
+        <li><a href="algorithms.html#pyrado.algorithms.timeseries_prediction.TSPred.save_snapshot">(TSPred method)</a>
+</li>
         <li><a href="algorithms.html#pyrado.algorithms.udr.UDR.save_snapshot">(UDR method)</a>
 </li>
       </ul></li>
@@ -4395,7 +4446,7 @@
       </ul></li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.state_augmentation.StateAugmentationWrapper.set_param">set_param() (StateAugmentationWrapper method)</a>
 </li>
-      <li><a href="sampling.html#pyrado.sampling.parallel_sampler.ParallelSampler.set_seed">set_seed() (ParallelSampler method)</a>
+      <li><a href="sampling.html#pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler.set_seed">set_seed() (ParallelRolloutSampler method)</a>
 
       <ul>
         <li><a href="sampling.html#pyrado.sampling.sampler_pool.SamplerPool.set_seed">(SamplerPool method)</a>
@@ -4431,6 +4482,8 @@
         <li><a href="spaces.html#pyrado.spaces.base.Space.shrink">(Space method)</a>
 </li>
       </ul></li>
+      <li><a href="sampling.html#pyrado.sampling.utils.shuffled_ordered_batches">shuffled_ordered_batches() (in module pyrado.sampling.utils)</a>
+</li>
       <li><a href="policies.html#pyrado.policies.features.sig_feat">sig_feat() (in module pyrado.policies.features)</a>
 </li>
       <li><a href="policies.html#pyrado.policies.features.sign_feat">sign_feat() (in module pyrado.policies.features)</a>
@@ -4471,10 +4524,10 @@
 </li>
       <li><a href="plotting.html#pyrado.plotting.live_update.LiveFigureManager.spin">spin() (LiveFigureManager method)</a>
 </li>
-      <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.split_shuffled_batches">split_shuffled_batches() (StepSequence method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.split_shuffled_batches">split_shuffled_batches() (StepSequence method)</a>
+</li>
       <li><a href="algorithms.html#pyrado.algorithms.spota.SPOTA">SPOTA (class in pyrado.algorithms.spota)</a>
 </li>
       <li><a href="policies.html#pyrado.policies.features.squared_feat">squared_feat() (in module pyrado.policies.features)</a>
@@ -4620,6 +4673,8 @@
 </li>
         <li><a href="algorithms.html#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.step">(SysIdViaEpisodicRL method)</a>
 </li>
+        <li><a href="algorithms.html#pyrado.algorithms.timeseries_prediction.TSPred.step">(TSPred method)</a>
+</li>
         <li><a href="algorithms.html#pyrado.algorithms.udr.UDR.step">(UDR method)</a>
 </li>
       </ul></li>
@@ -4726,6 +4781,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.Step.t">t (Step attribute)</a>
+</li>
+      <li><a href="utils.html#pyrado.utils.data_types.TimeSeriesDataPair.targ">targ() (TimeSeriesDataPair property)</a>
 </li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.target_tracking.TargetTrackingSim">TargetTrackingSim (class in pyrado.environments.rcspysim.target_tracking)</a>
 </li>
@@ -5011,10 +5068,10 @@
 </li>
       <li><a href="tests.html#tests.test_policies.test_rff_feat_batched">test_rff_feat_batched() (in module tests.test_policies)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.test_policies.test_rff_feat_serial">test_rff_feat_serial() (in module tests.test_policies)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.test_policies.test_rff_policy_batch">test_rff_policy_batch() (in module tests.test_policies)</a>
 </li>
       <li><a href="tests.html#tests.test_policies.test_rff_policy_serial">test_rff_policy_serial() (in module tests.test_policies)</a>
@@ -5328,6 +5385,10 @@
 </li>
       <li><a href="policies.html#pyrado.policies.time.TimePolicy">TimePolicy (class in pyrado.policies.time)</a>
 </li>
+      <li><a href="utils.html#pyrado.utils.data_types.TimeSeriesDataPair">TimeSeriesDataPair (class in pyrado.utils.data_types)</a>
+</li>
+      <li><a href="utils.html#pyrado.utils.data_sets.TimeSeriesDataSet">TimeSeriesDataSet (class in pyrado.utils.data_sets)</a>
+</li>
       <li><a href="utils.html#pyrado.utils.data_types.to_float_relentless">to_float_relentless() (in module pyrado.utils.data_types)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.data_format.to_format">to_format() (in module pyrado.sampling.data_format)</a>
@@ -5365,6 +5426,8 @@
       <li><a href="policies.html#pyrado.policies.domain_distribution.DomainDistrParamPolicy.transform_to_ddp_space">transform_to_ddp_space() (DomainDistrParamPolicy method)</a>
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.truncate_rollouts">truncate_rollouts() (SysIdViaEpisodicRL static method)</a>
+</li>
+      <li><a href="algorithms.html#pyrado.algorithms.timeseries_prediction.TSPred">TSPred (class in pyrado.algorithms.timeseries_prediction)</a>
 </li>
       <li><a href="policies.html#pyrado.policies.two_headed.TwoHeadedFNNPolicy">TwoHeadedFNNPolicy (class in pyrado.policies.two_headed)</a>
 </li>
@@ -5477,6 +5540,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms.html#pyrado.algorithms.reps.REPS.weights">weights() (REPS method)</a>
+</li>
+      <li><a href="utils.html#pyrado.utils.data_sets.TimeSeriesDataSet.window_size">window_size() (TimeSeriesDataSet property)</a>
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.reps.REPS.wmap">wmap() (REPS method)</a>
 </li>

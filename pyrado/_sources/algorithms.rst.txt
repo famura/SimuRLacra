@@ -221,6 +221,15 @@ sysid\_via\_episodic\_rl
    :show-inheritance:
 
 
+timeseries\_prediction
+----------------------
+
+.. automodule:: pyrado.algorithms.timeseries_prediction
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 udr
 ---
 

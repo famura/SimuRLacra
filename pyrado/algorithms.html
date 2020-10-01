@@ -121,6 +121,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.spota">spota</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.svpg">svpg</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.sysid_via_episodic_rl">sysid_via_episodic_rl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.timeseries_prediction">timeseries_prediction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.udr">udr</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.utils">utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms">Module contents</a></li>
@@ -1825,7 +1826,7 @@ arXiv, 2017</p>
 <span id="predefined-lqr"></span><h2>predefined_lqr<a class="headerlink" href="#module-pyrado.algorithms.predefined_lqr" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.algorithms.predefined_lqr.LQR">
-<em class="property">class </em><code class="sig-name descname">LQR</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">min_rollouts</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_workers</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">4</span></em>, <em class="sig-param"><span class="n">logger</span><span class="p">:</span> <span class="n"><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger">pyrado.logger.step.StepLogger</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sampler</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.sampler.SamplerBase" title="pyrado.sampling.sampler.SamplerBase">pyrado.sampling.sampler.SamplerBase</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ball_z_dim_mismatch</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/predefined_lqr.html#LQR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.predefined_lqr.LQR" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">LQR</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">min_rollouts</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_workers</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">4</span></em>, <em class="sig-param"><span class="n">logger</span><span class="p">:</span> <span class="n"><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger">pyrado.logger.step.StepLogger</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ball_z_dim_mismatch</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/predefined_lqr.html#LQR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.predefined_lqr.LQR" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a></p>
 <p>Linear Quadratic Regulator created using the control module</p>
 <dl class="py attribute">
@@ -2663,6 +2664,76 @@ rollouts of different length</p></li>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>MxN real-world rollouts and MxN simulated rollouts of equal length if <cite>replicate = True</cite>, else
 K real-world rollouts and K simulated rollouts of equal length</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.algorithms.timeseries_prediction">
+<span id="timeseries-prediction"></span><h2>timeseries_prediction<a class="headerlink" href="#module-pyrado.algorithms.timeseries_prediction" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.algorithms.timeseries_prediction.TSPred">
+<em class="property">class </em><code class="sig-name descname">TSPred</code><span class="sig-paren">(</span><em class="sig-param">save_dir: str</em>, <em class="sig-param">dataset: pyrado.utils.data_sets.TimeSeriesDataSet</em>, <em class="sig-param">policy: pyrado.policies.base.Policy</em>, <em class="sig-param">max_iter: int</em>, <em class="sig-param">windowed_mode: bool = False</em>, <em class="sig-param">optim_class=&lt;class 'torch.optim.adam.Adam'&gt;</em>, <em class="sig-param">optim_hparam: dict = None</em>, <em class="sig-param">loss_fcn=MSELoss()</em>, <em class="sig-param">lr_scheduler=None</em>, <em class="sig-param">lr_scheduler_hparam: Optional[dict] = None</em>, <em class="sig-param">num_workers: int = 1</em>, <em class="sig-param">seed: Optional[int] = None</em>, <em class="sig-param">logger: pyrado.logger.step.StepLogger = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/timeseries_prediction.html#TSPred"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.timeseries_prediction.TSPred" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a></p>
+<p>Train a policy to predict a time series of data.</p>
+<dl class="py method">
+<dt id="pyrado.algorithms.timeseries_prediction.TSPred.evaluate">
+<em class="property">static </em><code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">inps</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">targs</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">windowed_mode</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">num_init_samples</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">cascaded_predictions</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">hidden</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>torch.Tensor<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">loss_fcn</span><span class="o">=</span><span class="default_value">MSELoss()</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/timeseries_prediction.html#TSPred.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.timeseries_prediction.TSPred.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.algorithms.timeseries_prediction.TSPred.name">
+<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'tspred'</em><a class="headerlink" href="#pyrado.algorithms.timeseries_prediction.TSPred.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.timeseries_prediction.TSPred.predict">
+<em class="property">static </em><code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">policy: pyrado.policies.base.Policy</em>, <em class="sig-param">inp_seq: torch.Tensor</em>, <em class="sig-param">windowed_mode: bool</em>, <em class="sig-param">hidden: Optional[torch.Tensor] = None) -&gt; (&lt;class 'torch.Tensor'&gt;</em>, <em class="sig-param">&lt;class 'torch.Tensor'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/timeseries_prediction.html#TSPred.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.timeseries_prediction.TSPred.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the hidden states, predict one output given a arbitrary long sequence of inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>policy</strong> – policy used to make the predictions</p></li>
+<li><p><strong>inp_seq</strong> – input sequence</p></li>
+<li><p><strong>hidden</strong> – initial hidden states</p></li>
+<li><p><strong>windowed_mode</strong> – if <cite>True</cite>, fixed length input sequences are provided to the policy which then predicts
+one sample, else the complete input sequence is fed to the policy which then predicts
+an equally long sequence of samples</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>predicted output and latest hidden state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.timeseries_prediction.TSPred.save_snapshot">
+<code class="sig-name descname">save_snapshot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/timeseries_prediction.html#TSPred.save_snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.timeseries_prediction.TSPred.save_snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the algorithm information (e.g., environment, policy, ect.).
+Subclasses should call the base method to save the policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a <cite>dict</cite> of information about the current iteration of the meta-algorithm</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.timeseries_prediction.TSPred.step">
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snapshot_mode</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/timeseries_prediction.html#TSPred.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.timeseries_prediction.TSPred.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
+adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
+<li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
