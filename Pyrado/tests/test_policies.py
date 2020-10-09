@@ -32,7 +32,8 @@ import torch as to
 from pytest_lazyfixture import lazy_fixture
 
 from pyrado.policies.environment_specific import DualRBFLinearPolicy
-from tests.conftest import m_needs_cuda, m_needs_bullet, m_needs_mujoco, m_needs_rcs, m_needs_libtorch
+from tests.conftest import m_needs_cuda, m_needs_bullet, m_needs_mujoco, m_needs_rcs, m_needs_libtorch, DefaultEnvs, \
+    DefaultPolicies
 from pyrado.policies.adn import ADNPolicy, pd_cubic
 from pyrado.policies.dummy import DummyPolicy, IdlePolicy
 from pyrado.policies.fnn import FNNPolicy
@@ -46,6 +47,14 @@ from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import RenderMode
 
+@pytest.fixture
+def default_bob():
+    return DefaultEnvs.default_bob()
+
+
+@pytest.fixture
+def default_fs():
+    return DefaultPolicies.default_fs()
 
 @pytest.fixture(scope='function',
                 ids=['idlepol_bob_default'])
@@ -211,11 +220,12 @@ def test_rbf_feat_batched(batch_size, obs_dim, num_feat_per_dim, bounds):
 @pytest.mark.features
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_bob'),
-        lazy_fixture('default_qqsu'),
-        lazy_fixture('default_qbb'),
-        pytest.param(lazy_fixture('default_bop5d_bt'), marks=m_needs_bullet),
-    ], ids=['bob', 'qq-st', 'qbb', 'bop5D']
+        'default_bob',
+        'default_qqsu',
+        'default_qbb',
+        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    ], ids=['bob', 'qq-st', 'qbb', 'bop5D'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'num_feat_per_dim', [4, 100], ids=['4', '100']
@@ -233,11 +243,12 @@ def test_rff_policy_serial(env, num_feat_per_dim):
 @pytest.mark.features
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_bob'),
-        lazy_fixture('default_qqsu'),
-        lazy_fixture('default_qbb'),
-        pytest.param(lazy_fixture('default_bop5d_bt'), marks=m_needs_bullet),
-    ], ids=['bob', 'qq-su', 'qbb', 'bop5D']
+        'default_bob',
+        'default_qqsu',
+        'default_qbb',
+        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    ], ids=['bob', 'qq-su', 'qbb', 'bop5D'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'batch_size, num_feat_per_dim', [
@@ -258,11 +269,12 @@ def test_rff_policy_batch(env, batch_size, num_feat_per_dim):
 @pytest.mark.features
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_bob'),
-        lazy_fixture('default_qqsu'),
-        lazy_fixture('default_qbb'),
-        pytest.param(lazy_fixture('default_bop5d_bt'), marks=m_needs_bullet),
-    ], ids=['bob', 'qq-su', 'qbb', 'bop5D']
+        'default_bob',
+        'default_qqsu',
+        'default_qbb',
+        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    ], ids=['bob', 'qq-su', 'qbb', 'bop5D'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'num_feat_per_dim', [4, 100], ids=['4', '100']
@@ -280,11 +292,12 @@ def test_rfb_policy_serial(env, num_feat_per_dim):
 @pytest.mark.features
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_bob'),
-        lazy_fixture('default_qqsu'),
-        lazy_fixture('default_qbb'),
-        pytest.param(lazy_fixture('default_bop5d_bt'), marks=m_needs_bullet),
-    ], ids=['bob', 'qq-su', 'qbb', 'bop5D']
+        'default_bob',
+        'default_qqsu',
+        'default_qbb',
+        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    ], ids=['bob', 'qq-su', 'qbb', 'bop5D'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'batch_size, num_feat_per_dim', [
@@ -305,8 +318,9 @@ def test_rfb_policy_batch(env, batch_size, num_feat_per_dim):
 @pytest.mark.features
 @pytest.mark.parametrize(
     'env', [
-        pytest.param(lazy_fixture('default_wambic'), marks=m_needs_mujoco),  # so far, the only use case
-    ], ids=['wambic']
+        pytest.param('default_wambic', marks=m_needs_mujoco),  # so far, the only use case
+    ], ids=['wambic'],
+    indirect=True
 )
 @pytest.mark.parametrize('dim_mask', [0, 1, 2], ids=['0', '1', '2'])
 def test_dualrbf_policy(env, dim_mask):
@@ -321,22 +335,24 @@ def test_dualrbf_policy(env, dim_mask):
 
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_bob'),
-        lazy_fixture('default_qbb')
-    ], ids=['bob', 'qbb']
+        'default_bob',
+        'default_qbb'
+    ], ids=['bob', 'qbb'],
+    indirect=True
 )  # only for using lazy policy fixture
 @pytest.mark.parametrize(
     'policy', [
-        lazy_fixture('linear_policy'),
-        lazy_fixture('fnn_policy'),
-        lazy_fixture('rnn_policy'),
-        lazy_fixture('lstm_policy'),
-        lazy_fixture('gru_policy'),
-        lazy_fixture('adn_policy'),
-        lazy_fixture('thfnn_policy'),
-        lazy_fixture('thgru_policy'),
+        'linear_policy',
+        'fnn_policy',
+        'rnn_policy',
+        'lstm_policy',
+        'gru_policy',
+        'adn_policy',
+        'thfnn_policy',
+        'thgru_policy',
     ],
-    ids=['linear', 'fnn', 'rnn', 'lstm', 'gru', 'adn', 'thfnn', 'thgru']
+    ids=['linear', 'fnn', 'rnn', 'lstm', 'gru', 'adn', 'thfnn', 'thgru'],
+    indirect=True
 )
 def test_parameterized_policies_init_param(env, policy):
     some_values = to.ones_like(policy.param_values)
@@ -360,16 +376,18 @@ def test_feedforward_policy_one_step(policy):
 
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_bob'),
-        lazy_fixture('default_qbb')
-    ], ids=['bob', 'qbb']
+        'default_bob',
+        'default_qbb'
+    ], ids=['bob', 'qbb'],
+    indirect=True
 )  # only for using lazy policy fixture
 @pytest.mark.parametrize(
     'policy', [
-        lazy_fixture('time_policy'),
-        lazy_fixture('tracetime_policy'),
+        'time_policy',
+        'tracetime_policy',
     ],
-    ids=['time', 'tracetime']
+    ids=['time', 'tracetime'],
+    indirect=True
 )
 def test_time_policy_one_step(env, policy):
     policy.reset()
@@ -382,19 +400,21 @@ def test_time_policy_one_step(env, policy):
 @pytest.mark.recurrent_policy
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_bob'),
-        lazy_fixture('default_qbb')
-    ], ids=['bob', 'qbb']
+        'default_bob',
+        'default_qbb'
+    ], ids=['bob', 'qbb'],
+    indirect=True
 )  # only for using lazy policy fixture
 @pytest.mark.parametrize(
     'policy', [
-        lazy_fixture('rnn_policy'),
-        lazy_fixture('lstm_policy'),
-        lazy_fixture('gru_policy'),
-        lazy_fixture('adn_policy'),
-        lazy_fixture('thgru_policy'),
+        'rnn_policy',
+        'lstm_policy',
+        'gru_policy',
+        'adn_policy',
+        'thgru_policy',
     ],
-    ids=['rnn', 'lstm', 'gru', 'adn', 'thgru']
+    ids=['rnn', 'lstm', 'gru', 'adn', 'thgru'],
+    indirect=True
 )
 def test_recurrent_policy_one_step(env, policy):
     hid = policy.init_hidden()
@@ -463,7 +483,7 @@ def test_gru_policy(default_bob, gru_policy):
     'lstmpol_bobspec',
     'grupol_bobspec',
     'adnpol_bobspec',
-]), ids=['rnn', 'lstm', 'gru', 'adn'])
+    ]), ids=['rnn', 'lstm', 'gru', 'adn'], indirect=True)
 def test_recurrent_policy(policy):
     obs = policy.env_spec.obs_space.sample_uniform()  # shape = (4,)
     obs = to.from_numpy(obs)
@@ -492,18 +512,20 @@ def test_recurrent_policy(policy):
 @pytest.mark.recurrent_policy
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_bob'),
-        lazy_fixture('default_qbb'),
-        pytest.param(lazy_fixture('default_bop5d_bt'), marks=m_needs_bullet),
-    ], ids=['bob', 'qbb', 'bop5D']
+        'default_bob',
+        'default_qbb',
+        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    ], ids=['bob', 'qbb', 'bop5D'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'policy', [
-        lazy_fixture('rnn_policy'),
-        lazy_fixture('lstm_policy'),
-        lazy_fixture('gru_policy'),
-        lazy_fixture('adn_policy'),
-    ], ids=['rnn', 'lstm', 'gru', 'adn']
+        'rnn_policy',
+        'lstm_policy',
+        'gru_policy',
+        'adn_policy',
+    ], ids=['rnn', 'lstm', 'gru', 'adn'],
+    indirect=True
 )
 @pytest.mark.parametrize('batch_size', [1, 2, 4])
 def test_recurrent_policy_batching(env, policy, batch_size):
@@ -536,17 +558,19 @@ def test_recurrent_policy_batching(env, policy, batch_size):
 @pytest.mark.recurrent_policy
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_bob'),
-        pytest.param(lazy_fixture('default_bop5d_bt'), marks=m_needs_bullet),
-    ], ids=['bob', 'bop5D']
+        'default_bob',
+        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    ], ids=['bob', 'bop5D'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'policy', [
-        lazy_fixture('rnn_policy'),
-        lazy_fixture('lstm_policy'),
-        lazy_fixture('gru_policy'),
-        lazy_fixture('adn_policy'),
-    ], ids=['rnn', 'lstm', 'gru', 'adn']
+        'rnn_policy',
+        'lstm_policy',
+        'gru_policy',
+        'adn_policy',
+    ], ids=['rnn', 'lstm', 'gru', 'adn'],
+    indirect=True
 )
 def test_recurrent_policy_evaluate(env, policy):
     # Make a rollout
@@ -609,17 +633,19 @@ def test_hidden_state_packing_nobatch():
 
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_bob'),
-        lazy_fixture('default_qbb'),
-        pytest.param(lazy_fixture('default_bop5d_bt'), marks=m_needs_bullet),
-    ], ids=['bob', 'qbb', 'bop5D']
+        'default_bob',
+        'default_qbb',
+        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    ], ids=['bob', 'qbb', 'bop5D'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'policy', [
         # TimePolicy and Two-headed policies are not supported
-        lazy_fixture('linear_policy'),
-        lazy_fixture('fnn_policy'),
-    ], ids=['lin', 'fnn']
+        'linear_policy',
+        'fnn_policy',
+    ], ids=['lin', 'fnn'],
+    indirect=True
 )
 def test_script_feedforward(env, policy):
     # Generate scripted version
@@ -636,18 +662,20 @@ def test_script_feedforward(env, policy):
 @pytest.mark.recurrent_policy
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_bob'),
-        lazy_fixture('default_qbb'),
-        pytest.param(lazy_fixture('default_bop5d_bt'), marks=m_needs_bullet),
-    ], ids=['bob', 'qbb', 'bop5D']
+        'default_bob',
+        'default_qbb',
+        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    ], ids=['bob', 'qbb', 'bop5D'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'policy', [
-        lazy_fixture('rnn_policy'),
-        lazy_fixture('lstm_policy'),
-        lazy_fixture('gru_policy'),
-        lazy_fixture('adn_policy'),
-    ], ids=['rnn', 'lstm', 'gru', 'adn']
+        'rnn_policy',
+        'lstm_policy',
+        'gru_policy',
+        'adn_policy',
+    ], ids=['rnn', 'lstm', 'gru', 'adn'],
+    indirect=True
 )
 def test_script_recurrent(env, policy):
     # Generate scripted version
@@ -681,21 +709,23 @@ def test_script_recurrent(env, policy):
 @m_needs_libtorch
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_bob'),
-        lazy_fixture('default_qbb'),
-        pytest.param(lazy_fixture('default_bop5d_bt'), marks=m_needs_bullet),
-    ], ids=['bob', 'qbb', 'bop5D']
+        'default_bob',
+        'default_qbb',
+        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    ], ids=['bob', 'qbb', 'bop5D'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'policy', [
         # TimePolicy and Two-headed policies are not supported
-        lazy_fixture('linear_policy'),
-        lazy_fixture('fnn_policy'),
-        lazy_fixture('rnn_policy'),
-        lazy_fixture('lstm_policy'),
-        lazy_fixture('gru_policy'),
-        lazy_fixture('adn_policy'),
-    ], ids=['lin', 'fnn', 'rnn', 'lstm', 'gru', 'adn']
+        'linear_policy',
+        'fnn_policy',
+        'rnn_policy',
+        'lstm_policy',
+        'gru_policy',
+        'adn_policy',
+    ], ids=['lin', 'fnn', 'rnn', 'lstm', 'gru', 'adn'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'file_type', ['.pt', '.zip'], ids=['pt', 'zip']
@@ -734,21 +764,23 @@ def test_export_cpp(env, policy, tmpdir, file_type):
 @m_needs_libtorch
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_bob'),
-        lazy_fixture('default_qbb'),
-        pytest.param(lazy_fixture('default_bop5d_bt'), marks=m_needs_bullet),
-    ], ids=['bob', 'qbb', 'bop5D']
+        'default_bob',
+        'default_qbb',
+        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    ], ids=['bob', 'qbb', 'bop5D'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'policy', [
         # TimePolicy and Two-headed policies are not supported
-        lazy_fixture('linear_policy'),
-        lazy_fixture('fnn_policy'),
-        lazy_fixture('rnn_policy'),
-        lazy_fixture('lstm_policy'),
-        lazy_fixture('gru_policy'),
-        lazy_fixture('adn_policy'),
-    ], ids=['lin', 'fnn', 'rnn', 'lstm', 'gru', 'adn']
+        'linear_policy',
+        'fnn_policy',
+        'rnn_policy',
+        'lstm_policy',
+        'gru_policy',
+        'adn_policy',
+    ], ids=['lin', 'fnn', 'rnn', 'lstm', 'gru', 'adn'],
+    indirect=True
 )
 def test_export_rcspysim(env, policy, tmpdir):
     from rcsenv import ControlPolicy
