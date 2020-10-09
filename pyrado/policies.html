@@ -212,7 +212,7 @@ on Hierarchical Dynamical Systems”, IROS, 2012</p>
 <dl class="py method">
 <dt id="pyrado.policies.adn.ADNPolicy.capacity">
 <em class="property">property </em><code class="sig-name descname">capacity</code><a class="headerlink" href="#pyrado.policies.adn.ADNPolicy.capacity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the capacity parameter (exists for capacity-based dynamics functions), else return <cite>None</cite>.</p>
+<dd><p>Get the time scale parameter (exists for capacity-based dynamics functions), else return <cite>None</cite>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -504,7 +504,7 @@ The default implementation simply calls <cite>forward()</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rollout</strong> – complete rollout</p></li>
+<li><p><strong>rollout</strong> – recorded, complete rollout</p></li>
 <li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks.
 Defaults to ‘hidden_states’. Change for value functions.</p></li>
 </ul>
@@ -2132,13 +2132,13 @@ registered hooks while the latter silently ignores them.</p>
 <p>Policy architecture which has a common body and two heads that have a separate last layer</p>
 <dl class="py method">
 <dt id="pyrado.policies.two_headed.TwoHeadedGRUPolicy.evaluate">
-<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">hidden_states_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'hidden_states'</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>torch.Tensor<span class="p">, </span>torch.Tensor<span class="p">]</span><a class="reference internal" href="_modules/pyrado/policies/two_headed.html#TwoHeadedGRUPolicy.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.two_headed.TwoHeadedGRUPolicy.evaluate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollout</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">hidden_states_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'hidden_states'</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>torch.Tensor<span class="p">, </span>torch.Tensor<span class="p">]</span><a class="reference internal" href="_modules/pyrado/policies/two_headed.html#TwoHeadedGRUPolicy.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.two_headed.TwoHeadedGRUPolicy.evaluate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Re-evaluate the given rollout and return a derivable action tensor.
 The default implementation simply calls <cite>forward()</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rollout</strong> – complete rollout</p></li>
+<li><p><strong>rollout</strong> – recorded, complete rollout</p></li>
 <li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks.
 Defaults to ‘hidden_states’. Change for value functions.</p></li>
 </ul>
