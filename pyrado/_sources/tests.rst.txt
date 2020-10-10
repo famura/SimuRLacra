@@ -45,15 +45,6 @@ test\_domain\_randomization
    :show-inheritance:
 
 
-test\_dummy
------------
-
-.. automodule:: tests.test_dummy
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
 test\_environments
 ------------------
 

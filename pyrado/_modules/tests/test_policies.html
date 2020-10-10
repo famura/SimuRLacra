@@ -224,74 +224,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">RenderMode</span>
 
-<div class="viewcode-block" id="default_bob"><a class="viewcode-back" href="../../tests.html#tests.test_policies.default_bob">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
-<span class="k">def</span> <span class="nf">default_bob</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">DefaultEnvs</span><span class="o">.</span><span class="n">default_bob</span><span class="p">()</span></div>
 
-
-<div class="viewcode-block" id="default_fs"><a class="viewcode-back" href="../../tests.html#tests.test_policies.default_fs">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
-<span class="k">def</span> <span class="nf">default_fs</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">DefaultPolicies</span><span class="o">.</span><span class="n">default_fs</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="idlepol_bobspec"><a class="viewcode-back" href="../../tests.html#tests.test_policies.idlepol_bobspec">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">,</span>
-                <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;idlepol_bob_default&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">idlepol_bobspec</span><span class="p">(</span><span class="n">default_bob</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">IdlePolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">default_bob</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="dummypol_bobspec"><a class="viewcode-back" href="../../tests.html#tests.test_policies.dummypol_bobspec">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">,</span>
-                <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;dummypol_bob_default&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">dummypol_bobspec</span><span class="p">(</span><span class="n">default_bob</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">DummyPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">default_bob</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="linpol_bobspec"><a class="viewcode-back" href="../../tests.html#tests.test_policies.linpol_bobspec">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">,</span>
-                <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;linpol_bob_default&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">linpol_bobspec</span><span class="p">(</span><span class="n">default_bob</span><span class="p">,</span> <span class="n">default_fs</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">LinearPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">default_bob</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">feats</span><span class="o">=</span><span class="n">default_fs</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="fnnpol_bobspec"><a class="viewcode-back" href="../../tests.html#tests.test_policies.fnnpol_bobspec">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">,</span>
-                <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;fnnpol_bob_default&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">fnnpol_bobspec</span><span class="p">(</span><span class="n">default_bob</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">default_bob</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_sizes</span><span class="o">=</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="cuda_fnnpol_bobspec"><a class="viewcode-back" href="../../tests.html#tests.test_policies.cuda_fnnpol_bobspec">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">,</span>
-                <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;cuda_fnnpol_bob_default&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">cuda_fnnpol_bobspec</span><span class="p">(</span><span class="n">default_bob</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">default_bob</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_sizes</span><span class="o">=</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">,</span> <span class="n">use_cuda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="rnnpol_bobspec"><a class="viewcode-back" href="../../tests.html#tests.test_policies.rnnpol_bobspec">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">,</span>
-                <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rnnpol_bob_default&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">rnnpol_bobspec</span><span class="p">(</span><span class="n">default_bob</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">RNNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">default_bob</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="cuda_rnnpol_bobspec"><a class="viewcode-back" href="../../tests.html#tests.test_policies.cuda_rnnpol_bobspec">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">,</span>
-                <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;cuda_rnnpol_bob_default&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">cuda_rnnpol_bobspec</span><span class="p">(</span><span class="n">default_bob</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">RNNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">default_bob</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">,</span> <span class="n">use_cuda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="lstmpol_bobspec"><a class="viewcode-back" href="../../tests.html#tests.test_policies.lstmpol_bobspec">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">,</span>
-                <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lstmpol_bob_default&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">lstmpol_bobspec</span><span class="p">(</span><span class="n">default_bob</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">LSTMPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">default_bob</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="grupol_bobspec"><a class="viewcode-back" href="../../tests.html#tests.test_policies.grupol_bobspec">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">,</span>
-                <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;grupol_bob_default&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">grupol_bobspec</span><span class="p">(</span><span class="n">default_bob</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">GRUPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">default_bob</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="adnpol_bobspec"><a class="viewcode-back" href="../../tests.html#tests.test_policies.adnpol_bobspec">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">,</span>
-                <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;adnpol_bob_default&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">adnpol_bobspec</span><span class="p">(</span><span class="n">default_bob</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">ADNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">default_bob</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">default_bob</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">activation_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">,</span>
-                     <span class="n">potentials_dyn_fcn</span><span class="o">=</span><span class="n">pd_cubic</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_simple_feature_stack"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_simple_feature_stack">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">features</span>
@@ -537,13 +470,13 @@
     <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span><span class="p">,</span> <span class="n">some_values</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="test_feedforward_policy_one_step"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_feedforward_policy_one_step">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="n">lazy_fixture</span><span class="p">([</span>
-    <span class="s1">&#39;idlepol_bobspec&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;dummypol_bobspec&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;linpol_bobspec&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;fnnpol_bobspec&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;cuda_fnnpol_bobspec&#39;</span>
-<span class="p">]),</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;idle&#39;</span><span class="p">,</span> <span class="s1">&#39;dummy&#39;</span><span class="p">,</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;cuda_fnn&#39;</span><span class="p">])</span>
+<div class="viewcode-block" id="test_feedforward_policy_one_step"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_feedforward_policy_one_step">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">([</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">],</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;idle_policy&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;dummy_policy&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;linear_policy&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn_policy&#39;</span><span class="p">)</span>
+<span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;idle&#39;</span><span class="p">,</span> <span class="s1">&#39;dummy&#39;</span><span class="p">,</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">],</span>
+     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_feedforward_policy_one_step</span><span class="p">(</span><span class="n">policy</span><span class="p">):</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()</span>  <span class="c1"># shape = (4,)</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
@@ -605,10 +538,10 @@
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">act</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hid</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="test_any_policy_batching"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_any_policy_batching">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="n">lazy_fixture</span><span class="p">([</span>
-    <span class="s1">&#39;linpol_bobspec&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;fnnpol_bobspec&#39;</span>
-<span class="p">]),</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">])</span>
+<div class="viewcode-block" id="test_any_policy_batching"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_any_policy_batching">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">([</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">],</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;linear_policy&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn_policy&#39;</span><span class="p">)</span>
+<span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;batch_size&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">test_any_policy_batching</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">policy</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)])</span>  <span class="c1"># shape = (batch_size, 4)</span>
@@ -617,50 +550,37 @@
     <span class="k">assert</span> <span class="n">act</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">batch_size</span></div>
 
 
-<div class="viewcode-block" id="test_linear_policy_one_step_wo_exploration"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_linear_policy_one_step_wo_exploration">[docs]</a><span class="k">def</span> <span class="nf">test_linear_policy_one_step_wo_exploration</span><span class="p">(</span><span class="n">linpol_bobspec</span><span class="p">):</span>
-    <span class="n">obs</span> <span class="o">=</span> <span class="n">linpol_bobspec</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()</span>  <span class="c1"># shape = (4,)</span>
+<div class="viewcode-block" id="test_linear_policy_one_step_wo_exploration"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_linear_policy_one_step_wo_exploration">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">([</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">],</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;linear_policy&#39;</span><span class="p">)</span>
+<span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_linear_policy_one_step_wo_exploration</span><span class="p">(</span><span class="n">policy</span><span class="p">):</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()</span>  <span class="c1"># shape = (4,)</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-    <span class="n">val</span> <span class="o">=</span> <span class="n">linpol_bobspec</span><span class="o">.</span><span class="n">eval_feats</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">eval_feats</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
     <span class="c1"># __call__ uses eval_feats</span>
-    <span class="n">act</span> <span class="o">=</span> <span class="n">linpol_bobspec</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+    <span class="n">act</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">act</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="test_rnn_policy"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_rnn_policy">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">recurrent_policy</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;rnn_policy&#39;</span><span class="p">,</span> <span class="n">lazy_fixture</span><span class="p">([</span>
-    <span class="s1">&#39;rnnpol_bobspec&#39;</span>
-<span class="p">]),</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_rnn_policy</span><span class="p">(</span><span class="n">default_bob</span><span class="p">,</span> <span class="n">rnn_policy</span><span class="p">):</span>
-    <span class="n">ro</span> <span class="o">=</span> <span class="n">rollout</span><span class="p">(</span><span class="n">default_bob</span><span class="p">,</span> <span class="n">rnn_policy</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="n">RenderMode</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">StepSequence</span><span class="p">)</span></div>
-
-
 <div class="viewcode-block" id="test_lstm_policy"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_lstm_policy">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">recurrent_policy</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;lstm_policy&#39;</span><span class="p">,</span> <span class="n">lazy_fixture</span><span class="p">([</span>
-    <span class="s1">&#39;lstmpol_bobspec&#39;</span>
-<span class="p">]),</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_lstm_policy</span><span class="p">(</span><span class="n">default_bob</span><span class="p">,</span> <span class="n">lstm_policy</span><span class="p">):</span>
-    <span class="n">ro</span> <span class="o">=</span> <span class="n">rollout</span><span class="p">(</span><span class="n">default_bob</span><span class="p">,</span> <span class="n">lstm_policy</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="n">RenderMode</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">StepSequence</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="test_gru_policy"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_gru_policy">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">recurrent_policy</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;gru_policy&#39;</span><span class="p">,</span> <span class="n">lazy_fixture</span><span class="p">([</span>
-    <span class="s1">&#39;grupol_bobspec&#39;</span>
-<span class="p">]),</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_gru_policy</span><span class="p">(</span><span class="n">default_bob</span><span class="p">,</span> <span class="n">gru_policy</span><span class="p">):</span>
-    <span class="n">ro</span> <span class="o">=</span> <span class="n">rollout</span><span class="p">(</span><span class="n">default_bob</span><span class="p">,</span> <span class="n">gru_policy</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="n">RenderMode</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">([</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">],</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm_policy&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn_policy&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;gru_policy&#39;</span><span class="p">)</span>
+<span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lstm_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;gru_bob&#39;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_lstm_policy</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
+    <span class="n">ro</span> <span class="o">=</span> <span class="n">rollout</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="n">RenderMode</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">StepSequence</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_recurrent_policy"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_recurrent_policy">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">recurrent_policy</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="n">lazy_fixture</span><span class="p">([</span>
-    <span class="s1">&#39;rnnpol_bobspec&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;lstmpol_bobspec&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;grupol_bobspec&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;adnpol_bobspec&#39;</span><span class="p">,</span>
-    <span class="p">]),</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">([</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">],</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm_policy&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn_policy&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;gru_policy&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;adn_policy&#39;</span><span class="p">)</span>
+<span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lstm_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;gru_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;adn_bob&#39;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_recurrent_policy</span><span class="p">(</span><span class="n">policy</span><span class="p">):</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()</span>  <span class="c1"># shape = (4,)</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
@@ -988,30 +908,6 @@
         <span class="n">act_script</span> <span class="o">=</span> <span class="n">scripted</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
         <span class="n">act_cpp</span> <span class="o">=</span> <span class="n">cpp</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">policy</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">act_cpp</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">act_script</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="test_cuda"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_cuda">[docs]</a><span class="nd">@m_needs_cuda</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="n">lazy_fixture</span><span class="p">([</span>
-    <span class="s1">&#39;cuda_fnnpol_bobspec&#39;</span>
-<span class="p">]),</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;cuda_fnn&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_cuda</span><span class="p">(</span><span class="n">policy</span><span class="p">):</span>
-    <span class="n">obs</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()</span>  <span class="c1"># shape = (4,)</span>
-    <span class="n">obs</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-    <span class="n">act</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="s1">&#39;cuda&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">act</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">act</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="test_cuda_rnn"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_cuda_rnn">[docs]</a><span class="nd">@m_needs_cuda</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="n">lazy_fixture</span><span class="p">([</span>
-    <span class="s1">&#39;cuda_rnnpol_bobspec&#39;</span>
-<span class="p">]),</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;cuda_rnn&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_cuda_rnn</span><span class="p">(</span><span class="n">policy</span><span class="p">):</span>
-    <span class="n">obs</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()</span>  <span class="c1"># shape = (4,)</span>
-    <span class="n">obs</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-    <span class="n">act</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="s1">&#39;cuda&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">act</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">act</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

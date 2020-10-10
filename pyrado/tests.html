@@ -118,7 +118,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-tests.test_algorithm_utils">test_algorithm_utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-tests.test_algorithms">test_algorithms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-tests.test_domain_randomization">test_domain_randomization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-tests.test_dummy">test_dummy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-tests.test_environments">test_environments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-tests.test_exploration">test_exploration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-tests.test_logger">test_logger</a></li>
@@ -496,7 +495,7 @@
 
 <dl class="py function">
 <dt id="tests.test_algorithms.test_actor_critic">
-<code class="sig-name descname">test_actor_critic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">linear_policy</span></em>, <em class="sig-param"><span class="n">algo</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em>, <em class="sig-param"><span class="n">value_fcn_type</span></em>, <em class="sig-param"><span class="n">use_cuda</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_actor_critic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_actor_critic" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">test_actor_critic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em>, <em class="sig-param"><span class="n">algo</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em>, <em class="sig-param"><span class="n">value_fcn_type</span></em>, <em class="sig-param"><span class="n">use_cuda</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_actor_critic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_actor_critic" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -511,7 +510,7 @@
 
 <dl class="py function">
 <dt id="tests.test_algorithms.test_param_expl">
-<code class="sig-name descname">test_param_expl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">linear_policy</span></em>, <em class="sig-param"><span class="n">algo_class</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_param_expl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_param_expl" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">test_param_expl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em>, <em class="sig-param"><span class="n">algo_class</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_param_expl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_param_expl" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -531,7 +530,7 @@
 
 <dl class="py function">
 <dt id="tests.test_algorithms.test_svpg">
-<code class="sig-name descname">test_svpg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">linear_policy</span></em>, <em class="sig-param"><span class="n">actor_hparam</span></em>, <em class="sig-param"><span class="n">value_fcn_hparam</span></em>, <em class="sig-param"><span class="n">critic_hparam</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_svpg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_svpg" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">test_svpg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em>, <em class="sig-param"><span class="n">actor_hparam</span></em>, <em class="sig-param"><span class="n">value_fcn_hparam</span></em>, <em class="sig-param"><span class="n">critic_hparam</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_svpg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_svpg" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -575,60 +574,6 @@
 <dl class="py function">
 <dt id="tests.test_domain_randomization.test_setting_dp_vals">
 <code class="sig-name descname">test_setting_dp_vals</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_domain_randomization.html#test_setting_dp_vals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_domain_randomization.test_setting_dp_vals" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-<div class="section" id="module-tests.test_dummy">
-<span id="test-dummy"></span><h2>test_dummy<a class="headerlink" href="#module-tests.test_dummy" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="tests.test_dummy.DummyFixture">
-<em class="property">class </em><code class="sig-name descname">DummyFixture</code><a class="reference internal" href="_modules/tests/test_dummy.html#DummyFixture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_dummy.DummyFixture" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py attribute">
-<dt id="tests.test_dummy.DummyFixture.counter">
-<code class="sig-name descname">counter</code><em class="property"> = 0</em><a class="headerlink" href="#tests.test_dummy.DummyFixture.counter" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_dummy.dummy">
-<code class="sig-name descname">dummy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_dummy.html#dummy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_dummy.dummy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_dummy.single_fixed_dummy">
-<code class="sig-name descname">single_fixed_dummy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_dummy.html#single_fixed_dummy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_dummy.single_fixed_dummy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_dummy.test_for">
-<code class="sig-name descname">test_for</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_dummy.html#test_for"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_dummy.test_for" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_dummy.test_list">
-<code class="sig-name descname">test_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_dummy.html#test_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_dummy.test_list" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_dummy.test_with_fixture">
-<code class="sig-name descname">test_with_fixture</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dummy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_dummy.html#test_with_fixture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_dummy.test_with_fixture" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_dummy.test_with_lazy_params">
-<code class="sig-name descname">test_with_lazy_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span></em>, <em class="sig-param"><span class="n">dummyparam</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_dummy.html#test_with_lazy_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_dummy.test_with_lazy_params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_dummy.test_with_params">
-<code class="sig-name descname">test_with_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span></em>, <em class="sig-param"><span class="n">dummy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_dummy.html#test_with_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_dummy.test_with_params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_dummy.test_with_session_fixture">
-<code class="sig-name descname">test_with_session_fixture</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span></em>, <em class="sig-param"><span class="n">single_fixed_dummy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_dummy.html#test_with_session_fixture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_dummy.test_with_session_fixture" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -717,78 +662,8 @@
 <div class="section" id="module-tests.test_policies">
 <span id="test-policies"></span><h2>test_policies<a class="headerlink" href="#module-tests.test_policies" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="tests.test_policies.adnpol_bobspec">
-<code class="sig-name descname">adnpol_bobspec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_bob</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#adnpol_bobspec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.adnpol_bobspec" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_policies.cuda_fnnpol_bobspec">
-<code class="sig-name descname">cuda_fnnpol_bobspec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_bob</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#cuda_fnnpol_bobspec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.cuda_fnnpol_bobspec" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_policies.cuda_rnnpol_bobspec">
-<code class="sig-name descname">cuda_rnnpol_bobspec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_bob</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#cuda_rnnpol_bobspec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.cuda_rnnpol_bobspec" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_policies.default_bob">
-<code class="sig-name descname">default_bob</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#default_bob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.default_bob" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_policies.default_fs">
-<code class="sig-name descname">default_fs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#default_fs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.default_fs" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_policies.dummypol_bobspec">
-<code class="sig-name descname">dummypol_bobspec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_bob</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#dummypol_bobspec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.dummypol_bobspec" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_policies.fnnpol_bobspec">
-<code class="sig-name descname">fnnpol_bobspec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_bob</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#fnnpol_bobspec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.fnnpol_bobspec" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_policies.grupol_bobspec">
-<code class="sig-name descname">grupol_bobspec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_bob</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#grupol_bobspec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.grupol_bobspec" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_policies.idlepol_bobspec">
-<code class="sig-name descname">idlepol_bobspec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_bob</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#idlepol_bobspec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.idlepol_bobspec" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_policies.linpol_bobspec">
-<code class="sig-name descname">linpol_bobspec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_bob</span></em>, <em class="sig-param"><span class="n">default_fs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#linpol_bobspec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.linpol_bobspec" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_policies.lstmpol_bobspec">
-<code class="sig-name descname">lstmpol_bobspec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_bob</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#lstmpol_bobspec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.lstmpol_bobspec" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_policies.rnnpol_bobspec">
-<code class="sig-name descname">rnnpol_bobspec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_bob</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#rnnpol_bobspec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.rnnpol_bobspec" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt id="tests.test_policies.test_any_policy_batching">
 <code class="sig-name descname">test_any_policy_batching</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy</span></em>, <em class="sig-param"><span class="n">batch_size</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_any_policy_batching"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_any_policy_batching" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_policies.test_cuda">
-<code class="sig-name descname">test_cuda</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_cuda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_cuda" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_policies.test_cuda_rnn">
-<code class="sig-name descname">test_cuda_rnn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_cuda_rnn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_cuda_rnn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -812,11 +687,6 @@
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="tests.test_policies.test_gru_policy">
-<code class="sig-name descname">test_gru_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_bob</span></em>, <em class="sig-param"><span class="n">gru_policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_gru_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_gru_policy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt id="tests.test_policies.test_hidden_state_packing_batch">
 <code class="sig-name descname">test_hidden_state_packing_batch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_hidden_state_packing_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_hidden_state_packing_batch" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -828,12 +698,12 @@
 
 <dl class="py function">
 <dt id="tests.test_policies.test_linear_policy_one_step_wo_exploration">
-<code class="sig-name descname">test_linear_policy_one_step_wo_exploration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">linpol_bobspec</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_linear_policy_one_step_wo_exploration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_linear_policy_one_step_wo_exploration" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">test_linear_policy_one_step_wo_exploration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_linear_policy_one_step_wo_exploration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_linear_policy_one_step_wo_exploration" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="tests.test_policies.test_lstm_policy">
-<code class="sig-name descname">test_lstm_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_bob</span></em>, <em class="sig-param"><span class="n">lstm_policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_lstm_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_lstm_policy" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">test_lstm_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_lstm_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_lstm_policy" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -904,11 +774,6 @@
 <dl class="py function">
 <dt id="tests.test_policies.test_rff_policy_serial">
 <code class="sig-name descname">test_rff_policy_serial</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">num_feat_per_dim</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_rff_policy_serial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_rff_policy_serial" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_policies.test_rnn_policy">
-<code class="sig-name descname">test_rnn_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_bob</span></em>, <em class="sig-param"><span class="n">rnn_policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_rnn_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_rnn_policy" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
