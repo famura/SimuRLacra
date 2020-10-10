@@ -47,74 +47,7 @@ from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import RenderMode
 
-@pytest.fixture
-def default_bob():
-    return DefaultEnvs.default_bob()
 
-
-@pytest.fixture
-def default_fs():
-    return DefaultPolicies.default_fs()
-
-@pytest.fixture(scope='function',
-                ids=['idlepol_bob_default'])
-def idlepol_bobspec(default_bob):
-    return IdlePolicy(spec=default_bob.spec)
-
-
-@pytest.fixture(scope='function',
-                ids=['dummypol_bob_default'])
-def dummypol_bobspec(default_bob):
-    return DummyPolicy(spec=default_bob.spec)
-
-
-@pytest.fixture(scope='function',
-                ids=['linpol_bob_default'])
-def linpol_bobspec(default_bob, default_fs):
-    return LinearPolicy(spec=default_bob.spec, feats=default_fs)
-
-
-@pytest.fixture(scope='function',
-                ids=['fnnpol_bob_default'])
-def fnnpol_bobspec(default_bob):
-    return FNNPolicy(spec=default_bob.spec, hidden_sizes=(32, 32), hidden_nonlin=to.tanh)
-
-
-@pytest.fixture(scope='function',
-                ids=['cuda_fnnpol_bob_default'])
-def cuda_fnnpol_bobspec(default_bob):
-    return FNNPolicy(spec=default_bob.spec, hidden_sizes=(32, 32), hidden_nonlin=to.tanh, use_cuda=True)
-
-
-@pytest.fixture(scope='function',
-                ids=['rnnpol_bob_default'])
-def rnnpol_bobspec(default_bob):
-    return RNNPolicy(spec=default_bob.spec, hidden_size=4, num_recurrent_layers=3, hidden_nonlin='tanh')
-
-
-@pytest.fixture(scope='function',
-                ids=['cuda_rnnpol_bob_default'])
-def cuda_rnnpol_bobspec(default_bob):
-    return RNNPolicy(spec=default_bob.spec, hidden_size=4, num_recurrent_layers=3, hidden_nonlin='tanh', use_cuda=True)
-
-
-@pytest.fixture(scope='function',
-                ids=['lstmpol_bob_default'])
-def lstmpol_bobspec(default_bob):
-    return LSTMPolicy(spec=default_bob.spec, hidden_size=4, num_recurrent_layers=3)
-
-
-@pytest.fixture(scope='function',
-                ids=['grupol_bob_default'])
-def grupol_bobspec(default_bob):
-    return GRUPolicy(spec=default_bob.spec, hidden_size=4, num_recurrent_layers=3)
-
-
-@pytest.fixture(scope='function',
-                ids=['adnpol_bob_default'])
-def adnpol_bobspec(default_bob):
-    return ADNPolicy(spec=default_bob.spec, dt=default_bob.dt, activation_nonlin=to.sigmoid,
-                     potentials_dyn_fcn=pd_cubic)
 
 
 @pytest.mark.features
@@ -360,13 +293,13 @@ def test_parameterized_policies_init_param(env, policy):
     to.testing.assert_allclose(policy.param_values, some_values)
 
 
-@pytest.mark.parametrize('policy', lazy_fixture([
-    'idlepol_bobspec',
-    'dummypol_bobspec',
-    'linpol_bobspec',
-    'fnnpol_bobspec',
-    'cuda_fnnpol_bobspec'
-]), ids=['idle', 'dummy', 'linear', 'fnn', 'cuda_fnn'])
+@pytest.mark.parametrize(['env', 'policy'], [
+    ('default_bob', 'idle_policy'),
+    ('default_bob', 'dummy_policy'),
+    ('default_bob', 'linear_policy'),
+    ('default_bob', 'fnn_policy')
+], ids=['idle', 'dummy', 'linear', 'fnn'],
+     indirect=True)
 def test_feedforward_policy_one_step(policy):
     obs = policy.env_spec.obs_space.sample_uniform()  # shape = (4,)
     obs = to.from_numpy(obs)
@@ -428,10 +361,10 @@ def test_recurrent_policy_one_step(env, policy):
     assert isinstance(act, to.Tensor) and isinstance(hid, to.Tensor)
 
 
-@pytest.mark.parametrize('policy', lazy_fixture([
-    'linpol_bobspec',
-    'fnnpol_bobspec'
-]), ids=['linear', 'fnn'])
+@pytest.mark.parametrize(['env', 'policy'], [
+    ('default_bob', 'linear_policy'),
+    ('default_bob', 'fnn_policy')
+], ids=['linear', 'fnn'], indirect=True)
 @pytest.mark.parametrize('batch_size', [1, 2, 3])
 def test_any_policy_batching(policy, batch_size):
     obs = np.stack([policy.env_spec.obs_space.sample_uniform() for _ in range(batch_size)])  # shape = (batch_size, 4)
@@ -440,50 +373,37 @@ def test_any_policy_batching(policy, batch_size):
     assert act.shape[0] == batch_size
 
 
-def test_linear_policy_one_step_wo_exploration(linpol_bobspec):
-    obs = linpol_bobspec.env_spec.obs_space.sample_uniform()  # shape = (4,)
+@pytest.mark.parametrize(['env', 'policy'], [
+    ('default_bob', 'linear_policy')
+], ids=['linear'], indirect=True)
+def test_linear_policy_one_step_wo_exploration(policy):
+    obs = policy.env_spec.obs_space.sample_uniform()  # shape = (4,)
     obs = to.from_numpy(obs)
-    val = linpol_bobspec.eval_feats(obs)
+    val = policy.eval_feats(obs)
     assert isinstance(val, to.Tensor)
     # __call__ uses eval_feats
-    act = linpol_bobspec(obs)
+    act = policy(obs)
     assert isinstance(act, to.Tensor)
 
 
 @pytest.mark.recurrent_policy
-@pytest.mark.parametrize('rnn_policy', lazy_fixture([
-    'rnnpol_bobspec'
-]), ids=['bob'])
-def test_rnn_policy(default_bob, rnn_policy):
-    ro = rollout(default_bob, rnn_policy, render_mode=RenderMode(text=True))
+@pytest.mark.parametrize(['env', 'policy'], [
+    ('default_bob', 'lstm_policy'),
+    ('default_bob', 'rnn_policy'),
+    ('default_bob', 'gru_policy')
+], ids=['lstm_bob', 'rnn_bob', 'gru_bob'], indirect=True)
+def test_lstm_policy(env, policy):
+    ro = rollout(env, policy, render_mode=RenderMode(text=True))
     assert isinstance(ro, StepSequence)
 
 
 @pytest.mark.recurrent_policy
-@pytest.mark.parametrize('lstm_policy', lazy_fixture([
-    'lstmpol_bobspec'
-]), ids=['bob'])
-def test_lstm_policy(default_bob, lstm_policy):
-    ro = rollout(default_bob, lstm_policy, render_mode=RenderMode(text=True))
-    assert isinstance(ro, StepSequence)
-
-
-@pytest.mark.recurrent_policy
-@pytest.mark.parametrize('gru_policy', lazy_fixture([
-    'grupol_bobspec'
-]), ids=['bob'])
-def test_gru_policy(default_bob, gru_policy):
-    ro = rollout(default_bob, gru_policy, render_mode=RenderMode(text=True))
-    assert isinstance(ro, StepSequence)
-
-
-@pytest.mark.recurrent_policy
-@pytest.mark.parametrize('policy', lazy_fixture([
-    'rnnpol_bobspec',
-    'lstmpol_bobspec',
-    'grupol_bobspec',
-    'adnpol_bobspec',
-    ]), ids=['rnn', 'lstm', 'gru', 'adn'], indirect=True)
+@pytest.mark.parametrize(['env', 'policy'], [
+    ('default_bob', 'lstm_policy'),
+    ('default_bob', 'rnn_policy'),
+    ('default_bob', 'gru_policy'),
+    ('default_bob', 'adn_policy')
+], ids=['lstm_bob', 'rnn_bob', 'gru_bob', 'adn_bob'], indirect=True)
 def test_recurrent_policy(policy):
     obs = policy.env_spec.obs_space.sample_uniform()  # shape = (4,)
     obs = to.from_numpy(obs)
@@ -811,27 +731,3 @@ def test_export_rcspysim(env, policy, tmpdir):
         act_script = scripted(to.from_numpy(obs)).numpy()
         act_cpp = cpp(obs, policy.env_spec.act_space.flat_dim)
         assert act_cpp == pytest.approx(act_script)
-
-
-@m_needs_cuda
-@pytest.mark.parametrize('policy', lazy_fixture([
-    'cuda_fnnpol_bobspec'
-]), ids=['cuda_fnn'])
-def test_cuda(policy):
-    obs = policy.env_spec.obs_space.sample_uniform()  # shape = (4,)
-    obs = to.from_numpy(obs)
-    act = policy(obs)
-    assert 'cuda' in str(act.device)
-    assert isinstance(act, to.Tensor)
-
-
-@m_needs_cuda
-@pytest.mark.parametrize('policy', lazy_fixture([
-    'cuda_rnnpol_bobspec'
-]), ids=['cuda_rnn'])
-def test_cuda_rnn(policy):
-    obs = policy.env_spec.obs_space.sample_uniform()  # shape = (4,)
-    obs = to.from_numpy(obs)
-    act, _ = policy(obs)
-    assert 'cuda' in str(act.device)
-    assert isinstance(act, to.Tensor)

@@ -148,7 +148,14 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
         'default_bob'
     ],
     ids=['bob'],
-    indirect= True
+    indirect=True
+)
+@pytest.mark.parametrize(
+    'policy', [
+        'linear_policy'
+    ],
+    ids=['linear'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'algo_class, algo_hparam', [
@@ -165,7 +172,7 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
     ],
     ids=['hc_normal', 'hc_hyper', 'nes', 'nes_tr', 'nes_symm', 'pepg', 'power', 'cem-fcov', 'cem-dcov', 'reps']
 )
-def test_param_expl(ex_dir, env, linear_policy, algo_class, algo_hparam):
+def test_param_expl(ex_dir, env, policy, algo_class, algo_hparam):
     # Hyper-parameters
     common_hparam = dict(max_iter=3, num_rollouts=4)
     common_hparam.update(algo_hparam)
@@ -185,6 +192,13 @@ def test_param_expl(ex_dir, env, linear_policy, algo_class, algo_hparam):
     indirect=True
 )
 @pytest.mark.parametrize(
+    'policy', [
+        'linear_policy'
+    ],
+    ids=['linear'],
+    indirect=True
+)
+@pytest.mark.parametrize(
     'actor_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)], ids=['casual']
 )
 @pytest.mark.parametrize(
@@ -196,7 +210,7 @@ def test_param_expl(ex_dir, env, linear_policy, algo_class, algo_hparam):
 @pytest.mark.parametrize(
     'algo_hparam', [dict(max_iter=3, num_particles=3, temperature=10, lr=1e-3, horizon=50)], ids=['casual']
 )
-def test_svpg(ex_dir, env, linear_policy, actor_hparam, value_fcn_hparam, critic_hparam, algo_hparam):
+def test_svpg(ex_dir, env, policy, actor_hparam, value_fcn_hparam, critic_hparam, algo_hparam):
     # Create algorithm and train
     particle_hparam = dict(actor=actor_hparam, value_fcn=value_fcn_hparam, critic=critic_hparam)
     algo = SVPG(ex_dir, env, particle_hparam, **algo_hparam)
@@ -290,6 +304,12 @@ def test_spota_ppo(ex_dir, env, spota_hparam):
     indirect=True
 )
 @pytest.mark.parametrize(
+    'policy', [
+        'linear_policy'
+    ], ids=['linear'],
+    indirect=True
+)
+@pytest.mark.parametrize(
     'algo, algo_hparam',
     [
         (A2C, dict()),
@@ -307,7 +327,7 @@ def test_spota_ppo(ex_dir, env, spota_hparam):
     ids=['vf_fnn_plain', 'vf_fnn', 'vf_rnn']
 )
 @pytest.mark.parametrize('use_cuda', [False, True], ids=['cpu', 'cuda'])
-def test_actor_critic(ex_dir, env, linear_policy, algo, algo_hparam, value_fcn_type, use_cuda):
+def test_actor_critic(ex_dir, env, policy, algo, algo_hparam, value_fcn_type, use_cuda):
     # Create value function
     if value_fcn_type == 'fnn-plain':
         value_fcn = FNN(

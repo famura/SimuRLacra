@@ -31,7 +31,6 @@ import torch as to
 import numpy as np
 from copy import deepcopy
 
-from pytest_lazyfixture import lazy_fixture
 from pyrado.domain_randomization.domain_parameter import NormalDomainParam, MultivariateNormalDomainParam, \
     BernoulliDomainParam
 from pyrado.domain_randomization.utils import param_grid
@@ -153,20 +152,21 @@ def test_param_grid():
 
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_bob'),
-        lazy_fixture('default_omo'),
-        lazy_fixture('default_pend'),
-        lazy_fixture('default_qbb'),
-        lazy_fixture('default_qcpst'),
-        lazy_fixture('default_qcpsu'),
-        pytest.param(lazy_fixture('default_bop2d_bt'), marks=m_needs_bullet),
-        pytest.param(lazy_fixture('default_bop5d_bt'), marks=m_needs_bullet),
-        pytest.param(lazy_fixture('default_blpos_bt'), marks=m_needs_bullet),
-        pytest.param(lazy_fixture('default_cth'), marks=m_needs_mujoco),
-        pytest.param(lazy_fixture('default_hop'), marks=m_needs_mujoco),
-        pytest.param(lazy_fixture('default_wambic'), marks=m_needs_mujoco),
+        'default_bob',
+        'default_omo',
+        'default_pend',
+        'default_qbb',
+        'default_qcpst',
+        'default_qcpsu',
+        pytest.param('default_bop2d_bt', marks=m_needs_bullet),
+        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+        pytest.param('default_blpos_bt', marks=m_needs_bullet),
+        pytest.param('default_cth', marks=m_needs_mujoco),
+        pytest.param('default_hop', marks=m_needs_mujoco),
+        pytest.param('default_wambic', marks=m_needs_mujoco),
     ]
-    , ids=['bob', 'omo', 'pend', 'qbb', 'qcp-st', 'qcp-su', 'bop2d', 'bop5d', 'bl_pos', 'cth', 'hop', 'wam-bic']
+    , ids=['bob', 'omo', 'pend', 'qbb', 'qcp-st', 'qcp-su', 'bop2d', 'bop5d', 'bl_pos', 'cth', 'hop', 'wam-bic'],
+    indirect=True
 )
 def test_setting_dp_vals(env):
     # Loop over all possible domain parameters and set them to a random value

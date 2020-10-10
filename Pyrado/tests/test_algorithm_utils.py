@@ -30,7 +30,6 @@ import pytest
 import numpy as np
 import torch as to
 from copy import deepcopy
-from pytest_lazyfixture import lazy_fixture
 from torch.distributions.normal import Normal
 
 import pyrado
