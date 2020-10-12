@@ -178,7 +178,7 @@ def test_param_expl(ex_dir, env, policy, algo_class, algo_hparam):
     common_hparam.update(algo_hparam)
 
     # Create algorithm and train
-    algo = algo_class(ex_dir, env, linear_policy, **common_hparam)
+    algo = algo_class(ex_dir, env, policy, **common_hparam)
     algo.reset()  # not necessary, but this way we can test it too
     algo.train()
     assert algo.curr_iter == algo.max_iter
@@ -370,7 +370,7 @@ def test_actor_critic(ex_dir, env, policy, algo, algo_hparam, value_fcn_type, us
     common_hparam.update(algo_hparam)
 
     # Create algorithm and train
-    algo = algo(ex_dir, env, linear_policy, critic, **common_hparam)
+    algo = algo(ex_dir, env, policy, critic, **common_hparam)
     algo.train()
     assert algo.curr_iter == algo.max_iter
 
