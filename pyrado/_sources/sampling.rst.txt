@@ -50,10 +50,10 @@ parallel\_evaluation
    :show-inheritance:
 
 
-parallel\_sampler
------------------
+parallel\_rollout\_sampler
+--------------------------
 
-.. automodule:: pyrado.sampling.parallel_sampler
+.. automodule:: pyrado.sampling.parallel_rollout_sampler
    :members:
    :undoc-members:
    :show-inheritance:

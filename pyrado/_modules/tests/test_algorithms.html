@@ -204,6 +204,7 @@
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
 <span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">pytest_lazyfixture</span> <span class="kn">import</span> <span class="n">lazy_fixture</span>
 
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.a2c</span> <span class="kn">import</span> <span class="n">A2C</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.actor_critic</span> <span class="kn">import</span> <span class="n">ActorCritic</span>
@@ -238,7 +239,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sequences</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">ValueFunctionSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
-<span class="kn">from</span> <span class="nn">tests.conftest</span> <span class="kn">import</span> <span class="n">m_needs_bullet</span><span class="p">,</span> <span class="n">policy</span>
+<span class="kn">from</span> <span class="nn">tests.conftest</span> <span class="kn">import</span> <span class="n">m_needs_bullet</span>
 
 
 <span class="c1"># Fixture providing an experiment directory</span>
@@ -251,24 +252,22 @@
 <div class="viewcode-block" id="test_snapshots_notmeta"><a class="viewcode-back" href="../../tests.html#tests.test_algorithms.test_snapshots_notmeta">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">longtime</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s1">&#39;default_qbb&#39;</span>  <span class="c1"># we just need one env to construct the fixture policies</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_qbb&#39;</span><span class="p">),</span>  <span class="c1"># we just need one env to construct the fixture policies</span>
     <span class="p">],</span>
     <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;qbb&#39;</span><span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s1">&#39;linear_policy&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;fnn_policy&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;rnn_policy&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;lstm_policy&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;gru_policy&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;adn_policy&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;thfnn_policy&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;thgru_policy&#39;</span><span class="p">,</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;linear_policy&#39;</span><span class="p">),</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;fnn_policy&#39;</span><span class="p">),</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;rnn_policy&#39;</span><span class="p">),</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;lstm_policy&#39;</span><span class="p">),</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;gru_policy&#39;</span><span class="p">),</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;adn_policy&#39;</span><span class="p">),</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;thfnn_policy&#39;</span><span class="p">),</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;thgru_policy&#39;</span><span class="p">),</span>
     <span class="p">],</span>
     <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;thfnn&#39;</span><span class="p">,</span> <span class="s1">&#39;thgru&#39;</span><span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;algo_class, algo_hparam&#39;</span><span class="p">,</span> <span class="p">[</span>
@@ -322,17 +321,8 @@
 
 <div class="viewcode-block" id="test_param_expl"><a class="viewcode-back" href="../../tests.html#tests.test_algorithms.test_param_expl">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s1">&#39;default_bob&#39;</span>
-    <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s1">&#39;linear_policy&#39;</span>
-    <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">)</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;algo_class, algo_hparam&#39;</span><span class="p">,</span> <span class="p">[</span>
@@ -349,7 +339,7 @@
     <span class="p">],</span>
     <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;hc_normal&#39;</span><span class="p">,</span> <span class="s1">&#39;hc_hyper&#39;</span><span class="p">,</span> <span class="s1">&#39;nes&#39;</span><span class="p">,</span> <span class="s1">&#39;nes_tr&#39;</span><span class="p">,</span> <span class="s1">&#39;nes_symm&#39;</span><span class="p">,</span> <span class="s1">&#39;pepg&#39;</span><span class="p">,</span> <span class="s1">&#39;power&#39;</span><span class="p">,</span> <span class="s1">&#39;cem-fcov&#39;</span><span class="p">,</span> <span class="s1">&#39;cem-dcov&#39;</span><span class="p">,</span> <span class="s1">&#39;reps&#39;</span><span class="p">]</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_param_expl</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">algo_class</span><span class="p">,</span> <span class="n">algo_hparam</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_param_expl</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">linear_policy</span><span class="p">,</span> <span class="n">algo_class</span><span class="p">,</span> <span class="n">algo_hparam</span><span class="p">):</span>
     <span class="c1"># Hyper-parameters</span>
     <span class="n">common_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">num_rollouts</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
     <span class="n">common_hparam</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">algo_hparam</span><span class="p">)</span>
@@ -363,17 +353,8 @@
 
 <div class="viewcode-block" id="test_svpg"><a class="viewcode-back" href="../../tests.html#tests.test_algorithms.test_svpg">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s1">&#39;default_bob&#39;</span>
-    <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s1">&#39;linear_policy&#39;</span>
-    <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">)</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;actor_hparam&#39;</span><span class="p">,</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;casual&#39;</span><span class="p">]</span>
@@ -387,7 +368,7 @@
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;algo_hparam&#39;</span><span class="p">,</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">num_particles</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">horizon</span><span class="o">=</span><span class="mi">50</span><span class="p">)],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;casual&#39;</span><span class="p">]</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_svpg</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">actor_hparam</span><span class="p">,</span> <span class="n">value_fcn_hparam</span><span class="p">,</span> <span class="n">critic_hparam</span><span class="p">,</span> <span class="n">algo_hparam</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_svpg</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">linear_policy</span><span class="p">,</span> <span class="n">actor_hparam</span><span class="p">,</span> <span class="n">value_fcn_hparam</span><span class="p">,</span> <span class="n">critic_hparam</span><span class="p">,</span> <span class="n">algo_hparam</span><span class="p">):</span>
     <span class="c1"># Create algorithm and train</span>
     <span class="n">particle_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">actor</span><span class="o">=</span><span class="n">actor_hparam</span><span class="p">,</span> <span class="n">value_fcn</span><span class="o">=</span><span class="n">value_fcn_hparam</span><span class="p">,</span> <span class="n">critic</span><span class="o">=</span><span class="n">critic_hparam</span><span class="p">)</span>
     <span class="n">algo</span> <span class="o">=</span> <span class="n">SVPG</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">particle_hparam</span><span class="p">,</span> <span class="o">**</span><span class="n">algo_hparam</span><span class="p">)</span>
@@ -398,9 +379,8 @@
 <div class="viewcode-block" id="test_adr"><a class="viewcode-back" href="../../tests.html#tests.test_algorithms.test_adr">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">metaalgorithm</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s1">&#39;default_qqsu&#39;</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;qq-su&#39;</span><span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_qqsu&#39;</span><span class="p">)</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;qq-su&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;subrtn_hparam&#39;</span><span class="p">,</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_epoch</span><span class="o">=</span><span class="mi">4</span><span class="p">)],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;casual&#39;</span><span class="p">]</span>
@@ -436,9 +416,8 @@
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">metaalgorithm</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s1">&#39;default_qbb&#39;</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;qbb&#39;</span><span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_qbb&#39;</span><span class="p">)</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;qbb&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;spota_hparam&#39;</span><span class="p">,</span> <span class="p">[</span>
@@ -475,16 +454,9 @@
 
 <div class="viewcode-block" id="test_actor_critic"><a class="viewcode-back" href="../../tests.html#tests.test_algorithms.test_actor_critic">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;default_qbb&#39;</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s1">&#39;linear_policy&#39;</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">),</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_qbb&#39;</span><span class="p">)</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;algo, algo_hparam&#39;</span><span class="p">,</span>
@@ -504,7 +476,7 @@
     <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;vf_fnn_plain&#39;</span><span class="p">,</span> <span class="s1">&#39;vf_fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;vf_rnn&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;use_cuda&#39;</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;cpu&#39;</span><span class="p">,</span> <span class="s1">&#39;cuda&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_actor_critic</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">algo_hparam</span><span class="p">,</span> <span class="n">value_fcn_type</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_actor_critic</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">linear_policy</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">algo_hparam</span><span class="p">,</span> <span class="n">value_fcn_type</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">):</span>
     <span class="c1"># Create value function</span>
     <span class="k">if</span> <span class="n">value_fcn_type</span> <span class="o">==</span> <span class="s1">&#39;fnn-plain&#39;</span><span class="p">:</span>
         <span class="n">value_fcn</span> <span class="o">=</span> <span class="n">FNN</span><span class="p">(</span>
@@ -555,9 +527,8 @@
 <div class="viewcode-block" id="test_training_parameter_exploring"><a class="viewcode-back" href="../../tests.html#tests.test_algorithms.test_training_parameter_exploring">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">longtime</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s1">&#39;default_omo&#39;</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;omo&#39;</span><span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_omo&#39;</span><span class="p">)</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;omo&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;algo, algo_hparam&#39;</span><span class="p">,</span> <span class="p">[</span>
@@ -595,20 +566,18 @@
 
 <div class="viewcode-block" id="test_soft_update"><a class="viewcode-back" href="../../tests.html#tests.test_algorithms.test_soft_update">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s1">&#39;default_omo&#39;</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;omo&#39;</span><span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_omo&#39;</span><span class="p">)</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;omo&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;module&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s1">&#39;linear_policy&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;fnn_policy&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;rnn_policy&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;lstm_policy&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;gru_policy&#39;</span><span class="p">,</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;linear_policy&#39;</span><span class="p">),</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;fnn_policy&#39;</span><span class="p">),</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;rnn_policy&#39;</span><span class="p">),</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;lstm_policy&#39;</span><span class="p">),</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;gru_policy&#39;</span><span class="p">),</span>
     <span class="p">]</span>
-    <span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_soft_update</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">module</span><span class="p">):</span>
     <span class="c1"># Init param values</span>
@@ -627,9 +596,8 @@
 
 <div class="viewcode-block" id="test_arpl"><a class="viewcode-back" href="../../tests.html#tests.test_algorithms.test_arpl">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s1">&#39;default_omo&#39;</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;omo&#39;</span><span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_omo&#39;</span><span class="p">)</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;omo&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_arpl</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
     <span class="n">env</span> <span class="o">=</span> <span class="n">ActNormWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
@@ -681,9 +649,8 @@
 <div class="viewcode-block" id="test_sysidasrl"><a class="viewcode-back" href="../../tests.html#tests.test_algorithms.test_sysidasrl">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">longtime</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;env, num_eval_rollouts&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;env&#39;</span><span class="p">]</span>
+        <span class="p">(</span><span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">),</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_sysidasrl</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">num_eval_rollouts</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">eval_ddp_policy</span><span class="p">(</span><span class="n">rollouts_real</span><span class="p">):</span>

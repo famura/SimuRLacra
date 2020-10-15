@@ -114,7 +114,9 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">utils</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.argparser">argparser</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.averaging">averaging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.checks">checks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.data_processing">data_processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.data_sets">data_sets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.data_types">data_types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.exceptions">exceptions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.experiments">experiments</a></li>
@@ -238,6 +240,93 @@
 <dd><p>Reset internal variables.</p>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.utils.checks">
+<span id="checks"></span><h2>checks<a class="headerlink" href="#module-pyrado.utils.checks" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pyrado.utils.checks.check_all_equal">
+<code class="sig-name descname">check_all_equal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iterable</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/checks.html#check_all_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.checks.check_all_equal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if all elements of an iterable are equal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>iterable</strong> – iterable to check</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool saying if all elements are equal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.checks.check_all_lengths_equal">
+<code class="sig-name descname">check_all_lengths_equal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iterable</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/checks.html#check_all_lengths_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.checks.check_all_lengths_equal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the length of all elements of an iterable are equal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>iterable</strong> – iterable to check</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool saying if all elements are equal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.checks.check_all_shapes_equal">
+<code class="sig-name descname">check_all_shapes_equal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iterable</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/checks.html#check_all_shapes_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.checks.check_all_shapes_equal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the shape of all elements of an iterable are equal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>iterable</strong> – iterable to check</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool saying if all elements are equal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.checks.check_all_types_equal">
+<code class="sig-name descname">check_all_types_equal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iterable</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/checks.html#check_all_types_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.checks.check_all_types_equal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if all elements of an iterable are if the same type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>iterable</strong> – iterable to check</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool saying if all elements are of equal type</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.checks.is_iterable">
+<code class="sig-name descname">is_iterable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/checks.html#is_iterable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.checks.is_iterable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the input is iterable by trying to create an iterator from the input.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inp</strong> – any object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if input is iterable, else <cite>False</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.checks.is_iterator">
+<code class="sig-name descname">is_iterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/checks.html#is_iterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.checks.is_iterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the input is an iterator by trying to call <cite>next()</cite> on it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inp</strong> – any object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if input is an iterator, else <cite>False</cite></p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -399,6 +488,93 @@ Choosing <cite>axis=1</cite> and <cite>norm_order=1</cite> makes all columns of 
 </dd></dl>
 
 </div>
+<div class="section" id="module-pyrado.utils.data_sets">
+<span id="data-sets"></span><h2>data_sets<a class="headerlink" href="#module-pyrado.utils.data_sets" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.utils.data_sets.TimeSeriesDataSet">
+<em class="property">class </em><code class="sig-name descname">TimeSeriesDataSet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">window_size</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">ratio_train</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">standardize_data</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">scale_min_max_data</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'Unnamed data set'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/data_sets.html#TimeSeriesDataSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_sets.TimeSeriesDataSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
+<p>Class for storing time series data sets</p>
+<dl class="py method">
+<dt id="pyrado.utils.data_sets.TimeSeriesDataSet.cut_to_window_size">
+<em class="property">static </em><code class="sig-name descname">cut_to_window_size</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">ws</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/utils/data_sets.html#TimeSeriesDataSet.cut_to_window_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_sets.TimeSeriesDataSet.cut_to_window_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cut off samples such that all training sequences have length <cite>window_size</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – input data set with samples along the first dimension</p></li>
+<li><p><strong>ws</strong> – input window length as used for learning</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>data of proper length</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.utils.data_sets.TimeSeriesDataSet.num_samples_trn">
+<em class="property">property </em><code class="sig-name descname">num_samples_trn</code><a class="headerlink" href="#pyrado.utils.data_sets.TimeSeriesDataSet.num_samples_trn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of samples in the training subset.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.utils.data_sets.TimeSeriesDataSet.num_samples_tst">
+<em class="property">property </em><code class="sig-name descname">num_samples_tst</code><a class="headerlink" href="#pyrado.utils.data_sets.TimeSeriesDataSet.num_samples_tst" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of samples in the testing subset.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.utils.data_sets.TimeSeriesDataSet.ratio_train">
+<em class="property">property </em><code class="sig-name descname">ratio_train</code><a class="headerlink" href="#pyrado.utils.data_sets.TimeSeriesDataSet.ratio_train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the ratio of the training samples w.r.t. the total sample count.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.utils.data_sets.TimeSeriesDataSet.window_size">
+<em class="property">property </em><code class="sig-name descname">window_size</code><a class="headerlink" href="#pyrado.utils.data_sets.TimeSeriesDataSet.window_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the length of the sequences fed to the policy for predicting the next value.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.data_sets.create_sequences">
+<code class="sig-name descname">create_sequences</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">len_seq</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>Tuple<span class="p">]</span><a class="reference internal" href="_modules/pyrado/utils/data_sets.html#create_sequences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_sets.create_sequences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create input sequences with associated target values from data. The targets are the next data point after an input
+sequence of given length.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – data to be split into inputs and targets</p></li>
+<li><p><strong>len_seq</strong> – length of the input sequences</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of tuples with inout and target data pairs</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.data_sets.create_shuffled_sequences">
+<code class="sig-name descname">create_shuffled_sequences</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">len_seq</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>Tuple<span class="p">]</span><a class="reference internal" href="_modules/pyrado/utils/data_sets.html#create_shuffled_sequences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_sets.create_shuffled_sequences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create  input sequences with associated target values from data using <cite>create_sequences()</cite>, and shuffle the order
+of the sequences afterwards.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – data to be split into inputs and targets</p></li>
+<li><p><strong>len_seq</strong> – length of the input sequences</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of randomly ordered tuples with inout and target data pairs</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 <div class="section" id="module-pyrado.utils.data_types">
 <span id="data-types"></span><h2>data_types<a class="headerlink" href="#module-pyrado.utils.data_types" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
@@ -465,46 +641,23 @@ We are directly subclassing dict beacuse <cite>PropertySource</cite> in <cite>Rc
 
 </dd></dl>
 
-<dl class="py function">
-<dt id="pyrado.utils.data_types.check_all_shapes_equal">
-<code class="sig-name descname">check_all_shapes_equal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iterable</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/data_types.html#check_all_shapes_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.check_all_shapes_equal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if the shape attribute of all elements of an iterable (e.g., list) are equal.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>iterable</strong> – iterable to check</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>bool saying if all elements are equal</p>
-</dd>
-</dl>
+<dl class="py class">
+<dt id="pyrado.utils.data_types.TimeSeriesDataPair">
+<em class="property">class </em><code class="sig-name descname">TimeSeriesDataPair</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp_seq</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">targ</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/data_types.html#TimeSeriesDataPair"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.TimeSeriesDataPair" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>Pair of an input sequence and an associated target value for training time series prediction.</p>
+<dl class="py method">
+<dt id="pyrado.utils.data_types.TimeSeriesDataPair.inp_seq">
+<em class="property">property </em><code class="sig-name descname">inp_seq</code><a class="headerlink" href="#pyrado.utils.data_types.TimeSeriesDataPair.inp_seq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
 </dd></dl>
 
-<dl class="py function">
-<dt id="pyrado.utils.data_types.check_all_types_equal">
-<code class="sig-name descname">check_all_types_equal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iterable</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/data_types.html#check_all_types_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.check_all_types_equal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if all elements of an iterable (e.g., list) are if the same type.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>iterable</strong> – iterable to check</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>bool saying if all elements are of equal type</p>
-</dd>
-</dl>
+<dl class="py method">
+<dt id="pyrado.utils.data_types.TimeSeriesDataPair.targ">
+<em class="property">property </em><code class="sig-name descname">targ</code><a class="headerlink" href="#pyrado.utils.data_types.TimeSeriesDataPair.targ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
 </dd></dl>
 
-<dl class="py function">
-<dt id="pyrado.utils.data_types.check_all_values_equal">
-<code class="sig-name descname">check_all_values_equal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iterable</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/data_types.html#check_all_values_equal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.check_all_values_equal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if all elements of an iterable (e.g., list) are equal.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>iterable</strong> – iterable to check</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>bool saying if all elements are equal</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -530,34 +683,6 @@ This function is useful when the metrics (e.g., calculated with numpy) should be
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>list of ndarrays with equal length</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.utils.data_types.is_iterable">
-<code class="sig-name descname">is_iterable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/data_types.html#is_iterable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.is_iterable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if the input is iterable by trying to create an iterator from the input.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>inp</strong> – any object</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><cite>True</cite> if input is iterable, else <cite>False</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.utils.data_types.is_iterator">
-<code class="sig-name descname">is_iterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/data_types.html#is_iterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.is_iterator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if the input is an iterator by trying to call <cite>next()</cite> on it.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>inp</strong> – any object</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><cite>True</cite> if input is an iterator, else <cite>False</cite></p>
 </dd>
 </dl>
 </dd></dl>

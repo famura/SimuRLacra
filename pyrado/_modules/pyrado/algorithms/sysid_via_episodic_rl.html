@@ -219,11 +219,11 @@
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.observation_normalization</span> <span class="kn">import</span> <span class="n">ObsNormWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.domain_distribution</span> <span class="kn">import</span> <span class="n">DomainDistrParamPolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_sampler</span> <span class="kn">import</span> <span class="n">ParallelSampler</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_rollout_sampler</span> <span class="kn">import</span> <span class="n">ParallelRolloutSampler</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.parameter_exploration_sampler</span> <span class="kn">import</span> <span class="n">ParameterSamplingResult</span><span class="p">,</span> <span class="n">ParameterSample</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.utils</span> <span class="kn">import</span> <span class="n">gen_ordered_batch_idcs</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">check_all_values_equal</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.checks</span> <span class="kn">import</span> <span class="n">check_all_equal</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.math</span> <span class="kn">import</span> <span class="n">UnitCubeProjector</span>
 
@@ -302,7 +302,7 @@
 
         <span class="c1"># Create the sampler used to execute the same policy as on the real system in the meta-randomized env</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">base_seed</span> <span class="o">=</span> <span class="n">base_seed</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">behavior_sampler</span> <span class="o">=</span> <span class="n">ParallelSampler</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">behavior_sampler</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">env</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_behavior_policy</span><span class="p">,</span>
             <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
@@ -366,8 +366,8 @@
 
                 <span class="c1"># Check the validity of the initial states. The domain parameters will be different.</span>
                 <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ros_real_tr</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ros_sim_tr</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">idcs_sim</span><span class="p">)</span>
-                <span class="k">assert</span> <span class="n">check_all_values_equal</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">rollout_info</span><span class="p">[</span><span class="s1">&#39;init_state&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ros_real_tr</span><span class="p">])</span>
-                <span class="k">assert</span> <span class="n">check_all_values_equal</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">rollout_info</span><span class="p">[</span><span class="s1">&#39;init_state&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ros_sim_tr</span><span class="p">])</span>
+                <span class="k">assert</span> <span class="n">check_all_equal</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">rollout_info</span><span class="p">[</span><span class="s1">&#39;init_state&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ros_real_tr</span><span class="p">])</span>
+                <span class="k">assert</span> <span class="n">check_all_equal</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">rollout_info</span><span class="p">[</span><span class="s1">&#39;init_state&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ros_sim_tr</span><span class="p">])</span>
                 <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">rollout_info</span><span class="p">[</span><span class="s1">&#39;init_state&#39;</span><span class="p">],</span> <span class="n">s</span><span class="o">.</span><span class="n">rollout_info</span><span class="p">[</span><span class="s1">&#39;init_state&#39;</span><span class="p">])</span>
                             <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ros_real_tr</span><span class="p">,</span> <span class="n">ros_sim_tr</span><span class="p">)])</span>
 
