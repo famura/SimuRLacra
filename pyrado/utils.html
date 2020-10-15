@@ -950,6 +950,24 @@ exception is raised).</p>
 </dd></dl>
 
 <dl class="py function">
+<dt id="pyrado.utils.input_output.input_timeout">
+<code class="sig-name descname">input_timeout</code><span class="sig-paren">(</span><em class="sig-param">prompt: str</em>, <em class="sig-param">t_timeout: [&lt;class 'float'&gt;</em>, <em class="sig-param">&lt;class 'int'&gt;] = 30</em>, <em class="sig-param">default: str = None</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pyrado/utils/input_output.html#input_timeout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.input_timeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ask the user for an input and quit with a runtime error if no input was given</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prompt</strong> – text to be printed before recording the input</p></li>
+<li><p><strong>t_timeout</strong> – time limit to enter an input</p></li>
+<li><p><strong>default</strong> – default output that is returned if the timeout was raised, pass <cite>None</cite> for no default</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return the input as a string captured by the system</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="pyrado.utils.input_output.insert_newlines">
 <code class="sig-name descname">insert_newlines</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">every</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pyrado/utils/input_output.html#insert_newlines"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.insert_newlines" title="Permalink to this definition">¶</a></dt>
 <dd><p>Inserts multiple line breaks.</p>

@@ -991,7 +991,7 @@ The number of initial policies to evaluate is the number of found policies.</p>
 
 <dl class="py method">
 <dt id="pyrado.algorithms.bayrn.BayRn.eval_policy">
-<em class="property">static </em><code class="sig-name descname">eval_policy</code><span class="sig-paren">(</span><em class="sig-param">save_dir: [&lt;class 'str'&gt;, None], env: [&lt;class 'pyrado.environments.real_base.RealEnv'&gt;, &lt;class 'pyrado.environments.sim_base.SimEnv'&gt;, &lt;class 'pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper'&gt;], policy: pyrado.policies.base.Policy, mc_estimator: bool, prefix: str, num_rollouts: int</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/algorithms/bayrn.html#BayRn.eval_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.bayrn.BayRn.eval_policy" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">eval_policy</code><span class="sig-paren">(</span><em class="sig-param">save_dir: [&lt;class 'str'&gt;, None], env: [&lt;class 'pyrado.environments.real_base.RealEnv'&gt;, &lt;class 'pyrado.environments.sim_base.SimEnv'&gt;, &lt;class 'pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper'&gt;], policy: pyrado.policies.base.Policy, mc_estimator: bool, prefix: str, num_rollouts: int, num_parallel_envs: int = 1</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/algorithms/bayrn.html#BayRn.eval_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.bayrn.BayRn.eval_policy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate a policy on the target system (real-world platform).
 This method is static to facilitate evaluation of specific policies in hindsight.</p>
 <dl class="field-list simple">
@@ -1004,6 +1004,8 @@ This method is static to facilitate evaluation of specific policies in hindsight
 bound (<cite>False</cite>) obtained from bootrapping</p></li>
 <li><p><strong>prefix</strong> – to control the saving for the evaluation of an initial policy, <cite>None</cite> to deactivate</p></li>
 <li><p><strong>num_rollouts</strong> – number of rollouts to collect on the target system</p></li>
+<li><p><strong>prefix</strong> – to control the saving for the evaluation of an initial policy, <cite>None</cite> to deactivate</p></li>
+<li><p><strong>num_parallel_envs</strong> – number of environments for the parallel sampler (only used for SimEnv)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

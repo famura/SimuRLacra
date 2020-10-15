@@ -204,8 +204,6 @@
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
 <span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
-
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
@@ -738,7 +736,7 @@
 <span class="sd">        :param positive: direction switch</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">th_lim</span> <span class="o">=</span> <span class="mf">10.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">th_lim</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sign</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">positive</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">u_max</span> <span class="o">=</span> <span class="mf">0.9</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
@@ -754,7 +752,8 @@
         <span class="c1"># Unpack the raw measurement (is not an observation)</span>
         <span class="n">th</span> <span class="o">=</span> <span class="n">meas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">th</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">th_lim</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-8</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">th</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">th_lim</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-6</span><span class="p">:</span>
+            <span class="c1"># Recognized significant change in theta</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">th_lim</span> <span class="o">=</span> <span class="n">th</span>
         <span class="k">else</span><span class="p">:</span>
