@@ -231,7 +231,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.policies.two_headed</span> <span class="kn">import</span> <span class="n">TwoHeadedFNNPolicy</span><span class="p">,</span> <span class="n">TwoHeadedGRUPolicy</span>
 
 <span class="c1"># set spawn method to spawn for parallel test runs</span>
-<span class="n">mp</span><span class="o">.</span><span class="n">set_start_method</span><span class="p">(</span><span class="s1">&#39;spawn&#39;</span><span class="p">)</span>
+<span class="n">mp</span><span class="o">.</span><span class="n">set_start_method</span><span class="p">(</span><span class="s1">&#39;spawn&#39;</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># Set default torch dtype globally to avoid inconsistent errors depending on the test run order</span>
 <span class="n">to</span><span class="o">.</span><span class="n">set_default_dtype</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
