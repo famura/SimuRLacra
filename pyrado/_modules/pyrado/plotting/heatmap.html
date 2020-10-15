@@ -212,6 +212,7 @@
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">colors</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">ticker</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1</span> <span class="kn">import</span> <span class="n">make_axes_locatable</span>
 <span class="kn">from</span> <span class="nn">pandas.core.indexes.numeric</span> <span class="kn">import</span> <span class="n">NumericIndex</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 
@@ -317,15 +318,17 @@
     <span class="n">add_sep_colorbar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">ax_cb</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">colorbar_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">colorbar_orientation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;vertical&#39;</span><span class="p">,</span>
     <span class="n">use_index_labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">xlabel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">ylabel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">fig_canvas_title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">fig_size</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
-    <span class="n">manipulate_ticks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">tick_label_prec</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
     <span class="n">xtick_label_prec</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">ytick_label_prec</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ytick_label_prec</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">num_major_ticks_hm</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">num_major_ticks_cb</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot a 2D heat map from a 2D `pandas.DataFrame` using pyplot.</span>
@@ -345,17 +348,19 @@
 <span class="sd">    :param add_sep_colorbar: flag if a separate color bar is added automatically</span>
 <span class="sd">    :param ax_cb: axis to draw the color bar onto, if `None` a new figure is created</span>
 <span class="sd">    :param colorbar_label: label for the color bar</span>
+<span class="sd">    :param colorbar_orientation: oriantation of the color bar</span>
 <span class="sd">    :param use_index_labels: flag if index names from the pandas DataFrame are used as labels for the x- and y-axis.</span>
-<span class="sd">                             This can can be overridden by xlabel and ylabel.</span>
+<span class="sd">                             This can can be overridden by xlabel and ylabel</span>
 <span class="sd">    :param xlabel: label for the x axis</span>
 <span class="sd">    :param ylabel: label for the y axis</span>
 <span class="sd">    :param fig_canvas_title: window title for the heat map plot, no title by default</span>
 <span class="sd">    :param fig_size: width and height of the figure in inches</span>
-<span class="sd">    :param manipulate_ticks: apply custom manipulation to the x and y axis ticks</span>
-<span class="sd">    :param tick_label_prec: floating point precision of the x- and y-axis labels.</span>
+<span class="sd">    :param tick_label_prec: floating point precision of the x- and y-axis labels</span>
 <span class="sd">                            This can be overwritten xtick_label_prec and ytick_label_prec</span>
-<span class="sd">    :param xtick_label_prec: floating point precision of the x-axis labels</span>
-<span class="sd">    :param ytick_label_prec: floating point precision of the y-axis labels</span>
+<span class="sd">    :param xtick_label_prec: floating point precision of the x-axis labels, set `None` for default behavior</span>
+<span class="sd">    :param ytick_label_prec: floating point precision of the y-axis labels, set `None` for default behavior</span>
+<span class="sd">    :param num_major_ticks_hm: number of major axis ticks for the heat map, set `None` for default behavior</span>
+<span class="sd">    :param num_major_ticks_cb: number of major axis ticks for the color bar, set `None` for default behavior</span>
 <span class="sd">    :return: handles to the heat map and the color bar figures (None if not existent)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
@@ -391,11 +396,15 @@
         <span class="n">_annotate_heatmap</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">valfmt</span><span class="o">=</span><span class="n">annotation_valfmt</span><span class="p">)</span>
 
     <span class="c1"># Prepare the ticks</span>
-    <span class="k">if</span> <span class="n">manipulate_ticks</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">xtick_label_prec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">_setup_index_axis</span><span class="p">(</span><span class="n">ax_hm</span><span class="o">.</span><span class="n">xaxis</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">use_index_labels</span><span class="p">,</span>
                           <span class="n">xtick_label_prec</span> <span class="k">if</span> <span class="n">xtick_label_prec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">tick_label_prec</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ytick_label_prec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">_setup_index_axis</span><span class="p">(</span><span class="n">ax_hm</span><span class="o">.</span><span class="n">yaxis</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">use_index_labels</span><span class="p">,</span>
                           <span class="n">ytick_label_prec</span> <span class="k">if</span> <span class="n">ytick_label_prec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">tick_label_prec</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num_major_ticks_hm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax_hm</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">MaxNLocator</span><span class="p">(</span><span class="n">num_major_ticks_hm</span><span class="p">,</span> <span class="n">min_n_ticks</span><span class="o">=</span><span class="n">num_major_ticks_hm</span><span class="p">))</span>
+        <span class="n">ax_hm</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">MaxNLocator</span><span class="p">(</span><span class="n">num_major_ticks_hm</span><span class="p">,</span> <span class="n">min_n_ticks</span><span class="o">=</span><span class="n">num_major_ticks_hm</span><span class="p">))</span>
 
     <span class="n">ax_hm</span><span class="o">.</span><span class="n">stale</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># to cause redraw</span>
 
@@ -414,16 +423,22 @@
             <span class="n">fig_cb</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">colorbar_label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">colorbar</span><span class="o">.</span><span class="n">ColorbarBase</span><span class="p">(</span><span class="n">ax_cb</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">colorbar_label</span><span class="p">)</span>
+            <span class="n">colorbar</span><span class="o">.</span><span class="n">ColorbarBase</span><span class="p">(</span>
+                <span class="n">ax_cb</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">colorbar_label</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="n">colorbar_orientation</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">colorbar</span><span class="o">.</span><span class="n">ColorbarBase</span><span class="p">(</span><span class="n">ax_cb</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
-        <span class="c1"># if colorbar_label is not None:</span>
-        <span class="c1">#     fig_cb.colorbar(img, ax=ax_cb, label=colorbar_label)  # plt.colorbar works, too</span>
-        <span class="c1"># else:</span>
-        <span class="c1">#     fig_cb.colorbar(img, ax=ax_cb)  # plt.colorbar works, too</span>
-        <span class="c1">#</span>
-        <span class="c1"># # Only show the color bar</span>
-        <span class="c1"># ax_cb.remove()</span>
+            <span class="n">colorbar</span><span class="o">.</span><span class="n">ColorbarBase</span><span class="p">(</span>
+                <span class="n">ax_cb</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="n">colorbar_orientation</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">num_major_ticks_cb</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">colorbar_orientation</span> <span class="o">==</span> <span class="s1">&#39;horizontal&#39;</span><span class="p">:</span>
+                <span class="n">ax_cb</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_label_position</span><span class="p">(</span><span class="s1">&#39;top&#39;</span><span class="p">)</span>
+                <span class="n">ax_cb</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s1">&#39;top&#39;</span><span class="p">)</span>
+                <span class="n">ax_cb</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">MaxNLocator</span><span class="p">(</span><span class="n">nbins</span><span class="o">=</span><span class="n">num_major_ticks_cb</span><span class="p">,</span> <span class="n">min_n_ticks</span><span class="o">=</span><span class="n">num_major_ticks_cb</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">colorbar_orientation</span> <span class="o">==</span> <span class="s1">&#39;vertical&#39;</span><span class="p">:</span>
+                <span class="n">ax_cb</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">MaxNLocator</span><span class="p">(</span><span class="n">nbins</span><span class="o">=</span><span class="n">num_major_ticks_cb</span><span class="p">,</span> <span class="n">min_n_ticks</span><span class="o">=</span><span class="n">num_major_ticks_cb</span><span class="p">))</span>
+
         <span class="k">return</span> <span class="n">fig_hm</span><span class="p">,</span> <span class="n">fig_cb</span>
 
     <span class="k">else</span><span class="p">:</span>

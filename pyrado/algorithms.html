@@ -1119,7 +1119,7 @@ the user. Train a policy for every candidate. Finally, store the policies and ca
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cand</strong> – hyper-parameters for the domain parameter distribution coming from the domain randomizer</p></li>
+<li><p><strong>cand</strong> – hyper-parameters for the domain parameter distribution (need be compatible with the randomizer)</p></li>
 <li><p><strong>prefix</strong> – set a prefix to the saved file name by passing it to <cite>meta_info</cite></p></li>
 </ul>
 </dd>
@@ -1136,7 +1136,7 @@ the user. Train a policy for every candidate. Finally, store the policies and ca
 <span id="cem"></span><h2>cem<a class="headerlink" href="#module-pyrado.algorithms.cem" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.algorithms.cem.CEM">
-<em class="property">class </em><code class="sig-name descname">CEM</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">max_iter</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">pop_size</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num_rollouts</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num_is_samples</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">expl_std_init</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">expl_std_min</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">extra_expl_std_init</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">extra_expl_decay_iter</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">10</span></em>, <em class="sig-param"><span class="n">full_cov</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">symm_sampling</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">num_workers</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">4</span></em>, <em class="sig-param"><span class="n">logger</span><span class="p">:</span> <span class="n"><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger">pyrado.logger.step.StepLogger</a></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/cem.html#CEM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.cem.CEM" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">CEM</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">max_iter</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">pop_size</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num_rollouts</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num_is_samples</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">expl_std_init</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">expl_std_min</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">extra_expl_std_init</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">extra_expl_decay_iter</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">10</span></em>, <em class="sig-param"><span class="n">full_cov</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">symm_sampling</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">num_workers</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">4</span></em>, <em class="sig-param"><span class="n">logger</span><span class="p">:</span> <span class="n"><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger">pyrado.logger.step.StepLogger</a></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/cem.html#CEM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.cem.CEM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.parameter_exploring.ParameterExploring" title="pyrado.algorithms.parameter_exploring.ParameterExploring"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.parameter_exploring.ParameterExploring</span></code></a></p>
 <p>Cross-Entropy Method (CEM)
 This implementation is basically Algorithm 3.3. in [1] with the addition of decreasing noise [2].
@@ -2153,7 +2153,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <span id="simopt"></span><h2>simopt<a class="headerlink" href="#module-pyrado.algorithms.simopt" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.algorithms.simopt.SimOpt">
-<em class="property">class </em><code class="sig-name descname">SimOpt</code><span class="sig-paren">(</span><em class="sig-param">save_dir: str, env_sim: pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper, env_real: [&lt;class 'pyrado.environments.real_base.RealEnv'&gt;, &lt;class 'pyrado.environment_wrappers.base.EnvWrapper'&gt;], subrtn_policy: pyrado.algorithms.base.Algorithm, subrtn_distr: pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL, max_iter: int, num_eval_rollouts: int = 5, thold_succ: float = inf, thold_succ_subrtn: float = -inf, warmstart: bool = True, policy_param_init: torch.Tensor = None, valuefcn_param_init: torch.Tensor = None, subrtn_snapshot_mode: str = 'latest'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/simopt.html#SimOpt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.simopt.SimOpt" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">SimOpt</code><span class="sig-paren">(</span><em class="sig-param">save_dir: str, env_sim: pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper, env_real: [&lt;class 'pyrado.environments.real_base.RealEnv'&gt;, &lt;class 'pyrado.environment_wrappers.base.EnvWrapper'&gt;], subrtn_policy: pyrado.algorithms.base.Algorithm, subrtn_distr: pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL, max_iter: int, num_eval_rollouts: int = 5, thold_succ: float = inf, thold_succ_subrtn: float = -inf, warmstart: bool = True, policy_param_init: torch.Tensor = None, valuefcn_param_init: torch.Tensor = None, subrtn_snapshot_mode: str = 'latest', logger: pyrado.logger.step.StepLogger = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/simopt.html#SimOpt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.simopt.SimOpt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a></p>
 <p>Simulation Optimization (SimOpt)</p>
 <div class="admonition note">
@@ -2178,7 +2178,7 @@ This method is static to facilitate evaluation of specific policies in hindsight
 <li><p><strong>env</strong> – environment for evaluation, in the sim-2-sim case this is another simulation instance</p></li>
 <li><p><strong>policy</strong> – policy to evaluate</p></li>
 <li><p><strong>prefix</strong> – to control the saving for the evaluation of an initial policy, <cite>None</cite> to deactivate</p></li>
-<li><p><strong>num_rollouts</strong> – number of rollouts to collect on the target system</p></li>
+<li><p><strong>num_rollouts</strong> – number of rollouts to collect on the target domain</p></li>
 <li><p><strong>init_states</strong> – pass the initial states of the real system to sync the simulation (mandatory in this case)</p></li>
 <li><p><strong>seed</strong> – seed value for the random number generators, only used when evaluating in simulation</p></li>
 </ul>
@@ -2191,11 +2191,17 @@ This method is static to facilitate evaluation of specific policies in hindsight
 
 <dl class="py method">
 <dt id="pyrado.algorithms.simopt.SimOpt.eval_ddp_policy">
-<code class="sig-name descname">eval_ddp_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollouts_real</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/algorithms/simopt.html#SimOpt.eval_ddp_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.simopt.SimOpt.eval_ddp_policy" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">eval_ddp_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollouts_real</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">env_sim</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environment_wrappers.html#pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper" title="pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper">pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper</a></span></em>, <em class="sig-param"><span class="n">num_rollouts</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">subrtn_distr</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL" title="pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL">pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL</a></span></em>, <em class="sig-param"><span class="n">subrtn_policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm">pyrado.algorithms.base.Algorithm</a></span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/algorithms/simopt.html#SimOpt.eval_ddp_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.simopt.SimOpt.eval_ddp_policy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate the policy that fits the domain parameter distribution to the observed rollouts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>rollouts_real</strong> – recorded real-world rollouts</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollouts_real</strong> – recorded real-world rollouts</p></li>
+<li><p><strong>env_sim</strong> – randomized simulation environment a.k.a. source domain</p></li>
+<li><p><strong>num_rollouts</strong> – number of rollouts to collect on the target domain</p></li>
+<li><p><strong>subrtn_distr</strong> – algorithm which performs the optimization of the domain parameter distribution policy</p></li>
+<li><p><strong>subrtn_policy</strong> – algorithm which performs the optimization of the behavioral policy (and value-function)</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>average system identification loss</p>
@@ -2259,25 +2265,8 @@ contains a dict of information about the current iteration of the meta-algorithm
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyrado.algorithms.simopt.SimOpt.train_policy_sim">
-<code class="sig-name descname">train_policy_sim</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cand</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/algorithms/simopt.html#SimOpt.train_policy_sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.simopt.SimOpt.train_policy_sim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Train a policy in simulation for given hyper-parameters from the domain randomizer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>cand</strong> – hyper-parameters for the domain parameter distribution coming from the domain randomizer</p></li>
-<li><p><strong>prefix</strong> – set a prefix to the saved file name by passing it to <cite>meta_info</cite></p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>estimated return of the trained policy in the target domain</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.algorithms.simopt.SimOpt.train_randomizer">
-<code class="sig-name descname">train_randomizer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollouts_real</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">prefix</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/algorithms/simopt.html#SimOpt.train_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.simopt.SimOpt.train_randomizer" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.algorithms.simopt.SimOpt.train_ddp_policy">
+<code class="sig-name descname">train_ddp_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollouts_real</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">prefix</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/algorithms/simopt.html#SimOpt.train_ddp_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.simopt.SimOpt.train_ddp_policy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Train and evaluate the policy that parametrizes domain randomizer, such that the loss given by the instance of
 <cite>SysIdViaEpisodicRL</cite> is minimized.</p>
 <dl class="field-list simple">
@@ -2289,6 +2278,23 @@ contains a dict of information about the current iteration of the meta-algorithm
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>average system identification loss</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.simopt.SimOpt.train_policy_sim">
+<code class="sig-name descname">train_policy_sim</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cand</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/pyrado/algorithms/simopt.html#SimOpt.train_policy_sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.simopt.SimOpt.train_policy_sim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train a policy in simulation for given hyper-parameters from the domain randomizer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cand</strong> – hyper-parameters for the domain parameter distribution (need be compatible with the randomizer)</p></li>
+<li><p><strong>prefix</strong> – set a prefix to the saved file name by passing it to <cite>meta_info</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>estimated return of the trained policy in the target domain</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2554,7 +2560,7 @@ the L2 norm. The reason for this is that longer time series would be punished ot
 
 <dl class="py attribute">
 <dt id="pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.iteration_key">
-<code class="sig-name descname">iteration_key</code><em class="property">: str</em><em class="property"> = 'sysid_erl_iteration'</em><a class="headerlink" href="#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.iteration_key" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">iteration_key</code><em class="property">: str</em><em class="property"> = 'sysiderl_iteration'</em><a class="headerlink" href="#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.iteration_key" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -2593,7 +2599,7 @@ Be sure to align and truncate the rollouts beforehand.</p>
 
 <dl class="py attribute">
 <dt id="pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.name">
-<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'sysid-erl'</em><a class="headerlink" href="#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.name" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'sysiderl'</em><a class="headerlink" href="#pyrado.algorithms.sysid_via_episodic_rl.SysIdViaEpisodicRL.name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">

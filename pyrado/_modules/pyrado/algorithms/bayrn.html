@@ -358,7 +358,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Train a policy in simulation for given hyper-parameters from the domain randomizer.</span>
 
-<span class="sd">        :param cand: hyper-parameters for the domain parameter distribution coming from the domain randomizer</span>
+<span class="sd">        :param cand: hyper-parameters for the domain parameter distribution (need be compatible with the randomizer)</span>
 <span class="sd">        :param prefix: set a prefix to the saved file name by passing it to `meta_info`</span>
 <span class="sd">        :return: estimated return of the trained policy in the target domain</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -779,12 +779,12 @@
         <span class="c1"># Reset the subroutine&#39;s algorithm which includes resetting the exploration</span>
         <span class="n">subrtn</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
-        <span class="c1"># Do a warmstart</span>
+        <span class="c1"># Do a warm start</span>
         <span class="n">subrtn</span><span class="o">.</span><span class="n">init_modules</span><span class="p">(</span>
             <span class="n">warmstart</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">policy_param_init</span><span class="o">=</span><span class="n">policy_param_init</span><span class="p">,</span> <span class="n">valuefcn_param_init</span><span class="o">=</span><span class="n">valuefcn_param_init</span>
         <span class="p">)</span>
 
-        <span class="n">subrtn</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="o">=</span><span class="n">subrtn_snapshot_mode</span><span class="p">)</span>
+        <span class="n">subrtn</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="o">=</span><span class="n">subrtn_snapshot_mode</span><span class="p">,</span> <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;argmax&#39;</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">subrtn</span><span class="o">.</span><span class="n">policy</span></div></div>
 </pre></div>
 
