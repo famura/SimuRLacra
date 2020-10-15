@@ -68,14 +68,10 @@ class FNN(nn.Module):
         super().__init__()  # init nn.Module
 
         # Store settings
-        self._hidden_nonlin = hidden_nonlin if isinstance(hidden_nonlin, Iterable) else len(hidden_sizes)*[
-            hidden_nonlin]
-        self._dropout = dropout
-        self.output_nonlin = output_nonlin
         # TODO One day replace legacy above with below
-        # self.hidden_nonlin = hidden_nonlin if isinstance(hidden_nonlin, Iterable) else len(hidden_sizes)*[hidden_nonlin]
-        # self.dropout = dropout
-        # self.output_nonlin = output_nonlin
+        self.hidden_nonlin = hidden_nonlin if isinstance(hidden_nonlin, Iterable) else len(hidden_sizes)*[hidden_nonlin]
+        self.dropout = dropout
+        self.output_nonlin = output_nonlin
 
         # Create hidden layers (stored in ModuleList so their parameters are tracked)
         self.hidden_layers = nn.ModuleList()
@@ -100,24 +96,6 @@ class FNN(nn.Module):
     def device(self) -> str:
         """ Get the device (CPU or GPU) on which the FNN is stored. """
         return self._device
-
-    @property
-    def dropout(self):
-        """ For legacy compatibility """
-        return self._dropout
-
-    @property
-    def hidden_nonlin(self):
-        """ For legacy compatibility """
-        if isinstance(self._hidden_nonlin, Iterable):
-            return self._hidden_nonlin
-        else:
-            return len(self.hidden_layers)*[self._hidden_nonlin]
-
-    @property
-    def output_nonlin(self):
-        """ For legacy compatibility """
-        return self.output_nonlin
 
     @property
     def param_values(self) -> to.Tensor:

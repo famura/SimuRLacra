@@ -111,13 +111,9 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
                 last_cand = to.load(osp.join(ex_dir, 'candidates.pt'))[-1, :]
                 env.adapt_randomizer(last_cand.numpy())
                 print_cbt(f'Loaded the domain randomizer\n{env.randomizer}', 'w')
-            # Policy
-            if args.iter == -1:
-                policy = to.load(osp.join(ex_dir, 'policy.pt'))
-                print_cbt(f"Loaded {osp.join(ex_dir, 'policy.pt')}", 'g')
-            else:
-                policy = to.load(osp.join(ex_dir, f'iter_{args.iter}_policy.pt'))
-                print_cbt(f"Loaded {osp.join(ex_dir, f'iter_{args.iter}_policy.pt')}", 'g')
+                # Policy
+                policy = to.load(osp.join(ex_dir, f'{args.load_name}.pt'))
+                print_cbt(f"Loaded {osp.join(ex_dir, f'{args.load_name}.pt')}", 'g')
             # Value function (optional)
             if any([a.name in hparams.get('subrtn_name', '') for a in [PPO, PPO2, A2C]]):
                 try:

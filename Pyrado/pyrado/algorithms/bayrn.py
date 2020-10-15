@@ -152,7 +152,7 @@ class BayRn(Algorithm):
         self.acq_restarts = acq_restarts
         self.acq_samples = acq_samples
         self.acq_param = acq_param
-        self.policy_param_init = policy_param_init.detach() if policy_param_init is not None else None
+        self.policy_param_init = policy_param_init
         self.valuefcn_param_init = valuefcn_param_init.detach() if valuefcn_param_init is not None else None
         self.warmstart = warmstart
         self.num_eval_rollouts_real = num_eval_rollouts_real
@@ -164,6 +164,11 @@ class BayRn(Algorithm):
         self.curr_cand_value = -pyrado.inf  # for the stopping criterion
         self.uc_normalizer = UnitCubeProjector(bounds[0, :], bounds[1, :])
 
+        if self.policy_param_init is not None:
+            if to.is_tensor(self.policy_param_init):
+                self.policy_param_init.detach()
+            else:
+                self.policy_param_init = to.tensor(self.policy_param_init)
         # Set the flag to run the initialization phase. This is overruled if load_snapshot is called.
         self.initialized = False
         if num_init_cand > 0:
@@ -269,7 +274,8 @@ class BayRn(Algorithm):
                     policy: Policy,
                     mc_estimator: bool,
                     prefix: str,
-                    num_rollouts: int) -> to.Tensor:
+                    num_rollouts: int,
+                    num_parallel_envs: int = 1) -> to.Tensor:
         """
         Evaluate a policy on the target system (real-world platform).
         This method is static to facilitate evaluation of specific policies in hindsight.
@@ -281,6 +287,8 @@ class BayRn(Algorithm):
                                      bound (`False`) obtained from bootrapping
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
         :param num_rollouts: number of rollouts to collect on the target system
+        :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
+        :param num_parallel_envs: number of environments for the parallel sampler (only used for SimEnv)
         :return: estimated return in the target domain
         """
         if save_dir is not None:
@@ -290,10 +298,15 @@ class BayRn(Algorithm):
         if isinstance(inner_env(env), RealEnv):
             # Evaluate sequentially when conducting a sim-to-real experiment
             for i in range(num_rollouts):
-                rets_real[i] = rollout(env, policy, eval=True, no_close=False).undiscounted_return()
+                rets_real[i] = rollout(env, policy, eval=True).undiscounted_return()
+                # If a reward of -1 is given, skip evaluation ahead and set all returns to zero
+                if rets_real[i] == -1:
+                    print_cbt('Set all returns for this policy to zero.', color='c')
+                    rets_real = to.zeros(num_rollouts)
+                    break
         elif isinstance(inner_env(env), SimEnv):
             # Create a parallel sampler when conducting a sim-to-sim experiment
-            sampler = ParallelRolloutSampler(env, policy, num_workers=1, min_rollouts=num_rollouts)
+            sampler = ParallelRolloutSampler(env, policy, num_workers=num_parallel_envs, min_rollouts=num_rollouts)
             ros = sampler.sample()
             for i in range(num_rollouts):
                 rets_real[i] = ros[i].undiscounted_return()
@@ -425,8 +438,8 @@ class BayRn(Algorithm):
                 if not len(found_policies) == len(found_cands):
                     print_cbt(f'Found {len(found_policies)} policies, but {len(found_cands)} candidates!', 'r')
                     n = len(found_cands) - len(found_policies)
-                    delete = input('Delete the superfluous candidates? [y / any other]').lower() == 'y'
-                    if n > 0 and delete:
+                    delete = input_timeout('Delete the superfluous candidates? [any / n]', default='').lower()
+                    if n > 0 and not delete == 'n':
                         # Delete the superfluous candidates
                         print_cbt(f'Candidates before:\n{self.cands.numpy()}', 'w')
                         self.cands = self.cands[:-n, :]
@@ -461,7 +474,7 @@ class BayRn(Algorithm):
                 found_evals = natural_sort(found_evals)  # the order determines the rows of the tensor
 
                 # Reconstruct candidates_values.pt
-                self.cands_values = to.empty(self.cands.shape[0])
+                self.cands_values = to.zeros(self.cands.shape[0])
                 for i, fe in enumerate(found_evals):
                     # Get the return estimate from the raw evaluations as in eval_policy()
                     if self.mc_estimator:
@@ -473,7 +486,7 @@ class BayRn(Algorithm):
 
                 if len(found_evals) < len(found_cands):
                     print_cbt(f'Found {len(found_evals)} real-world evaluation files but {len(found_cands)} candidates.'
-                              f' Now evaluation the remaining ones.', 'c', bright=True)
+                              f' Now evaluating the remaining ones.', 'c', bright=True)
                 for i in range(len(found_cands) - len(found_evals)):
                     # Evaluate the current policy in the target domain
                     if len(found_evals) < self.num_init_cand:
@@ -489,6 +502,10 @@ class BayRn(Algorithm):
 
                 if len(found_cands) < self.num_init_cand:
                     print_cbt('Found less candidates than the number of initial candidates.', 'y')
+                    if input('Do you want to skip training and evaluating the remaining ones? [any / n]') == 'y':
+                        self.initialized = True
+                    else:
+                        print_cbt('Redoing all init policies', 'y', bright=True)
                 else:
                     self.initialized = True
 
@@ -592,6 +609,12 @@ class BayRn(Algorithm):
         cands_values = to.load(osp.join(load_dir, 'candidates_values.pt')).unsqueeze(1)
         bounds = to.load(osp.join(load_dir, 'bounds.pt'))
         uc_normalizer = UnitCubeProjector(bounds[0, :], bounds[1, :])
+
+        if cands.shape[0] > cands_values.shape[0]:
+            print_cbt(
+                f'There are {cands.shape[0]} candidates but only {cands_values.shape[0]} evaluations. Ignoring the'
+                f'candidates without evaluation for computing the argmax.', 'y')
+            cands = cands[:cands_values.shape[0], :]
 
         # Find the maximizer
         argmax_cand = BayRn.argmax_posterior_mean(cands, cands_values, uc_normalizer, num_restarts, num_samples)

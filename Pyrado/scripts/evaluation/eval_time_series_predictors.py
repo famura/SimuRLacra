@@ -29,7 +29,6 @@
 """
 Compare potential based neural networks to classical recurrent networks for time series prediction.
 """
-
 import numpy as np
 import os.path as osp
 from matplotlib import pyplot as plt

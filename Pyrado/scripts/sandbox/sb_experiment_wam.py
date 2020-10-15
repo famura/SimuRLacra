@@ -36,7 +36,6 @@ Additional reading:
     Ball-in-a-cup demo:
     https://git.ias.informatik.tu-darmstadt.de/klink/ball-in-a-cup-demo/-/blob/master/bic-new.py
 """
-
 import os.path as osp
 import numpy as np
 import robcom_python as r

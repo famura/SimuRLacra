@@ -60,6 +60,6 @@ if __name__ == '__main__':
     while not done:
         ro = rollout(env, policy, render_mode=RenderMode(text=False, video=True), eval=True,
                      reset_kwargs=dict(domain_param=param, init_state=state))
-        print_domain_params(env.domain_param)
+        # print_domain_params(env.domain_param)
         print_cbt(f'Return: {ro.undiscounted_return()}', 'g', bright=True)
         done, state, param = after_rollout_query(env, policy, ro)

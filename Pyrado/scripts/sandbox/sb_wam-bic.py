@@ -222,6 +222,40 @@ def rollout_dummy_rbf_policy():
     plt.show()
 
 
+def rollout_dummy_rbf_policy_4dof():
+    # Environment
+    env = WAMBallInCupSim(
+        num_dof=4,
+        max_steps=3000,
+        # Note, when tuning the task args: the `R` matrices are now 4x4 for the 4 dof WAM
+        task_args=dict(
+            R=np.zeros((4, 4)),
+            R_dev=np.diag([0.2, 0.2, 1e-2, 1e-2])
+        ),
+    )
+
+    # Stabilize ball and print out the stable state
+    env.reset()
+    act = np.zeros(env.spec.act_space.flat_dim)
+    for i in range(1500):
+        env.step(act)
+        env.render(mode=RenderMode(video=True))
+
+    # Printing out actual positions for 4-dof (..just needed to setup the hard-coded values in the class)
+    print('Ball pos:', env.sim.data.get_body_xpos('ball'))
+    print('Cup goal:', env.sim.data.get_site_xpos('cup_goal'))
+    print('Joint pos (incl. first rope angle):', env.sim.data.qpos[:5])
+
+    # Apply DualRBFLinearPolicy and plot the joint states over the desired ones
+    rbf_hparam = dict(num_feat_per_dim=7, bounds=(np.array([0.]), np.array([1.])))
+    policy = DualRBFLinearPolicy(env.spec, rbf_hparam, dim_mask=2)
+    done, param = False, None
+    while not done:
+        ro = rollout(env, policy, render_mode=RenderMode(video=True), eval=True, reset_kwargs=dict(domain_param=param))
+        print_cbt(f'Return: {ro.undiscounted_return()}', 'g', bright=True)
+        done, _, param = after_rollout_query(env, policy, ro)
+
+
 if __name__ == '__main__':
     pyrado.set_seed(0)
 
@@ -236,3 +270,6 @@ if __name__ == '__main__':
 
     # Apply DualRBFLinearPolicy and plot the joint states over the desired ones
     rollout_dummy_rbf_policy()
+
+    # Do a rollout with the 4-dof WAM
+    # rollout_dummy_rbf_policy_4dof()

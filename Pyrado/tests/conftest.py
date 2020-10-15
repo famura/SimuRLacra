@@ -54,7 +54,7 @@ from pyrado.policies.time import TimePolicy, TraceableTimePolicy
 from pyrado.policies.two_headed import TwoHeadedFNNPolicy, TwoHeadedGRUPolicy
 
 # set spawn method to spawn for parallel test runs
-mp.set_start_method('spawn')
+mp.set_start_method('spawn', force=True)
 
 # Set default torch dtype globally to avoid inconsistent errors depending on the test run order
 to.set_default_dtype(to.double)

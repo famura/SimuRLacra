@@ -30,9 +30,12 @@
 Train an agent to solve the WAM Ball-in-cup environment using Policy learning by Weighting Exploration with the Returns.
 """
 import numpy as np
+import os.path as osp
+import torch as to
 
 import pyrado
 from pyrado.algorithms.power import PoWER
+from pyrado.algorithms.udr import UDR
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam, NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
@@ -46,9 +49,8 @@ if __name__ == '__main__':
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    # Experiment (set seed before creating the modules)
-    # ex_dir = setup_experiment(WAMBallInCupSim.name, PoWER.name + '_' + DualRBFLinearPolicy.name)
-    ex_dir = setup_experiment(WAMBallInCupSim.name, f'{PoWER.name}_{DualRBFLinearPolicy.name}',
+    # Experiment
+    ex_dir = setup_experiment(WAMBallInCupSim.name, f'{UDR.name}-{PoWER.name}_{DualRBFLinearPolicy.name}',
                               '4dof_rand-cs-rl-bm-jd-js')
 
     # Set seed if desired
@@ -79,16 +81,19 @@ if __name__ == '__main__':
         dim_mask=2
     )
     policy = DualRBFLinearPolicy(env.spec, **policy_hparam)
+    policy.param_values = to.load(osp.join(
+        pyrado.EXP_DIR, 'wam-bic', 'bayrn_power', '0001-01-01_00-00-00--initpolicies', 'policy_1.pt'
+    )).param_values
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=100,
+        max_iter=50,
         pop_size=200,
-        num_rollouts=100,
         num_is_samples=10,
-        expl_std_init=np.pi/6,
+        num_rollouts=8,
+        expl_std_init=np.pi/12,
         expl_std_min=0.02,
-        num_workers=8,
+        num_sampler_envs=16,
     )
     algo = PoWER(ex_dir, env, policy, **algo_hparam)
 

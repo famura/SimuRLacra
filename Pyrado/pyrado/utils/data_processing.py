@@ -29,7 +29,6 @@
 """
 Only tested for 1-dim inputs, e.g. time series of rewards.
 """
-
 import numpy as np
 import torch as to
 from typing import Union, Tuple

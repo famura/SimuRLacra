@@ -28,7 +28,7 @@
 
 ###############################################################################
 ## SLURM Configurations
-#SBATCH --job-name "$1"
+#SBATCH --job-name pyrado_cpu
 #SBATCH --array 0-0
 #SBATCH --time 72:00:00
 ## Always leave ntasks value to 1. This is only used for MPI, which is not supported now.

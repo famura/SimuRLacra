@@ -32,12 +32,14 @@ from pyrado.spaces import BoxSpace
 
 
 # 4 DoF arm, 2 DoF actuated
+init_pose_des_4dof = np.array([0., 0.6, 0., 1.25])
 act_min_wam_4dof = np.array([-1.985, -0.9, -10*np.pi, -10*np.pi])
 act_max_wam_4dof = np.array([1.985, np.pi, 10*np.pi, 10*np.pi])
 labels_4dof = [r'$q_{1,des}$', r'$q_{3,des}$', r'$\dot{q}_{1,des}$', r'$\dot{q}_{3,des}$']
 act_space_wam_4dof = BoxSpace(act_min_wam_4dof, act_max_wam_4dof, labels=labels_4dof)
 
 # 7 DoF arm, 3 DoF actuated
+init_pose_des_7dof = np.array([0., 0.5876, 0., 1.36, 0.5, -0.321, -1.57])
 act_min_wam_7dof = np.array([-1.985, -0.9, -np.pi/2, -10*np.pi, -10*np.pi, -10*np.pi])
 act_max_wam_7dof = np.array([1.985, np.pi, np.pi/2, 10*np.pi, 10*np.pi, 10*np.pi])
 labels_7dof = [r'$q_{1,des}$', r'$q_{3,des}$', r'$q_{5,des}$',

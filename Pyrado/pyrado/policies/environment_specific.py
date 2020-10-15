@@ -27,8 +27,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import math
-from typing import Union
-
 import numpy as np
 import time
 import torch as to
@@ -561,7 +559,7 @@ class QQubeGoToLimCtrl:
         :param positive: direction switch
         """
         self.done = False
-        self.th_lim = 10.
+        self.th_lim = pyrado.inf
         self.sign = 1 if positive else -1
         self.u_max = 0.9
         self.cnt = 0
@@ -577,7 +575,8 @@ class QQubeGoToLimCtrl:
         # Unpack the raw measurement (is not an observation)
         th = meas[0].item()
 
-        if abs(th - self.th_lim) > 1e-8:
+        if abs(th - self.th_lim) > 1e-6:
+            # Recognized significant change in theta
             self.cnt = 0
             self.th_lim = th
         else:

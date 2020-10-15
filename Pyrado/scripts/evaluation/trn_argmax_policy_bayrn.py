@@ -29,9 +29,6 @@
 """
 Script to get the maximizer of a GP's posterior given saved data from a BayRn experiment
 """
-import os.path as osp
-import torch as to
-
 import pyrado
 from pyrado.algorithms.advantage import GAE
 from pyrado.algorithms.bayrn import BayRn
@@ -42,7 +39,6 @@ from pyrado.algorithms.ppo import PPO, PPO2
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment
-from pyrado.utils.math import UnitCubeProjector
 
 
 if __name__ == '__main__':
@@ -54,12 +50,6 @@ if __name__ == '__main__':
 
     # Load the environment and the policy
     env_sim, policy, kwout = load_experiment(ex_dir, args)
-
-    # Load the required data
-    cands = to.load(osp.join(ex_dir, 'candidates.pt'))
-    cands_values = to.load(osp.join(ex_dir, 'candidates_values.pt')).unsqueeze(1)
-    bounds = to.load(osp.join(ex_dir, 'bounds.pt'))
-    uc_normalizer = UnitCubeProjector(bounds[0, :], bounds[1, :])
 
     # Decide on which algorithm to use via the mode argument
     if args.mode == PPO.name:

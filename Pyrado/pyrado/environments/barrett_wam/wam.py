@@ -32,7 +32,8 @@ import robcom_python as robcom
 from init_args_serializer import Serializable
 
 import pyrado
-from pyrado.environments.barrett_wam import act_space_wam_7dof, act_space_wam_4dof
+from pyrado.environments.barrett_wam import init_pose_des_4dof, init_pose_des_7dof, act_space_wam_7dof, \
+    act_space_wam_4dof
 from pyrado.environments.real_base import RealEnv
 from pyrado.spaces import BoxSpace
 from pyrado.spaces.base import Space
@@ -77,21 +78,25 @@ class WAMBallInCupReal(RealEnv, Serializable):
         # Call the base class constructor to initialize fundamental members
         super().__init__(dt, max_steps)
 
-        # Create the robcom client and connect to it
+        # Create the robcom client and connect to it. Use a Process to timeout if connection cannot be established
+        self._connected = False
         self._client = robcom.Client()
-        if ip is not None:
-            with completion_context('Connecting to the Barret WAM client', color='c'):
-                self._client.start(ip, 2013)  # IP address and port
-        self._dc = None  # Goto command
+        try:
+            self._client.start(ip, 2013, 1000)  # ip address, port, timeout in ms
+            self._connected = True
+            print_cbt('Connected to the Barret WAM client.', 'c', bright=True)
+        except RuntimeError:
+            print_cbt('Connection to the Barret WAM client failed.', 'r', bright=True)
+        self._dc = None  # direct-control process
 
         # Number of controlled joints (dof)
         self.num_dof = num_dof
 
         # Desired joint position for the initial state
         if self.num_dof == 4:
-            self.init_pose_des = np.array([0.0, 0.6, 0.0, 1.25])
+            self.init_pose_des = init_pose_des_4dof
         elif self.num_dof == 7:
-            self.init_pose_des = np.array([0.0, 0.5876, 0.0, 1.36, 0.0, -0.321, -1.57])
+            self.init_pose_des = init_pose_des_7dof
         else:
             raise pyrado.ValueErr(given=self.num_dof, eq_constraint="4 or 7")
 
@@ -145,6 +150,10 @@ class WAMBallInCupReal(RealEnv, Serializable):
         self._obs_space = BoxSpace(np.array([0.]), np.array([1.]), labels=['$t$'])
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
+        if not self._connected:
+            print_cbt('Not connected to Barret WAM client.', 'r', bright=True)
+            raise pyrado.ValueErr(given=self._connected, eq_constraint=True)
+
         # Create robcom GoTo process
         gt = self._client.create(robcom.Goto, 'RIGHT_ARM', '')
 
@@ -231,7 +240,6 @@ class WAMBallInCupReal(RealEnv, Serializable):
         :param eg: end-effector group
         :param data_provider: additional data stream
         """
-
         # Check if max_steps is reached
         if self._curr_step_rr >= self.max_steps:
             return True

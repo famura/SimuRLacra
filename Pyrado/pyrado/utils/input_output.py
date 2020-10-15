@@ -28,6 +28,8 @@
 
 import contextlib
 import numpy as np
+import select
+import sys
 from colorama import Fore, Style
 from typing import Sequence, Iterable
 
@@ -36,15 +38,25 @@ from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils import run_once
 
 
-def insert_newlines(string: str, every: int) -> str:
+def input_timeout(prompt: str, t_timeout: [float, int] = 30, default: str = None) -> str:
     """
-    Inserts multiple line breaks.
+    Ask the user for an input and quit with a runtime error if no input was given
 
-    :param string: input string to be broken into multiple lines
-    :param every: gap in number of characters between every line break
-    :return: the input sting with line breaks
+    :param prompt: text to be printed before recording the input
+    :param t_timeout: time limit to enter an input
+    :param default: default output that is returned if the timeout was raised, pass `None` for no default
+    :return: return the input as a string captured by the system
     """
-    return '\n'.join(string[i:i + every] for i in range(0, len(string), every))
+    print(prompt, end=' ')
+    rlist, _, _ = select.select([sys.stdin], [], [], t_timeout)
+
+    if not rlist:
+        if default is None:
+            raise RuntimeError(f'No input received within {t_timeout}s!')
+        else:
+            return default
+
+    return sys.stdin.readline().strip()
 
 
 def print_cbt(msg: str, color: str = '', bright: bool = False, tag: str = '', end='\n'):
@@ -131,6 +143,17 @@ def select_query(items,
             # The fallback should report it's own errors
         else:
             print('Please enter a number.')
+
+
+def insert_newlines(string: str, every: int) -> str:
+    """
+    Inserts multiple line breaks.
+
+    :param string: input string to be broken into multiple lines
+    :param every: gap in number of characters between every line break
+    :return: the input sting with line breaks
+    """
+    return '\n'.join(string[i:i + every] for i in range(0, len(string), every))
 
 
 def ensure_math_mode(inp: [str, Sequence[str]], no_subscript: bool = False) -> [str, list]:

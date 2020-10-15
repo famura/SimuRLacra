@@ -175,7 +175,7 @@ class SVPG(Algorithm):
 
         # Particle factory
         actor = FNNPolicy(spec=env.spec, **particle_hparam['actor'])
-        value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **particle_hparam['value_fcn'])
+        value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **particle_hparam['valuefcn'])
         critic = GAE(value_fcn, **particle_hparam['critic'])
         self.register_as_logger_parent(critic)
         particle = SVPGParticle(env.spec, actor, critic)

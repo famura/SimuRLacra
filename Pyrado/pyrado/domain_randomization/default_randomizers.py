@@ -414,9 +414,10 @@ def get_default_randomizer_wambic() -> DomainRandomizer:
         NormalDomainParam(name='ball_mass', mean=dp_nom['ball_mass'], std=dp_nom['ball_mass']/10, clip_lo=1e-2),
         UniformDomainParam(name='joint_damping', mean=dp_nom['joint_damping'], halfspan=dp_nom['joint_damping']/2,
                            clip_lo=0.),
-        UniformDomainParam(name='joint_stiction', mean=dp_nom['joint_stiction'], halfspan=dp_nom['joint_stiction'],
+        UniformDomainParam(name='joint_stiction', mean=dp_nom['joint_stiction'], halfspan=dp_nom['joint_stiction']/2,
                            clip_lo=0.),
-        UniformDomainParam(name='rope_damping', mean=dp_nom['rope_damping'], halfspan=5e-4, clip_lo=1e-6),
+        UniformDomainParam(name='rope_damping', mean=dp_nom['rope_damping'], halfspan=dp_nom['rope_damping']/2,
+                           clip_lo=1e-6),
     )
 
 

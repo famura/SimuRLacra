@@ -32,12 +32,13 @@ import os.path as osp
 from init_args_serializer import Serializable
 
 import pyrado
-from pyrado.environments.barrett_wam import act_space_wam_4dof, act_space_wam_7dof
+from pyrado.environments.barrett_wam import init_pose_des_4dof, init_pose_des_7dof, act_space_wam_4dof, \
+    act_space_wam_7dof
+from pyrado.environments.mujoco.base import MujocoSimEnv
 from pyrado.spaces.base import Space
 from pyrado.spaces.singular import SingularStateSpace
-from pyrado.tasks.base import Task
-from pyrado.environments.mujoco.base import MujocoSimEnv
 from pyrado.spaces.box import BoxSpace
+from pyrado.tasks.base import Task
 from pyrado.tasks.condition_only import ConditionOnlyTask
 from pyrado.tasks.desired_state import DesStateTask
 from pyrado.tasks.final_reward import BestStateFinalRewTask, FinalRewTask, FinalRewMode
@@ -160,10 +161,10 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         self.num_dof = num_dof
         if num_dof == 4:
             graph_file_name = 'wam_4dof_bic.xml'
-            self.init_pose_des = np.array([0.0, 0.6, 0.0, 1.25])
+            self.init_pose_des = init_pose_des_4dof
         elif num_dof == 7:
             graph_file_name = 'wam_7dof_bic.xml'
-            self.init_pose_des = np.array([0.0, 0.5876, 0.0, 1.36, 0.0, -0.321, -1.57])
+            self.init_pose_des = init_pose_des_7dof
         else:
             raise pyrado.ValueErr(given=num_dof, eq_constraint='4 or 7')
 
@@ -259,16 +260,19 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         self._obs_space = BoxSpace(np.array([0.]), np.array([1.]), labels=['$t$'])
 
     def _create_task(self, task_args: dict) -> Task:
-        # Create two (or three) parallel running task.
-        #   1.) Main task: Desired state task for the cartesian ball distance
-        #   2.) Deviation task: Desired state task for the cartesian- and joint deviation from the init position
-        #   3.) Binary Bonus: Adds a binary bonus when ball is catched [inactive by default]
-        return ParallelTasks([self._create_main_task(task_args),
-                              self._create_deviation_task(task_args),
-                              self._create_main_task(dict(
-                                  sparse_rew_fcn=True,
-                                  success_bonus=task_args.get('success_bonus', 0)))
-                              ])
+        if task_args.get('sparse_rew_fcn', False):
+            # Create a task with binary reward
+            return self._create_main_task(task_args)
+        else:
+            # Create two (or three) parallel running task.
+            #   1.) Main task: Desired state task for the cartesian ball distance
+            #   2.) Deviation task: Desired state task for the cartesian- and joint deviation from the init position
+            #   3.) Binary Bonus: Adds a binary bonus when ball is catched [inactive by default]
+            return ParallelTasks([
+                self._create_main_task(task_args),
+                self._create_deviation_task(task_args),
+                self._create_main_task(dict(sparse_rew_fcn=True, success_bonus=task_args.get('success_bonus', 0)))
+            ])
 
     def _create_main_task(self, task_args: dict) -> Task:
         # Create a DesStateTask that masks everything but the ball position

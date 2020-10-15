@@ -81,9 +81,9 @@ def set_style(style_name: str = 'default'):
         ValueError("Unknown style name! Got {}, but expected 'default', 'ggplot', 'dark_background',"
                    "'seaborn', or 'seaborn-muted'.".format(style_name))
 
-    plt.rc('font', size=11)
-    plt.rc('xtick', labelsize=11)
-    plt.rc('ytick', labelsize=11)
+    plt.rc('font', size=10)
+    plt.rc('xtick', labelsize=10)
+    plt.rc('ytick', labelsize=10)
     # plt.rc('savefig', bbox='tight')  # 'tight' is incompatible with pipe-based animation backends
     plt.rc('savefig', pad_inches=0)
 

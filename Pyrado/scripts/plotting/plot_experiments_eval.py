@@ -127,9 +127,6 @@ class ResultContainer:
             self._returns_est_per_ex.append(np.mean(np.asarray(rets), axis=1))
             self.returns_est.extend(np.mean(np.asarray(rets), axis=1))
 
-        # if not len(self.returns_est) == len(self.matches):
-        #     raise pyrado.ShapeErr(given=self.returns_est, expected_match=self.matches)
-
         # Print what has been loaded
         ex_names = ['...' + m[m.rfind('/'):] for m in self.matches]  # cut off everything until the experiment's name
         print(tabulate(
@@ -154,28 +151,28 @@ if __name__ == '__main__':
     results = [
         ResultContainer(
             name='BayRn',
-            parent_dir=osp.join(pyrado.EXP_DIR, env_name, 'bayrn-ppo_fnn'),
+            parent_dir=osp.join(pyrado.EXP_DIR, env_name, 'DIR_NAME'),
             # incl_pattern='',
             latest_evals_only=False,
             sort=True
         ),
         ResultContainer(
             name='SimOpt',
-            parent_dir=osp.join(pyrado.EXP_DIR, env_name, 'simopt-reps_reported'),
+            parent_dir=osp.join(pyrado.EXP_DIR, env_name, 'DIR_NAME'),
             # incl_pattern='',
             latest_evals_only=False,
             sort=True
         ),
         ResultContainer(
             name='UDR',
-            parent_dir=osp.join(pyrado.EXP_DIR, env_name, 'udr-ppo_fnn'),
+            parent_dir=osp.join(pyrado.EXP_DIR, env_name, 'DIR_NAME'),
             # incl_pattern='',
             latest_evals_only=False,
             sort=True
         ),
         ResultContainer(
             name='PPO',
-            parent_dir=osp.join(pyrado.EXP_DIR, env_name, 'ppo_fnn'),
+            parent_dir=osp.join(pyrado.EXP_DIR, env_name, 'DIR_NAME'),
             # incl_pattern='',
             latest_evals_only=False,
             sort=True
@@ -183,13 +180,7 @@ if __name__ == '__main__':
     ]
 
     # Extract the data
-    # data = [r.returns_est for r in results]
-    data = [
-        to.load(osp.join(pyrado.TEMP_DIR, 'returns_bayrn.pt')).tolist(),
-        to.load(osp.join(pyrado.TEMP_DIR, 'returns_simopt.pt')).tolist(),
-        to.load(osp.join(pyrado.TEMP_DIR, 'returns_udr.pt')).tolist(),
-        to.load(osp.join(pyrado.TEMP_DIR, 'returns_nominal.pt')).tolist(),
-    ]
+    data = [r.returns_est for r in results]
     algo_names = [r.name for r in results]
 
     # Plot and save

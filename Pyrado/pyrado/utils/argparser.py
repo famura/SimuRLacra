@@ -57,6 +57,9 @@ def get_argparser() -> argparse.ArgumentParser:
     parser.add_argument('--load_all', action='store_true', default=False,
                         help="load all quantities e.g. policies (default: False)")
 
+    parser.add_argument('--load_name', type=str, default='policy',
+                        help="name of the policy to load without type extension, (default: 'policy')")
+
     parser.add_argument('-d', '--ex_dir', type=str, nargs='?',
                         help="path to the experiment directory to load from")
 
