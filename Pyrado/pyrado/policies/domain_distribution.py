@@ -27,8 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import torch as to
-from typing import Dict, Tuple
 from torch import nn as nn
+from typing import Dict, Tuple
 
 import pyrado
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
@@ -37,7 +37,6 @@ from pyrado.spaces import BoxSpace
 from pyrado.spaces.empty import EmptySpace
 from pyrado.utils.data_processing import MinMaxScaler
 from pyrado.utils.data_types import EnvSpec
-from pyrado.utils.math import clamp, UnitCubeProjector
 
 
 class DomainDistrParamPolicy(Policy):
@@ -49,6 +48,7 @@ class DomainDistrParamPolicy(Policy):
                  mapping: Dict[int, Tuple[str, str]],
                  trafo_mask: list,
                  prior: DomainRandomizer = None,
+                 scale_params: bool = False,
                  use_cuda: bool = False):
         """
         Constructor
@@ -58,6 +58,8 @@ class DomainDistrParamPolicy(Policy):
         :param trafo_mask: every domain distribution parameter that is set to `True` in this mask will be exponentially
                            transformed. This is useful to avoid setting negative variance.
         :param prior: prior believe about the distribution parameters in from of a `DomainRandomizer`
+        :param scale_params: if `True`, the log-transformed policy parameters are scaled in the range of $[-0.5, 0.5]$.
+                             The advantage of this is to make the parameter-based exploration easier.
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
         if not isinstance(mapping, dict):
@@ -68,6 +70,7 @@ class DomainDistrParamPolicy(Policy):
         self.mapping = mapping
         self.mask = to.tensor(trafo_mask, dtype=to.bool)
         self.prior = prior
+        self._scale_params = scale_params
 
         # Define the parameter space by using the Policy.env_spec.act_space
         param_spec = EnvSpec(obs_space=EmptySpace(), act_space=BoxSpace(-pyrado.inf, pyrado.inf, shape=len(mapping)))
@@ -76,7 +79,8 @@ class DomainDistrParamPolicy(Policy):
         super().__init__(param_spec, use_cuda)
 
         self.params = nn.Parameter(to.empty(param_spec.act_space.flat_dim), requires_grad=True)
-        self.param_scaler = None  # initialized during init_param()
+        if self._scale_params:
+            self.param_scaler = None  # initialized during init_param()
         self.init_param(prior=prior)
 
     def transform_to_ddp_space(self, params: to.Tensor) -> to.Tensor:
@@ -90,13 +94,15 @@ class DomainDistrParamPolicy(Policy):
 
         if ddp.ndimension() == 1:
             # Only one set of domain distribution parameters
-            ddp.data = self.param_scaler.scale_back(ddp.data)
+            if self._scale_params:
+                ddp.data = self.param_scaler.scale_back(ddp.data)
             ddp.data[self.mask] = to.exp(ddp.data[self.mask])
 
         elif ddp.ndimension() == 2:
             # Multiple sets of domain distribution parameters along the first axis
-            for i in range(ddp.shape[0]):
-                ddp[i].data = self.param_scaler.scale_back(ddp[i].data)
+            if self._scale_params:
+                for i in range(ddp.shape[0]):
+                    ddp[i].data = self.param_scaler.scale_back(ddp[i].data)
             ddp.data[:, self.mask] = to.exp(ddp.data[:, self.mask])
 
         else:
@@ -125,16 +131,20 @@ class DomainDistrParamPolicy(Policy):
                             self.params[idx].data.fill_(to.log(to.tensor(val)))
                         else:
                             self.params[idx].data.fill_(to.tensor(val))
+                        if to.any(to.isnan(self.params[idx].data)):
+                            raise pyrado.ValueErr(msg='DomainDistrParamPolicy parameter became NaN during'
+                                                      'initialization! Check the mask and negative mean values.')
 
         else:
             raise pyrado.ValueErr(msg='DomainDistrParamPolicy needs to be initialized! Either with a set of policy'
                                       'parameters, or with a prior in form of a DomainRandomizer!')
 
-        # After initializing, we have an estimate on the magnitude of the policy parameters. Usually, the
-        # non-transformed means are a magnitude smaller than e.g. the transformed stds. Thus, we will approximately
-        # project them to [-1, 1]
-        self.param_scaler = MinMaxScaler(bound_lo=-1, bound_up=1)
-        self.params.data = self.param_scaler.scale_to(self.params.data)  # params now in [-1, 1]
+        if self._scale_params:
+            # After initializing, we have an estimate on the magnitude of the policy parameters. Usually, the
+            # non-transformed means are a magnitude smaller than e.g. the transformed stds. Thus, we will approximately
+            # project them to [-0.5, 0.5]
+            self.param_scaler = MinMaxScaler(bound_lo=-0.5, bound_up=0.5)
+            self.params.data = self.param_scaler.scale_to(self.params.data)  # params now in [-0.5, 0.5]
 
     def forward(self, obs: to.Tensor = None) -> to.Tensor:
         # Should never be used. This is an abuse of the policy class but it is worth it.

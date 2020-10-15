@@ -110,10 +110,10 @@ if __name__ == '__main__':
     if args.save_figures:
         if args.mode in ['1D', '3D']:
             for fmt in ['pdf', 'pgf']:
-                fig.savefig(osp.join(ex_dir, f'gp-posterior-ret.{fmt}'), dpi=500)
+                fig.savefig(osp.join(ex_dir, f'gp_posterior_ret.{fmt}'), dpi=500)
         elif args.mode == '2D':
             for fmt in ['pdf', 'pgf']:
-                fig_mean.savefig(osp.join(ex_dir, f'gp-posterior-ret_mean.{fmt}'), dpi=500)
-                fig_std.savefig(osp.join(ex_dir, f'gp-posterior-ret_std.{fmt}'), dpi=500)
+                fig_mean.savefig(osp.join(ex_dir, f'gp_posterior_ret_mean.{fmt}'), dpi=500)
+                fig_std.savefig(osp.join(ex_dir, f'gp_posterior_ret_std.{fmt}'), dpi=500)
 
     plt.show()

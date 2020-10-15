@@ -29,7 +29,6 @@
 """
 Script for the paper plot the GP's posterior after a Bayesian Domain Randomization sim-to-sim experiment
 """
-
 import joblib
 import os
 import os.path as osp
@@ -101,8 +100,8 @@ if __name__ == '__main__':
 
         if not args.render3D:
             # Plot 2D
-            hm_fig_size = (pyrado.figsize_IEEE_1col_square[0]*0.75, pyrado.figsize_IEEE_1col_square[0]*0.75)
-            cb_fig_size = (pyrado.figsize_IEEE_1col_square[0]*0.15, pyrado.figsize_IEEE_1col_square[0]*0.55)
+            hm_fig_size = (pyrado.figsize_IEEE_1col_square[0]*0.5, pyrado.figsize_IEEE_1col_square[0]*0.5)  # 1row2col
+            cb_fig_size = (pyrado.figsize_IEEE_1col_square[0]*0.33, pyrado.figsize_IEEE_1col_square[0]*0.12)  # 1row2col
 
             fig_hm_mean, ax_hm_mean = plt.subplots(1, figsize=hm_fig_size, constrained_layout=True)
             fig_cb_mean, ax_cb_mean = plt.subplots(1, figsize=cb_fig_size, constrained_layout=True)
@@ -119,40 +118,37 @@ if __name__ == '__main__':
         raise pyrado.ValueErr(msg='Select exactly 1 or 2 indices!')
 
     # Nice color map from seaborn
-    # hm_cmap = sns.cubehelix_palette(light=.9, dark=.1, reverse=True, as_cmap=True)
-    # hm_cmap = sns.light_palette("muted_navy", reverse=True, as_cmap=True)
     hm_cmap = ListedColormap(sns.color_palette("YlGnBu", n_colors=100)[::-1])
-    # hm_cmap = ListedColormap(sns.color_palette("YlOrRd", n_colors=100)[::-1])
-    # hm_cmap = ListedColormap(sns.color_palette("OrRd", n_colors=100)[::-1])
-    # scat_cmap = LinearSegmentedColormap.from_list('white_to_gray', [(1., 1., 1.), (.4, .4, .4)], N=256)
-    scat_cmap = LinearSegmentedColormap.from_list('light_to_dark_gray', [(.8, .8, .8), (.2, .2, .2)], N=256)
-
-    render_singletask_gp(
-        ax, cands, cands_values, min_gp_obsnoise=1e-5,
-        data_x_min=bounds[0, args.idcs], data_x_max=bounds[1, args.idcs],
-        # data_x_min=bounds[0], data_x_max=bounds[1],
-        idcs_sel=args.idcs, x_label=x_label, y_label=y_label, z_label=r'$\hat{J}^{\textrm{real}}$',
-        heatmap_cmap=hm_cmap, num_stds=2, resolution=151, legend_data_cmap=scat_cmap, show_legend_data=args.verbose,
-        show_legend_posterior=True, show_legend_std=True, render3D=args.render3D,
-    )
+    scat_cmap = LinearSegmentedColormap.from_list('light_to_dark_gray', [(.95, .95, .95), (.05, .05, .05)], N=256)
 
     if len(args.idcs) == 1:
         ax.axvline(gt_val_x, c='firebrick', ls='--', lw=1.5, label='gt')
 
+    render_singletask_gp(
+        ax, cands, cands_values, min_gp_obsnoise=1e-5,
+        data_x_min=bounds[0, args.idcs], data_x_max=bounds[1, args.idcs],
+        idcs_sel=args.idcs, x_label=r'pend. pole mass $m_p$', y_label=r'rot. pole mass $m_r$',
+        z_label=r'r$\hat{J}^{\textrm{real}}$',
+        heatmap_cmap=hm_cmap, num_stds=2, resolution=201, legend_data_cmap=scat_cmap, show_legend_data=args.verbose,
+        show_legend_posterior=True, show_legend_std=True, render3D=args.render3D,
+    )
+
     if len(args.idcs) == 2 and not args.render3D:
         # Plot the ground truth domain parameter configuration
-        ax_hm_mean.scatter(gt_val_x, gt_val_y, c='firebrick', marker='o', s=60)  # forestgreen
-        ax_hm_std.scatter(gt_val_x, gt_val_y, c='firebrick', marker='o', s=60)  # forestgreen
+        ax_hm_mean.scatter(gt_val_x, gt_val_y, c='firebrick', marker='*', s=60)  # forestgreen
+        ax_hm_std.scatter(gt_val_x, gt_val_y, c='firebrick', marker='*', s=60)  # forestgreen
 
     if args.save_figures:
         os.makedirs(osp.join(ex_dir, 'plots'), exist_ok=True)
         for fmt in ['pdf', 'pgf', 'png']:
             if len(args.idcs) == 1 or args.render3D:
-                fig.savefig(osp.join(ex_dir, 'plots', f'gp-posterior-ret-mean.{fmt}'), dpi=500)
+                fig.savefig(osp.join(ex_dir, 'plots', f'gp_posterior_ret_mean.{fmt}'), dpi=500)
             if len(args.idcs) == 2 and not args.render3D:
-                fig_hm_mean.savefig(osp.join(ex_dir, 'plots', f'gp-posterior-ret-mean-hm.{fmt}'), dpi=500)
-                fig_cb_mean.savefig(osp.join(ex_dir, 'plots', f'gp-posterior-ret-mean-cb.{fmt}'), dpi=500)
-                fig_hm_std.savefig(osp.join(ex_dir, 'plots', f'gp-posterior-ret-std-hm.{fmt}'), dpi=500)
-                fig_cb_std.savefig(osp.join(ex_dir, 'plots', f'gp-posterior-ret-std-cb.{fmt}'), dpi=500)
+                fig_hm_mean.savefig(osp.join(ex_dir, 'plots', f'gp_posterior_ret_mean_hm.{fmt}'), dpi=500,
+                                    backend='pgf')
+                fig_cb_mean.savefig(osp.join(ex_dir, 'plots', f'gp_posterior_ret_mean_cb.{fmt}'), dpi=500,
+                                    backend='pgf')
+                fig_hm_std.savefig(osp.join(ex_dir, 'plots', f'gp_posterior_ret_std_hm.{fmt}'), dpi=500, backend='pgf')
+                fig_cb_std.savefig(osp.join(ex_dir, 'plots', f'gp_posterior_ret_std_cb.{fmt}'), dpi=500, backend='pgf')
 
     plt.show()

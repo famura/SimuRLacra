@@ -28,17 +28,17 @@
 
 ###############################################################################
 ## SLURM Configurations
-#SBATCH --job-name "$1"
-#SBATCH --array 0-0
+#SBATCH --job-name pyrado_cpu
+#SBATCH --array 0-9
 #SBATCH --time 72:00:00
 ## Always leave ntasks value to 1. This is only used for MPI, which is not supported now.
 #SBATCH --ntasks 1
 ## Specify the number of cores. The maximum is 32.
-#SBATCH --cpus-per-task 16
+#SBATCH --cpus-per-task 1
 ## Leave this if you want to use a GPU per job. Remove it if you do not need it.
 ##SBATCH --gres=gpu:rtx2080:1
 ##SBATCH -C avx
-##SBATCH --mem-per-cpu=4096
+##SBATCH --mem-per-cpu=2048
 #SBATCH -o /home/muratore/Software/SimuRLacra/remotelaunch/logs/%A_%a-out.txt
 #SBATCH -e /home/muratore/Software/SimuRLacra/remotelaunch/logs/%A_%a-err.txt
 ###############################################################################
@@ -57,4 +57,4 @@ cd "$SCRIPTS_DIR"
 
 # Run python scripts with provided command line arguments
 CMD="$@" # all arguments for the script call starting from PATHTO/SimuRLacra/Pyrado/scripts (excluding "python")
-python $CMD
+python $CMD --seed $SLURM_ARRAY_TASK_ID

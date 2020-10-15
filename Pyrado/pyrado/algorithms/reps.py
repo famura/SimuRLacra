@@ -137,7 +137,7 @@ class REPS(ParameterExploring):
             )
         else:
             self.optim_dual = to.optim.SGD([{'params': self._log_eta}], lr=lr_dual, momentum=0.8, weight_decay=1e-4)
-            # self.optim_dual = to.optim.Adam([{'params': self._log_eta}], lr=lr_dual)  # used in [2], but unstable here
+            # self.optim_dual = to.optim.Adam([{'params': self._log_eta}], lr=lr_dual, eps=1e-5)  # used in [2], but unstable here
         self.num_epoch_dual = num_epoch_dual
 
     @property

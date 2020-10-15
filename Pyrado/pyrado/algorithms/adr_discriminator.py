@@ -67,7 +67,7 @@ class RewardGenerator:
                        act_space=BoxSpace(bound_lo=[0], bound_up=[1]))
         self.discriminator = FNNPolicy(spec=spec, hidden_nonlin=to.tanh, hidden_sizes=[62], output_nonlin=to.sigmoid)
         self.loss_fcn = nn.BCELoss()
-        self.optimizer = to.optim.Adam(self.discriminator.parameters(), lr)
+        self.optimizer = to.optim.Adam(self.discriminator.parameters(), lr=lr, eps=1e-5)
         self.logger = logger
 
     def get_reward(self, traj: StepSequence):

@@ -169,7 +169,7 @@ def render_singletask_gp(
 
         # Plot the queried data points
         scat_plot = ax.scatter(data_x.numpy().flatten(), data_y.numpy().flatten(),
-                               marker='x', c=np.arange(data_x.shape[0], dtype=np.int),
+                               marker='o', c=np.arange(data_x.shape[0], dtype=np.int),
                                cmap=legend_data_cmap)
 
         if show_legend_data:
@@ -190,8 +190,10 @@ def render_singletask_gp(
 
     elif dim_x == 2:
         # Create mesh grid matrices from x and y vectors
-        x0_grid = to.linspace(min(data_x[:, 0]), max(data_x[:, 0]), resolution)
-        x1_grid = to.linspace(min(data_x[:, 1]), max(data_x[:, 1]), resolution)
+        # x0_grid = to.linspace(min(data_x[:, 0]), max(data_x[:, 0]), resolution)
+        # x1_grid = to.linspace(min(data_x[:, 1]), max(data_x[:, 1]), resolution)
+        x0_grid = to.linspace(0, 1, resolution)
+        x1_grid = to.linspace(0, 1, resolution)
         x0_mesh, x1_mesh = to.meshgrid([x0_grid, x1_grid])
         x0_mesh, x1_mesh = x0_mesh.t(), x1_mesh.t()  # transpose not necessary but makes identical mesh as np.meshgrid
 
@@ -224,7 +226,7 @@ def render_singletask_gp(
 
             # Plot the queried data points
             scat_plot = ax.scatter(data_x[:, 0].numpy(), data_x[:, 1].numpy(), data_y.numpy(),
-                                   marker='x', c=np.arange(data_x.shape[0], dtype=np.int),
+                                   marker='o', c=np.arange(data_x.shape[0], dtype=np.int),
                                    cmap=legend_data_cmap)
 
             if show_legend_data:
@@ -235,7 +237,7 @@ def render_singletask_gp(
 
             # Plot the argmax of the posterior mean
             x, y = argmax_posterior[0, 0], argmax_posterior[0, 1]
-            ax.scatter(x, y, argmax_pmean_val, c='darkorange', marker='o', s=60)
+            ax.scatter(x, y, argmax_pmean_val, c='darkorange', marker='*', s=60)
             # ax.plot((x, x), (y, y), (data_y.min(), data_y.max()), c='k', ls='--', lw=1.5)
 
         else:
@@ -249,19 +251,22 @@ def render_singletask_gp(
             # Plot a 2D image
             df_mean = pd.DataFrame(mean_raw.numpy(), columns=x0_grid_raw.numpy(), index=x1_grid_raw.numpy())
             render_heatmap(df_mean, ax_hm=ax[0], ax_cb=ax[1], xlabel=x_label, ylabel=y_label, annotate=False,
-                           fig_canvas_title='Returns', tick_label_prec=5, add_sep_colorbar=True, cmap=heatmap_cmap,
-                           colorbar_label=colorbar_label)
+                           fig_canvas_title='Returns', tick_label_prec=2, add_sep_colorbar=True, cmap=heatmap_cmap,
+                           colorbar_label=colorbar_label, num_major_ticks_hm=3, num_major_ticks_cb=2,
+                           colorbar_orientation='horizontal')
 
             df_std = pd.DataFrame(std_raw.numpy(), columns=x0_grid_raw.numpy(), index=x1_grid_raw.numpy())
             render_heatmap(df_std, ax_hm=ax[2], ax_cb=ax[3], xlabel=x_label, ylabel=y_label, annotate=False,
-                           fig_canvas_title='Standard Deviations', tick_label_prec=5, add_sep_colorbar=True,
-                           cmap=heatmap_cmap, colorbar_label=colorbar_label,
-                           norm=colors.Normalize())  # explicitly instantiate a new norm
+                           fig_canvas_title='Standard Deviations', tick_label_prec=2, add_sep_colorbar=True,
+                           cmap=heatmap_cmap, colorbar_label=colorbar_label, num_major_ticks_hm=3, num_major_ticks_cb=2,
+                           colorbar_orientation='horizontal',
+                           norm=colors.Normalize()
+                           )  # explicitly instantiate a new norm
 
             # Plot the queried data points
             for i in [0, 2]:
                 scat_plot = ax[i].scatter(data_x[:, 0].numpy(), data_x[:, 1].numpy(),
-                                          marker='x', c=np.arange(data_x.shape[0], dtype=np.int),
+                                          marker='o', s=15, c=np.arange(data_x.shape[0], dtype=np.int),
                                           cmap=legend_data_cmap)
 
                 if show_legend_data:
@@ -272,8 +277,8 @@ def render_singletask_gp(
                     ax[i].add_artist(scat_legend)
 
             # Plot the argmax of the posterior mean
-            ax[0].scatter(argmax_posterior[0, 0], argmax_posterior[0, 1], c='darkorange', marker='o', s=60)  # steelblue
-            ax[2].scatter(argmax_posterior[0, 0], argmax_posterior[0, 1], c='darkorange', marker='o', s=60)  # steelblue
+            ax[0].scatter(argmax_posterior[0, 0], argmax_posterior[0, 1], c='darkorange', marker='*', s=60)  # steelblue
+            ax[2].scatter(argmax_posterior[0, 0], argmax_posterior[0, 1], c='darkorange', marker='*', s=60)  # steelblue
             # ax[0].axvline(argmax_posterior[0, 0], c='w', ls='--', lw=1.5)
             # ax[0].axhline(argmax_posterior[0, 1], c='w', ls='--', lw=1.5)
             # ax[2].axvline(argmax_posterior[0, 0], c='w', ls='--', lw=1.5)

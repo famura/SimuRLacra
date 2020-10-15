@@ -32,6 +32,7 @@ Script to get the maximizer of a GP's posterior given saved data from a BayRn ex
 import os.path as osp
 import torch as to
 
+import pyrado
 from pyrado.algorithms.advantage import GAE
 from pyrado.algorithms.bayrn import BayRn
 from pyrado.algorithms.cem import CEM
@@ -79,6 +80,9 @@ if __name__ == '__main__':
     # Start from previous results policy if desired
     ppi = policy.param_values.data if args.warmstart is not None else None
     vpi = kwout['value_fcn'].param_values.data if args.warmstart is not None else None
+
+    # Set seed if desired
+    pyrado.set_seed(args.seed, verbose=True)
 
     # Train the policy on the most lucrative domain
     BayRn.train_argmax_policy(ex_dir, env_sim, subroutine, num_restarts=500, num_samples=1000,

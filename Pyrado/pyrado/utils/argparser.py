@@ -90,6 +90,9 @@ def get_argparser() -> argparse.ArgumentParser:
     parser.add_argument('--remove_dr_wrappers', action='store_true', default=False,
                         help="remove all domain randomization wrappers (default: False)")
 
+    parser.add_argument('--policy_name', type=str, nargs='?', default='policy',
+                        help="(partial) name of the policy to load, e.g. 'argmax', or 'iter_0' (default: policy)")
+
     parser.add_argument('-s', '--save_figures', action='store_true', default=False,
                         help="save all generated figures (default: False)")
 

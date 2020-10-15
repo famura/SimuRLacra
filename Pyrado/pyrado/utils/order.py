@@ -56,13 +56,12 @@ def filter_los_by_lok(strs: list, keys: list) -> list:
 
 def get_immediate_subdirs(parent_dir: str):
     """
-    Get all 1st level subdirectories of a specified directory (i.e. a path)
+    Get all 1st level subdirectories of a specified directory (i.e. a path).
 
     :param parent_dir: directory in which to look for subdirectories
     :return: list of names of all 1st level subdirectories
     """
-    return [name for name in os.listdir(parent_dir)
-            if os.path.isdir(os.path.join(parent_dir, name))]
+    return [f.path for f in os.scandir(parent_dir) if os.path.isdir(os.path.join(parent_dir, f))]
 
 
 def natural_sort(lst: list):

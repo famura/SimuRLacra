@@ -49,7 +49,7 @@ if __name__ == '__main__':
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{PPO.name}_{FNNPolicy.name}', '100Hz')
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{PPO.name}_{FNNPolicy.name}', f'100Hz_seed_{args.seed}')
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
@@ -60,26 +60,21 @@ if __name__ == '__main__':
     env = ActNormWrapper(env)
 
     # Policy
-    init_param_kwargs = dict(uniform_bias=True)
-    policy_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh, init_param_kwargs=init_param_kwargs)
-    # policy_hparam = dict(hidden_size=32, num_recurrent_layers=1)
+    policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)  # FNN
+    # policy_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
     policy = FNNPolicy(spec=env.spec, **policy_hparam)
-    # policy = RNNPolicy(spec=env.spec, **policy_hparam)
-    # policy = LSTMPolicy(spec=env.spec, **policy_hparam)
     # policy = GRUPolicy(spec=env.spec, **policy_hparam)
 
     # Critic
-    value_fcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh, init_param_kwargs=init_param_kwargs)
-    # value_fcn_hparam = dict(hidden_size=32, num_recurrent_layers=1)
+    value_fcn_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)  # FNN
+    # value_fcn_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
     value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
-    # value_fcn = RNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
-    # value_fcn = LSTMPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
     # value_fcn = GRUPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
     critic_hparam = dict(
         gamma=0.9885,
         lamda=0.9648,
         num_epoch=2,
-        batch_size=60,
+        batch_size=250,
         standardize_adv=False,
         lr=5.792e-4,
         max_grad_norm=1.,
@@ -88,15 +83,15 @@ if __name__ == '__main__':
 
     # Subroutine
     algo_hparam = dict(
-        max_iter=600,
+        max_iter=300,
         min_steps=23*env.max_steps,
         num_epoch=7,
         eps_clip=0.0744,
-        batch_size=60,
+        batch_size=250,
         std_init=0.9074,
         lr=3.446e-04,
         max_grad_norm=1.,
-        num_workers=16,
+        num_workers=8,
     )
     algo = PPO(ex_dir, env, policy, critic, **algo_hparam)
 

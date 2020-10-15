@@ -36,14 +36,15 @@ from tabulate import tabulate
 from typing import Sequence
 
 import pyrado
-from pyrado.algorithms.actor_critic import ActorCritic
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.sysid_via_episodic_rl import SysIdViaEpisodicRL
-from pyrado.algorithms.utils import until_thold_exceeded
+from pyrado.algorithms.utils import until_thold_exceeded, save_prefix_suffix, load_prefix_suffix
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
+from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.quanser.base import RealEnv
 from pyrado.environments.sim_base import SimEnv
+from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
@@ -79,7 +80,8 @@ class SimOpt(Algorithm):
                  warmstart: bool = True,
                  policy_param_init: to.Tensor = None,
                  valuefcn_param_init: to.Tensor = None,
-                 subrtn_snapshot_mode: str = 'latest'):
+                 subrtn_snapshot_mode: str = 'latest',
+                 logger: StepLogger = None):
         """
         Constructor
 
@@ -90,8 +92,8 @@ class SimOpt(Algorithm):
         :param save_dir: directory to save the snapshots i.e. the results in
         :param env_sim: randomized simulation environment a.k.a. source domain
         :param env_real: real-world environment a.k.a. target domain
-        :param subrtn_policy: algorithm which performs the policy / value-function optimization
-        :param subrtn_distr: algorithm which TODO
+        :param subrtn_policy: algorithm which performs the optimization of the behavioral policy (and value-function)
+        :param subrtn_distr: algorithm which performs the optimization of the domain parameter distribution policy
         :param max_iter: maximum number of iterations
         :param num_eval_rollouts: number of rollouts in the target domain to estimate the return
         :param thold_succ: success threshold on the real system's return for BayRn, stop the algorithm if exceeded
@@ -102,6 +104,7 @@ class SimOpt(Algorithm):
         :param policy_param_init: initial policy parameter values for the subrtn, set `None` to be random
         :param valuefcn_param_init: initial value function parameter values for the subrtn, set `None` to be random
         :param subrtn_snapshot_mode: snapshot mode for saving during training of the subrtn
+        :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         if not isinstance(env_sim, MetaDomainRandWrapper):
             raise pyrado.TypeErr(given=env_sim, expected_type=MetaDomainRandWrapper)
@@ -111,7 +114,7 @@ class SimOpt(Algorithm):
             raise pyrado.TypeErr(given=subrtn_distr, expected_type=SysIdViaEpisodicRL)
 
         # Call Algorithm's constructor
-        super().__init__(save_dir, max_iter, subrtn_policy.policy, logger=None)
+        super().__init__(save_dir, max_iter, subrtn_policy.policy, logger)
 
         # Store the inputs and initialize
         self._env_sim = env_sim
@@ -129,11 +132,16 @@ class SimOpt(Algorithm):
         self.thold_succ_subrtn = to.tensor([thold_succ_subrtn])
         self.max_subrtn_rep = 3  # number of tries to exceed thold_succ_subrtn during training in simulation
 
+        # Save initial environments
+        joblib.dump(self._env_sim, osp.join(self._save_dir, 'env_sim.pkl'))
+        joblib.dump(self._env_real, osp.join(self._save_dir, 'env_real.pkl'))
+        joblib.dump(self._subrtn_distr.policy.prior, osp.join(self._save_dir, 'prior.pkl'))
+
     def train_policy_sim(self, cand: to.Tensor, prefix: str) -> float:
         """
         Train a policy in simulation for given hyper-parameters from the domain randomizer.
 
-        :param cand: hyper-parameters for the domain parameter distribution coming from the domain randomizer
+        :param cand: hyper-parameters for the domain parameter distribution (need be compatible with the randomizer)
         :param prefix: set a prefix to the saved file name by passing it to `meta_info`
         :return: estimated return of the trained policy in the target domain
         """
@@ -141,7 +149,6 @@ class SimOpt(Algorithm):
         to.save(cand.view(-1), osp.join(self._save_dir, f'{prefix}_candidate.pt'))
 
         # Set the domain randomizer
-        cand = self._subrtn_distr.subrtn.policy.transform_to_ddp_space(cand)
         self._env_sim.adapt_randomizer(cand.detach().cpu().numpy())
 
         # Reset the subroutine algorithm which includes resetting the exploration
@@ -162,7 +169,7 @@ class SimOpt(Algorithm):
         avg_ret_sim = to.mean(to.tensor([r.undiscounted_return() for r in ros]))
         return float(avg_ret_sim)
 
-    def train_randomizer(self, rollouts_real: Sequence[StepSequence], prefix: str) -> float:
+    def train_ddp_policy(self, rollouts_real: Sequence[StepSequence], prefix: str) -> float:
         """
         Train and evaluate the policy that parametrizes domain randomizer, such that the loss given by the instance of
         `SysIdViaEpisodicRL` is minimized.
@@ -178,24 +185,35 @@ class SimOpt(Algorithm):
         self._subrtn_distr.train(snapshot_mode=self.subrtn_snapshot_mode,
                                  meta_info=dict(rollouts_real=rollouts_real, prefix=prefix))
 
-        return self.eval_ddp_policy(rollouts_real)
+        return SimOpt.eval_ddp_policy(
+            rollouts_real, self._env_sim, self.num_eval_rollouts, self._subrtn_distr, self._subrtn_policy
+        )
 
-    def eval_ddp_policy(self, rollouts_real: Sequence[StepSequence]) -> float:
+    @staticmethod
+    def eval_ddp_policy(rollouts_real: Sequence[StepSequence],
+                        env_sim: MetaDomainRandWrapper,
+                        num_rollouts: int,
+                        subrtn_distr: SysIdViaEpisodicRL,
+                        subrtn_policy: Algorithm) -> float:
         """
         Evaluate the policy that fits the domain parameter distribution to the observed rollouts.
 
         :param rollouts_real: recorded real-world rollouts
+        :param env_sim: randomized simulation environment a.k.a. source domain
+        :param num_rollouts: number of rollouts to collect on the target domain
+        :param subrtn_distr: algorithm which performs the optimization of the domain parameter distribution policy
+        :param subrtn_policy: algorithm which performs the optimization of the behavioral policy (and value-function)
         :return: average system identification loss
         """
-        # Run rollouts with the best fitter domain parameter distribution
-        assert self._env_sim.randomizer is self._subrtn_distr.subrtn.env.randomizer
+        # Run rollouts in simulation with the same initial states as the real-world rollouts
+        assert env_sim.randomizer is subrtn_distr.subrtn.env.randomizer
         init_states_real = np.array([ro.rollout_info['init_state'] for ro in rollouts_real])
-        rollouts_sim = self.eval_behav_policy(
-            None, self._env_sim, self._subrtn_policy.policy, '', self.num_eval_rollouts, init_states_real
+        rollouts_sim = SimOpt.eval_behav_policy(
+            None, env_sim, subrtn_policy.policy, '', num_rollouts, init_states_real
         )
 
         # Clip the rollouts rollouts yielding two lists of pairwise equally long rollouts
-        ros_real_tr, ros_sim_tr = self._subrtn_distr.truncate_rollouts(
+        ros_real_tr, ros_sim_tr = SysIdViaEpisodicRL.truncate_rollouts(
             rollouts_real, rollouts_sim, replicate=False
         )
         assert len(ros_real_tr) == len(ros_sim_tr)
@@ -203,7 +221,7 @@ class SimOpt(Algorithm):
                     for r, s in zip(ros_real_tr, ros_sim_tr)])
 
         # Return the average the loss
-        losses = [self._subrtn_distr.loss_fcn(ro_r, ro_s) for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr)]
+        losses = [subrtn_distr.loss_fcn(ro_r, ro_s) for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr)]
         return float(np.mean(np.asarray(losses)))
 
     @staticmethod
@@ -222,7 +240,7 @@ class SimOpt(Algorithm):
         :param env: environment for evaluation, in the sim-2-sim case this is another simulation instance
         :param policy: policy to evaluate
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
-        :param num_rollouts: number of rollouts to collect on the target system
+        :param num_rollouts: number of rollouts to collect on the target domain
         :param init_states: pass the initial states of the real system to sync the simulation (mandatory in this case)
         :param seed: seed value for the random number generators, only used when evaluating in simulation
         :return: rollouts
@@ -230,13 +248,13 @@ class SimOpt(Algorithm):
         if save_dir is not None:
             print_cbt(f'Executing {prefix}_policy ...', 'c', bright=True)
 
-        ros = []
-        if isinstance(env, RealEnv):
+        ros_real = []
+        if isinstance(inner_env(env), RealEnv):
             # Evaluate in the real world
             for i in range(num_rollouts):
-                ros.append(rollout(env, policy, eval=True))
+                ros_real.append(rollout(env, policy, eval=True))
 
-        elif isinstance(env, (SimEnv, MetaDomainRandWrapper)):
+        elif isinstance(inner_env(env), SimEnv):
             if init_states is None:
                 init_states = np.array([env.init_space.sample_uniform() for _ in range(num_rollouts)])
             if init_states.shape[0] != num_rollouts:
@@ -245,16 +263,18 @@ class SimOpt(Algorithm):
             # Evaluate in simulation
             for i in range(num_rollouts):
                 # there can be other sources of randomness aside the domain parameters
-                ros.append(rollout(env, policy, eval=True, seed=seed,
-                                   reset_kwargs=dict(init_state=init_states[i, :])))
+                ros_real.append(
+                    rollout(env, policy, eval=True, seed=seed, reset_kwargs=dict(init_state=init_states[i, :]))
+                )
 
         else:
-            raise pyrado.TypeErr(given=env, expected_type=[RealEnv, SimEnv, MetaDomainRandWrapper])
+            raise pyrado.TypeErr(given=env, expected_type=[RealEnv, SimEnv])
 
         if save_dir is not None:
             # Save the evaluation results
-            rets_real = to.tensor([r.undiscounted_return() for r in ros])
-            to.save(rets_real, osp.join(save_dir, f'{prefix}_returns_real.pt'))
+            save_prefix_suffix(ros_real, 'rollouts_real', 'pkl', save_dir, meta_info=dict(prefix=prefix))
+            rets_real = to.tensor([r.undiscounted_return() for r in ros_real])
+            save_prefix_suffix(rets_real, 'returns_real', 'pt', save_dir, meta_info=dict(prefix=prefix))
 
             print_cbt('Target domain performance', bright=True)
             print(tabulate([['mean return', to.mean(rets_real).item()],
@@ -262,20 +282,19 @@ class SimOpt(Algorithm):
                             ['min return', to.min(rets_real)],
                             ['max return', to.max(rets_real)]]))
 
-        return ros
+        return ros_real
 
     def step(self, snapshot_mode: str = 'latest', meta_info: dict = None):
         if self._curr_iter == 0:
             # First iteration, use the policy parameters (initialized from a prior)
-            cand = self._subrtn_distr.policy.param_values.detach()
-            self.cands = cand.clone().unsqueeze(0)
+            cand = self._subrtn_distr.policy.transform_to_ddp_space(self._subrtn_distr.policy.param_values)  # clones
+            self.cands = cand.unsqueeze(0)
         else:
             # Select the latest domain distribution parameter set
             assert isinstance(self.cands, to.Tensor)
-            cand = self.cands[-1, :]
+            cand = self.cands[-1, :].clone()
 
-        print_cbt(f'Current domain distribution parameters: '
-                  f'{self._subrtn_distr.subrtn.policy.transform_to_ddp_space(cand).detach().cpu().numpy()}', 'g')
+        print_cbt(f'Current domain distribution parameters: {cand.detach().cpu().numpy()}', 'g')
 
         # Train and evaluate the behavioral policy, repeat if the resulting policy did not exceed the success threshold
         prefix = f'iter_{self._curr_iter}'
@@ -284,18 +303,27 @@ class SimOpt(Algorithm):
         )(self.train_policy_sim)
         wrapped_trn_fcn(cand, prefix)
 
+        # Save the latest behavioral policy explicitly
+        self._subrtn_policy.save_snapshot()
+
         # Evaluate the current policy in the target domain
         policy = to.load(osp.join(self._save_dir, f'{prefix}_policy.pt'))
         rollouts_real = self.eval_behav_policy(
-            self._save_dir, self._env_real, policy, prefix, self.num_eval_rollouts, None)
+            self._save_dir, self._env_real, policy, prefix, self.num_eval_rollouts, None
+        )
 
         if self._curr_iter == 0:
             # First iteration, also evaluate the random initialization
-            self.cands_values = to.tensor(self.eval_ddp_policy(rollouts_real)).unsqueeze(0)
+            self.cands_values = SimOpt.eval_ddp_policy(
+                rollouts_real, self._env_sim, self.num_eval_rollouts, self._subrtn_distr, self._subrtn_policy
+            )
+            self.cands_values = to.tensor(self.cands_values).unsqueeze(0)
 
         # Train and evaluate the policy which represents domain parameter distribution. Save the real-world rollouts.
-        curr_cand_value = self.train_randomizer(rollouts_real, prefix)
-        next_cand = self._subrtn_distr.subrtn.best_policy_param.detach()
+        curr_cand_value = self.train_ddp_policy(rollouts_real, prefix)
+
+        # The next candidate is the current search distribution and not the best policy parameter set (which is saved)
+        next_cand = self._subrtn_distr.policy.transform_to_ddp_space(self._subrtn_distr.policy.param_values)
 
         # Logging
         self.cands = to.cat([self.cands, next_cand.unsqueeze(0)], dim=0)
@@ -313,33 +341,53 @@ class SimOpt(Algorithm):
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subrtn!')
 
-        # Save the latest behavioral policy explicitly
-        to.save(self._subrtn_policy.policy, osp.join(self.save_dir, 'policy.pt'))
-
     def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
         # Get the directory to load from
         ld = load_dir if load_dir is not None else self._save_dir
         if not osp.isdir(ld):
-            raise pyrado.ValueErr(msg='Given path is not a directory!')
+            raise pyrado.PathErr(given=ld)
 
         if meta_info is None:
             # Crawl through the given directory and check how many policies and candidates there are
-            found_policies, found_cands = None, None
+            found_policies, found_ddp_policies, found_cands, found_evals = None, None, None, None
             for root, dirs, files in os.walk(ld):
                 dirs.clear()  # prevents walk() from going into subdirectories
-                found_policies = [p for p in files if p.endswith('_policy.pt')]  # 'policy.pt' file should not be found
+                found_policies = [p for p in files if
+                                  p.endswith('_policy.pt') and not 'ddp' in p]  # 'policy.pt' file should not be found
+                found_ddp_policies = [p for p in files if
+                                      p.endswith('_ddp_policy.pt')]  # 'ddp_policy.pt' file should not be found
                 found_cands = [c for c in files if c.endswith('_candidate.pt')]
+                found_evals = [v for v in files if v.endswith('_rollouts_real.pkl')]
+
+            # The order is important since it determines the rows of the tensor
+            found_policies.sort()
+            found_ddp_policies.sort()
+            found_cands.sort()
+            found_evals.sort()
 
             # Copy to the current experiment's directory. Not necessary if we are continuing in that directory.
             if ld != self._save_dir:
                 for p in found_policies:
                     copyfile(osp.join(ld, p), osp.join(self._save_dir, p))
+                for ddp in found_ddp_policies:
+                    copyfile(osp.join(ld, ddp), osp.join(self._save_dir, ddp))
                 for c in found_cands:
                     copyfile(osp.join(ld, c), osp.join(self._save_dir, c))
+                for e in found_evals:
+                    copyfile(osp.join(ld, e), osp.join(self._save_dir, e))
+                try:
+                    copyfile(osp.join(ld, 'candidates_values.pt'), osp.join(self._save_dir, 'candidates_values.pt'))
+                except FileNotFoundError:
+                    pass
+
+            # Reconstruct candidates_values.pt
+            try:
+                self.cands_values = to.load(osp.join(ld, 'candidates_values.pt'))
+            except FileNotFoundError:
+                self.cands_values = to.tensor([])
 
             if len(found_policies) > 0:
                 # Load all found candidates to save them into a single tensor
-                found_cands.sort()  # the order is important since it determines the rows of the tensor
                 self.cands = to.stack([to.load(osp.join(ld, c)) for c in found_cands])
                 to.save(self.cands, osp.join(self._save_dir, 'candidates.pt'))
 
@@ -347,73 +395,86 @@ class SimOpt(Algorithm):
                 if not len(found_policies) == len(found_cands):
                     print_cbt(f'Found {len(found_policies)} policies, but {len(found_cands)} candidates!', 'r')
                     n = len(found_cands) - len(found_policies)
-                    delete = input('Delete the superfluous candidates? [y / any other]').lower() == 'y'
+                    delete = input('Delete the superfluous candidates? [y / any other] ').lower() == 'y'
                     if n > 0 and delete:
                         # Delete the superfluous candidates
                         print_cbt(f'Candidates before:\n{self.cands.numpy()}', 'w')
                         self.cands = self.cands[:-n, :]
-                        found_cands = found_cands[:-n]
+                        found_cands = found_cands[:-n]  # cut if used later
                         to.save(self.cands, osp.join(self._save_dir, 'candidates.pt'))
                         print_cbt(f'Candidates after:\n{self.cands.numpy()}', 'c')
                     else:
                         raise pyrado.ShapeErr(msg=f'Found {len(found_policies)} policies,'
                                                   f'but {len(found_cands)} candidates!')
 
+                if len(found_evals) < self.cands.shape[0]:
+                    print_cbt(f'Found {len(found_evals)} real-world evaluation files but {self.cands.shape[0]} '
+                              f'candidates. Now evaluation the remaining ones.', 'c', bright=True)
+                for i in range(self.cands.shape[0] - len(found_evals)):
+                    # Evaluate the current policy in the target domain
+                    prefix = f'iter_{i + len(found_evals)}'
+                    policy = to.load(osp.join(self._save_dir, f'{prefix}_policy.pt'))
+                    ros_real = self.eval_behav_policy(
+                        self._save_dir, self._env_real, policy, prefix, self.num_eval_rollouts, None
+                    )
+                    save_prefix_suffix(ros_real, 'rollouts_real', 'pkl', self._save_dir, meta_info=dict(prefix=prefix))
+                    rets_real = to.tensor([r.undiscounted_return() for r in ros_real])
+                    save_prefix_suffix(rets_real, 'returns_real', 'pt', self._save_dir, meta_info=dict(prefix=prefix))
+
+                if len(found_ddp_policies) != len(found_policies):
+                    print_cbt(f'Found {len(found_ddp_policies)} ddp policies, but {len(found_policies)} policies. '
+                              f'Now training the remaining one.', 'c', bright=True)
+                    n = len(found_policies) - len(found_ddp_policies)
+                    assert n == 1
+                    prefix = f'iter_{len(found_ddp_policies)}'
+                    ros_real = joblib.load(osp.join(self._save_dir, f'{prefix}_rollouts_real.pkl'))
+                    curr_cand_value = self.train_ddp_policy(ros_real, prefix)
+                    # self.cands_values = to.cat([self.cands_values, to.tensor(curr_cand_value).unsqueeze(0)], dim=0)
+
+                if len(self.cands_values) < self.cands.shape[0]:
+                    print_cbt(f'Found {len(self.cands_values)} candidates values but {self.cands.shape[0]} '
+                              f'candidates. Now evaluation the remaining ones.', 'c', bright=True)
+                    for i in range(len(self.cands_values) - self.cands.shape[0]):
+                        prefix = f'iter_{i + len(found_evals)}'
+                        rollouts_real = joblib.load(osp.join(ld, f'{prefix}_rollouts_real.pkl'))
+                        self._env_sim.adapt_randomizer(self.cands[i, :].detach().cpu().numpy())
+                        self._subrtn_policy._policy = to.load(osp.join(ld, f'iter_{i}_policy.pt'))
+                        curr_cand_value = SimOpt.eval_ddp_policy(
+                            rollouts_real, self._env_sim, self.num_eval_rollouts, self._subrtn_distr,
+                            self._subrtn_policy
+                        )
+                        self.cands_values = to.cat([self.cands_values, to.tensor(curr_cand_value).unsqueeze(0)], dim=0)
+                elif len(self.cands_values) > self.cands.shape[0]:
+                    print_cbt(f'Found {len(self.cands_values)} candidates values but {self.cands.shape[0]} '
+                              f'candidates!', 'r')
+                    n = len(self.cands_values) - self.cands.shape[0]
+                    delete = input('Delete the superfluous  values? [y / any other] ').lower() == 'y'
+                    if n > 0 and delete:
+                        # Delete the superfluous candidates
+                        print_cbt(f'Candidates values before:\n{self.cands_values.numpy()}', 'w')
+                        self.cands_values = self.cands_values[:-n]
+                        to.save(self.cands_values, osp.join(self._save_dir, 'candidates_values.pt'))
+                        print_cbt(f'Candidates after:\n{self.cands_values.numpy()}', 'c')
+
             else:
                 # Redo it all
                 print_cbt('No policies have been found. Basically starting from scratch.', 'y', bright=True)
                 self.cands = None
-
-            try:
-                # Crawl through the load_dir and copy all previous evaluations.
-                # Not necessary if we are continuing in that directory.
-                if ld != self._save_dir:
-                    for root, dirs, files in os.walk(ld):
-                        dirs.clear()  # prevents walk() from going into subdirectories
-                        [copyfile(osp.join(ld, c), osp.join(self._save_dir, c))
-                         for c in files if c.endswith('_rollouts_real.pkl')]
-
-                # Get all previously done evaluations. If we don't find any, the exception is caught.
-                found_evals = None
-                for root, dirs, files in os.walk(ld):
-                    dirs.clear()  # prevents walk() from going into subdirectories
-                    found_evals = [v for v in files if v.endswith('_rollouts_real.pkl')]
-                found_evals.sort()  # the order determines the rows of the tensor
-
-                # Reconstruct candidates_values.pt
-                self.cands_values = to.empty(self.cands.shape[0])
-                for i, fe in enumerate(found_evals):
-                    rollouts_real = joblib.load(osp.join(ld, fe))
-                    # Get the return estimate from the raw evaluations as in eval_behav_policy()
-                    self.cands_values[i] = to.mean(to.load(osp.join(ld, fe)))
-
-                if len(found_evals) < len(found_cands):
-                    print_cbt(f'Found {len(found_evals)} real-world evaluation files but {len(found_cands)} candidates.'
-                              f' Now evaluation the remaining ones.', 'c', bright=True)
-                for i in range(len(found_cands) - len(found_evals)):
-                    # Evaluate the current policy in the target domain
-                    prefix = f'init_{i + len(found_evals)}'
-                    policy = to.load(osp.join(self._save_dir, f'{prefix}_policy.pt'))
-                    self.cands_values[i + len(found_evals)] = self.eval_ddp_policy(
-                        rollouts_real  # TODO
-                    )
-                to.save(self.cands_values, osp.join(self._save_dir, 'candidates_values.pt'))
-
-            except (FileNotFoundError, RuntimeError):
-                # If there are returns_real.pt files but len(found_policies) > 0 (was checked earlier)
-                raise pyrado.PathErr(msg='No real world evaluations found!')
+                self.cands_values = None
 
             # Get current iteration count
-            found_iter_policies = None
-            for root, dirs, files in os.walk(ld):
-                dirs.clear()  # prevents walk() from going into subdirectories
-                found_iter_policies = [p for p in files if p.endswith('_policy.pt')]
-
-            self._curr_iter = len(found_iter_policies)  # continue with next
+            self._curr_iter = len(found_policies)  # continue with next
 
             # Initialize subroutines with previous iteration
-            self._subrtn_policy.load_snapshot(ld, meta_info=dict(prefix=f'iter_{self._curr_iter - 1}'))
-            self._subrtn_distr.load_snapshot(ld, meta_info=dict(prefix=f'iter_{self._curr_iter - 1}'))
+            if self._curr_iter > 0:
+                # self._subrtn_policy.load_snapshot(ld, meta_info=dict(prefix=f'iter_{self._curr_iter - 1}'))
+                # self._subrtn_distr.load_snapshot(ld, meta_info=dict(prefix=f'iter_{self._curr_iter - 1}'))
+
+                prefix = f'iter_{self._curr_iter - 1}'
+                self._subrtn_policy._policy = load_prefix_suffix(
+                    self._subrtn_policy._policy, 'policy', 'pt', self._save_dir, dict(prefix=prefix))
+                self._subrtn_distr.subrtn._policy = load_prefix_suffix(
+                    self._subrtn_distr.subrtn._policy, 'ddp_policy', 'pt', self._save_dir, dict(prefix=prefix))
 
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subrtn!')

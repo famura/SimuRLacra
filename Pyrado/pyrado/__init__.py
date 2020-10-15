@@ -120,10 +120,10 @@ def set_seed(seed: Union[int, None], verbose: bool = False):
     """
     Set the seed for the random number generators
 
-    :param seed: value for the random number generators' seeds
+    :param seed: value for the random number generators' seeds, pass `None` to skip seeding
     :param verbose: if `True` the seed is printed
     """
-    if seed is not None:
+    if isinstance(seed, int):
         random.seed(seed)
         np.random.seed(seed)
         to.manual_seed(seed)

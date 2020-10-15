@@ -32,18 +32,21 @@ Train an agent to solve the Qube swing-up task using Bayesian Domain Randomizati
 import torch as to
 
 import pyrado
+from pyrado.algorithms.advantage import GAE
 from pyrado.algorithms.power import PoWER
+from pyrado.algorithms.ppo import PPO
+from pyrado.algorithms.bayrn import BayRn
 from pyrado.domain_randomization.default_randomizers import get_zero_var_randomizer, get_default_domain_param_map_qq
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
-from pyrado.environments.quanser.quanser_qube import QQubeReal
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-from pyrado.algorithms.bayrn import BayRn
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.environment_specific import QQubeSwingUpAndBalanceCtrl
-from pyrado.policies.features import FeatureStack, identity_feat, sign_feat, abs_feat, squared_feat, qubic_feat, \
-    bell_feat, MultFeat
+from pyrado.policies.features import FeatureStack, identity_feat, sign_feat, abs_feat, squared_feat, MultFeat
+from pyrado.policies.fnn import FNNPolicy
 from pyrado.policies.linear import LinearPolicy
+from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.experiments import wrap_like_other_env
 
 
@@ -54,7 +57,7 @@ if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(QQubeSwingUpSim.name,
                               f'{BayRn.name}-{PoWER.name}_{QQubeSwingUpAndBalanceCtrl.name}_sim2sim',
-                              'rand-Mp-Mr')
+                              f'rand-Mp-Mr_seed-{args.seed}_ucb')
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
@@ -69,65 +72,94 @@ if __name__ == '__main__':
     env_real = QQubeSwingUpSim(**env_sim_hparams)
     env_real.domain_param = dict(
         Mp=0.024*1.1,
-        Mr=0.095*0.9,
-        # Lp=0.129*1.10
-        # Lr=0.085*0.95,
+        Mr=0.095*1.1,
     )
     env_real_hparams = env_sim_hparams
-    # env_real = QQubeReal(**env_real_hparams)
     env_real = wrap_like_other_env(env_real, env_sim)
 
-    # Policy
-    # policy_hparam = dict(
-    #     feats=FeatureStack([identity_feat, sign_feat, abs_feat, squared_feat, qubic_feat,
-    #                         MultFeat([2, 5]), MultFeat([3, 5]), MultFeat([4, 5])])
-    # )
-    # policy = LinearPolicy(spec=env_sim.spec, **policy_hparam)
+    # PoWER + energy-based controller setup
     policy_hparam = dict(energy_gain=0.587, ref_energy=0.827, acc_max=10.)
     policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec, **policy_hparam)
-
-    # Subroutine
     subrtn_hparam = dict(
         max_iter=10,
         pop_size=50,
-        num_rollouts=20,
-        num_is_samples=10,
+        num_rollouts=6,
+        num_is_samples=5,
         expl_std_init=2.0,
         expl_std_min=0.02,
         symm_sampling=False,
-        num_workers=12,
+        num_workers=32,
     )
-    power = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
+    subrtn = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
+
+    # PoWER + linear policy setup
+    # policy_hparam = dict(
+    #     feats=FeatureStack([identity_feat, sign_feat, abs_feat, squared_feat,
+    #                         MultFeat([2, 5]), MultFeat([3, 5]), MultFeat([4, 5])])
+    # )
+    # policy = LinearPolicy(spec=env_sim.spec, **policy_hparam)
+    # subrtn_hparam = dict(
+    #     max_iter=20,
+    #     pop_size=200,
+    #     num_rollouts=6,
+    #     num_is_samples=10,
+    #     expl_std_init=2.0,
+    #     expl_std_min=0.02,
+    #     symm_sampling=False,
+    #     num_workers=32,
+    # )
+    # subrtn = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
+
+    # PPO + FNN setup
+    # policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
+    # policy = FNNPolicy(spec=env_sim.spec, **policy_hparam)
+    # value_fcn_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
+    # value_fcn = FNNPolicy(spec=EnvSpec(env_sim.obs_space, ValueFunctionSpace), **value_fcn_hparam)
+    # critic_hparam = dict(
+    #     gamma=0.9885,
+    #     lamda=0.9648,
+    #     num_epoch=2,
+    #     batch_size=500,
+    #     standardize_adv=False,
+    #     lr=5.792e-4,
+    #     max_grad_norm=1.,
+    # )
+    # critic = GAE(value_fcn, **critic_hparam)
+    # subrtn_hparam = dict(
+    #     max_iter=300,
+    #     min_steps=23*env_sim.max_steps,
+    #     num_epoch=7,
+    #     eps_clip=0.0744,
+    #     batch_size=500,
+    #     std_init=0.9074,
+    #     lr=3.446e-04,
+    #     max_grad_norm=1.,
+    #     num_workers=12,
+    # )
+    # subrtn = PPO(ex_dir, env_sim, policy, critic, **subrtn_hparam)
 
     # Set the boundaries for the GP
     dp_nom = QQubeSwingUpSim.get_nominal_domain_param()
-    # bounds = to.tensor(
-    #     [[0.8*dp_nom['Mp'], dp_nom['Mp']/5000],
-    #      [1.2*dp_nom['Mp'], dp_nom['Mp']/4999]])
     bounds = to.tensor(
-        [[0.8*dp_nom['Mp'], dp_nom['Mp']/5000,
-          0.8*dp_nom['Mr'], dp_nom['Mr']/5000],
-         [1.2*dp_nom['Mp'], dp_nom['Mp']/4999,
-          1.2*dp_nom['Mr'], dp_nom['Mr']/4999]])
-    # bounds = to.tensor(
-    #     [[0.9*dp_nom['Mp'], dp_nom['Mp']/5000, 0.9*dp_nom['Mr'], dp_nom['Mr']/5000,
-    #       0.9*dp_nom['Lp'], dp_nom['Lp']/5000, 0.9*dp_nom['Lr'], dp_nom['Lr']/5000],
-    #      [1.1*dp_nom['Mp'], dp_nom['Mp']/4999, 1.1*dp_nom['Mr'], dp_nom['Mr']/4999,
-    #       1.1*dp_nom['Lp'], dp_nom['Lp']/4999, 1.1*dp_nom['Lr'], dp_nom['Lr']/4999]])
+        [[0.8*dp_nom['Mp'], 1e-12,
+          0.8*dp_nom['Mr'], 1e-12],
+         [1.2*dp_nom['Mp'], 1e-11,
+          1.2*dp_nom['Mr'], 1e-11]])
 
     # Algorithm
     bayrn_hparam = dict(
         max_iter=15,
-        acq_fc='EI',
+        acq_fc='UCB',
         acq_param=dict(beta=0.25),
         acq_restarts=500,
         acq_samples=1000,
-        num_init_cand=2*bounds.shape[1],
+        num_init_cand=5,
         warmstart=False,
-        num_eval_rollouts_real=100 if isinstance(env_real, QQubeSwingUpSim) else 5,
+        num_eval_rollouts_real=100,  # sim-2-sim
+        thold_succ_subrtn=300,
     )
 
-    # Save the environments and the hyper-parameters (do it before the init routine of BDR)
+    # Save the environments and the hyper-parameters (do it before the init routine of BayRn)
     save_list_of_dicts_to_yaml([
         dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=args.seed),
         dict(policy=policy_hparam),
@@ -136,7 +168,7 @@ if __name__ == '__main__':
         ex_dir
     )
 
-    algo = BayRn(ex_dir, env_sim, env_real, subrtn=power, bounds=bounds, **bayrn_hparam)
+    algo = BayRn(ex_dir, env_sim, env_real, subrtn, bounds, **bayrn_hparam)
 
     # Jeeeha
-    algo.train(snapshot_mode='best', seed=args.seed)
+    algo.train(snapshot_mode='latest', seed=args.seed)

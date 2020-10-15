@@ -114,14 +114,14 @@ class QQubeReal(QuanserReal, Serializable):
     def _correct_sensor_offset(self, meas: np.ndarray) -> np.ndarray:
         return meas - self._sens_offset
 
-    def _wait_for_pole_at_rest(self):
+    def _wait_for_pole_at_rest(self, thold_ang_vel: float = 0.1/180.*np.pi):
         """ Wait until the Qube's rotating pole is at rest """
         cnt = 0
         while cnt < 1.5/self._dt:
             # Get next measurement
             meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
 
-            if np.abs(meas[2]) < 1e-6 and np.abs(meas[3]) < 1e-6:
+            if np.abs(meas[2]) < thold_ang_vel and np.abs(meas[3]) < thold_ang_vel:
                 cnt += 1
             else:
                 cnt = 0

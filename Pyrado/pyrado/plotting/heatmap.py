@@ -33,6 +33,7 @@ from matplotlib import colorbar
 from matplotlib import colors
 from matplotlib import pyplot as plt
 from matplotlib import ticker
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from pandas.core.indexes.numeric import NumericIndex
 from typing import Any
 
@@ -138,15 +139,17 @@ def render_heatmap(
     add_sep_colorbar: bool = False,
     ax_cb: plt.Axes = None,
     colorbar_label: str = None,
+    colorbar_orientation: str = 'vertical',
     use_index_labels: bool = False,
     xlabel: str = None,
     ylabel: str = None,
     fig_canvas_title: str = None,
     fig_size: tuple = (8, 6),
-    manipulate_ticks: bool = False,
     tick_label_prec: int = 3,
     xtick_label_prec: int = None,
-    ytick_label_prec: int = None
+    ytick_label_prec: int = None,
+    num_major_ticks_hm: int = None,
+    num_major_ticks_cb: int = None,
 ) -> (plt.Figure, plt.Figure):
     """
     Plot a 2D heat map from a 2D `pandas.DataFrame` using pyplot.
@@ -166,17 +169,19 @@ def render_heatmap(
     :param add_sep_colorbar: flag if a separate color bar is added automatically
     :param ax_cb: axis to draw the color bar onto, if `None` a new figure is created
     :param colorbar_label: label for the color bar
+    :param colorbar_orientation: oriantation of the color bar
     :param use_index_labels: flag if index names from the pandas DataFrame are used as labels for the x- and y-axis.
-                             This can can be overridden by xlabel and ylabel.
+                             This can can be overridden by xlabel and ylabel
     :param xlabel: label for the x axis
     :param ylabel: label for the y axis
     :param fig_canvas_title: window title for the heat map plot, no title by default
     :param fig_size: width and height of the figure in inches
-    :param manipulate_ticks: apply custom manipulation to the x and y axis ticks
-    :param tick_label_prec: floating point precision of the x- and y-axis labels.
+    :param tick_label_prec: floating point precision of the x- and y-axis labels
                             This can be overwritten xtick_label_prec and ytick_label_prec
-    :param xtick_label_prec: floating point precision of the x-axis labels
-    :param ytick_label_prec: floating point precision of the y-axis labels
+    :param xtick_label_prec: floating point precision of the x-axis labels, set `None` for default behavior
+    :param ytick_label_prec: floating point precision of the y-axis labels, set `None` for default behavior
+    :param num_major_ticks_hm: number of major axis ticks for the heat map, set `None` for default behavior
+    :param num_major_ticks_cb: number of major axis ticks for the color bar, set `None` for default behavior
     :return: handles to the heat map and the color bar figures (None if not existent)
     """
     if isinstance(data, pd.DataFrame):
@@ -212,11 +217,15 @@ def render_heatmap(
         _annotate_heatmap(img, valfmt=annotation_valfmt)
 
     # Prepare the ticks
-    if manipulate_ticks:
+    if xtick_label_prec is not None:
         _setup_index_axis(ax_hm.xaxis, x, use_index_labels,
                           xtick_label_prec if xtick_label_prec is not None else tick_label_prec)
+    if ytick_label_prec is not None:
         _setup_index_axis(ax_hm.yaxis, y, use_index_labels,
                           ytick_label_prec if ytick_label_prec is not None else tick_label_prec)
+    if num_major_ticks_hm is not None:
+        ax_hm.xaxis.set_major_locator(plt.MaxNLocator(num_major_ticks_hm, min_n_ticks=num_major_ticks_hm))
+        ax_hm.yaxis.set_major_locator(plt.MaxNLocator(num_major_ticks_hm, min_n_ticks=num_major_ticks_hm))
 
     ax_hm.stale = True  # to cause redraw
 
@@ -235,16 +244,22 @@ def render_heatmap(
             fig_cb = plt.gcf()
 
         if colorbar_label is not None:
-            colorbar.ColorbarBase(ax_cb, cmap=cmap, norm=norm, label=colorbar_label)
+            colorbar.ColorbarBase(
+                ax_cb, cmap=cmap, norm=norm, label=colorbar_label, orientation=colorbar_orientation
+            )
         else:
-            colorbar.ColorbarBase(ax_cb, cmap=cmap, norm=norm)
-        # if colorbar_label is not None:
-        #     fig_cb.colorbar(img, ax=ax_cb, label=colorbar_label)  # plt.colorbar works, too
-        # else:
-        #     fig_cb.colorbar(img, ax=ax_cb)  # plt.colorbar works, too
-        #
-        # # Only show the color bar
-        # ax_cb.remove()
+            colorbar.ColorbarBase(
+                ax_cb, cmap=cmap, norm=norm, orientation=colorbar_orientation
+            )
+
+        if num_major_ticks_cb is not None:
+            if colorbar_orientation == 'horizontal':
+                ax_cb.xaxis.set_label_position('top')
+                ax_cb.xaxis.set_ticks_position('top')
+                ax_cb.xaxis.set_major_locator(plt.MaxNLocator(nbins=num_major_ticks_cb, min_n_ticks=num_major_ticks_cb))
+            elif colorbar_orientation == 'vertical':
+                ax_cb.yaxis.set_major_locator(plt.MaxNLocator(nbins=num_major_ticks_cb, min_n_ticks=num_major_ticks_cb))
+
         return fig_hm, fig_cb
 
     else:

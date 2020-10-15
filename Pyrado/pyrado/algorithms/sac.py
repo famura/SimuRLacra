@@ -180,14 +180,14 @@ class SAC(Algorithm):
             min_steps=100*env.max_steps,
             min_rollouts=None
         )
-        self._optim_policy = to.optim.Adam([{'params': self._policy.parameters()}], lr=lr)
-        self._optim_q_fcn_1 = to.optim.Adam([{'params': self.q_fcn_1.parameters()}], lr=lr)
-        self._optim_q_fcn_2 = to.optim.Adam([{'params': self.q_fcn_2.parameters()}], lr=lr)
+        self._optim_policy = to.optim.Adam([{'params': self._policy.parameters()}], lr=lr, eps=1e-5)
+        self._optim_q_fcn_1 = to.optim.Adam([{'params': self.q_fcn_1.parameters()}], lr=lr, eps=1e-5)
+        self._optim_q_fcn_2 = to.optim.Adam([{'params': self.q_fcn_2.parameters()}], lr=lr, eps=1e-5)
         log_alpha_init = to.log(to.tensor(alpha_init, dtype=to.get_default_dtype()))
         if learn_alpha:
             # Automatic entropy tuning
             self._log_alpha = nn.Parameter(log_alpha_init, requires_grad=True)
-            self._alpha_optim = to.optim.Adam([{'params': self._log_alpha}], lr=lr)
+            self._alpha_optim = to.optim.Adam([{'params': self._log_alpha}], lr=lr, eps=1e-5)
             self.target_entropy = -to.prod(to.tensor(env.act_space.shape))
         else:
             self._log_alpha = log_alpha_init

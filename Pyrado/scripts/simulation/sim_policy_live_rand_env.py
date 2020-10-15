@@ -50,7 +50,7 @@ if __name__ == '__main__':
     ex_dir = ask_for_experiment()
 
     # Get the simulation environment
-    env, policy, kwout = load_experiment(ex_dir)
+    env, policy, kwout = load_experiment(ex_dir, args)
 
     # Override the time step size if specified
     if args.dt is not None:

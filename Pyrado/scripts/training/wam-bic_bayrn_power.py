@@ -121,7 +121,7 @@ if __name__ == '__main__':
         subrtn_snapshot_mode='best'
     )
 
-    # Save the environments and the hyper-parameters (do it before the init routine of BDR)
+    # Save the environments and the hyper-parameters (do it before the init routine of BayRn)
     save_list_of_dicts_to_yaml([
         dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=args.seed),
         dict(policy=policy_hparam),

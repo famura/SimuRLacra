@@ -255,6 +255,58 @@ def test_minmaxscaler(dtype, lb, ub):
 
 
 @pytest.mark.parametrize(
+    'dtype', ['torch', 'numpy'], ids=['to', 'np']
+)
+@pytest.mark.parametrize(
+    'lb, ub', [
+        (0, 1),
+        (-1, 1),
+        (-2.5, 0),
+        (-np.ones((3, 2)), np.ones((3, 2)))
+    ], ids=['lb0_ub1', 'lb-1_ub1', 'lb-2.5_ub0', 'np_ones']
+)
+def test_minmaxscaler(dtype, lb, ub):
+    for _ in range(10):
+        scaler = MinMaxScaler(lb, ub)
+        x = 1e2*to.rand(3, 2) if dtype == 'torch' else np.random.rand(3, 2)
+        x_scaled = scaler.scale_to(x)
+        x_scaled_back = scaler.scale_back(x_scaled)
+
+        if isinstance(x_scaled, to.Tensor):
+            x_scaled = x_scaled.numpy()  # for easier checking with pytest.approx
+            x_scaled_back = x_scaled_back.numpy()  # for easier checking with pytest.approx
+        assert np.all(scaler._bound_lo*np.ones_like(x_scaled) <= x_scaled)
+        assert np.all(x_scaled <= scaler._bound_up*np.ones_like(x_scaled))
+        assert np.allclose(x, x_scaled_back)
+
+
+@pytest.mark.parametrize(
+    'dtype', ['torch', 'numpy'], ids=['to', 'np']
+)
+@pytest.mark.parametrize(
+    'lb, ub', [
+        (0, 1),
+        (-1, 1),
+        (-2.5, 0),
+        (-np.ones((3, 2)), np.ones((3, 2)))
+    ], ids=['lb0_ub1', 'lb-1_ub1', 'lb-2.5_ub0', 'np_ones']
+)
+def test_minmaxscaler(dtype, lb, ub):
+    for _ in range(10):
+        scaler = MinMaxScaler(lb, ub)
+        x = 1e2*to.rand(3, 2) if dtype == 'torch' else np.random.rand(3, 2)
+        x_scaled = scaler.scale_to(x)
+        x_scaled_back = scaler.scale_back(x_scaled)
+
+        if isinstance(x_scaled, to.Tensor):
+            x_scaled = x_scaled.numpy()  # for easier checking with pytest.approx
+            x_scaled_back = x_scaled_back.numpy()  # for easier checking with pytest.approx
+        assert np.all(scaler._bound_lo*np.ones_like(x_scaled) <= x_scaled)
+        assert np.all(x_scaled <= scaler._bound_up*np.ones_like(x_scaled))
+        assert np.allclose(x, x_scaled_back)
+
+
+@pytest.mark.parametrize(
     'data_seq, axis', [
         ([np.array([1, 1, 2]), np.array([1, 6, 3]), np.array([1, 6, 3]), np.array([10, -20, 20])], 0),
         ([np.array([1, 1, 2]), np.array([1, 6, 3]), np.array([1, 6, 3]), np.array([10, -20, 20])], None),

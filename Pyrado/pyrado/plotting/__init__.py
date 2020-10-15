@@ -85,7 +85,7 @@ def set_style(style_name: str = 'default'):
     plt.rc('xtick', labelsize=11)
     plt.rc('ytick', labelsize=11)
     # plt.rc('savefig', bbox='tight')  # 'tight' is incompatible with pipe-based animation backends
-    # plt.rc('savefig', pad_inches=0)
+    plt.rc('savefig', pad_inches=0)
 
 
 set_style()

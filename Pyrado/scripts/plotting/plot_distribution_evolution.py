@@ -39,6 +39,7 @@ from pyrado.algorithms.bayrn import BayRn
 from pyrado.algorithms.simopt import SimOpt
 from pyrado.logger.experiment import ask_for_experiment, load_dict_from_yaml
 from pyrado.plotting.distribution import render_distr_evo
+from pyrado.policies.domain_distribution import DomainDistrParamPolicy
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.input_output import print_cbt
 
@@ -83,8 +84,9 @@ if __name__ == '__main__':
             print_cbt(f'Did not remove the {num_init_cand} (randomly sampled) initial candidates.', 'c')
 
     elif hparams['algo_name'] == SimOpt.name:
-        ddp_policy = to.load(osp.join(ex_dir, 'ddp_policy.py'))
-        cands = ddp_policy.transform_to_ddp_space(cands)
+        pass
+        # ddp_policy = to.load(osp.join(ex_dir, 'ddp_policy.pt'))
+        # cands = ddp_policy.transform_to_ddp_space(cands)
 
     else:
         raise pyrado.ValueErr(given=hparams['algo_name'], eq_constraint=f'{BayRn.name} or {SimOpt.name}')
@@ -115,8 +117,9 @@ if __name__ == '__main__':
                 raise NotImplementedError(f'{ddp_name}')
 
         # Determine the evaluation grid from the means and the associated stds
-        x_grid_limits = (cands[:, 2*idx_dp].min() - 3*cands[to.argmin(cands[:, 2*idx_dp]), 1],
-                         cands[:, 2*idx_dp].max() + 3*cands[to.argmax(cands[:, 2*idx_dp]), 1])
+        x_grid_limits = [cands[:, 2*idx_dp].min() - 3*cands[to.argmin(cands[:, 2*idx_dp]), 1],
+                         cands[:, 2*idx_dp].max() + 3*cands[to.argmax(cands[:, 2*idx_dp]), 1]]
+        x_grid_limits = [x.item() for x in x_grid_limits if isinstance(x, to.Tensor)]
 
         # Plot the distributions
         if dim_cand//2 == 1:

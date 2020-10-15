@@ -463,7 +463,7 @@ class QQubePDCtrl(Policy):
                  k: to.Tensor = to.tensor([4., 0, 0.5, 0]),
                  th_des: float = 0.,
                  al_des: float = 0.,
-                 tols: to.Tensor = to.tensor([1.5, 0.5, 0.01, 0.01], dtype=to.float64)/180.*math.pi,
+                 tols: to.Tensor = to.tensor([1.5, 0.5, 0.1, 0.1], dtype=to.float64)/180.*math.pi,
                  use_cuda: bool = False):
         r"""
         Constructor
@@ -563,7 +563,7 @@ class QQubeGoToLimCtrl:
         self.done = False
         self.th_lim = 10.
         self.sign = 1 if positive else -1
-        self.u_max = 0.8
+        self.u_max = 0.9
         self.cnt = 0
         self.cnt_done = cnt_done
 

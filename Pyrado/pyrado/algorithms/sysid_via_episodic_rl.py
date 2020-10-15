@@ -54,8 +54,8 @@ from pyrado.utils.math import UnitCubeProjector
 class SysIdViaEpisodicRL(Algorithm):
     """ Wrapper to frame black-box system identification as an episodic reinforcement learning problem """
 
-    name: str = 'sysid-erl'
-    iteration_key: str = 'sysid_erl_iteration'  # logger's iteration key
+    name: str = 'sysiderl'
+    iteration_key: str = 'sysiderl_iteration'  # logger's iteration key
 
     def __init__(self,
                  subrtn: Algorithm,
@@ -106,7 +106,7 @@ class SysIdViaEpisodicRL(Algorithm):
         self._subrtn = subrtn
         self._behavior_policy = behavior_policy
         self.obs_dim_weight = np.diag(obs_dim_weight)  # weighting factor between the different observations
-        if metric is None:
+        if metric is None or metric == 'None':
             self.metric = partial(self.default_metric, w_abs=w_abs, w_sq=w_sq, obs_dim_weight=self.obs_dim_weight)
         else:
             self.metric = metric
@@ -156,7 +156,6 @@ class SysIdViaEpisodicRL(Algorithm):
         # Extract the initial states from the real rollouts
         rollouts_real = meta_info['rollouts_real']
         init_states_real = [ro.rollout_info['init_state'] for ro in rollouts_real]
-        # [ro_r.torch() for ro_r in rollouts_real]
 
         # Sample new policy parameters a.k.a domain distribution parameters
         param_sets = self._subrtn.expl_strat.sample_param_sets(
@@ -195,14 +194,23 @@ class SysIdViaEpisodicRL(Algorithm):
                             for r, s in zip(ros_real_tr, ros_sim_tr)])
 
                 # Compute the losses
-                losses = [self.loss_fcn(ro_r, ro_s) for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr)]
+                losses = np.asarray([self.loss_fcn(ro_r, ro_s) for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr)])
+
+                if np.all(losses == 0.):
+                    raise pyrado.ValueErr(msg='All SysIdViaEpisodicRL losses are equal to zero! Most likely the domain'
+                                              'randomization is too extreme, such that every trajectory is done after'
+                                              'one step. Check the exploration strategy.')
+
+                # Handle zero losses by setting them to the maximum current loss
+                losses[losses == 0] = np.max(losses)
                 loss_hist.extend(losses)
 
                 # We need to assign the loss value to the simulated rollout, but this one can be of a different
                 # length than the real-world rollouts as well as of different length than the original
-                # (non-truncated) simulated rollout. We simply distribute loss evenly over the rollout
+                # (non-truncated) simulated rollout. Thus, we simply write the loss value into the first step.
                 for i, l in zip(range(idcs_sim[0], idcs_sim[-1] + 1), losses):
-                    rollouts_sim[i].rewards[:] = -l/rollouts_sim[i].length
+                    rollouts_sim[i].rewards[:] = 0.
+                    rollouts_sim[i].rewards[0] = -l
 
             # Collect the results
             param_samples.append(ParameterSample(params=ps, rollouts=rollouts_sim))
@@ -243,8 +251,6 @@ class SysIdViaEpisodicRL(Algorithm):
         :return: weighted linear combination of the error's MAE and MSE, averaged over time
         """
         err_w = np.matmul(err, obs_dim_weight)
-        # err_norm = w_abs*np.linalg.norm(err_w, ord=1, axis=0) + w_sq*np.linalg.norm(err_w, ord=2, axis=0)
-        # return err_norm/err_w.shape[0]
         return w_abs*np.mean(np.abs(err_w), axis=0) + w_sq*np.mean(np.power(err_w, 2), axis=0)
 
     def loss_fcn(self, rollout_real: StepSequence, rollout_sim: StepSequence) -> float:
@@ -320,7 +326,8 @@ class SysIdViaEpisodicRL(Algorithm):
 
     def save_snapshot(self, meta_info: dict = None):
         # ParameterExploring subroutine saves the best policy (in this case a DomainDistrParamPolicy)
-        self._subrtn.save_snapshot(meta_info=dict(prefix='ddp'))
+        self._subrtn.save_snapshot(meta_info=dict(prefix=f"{meta_info['prefix']}_ddp"))  # save iter_X_ddp_policy.pt
+        self._subrtn.save_snapshot(meta_info=dict(prefix='ddp'))  # override ddp_policy.pt
 
         # Print the current search distribution's mean
         cpp = self._subrtn.policy.transform_to_ddp_space(self._subrtn.policy.param_values)
@@ -332,10 +339,6 @@ class SysIdViaEpisodicRL(Algorithm):
         self._subrtn.env.adapt_randomizer(domain_distr_param_values=cbp.detach().cpu().numpy())
         print_cbt(f'Best fitted domain parameter distribution\n{self._subrtn.env.randomizer}', 'g')
         joblib.dump(self._subrtn.env, osp.join(self._save_dir, 'env_sim.pkl'))
-
-        if 'rollouts_real' not in meta_info:
-            raise pyrado.KeyErr(key='rollouts_real', container=meta_info)
-        save_prefix_suffix(meta_info['rollouts_real'], 'rollouts_real', 'pkl', self._save_dir, meta_info)
 
     def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
         return self._subrtn.load_snapshot(load_dir, meta_info)

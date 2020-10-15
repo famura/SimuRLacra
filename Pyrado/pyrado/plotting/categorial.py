@@ -44,6 +44,7 @@ def render_boxplot(
     show_legend: bool = True,
     legend_loc: str = 'best',
     title: str = None,
+    use_seaborn: bool = False,
 ) -> plt.Figure:
     """
     Create a box plot for a list of data arrays. Every entry results in one column of the box plot.
@@ -65,30 +66,40 @@ def render_boxplot(
     :param show_legend: flag if the legend entry should be printed, set to True when using multiple subplots
     :param legend_loc: location of the legend, ignored if `show_legend = False`
     :param title: title displayed above the figure, set to None to suppress the title
+    :param use_seaborn: if `True`, use seaborn instead of plain pyplot
     :return: handle to the resulting figure
     """
-    medianprops = dict(linewidth=1., color='firebrick')
-    meanprops = dict(marker='D', markeredgecolor='black', markerfacecolor='purple')
-    boxprops = dict(linewidth=1.)
-    whiskerprops = dict(linewidth=1.)
-    capprops = dict(linewidth=1.)
+    if use_seaborn:
+        # Plot the data
+        import seaborn as sns
+        import pandas as pd
 
-    # Plot the data
-    box = ax.boxplot(
-        data,
-        boxprops=boxprops, whiskerprops=whiskerprops, capprops=capprops,
-        meanprops=meanprops, meanline=False, showmeans=False,
-        medianprops=medianprops,
-        showfliers=show_fliers,
-        notch=False,
-        patch_artist=colorize,  # necessary to colorize the boxes
-        labels=x_labels, widths=0.7
-    )
+        df = pd.DataFrame(data, x_labels).T
+        ax = sns.boxplot(data=df)
 
-    if colorize:
-        for i, patch in enumerate(box['boxes']):
-            patch.set_facecolorf(f'C{i%10}')
-            patch.set_alpha(alpha)
+    else:
+        medianprops = dict(linewidth=1., color='firebrick')
+        meanprops = dict(marker='D', markeredgecolor='black', markerfacecolor='purple')
+        boxprops = dict(linewidth=1.)
+        whiskerprops = dict(linewidth=1.)
+        capprops = dict(linewidth=1.)
+
+        # Plot the data
+        box = ax.boxplot(
+            data,
+            boxprops=boxprops, whiskerprops=whiskerprops, capprops=capprops,
+            meanprops=meanprops, meanline=False, showmeans=False,
+            medianprops=medianprops,
+            showfliers=show_fliers,
+            notch=False,
+            patch_artist=colorize,  # necessary to colorize the boxes
+            labels=x_labels, widths=0.7
+        )
+
+        if colorize:
+            for i, patch in enumerate(box['boxes']):
+                patch.set_facecolorf(f'C{i%10}')
+                patch.set_alpha(alpha)
 
     # Add dashed line to mark the approx solved threshold
     if vline_level is not None:
@@ -131,25 +142,46 @@ def render_violinplot(
     :param vline_level: if not `None` (default) add a vertical line at the given level
     :param vline_label: label for the vertical line
     :param alpha: transparency (alpha-value) for violin body (including the border lines)
-    :param show_inner_quartiles: display the 1st and 3rd quartile with a thick line
+    :param show_inner_quartiles: display the 1st and 3rd quartile with a thick line, ignored if `use_seaborn` is `True`
     :param show_legend: flag if the legend entry should be printed, set to `True` when using multiple subplots
     :param legend_loc: location of the legend, ignored if `show_legend = False`
     :param title: title displayed above the figure, set to None to suppress the title
+    :param use_seaborn: if `True`, use seaborn instead of plain pyplot
     :return: handle to the resulting figure
     """
     if use_seaborn:
         # Plot the data
         import seaborn as sns
         import pandas as pd
+
+        # Get default color map and move the 4th element to the 2nd position
+        palette = sns.color_palette()[:4]
+        palette.insert(1, palette.pop(3))
+
         df = pd.DataFrame(data, x_labels).T
-        ax = sns.violinplot(data=df, scale='count', inner='stick', bw=0.3, cut=0)  # cut controls the max7min values
+        ax = sns.violinplot(data=df, scale='count', inner='box', bw=0.3, cut=0, palette=palette)
+        # ax = sns.violinplot(data=df, scale='width', inner='quartile', bw=0.3, cut=0)  # cut controls the max7min values
+
+        # Grouped boxplot
+        # df = pd.DataFrame(columns=['algo', 'succ_rate', 'domain'])
+        # df = pd.concat([df, pd.DataFrame.from_dict(dict(algo='BayRn', succ_rate=data[0], domain='real'))])
+        # df = pd.concat([df, pd.DataFrame.from_dict(dict(algo='BayRn', succ_rate=data[1], domain='sim'))])
+        # df = pd.concat([df, pd.DataFrame.from_dict(dict(algo='UDR', succ_rate=data[2], domain='real'))])
+        # df = pd.concat([df, pd.DataFrame.from_dict(dict(algo='UDR', succ_rate=data[3], domain='sim'))])
+        # df = pd.concat([df, pd.DataFrame.from_dict(dict(algo='PPO', succ_rate=data[4], domain='real'))])
+        # df = pd.concat([df, pd.DataFrame.from_dict(dict(algo='PPO', succ_rate=data[5], domain='sim'))])
+        # ax = sns.violinplot(data=df, scale='width', bw=0.3, cut=0,
+        #                     palette="Set1", x='algo', y='succ_rate', hue='domain', hue_order=['real', 'sim'])
 
         medians = np.zeros(len(data))
         for i in range(len(data)):
             medians[i] = np.median(data[i])
 
-        x_grid = np.arange(0, len(medians))
-        ax.scatter(x_grid, medians, marker='o', s=50, zorder=3, color='white', edgecolors='black')
+        # Plot larger circles
+        left, right = ax.get_xlim()
+        locs = ax.get_xticks()
+        ax.scatter(locs, medians, marker='o', s=30, zorder=3, color='white', edgecolors='black')
+        ax.set_xlim((left, right))
 
     else:
         # Plot the data

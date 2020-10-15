@@ -37,6 +37,7 @@ from pyrado.algorithms.nes import NES
 from pyrado.algorithms.ppo import PPO
 from pyrado.algorithms.simopt import SimOpt
 from pyrado.algorithms.sysid_via_episodic_rl import SysIdViaEpisodicRL
+from pyrado.environments.quanser.quanser_qube import QQubeReal
 from pyrado.policies.domain_distribution import DomainDistrParamPolicy
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam, NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
@@ -54,21 +55,15 @@ if __name__ == '__main__':
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{SimOpt.name}-{NES.name}')
-    num_workers = 16
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{SimOpt.name}-{NES.name}_{PPO.name}_{FNNPolicy.name}')
+    num_workers = 12
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
     env_hparams = dict(dt=1/100., max_steps=600)
-    env_real = QQubeSwingUpSim(**env_hparams)
-    env_real.domain_param = dict(
-        Mr=0.095*0.9,
-        Mp=0.024*1.1,
-        Lr=0.085*0.9,
-        Lp=0.129*1.1,
-    )
+    env_real = QQubeReal(**env_hparams)
 
     env_sim = QQubeSwingUpSim(**env_hparams)
     randomizer = DomainRandomizer(
@@ -83,16 +78,14 @@ if __name__ == '__main__':
         2: ('Mp', 'mean'), 3: ('Mp', 'std'),
         4: ('Lr', 'mean'), 5: ('Lr', 'std'),
         6: ('Lp', 'mean'), 7: ('Lp', 'std')
-        # 0: ('Lr', 'mean'), 1: ('Lr', 'std'),
-        # 2: ('Lp', 'mean'), 3: ('Lp', 'std')
     }
     trafo_mask = [False, True, False, True, False, True, False, True]
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
 
     # Subroutine for policy improvement
-    behav_policy_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.relu)  # FNN
+    behav_policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
     behav_policy = FNNPolicy(spec=env_sim.spec, **behav_policy_hparam)
-    value_fcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.relu)  # FNN
+    value_fcn_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
     value_fcn = FNNPolicy(spec=EnvSpec(env_sim.obs_space, ValueFunctionSpace), **value_fcn_hparam)
     critic_hparam = dict(
         gamma=0.9885,
@@ -106,7 +99,7 @@ if __name__ == '__main__':
     critic = GAE(value_fcn, **critic_hparam)
     subrtn_policy_hparam = dict(
         max_iter=200,
-        min_steps=5*23*env_sim.max_steps,
+        min_steps=23*env_sim.max_steps,
         num_epoch=7,
         eps_clip=0.0744,
         batch_size=500,
@@ -119,38 +112,39 @@ if __name__ == '__main__':
 
     # Subroutine for system identification
     prior = DomainRandomizer(
-        NormalDomainParam(name='Mr', mean=0.095, std=0.095e-1),
-        NormalDomainParam(name='Mp', mean=0.024, std=0.024e-1),
-        NormalDomainParam(name='Lr', mean=0.085, std=0.085e-1),
-        NormalDomainParam(name='Lp', mean=0.129, std=0.129e-1),
+        NormalDomainParam(name='Mr', mean=0.095, std=0.095/10),
+        NormalDomainParam(name='Mp', mean=0.024, std=0.024/10),
+        NormalDomainParam(name='Lr', mean=0.085, std=0.085/10),
+        NormalDomainParam(name='Lp', mean=0.129, std=0.129/10),
     )
-    ddp_policy = DomainDistrParamPolicy(mapping=dp_map, trafo_mask=trafo_mask, prior=prior)
+    ddp_policy_hparam = dict(
+        mapping=dp_map, trafo_mask=trafo_mask, scale_params=False
+    )
+    ddp_policy = DomainDistrParamPolicy(prior=prior, **ddp_policy_hparam)
     subsubrtn_distr_hparam = dict(
-        max_iter=5,
-        pop_size=200,
+        max_iter=10,
+        pop_size=None,
+        eta_mean=1.,
         num_rollouts=1,
-        num_is_samples=10,
-        expl_std_init=0.01,
-        expl_std_min=0.001,
-        extra_expl_std_init=0.01,
-        extra_expl_decay_iter=5,
+        expl_std_init=5e-2,
+        expl_std_min=1e-4,
         num_workers=num_workers,
     )
     subsubrtn_distr = NES(ex_dir, env_sim, ddp_policy, **subsubrtn_distr_hparam)
     subrtn_distr_hparam = dict(
         metric=None,
         obs_dim_weight=[1., 1., 1., 1., 2., 2.],
-        num_rollouts_per_distr=50,
+        num_rollouts_per_distr=len(dp_map)*10,
         num_workers=num_workers,
     )
     subrtn_distr = SysIdViaEpisodicRL(subsubrtn_distr, behavior_policy=behav_policy, **subrtn_distr_hparam)
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=10,
+        max_iter=15,
         num_eval_rollouts=5,
         warmstart=True,
-        thold_succ_subrtn=50,
+        thold_succ_subrtn=100,
         subrtn_snapshot_mode='latest',
     )
     algo = SimOpt(ex_dir, env_sim, env_real, subrtn_policy, subrtn_distr, **algo_hparam)
@@ -159,9 +153,9 @@ if __name__ == '__main__':
     save_list_of_dicts_to_yaml([
         dict(env=env_hparams, seed=args.seed),
         dict(behav_policy=behav_policy_hparam),
-        dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
-        dict(subrtn_distr=subrtn_distr_hparam, subrtn_distr_name=subrtn_distr.name,
-             dp_map=dp_map, trafo_mask=trafo_mask),
+        # dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
+        dict(ddp_policy=ddp_policy_hparam, subrtn_distr_name=ddp_policy.name),
+        dict(subrtn_distr=subrtn_distr_hparam, subrtn_distr_name=subrtn_distr.name),
         dict(subsubrtn_distr=subsubrtn_distr_hparam, subsubrtn_distr_name=subsubrtn_distr.name),
         dict(subrtn_policy=subrtn_policy_hparam, subrtn_policy_name=subrtn_policy.name),
         dict(algo=algo_hparam, algo_name=algo.name)],

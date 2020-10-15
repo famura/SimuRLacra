@@ -181,7 +181,7 @@ class BayRn(Algorithm):
         """
         Train a policy in simulation for given hyper-parameters from the domain randomizer.
 
-        :param cand: hyper-parameters for the domain parameter distribution coming from the domain randomizer
+        :param cand: hyper-parameters for the domain parameter distribution (need be compatible with the randomizer)
         :param prefix: set a prefix to the saved file name by passing it to `meta_info`
         :return: estimated return of the trained policy in the target domain
         """
@@ -602,10 +602,10 @@ class BayRn(Algorithm):
         # Reset the subroutine's algorithm which includes resetting the exploration
         subrtn.reset()
 
-        # Do a warmstart
+        # Do a warm start
         subrtn.init_modules(
             warmstart=True, policy_param_init=policy_param_init, valuefcn_param_init=valuefcn_param_init
         )
 
-        subrtn.train(snapshot_mode=subrtn_snapshot_mode)
+        subrtn.train(snapshot_mode=subrtn_snapshot_mode, meta_info=dict(suffix='argmax'))
         return subrtn.policy

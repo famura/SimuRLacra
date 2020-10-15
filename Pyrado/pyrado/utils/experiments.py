@@ -97,10 +97,10 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
             # Value function (optional)
             if any([a.name in hparams.get('subrtn_name', '') for a in [PPO, PPO2, A2C]]):
                 try:
-                    kwout['valuefcn'] = to.load(osp.join(ex_dir, 'final_valuefcn.pt'))
+                    kwout['value_fcn'] = to.load(osp.join(ex_dir, 'final_valuefcn.pt'))
                     print_cbt(f"Loaded {osp.join(ex_dir, 'final_valuefcn.pt')}", 'g')
                 except FileNotFoundError:
-                    kwout['valuefcn'] = to.load(osp.join(ex_dir, 'valuefcn.pt'))
+                    kwout['value_fcn'] = to.load(osp.join(ex_dir, 'valuefcn.pt'))
                     print_cbt(f"Loaded {osp.join(ex_dir, 'valuefcn.pt')}", 'g')
 
         elif BayRn.name in hparams.get('algo_name', ''):
@@ -116,15 +116,15 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
                 policy = to.load(osp.join(ex_dir, 'policy.pt'))
                 print_cbt(f"Loaded {osp.join(ex_dir, 'policy.pt')}", 'g')
             else:
-                policy = to.load(osp.join(ex_dir, f'iter_{args.iter}.pt'))
-                print_cbt(f"Loaded {osp.join(ex_dir, f'iter_{args.iter}.pt')}", 'g')
+                policy = to.load(osp.join(ex_dir, f'iter_{args.iter}_policy.pt'))
+                print_cbt(f"Loaded {osp.join(ex_dir, f'iter_{args.iter}_policy.pt')}", 'g')
             # Value function (optional)
             if any([a.name in hparams.get('subrtn_name', '') for a in [PPO, PPO2, A2C]]):
                 try:
-                    kwout['valuefcn'] = to.load(osp.join(ex_dir, 'final_valuefcn.pt'))
+                    kwout['value_fcn'] = to.load(osp.join(ex_dir, 'final_valuefcn.pt'))
                     print_cbt(f"Loaded {osp.join(ex_dir, 'final_valuefcn.pt')}", 'g')
                 except FileNotFoundError:
-                    kwout['valuefcn'] = to.load(osp.join(ex_dir, 'valuefcn.pt'))
+                    kwout['value_fcn'] = to.load(osp.join(ex_dir, 'valuefcn.pt'))
                     print_cbt(f"Loaded {osp.join(ex_dir, 'valuefcn.pt')}", 'g')
 
         elif EPOpt.name in hparams.get('algo_name', ''):
@@ -141,7 +141,7 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
             policy = to.load(osp.join(ex_dir, 'policy.pt'))
             print_cbt(f"Loaded {osp.join(ex_dir, 'policy.pt')}", 'g')
             # Value function
-            kwout['valuefcn'] = to.load(osp.join(ex_dir, 'valuefcn.pt'))
+            kwout['value_fcn'] = to.load(osp.join(ex_dir, 'valuefcn.pt'))
             print_cbt(f"Loaded {osp.join(ex_dir, 'valuefcn.pt')}", 'g')
 
         elif SAC.name in hparams.get('algo_name', ''):

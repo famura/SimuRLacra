@@ -109,7 +109,7 @@ class GAE(LoggerAware, nn.Module):
 
         # Initialize
         self.loss_fcn = nn.MSELoss()
-        self.optim = to.optim.Adam(self._value_fcn.parameters(), lr=lr, betas=(0.9, 0.999), eps=1e-5)
+        self.optim = to.optim.Adam(self._value_fcn.parameters(), lr=lr, eps=1e-5)
         self._lr_scheduler = lr_scheduler
         self._lr_scheduler_hparam = lr_scheduler_hparam
         if lr_scheduler is not None:

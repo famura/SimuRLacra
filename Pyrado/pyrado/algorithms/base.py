@@ -310,6 +310,9 @@ class Algorithm(ABC, LoggerAware):
             self._curr_iter = pd.read_csv(osp.join(ld, 'progress.csv'))[self.iteration_key].iloc[-1]
         except (FileNotFoundError, pd.errors.EmptyDataError):
             self._curr_iter = 0
+        except pd.errors.ParserError:
+            print_cbt('Pandas parser error occured during reading the progress.csv file. Setting curr_iter to 0.', 'y')
+            self._curr_iter = 0
 
         # Does not matter if this algorithm instance is a subroutine of another algorithm
         self._policy = load_prefix_suffix(self._policy, 'policy', 'pt', ld, meta_info)

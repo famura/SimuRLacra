@@ -55,7 +55,7 @@ if __name__ == '__main__':
     ex_tag = ex_dir.split('--', 1)[1]
 
     # Load the policy and the environment (for constructing the real-world counterpart)
-    env_sim, policy, _ = load_experiment(ex_dir)
+    env_sim, policy, _ = load_experiment(ex_dir, args)
 
     if args.verbose:
         print(f'Policy params:\n{policy.param_values.detach().cpu().numpy()}')

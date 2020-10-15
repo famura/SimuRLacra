@@ -98,7 +98,7 @@ if __name__ == '__main__':
     ex_dirs = [osp.join(p, e) for p, e in zip(prefixes, ex_names)]
     policies = []
     for ex_dir in ex_dirs:
-        _, policy, _ = load_experiment(ex_dir)
+        _, policy, _ = load_experiment(ex_dir, args)
         policies.append(policy)
 
     # Fix initial state (set to None if it should not be fixed)

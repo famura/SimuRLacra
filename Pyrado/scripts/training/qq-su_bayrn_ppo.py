@@ -56,7 +56,7 @@ if __name__ == '__main__':
 
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{BayRn.name}-{PPO.name}_{FNNPolicy.name}',
-                              'rand-Mp-Mr-Lp-Lr')
+                              'rand-Mp-Mr-Lp-Lr_lower-std')
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
@@ -74,23 +74,17 @@ if __name__ == '__main__':
     env_real = wrap_like_other_env(env_real, env_sim)
 
     # Policy
-    policy_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)  # FNN
-    # policy_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
+    policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
     policy = FNNPolicy(spec=env_sim.spec, **policy_hparam)
-    # policy = RNNPolicy(spec=env_sim.spec, **policy_hparam)
-    # policy = LSTMPolicy(spec=env_sim.spec, **policy_hparam)
-    # policy = GRUPolicy(spec=env_sim.spec, **policy_hparam)
 
     # Critic
-    value_fcn_hparam = dict(hidden_sizes=[16, 16], hidden_nonlin=to.tanh)  # FNN
-    # value_fcn_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
+    value_fcn_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
     value_fcn = FNNPolicy(spec=EnvSpec(env_sim.obs_space, ValueFunctionSpace), **value_fcn_hparam)
-    # value_fcn = GRUPolicy(spec=EnvSpec(env_sim.obs_space, ValueFunctionSpace), **value_fcn_hparam)
     critic_hparam = dict(
         gamma=0.9885,
         lamda=0.9648,
         num_epoch=2,
-        batch_size=60,
+        batch_size=500,
         standardize_adv=False,
         lr=5.792e-4,
         max_grad_norm=1.,
@@ -103,11 +97,11 @@ if __name__ == '__main__':
         min_steps=23*env_sim.max_steps,
         num_epoch=7,
         eps_clip=0.0744,
-        batch_size=60,
+        batch_size=500,
         std_init=0.9074,
         lr=3.446e-04,
         max_grad_norm=1.,
-        num_workers=16,
+        num_workers=8,
     )
     ppo = PPO(ex_dir, env_sim, policy, critic, **subrtn_hparam)
 
@@ -117,10 +111,10 @@ if __name__ == '__main__':
     #     [[0.8*dp_nom['Mp'], dp_nom['Mp']/1000],
     #      [1.2*dp_nom['Mp'], dp_nom['Mp']/10]])
     bounds = to.tensor(
-        [[0.8*dp_nom['Mp'], dp_nom['Mp']/1000, 0.8*dp_nom['Mr'], dp_nom['Mr']/1000,
-          0.8*dp_nom['Lp'], dp_nom['Lp']/1000, 0.8*dp_nom['Lr'], dp_nom['Lr']/1000],
-         [1.2*dp_nom['Mp'], dp_nom['Mp']/10, 1.2*dp_nom['Mr'], dp_nom['Mr']/10,
-          1.2*dp_nom['Lp'], dp_nom['Lp']/10, 1.2*dp_nom['Lr'], dp_nom['Lr']/10]])
+        [[0.8*dp_nom['Mp'], dp_nom['Mp']/5000, 0.8*dp_nom['Mr'], dp_nom['Mr']/5000,
+          0.8*dp_nom['Lp'], dp_nom['Lp']/5000, 0.8*dp_nom['Lr'], dp_nom['Lr']/5000],
+         [1.2*dp_nom['Mp'], dp_nom['Mp']/20, 1.2*dp_nom['Mr'], dp_nom['Mr']/20,
+          1.2*dp_nom['Lp'], dp_nom['Lp']/20, 1.2*dp_nom['Lr'], dp_nom['Lr']/20]])
 
     # policy_init = to.load(osp.join(pyrado.EXP_DIR, QQubeSwingUpSim.name, PPO.name, 'EXP_NAME', 'policy.pt'))
     # valuefcn_init = to.load(osp.join(pyrado.EXP_DIR, QQubeSwingUpSim.name, PPO.name, 'EXP_NAME', 'valuefcn.pt'))

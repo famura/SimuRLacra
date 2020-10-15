@@ -27,50 +27,58 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Run separate evaluation for comparing against BayRn
+Learn the domain parameter distribution of masses and lengths of the Quanser Qube while using a handcrafted
+randomization for the remaining domain parameters. Continue in the same directory of a previous experiment.
 """
-import os
+import joblib
 import os.path as osp
 import torch as to
-from datetime import datetime
 
-import pyrado
+from pyrado.algorithms.advantage import GAE
+from pyrado.algorithms.ppo import PPO
 from pyrado.algorithms.bayrn import BayRn
 from pyrado.environments.quanser.quanser_qube import QQubeReal
-from pyrado.logger.experiment import ask_for_experiment, timestamp_format
-from pyrado.utils.experiments import wrap_like_other_env, load_experiment
-from pyrado.utils.input_output import print_cbt
+from pyrado.logger.experiment import load_dict_from_yaml, ask_for_experiment
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.experiments import wrap_like_other_env
 
 
 if __name__ == '__main__':
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    # Get the experiment's directory to load from if not given as command line argument
+    # Get the experiment's directory to load from
     ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
 
-    # Load the policy and the environment (for constructing the real-world counterpart)
-    env_sim, policy, _ = load_experiment(ex_dir, args)
-    if 'argmax' in args.policy_name:
-        policy = to.load(osp.join(ex_dir, 'policy_argmax.pt'))
-        print_cbt(f"Loaded {osp.join(ex_dir, 'policy_argmax.pt')}", 'g', bright=True)
+    # Environments
+    hparams = load_dict_from_yaml(osp.join(ex_dir, 'hyperparams.yaml'))
+    env_sim = joblib.load(osp.join(ex_dir, 'env_sim.pkl'))
+    # env_real = joblib.load(osp.join(ex_dir, 'env_real.pkl'))
+    env_real = QQubeReal(dt=1/500, max_steps=3000, ip='192.168.2.40')
 
-    # Create real-world counterpart
-    # If `max_steps` (or `dt`) are not explicitly set using `args`, use the same as in the simulation
-    max_steps = args.max_steps if args.max_steps < pyrado.inf else env_sim.max_steps
-    dt = args.dt if args.dt is not None else env_sim.dt
-    env_real = QQubeReal(dt, max_steps)
-    print_cbt(f'Set up the QQubeReal environment with dt={env_real.dt} max_steps={env_real.max_steps}.', 'c')
-
-    # Finally wrap the env in the same as done during training
+    # Wrap the real environment in the same way as done during training
     env_real = wrap_like_other_env(env_real, env_sim)
 
-    ex_ts = datetime.now().strftime(timestamp_format)
-    save_dir = osp.join(ex_dir, 'evaluation')
-    os.makedirs(save_dir, exist_ok=True)
-    num_ro_per_config = args.num_ro_per_config if args.num_ro_per_config is not None else 5
-    est_ret = BayRn.eval_policy(
-        save_dir, env_real, policy, mc_estimator=True, prefix=ex_ts, num_rollouts=num_ro_per_config
-    )
-    print_cbt(f'Estimated return: {est_ret.item()}', 'g')
+    # Policy
+    policy = to.load(osp.join(ex_dir, 'policy.pt'))
+
+    # Critic
+    valuefcn = to.load(osp.join(ex_dir, 'valuefcn.pt'))
+    critic = GAE(valuefcn, **hparams['critic'])
+
+    # Subroutine
+    subrtn_hparam = hparams['subrtn']
+    subrtn_hparam.update({'num_workers': 1})
+    ppo = PPO(ex_dir, env_sim, policy, critic, **subrtn_hparam)
+
+    # Set the boundaries for the GP
+    bounds = to.load(osp.join(ex_dir, 'bounds.pt'))
+
+    # Algorithm
+    algo_hparam = hparams['algo']
+    algo_hparam.update({'thold_succ_subrtn': 100})
+    algo = BayRn(ex_dir, env_sim, env_real, subrtn=ppo, bounds=bounds, **algo_hparam)
+
+    # Jeeeha
+    seed = hparams['seed'] if isinstance(hparams['seed'], int) else None
+    algo.train(snapshot_mode='latest', seed=seed, load_dir=ex_dir)

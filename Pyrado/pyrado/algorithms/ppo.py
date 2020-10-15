@@ -320,7 +320,8 @@ class PPO2(ActorCritic):
             [{'params': self._expl_strat.policy.parameters()},
              {'params': self._expl_strat.noise.parameters()},
              {'params': self._critic.value_fcn.parameters()}],
-            lr=lr, eps=1e-5)
+            lr=lr, eps=1e-5
+        )
         self._lr_scheduler = lr_scheduler
         self._lr_scheduler_hparam = lr_scheduler_hparam
         if lr_scheduler is not None:

@@ -65,7 +65,7 @@ class CEM(ParameterExploring):
                  num_is_samples: int,
                  expl_std_init: float,
                  expl_std_min: float = 0.01,
-                 extra_expl_std_init: float = 1.,
+                 extra_expl_std_init: float = 0.,
                  extra_expl_decay_iter: int = 10,
                  full_cov: bool = False,
                  symm_sampling: bool = False,
@@ -87,7 +87,7 @@ class CEM(ParameterExploring):
         :param full_cov: pass `True` to compute a full covariance matrix for sampling the next policy parameter values,
                          else a diagonal covariance is used
         :param extra_expl_std_init: additional standard deviation for the parameter exploration added to the diagonal
-                                    entries of the covariance matirx.
+                                    entries of the covariance matirx, set to 0 to disable this functionality
         :param extra_expl_decay_iter: limit for the linear decay of the additional standard deviation, i.e. last
                                       iteration in which the additional exploration noise is applied
         :param symm_sampling: use an exploration strategy which samples symmetric populations
@@ -97,6 +97,8 @@ class CEM(ParameterExploring):
             raise pyrado.ValueErr(given=extra_expl_std_init, ge_constraint='0')
         if not extra_expl_decay_iter > 0:
             raise pyrado.ValueErr(given=extra_expl_decay_iter, g_constraint='0')
+        if not num_is_samples <= pop_size:
+            raise pyrado.ValueErr(given=num_is_samples, le_constraint=pop_size)
 
         # Call ParameterExploring's constructor
         super().__init__(
@@ -109,6 +111,8 @@ class CEM(ParameterExploring):
             num_workers=num_workers,
             logger=logger,
         )
+
+        self.num_is_samples = int(num_is_samples)
 
         # Explore using normal noise
         self._expl_strat = NormalParamNoise(
@@ -124,14 +128,15 @@ class CEM(ParameterExploring):
                 self.pop_size += 1
             self._expl_strat = SymmParamExplStrat(self._expl_strat)
 
-        self.num_is_samples = min(pop_size, num_is_samples)
+        # Optionally add additional entropy
         self.extra_expl_decay_iter = extra_expl_decay_iter
         if isinstance(self._expl_strat.noise, DiagNormalNoise):
             self.extra_expl_std_init = to.ones_like(self._policy.param_values)*extra_expl_std_init
         elif isinstance(self._expl_strat.noise, FullNormalNoise):
             self.extra_expl_std_init = to.eye(self._policy.num_param)*extra_expl_std_init
         else:
-            raise NotImplementedError  # CEM could also sample using different distributions
+            raise pyrado.TypeErr(msg='Additional exploration entropy is only implemented for Gaussian distributions,'
+                                     'i.e. DiagNormalNoise and FullNormalNoise')
 
     @to.no_grad()
     def update(self, param_results: ParameterSamplingResult, ret_avg_curr: float = None):
@@ -160,8 +165,6 @@ class CEM(ParameterExploring):
                 1. - self._curr_iter/self.extra_expl_decay_iter, 0  # see [2, p.4]
             )
             self._expl_strat.noise.adapt(cov=cov_is + extra_expl_cov)
-        else:
-            raise NotImplementedError  # CEM could also sample using different distributions
 
         # Logging
         self.logger.add_value('median imp samp return', to.median(rets_avg_is))

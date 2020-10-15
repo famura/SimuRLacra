@@ -31,7 +31,7 @@ import torch as to
 from matplotlib import pyplot as plt
 from matplotlib.cm import get_cmap
 from torch.distributions import Distribution
-from typing import Sequence, Iterable
+from typing import Sequence
 
 import pyrado
 from pyrado.utils.checks import check_all_types_equal
@@ -39,8 +39,8 @@ from pyrado.utils.checks import check_all_types_equal
 
 def render_distr_evo(
     ax: plt.Axes,
-    distributions: Iterable,
-    x_grid_limits: [tuple, list, np.ndarray],
+    distributions: Sequence[Distribution],
+    x_grid_limits: Sequence,
     x_label: str = '',
     y_label: str = '',
     distr_labels: Sequence[str] = None,
@@ -88,8 +88,8 @@ def render_distr_evo(
     # Plot the data
     for i, d in enumerate(distributions):
         probs = to.exp(d.log_prob(x_gird))
-        ax.plot(x_gird.numpy(), probs.numpy(), label=distr_labels[i])
-        ax.fill_between(x_gird.numpy(), np.zeros(probs.size()), probs.numpy(), alpha=alpha)
+        ax.plot(x_gird.numpy(), probs.detach().numpy(), label=distr_labels[i])
+        ax.fill_between(x_gird.detach().numpy(), np.zeros(probs.size()), probs.detach().numpy(), alpha=alpha)
 
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)

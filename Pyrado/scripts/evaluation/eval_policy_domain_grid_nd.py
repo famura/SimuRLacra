@@ -59,7 +59,7 @@ if __name__ == '__main__':
     ex_dir = ask_for_experiment()
 
     # Load the policy (trained in simulation) and the environment
-    env, policy, _ = load_experiment(ex_dir)
+    env, policy, _ = load_experiment(ex_dir, args)
 
     # Create multi-dim evaluation grid
     param_spec = dict()
