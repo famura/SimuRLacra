@@ -55,6 +55,7 @@ from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.base import Env
+from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.experiment import load_dict_from_yaml
 from pyrado.policies.adn import pd_linear, pd_cubic, pd_capacity_21_abs, pd_capacity_21, pd_capacity_32, \
@@ -213,7 +214,8 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
     return env, policy, kwout
 
 
-def wrap_like_other_env(env_targ: Env, env_src: [SimEnv, EnvWrapper], use_downsampling: bool = False) -> Env:
+def wrap_like_other_env(env_targ: Union[SimEnv, RealEnv], env_src: [SimEnv, EnvWrapper], use_downsampling: bool = False
+                        ) -> Union[SimEnv, RealEnv]:
     """
     Wrap a given real environment like it's simulated counterpart (except the domain randomization of course).
 

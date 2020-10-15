@@ -148,24 +148,3 @@ def eval_randomized_domain(pool: SamplerPool,
     # Run with progress bar
     with tqdm(leave=False, file=sys.stdout, unit='rollouts', desc='Sampling') as pb:
         return pool.run_map(_run_rollout_nom, init_states, pb)
-
-
-def conditional_actnorm_wrapper(env: Env, ex_dirs: list, idx: int):
-    """
-    Wrap the environment with an action normalization wrapper if the simulated environment had one.
-
-    :param env: environment to sample from
-    :param ex_dirs: list of experiment directories that will be loaded
-    :param idx: index of the current directory
-    :return: modified environment
-    """
-    # Get the simulation environment
-    env_sim, _, _ = load_experiment(ex_dirs[idx])
-
-    if typed_env(env_sim, ActNormWrapper) is not None:
-        env = ActNormWrapper(env)
-        print_cbt(f'Added an action normalization wrapper to {idx + 1}-th evaluation policy.', 'y')
-    else:
-        env = remove_env(env, ActNormWrapper)
-        print_cbt(f'Removed an action normalization wrapper to {idx + 1}-th evaluation policy.', 'y')
-    return env

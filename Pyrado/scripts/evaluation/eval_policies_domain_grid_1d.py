@@ -42,12 +42,12 @@ from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.sampling.parallel_evaluation import eval_domain_params, conditional_actnorm_wrapper
+from pyrado.sampling.parallel_evaluation import eval_domain_params
 from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.checks import check_all_lengths_equal
 from pyrado.utils.data_types import dict_arraylike_to_float
-from pyrado.utils.experiments import load_experiment
+from pyrado.utils.experiments import load_experiment, wrap_like_other_env
 from pyrado.utils.input_output import print_cbt
 
 
@@ -174,10 +174,11 @@ if __name__ == '__main__':
 
     # Loading the policies
     ex_dirs = [osp.join(p, e) for p, e in zip(prefixes, ex_names)]
-    policies = []
+    env_sim_list = []
+    policy_list = []
     for ex_dir in ex_dirs:
         _, policy, _ = load_experiment(ex_dir, args)
-        policies.append(policy)
+        policy_list.append(policy)
 
     # Create one-dim results grid and ensure right number of rollouts
     param_list = param_grid(param_spec)
@@ -190,7 +191,7 @@ if __name__ == '__main__':
     df = pd.DataFrame(columns=['policy', 'ret', 'len', varied_param_key])
 
     # Evaluate all policies
-    for i, policy in enumerate(policies):
+    for i, (env_sim, policy) in enumerate(zip(env_sim_list, policy_list)):
         # Create a new sampler pool for every policy to synchronize the random seeds i.e. init states
         pool = SamplerPool(args.num_workers)
 
@@ -201,8 +202,8 @@ if __name__ == '__main__':
         else:
             print_cbt('No seed was set', 'y')
 
-        # Add an action normalization wrapper if the policy was trained with one
-        env = conditional_actnorm_wrapper(env, ex_dirs, i)
+        # Add the same wrappers as during training
+        env = wrap_like_other_env(env, env_sim)
 
         # Sample rollouts
         ros = eval_domain_params(pool, env, policy, param_list, init_state)
