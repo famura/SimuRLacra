@@ -1878,7 +1878,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <span id="reps"></span><h2>reps<a class="headerlink" href="#module-pyrado.algorithms.reps" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.algorithms.reps.REPS">
-<em class="property">class </em><code class="sig-name descname">REPS</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">max_iter</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">eps</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">num_rollouts</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">pop_size</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">expl_std_init</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">expl_std_min</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">symm_sampling</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">num_workers</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">4</span></em>, <em class="sig-param"><span class="n">num_epoch_dual</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">softmax_transform</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_map</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">grad_free_optim</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">lr_dual</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.0005</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/reps.html#REPS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.reps.REPS" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">REPS</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">max_iter</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">eps</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">num_rollouts</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">pop_size</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">expl_std_init</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">expl_std_min</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">symm_sampling</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">num_workers</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">4</span></em>, <em class="sig-param"><span class="n">num_epoch_dual</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">softmax_transform</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_map</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">optim_mode</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'scipy'</span></em>, <em class="sig-param"><span class="n">lr_dual</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.0005</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/reps.html#REPS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.reps.REPS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.parameter_exploring.ParameterExploring" title="pyrado.algorithms.parameter_exploring.ParameterExploring"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.parameter_exploring.ParameterExploring</span></code></a></p>
 <p>Episodic variant of Relative Entropy Policy Search (REPS)</p>
 <div class="admonition seealso">
@@ -1894,12 +1894,15 @@ contains a dict of information about the current iteration of the meta-algorithm
 </dl>
 </div>
 <dl class="py method">
-<dt id="pyrado.algorithms.reps.REPS.dual_eval">
-<code class="sig-name descname">dual_eval</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rets</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/algorithms/reps.html#REPS.dual_eval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.reps.REPS.dual_eval" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.algorithms.reps.REPS.dual_evaluation">
+<code class="sig-name descname">dual_evaluation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">eta</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>torch.Tensor<span class="p">, </span>numpy.ndarray<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">rets</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>torch.Tensor<span class="p">, </span>numpy.ndarray<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; Union<span class="p">[</span>torch.Tensor<span class="p">, </span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/pyrado/algorithms/reps.html#REPS.dual_evaluation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.reps.REPS.dual_evaluation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the REPS dual function value for policy evaluation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>rets</strong> – return values per policy sample after averaging over multiple rollouts using the same policy</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>eta</strong> – lagrangian multiplier (optimization variable of the dual)</p></li>
+<li><p><strong>rets</strong> – return values per policy sample after averaging over multiple rollouts using the same policy</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>dual loss value</p>
@@ -1908,12 +1911,13 @@ contains a dict of information about the current iteration of the meta-algorithm
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyrado.algorithms.reps.REPS.dual_impr">
-<code class="sig-name descname">dual_impr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">param_samples</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">w</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/algorithms/reps.html#REPS.dual_impr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.reps.REPS.dual_impr" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.algorithms.reps.REPS.dual_improvement">
+<code class="sig-name descname">dual_improvement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">eta</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>torch.Tensor<span class="p">, </span>numpy.ndarray<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">param_samples</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">w</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; Union<span class="p">[</span>torch.Tensor<span class="p">, </span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/pyrado/algorithms/reps.html#REPS.dual_improvement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.reps.REPS.dual_improvement" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the REPS dual function value for policy improvement.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>eta</strong> – lagrangian multiplier (optimization variable of the dual)</p></li>
 <li><p><strong>param_samples</strong> – all sampled policy parameters</p></li>
 <li><p><strong>w</strong> – weights of the policy parameter samples</p></li>
 </ul>
@@ -1933,7 +1937,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dl class="py method">
 <dt id="pyrado.algorithms.reps.REPS.minimize">
 <code class="sig-name descname">minimize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">loss_fcn</span><span class="p">:</span> <span class="n">Callable</span></em>, <em class="sig-param"><span class="n">rets</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">param_samples</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">w</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/reps.html#REPS.minimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.reps.REPS.minimize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Minimize the given dual function. Iterate num_epoch_dual times.</p>
+<dd><p>Minimize the given dual function. Iterate <cite>num_epoch_dual</cite> times.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1996,11 +2000,12 @@ As stated in [2, sec 4.1], we could calculate weights using any rank preserving 
 
 <dl class="py method">
 <dt id="pyrado.algorithms.reps.REPS.wml">
-<code class="sig-name descname">wml</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">param_samples</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">w</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/reps.html#REPS.wml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.reps.REPS.wml" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">wml</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">eta</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">param_samples</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">w</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/reps.html#REPS.wml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.reps.REPS.wml" title="Permalink to this definition">¶</a></dt>
 <dd><p>Weighted maximum likelihood update of the policy’s mean and the exploration strategy’s covariance</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>eta</strong> – lagrangian multiplier (optimization variable of the dual)</p></li>
 <li><p><strong>param_samples</strong> – all sampled policy parameters</p></li>
 <li><p><strong>w</strong> – weights of the policy parameter samples</p></li>
 </ul>
@@ -2938,6 +2943,26 @@ for the given rollout using the given exploration strategy.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>collected action statistics, see <cite>ActionStatistics</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.algorithms.utils.get_grad_via_torch">
+<code class="sig-name descname">get_grad_via_torch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x_np</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">fcn_to</span><span class="p">:</span> <span class="n">Callable</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args_to</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs_to</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/algorithms/utils.html#get_grad_via_torch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.utils.get_grad_via_torch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the gradient of a function operating on PyTorch tensors, by casting the input <cite>x_np</cite> as well as the
+resulting gradient to PyTorch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_np</strong> – input vector <span class="math notranslate nohighlight">\(x\)</span></p></li>
+<li><p><strong>fcn_to</strong> – function <span class="math notranslate nohighlight">\(f(x, \cdot)\)</span></p></li>
+<li><p><strong>args_to</strong> – other arguments to the function</p></li>
+<li><p><strong>kwargs_to</strong> – other keyword arguments to the function</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(\nabla_x f(x, \cdot)\)</span></p>
 </dd>
 </dl>
 </dd></dl>

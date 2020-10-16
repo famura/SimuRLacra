@@ -242,7 +242,7 @@
     <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sclar&#39;</span><span class="p">,</span> <span class="s1">&#39;scalar_1D&#39;</span><span class="p">,</span> <span class="s1">&#39;vec_1D&#39;</span><span class="p">,</span> <span class="s1">&#39;vec_2D&#39;</span><span class="p">,</span> <span class="s1">&#39;vec_2D_T&#39;</span><span class="p">,</span> <span class="s1">&#39;arr_2D&#39;</span><span class="p">,</span> <span class="s1">&#39;arr_3D&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">test_atleast_3D</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="n">x_al3d</span> <span class="o">=</span> <span class="n">atleast_3D</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">x_al3d</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="n">x_al3d</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">3</span>
 
     <span class="c1"># We want to mimic the numpy function</span>
     <span class="n">x_np</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_3d</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>

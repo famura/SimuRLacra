@@ -211,7 +211,7 @@
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.adr_discriminator</span> <span class="kn">import</span> <span class="n">RewardGenerator</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.utils</span> <span class="kn">import</span> <span class="n">compute_action_statistics</span><span class="p">,</span> <span class="n">until_thold_exceeded</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.utils</span> <span class="kn">import</span> <span class="n">compute_action_statistics</span><span class="p">,</span> <span class="n">until_thold_exceeded</span><span class="p">,</span> <span class="n">get_grad_via_torch</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="n">get_default_randomizer_omo</span>
 <span class="kn">from</span> <span class="nn">pyrado.exploration.stochastic_action</span> <span class="kn">import</span> <span class="n">NormalActNoiseExplStrat</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span>
@@ -329,6 +329,16 @@
             <span class="k">assert</span> <span class="n">val</span> <span class="o">&gt;=</span> <span class="n">thold</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="kc">True</span>  <span class="c1"># there is no easy way to insect the counter, read the printed messages</span></div>
+
+
+<div class="viewcode-block" id="test_get_grad_via_torch"><a class="viewcode-back" href="../../tests.html#tests.test_algorithm_utils.test_get_grad_via_torch">[docs]</a><span class="k">def</span> <span class="nf">test_get_grad_via_torch</span><span class="p">():</span>
+    <span class="k">def</span> <span class="nf">to_fcn</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="mi">3</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">grad_np</span> <span class="o">=</span> <span class="n">get_grad_via_torch</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">to_fcn</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">grad_np</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">grad_np</span><span class="p">,</span> <span class="mi">18</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span></div>
 </pre></div>
 
            </div>
