@@ -110,7 +110,7 @@ m_needs_cuda = pytest.mark.skipif(not to.cuda.is_available(), reason='CUDA is no
 # Environment fixtures
 # --------------------
 
-@pytest.fixture
+@pytest.fixture(scope='function')
 def env(request):
     if hasattr(request, 'param'):
         marker = request.param
@@ -485,7 +485,7 @@ class DefaultEnvs:
 # ---------------
 
 
-@pytest.fixture
+@pytest.fixture(scope='function')
 def policy(request, env):
     selected_policy = request.param
     if selected_policy is None:
@@ -511,7 +511,6 @@ class DefaultPolicies:
 
     @staticmethod
     def linear_policy(env):
-        print(env)
         return LinearPolicy(env.spec, DefaultPolicies.default_fs())
 
     @staticmethod
