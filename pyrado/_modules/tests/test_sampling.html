@@ -216,7 +216,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.policies.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.data_format</span> <span class="kn">import</span> <span class="n">to_format</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.hyper_sphere</span> <span class="kn">import</span> <span class="n">sample_from_hyper_sphere_surface</span>
-<span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_rollout_sampler</span> <span class="kn">import</span> <span class="n">ParallelRolloutSampler</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_sampler</span> <span class="kn">import</span> <span class="n">ParallelSampler</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.parameter_exploration_sampler</span> <span class="kn">import</span> <span class="n">ParameterExplorationSampler</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
@@ -550,7 +550,7 @@
     <span class="n">policy</span> <span class="o">=</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">,</span> <span class="n">use_cuda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># Create the sampler</span>
-    <span class="n">sampler</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">ParallelSampler</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 
     <span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
     <span class="k">assert</span> <span class="n">samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>

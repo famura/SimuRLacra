@@ -23,28 +23,10 @@ averaging
    :show-inheritance:
 
 
-checks
-------
-
-.. automodule:: pyrado.utils.checks
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
 data\_processing
 ----------------
 
 .. automodule:: pyrado.utils.data_processing
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-data\_sets
-----------
-
-.. automodule:: pyrado.utils.data_sets
    :members:
    :undoc-members:
    :show-inheritance:

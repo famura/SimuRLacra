@@ -213,14 +213,15 @@
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.actor_critic</span> <span class="kn">import</span> <span class="n">ActorCritic</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.advantage</span> <span class="kn">import</span> <span class="n">GAE</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.utils</span> <span class="kn">import</span> <span class="n">compute_action_statistics</span><span class="p">,</span> <span class="n">num_iter_from_rollouts</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.utils</span> <span class="kn">import</span> <span class="n">compute_action_statistics</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
 <span class="kn">from</span> <span class="nn">pyrado.exploration.stochastic_action</span> <span class="kn">import</span> <span class="n">NormalActNoiseExplStrat</span>
 <span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base_recurrent</span> <span class="kn">import</span> <span class="n">RecurrentPolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_rollout_sampler</span> <span class="kn">import</span> <span class="n">ParallelRolloutSampler</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_sampler</span> <span class="kn">import</span> <span class="n">ParallelSampler</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">discounted_values</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">num_iter_from_rollouts</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.math</span> <span class="kn">import</span> <span class="n">explained_var</span>
 
 
@@ -297,7 +298,7 @@
         <span class="c1"># Initialize</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_loss</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span> <span class="o">=</span> <span class="n">NormalActNoiseExplStrat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="n">std_init</span><span class="o">=</span><span class="n">std_init</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">ParallelSampler</span><span class="p">(</span>
             <span class="n">env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="p">,</span>
             <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
             <span class="n">min_steps</span><span class="o">=</span><span class="n">min_steps</span><span class="p">,</span>
@@ -486,7 +487,7 @@
         <span class="c1"># Initialize</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_loss</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span> <span class="o">=</span> <span class="n">NormalActNoiseExplStrat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="n">std_init</span><span class="o">=</span><span class="n">std_init</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">ParallelSampler</span><span class="p">(</span>
             <span class="n">env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="p">,</span>
             <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
             <span class="n">min_steps</span><span class="o">=</span><span class="n">min_steps</span><span class="p">,</span>
@@ -496,8 +497,7 @@
             <span class="p">[{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">parameters</span><span class="p">()},</span>
              <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">parameters</span><span class="p">()},</span>
              <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_critic</span><span class="o">.</span><span class="n">value_fcn</span><span class="o">.</span><span class="n">parameters</span><span class="p">()}],</span>
-            <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span>
-        <span class="p">)</span>
+            <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler</span> <span class="o">=</span> <span class="n">lr_scheduler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_hparam</span> <span class="o">=</span> <span class="n">lr_scheduler_hparam</span>
         <span class="k">if</span> <span class="n">lr_scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
