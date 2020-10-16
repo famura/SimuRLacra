@@ -30,7 +30,6 @@ import pytest
 import numpy as np
 import torch as to
 from copy import deepcopy
-from pytest_lazyfixture import lazy_fixture
 from torch.distributions.normal import Normal
 
 import pyrado
@@ -49,21 +48,23 @@ from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 @pytest.mark.sampling
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_pend'),
-    ]
+        'default_pend',
+    ],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'policy', [
-        lazy_fixture('linear_policy'),
-        lazy_fixture('fnn_policy'),
-        lazy_fixture('rnn_policy'),
-        lazy_fixture('lstm_policy'),
-        lazy_fixture('gru_policy'),
-        lazy_fixture('adn_policy'),
-        lazy_fixture('thfnn_policy'),
-        lazy_fixture('thgru_policy'),
+        'linear_policy',
+        'fnn_policy',
+        'rnn_policy',
+        'lstm_policy',
+        'gru_policy',
+        'adn_policy',
+        'thfnn_policy',
+        'thgru_policy',
     ],
     ids=['linear', 'fnn', 'rnn', 'lstm', 'gru', 'adn', 'thfnn', 'thgru'],
+    indirect=True
 )
 def test_action_statistics(env, policy):
     sigma = 1.  # with lower values like 0.1 we can observe violations of the tolerances
@@ -109,8 +110,9 @@ def test_action_statistics(env, policy):
 @pytest.mark.longtime
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_omo'),
-    ]
+        'default_omo',
+    ],
+    indirect=True
 )
 def test_adr_reward_generator(env):
     reference_env = env

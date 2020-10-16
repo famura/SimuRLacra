@@ -15,13 +15,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build the Docker image
-        run: docker build . --file docker/Dockerfile.blackforest --tag simurlacra:blackforest
+        run: docker build . --file docker/Dockerfile.sacher --tag simurlacra:sacher
       - name: Execute tests
         env:
           CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
         run: |
           export COVPATH=$(realpath .)
-          docker run --rm -i -v $COVPATH:/cov simurlacra:blackforest conda run -n pyrado bash -c "pytest Pyrado/tests --cov=./Pyrado --cov-report=xml --verbose -m 'not visualization'; sudo cp ./coverage.xml /cov"
+          docker run --rm -i -v $COVPATH:/cov simurlacra:sacher conda run -n pyrado bash -c "pytest Pyrado/tests --cov=./Pyrado --cov-report=xml --verbose -m 'not visualization'; sudo cp ./coverage.xml /cov"
           sudo mkdir /home/user/
           sudo mkdir /home/user/SimuRLacra
           sudo ln -s $COVPATH /home/user/SimuRLacra

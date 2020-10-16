@@ -27,7 +27,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import pytest
-from pytest_lazyfixture import lazy_fixture
 
 from pyrado.algorithms.a2c import A2C
 from pyrado.algorithms.actor_critic import ActorCritic
@@ -62,7 +61,7 @@ from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sequences import *
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.data_types import EnvSpec
-from tests.conftest import m_needs_bullet
+from tests.conftest import m_needs_bullet, policy
 
 
 # Fixture providing an experiment directory
@@ -75,22 +74,24 @@ def ex_dir(tmpdir):
 @pytest.mark.longtime
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_qbb'),  # we just need one env to construct the fixture policies
+        'default_qbb'  # we just need one env to construct the fixture policies
     ],
     ids=['qbb'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'policy', [
-        lazy_fixture('linear_policy'),
-        lazy_fixture('fnn_policy'),
-        lazy_fixture('rnn_policy'),
-        lazy_fixture('lstm_policy'),
-        lazy_fixture('gru_policy'),
-        lazy_fixture('adn_policy'),
-        lazy_fixture('thfnn_policy'),
-        lazy_fixture('thgru_policy'),
+        'linear_policy',
+        'fnn_policy',
+        'rnn_policy',
+        'lstm_policy',
+        'gru_policy',
+        'adn_policy',
+        'thfnn_policy',
+        'thgru_policy',
     ],
     ids=['linear', 'fnn', 'rnn', 'lstm', 'gru', 'adn', 'thfnn', 'thgru'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'algo_class, algo_hparam', [
@@ -144,8 +145,17 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
 
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_bob')
-    ], ids=['bob']
+        'default_bob'
+    ],
+    ids=['bob'],
+    indirect=True
+)
+@pytest.mark.parametrize(
+    'policy', [
+        'linear_policy'
+    ],
+    ids=['linear'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'algo_class, algo_hparam', [
@@ -162,13 +172,13 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
     ],
     ids=['hc_normal', 'hc_hyper', 'nes', 'nes_tr', 'nes_symm', 'pepg', 'power', 'cem-fcov', 'cem-dcov', 'reps']
 )
-def test_param_expl(ex_dir, env, linear_policy, algo_class, algo_hparam):
+def test_param_expl(ex_dir, env, policy, algo_class, algo_hparam):
     # Hyper-parameters
     common_hparam = dict(max_iter=3, num_rollouts=4)
     common_hparam.update(algo_hparam)
 
     # Create algorithm and train
-    algo = algo_class(ex_dir, env, linear_policy, **common_hparam)
+    algo = algo_class(ex_dir, env, policy, **common_hparam)
     algo.reset()  # not necessary, but this way we can test it too
     algo.train()
     assert algo.curr_iter == algo.max_iter
@@ -176,8 +186,17 @@ def test_param_expl(ex_dir, env, linear_policy, algo_class, algo_hparam):
 
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_bob')
-    ], ids=['bob']
+        'default_bob'
+    ],
+    ids=['bob'],
+    indirect=True
+)
+@pytest.mark.parametrize(
+    'policy', [
+        'linear_policy'
+    ],
+    ids=['linear'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'actor_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)], ids=['casual']
@@ -191,7 +210,7 @@ def test_param_expl(ex_dir, env, linear_policy, algo_class, algo_hparam):
 @pytest.mark.parametrize(
     'algo_hparam', [dict(max_iter=3, num_particles=3, temperature=10, lr=1e-3, horizon=50)], ids=['casual']
 )
-def test_svpg(ex_dir, env, linear_policy, actor_hparam, value_fcn_hparam, critic_hparam, algo_hparam):
+def test_svpg(ex_dir, env, policy, actor_hparam, value_fcn_hparam, critic_hparam, algo_hparam):
     # Create algorithm and train
     particle_hparam = dict(actor=actor_hparam, value_fcn=value_fcn_hparam, critic=critic_hparam)
     algo = SVPG(ex_dir, env, particle_hparam, **algo_hparam)
@@ -202,8 +221,9 @@ def test_svpg(ex_dir, env, linear_policy, actor_hparam, value_fcn_hparam, critic
 @pytest.mark.metaalgorithm
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_qqsu')
-    ], ids=['qq-su']
+        'default_qqsu'
+    ], ids=['qq-su'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'subrtn_hparam', [dict(max_iter=3, min_rollouts=5, num_workers=1, num_epoch=4)], ids=['casual']
@@ -239,8 +259,9 @@ def test_adr(ex_dir, env, subrtn_hparam, actor_hparam, value_fcn_hparam, critic_
 @pytest.mark.metaalgorithm
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_qbb')
-    ], ids=['qbb']
+        'default_qbb'
+    ], ids=['qbb'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'spota_hparam', [
@@ -277,9 +298,16 @@ def test_spota_ppo(ex_dir, env, spota_hparam):
 
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_bob'),
-        lazy_fixture('default_qbb')
-    ], ids=['bob', 'qbb']
+        'default_bob',
+        'default_qbb'
+    ], ids=['bob', 'qbb'],
+    indirect=True
+)
+@pytest.mark.parametrize(
+    'policy', [
+        'linear_policy'
+    ], ids=['linear'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'algo, algo_hparam',
@@ -299,7 +327,7 @@ def test_spota_ppo(ex_dir, env, spota_hparam):
     ids=['vf_fnn_plain', 'vf_fnn', 'vf_rnn']
 )
 @pytest.mark.parametrize('use_cuda', [False, True], ids=['cpu', 'cuda'])
-def test_actor_critic(ex_dir, env, linear_policy, algo, algo_hparam, value_fcn_type, use_cuda):
+def test_actor_critic(ex_dir, env, policy, algo, algo_hparam, value_fcn_type, use_cuda):
     # Create value function
     if value_fcn_type == 'fnn-plain':
         value_fcn = FNN(
@@ -342,7 +370,7 @@ def test_actor_critic(ex_dir, env, linear_policy, algo, algo_hparam, value_fcn_t
     common_hparam.update(algo_hparam)
 
     # Create algorithm and train
-    algo = algo(ex_dir, env, linear_policy, critic, **common_hparam)
+    algo = algo(ex_dir, env, policy, critic, **common_hparam)
     algo.train()
     assert algo.curr_iter == algo.max_iter
 
@@ -350,8 +378,9 @@ def test_actor_critic(ex_dir, env, linear_policy, algo, algo_hparam, value_fcn_t
 @pytest.mark.longtime
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_omo')
-    ], ids=['omo']
+        'default_omo'
+    ], ids=['omo'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'algo, algo_hparam', [
@@ -389,18 +418,20 @@ def test_training_parameter_exploring(ex_dir, env, algo, algo_hparam):
 
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_omo')
-    ], ids=['omo']
+        'default_omo'
+    ], ids=['omo'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'module', [
-        lazy_fixture('linear_policy'),
-        lazy_fixture('fnn_policy'),
-        lazy_fixture('rnn_policy'),
-        lazy_fixture('lstm_policy'),
-        lazy_fixture('gru_policy'),
+        'linear_policy',
+        'fnn_policy',
+        'rnn_policy',
+        'lstm_policy',
+        'gru_policy',
     ]
-    , ids=['linear', 'fnn', 'rnn', 'lstm', 'gru']
+    , ids=['linear', 'fnn', 'rnn', 'lstm', 'gru'],
+    indirect=True
 )
 def test_soft_update(env, module):
     # Init param values
@@ -419,8 +450,9 @@ def test_soft_update(env, module):
 
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_omo')
-    ], ids=['omo']
+        'default_omo'
+    ], ids=['omo'],
+    indirect=True
 )
 def test_arpl(ex_dir, env):
     env = ActNormWrapper(env)
@@ -472,8 +504,9 @@ def test_arpl(ex_dir, env):
 @pytest.mark.longtime
 @pytest.mark.parametrize(
     'env, num_eval_rollouts', [
-        (lazy_fixture('default_bob'), 5)
-    ], ids=['bob']
+        ('default_bob', 5)
+    ], ids=['bob'],
+    indirect=['env']
 )
 def test_sysidasrl(ex_dir, env, num_eval_rollouts):
     def eval_ddp_policy(rollouts_real):
