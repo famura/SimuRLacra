@@ -223,7 +223,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.exploration.stochastic_action</span> <span class="kn">import</span> <span class="n">NormalActNoiseExplStrat</span>
 <span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
-<span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_sampler</span> <span class="kn">import</span> <span class="n">ParallelSampler</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_rollout_sampler</span> <span class="kn">import</span> <span class="n">ParallelRolloutSampler</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 
 
@@ -352,7 +352,7 @@
 
         <span class="c1"># Particle factory</span>
         <span class="n">actor</span> <span class="o">=</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="o">**</span><span class="n">particle_hparam</span><span class="p">[</span><span class="s1">&#39;actor&#39;</span><span class="p">])</span>
-        <span class="n">value_fcn</span> <span class="o">=</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">EnvSpec</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span> <span class="n">ValueFunctionSpace</span><span class="p">),</span> <span class="o">**</span><span class="n">particle_hparam</span><span class="p">[</span><span class="s1">&#39;value_fcn&#39;</span><span class="p">])</span>
+        <span class="n">value_fcn</span> <span class="o">=</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">EnvSpec</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span> <span class="n">ValueFunctionSpace</span><span class="p">),</span> <span class="o">**</span><span class="n">particle_hparam</span><span class="p">[</span><span class="s1">&#39;valuefcn&#39;</span><span class="p">])</span>
         <span class="n">critic</span> <span class="o">=</span> <span class="n">GAE</span><span class="p">(</span><span class="n">value_fcn</span><span class="p">,</span> <span class="o">**</span><span class="n">particle_hparam</span><span class="p">[</span><span class="s1">&#39;critic&#39;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_as_logger_parent</span><span class="p">(</span><span class="n">critic</span><span class="p">)</span>
         <span class="n">particle</span> <span class="o">=</span> <span class="n">SVPGParticle</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">actor</span><span class="p">,</span> <span class="n">critic</span><span class="p">)</span>
@@ -367,7 +367,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">particleSteps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">serial</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">samplers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ParallelSampler</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">samplers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span>
                     <span class="n">env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">expl_strats</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">num_workers</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="o">=</span><span class="n">min_rollouts</span><span class="p">,</span> <span class="n">min_steps</span><span class="o">=</span><span class="n">min_steps</span>
                 <span class="p">)</span>
 

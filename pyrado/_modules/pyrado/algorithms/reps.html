@@ -314,7 +314,7 @@
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">optim_dual</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">([{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_eta</span><span class="p">}],</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr_dual</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
-            <span class="c1"># self.optim_dual = to.optim.Adam([{&#39;params&#39;: self._log_eta}], lr=lr_dual)  # used in [2], but unstable here</span>
+            <span class="c1"># self.optim_dual = to.optim.Adam([{&#39;params&#39;: self._log_eta}], lr=lr_dual, eps=1e-5)  # used in [2], but unstable here</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_epoch_dual</span> <span class="o">=</span> <span class="n">num_epoch_dual</span>
 
     <span class="nd">@property</span>

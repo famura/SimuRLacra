@@ -212,7 +212,7 @@ on Hierarchical Dynamical Systems”, IROS, 2012</p>
 <dl class="py method">
 <dt id="pyrado.policies.adn.ADNPolicy.capacity">
 <em class="property">property </em><code class="sig-name descname">capacity</code><a class="headerlink" href="#pyrado.policies.adn.ADNPolicy.capacity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the time scale parameter (exists for capacity-based dynamics functions), else return <cite>None</cite>.</p>
+<dd><p>Get the capacity parameter (exists for capacity-based dynamics functions), else return <cite>None</cite>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -504,7 +504,7 @@ The default implementation simply calls <cite>forward()</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rollout</strong> – recorded, complete rollout</p></li>
+<li><p><strong>rollout</strong> – complete rollout</p></li>
 <li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks.
 Defaults to ‘hidden_states’. Change for value functions.</p></li>
 </ul>
@@ -771,7 +771,7 @@ registered hooks while the latter silently ignores them.</p>
 <span id="domain-distribution"></span><h2>domain_distribution<a class="headerlink" href="#module-pyrado.policies.domain_distribution" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.policies.domain_distribution.DomainDistrParamPolicy">
-<em class="property">class </em><code class="sig-name descname">DomainDistrParamPolicy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mapping</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>int<span class="p">, </span>Tuple<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">trafo_mask</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">prior</span><span class="p">:</span> <span class="n"><a class="reference internal" href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/domain_distribution.html#DomainDistrParamPolicy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.domain_distribution.DomainDistrParamPolicy" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">DomainDistrParamPolicy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mapping</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>int<span class="p">, </span>Tuple<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">trafo_mask</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">prior</span><span class="p">:</span> <span class="n"><a class="reference internal" href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">scale_params</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/domain_distribution.html#DomainDistrParamPolicy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.domain_distribution.DomainDistrParamPolicy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a></p>
 <p>A proxy to the Policy class in order to use the policy’s parameters as domain distribution parameters</p>
 <dl class="py method">
@@ -1146,7 +1146,7 @@ The only but significant difference of this controller to the other PD controlle
 
 <dl class="py class">
 <dt id="pyrado.policies.environment_specific.QQubePDCtrl">
-<em class="property">class </em><code class="sig-name descname">QQubePDCtrl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">k</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">tensor([4.0, 0.0, 0.5, 0.0])</span></em>, <em class="sig-param"><span class="n">th_des</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">al_des</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">tols</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">tensor([0.0262, 0.0087, 0.0002, 0.0002])</span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/environment_specific.html#QQubePDCtrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.environment_specific.QQubePDCtrl" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">QQubePDCtrl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">k</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">tensor([4.0, 0.0, 0.5, 0.0])</span></em>, <em class="sig-param"><span class="n">th_des</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">al_des</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">tols</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">tensor([0.0262, 0.0087, 0.0017, 0.0017])</span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/environment_specific.html#QQubePDCtrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.environment_specific.QQubePDCtrl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a></p>
 <p>PD-controller for the Qunaser Qube.
 Drives Qube to <span class="math notranslate nohighlight">\(x_{des} = [\theta_{des}, \alpha_{des}, 0.0, 0.0]\)</span>.
@@ -1480,12 +1480,6 @@ Since we operate on a discrete ation space, we can construct a table.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyrado.policies.fnn.FNN.dropout">
-<em class="property">property </em><code class="sig-name descname">dropout</code><a class="headerlink" href="#pyrado.policies.fnn.FNN.dropout" title="Permalink to this definition">¶</a></dt>
-<dd><p>For legacy compatibility</p>
-</dd></dl>
-
-<dl class="py method">
 <dt id="pyrado.policies.fnn.FNN.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/fnn.html#FNN.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.fnn.FNN.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines the computation performed at every call.</p>
@@ -1500,12 +1494,6 @@ registered hooks while the latter silently ignores them.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyrado.policies.fnn.FNN.hidden_nonlin">
-<em class="property">property </em><code class="sig-name descname">hidden_nonlin</code><a class="headerlink" href="#pyrado.policies.fnn.FNN.hidden_nonlin" title="Permalink to this definition">¶</a></dt>
-<dd><p>For legacy compatibility</p>
-</dd></dl>
-
-<dl class="py method">
 <dt id="pyrado.policies.fnn.FNN.init_param">
 <code class="sig-name descname">init_param</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">init_values</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/fnn.html#FNN.init_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.fnn.FNN.init_param" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the network’s parameters. By default the parameters are initialized randomly.</p>
@@ -1514,12 +1502,6 @@ registered hooks while the latter silently ignores them.</p>
 <dd class="field-odd"><p><strong>init_values</strong> – Tensor of fixed initial network parameter values</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.policies.fnn.FNN.output_nonlin">
-<em class="property">property </em><code class="sig-name descname">output_nonlin</code><a class="headerlink" href="#pyrado.policies.fnn.FNN.output_nonlin" title="Permalink to this definition">¶</a></dt>
-<dd><p>For legacy compatibility</p>
 </dd></dl>
 
 <dl class="py method">
@@ -2132,13 +2114,13 @@ registered hooks while the latter silently ignores them.</p>
 <p>Policy architecture which has a common body and two heads that have a separate last layer</p>
 <dl class="py method">
 <dt id="pyrado.policies.two_headed.TwoHeadedGRUPolicy.evaluate">
-<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollout</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">hidden_states_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'hidden_states'</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>torch.Tensor<span class="p">, </span>torch.Tensor<span class="p">]</span><a class="reference internal" href="_modules/pyrado/policies/two_headed.html#TwoHeadedGRUPolicy.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.two_headed.TwoHeadedGRUPolicy.evaluate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">hidden_states_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'hidden_states'</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>torch.Tensor<span class="p">, </span>torch.Tensor<span class="p">]</span><a class="reference internal" href="_modules/pyrado/policies/two_headed.html#TwoHeadedGRUPolicy.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.two_headed.TwoHeadedGRUPolicy.evaluate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Re-evaluate the given rollout and return a derivable action tensor.
 The default implementation simply calls <cite>forward()</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rollout</strong> – recorded, complete rollout</p></li>
+<li><p><strong>rollout</strong> – complete rollout</p></li>
 <li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks.
 Defaults to ‘hidden_states’. Change for value functions.</p></li>
 </ul>
