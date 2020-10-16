@@ -223,7 +223,6 @@
     <span class="n">show_legend</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">legend_loc</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;best&#39;</span><span class="p">,</span>
     <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">use_seaborn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a box plot for a list of data arrays. Every entry results in one column of the box plot.</span>
@@ -245,40 +244,30 @@
 <span class="sd">    :param show_legend: flag if the legend entry should be printed, set to True when using multiple subplots</span>
 <span class="sd">    :param legend_loc: location of the legend, ignored if `show_legend = False`</span>
 <span class="sd">    :param title: title displayed above the figure, set to None to suppress the title</span>
-<span class="sd">    :param use_seaborn: if `True`, use seaborn instead of plain pyplot</span>
 <span class="sd">    :return: handle to the resulting figure</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">use_seaborn</span><span class="p">:</span>
-        <span class="c1"># Plot the data</span>
-        <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-        <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+    <span class="n">medianprops</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;firebrick&#39;</span><span class="p">)</span>
+    <span class="n">meanprops</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">markerfacecolor</span><span class="o">=</span><span class="s1">&#39;purple&#39;</span><span class="p">)</span>
+    <span class="n">boxprops</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+    <span class="n">whiskerprops</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+    <span class="n">capprops</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
 
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">x_labels</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+    <span class="c1"># Plot the data</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">boxprops</span><span class="o">=</span><span class="n">boxprops</span><span class="p">,</span> <span class="n">whiskerprops</span><span class="o">=</span><span class="n">whiskerprops</span><span class="p">,</span> <span class="n">capprops</span><span class="o">=</span><span class="n">capprops</span><span class="p">,</span>
+        <span class="n">meanprops</span><span class="o">=</span><span class="n">meanprops</span><span class="p">,</span> <span class="n">meanline</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">showmeans</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">medianprops</span><span class="o">=</span><span class="n">medianprops</span><span class="p">,</span>
+        <span class="n">showfliers</span><span class="o">=</span><span class="n">show_fliers</span><span class="p">,</span>
+        <span class="n">notch</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">patch_artist</span><span class="o">=</span><span class="n">colorize</span><span class="p">,</span>  <span class="c1"># necessary to colorize the boxes</span>
+        <span class="n">labels</span><span class="o">=</span><span class="n">x_labels</span><span class="p">,</span> <span class="n">widths</span><span class="o">=</span><span class="mf">0.7</span>
+    <span class="p">)</span>
 
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">medianprops</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;firebrick&#39;</span><span class="p">)</span>
-        <span class="n">meanprops</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">markerfacecolor</span><span class="o">=</span><span class="s1">&#39;purple&#39;</span><span class="p">)</span>
-        <span class="n">boxprops</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
-        <span class="n">whiskerprops</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
-        <span class="n">capprops</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
-
-        <span class="c1"># Plot the data</span>
-        <span class="n">box</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span>
-            <span class="n">data</span><span class="p">,</span>
-            <span class="n">boxprops</span><span class="o">=</span><span class="n">boxprops</span><span class="p">,</span> <span class="n">whiskerprops</span><span class="o">=</span><span class="n">whiskerprops</span><span class="p">,</span> <span class="n">capprops</span><span class="o">=</span><span class="n">capprops</span><span class="p">,</span>
-            <span class="n">meanprops</span><span class="o">=</span><span class="n">meanprops</span><span class="p">,</span> <span class="n">meanline</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">showmeans</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">medianprops</span><span class="o">=</span><span class="n">medianprops</span><span class="p">,</span>
-            <span class="n">showfliers</span><span class="o">=</span><span class="n">show_fliers</span><span class="p">,</span>
-            <span class="n">notch</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">patch_artist</span><span class="o">=</span><span class="n">colorize</span><span class="p">,</span>  <span class="c1"># necessary to colorize the boxes</span>
-            <span class="n">labels</span><span class="o">=</span><span class="n">x_labels</span><span class="p">,</span> <span class="n">widths</span><span class="o">=</span><span class="mf">0.7</span>
-        <span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">colorize</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">patch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">box</span><span class="p">[</span><span class="s1">&#39;boxes&#39;</span><span class="p">]):</span>
-                <span class="n">patch</span><span class="o">.</span><span class="n">set_facecolorf</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;C</span><span class="si">{</span><span class="n">i</span><span class="o">%</span><span class="mi">10</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-                <span class="n">patch</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">colorize</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">patch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">box</span><span class="p">[</span><span class="s1">&#39;boxes&#39;</span><span class="p">]):</span>
+            <span class="n">patch</span><span class="o">.</span><span class="n">set_facecolorf</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;C</span><span class="si">{</span><span class="n">i</span><span class="o">%</span><span class="mi">10</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">patch</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
 
     <span class="c1"># Add dashed line to mark the approx solved threshold</span>
     <span class="k">if</span> <span class="n">vline_level</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -321,46 +310,25 @@
 <span class="sd">    :param vline_level: if not `None` (default) add a vertical line at the given level</span>
 <span class="sd">    :param vline_label: label for the vertical line</span>
 <span class="sd">    :param alpha: transparency (alpha-value) for violin body (including the border lines)</span>
-<span class="sd">    :param show_inner_quartiles: display the 1st and 3rd quartile with a thick line, ignored if `use_seaborn` is `True`</span>
+<span class="sd">    :param show_inner_quartiles: display the 1st and 3rd quartile with a thick line</span>
 <span class="sd">    :param show_legend: flag if the legend entry should be printed, set to `True` when using multiple subplots</span>
 <span class="sd">    :param legend_loc: location of the legend, ignored if `show_legend = False`</span>
 <span class="sd">    :param title: title displayed above the figure, set to None to suppress the title</span>
-<span class="sd">    :param use_seaborn: if `True`, use seaborn instead of plain pyplot</span>
 <span class="sd">    :return: handle to the resulting figure</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">use_seaborn</span><span class="p">:</span>
         <span class="c1"># Plot the data</span>
         <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
         <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-
-        <span class="c1"># Get default color map and move the 4th element to the 2nd position</span>
-        <span class="n">palette</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">()[:</span><span class="mi">4</span><span class="p">]</span>
-        <span class="n">palette</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">palette</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
-
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">x_labels</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">violinplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="n">inner</span><span class="o">=</span><span class="s1">&#39;box&#39;</span><span class="p">,</span> <span class="n">bw</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">cut</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="n">palette</span><span class="p">)</span>
-        <span class="c1"># ax = sns.violinplot(data=df, scale=&#39;width&#39;, inner=&#39;quartile&#39;, bw=0.3, cut=0)  # cut controls the max7min values</span>
-
-        <span class="c1"># Grouped boxplot</span>
-        <span class="c1"># df = pd.DataFrame(columns=[&#39;algo&#39;, &#39;succ_rate&#39;, &#39;domain&#39;])</span>
-        <span class="c1"># df = pd.concat([df, pd.DataFrame.from_dict(dict(algo=&#39;BayRn&#39;, succ_rate=data[0], domain=&#39;real&#39;))])</span>
-        <span class="c1"># df = pd.concat([df, pd.DataFrame.from_dict(dict(algo=&#39;BayRn&#39;, succ_rate=data[1], domain=&#39;sim&#39;))])</span>
-        <span class="c1"># df = pd.concat([df, pd.DataFrame.from_dict(dict(algo=&#39;UDR&#39;, succ_rate=data[2], domain=&#39;real&#39;))])</span>
-        <span class="c1"># df = pd.concat([df, pd.DataFrame.from_dict(dict(algo=&#39;UDR&#39;, succ_rate=data[3], domain=&#39;sim&#39;))])</span>
-        <span class="c1"># df = pd.concat([df, pd.DataFrame.from_dict(dict(algo=&#39;PPO&#39;, succ_rate=data[4], domain=&#39;real&#39;))])</span>
-        <span class="c1"># df = pd.concat([df, pd.DataFrame.from_dict(dict(algo=&#39;PPO&#39;, succ_rate=data[5], domain=&#39;sim&#39;))])</span>
-        <span class="c1"># ax = sns.violinplot(data=df, scale=&#39;width&#39;, bw=0.3, cut=0,</span>
-        <span class="c1">#                     palette=&quot;Set1&quot;, x=&#39;algo&#39;, y=&#39;succ_rate&#39;, hue=&#39;domain&#39;, hue_order=[&#39;real&#39;, &#39;sim&#39;])</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">violinplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="n">inner</span><span class="o">=</span><span class="s1">&#39;stick&#39;</span><span class="p">,</span> <span class="n">bw</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">cut</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># cut controls the max7min values</span>
 
         <span class="n">medians</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
             <span class="n">medians</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
-        <span class="c1"># Plot larger circles</span>
-        <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
-        <span class="n">locs</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xticks</span><span class="p">()</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">locs</span><span class="p">,</span> <span class="n">medians</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">))</span>
+        <span class="n">x_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">medians</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x_grid</span><span class="p">,</span> <span class="n">medians</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Plot the data</span>
