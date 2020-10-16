@@ -242,7 +242,7 @@
                  <span class="n">num_is_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                  <span class="n">expl_std_init</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                  <span class="n">expl_std_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
-                 <span class="n">extra_expl_std_init</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
+                 <span class="n">extra_expl_std_init</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span>
                  <span class="n">extra_expl_decay_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
                  <span class="n">full_cov</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="n">symm_sampling</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -264,7 +264,7 @@
 <span class="sd">        :param full_cov: pass `True` to compute a full covariance matrix for sampling the next policy parameter values,</span>
 <span class="sd">                         else a diagonal covariance is used</span>
 <span class="sd">        :param extra_expl_std_init: additional standard deviation for the parameter exploration added to the diagonal</span>
-<span class="sd">                                    entries of the covariance matirx.</span>
+<span class="sd">                                    entries of the covariance matirx, set to 0 to disable this functionality</span>
 <span class="sd">        :param extra_expl_decay_iter: limit for the linear decay of the additional standard deviation, i.e. last</span>
 <span class="sd">                                      iteration in which the additional exploration noise is applied</span>
 <span class="sd">        :param symm_sampling: use an exploration strategy which samples symmetric populations</span>
@@ -274,6 +274,8 @@
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">extra_expl_std_init</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">extra_expl_decay_iter</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">extra_expl_decay_iter</span><span class="p">,</span> <span class="n">g_constraint</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">num_is_samples</span> <span class="o">&lt;=</span> <span class="n">pop_size</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_is_samples</span><span class="p">,</span> <span class="n">le_constraint</span><span class="o">=</span><span class="n">pop_size</span><span class="p">)</span>
 
         <span class="c1"># Call ParameterExploring&#39;s constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -286,6 +288,8 @@
             <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
             <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
         <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_is_samples</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_is_samples</span><span class="p">)</span>
 
         <span class="c1"># Explore using normal noise</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span> <span class="o">=</span> <span class="n">NormalParamNoise</span><span class="p">(</span>
@@ -301,14 +305,15 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">pop_size</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span> <span class="o">=</span> <span class="n">SymmParamExplStrat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_is_samples</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">pop_size</span><span class="p">,</span> <span class="n">num_is_samples</span><span class="p">)</span>
+        <span class="c1"># Optionally add additional entropy</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">extra_expl_decay_iter</span> <span class="o">=</span> <span class="n">extra_expl_decay_iter</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">DiagNormalNoise</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">extra_expl_std_init</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">param_values</span><span class="p">)</span><span class="o">*</span><span class="n">extra_expl_std_init</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span> <span class="n">FullNormalNoise</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">extra_expl_std_init</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">num_param</span><span class="p">)</span><span class="o">*</span><span class="n">extra_expl_std_init</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span>  <span class="c1"># CEM could also sample using different distributions</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Additional exploration entropy is only implemented for Gaussian distributions,&#39;</span>
+                                     <span class="s1">&#39;i.e. DiagNormalNoise and FullNormalNoise&#39;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="CEM.update"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.cem.CEM.update">[docs]</a>    <span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_results</span><span class="p">:</span> <span class="n">ParameterSamplingResult</span><span class="p">,</span> <span class="n">ret_avg_curr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -337,8 +342,6 @@
                 <span class="mf">1.</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">extra_expl_decay_iter</span><span class="p">,</span> <span class="mi">0</span>  <span class="c1"># see [2, p.4]</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="n">cov</span><span class="o">=</span><span class="n">cov_is</span> <span class="o">+</span> <span class="n">extra_expl_cov</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span>  <span class="c1"># CEM could also sample using different distributions</span>
 
         <span class="c1"># Logging</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;median imp samp return&#39;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">rets_avg_is</span><span class="p">))</span>

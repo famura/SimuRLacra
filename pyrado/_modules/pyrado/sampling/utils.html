@@ -256,7 +256,7 @@
 
 <div class="viewcode-block" id="gen_ordered_batches"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.utils.gen_ordered_batches">[docs]</a><span class="k">def</span> <span class="nf">gen_ordered_batches</span><span class="p">(</span><span class="n">inp</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Helper function that cuts the input into equal spaced chunks</span>
+<span class="sd">    Helper function that cuts the input into equal sized chunks</span>
 
 <span class="sd">    :param inp: iterable input</span>
 <span class="sd">    :param batch_size: number of samples in each mini-batch</span>
@@ -264,6 +264,19 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">it</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)),</span> <span class="p">[])</span></div>
+
+
+<div class="viewcode-block" id="shuffled_ordered_batches"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.utils.shuffled_ordered_batches">[docs]</a><span class="k">def</span> <span class="nf">shuffled_ordered_batches</span><span class="p">(</span><span class="n">inp</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper function that cuts the input into equal sized chunks with the original ordering, but shuffled order among the</span>
+<span class="sd">    chunks</span>
+
+<span class="sd">    :param inp: iterable input</span>
+<span class="sd">    :param batch_size: number of samples in each mini-batch</span>
+<span class="sd">    :return: list of randomly ordered mini-batches which within themselves have the original ordering</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ordered_batches</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">gen_ordered_batches</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">ordered_batches</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ordered_batches</span><span class="p">))</span></div>
 </pre></div>
 
            </div>
