@@ -207,7 +207,6 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">pytest_lazyfixture</span> <span class="kn">import</span> <span class="n">lazy_fixture</span>
 <span class="kn">from</span> <span class="nn">torch.distributions.normal</span> <span class="kn">import</span> <span class="n">Normal</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
@@ -219,28 +218,30 @@
 <span class="kn">from</span> <span class="nn">pyrado.policies.two_headed</span> <span class="kn">import</span> <span class="n">TwoHeadedPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
-<span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_rollout_sampler</span> <span class="kn">import</span> <span class="n">ParallelRolloutSampler</span>
+<span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_sampler</span> <span class="kn">import</span> <span class="n">ParallelSampler</span>
 
 
 <div class="viewcode-block" id="test_action_statistics"><a class="viewcode-back" href="../../tests.html#tests.test_algorithm_utils.test_action_statistics">[docs]</a><span class="nd">@to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">sampling</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_pend&#39;</span><span class="p">),</span>
-    <span class="p">]</span>
+        <span class="s1">&#39;default_pend&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;linear_policy&#39;</span><span class="p">),</span>
-        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;fnn_policy&#39;</span><span class="p">),</span>
-        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;rnn_policy&#39;</span><span class="p">),</span>
-        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;lstm_policy&#39;</span><span class="p">),</span>
-        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;gru_policy&#39;</span><span class="p">),</span>
-        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;adn_policy&#39;</span><span class="p">),</span>
-        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;thfnn_policy&#39;</span><span class="p">),</span>
-        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;thgru_policy&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;linear_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;fnn_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;rnn_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;lstm_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;gru_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;adn_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;thfnn_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;thgru_policy&#39;</span><span class="p">,</span>
     <span class="p">],</span>
     <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;thfnn&#39;</span><span class="p">,</span> <span class="s1">&#39;thgru&#39;</span><span class="p">],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_action_statistics</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
     <span class="n">sigma</span> <span class="o">=</span> <span class="mf">1.</span>  <span class="c1"># with lower values like 0.1 we can observe violations of the tolerances</span>
@@ -286,8 +287,9 @@
 <div class="viewcode-block" id="test_adr_reward_generator"><a class="viewcode-back" href="../../tests.html#tests.test_algorithm_utils.test_adr_reward_generator">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">longtime</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_omo&#39;</span><span class="p">),</span>
-    <span class="p">]</span>
+        <span class="s1">&#39;default_omo&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_adr_reward_generator</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
     <span class="n">reference_env</span> <span class="o">=</span> <span class="n">env</span>
@@ -302,8 +304,8 @@
     <span class="n">dr</span> <span class="o">=</span> <span class="n">get_default_randomizer_omo</span><span class="p">()</span>
     <span class="n">dr</span><span class="o">.</span><span class="n">randomize</span><span class="p">(</span><span class="n">num_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">random_env</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">=</span> <span class="n">dr</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s1">&#39;dict&#39;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;numpy&#39;</span><span class="p">)</span>
-    <span class="n">reference_sampler</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span><span class="n">reference_env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">min_steps</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
-    <span class="n">random_sampler</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span><span class="n">random_env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">min_steps</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+    <span class="n">reference_sampler</span> <span class="o">=</span> <span class="n">ParallelSampler</span><span class="p">(</span><span class="n">reference_env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">min_steps</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+    <span class="n">random_sampler</span> <span class="o">=</span> <span class="n">ParallelSampler</span><span class="p">(</span><span class="n">random_env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">min_steps</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
 
     <span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">200</span><span class="p">):</span>

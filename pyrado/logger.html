@@ -188,6 +188,9 @@
 <h1>logger<a class="headerlink" href="#logger" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-pyrado.logger.experiment">
 <span id="experiment"></span><h2>experiment<a class="headerlink" href="#module-pyrado.logger.experiment" title="Permalink to this headline">¶</a></h2>
+<p>Log storage management</p>
+<p>Experiment folder path:
+&lt;prefix&gt;/&lt;env&gt;/&lt;algo&gt;/&lt;timestamp&gt;–&lt;info&gt;</p>
 <dl class="py class">
 <dt id="pyrado.logger.experiment.AugmentedSafeLoader">
 <em class="property">class </em><code class="sig-name descname">AugmentedSafeLoader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stream</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#AugmentedSafeLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.AugmentedSafeLoader" title="Permalink to this definition">¶</a></dt>
@@ -211,8 +214,6 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class for defining experiments
 This is a path-like object, and as such it can be used everywhere a normal path would be used.</p>
-<p>Experiment folder path:
-&lt;base_dir&gt;/&lt;env_name&gt;/&lt;algo_name&gt;/&lt;timestamp&gt;–&lt;extra_info&gt;</p>
 <dl class="py method">
 <dt id="pyrado.logger.experiment.Experiment.matches">
 <code class="sig-name descname">matches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hint</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/logger/experiment.html#Experiment.matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.Experiment.matches" title="Permalink to this definition">¶</a></dt>
@@ -229,16 +230,8 @@ This is a path-like object, and as such it can be used everywhere a normal path 
 
 <dl class="py function">
 <dt id="pyrado.logger.experiment.ask_for_experiment">
-<code class="sig-name descname">ask_for_experiment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">latest_only</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#ask_for_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.ask_for_experiment" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">ask_for_experiment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#ask_for_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.ask_for_experiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ask for an experiment on the console. This is the go-to entry point for evaluation scripts.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>latest_only</strong> – only select the latest experiment of each type (environment-algorithm combination)</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>query asking the user for an experiment</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -291,6 +284,12 @@ This is a path-like object, and as such it can be used everywhere a normal path 
 <dt id="pyrado.logger.experiment.select_by_hint">
 <code class="sig-name descname">select_by_hint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">exps</span></em>, <em class="sig-param"><span class="n">hint</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#select_by_hint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.select_by_hint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select experiment by hint.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.logger.experiment.select_latest">
+<code class="sig-name descname">select_latest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">exps</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#select_latest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.select_latest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select the most recent experiment from an iterable of experiments.</p>
 </dd></dl>
 
 <dl class="py function">

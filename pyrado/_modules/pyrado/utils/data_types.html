@@ -207,9 +207,8 @@
 
 <span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces.base</span> <span class="kn">import</span> <span class="n">Space</span>
@@ -227,12 +226,6 @@
     <span class="sd">&quot;&quot;&quot; The specification of a render mode, do not print or render anything by default &quot;&quot;&quot;</span>
     <span class="n">text</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">video</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></div>
-
-
-<div class="viewcode-block" id="TimeSeriesDataPair"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.TimeSeriesDataPair">[docs]</a><span class="k">class</span> <span class="nc">TimeSeriesDataPair</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Pair of an input sequence and an associated target value for training time series prediction. &quot;&quot;&quot;</span>
-    <span class="n">inp_seq</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span>
-    <span class="n">targ</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span></div>
 
 
 <div class="viewcode-block" id="DSSpec"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.DSSpec">[docs]</a><span class="k">class</span> <span class="nc">DSSpec</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
@@ -402,6 +395,83 @@
 
     <span class="c1"># Return the modified copy</span>
     <span class="k">return</span> <span class="n">loa_c</span></div>
+
+
+<div class="viewcode-block" id="is_iterable"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.is_iterable">[docs]</a><span class="k">def</span> <span class="nf">is_iterable</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the input is iterable by trying to create an iterator from the input.</span>
+
+<span class="sd">    :param inp: any object</span>
+<span class="sd">    :return: `True` if input is iterable, else `False`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="is_iterator"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.is_iterator">[docs]</a><span class="k">def</span> <span class="nf">is_iterator</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the input is an iterator by trying to call `next()` on it.</span>
+
+<span class="sd">    :param inp: any object</span>
+<span class="sd">    :return: `True` if input is an iterator, else `False`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">next</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="check_all_types_equal"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.check_all_types_equal">[docs]</a><span class="k">def</span> <span class="nf">check_all_types_equal</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if all elements of an iterable (e.g., list) are if the same type.</span>
+
+<span class="sd">    :param iterable: iterable to check</span>
+<span class="sd">    :return: bool saying if all elements are of equal type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">first</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">first</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span> <span class="k">for</span> <span class="n">rest</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="check_all_shapes_equal"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.check_all_shapes_equal">[docs]</a><span class="k">def</span> <span class="nf">check_all_shapes_equal</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the shape attribute of all elements of an iterable (e.g., list) are equal.</span>
+
+<span class="sd">    :param iterable: iterable to check</span>
+<span class="sd">    :return: bool saying if all elements are equal</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">first</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">first</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">rest</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">rest</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="check_all_values_equal"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.check_all_values_equal">[docs]</a><span class="k">def</span> <span class="nf">check_all_values_equal</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if all elements of an iterable (e.g., list) are equal.</span>
+
+<span class="sd">    :param iterable: iterable to check</span>
+<span class="sd">    :return: bool saying if all elements are equal</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">first</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">rest</span><span class="p">)</span> <span class="k">for</span> <span class="n">rest</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">first</span> <span class="o">==</span> <span class="n">rest</span> <span class="k">for</span> <span class="n">rest</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
