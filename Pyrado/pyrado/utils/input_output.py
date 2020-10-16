@@ -31,7 +31,7 @@ import numpy as np
 import select
 import sys
 from colorama import Fore, Style
-from typing import Sequence, Iterable
+from typing import Sequence, Iterable, Callable, Any
 
 import pyrado
 from pyrado.utils import run_once
@@ -99,13 +99,24 @@ def print_cbt_once(msg: str, color: str = '', bright: bool = False, tag: str = '
     return print_cbt(msg, color, bright, tag, end)
 
 
-def select_query(items,
-                 max_display=10,
-                 fallback=None,
-                 item_formatter=str,
+def select_query(items: Sequence,
+                 max_display: int = 10,
+                 fallback: Callable = None,
+                 item_formatter: Callable[[Any], str] = str,
                  header: str = 'Available options:',
                  footer: str = 'Please enter the number of the option to use.'):
-    """ Ask the user to select an item out of the given list. """
+    """
+    Ask the user to select an item out of the given list.
+
+    :param items: items for the query
+    :param max_display: maximum number of items
+    :param fallback: callable to select select an experiment from a hint if the input is not a number
+    :param item_formatter: callable to select the parts of an `Experiment` instance which should be printed, by default
+                           `str` turns the complete `Experiment` instance into a string.
+    :param header: string to print above the query
+    :param footer: string to print above the query
+    :return: interactive query for selecting an experiment
+    """
 
     # Truncate if needed
     print(header)

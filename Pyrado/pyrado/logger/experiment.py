@@ -26,12 +26,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-"""
-Log storage management
-
-Experiment folder path:
-<prefix>/<env>/<algo>/<timestamp>--<info>
-"""
 import itertools
 import numpy as np
 import os
@@ -42,7 +36,7 @@ import yaml
 from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
-from typing import Sequence
+from typing import Sequence, Union, Iterable, List
 
 import pyrado
 from pyrado.logger import set_log_prefix_dir
@@ -58,6 +52,9 @@ class Experiment:
     """
     Class for defining experiments
     This is a path-like object, and as such it can be used everywhere a normal path would be used.
+
+    Experiment folder path:
+    <base_dir>/<env_name>/<algo_name>/<timestamp>--<extra_info>
     """
 
     def __init__(self,
@@ -71,8 +68,8 @@ class Experiment:
         Constructor
 
         :param env_name: environment trained on
-        :param algo_name: algorithm trained with
-        :param extra_info: additional information on the experiment (freeform)
+        :param algo_name: algorithm trained with, usually also includes the policy type, e.g. 'a2c_fnn'
+        :param extra_info: additional information on the experiment (free form)
         :param exp_id: combined timestamp and extra_info, usually the final folder name.
         :param timestamp: experiment creation timestamp
         :param base_dir: base storage directory
@@ -216,12 +213,27 @@ def list_experiments(env_name: str = None,
         yield from _le_select_filter(env_name, algo_name, base_dir)
 
 
-def select_latest(exps):
-    """ Select the most recent experiment from an iterable of experiments. """
-    se = sorted(exps, key=lambda exp: exp.timestamp, reverse=True)
-    if len(se) == 0:
-        return None
-    return se[0]
+def _select_latest(exps: Iterable) -> Union[Experiment, None]:
+    """
+    Select the most recent experiment from an iterable of experiments. Return `None` if there are no experiments.
+
+    :param exps: iterable of experiments
+    :return: latest experiment ot `None`
+    """
+    se = sorted(exps, key=lambda exp: exp.timestamp, reverse=True)  # sort from latest to oldest
+    return None if len(se) == 0 else se[0]
+
+
+def _select_all(exps: Iterable) -> Union[List[Experiment], None]:
+    """
+    Select all experiments from an iterable of experiments and sort them from from latest to oldest.
+    Return `None` if there are no experiments.
+
+    :param exps: iterable of experiments
+    :return: temporally sorted experiment ot `None`
+    """
+    se = sorted(exps, key=lambda exp: exp.timestamp, reverse=True)  # sort from latest to oldest
+    return None if len(se) == 0 else se
 
 
 def select_by_hint(exps, hint):
@@ -232,15 +244,20 @@ def select_by_hint(exps, hint):
 
     # Select matching exps
     selected = filter(lambda exp: exp.matches(hint), exps)
-    sl = select_latest(selected)
+    sl = _select_latest(selected)
 
     if sl is None:
         print_cbt(f'No experiment matching hint {hint}', 'r')
     return sl
 
 
-def ask_for_experiment():
-    """ Ask for an experiment on the console. This is the go-to entry point for evaluation scripts. """
+def ask_for_experiment(latest_only: bool = False):
+    """
+    Ask for an experiment on the console. This is the go-to entry point for evaluation scripts.
+
+    :param latest_only: only select the latest experiment of each type (environment-algorithm combination)
+    :return: query asking the user for an experiment
+    """
     # Scan for experiment list
     all_exps = list(list_experiments())
 
@@ -249,16 +266,20 @@ def ask_for_experiment():
         exit(1)
 
     # Obtain experiment prefixes and timestamps
-    all_exps.sort(key=lambda exp: exp.prefix)
-    exps_by_prefix = itertools.groupby(all_exps, key=lambda exp: exp.prefix)
-    latest_exp_by_prefix = [select_latest(exps) for _, exps in exps_by_prefix]
-    latest_exp_by_prefix.sort(key=lambda exp: exp.timestamp, reverse=True)
+    all_exps.sort(key=lambda exp: exp.prefix)  # sorting experiments from early to late
+    exps_by_prefix = itertools.groupby(all_exps, key=lambda exp: exp.prefix)  # grouping by env-algo combination
+    if latest_only:
+        sel_exp_by_prefix = [_select_latest(exps) for _, exps in exps_by_prefix]
+    else:
+        sel_exp_by_prefix = [_select_all(exps) for _, exps in exps_by_prefix]
+        sel_exp_by_prefix = list(itertools.chain.from_iterable(sel_exp_by_prefix))  # flatten list of lists
+    sel_exp_by_prefix.sort(key=lambda exp: exp.timestamp, reverse=True)
 
     # Ask nicely
     return select_query(
-        latest_exp_by_prefix,
+        sel_exp_by_prefix,
         fallback=lambda hint: select_by_hint(all_exps, hint),
-        item_formatter=lambda exp: exp.prefix,
+        item_formatter=lambda exp: f'({exp.timestamp}) {exp.prefix}',
         header='Available experiments:',
         footer='Enter experiment number or a partial path to an experiment.'
     )
