@@ -450,3 +450,7 @@ class SamplerPool:
     def __reduce__(self):
         # We cannot really pickle this object since it has a ton of hidden state in the worker processes.
         raise RuntimeError('The sampler pool is not serializable!')
+
+    def __del__(self):
+        # stop the workers as soon as the pool is not referenced anymore
+        self.stop()
