@@ -410,24 +410,6 @@ For dicts, the dict elements are stacked individually. A list of dicts is treate
 <div class="section" id="module-pyrado.sampling.parallel_evaluation">
 <span id="parallel-evaluation"></span><h2>parallel_evaluation<a class="headerlink" href="#module-pyrado.sampling.parallel_evaluation" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="pyrado.sampling.parallel_evaluation.conditional_actnorm_wrapper">
-<code class="sig-name descname">conditional_actnorm_wrapper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span></em>, <em class="sig-param"><span class="n">ex_dirs</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">idx</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parallel_evaluation.html#conditional_actnorm_wrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parallel_evaluation.conditional_actnorm_wrapper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrap the environment with an action normalization wrapper if the simulated environment had one.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>env</strong> – environment to sample from</p></li>
-<li><p><strong>ex_dirs</strong> – list of experiment directories that will be loaded</p></li>
-<li><p><strong>idx</strong> – index of the current directory</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>modified environment</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt id="pyrado.sampling.parallel_evaluation.eval_domain_params">
 <code class="sig-name descname">eval_domain_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pool</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.sampling.sampler_pool.SamplerPool" title="pyrado.sampling.sampler_pool.SamplerPool">pyrado.sampling.sampler_pool.SamplerPool</a></span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">params</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">init_state</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pyrado/sampling/parallel_evaluation.html#eval_domain_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parallel_evaluation.eval_domain_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate a policy on a multidimensional grid of domain parameters.</p>
