@@ -32,7 +32,7 @@ import os.path as osp
 import torch as to
 from copy import deepcopy
 from torch.distributions import Distribution
-from typing import NamedTuple, Optional, Union
+from typing import NamedTuple, Optional, Union, Sequence
 
 import pyrado
 from pyrado.sampling.step_sequence import StepSequence
@@ -296,3 +296,21 @@ class ReplayMemory:
             raise pyrado.TypeErr(msg='The replay memory is empty!')
         else:
             return sum(self._memory.rewards)/self._memory.length
+
+
+def num_iter_from_rollouts(ros: [Sequence[StepSequence], None],
+                           concat_ros: [StepSequence, None],
+                           batch_size: int) -> int:
+    """
+    Get the number of iterations from the given rollout data.
+
+    :param ros: multiple rollouts
+    :param concat_ros: concatenated rollouts
+    :param batch_size: number of samples per batch
+    :return: number of iterations (e.g. used for the progress bar)
+    """
+    if ros is None:
+        assert concat_ros is not None
+        return (concat_ros.length + batch_size - 1)//batch_size
+    else:
+        return (sum(ro.length for ro in ros) + batch_size - 1)//batch_size

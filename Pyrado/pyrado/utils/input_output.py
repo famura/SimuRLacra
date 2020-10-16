@@ -34,7 +34,6 @@ from colorama import Fore, Style
 from typing import Sequence, Iterable
 
 import pyrado
-from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils import run_once
 
 
@@ -210,24 +209,6 @@ def ensure_no_subscript(inp: [str, Sequence[str]]) -> [str, list]:
 
     else:
         raise pyrado.TypeErr(given=inp, expected_type=[str, list])
-
-
-def num_iter_from_rollouts(ros: [Sequence[StepSequence], None],
-                           concat_ros: [StepSequence, None],
-                           batch_size: int) -> int:
-    """
-    Get the number of iterations from the given rollout data.
-
-    :param ros: multiple rollouts
-    :param concat_ros: concatenated rollouts
-    :param batch_size: number of samples per batch
-    :return: number of iterations (e.g. used for the progress bar)
-    """
-    if ros is None:
-        assert concat_ros is not None
-        return (concat_ros.length + batch_size - 1)//batch_size
-    else:
-        return (sum(ro.length for ro in ros) + batch_size - 1)//batch_size
 
 
 def color_validity(data: np.ndarray, valids: np.ndarray) -> list:

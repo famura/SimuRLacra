@@ -41,7 +41,7 @@ from pyrado.policies.base import Policy
 from pyrado.policies.base_recurrent import RecurrentPolicy
 from pyrado.sampling.step_sequence import StepSequence, discounted_values
 from pyrado.spaces import ValueFunctionSpace
-from pyrado.utils.input_output import num_iter_from_rollouts
+from pyrado.algorithms.utils import num_iter_from_rollouts
 from pyrado.utils.math import explained_var
 from pyrado.utils.data_processing import RunningStandardizer, standardize
 
