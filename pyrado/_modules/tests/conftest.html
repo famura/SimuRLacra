@@ -287,7 +287,7 @@
 <span class="c1"># Environment fixtures</span>
 <span class="c1"># --------------------</span>
 
-<div class="viewcode-block" id="env"><a class="viewcode-back" href="../../tests.html#tests.conftest.env">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<div class="viewcode-block" id="env"><a class="viewcode-back" href="../../tests.html#tests.conftest.env">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">env</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;param&#39;</span><span class="p">):</span>
         <span class="n">marker</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">param</span>
@@ -662,7 +662,7 @@
 <span class="c1"># ---------------</span>
 
 
-<div class="viewcode-block" id="policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.policy">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<div class="viewcode-block" id="policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.policy">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">policy</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
     <span class="n">selected_policy</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">param</span>
     <span class="k">if</span> <span class="n">selected_policy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -688,7 +688,6 @@
 
 <div class="viewcode-block" id="DefaultPolicies.linear_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.linear_policy">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">linear_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">LinearPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">DefaultPolicies</span><span class="o">.</span><span class="n">default_fs</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.time_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.time_policy">[docs]</a>    <span class="nd">@staticmethod</span>
