@@ -27,9 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import torch as to
-from warnings import warn
 
-import pyrado
 from pyrado.algorithms.parameter_exploring import ParameterExploring
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import NormalParamNoise, SymmParamExplStrat
@@ -37,6 +35,7 @@ from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.policies.linear import LinearPolicy
 from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult
+from pyrado.utils.input_output import print_cbt
 
 
 class PoWER(ParameterExploring):
@@ -83,7 +82,7 @@ class PoWER(ParameterExploring):
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         if not isinstance(policy, LinearPolicy):
-            warn('PoWER was designed for linear policies.', UserWarning)
+            print_cbt('REPS was designed for linear policies.', 'y')
 
         # Call ParameterExploring's constructor
         super().__init__(
@@ -132,7 +131,7 @@ class PoWER(ParameterExploring):
         rets_avg_ros = to.tensor(param_results.mean_returns)
         if any(rets_avg_ros < 0):
             rets_avg_ros[rets_avg_ros < 0] = 1e-3
-            warn('PoWER is must use positive reward functions (improper probability distribution)!')
+            print_cbt('PoWER is must use positive reward functions (improper probability distribution)!', 'r')
 
         # We do the simplification from the original implementation, which is only valid for the return-based variant
         W = to.inverse(self._expl_strat.noise.cov)

@@ -147,7 +147,7 @@ if __name__ == '__main__':
         expl_std_init=5e-2,
         expl_std_min=1e-5,
         num_epoch_dual=1000,
-        grad_free_optim=False,
+        optim_mode='torch',
         lr_dual=5e-4,
         use_map=True,
         num_workers=num_workers,

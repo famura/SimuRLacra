@@ -28,11 +28,12 @@
 
 import functools
 import joblib
+import numpy as np
 import os.path as osp
 import torch as to
 from copy import deepcopy
 from torch.distributions import Distribution
-from typing import NamedTuple, Optional, Union, Sequence
+from typing import NamedTuple, Optional, Union, Sequence, Callable
 
 import pyrado
 from pyrado.sampling.step_sequence import StepSequence
@@ -314,3 +315,21 @@ def num_iter_from_rollouts(ros: [Sequence[StepSequence], None],
         return (concat_ros.length + batch_size - 1)//batch_size
     else:
         return (sum(ro.length for ro in ros) + batch_size - 1)//batch_size
+
+
+def get_grad_via_torch(x_np: np.ndarray, fcn_to: Callable, *args_to, **kwargs_to) -> np.ndarray:
+    r"""
+    Get the gradient of a function operating on PyTorch tensors, by casting the input `x_np` as well as the
+    resulting gradient to PyTorch.
+
+    :param x_np: input vector $x$
+    :param fcn_to: function $f(x, \cdot)$
+    :param args_to: other arguments to the function
+    :param kwargs_to: other keyword arguments to the function
+    :return: $\nabla_x f(x, \cdot)$
+    """
+    x_to = to.tensor(to.from_numpy(x_np), requires_grad=True)
+    out_to = fcn_to(x_to, *args_to, **kwargs_to)
+    grad_to = to.autograd.grad(outputs=out_to, inputs=x_to, grad_outputs=to.ones_like(out_to))
+    grad_to = grad_to[0]  # computes and returns the sum of gradients of outputs w.r.t. the inputs; we only have one
+    return grad_to.numpy()

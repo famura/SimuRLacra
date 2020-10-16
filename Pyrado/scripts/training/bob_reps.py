@@ -34,6 +34,7 @@ Train an agent to solve the Ball-on-Beam environment using Relative Entropy Sear
 """
 import pyrado
 from pyrado.algorithms.reps import REPS
+from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.features import FeatureStack, RandFourierFeat, RBFFeat, identity_feat, sin_feat
@@ -54,6 +55,7 @@ if __name__ == '__main__':
     # Environment
     env_hparams = dict(dt=1/100., max_steps=500)
     env = BallOnBeamSim(**env_hparams)
+    env = ActNormWrapper(env)
 
     # Policy
     policy_hparam = dict(
@@ -66,16 +68,16 @@ if __name__ == '__main__':
     # Algorithm
     algo_hparam = dict(
         max_iter=500,
-        eps=0.1,
+        eps=0.2,
         pop_size=10*policy.num_param,
         num_rollouts=10,
-        expl_std_init=1.0,
+        expl_std_init=0.2,
         expl_std_min=0.02,
-        num_epoch_dual=5000,
-        grad_free_optim=False,
+        num_epoch_dual=1000,
+        optim_mode='scipy',
         lr_dual=1e-3,
         use_map=True,
-        num_workers=4,
+        num_workers=8,
     )
     algo = REPS(ex_dir, env, policy, **algo_hparam)
 

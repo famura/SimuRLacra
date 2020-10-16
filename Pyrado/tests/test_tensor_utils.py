@@ -65,7 +65,7 @@ def test_atleast_2D(x):
     ], ids=['sclar', 'scalar_1D', 'vec_1D', 'vec_2D', 'vec_2D_T', 'arr_2D', 'arr_3D'])
 def test_atleast_3D(x):
     x_al3d = atleast_3D(x)
-    assert x_al3d.ndim >= 2
+    assert x_al3d.ndim >= 3
 
     # We want to mimic the numpy function
     x_np = np.atleast_3d(x.numpy())

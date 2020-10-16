@@ -28,6 +28,7 @@
 
 import numpy as np
 import torch as to
+from scipy.special import logsumexp
 from typing import Union, Tuple
 
 import pyrado
@@ -154,7 +155,7 @@ def explained_var(y_mdl: Union[np.ndarray, to.Tensor], y_obs: Union[np.ndarray, 
         raise pyrado.TypeErr(given=y_mdl, expected_type=Union[np.ndarray, to.Tensor])
 
 
-def logmeanexp(x: to.Tensor, dim: int = 0) -> to.Tensor:
+def logmeanexp(x: Union[to.Tensor, np.ndarray], dim: int = 0) -> Union[to.Tensor, np.ndarray]:
     r"""
     Numerically stable way to compute $\log \left( 1/N \sum_{i=1}^N \exp(x) \right)$
 
@@ -162,7 +163,12 @@ def logmeanexp(x: to.Tensor, dim: int = 0) -> to.Tensor:
     :param dim: dimension to compute the logmeanexp along
     :return: $\log \left( 1/N \sum_{i=1}^N \exp(x) \right)$
     """
-    return to.logsumexp(x, dim=dim) - to.log(to.tensor(x.shape[dim], dtype=to.get_default_dtype()))
+    if isinstance(x, to.Tensor):
+        return to.logsumexp(x, dim=dim) - to.log(to.tensor(x.shape[dim], dtype=to.get_default_dtype()))
+    elif isinstance(x, np.ndarray):
+        return logsumexp(x, axis=dim) - np.log(np.array(x.shape[dim], dtype=np.float32))  # warning can be ignored
+    else:
+        raise pyrado.TypeErr(given=x, expected_type=[to.Tensor, np.ndarray])
 
 
 def cosine_similarity(x: to.Tensor, y: to.Tensor) -> to.Tensor:

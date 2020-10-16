@@ -26,20 +26,24 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import functools
+import numpy as np
 import sys
 import torch as to
+from functools import partial
+from scipy import optimize
 from torch.distributions import kl_divergence
 from torch.distributions.multivariate_normal import MultivariateNormal
 from tqdm import tqdm
-from typing import Callable
-from warnings import warn
+from typing import Callable, Union
 
+import pyrado
 from pyrado.algorithms.parameter_exploring import ParameterExploring
+from pyrado.algorithms.utils import get_grad_via_torch
 from pyrado.policies.domain_distribution import DomainDistrParamPolicy
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import NormalParamNoise, SymmParamExplStrat
 from pyrado.policies.linear import LinearPolicy
+from pyrado.utils.input_output import print_cbt
 from pyrado.utils.math import logmeanexp
 from pyrado.utils.optimizers import GSS
 from pyrado.policies.base import Policy
@@ -75,7 +79,7 @@ class REPS(ParameterExploring):
                  num_epoch_dual: int = 1000,
                  softmax_transform: bool = False,
                  use_map: bool = True,
-                 grad_free_optim: bool = False,
+                 optim_mode: str = 'scipy',
                  lr_dual: float = 5e-4):
         """
         Constructor
@@ -93,11 +97,12 @@ class REPS(ParameterExploring):
         :param num_epoch_dual: number of epochs for the minimization of the dual function
         :param softmax_transform: pass `True` to use a softmax to transform the returns, else use a shifted exponential
         :param use_map: use maximum a-posteriori likelihood (`True`) or maximum likelihood (`False`) update rule
-        :param grad_free_optim: use a derivative free optimizer (e.g. golden section search) or a SGD-based optimizer
+        :param optim_mode: choose the type of optimizer: 'torch' for a SGD-based optimizer or 'scipy' for optimizers
+                           from scipy (here SLSQP)
         :param lr_dual: learning rate for the dual's optimizer (ignored if `grad_free_optim = True`)
         """
         if not isinstance(policy, (LinearPolicy, DomainDistrParamPolicy)):
-            warn('REPS was designed for linear policies.', UserWarning)
+            print_cbt('REPS was designed for linear policies.', 'y')
 
         # Call ParameterExploring's constructor
         super().__init__(
@@ -130,15 +135,16 @@ class REPS(ParameterExploring):
             self._expl_strat = SymmParamExplStrat(self._expl_strat)
 
         # Dual optimization
+        self.num_epoch_dual = num_epoch_dual
         self._log_eta = to.tensor([0.], requires_grad=True)
-        if grad_free_optim:
-            self.optim_dual = GSS(
-                [{'params': self._log_eta}], param_min=to.log(to.tensor([1e-5])), param_max=to.log(to.tensor([1e5]))
-            )
-        else:
+        self.optim_mode = optim_mode.lower()
+        if self.optim_mode == 'scipy':
+            pass
+        elif self.optim_mode == 'torch':
             self.optim_dual = to.optim.SGD([{'params': self._log_eta}], lr=lr_dual, momentum=0.8, weight_decay=1e-4)
             # self.optim_dual = to.optim.Adam([{'params': self._log_eta}], lr=lr_dual, eps=1e-5)  # used in [2], but unstable here
-        self.num_epoch_dual = num_epoch_dual
+        else:
+            raise pyrado.ValueErr(given=optim_mode, eq_constraint=['scipy', 'torch'])
 
     @property
     def eta(self) -> to.Tensor:
@@ -160,36 +166,54 @@ class REPS(ParameterExploring):
             # Do numerically stabilized exp transform
             return to.exp(to.clamp((rets - to.max(rets))/self.eta, min=-700.))
 
-    def dual_eval(self, rets: to.Tensor) -> to.Tensor:
+    def dual_evaluation(self,
+                        eta: Union[to.Tensor, np.ndarray],
+                        rets: Union[to.Tensor, np.ndarray]) -> Union[to.Tensor, np.ndarray]:
         """
         Compute the REPS dual function value for policy evaluation.
 
+        :param eta: lagrangian multiplier (optimization variable of the dual)
         :param rets: return values per policy sample after averaging over multiple rollouts using the same policy
         :return: dual loss value
         """
-        return self.eta*self.eps + self.eta*logmeanexp(rets/self.eta)
+        if not (isinstance(eta, to.Tensor) and isinstance(rets, to.Tensor) or
+                isinstance(eta, np.ndarray) and isinstance(rets, np.ndarray)):
+            raise pyrado.TypeErr(msg='')
+        return eta*self.eps + eta*logmeanexp(rets/eta)
 
-    def dual_impr(self, param_samples: to.Tensor, w: to.Tensor) -> to.Tensor:
+    def dual_improvement(self,
+                         eta: Union[to.Tensor, np.ndarray],
+                         param_samples: to.Tensor,
+                         w: to.Tensor) -> Union[to.Tensor, np.ndarray]:
         """
         Compute the REPS dual function value for policy improvement.
 
+        :param eta: lagrangian multiplier (optimization variable of the dual)
         :param param_samples: all sampled policy parameters
         :param w: weights of the policy parameter samples
         :return: dual loss value
         """
-        # The sample weights have been computed by minimizing dual_eval, don't track the gradient twice
+        # The sample weights have been computed by minimizing dual_evaluation, don't track the gradient twice
         assert w.requires_grad is False
 
         with to.no_grad():
             distr_old = MultivariateNormal(self._policy.param_values, self._expl_strat.cov.data)
 
-            self.wml(param_samples, w)
+            if self.optim_mode == 'scipy' and not isinstance(eta, to.Tensor):
+                # We can arrive there during the 'normal' REPS routine, but also when computing the gradient (jac) for
+                # the scipy optimizer. In the latter case, eta is already a tensor.
+                eta = to.from_numpy(eta)
+            self.wml(eta, param_samples, w)
 
             distr_new = MultivariateNormal(self._policy.param_values, self._expl_strat.cov.data)
             logprobs = distr_new.log_prob(param_samples)
             kl = kl_divergence(distr_new, distr_old)  # mode seeking a.k.a. exclusive KL
 
-        return w@logprobs + self.eta*(self.eps - kl)
+        if self.optim_mode == 'scipy':
+            loss = w.numpy()@logprobs.numpy() + eta*(self.eps - kl.numpy())
+        else:
+            loss = w@logprobs + eta*(self.eps - kl)
+        return loss
 
     def minimize(self,
                  loss_fcn: Callable,
@@ -197,51 +221,57 @@ class REPS(ParameterExploring):
                  param_samples: to.Tensor = None,
                  w: to.Tensor = None):
         """
-        Minimize the given dual function. Iterate num_epoch_dual times.
+        Minimize the given dual function. Iterate `num_epoch_dual` times.
 
         :param loss_fcn: function to minimize, different for `wml()` and `wmap()`
         :param rets: return values per policy sample after averaging over multiple rollouts using the same policy
         :param param_samples: all sampled policy parameters
         :param w: weights of the policy parameter samples
         """
-        if isinstance(self.optim_dual, GSS):
-            self.optim_dual.reset()
+        if self.optim_mode == 'scipy':
+            # Use scipy optimizers
+            if loss_fcn == self.dual_evaluation:
+                res = optimize.minimize(
+                    partial(self.dual_evaluation, rets=rets.numpy()),
+                    jac=partial(get_grad_via_torch,
+                                fcn_to=partial(self.dual_evaluation, rets=rets)),
+                    x0=np.array([1.]), method='SLSQP', bounds=((1e-8, 1e8),)
+                )
+            elif loss_fcn == self.dual_improvement:
+                res = optimize.minimize(
+                    partial(self.dual_improvement, param_samples=param_samples, w=w),
+                    jac=partial(get_grad_via_torch,
+                                fcn_to=partial(self.dual_improvement, param_samples=param_samples, w=w)),
+                    x0=np.array([1.]), method='SLSQP', bounds=((1e-8, 1e8),)
+                )
+            else:
+                raise pyrado.TypeErr(msg='Received an improper loss function in REPS.minimize()!')
 
-        for _ in tqdm(range(self.num_epoch_dual), total=self.num_epoch_dual, desc=f'Minimizing dual', unit='epochs',
-                      file=sys.stdout, leave=False):
-            if not isinstance(self.optim_dual, GSS):
-                # Reset the gradients
+            eta = res['x']
+            self._log_eta = to.log(to.from_numpy(eta))
+
+        else:
+            for _ in tqdm(range(self.num_epoch_dual), total=self.num_epoch_dual, desc=f'Minimizing dual', unit='epochs',
+                          file=sys.stdout, leave=False):
+                # Use PyTorch optimizers
                 self.optim_dual.zero_grad()
-
-            # Compute value function loss
-            if loss_fcn == self.dual_eval:
-                loss = loss_fcn(rets)  # policy evaluation dual
-            elif loss_fcn == self.dual_impr:
-                loss = loss_fcn(param_samples, w)  # policy improvement dual
-            else:
-                raise NotImplementedError
-
-            # Update the parameter
-            if isinstance(self.optim_dual, GSS):
-                # Use golden section search optimizer
-                if loss_fcn == self.dual_eval:
-                    self.optim_dual.step(closure=functools.partial(loss_fcn, rets=rets))
-                elif loss_fcn == self.dual_impr:
-                    self.optim_dual.step(closure=functools.partial(loss_fcn, param_samples=param_samples, w=w))
+                if loss_fcn == self.dual_evaluation:
+                    loss = self.dual_evaluation(self.eta, rets)
+                elif loss_fcn == self.dual_improvement:
+                    loss = self.dual_improvement(self.eta, param_samples, w)
                 else:
-                    raise NotImplementedError
-            else:
-                # Use gradient descent optimizer
+                    raise pyrado.TypeErr(msg='Received an improper loss function in REPS.minimize()!')
                 loss.backward()
                 self.optim_dual.step()
 
         if to.isnan(self._log_eta):
             raise RuntimeError(f"The dual's optimization parameter _log_eta became NaN!")
 
-    def wml(self, param_samples: to.Tensor, w: to.Tensor):
+    def wml(self, eta: to.Tensor, param_samples: to.Tensor, w: to.Tensor):
         """
         Weighted maximum likelihood update of the policy's mean and the exploration strategy's covariance
 
+        :param eta: lagrangian multiplier (optimization variable of the dual)
         :param param_samples: all sampled policy parameters
         :param w: weights of the policy parameter samples
         """
@@ -250,7 +280,7 @@ class REPS(ParameterExploring):
 
         # Update the mean
         w_sum_param_samples = to.einsum('k,kh->h', w, param_samples)
-        self._policy.param_values = (self.eta*mean_old + w_sum_param_samples)/(to.sum(w) + self.eta)
+        self._policy.param_values = (eta*mean_old + w_sum_param_samples)/(to.sum(w) + eta)
         param_values_delta = self._policy.param_values - mean_old
 
         # Difference between all sampled policy parameters and the updated policy
@@ -258,8 +288,8 @@ class REPS(ParameterExploring):
         w_diff = to.einsum('nk,n,nh->kh', diff, w, diff)  # outer product of scaled diff, then sum over all samples
 
         # Update the covariance
-        cov_new = (w_diff + self.eta*cov_old +
-                   self.eta*to.einsum('k,h->kh', param_values_delta, param_values_delta))/(to.sum(w) + self.eta)
+        cov_new = (w_diff + eta*cov_old +
+                   eta*to.einsum('k,h->kh', param_values_delta, param_values_delta))/(to.sum(w) + eta)
         self._expl_strat.adapt(cov=cov_new)
 
     def wmap(self, param_samples: to.Tensor, w: to.Tensor):
@@ -270,29 +300,29 @@ class REPS(ParameterExploring):
         :param w: weights of the policy parameter samples
         """
         # Optimize eta according to the the policy's dual function to satisfy the KL constraint
-        self.minimize(self.dual_impr, param_samples=param_samples, w=w.detach())
+        self.minimize(self.dual_improvement, param_samples=param_samples, w=w.detach())
 
         # Update the policy's and exploration strategy's parameters
-        self.wml(param_samples, w.detach())
+        self.wml(self.eta, param_samples, w.detach())
 
     def update(self, param_results: ParameterSamplingResult, ret_avg_curr: float = None):
         # Average the return values over the rollouts
         rets_avg_ros = param_results.mean_returns
         rets_avg_ros = to.from_numpy(rets_avg_ros)
 
+        with to.no_grad():
+            distr_old = MultivariateNormal(self._policy.param_values, self._expl_strat.cov.data)
+            loss = self.dual_evaluation(self.eta, rets_avg_ros)
+            self.logger.add_value('dual loss before', loss.item())
+
         # Reset dual's parameter
         self._log_eta.data.fill_(0.)
 
-        with to.no_grad():
-            distr_old = MultivariateNormal(self._policy.param_values, self._expl_strat.cov.data)
-            loss = self.dual_eval(rets_avg_ros)
-            self.logger.add_value('dual loss before', loss.item())
-
-        # Optimize over eta
-        self.minimize(self.dual_eval, rets=rets_avg_ros)
+        # Optimize eta
+        self.minimize(self.dual_evaluation, rets=rets_avg_ros)
 
         with to.no_grad():
-            loss = self.dual_eval(rets_avg_ros)
+            loss = self.dual_evaluation(self.eta, rets_avg_ros)
             self.logger.add_value('dual loss after', loss.item())
             self.logger.add_value('eta', self.eta.item())
 
@@ -301,9 +331,9 @@ class REPS(ParameterExploring):
 
         # Update the policy's mean and the exploration strategy's covariance
         if self.use_map:
-            self.wmap(param_results.parameters, w)
+            self.wmap(param_results.parameters, w)  # calls self.wml(param_results.parameters, w)
         else:
-            self.wml(param_results.parameters, w)
+            self.wml(self.eta, param_results.parameters, w)
 
         # Logging
         distr_new = MultivariateNormal(self._policy.param_values, self._expl_strat.cov.data)

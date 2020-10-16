@@ -37,7 +37,7 @@ from pyrado.sampling.utils import gen_batch_idcs, gen_ordered_batch_idcs, gen_or
 from pyrado.utils.data_types import *
 from pyrado.utils.functions import noisy_nonlin_fcn
 from pyrado.utils.input_output import completion_context, print_cbt_once
-from pyrado.utils.math import cosine_similarity, cov, rmse
+from pyrado.utils.math import cosine_similarity, cov, rmse, logmeanexp
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.policies.dummy import DummyPolicy
 from pyrado.sampling.rollout import rollout
@@ -598,3 +598,14 @@ def test_print_cbt_once(color, bright):
         print_cbt_once(msg, color, bright, tag='tag', end='\n')
         if i > 0:
             assert print_cbt_once.has_run
+
+
+@pytest.mark.parametrize('x', [to.rand(5, 3), np.random.rand(5, 3)], ids=['torch', 'numpy'])
+@pytest.mark.parametrize('dim', [0, 1], ids=['dim0', 'dim1'])
+def test_logmeanexp(x, dim):
+    lme = logmeanexp(x, dim)
+    assert lme is not None
+    if isinstance(x, to.Tensor):
+        assert to.allclose(lme, to.log(to.mean(to.exp(x), dim=dim)))
+    if isinstance(x, np.ndarray):
+        assert np.allclose(lme, np.log(np.mean(np.exp(x), axiswow=dim)))

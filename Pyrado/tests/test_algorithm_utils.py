@@ -34,7 +34,7 @@ from torch.distributions.normal import Normal
 
 import pyrado
 from pyrado.algorithms.adr_discriminator import RewardGenerator
-from pyrado.algorithms.utils import compute_action_statistics, until_thold_exceeded
+from pyrado.algorithms.utils import compute_action_statistics, until_thold_exceeded, get_grad_via_torch
 from pyrado.domain_randomization.default_randomizers import get_default_randomizer_omo
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 from pyrado.policies.fnn import FNNPolicy
@@ -152,3 +152,13 @@ def test_until_thold_exceeded(thold, max_iter):
             assert val >= thold
         else:
             assert True  # there is no easy way to insect the counter, read the printed messages
+
+
+def test_get_grad_via_torch():
+    def to_fcn(x: np.ndarray):
+        return (x + 2)**2*3
+
+    x = np.ones((2, 2))
+    grad_np = get_grad_via_torch(x, to_fcn)
+    assert isinstance(grad_np, np.ndarray)
+    assert np.allclose(grad_np, 18*np.ones((2, 2)))

@@ -108,7 +108,7 @@ if __name__ == '__main__':
         num_rollouts=1,
         expl_std_init=1.0,
         num_epoch_dual=5000,
-        grad_free_optim=False,
+        optim_mode='torch',
         lr_dual=5e-4,
         use_map=True,
         num_workers=6,

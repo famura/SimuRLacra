@@ -390,7 +390,7 @@ def test_actor_critic(ex_dir, env, policy, algo, algo_hparam, value_fcn_type, us
         (PoWER, dict(max_iter=20, pop_size=100, num_rollouts=6, num_is_samples=10, expl_std_init=0.5)),
         (CEM, dict(max_iter=20, pop_size=100, num_rollouts=6, num_is_samples=10, expl_std_init=0.5, full_cov=False)),
         (REPS, dict(max_iter=50, pop_size=500, num_rollouts=6, eps=0.1, expl_std_init=0.5,
-                    use_map=True, grad_free_optim=False)),
+                    use_map=True, optim_mode='torch')),
     ], ids=['hc_normal', 'nes', 'pepg', 'power', 'cem', 'reps']
 )
 def test_training_parameter_exploring(ex_dir, env, algo, algo_hparam):
