@@ -553,9 +553,10 @@
 
 <div class="viewcode-block" id="test_truncate_rollouts"><a class="viewcode-back" href="../../tests.html#tests.test_rollout_result.test_truncate_rollouts">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_pend&#39;</span><span class="p">),</span>
-        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;default_pend&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
     <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;pend&#39;</span><span class="p">,</span> <span class="s1">&#39;bob&#39;</span><span class="p">],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;num_real_ros&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1realro&#39;</span><span class="p">,</span> <span class="s1">&#39;3realro&#39;</span><span class="p">]</span>
