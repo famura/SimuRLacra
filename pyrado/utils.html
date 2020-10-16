@@ -985,24 +985,6 @@ exception is raised).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pyrado.utils.input_output.num_iter_from_rollouts">
-<code class="sig-name descname">num_iter_from_rollouts</code><span class="sig-paren">(</span><em class="sig-param">ros: [typing.Sequence[pyrado.sampling.step_sequence.StepSequence], None], concat_ros: [&lt;class 'pyrado.sampling.step_sequence.StepSequence'&gt;, None], batch_size: int</em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/pyrado/utils/input_output.html#num_iter_from_rollouts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.num_iter_from_rollouts" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the number of iterations from the given rollout data.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ros</strong> – multiple rollouts</p></li>
-<li><p><strong>concat_ros</strong> – concatenated rollouts</p></li>
-<li><p><strong>batch_size</strong> – number of samples per batch</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>number of iterations (e.g. used for the progress bar)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt id="pyrado.utils.input_output.print_cbt">
 <code class="sig-name descname">print_cbt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">color</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">bright</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">tag</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">end</span><span class="o">=</span><span class="default_value">'\n'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/input_output.html#print_cbt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.print_cbt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print a colored (and bright) message with a tag in the beginning.</p>
@@ -1027,8 +1009,24 @@ exception is raised).</p>
 
 <dl class="py function">
 <dt id="pyrado.utils.input_output.select_query">
-<code class="sig-name descname">select_query</code><span class="sig-paren">(</span><em class="sig-param">items</em>, <em class="sig-param">max_display=10</em>, <em class="sig-param">fallback=None</em>, <em class="sig-param">item_formatter=&lt;class 'str'&gt;</em>, <em class="sig-param">header: str = 'Available options:'</em>, <em class="sig-param">footer: str = 'Please enter the number of the option to use.'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/input_output.html#select_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.select_query" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">select_query</code><span class="sig-paren">(</span><em class="sig-param">items: Sequence, max_display: int = 10, fallback: Callable = None, item_formatter: Callable[[Any], str] = &lt;class 'str'&gt;, header: str = 'Available options:', footer: str = 'Please enter the number of the option to use.'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/input_output.html#select_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.select_query" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ask the user to select an item out of the given list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>items</strong> – items for the query</p></li>
+<li><p><strong>max_display</strong> – maximum number of items</p></li>
+<li><p><strong>fallback</strong> – callable to select select an experiment from a hint if the input is not a number</p></li>
+<li><p><strong>item_formatter</strong> – callable to select the parts of an <cite>Experiment</cite> instance which should be printed, by default
+<cite>str</cite> turns the complete <cite>Experiment</cite> instance into a string.</p></li>
+<li><p><strong>header</strong> – string to print above the query</p></li>
+<li><p><strong>footer</strong> – string to print above the query</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>interactive query for selecting an experiment</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

@@ -2960,6 +2960,24 @@ for the given rollout using the given exploration strategy.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt id="pyrado.algorithms.utils.num_iter_from_rollouts">
+<code class="sig-name descname">num_iter_from_rollouts</code><span class="sig-paren">(</span><em class="sig-param">ros: [typing.Sequence[pyrado.sampling.step_sequence.StepSequence], None], concat_ros: [&lt;class 'pyrado.sampling.step_sequence.StepSequence'&gt;, None], batch_size: int</em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/pyrado/algorithms/utils.html#num_iter_from_rollouts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.utils.num_iter_from_rollouts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of iterations from the given rollout data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ros</strong> – multiple rollouts</p></li>
+<li><p><strong>concat_ros</strong> – concatenated rollouts</p></li>
+<li><p><strong>batch_size</strong> – number of samples per batch</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>number of iterations (e.g. used for the progress bar)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="pyrado.algorithms.utils.save_prefix_suffix">
 <code class="sig-name descname">save_prefix_suffix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">file_ext</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">save_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#save_prefix_suffix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.utils.save_prefix_suffix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save an arbitrary object object using a prefix or suffix, depending on the meta information.</p>

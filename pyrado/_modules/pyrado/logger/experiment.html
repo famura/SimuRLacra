@@ -205,12 +205,6 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Log storage management</span>
-
-<span class="sd">Experiment folder path:</span>
-<span class="sd">&lt;prefix&gt;/&lt;env&gt;/&lt;algo&gt;/&lt;timestamp&gt;--&lt;info&gt;</span>
-<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -221,7 +215,7 @@
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.logger</span> <span class="kn">import</span> <span class="n">set_log_prefix_dir</span>
@@ -237,6 +231,9 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class for defining experiments</span>
 <span class="sd">    This is a path-like object, and as such it can be used everywhere a normal path would be used.</span>
+
+<span class="sd">    Experiment folder path:</span>
+<span class="sd">    &lt;base_dir&gt;/&lt;env_name&gt;/&lt;algo_name&gt;/&lt;timestamp&gt;--&lt;extra_info&gt;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -250,8 +247,8 @@
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param env_name: environment trained on</span>
-<span class="sd">        :param algo_name: algorithm trained with</span>
-<span class="sd">        :param extra_info: additional information on the experiment (freeform)</span>
+<span class="sd">        :param algo_name: algorithm trained with, usually also includes the policy type, e.g. &#39;a2c_fnn&#39;</span>
+<span class="sd">        :param extra_info: additional information on the experiment (free form)</span>
 <span class="sd">        :param exp_id: combined timestamp and extra_info, usually the final folder name.</span>
 <span class="sd">        :param timestamp: experiment creation timestamp</span>
 <span class="sd">        :param base_dir: base storage directory</span>
@@ -395,12 +392,27 @@
         <span class="k">yield from</span> <span class="n">_le_select_filter</span><span class="p">(</span><span class="n">env_name</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="select_latest"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.select_latest">[docs]</a><span class="k">def</span> <span class="nf">select_latest</span><span class="p">(</span><span class="n">exps</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Select the most recent experiment from an iterable of experiments. &quot;&quot;&quot;</span>
-    <span class="n">se</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">exps</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">exp</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">se</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">None</span>
-    <span class="k">return</span> <span class="n">se</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+<span class="k">def</span> <span class="nf">_select_latest</span><span class="p">(</span><span class="n">exps</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Experiment</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Select the most recent experiment from an iterable of experiments. Return `None` if there are no experiments.</span>
+
+<span class="sd">    :param exps: iterable of experiments</span>
+<span class="sd">    :return: latest experiment ot `None`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">se</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">exps</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">exp</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># sort from latest to oldest</span>
+    <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">se</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">se</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_select_all</span><span class="p">(</span><span class="n">exps</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Experiment</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Select all experiments from an iterable of experiments and sort them from from latest to oldest.</span>
+<span class="sd">    Return `None` if there are no experiments.</span>
+
+<span class="sd">    :param exps: iterable of experiments</span>
+<span class="sd">    :return: temporally sorted experiment ot `None`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">se</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">exps</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">exp</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># sort from latest to oldest</span>
+    <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">se</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">se</span>
 
 
 <div class="viewcode-block" id="select_by_hint"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.select_by_hint">[docs]</a><span class="k">def</span> <span class="nf">select_by_hint</span><span class="p">(</span><span class="n">exps</span><span class="p">,</span> <span class="n">hint</span><span class="p">):</span>
@@ -411,15 +423,20 @@
 
     <span class="c1"># Select matching exps</span>
     <span class="n">selected</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">exp</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">hint</span><span class="p">),</span> <span class="n">exps</span><span class="p">)</span>
-    <span class="n">sl</span> <span class="o">=</span> <span class="n">select_latest</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span>
+    <span class="n">sl</span> <span class="o">=</span> <span class="n">_select_latest</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">sl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No experiment matching hint </span><span class="si">{</span><span class="n">hint</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">sl</span></div>
 
 
-<div class="viewcode-block" id="ask_for_experiment"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.ask_for_experiment">[docs]</a><span class="k">def</span> <span class="nf">ask_for_experiment</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot; Ask for an experiment on the console. This is the go-to entry point for evaluation scripts. &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ask_for_experiment"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.ask_for_experiment">[docs]</a><span class="k">def</span> <span class="nf">ask_for_experiment</span><span class="p">(</span><span class="n">latest_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ask for an experiment on the console. This is the go-to entry point for evaluation scripts.</span>
+
+<span class="sd">    :param latest_only: only select the latest experiment of each type (environment-algorithm combination)</span>
+<span class="sd">    :return: query asking the user for an experiment</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Scan for experiment list</span>
     <span class="n">all_exps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">list_experiments</span><span class="p">())</span>
 
@@ -428,16 +445,20 @@
         <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># Obtain experiment prefixes and timestamps</span>
-    <span class="n">all_exps</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">exp</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
-    <span class="n">exps_by_prefix</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">all_exps</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">exp</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
-    <span class="n">latest_exp_by_prefix</span> <span class="o">=</span> <span class="p">[</span><span class="n">select_latest</span><span class="p">(</span><span class="n">exps</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">exps</span> <span class="ow">in</span> <span class="n">exps_by_prefix</span><span class="p">]</span>
-    <span class="n">latest_exp_by_prefix</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">exp</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">all_exps</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">exp</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>  <span class="c1"># sorting experiments from early to late</span>
+    <span class="n">exps_by_prefix</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">all_exps</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">exp</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>  <span class="c1"># grouping by env-algo combination</span>
+    <span class="k">if</span> <span class="n">latest_only</span><span class="p">:</span>
+        <span class="n">sel_exp_by_prefix</span> <span class="o">=</span> <span class="p">[</span><span class="n">_select_latest</span><span class="p">(</span><span class="n">exps</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">exps</span> <span class="ow">in</span> <span class="n">exps_by_prefix</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sel_exp_by_prefix</span> <span class="o">=</span> <span class="p">[</span><span class="n">_select_all</span><span class="p">(</span><span class="n">exps</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">exps</span> <span class="ow">in</span> <span class="n">exps_by_prefix</span><span class="p">]</span>
+        <span class="n">sel_exp_by_prefix</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">sel_exp_by_prefix</span><span class="p">))</span>  <span class="c1"># flatten list of lists</span>
+    <span class="n">sel_exp_by_prefix</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">exp</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># Ask nicely</span>
     <span class="k">return</span> <span class="n">select_query</span><span class="p">(</span>
-        <span class="n">latest_exp_by_prefix</span><span class="p">,</span>
+        <span class="n">sel_exp_by_prefix</span><span class="p">,</span>
         <span class="n">fallback</span><span class="o">=</span><span class="k">lambda</span> <span class="n">hint</span><span class="p">:</span> <span class="n">select_by_hint</span><span class="p">(</span><span class="n">all_exps</span><span class="p">,</span> <span class="n">hint</span><span class="p">),</span>
-        <span class="n">item_formatter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">exp</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span>
+        <span class="n">item_formatter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">exp</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;(</span><span class="si">{</span><span class="n">exp</span><span class="o">.</span><span class="n">timestamp</span><span class="si">}</span><span class="s1">) </span><span class="si">{</span><span class="n">exp</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
         <span class="n">header</span><span class="o">=</span><span class="s1">&#39;Available experiments:&#39;</span><span class="p">,</span>
         <span class="n">footer</span><span class="o">=</span><span class="s1">&#39;Enter experiment number or a partial path to an experiment.&#39;</span>
     <span class="p">)</span></div>
