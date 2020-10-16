@@ -376,9 +376,10 @@ def test_namedtuple(data_format):
 
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_pend'),
-        lazy_fixture('default_bob'),
+        'default_pend',
+        'default_bob',
     ], ids=['pend', 'bob'],
+    indirect=True
 )
 @pytest.mark.parametrize(
     'num_real_ros', [1, 3], ids=['1realro', '3realro']
