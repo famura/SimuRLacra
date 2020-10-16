@@ -278,8 +278,8 @@
 <span class="sd">        Re-evaluate the given rollout using the policy wrapped by this exploration strategy.</span>
 <span class="sd">        Use this method to get gradient data on the action distribution.</span>
 
-<span class="sd">        :param rollout: recorded, complete rollout</span>
-<span class="sd">        :param hidden_states_name: name of hidden states rollout entry, used for recurrent networks.</span>
+<span class="sd">        :param rollout: complete rollout</span>
+<span class="sd">        :param hidden_states_name: name of hidden states rollout entry, used for recurrent networks</span>
 <span class="sd">        :return: actions with gradient data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
@@ -497,8 +497,8 @@
 <span class="sd">        This version is tailored to the two-headed policy architecture used for SAC, since it requires a two-headed</span>
 <span class="sd">        policy, where the first head returns the mean action and the second head returns the state-dependent std.</span>
 
-<span class="sd">        :param rollout: recorded, complete rollout</span>
-<span class="sd">        :param hidden_states_name: name of hidden states rollout entry, used for recurrent networks.</span>
+<span class="sd">        :param rollout: complete rollout</span>
+<span class="sd">        :param hidden_states_name: name of hidden states rollout entry, used for recurrent networks</span>
 <span class="sd">        :return: actions with gradient data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>

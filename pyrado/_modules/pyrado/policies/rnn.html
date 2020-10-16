@@ -292,8 +292,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span> <span class="o">=</span> <span class="n">hidden_size</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_num_recurrent_layers</span> <span class="o">=</span> <span class="n">num_recurrent_layers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_output_nonlin</span> <span class="o">=</span> <span class="n">output_nonlin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_recurrent_layers</span> <span class="o">=</span> <span class="n">num_recurrent_layers</span>
 
         <span class="c1"># Create RNN layers</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">recurrent_network_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;Can not instantiate RNNPolicyBase!&#39;</span>
@@ -310,6 +309,7 @@
 
         <span class="c1"># Create output layer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_nonlin</span> <span class="o">=</span> <span class="n">output_nonlin</span>
 
         <span class="c1"># Call custom initialization function after PyTorch network parameter initialization</span>
         <span class="n">init_param_kwargs</span> <span class="o">=</span> <span class="n">init_param_kwargs</span> <span class="k">if</span> <span class="n">init_param_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">dict</span><span class="p">()</span>
@@ -327,7 +327,7 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">hidden_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="c1"># The total number of hidden parameters is the hidden layer size times the hidden layer count</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_recurrent_layers</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_recurrent_layers</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span>
 
 <div class="viewcode-block" id="RNNPolicyBase.forward"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.rnn.RNNPolicyBase.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
         <span class="n">obs</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
@@ -349,12 +349,12 @@
             <span class="n">hidden</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unpack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
 
         <span class="c1"># Pass the input through hidden RNN layers</span>
-        <span class="n">output</span><span class="p">,</span> <span class="n">new_hidden</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rnn_layers</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
+        <span class="n">out</span><span class="p">,</span> <span class="n">new_hidden</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rnn_layers</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
 
         <span class="c1"># And through the output layer</span>
-        <span class="n">act</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_nonlin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">act</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_nonlin</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
+        <span class="n">act</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_nonlin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">act</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_nonlin</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
 
         <span class="c1"># Adjust the outputs&#39; shape to be compatible with the space of the environment</span>
         <span class="k">if</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -368,6 +368,7 @@
         <span class="k">return</span> <span class="n">act</span><span class="p">,</span> <span class="n">new_hidden</span></div>
 
 <div class="viewcode-block" id="RNNPolicyBase.evaluate"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.rnn.RNNPolicyBase.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rollout</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">hidden_states_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;hidden_states&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">rollout</span><span class="o">.</span><span class="n">data_format</span> <span class="o">==</span> <span class="s1">&#39;torch&#39;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;The rollout data passed to evaluate() must be of type torch.Tensor!&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">rollout</span><span class="o">.</span><span class="n">continuous</span><span class="p">:</span>
@@ -381,21 +382,21 @@
         <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rollout</span><span class="o">.</span><span class="n">iterate_rollouts</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">hidden_states_name</span> <span class="ow">in</span> <span class="n">rollout</span><span class="o">.</span><span class="n">data_names</span><span class="p">:</span>
                 <span class="c1"># Get initial hidden state from first step</span>
-                <span class="n">init_hs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unpack_hidden</span><span class="p">(</span><span class="n">ro</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">hidden_states_name</span><span class="p">])</span>
+                <span class="n">hidden</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unpack_hidden</span><span class="p">(</span><span class="n">ro</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">hidden_states_name</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Let the network pick the default hidden state</span>
-                <span class="n">init_hs</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">hidden</span> <span class="o">=</span> <span class="kc">None</span>
 
-            <span class="c1"># Reshape observations to match torch&#39;s rnn sequence protocol</span>
+            <span class="c1"># Reshape observations to match PyTorchs&#39;s RNN sequence protocol</span>
             <span class="n">obs</span> <span class="o">=</span> <span class="n">ro</span><span class="o">.</span><span class="n">get_data_values</span><span class="p">(</span><span class="s1">&#39;observations&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 
             <span class="c1"># Run them through the network</span>
-            <span class="n">output</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rnn_layers</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">init_hs</span><span class="p">)</span>
+            <span class="n">out</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rnn_layers</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
 
             <span class="c1"># And through the output layer</span>
-            <span class="n">act</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_nonlin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">act</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_nonlin</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
+            <span class="n">act</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_nonlin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">act</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_nonlin</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
 
             <span class="c1"># Collect the actions</span>
             <span class="n">act_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
@@ -412,7 +413,7 @@
 <span class="sd">        :param batch_size: if not `None`, hidden is 2-dim and the first dim represents parts of a data batch</span>
 <span class="sd">        :return: unpacked hidden state, ready for the network</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">default_unpack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_recurrent_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_unpack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_recurrent_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_pack_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -424,7 +425,7 @@
 <span class="sd">        :param batch_size: if not `None`, the result should be 2-dim and the first dim represents parts of a data batch</span>
 <span class="sd">        :return: packed hidden state</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">default_pack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_recurrent_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">default_pack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_recurrent_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RNNPolicy"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.rnn.RNNPolicy">[docs]</a><span class="k">class</span> <span class="nc">RNNPolicy</span><span class="p">(</span><span class="n">RNNPolicyBase</span><span class="p">):</span>
@@ -486,7 +487,7 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">hidden_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="c1"># LSTM has two hidden variables per layer</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_recurrent_layers</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="o">*</span><span class="mi">2</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_recurrent_layers</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="o">*</span><span class="mi">2</span>
 
     <span class="k">def</span> <span class="nf">_unpack_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Special case - need to split into hidden and cell term memory</span>
@@ -499,7 +500,7 @@
                 <span class="s1">&#39;Cannot use batched observations with unbatched hidden state&#39;</span>
 
             <span class="c1"># Reshape to hid/cell x nrl x batch x hs</span>
-            <span class="n">hd</span> <span class="o">=</span> <span class="n">hidden</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_recurrent_layers</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">)</span>
+            <span class="n">hd</span> <span class="o">=</span> <span class="n">hidden</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_recurrent_layers</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">)</span>
             <span class="c1"># Split hidden and cell state</span>
             <span class="k">return</span> <span class="n">hd</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">hd</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
 
@@ -510,7 +511,7 @@
                 <span class="sa">f</span><span class="s1">&#39;Batch size of hidden state (</span><span class="si">{</span><span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">) must match batch size of observations (</span><span class="si">{</span><span class="n">batch_size</span><span class="si">}</span><span class="s1">)&#39;</span>
 
             <span class="c1"># Reshape to hid/cell x nrl x batch x hs</span>
-            <span class="n">hd</span> <span class="o">=</span> <span class="n">hidden</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_recurrent_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">)</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="n">hd</span> <span class="o">=</span> <span class="n">hidden</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_recurrent_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">)</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
             <span class="c1"># Split hidden and cell state</span>
             <span class="k">return</span> <span class="n">hd</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">hd</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
 
