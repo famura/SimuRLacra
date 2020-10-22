@@ -30,7 +30,6 @@
 Train an agent to solve the WAM Ball-in-cup environment using Bayesian Domain Randomization.
 """
 import numpy as np
-import os.path as osp
 import torch as to
 
 import pyrado
@@ -133,7 +132,6 @@ if __name__ == '__main__':
         warmstart=True,
         num_eval_rollouts_real=100 if isinstance(env_real, WAMBallInCupSim) else 5,
         num_eval_rollouts_sim=100,
-        # policy_param_init=policy_init.param_values.data,
         subrtn_snapshot_mode='best'
     )
 

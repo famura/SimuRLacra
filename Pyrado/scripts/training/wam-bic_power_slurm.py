@@ -94,7 +94,7 @@ if __name__ == '__main__':
 
     # Algorithm
     algo_hparam = hparams['subroutine']
-    algo_hparam.update({'num_sampler_envs': 8})  # should be equivalent to the number of cores per job
+    algo_hparam.update({'num_workers': 8})  # should be equivalent to the number of cores per job
     algo = PoWER(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters

@@ -30,8 +30,6 @@
 Train an agent to solve the WAM Ball-in-cup environment using Policy learning by Weighting Exploration with the Returns.
 """
 import numpy as np
-import os.path as osp
-import torch as to
 
 import pyrado
 from pyrado.algorithms.power import PoWER
@@ -51,7 +49,7 @@ if __name__ == '__main__':
 
     # Experiment
     ex_dir = setup_experiment(WAMBallInCupSim.name, f'{UDR.name}-{PoWER.name}_{DualRBFLinearPolicy.name}',
-                              '4dof_rand-cs-rl-bm-jd-js')
+                              'rand-cs-rl-bm-jd-js')
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
@@ -81,9 +79,6 @@ if __name__ == '__main__':
         dim_mask=2
     )
     policy = DualRBFLinearPolicy(env.spec, **policy_hparam)
-    policy.param_values = to.load(osp.join(
-        pyrado.EXP_DIR, 'wam-bic', 'bayrn_power', '0001-01-01_00-00-00--initpolicies', 'policy_1.pt'
-    )).param_values
 
     # Algorithm
     algo_hparam = dict(
@@ -93,7 +88,7 @@ if __name__ == '__main__':
         num_rollouts=8,
         expl_std_init=np.pi/12,
         expl_std_min=0.02,
-        num_sampler_envs=16,
+        num_workers=8,
     )
     algo = PoWER(ex_dir, env, policy, **algo_hparam)
 
