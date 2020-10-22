@@ -191,6 +191,7 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         self.stop_on_collision = stop_on_collision
 
         self.camera_config = dict(
+            distance=2.7,
             trackbodyid=0,  # id of the body to track
             elevation=-30,  # camera rotation around the axis in the plane
             azimuth=-90  # camera rotation around the camera's vertical axis

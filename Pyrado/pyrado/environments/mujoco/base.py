@@ -31,6 +31,7 @@ import numpy as np
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from init_args_serializer import Serializable
+from mujoco_py.generated.const import RND_FOG
 
 import pyrado
 from pyrado.environments.sim_base import SimEnv
@@ -202,6 +203,11 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
 
     def configure_viewer(self):
         """ Configure the camera when the viewer is initialized. You need to set `self.camera_config` before. """
+        # Render a fog around the scene by default
+        if self.camera_config.pop('render_fog', True):
+            self.viewer.scn.flags[RND_FOG] = 1
+
+        # Parse all other options
         for key, value in self.camera_config.items():
             if isinstance(value, np.ndarray):
                 getattr(self.viewer.cam, key)[:] = value
