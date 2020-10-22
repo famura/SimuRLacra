@@ -423,7 +423,7 @@ def test_training_parameter_exploring(ex_dir, env, algo, algo_hparam):
     indirect=True
 )
 @pytest.mark.parametrize(
-    'module', [
+    'policy', [
         'linear_policy',
         'fnn_policy',
         'rnn_policy',
@@ -433,9 +433,9 @@ def test_training_parameter_exploring(ex_dir, env, algo, algo_hparam):
     , ids=['linear', 'fnn', 'rnn', 'lstm', 'gru'],
     indirect=True
 )
-def test_soft_update(env, module):
+def test_soft_update(env, policy):
     # Init param values
-    target, source = deepcopy(module), deepcopy(module)
+    target, source = deepcopy(policy), deepcopy(policy)
     target.param_values = to.zeros_like(target.param_values)
     source.param_values = to.ones_like(source.param_values)
 
