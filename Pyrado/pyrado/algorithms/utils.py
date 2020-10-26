@@ -28,7 +28,6 @@
 
 import functools
 import numpy as np
-import os.path as osp
 import torch as to
 from copy import deepcopy
 from torch.distributions import Distribution
@@ -221,7 +220,11 @@ def get_grad_via_torch(x_np: np.ndarray, fcn_to: Callable, *args_to, **kwargs_to
     :param kwargs_to: other keyword arguments to the function
     :return: $\nabla_x f(x, \cdot)$
     """
-    x_to = to.tensor(to.from_numpy(x_np), requires_grad=True)
+    if not isinstance(x_np, np.ndarray):
+        raise pyrado.TypeErr(given=x_np, expected_type=np.ndarray)
+
+    x_to = to.from_numpy(x_np)
+    x_to.requires_grad = True
     out_to = fcn_to(x_to, *args_to, **kwargs_to)
     grad_to = to.autograd.grad(outputs=out_to, inputs=x_to, grad_outputs=to.ones_like(out_to))
     grad_to = grad_to[0]  # computes and returns the sum of gradients of outputs w.r.t. the inputs; we only have one

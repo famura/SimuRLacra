@@ -106,6 +106,12 @@ class FeatureStack:
                 if rbfs[i]:
                     num_feat += fcn.num_feat
 
+        if any(isinstance(f, ATan2Feat) for f in self.feat_fcns):
+            for fcn in self.feat_fcns:
+                if isinstance(fcn, ATan2Feat):
+                    # We do not care about the number of observations, but we added them before
+                    num_feat = num_feat - inp_flat_dim + 1
+
         if any(isinstance(f, MultFeat) for f in self.feat_fcns):
             for fcn in self.feat_fcns:
                 if isinstance(fcn, MultFeat):
@@ -187,12 +193,43 @@ class MultFeat:
 
     def __call__(self, inp: to.Tensor) -> to.Tensor:
         """
-        Evaluate the features.
+        Evaluate the feature.
 
         :param inp: input i.e. observations in the RL setting
         :return: feature value
         """
         return reduce(to.mul, [inp[i] for i in self._idcs]).unsqueeze(0)  # unsqueeze for later concatenation
+
+
+class ATan2Feat:
+    """ Feature that computes the atan2 from two dimensions of the given input / observation. """
+
+    def __init__(self, idx_sin: int, idx_cos: int):
+        """
+        Constructor
+
+        :param idx_sin: indices of the numerator, i.e. the sin-transformed observation dimension
+        :param idx_cos: indices of the denominator, i.e. the cos-transformed observation dimension
+        """
+        if not isinstance(idx_sin, int):
+            raise pyrado.TypeErr(given=idx_sin, expected_type=int)
+        if not isinstance(idx_cos, int):
+            raise pyrado.TypeErr(given=idx_cos, expected_type=int)
+        self._idx_sin = idx_sin
+        self._idx_cos = idx_cos
+
+    def __str__(self):
+        """ Get an information string. """
+        return f'{get_class_name(self)} (index for numerator {self._idx_sin}, index for denominator {self._idx_cos})'
+
+    def __call__(self, inp: to.Tensor) -> to.Tensor:
+        """
+        Evaluate the feature.
+
+        :param inp: input i.e. observations in the RL setting
+        :return: feature value
+        """
+        return to.atan2(inp[self._idx_sin], inp[self._idx_cos]).unsqueeze(0)  # unsqueeze for later concatenation
 
 
 class RandFourierFeat:
