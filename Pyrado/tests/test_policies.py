@@ -28,26 +28,16 @@
 
 import pytest
 import os.path as osp
-import torch as to
-from pytest_lazyfixture import lazy_fixture
 
 from pyrado.policies.environment_specific import DualRBFLinearPolicy
-from tests.conftest import m_needs_cuda, m_needs_bullet, m_needs_mujoco, m_needs_rcs, m_needs_libtorch, DefaultEnvs, \
-    DefaultPolicies
-from pyrado.policies.adn import ADNPolicy, pd_cubic
-from pyrado.policies.dummy import DummyPolicy, IdlePolicy
-from pyrado.policies.fnn import FNNPolicy
-from pyrado.policies.rnn import RNNPolicy, default_unpack_hidden, default_pack_hidden
-from pyrado.policies.rnn import LSTMPolicy
-from pyrado.policies.rnn import GRUPolicy
+from tests.conftest import m_needs_cuda, m_needs_bullet, m_needs_mujoco, m_needs_rcs, m_needs_libtorch
+from pyrado.policies.rnn import default_unpack_hidden, default_pack_hidden
 from pyrado.policies.linear import LinearPolicy
 from pyrado.policies.features import *
 from pyrado.policies.two_headed import TwoHeadedGRUPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import RenderMode
-
-
 
 
 @pytest.mark.features
@@ -362,11 +352,11 @@ def test_recurrent_policy_one_step(env, policy):
 
 
 @pytest.mark.parametrize(['env', 'policy'], [
-    ('default_bob', 'linear_policy'),
-    ('default_bob', 'fnn_policy')
+    ('default_qbb', 'linear_policy'),
+    ('default_qbb', 'fnn_policy'),
 ], ids=['linear', 'fnn'], indirect=True)
 @pytest.mark.parametrize('batch_size', [1, 2, 3])
-def test_any_policy_batching(policy, batch_size):
+def test_any_policy_batching(env, policy, batch_size):
     obs = np.stack([policy.env_spec.obs_space.sample_uniform() for _ in range(batch_size)])  # shape = (batch_size, 4)
     obs = to.from_numpy(obs)
     act = policy(obs)
@@ -404,11 +394,10 @@ def test_lstm_policy(env, policy):
     ('default_bob', 'gru_policy'),
     ('default_bob', 'adn_policy')
 ], ids=['lstm_bob', 'rnn_bob', 'gru_bob', 'adn_bob'], indirect=True)
-def test_recurrent_policy(policy):
+def test_recurrent_policy(env, policy):
+    assert policy.is_recurrent
     obs = policy.env_spec.obs_space.sample_uniform()  # shape = (4,)
     obs = to.from_numpy(obs)
-
-    assert policy.is_recurrent
 
     # Do this in evaluation mode to disable dropout&co
     policy.eval()
@@ -416,7 +405,7 @@ def test_recurrent_policy(policy):
     # Create initial hidden state
     hidden = policy.init_hidden()
     # Use a random one to ensure we don't just run into the 0-special-case
-    hidden.random_()
+    hidden = to.rand_like(hidden)
     assert len(hidden) == policy.hidden_size
 
     # Test general conformity
@@ -644,7 +633,8 @@ def test_script_recurrent(env, policy):
         'lstm_policy',
         'gru_policy',
         'adn_policy',
-    ], ids=['lin', 'fnn', 'rnn', 'lstm', 'gru', 'adn'],
+        'nf_policy',
+    ], ids=['lin', 'fnn', 'rnn', 'lstm', 'gru', 'adn', 'nf'],
     indirect=True
 )
 @pytest.mark.parametrize(
@@ -699,7 +689,8 @@ def test_export_cpp(env, policy, tmpdir, file_type):
         'lstm_policy',
         'gru_policy',
         'adn_policy',
-    ], ids=['lin', 'fnn', 'rnn', 'lstm', 'gru', 'adn'],
+        'nf_policy',
+    ], ids=['lin', 'fnn', 'rnn', 'lstm', 'gru', 'adn', 'nf'],
     indirect=True
 )
 def test_export_rcspysim(env, policy, tmpdir):

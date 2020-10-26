@@ -170,11 +170,12 @@ def test_param_grid():
 )
 def test_setting_dp_vals(env):
     # Loop over all possible domain parameters and set them to a random value
-    for dp_key in env.supported_domain_param:
-        rand_val = np.random.rand()  # [0, 1[
-        env.reset(domain_param={dp_key: rand_val})
-        if any([s in dp_key for s in ['slip', 'compliance', 'linearvelocitydamping', 'angularvelocitydamping']]):
-            # Skip the parameters that are only available in Vortex but not in Bullet
-            assert True
-        else:
-            assert env.domain_param[dp_key] == pytest.approx(rand_val, abs=1e-4)
+    for _ in range(10):
+        for dp_key in env.supported_domain_param:
+            rand_val = np.random.rand()  # [0, 1[
+            env.reset(domain_param={dp_key: rand_val})
+            if any([s in dp_key for s in ['slip', 'compliance', 'linearvelocitydamping', 'angularvelocitydamping']]):
+                # Skip the parameters that are only available in Vortex but not in Bullet
+                assert True
+            else:
+                assert env.domain_param[dp_key] == pytest.approx(rand_val, abs=1e-4)

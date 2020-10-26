@@ -43,7 +43,6 @@ from pyrado.sampling.step_sequence import StepSequence
 from pyrado.sampling.data_format import to_format
 from pyrado.sampling.step_sequence import discounted_value, gae_returns
 from pyrado.sampling.rollout import rollout
-from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 
 
 rewards = [
@@ -291,13 +290,12 @@ def test_pickle(data_format):
         assert step.done == step_pi.done
 
 
-@pytest.mark.parametrize(
-    'env', [
-        BallOnBeamSim(dt=0.01, max_steps=200),
-    ], ids=['bob_linpol']
-)
-def test_advantage_calculation(env, linear_policy):
-    ro = rollout(env, linear_policy)
+@pytest.mark.parametrize(['env', 'policy'], [
+    ('default_bob', 'linear_policy'),
+], ids=['bob_linpol'], indirect=True
+                         )
+def test_advantage_calculation(env, policy):
+    ro = rollout(env, policy)
     gamma = 0.99
     lamb = 0.95
 

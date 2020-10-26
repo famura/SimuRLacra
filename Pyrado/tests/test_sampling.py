@@ -29,13 +29,11 @@
 import pytest
 import random
 import time
-from pytest_lazyfixture import lazy_fixture
+from matplotlib import pyplot as plt
 from torch.distributions.multivariate_normal import MultivariateNormal
 
-from matplotlib import pyplot as plt
+from pyrado.domain_randomization.default_randomizers import get_default_randomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
-from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
-from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.policies.fnn import FNNPolicy
 from pyrado.sampling.data_format import to_format
 from pyrado.sampling.hyper_sphere import sample_from_hyper_sphere_surface
@@ -46,7 +44,6 @@ from pyrado.sampling.step_sequence import StepSequence
 from pyrado.sampling.sampler_pool import *
 from pyrado.sampling.sequences import *
 from pyrado.sampling.bootstrapping import bootstrap_ci
-from pyrado.policies.linear import LinearPolicy
 from pyrado.policies.features import *
 from pyrado.sampling.cvar_sampler import select_cvar
 from pyrado.utils.data_types import RenderMode
@@ -192,21 +189,29 @@ def test_sample_from_unit_sphere_surface(num_dim, method):
 
 
 @pytest.mark.parametrize(
-    'env', [
-        lazy_fixture('default_bob'),
-        lazy_fixture('default_qbb'),
-    ], ids=['bob_linpol', 'qbb_linpol']
-)
-def test_rollout_wo_exploration(env):
-    # Create an arbitrary policy of type Policy
-    policy = LinearPolicy(env.spec, FeatureStack([const_feat, identity_feat, squared_feat]))
-
+    ['env', 'policy'], [
+        ('default_bob', 'idle_policy'),
+        ('default_bob', 'dummy_policy'),
+        ('default_bob', 'time_policy'),
+        ('default_bob', 'linear_policy'),
+        ('default_bob', 'fnn_policy'),
+        ('default_bob', 'rnn_policy'),
+        ('default_bob', 'lstm_policy'),
+        ('default_bob', 'gru_policy'),
+        ('default_bob', 'adn_policy'),
+        ('default_bob', 'nf_policy'),
+        ('default_bob', 'thfnn_policy'),
+        ('default_bob', 'thgru_policy'),
+    ], ids=['bob_idle', 'bob_dummy', 'bob_time', 'bob_lin', 'bob_fnn', 'bob_rnn', 'bob_lstm', 'bob_gru', 'bob_adn',
+            'bob_nf', 'bob_thfnn', 'bob_thgru'],
+    indirect=True)
+def test_rollout_wo_exploration(env, policy):
     ro = rollout(env, policy, render_mode=RenderMode())
     assert isinstance(ro, StepSequence)
     assert len(ro) <= env.max_steps
 
 
-@pytest.mark.parametrize('env', [lazy_fixture('default_qbb')], ids=['qbb'])
+@pytest.mark.parametrize('env', ['default_bob', 'default_qbb'], ids=['bob', 'qbb'], indirect=True)
 def test_rollout_wo_policy(env):
     def policy(obs):
         # Callable must receive and return tensors
@@ -322,21 +327,18 @@ def test_bootsrapping():
     print('[use_t_for_ci=True] CI: ', ci)
 
 
-def test_param_expl_sampler(default_bob, bob_pert):
+@pytest.mark.parametrize(
+    ['env', 'policy'], [
+        ('default_bob', 'fnn_policy'),
+    ], ids=['bob_fnnpol'], indirect=True)
+def test_param_expl_sampler(env, policy):
     # Add randomizer
-    env = DomainRandWrapperLive(default_bob, bob_pert)
-
-    # Use a simple policy
-    policy = FNNPolicy(env.spec, hidden_sizes=[8], hidden_nonlin=to.tanh)
+    pert = get_default_randomizer(env)
+    env = DomainRandWrapperLive(env, pert)
 
     # Create the sampler
     num_rollouts_per_param = 12
-    sampler = ParameterExplorationSampler(
-        env,
-        policy,
-        num_workers=1,
-        num_rollouts_per_param=num_rollouts_per_param,
-    )
+    sampler = ParameterExplorationSampler(env, policy, num_workers=1, num_rollouts_per_param=num_rollouts_per_param)
 
     # Use some random parameters
     num_ps = 12

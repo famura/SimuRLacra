@@ -53,6 +53,7 @@ from pyrado.policies.rnn import RNNPolicy, GRUPolicy, LSTMPolicy
 from pyrado.policies.time import TimePolicy, TraceableTimePolicy
 from pyrado.policies.two_headed import TwoHeadedFNNPolicy, TwoHeadedGRUPolicy
 
+
 # set spawn method to spawn for parallel test runs
 mp.set_start_method('spawn', force=True)
 
@@ -130,75 +131,61 @@ class DefaultEnvs:
     def default_cata():
         return CatapultSim(max_steps=1, example_config=False)
 
-
     @staticmethod
     def default_rosen():
         return RosenSim()
-
 
     @staticmethod
     def default_bob():
         return BallOnBeamSim(dt=0.01, max_steps=500)
 
-
     @staticmethod
     def default_omo():
         return OneMassOscillatorSim(dt=0.02, max_steps=300)
-
 
     @staticmethod
     def default_pend():
         return PendulumSim(dt=0.02, max_steps=400)
 
-
     @staticmethod
     def default_qbb():
         return QBallBalancerSim(dt=0.01, max_steps=500)
-
 
     @staticmethod
     def default_qcpst():
         return QCartPoleStabSim(dt=0.01, max_steps=300)
 
-
     @staticmethod
     def default_qcpsu():
         return QCartPoleSwingUpSim(dt=0.002, max_steps=8000)
-
 
     @staticmethod
     def default_qqst():
         return QQubeStabSim(dt=0.01, max_steps=500)
 
-
     @staticmethod
     def default_qqsu():
         return QQubeSwingUpSim(dt=0.004, max_steps=4000)
-
 
     @staticmethod
     @m_needs_bullet
     def default_bop2d_bt():
         return BallOnPlate2DSim(physicsEngine='Bullet', dt=0.01, max_steps=3000, checkJointLimits=False)
 
-
     @staticmethod
     @m_needs_vortex
     def default_bop2d_vx():
         return BallOnPlate2DSim(physicsEngine='Vortex', dt=0.01, max_steps=3000, checkJointLimits=False)
-
 
     @staticmethod
     @m_needs_bullet
     def default_bop5d_bt():
         return BallOnPlate5DSim(physicsEngine='Bullet', dt=0.01, max_steps=3000, checkJointLimits=False)
 
-
     @staticmethod
     @m_needs_vortex
     def default_bop5d_vx():
         return BallOnPlate5DSim(physicsEngine='Vortex', dt=0.01, max_steps=3000, checkJointLimits=False)
-
 
     @staticmethod
     @m_needs_bullet
@@ -220,7 +207,6 @@ class DefaultEnvs:
             observeTaskSpaceDiscrepancy=True,
         )
 
-
     @staticmethod
     @m_needs_vortex
     def default_p3l_ik_vx():
@@ -240,7 +226,6 @@ class DefaultEnvs:
             observeCurrentManipulability=True,
             observeTaskSpaceDiscrepancy=True,
         )
-
 
     @staticmethod
     @m_needs_bullet
@@ -265,7 +250,6 @@ class DefaultEnvs:
             observeDynamicalSystemDiscrepancy=True,
         )
 
-
     @staticmethod
     @m_needs_vortex
     def default_p3l_ta_vx():
@@ -289,7 +273,6 @@ class DefaultEnvs:
             observeDynamicalSystemDiscrepancy=True,
         )
 
-
     @staticmethod
     @m_needs_vortex
     def default_pi_ik_6l_vx():
@@ -310,7 +293,6 @@ class DefaultEnvs:
             observeDynamicalSystemDiscrepancy=True,
             observeTaskSpaceDiscrepancy=True,
         )
-
 
     @staticmethod
     @m_needs_bullet
@@ -333,7 +315,6 @@ class DefaultEnvs:
             observeTaskSpaceDiscrepancy=True,
         )
 
-
     @staticmethod
     @m_needs_bullet
     def default_pi_ta_6l_bt():
@@ -355,9 +336,8 @@ class DefaultEnvs:
             observeTaskSpaceDiscrepancy=True,
         )
 
-
-    @m_needs_vortex
     @staticmethod
+    @m_needs_vortex
     def default_pi_ta_5l_vx():
         return PlanarInsertTASim(
             physicsEngine='Vortex',
@@ -376,7 +356,6 @@ class DefaultEnvs:
             observeDynamicalSystemDiscrepancy=True,
             observeTaskSpaceDiscrepancy=True,
         )
-
 
     @staticmethod
     @m_needs_bullet
@@ -402,9 +381,8 @@ class DefaultEnvs:
             observeTaskSpaceDiscrepancy=True
         )
 
-
-    @m_needs_bullet
     @staticmethod
+    @m_needs_bullet
     def default_bspos_bt():
         return BoxShelvingPosDSSim(
             physicsEngine='Bullet',
@@ -428,7 +406,6 @@ class DefaultEnvs:
             observeTaskSpaceDiscrepancy=True,
             observeDynamicalSystemGoalDistance=True,
         )
-
 
     @staticmethod
     @m_needs_vortex
@@ -456,24 +433,20 @@ class DefaultEnvs:
             observeDynamicalSystemGoalDistance=True,
         )
 
-
     @staticmethod
     @m_needs_bullet
     def default_qqsurcs_bt():
         return QQubeRcsSim(physicsEngine='Bullet', dt=1/250., max_steps=3000)
-
 
     @staticmethod
     @m_needs_mujoco
     def default_cth():
         return HalfCheetahSim()
 
-
-    @m_needs_mujoco
     @staticmethod
+    @m_needs_mujoco
     def default_hop():
         return HopperSim()
-
 
     @staticmethod
     @m_needs_mujoco
@@ -493,8 +466,6 @@ def policy(request, env):
         raise ValueError("No policy specified")
     else:
         return getattr(DefaultPolicies, selected_policy)(env)
-
-
 
 
 class DefaultPolicies:
@@ -549,7 +520,7 @@ class DefaultPolicies:
         return ADNPolicy(env.spec, dt=env.dt, activation_nonlin=to.sigmoid, potentials_dyn_fcn=pd_cubic)
 
     @staticmethod
-    def adn_policy(env):
+    def nf_policy(env):
         return NFPolicy(env.spec, dt=env.dt, hidden_size=5, mirrored_conv_weights=True, tau_learnable=True,
                         init_param_kwargs=dict(bell=True), kappa_learnable=True, potential_init_learnable=True)
 

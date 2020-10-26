@@ -129,8 +129,8 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
         algo.critic.value_fcn.param_values += to.tensor([42.])
 
     # Save and load
-    algo.save_snapshot(meta_info=None, algo_name=policy.name)
-    algo_loaded = Algorithm.load_snapshot(load_dir=ex_dir, algo_name=policy.name)
+    algo.save_snapshot(meta_info=None)
+    algo_loaded = Algorithm.load_snapshot(load_dir=ex_dir)
     assert isinstance(algo_loaded, Algorithm)
     policy_loaded = algo_loaded.policy
     if isinstance(algo, ActorCritic):
@@ -173,7 +173,7 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
 )
 def test_param_expl(ex_dir, env, policy, algo_class, algo_hparam):
     # Hyper-parameters
-    common_hparam = dict(max_iter=3, num_rollouts=4)
+    common_hparam = dict(max_iter=2, num_rollouts=4)
     common_hparam.update(algo_hparam)
 
     # Create algorithm and train
@@ -184,18 +184,10 @@ def test_param_expl(ex_dir, env, policy, algo_class, algo_hparam):
 
 
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob'
-    ],
-    ids=['bob'],
-    indirect=True
+    'env', ['default_bob'], ids=['bob'], indirect=True
 )
 @pytest.mark.parametrize(
-    'policy', [
-        'linear_policy'
-    ],
-    ids=['linear'],
-    indirect=True
+    'policy', ['linear_policy'], ids=['linear'], indirect=True
 )
 @pytest.mark.parametrize(
     'actor_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)], ids=['casual']
@@ -207,7 +199,7 @@ def test_param_expl(ex_dir, env, policy, algo_class, algo_hparam):
     'critic_hparam', [dict(gamma=0.995, lamda=1., num_epoch=1, lr=1e-4, standardize_adv=False)], ids=['casual']
 )
 @pytest.mark.parametrize(
-    'algo_hparam', [dict(max_iter=3, num_particles=3, temperature=10, lr=1e-3, horizon=50)], ids=['casual']
+    'algo_hparam', [dict(max_iter=2, num_particles=3, temperature=10, lr=1e-3, horizon=50)], ids=['casual']
 )
 def test_svpg(ex_dir, env, policy, actor_hparam, value_fcn_hparam, critic_hparam, algo_hparam):
     # Create algorithm and train
@@ -225,7 +217,7 @@ def test_svpg(ex_dir, env, policy, actor_hparam, value_fcn_hparam, critic_hparam
     indirect=True
 )
 @pytest.mark.parametrize(
-    'subrtn_hparam', [dict(max_iter=3, min_rollouts=5, num_workers=1, num_epoch=4)], ids=['casual']
+    'subrtn_hparam', [dict(max_iter=2, min_rollouts=5, num_workers=1, num_epoch=4)], ids=['casual']
 )
 @pytest.mark.parametrize(
     'actor_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)], ids=['casual']
@@ -237,7 +229,7 @@ def test_svpg(ex_dir, env, policy, actor_hparam, value_fcn_hparam, critic_hparam
     'critic_hparam', [dict(gamma=0.995, lamda=1., num_epoch=1, lr=1e-4, standardize_adv=False)], ids=['casual']
 )
 @pytest.mark.parametrize(
-    'adr_hparam', [dict(max_iter=3, num_svpg_particles=3, num_discriminator_epoch=3, batch_size=100,
+    'adr_hparam', [dict(max_iter=2, num_svpg_particles=3, num_discriminator_epoch=3, batch_size=100,
                         num_workers=1, randomized_params=[])], ids=['casual']
 )
 def test_adr(ex_dir, env, subrtn_hparam, actor_hparam, value_fcn_hparam, critic_hparam, adr_hparam):
@@ -264,7 +256,7 @@ def test_adr(ex_dir, env, subrtn_hparam, actor_hparam, value_fcn_hparam, critic_
 )
 @pytest.mark.parametrize(
     'spota_hparam', [
-        dict(max_iter=3, alpha=0.05, beta=0.01, nG=2, nJ=10, ntau=5, nc_init=1, nr_init=1,
+        dict(max_iter=2, alpha=0.05, beta=0.01, nG=2, nJ=10, ntau=5, nc_init=1, nr_init=1,
              sequence_cand=sequence_add_init, sequence_refs=sequence_const, warmstart_cand=False,
              warmstart_refs=False, num_bs_reps=1000, studentized_ci=False),
     ], ids=['casual_hparam']
@@ -364,7 +356,7 @@ def test_actor_critic(ex_dir, env, policy, algo, algo_hparam, value_fcn_type, us
     critic = GAE(value_fcn, **critic_hparam)
 
     # Common hyper-parameters
-    common_hparam = dict(max_iter=3, min_rollouts=3, num_workers=1)
+    common_hparam = dict(max_iter=2, min_rollouts=3, num_workers=1)
     # Add specific hyper parameters if any
     common_hparam.update(algo_hparam)
 

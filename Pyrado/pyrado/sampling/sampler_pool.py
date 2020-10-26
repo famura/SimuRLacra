@@ -448,7 +448,7 @@ class SamplerPool:
         self.invoke_all_map(_run_set_seed, [seed + 1 + i for i in range(self._n_threads)])
 
     def __reduce__(self):
-        # We cannot really pickle this object since it has a ton of hidden state in the worker processes.
+        # We cannot really pickle this object since it has a lot of hidden state in the worker processes
         raise RuntimeError('The sampler pool is not serializable!')
 
     def __del__(self):

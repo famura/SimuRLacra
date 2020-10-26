@@ -220,7 +220,8 @@ def test_vpython_animations(env):
         pytest.param('default_bspos_bt', marks=m_needs_bullet),
         pytest.param('default_bspos_vx', marks=m_needs_vortex),
     ], ids=['p3l_ik_bt', 'p3l_ta_bt', 'p3l_ta_vx', 'pi_ik_6l_vx', 'pi_ik_5l_bt', 'pi_ta_6l_bt', 'pi_ta_5l_vx',
-            'bop2d_bt', 'bop2d_vx', 'bop5d_bt', 'bop5d_vx', 'bspos_bt', 'bspos_vx']
+            'bop2d_bt', 'bop2d_vx', 'bop5d_bt', 'bop5d_vx', 'bspos_bt', 'bspos_vx'],
+    indirect=True
 )
 def test_rcspysim_animations(env):
     assert isinstance(env, SimEnv)
