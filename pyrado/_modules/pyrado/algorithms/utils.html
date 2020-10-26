@@ -205,7 +205,6 @@
 
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">Distribution</span>
@@ -398,7 +397,11 @@
 <span class="sd">    :param kwargs_to: other keyword arguments to the function</span>
 <span class="sd">    :return: $\nabla_x f(x, \cdot)$</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">x_to</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">x_np</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x_np</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">x_np</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+
+    <span class="n">x_to</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">x_np</span><span class="p">)</span>
+    <span class="n">x_to</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">out_to</span> <span class="o">=</span> <span class="n">fcn_to</span><span class="p">(</span><span class="n">x_to</span><span class="p">,</span> <span class="o">*</span><span class="n">args_to</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs_to</span><span class="p">)</span>
     <span class="n">grad_to</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">out_to</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">x_to</span><span class="p">,</span> <span class="n">grad_outputs</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">out_to</span><span class="p">))</span>
     <span class="n">grad_to</span> <span class="o">=</span> <span class="n">grad_to</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># computes and returns the sum of gradients of outputs w.r.t. the inputs; we only have one</span>
