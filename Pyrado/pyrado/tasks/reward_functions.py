@@ -328,7 +328,7 @@ class UnderActuatedSwingUpRewFcn(RewFcn):
         cost_pole = self.c_theta_sq*err_s[self.idx_th]**2 + np.log(err_s[self.idx_th]**2 + self.c_theta_log)
         cost_cart = np.abs(err_s[self.idx_x])  # cart position = cart position error
         cost_act = err_a**2
-        return float(-self.c_costs@np.asarray([cost_pole, cost_cart, cost_act]) + 10)
+        return float(-self.c_costs@np.hstack([cost_pole, cost_cart, cost_act]) + 10.)
 
 
 class StateBasedRewFcn:

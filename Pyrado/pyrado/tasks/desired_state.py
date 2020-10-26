@@ -153,4 +153,4 @@ class RadiallySymmDesStateTask(DesStateTask):
         err_state[err_state > np.pi] = 2*np.pi - err_state[err_state > np.pi]  # e.g. 360 - (210) = 150
         err_state[err_state < -np.pi] = -2*np.pi - err_state[err_state < -np.pi]  # e.g. -360 - (-210) = -150
 
-        return self.rew_fcn(err_state, -act)  # act_des = 0
+        return self.rew_fcn(err_state, -act, remaining_steps)  # act_des = 0
