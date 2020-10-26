@@ -226,7 +226,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="n">UniformDomainParam</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_randomizer</span> <span class="kn">import</span> <span class="n">DomainRandomizer</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_normalization</span> <span class="kn">import</span> <span class="n">ActNormWrapper</span>
-<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="n">get_default_randomizer</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="n">create_default_randomizer</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="n">DomainRandWrapperBuffer</span><span class="p">,</span> <span class="n">DomainRandWrapperLive</span><span class="p">,</span> \
     <span class="n">MetaDomainRandWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.state_augmentation</span> <span class="kn">import</span> <span class="n">StateAugmentationWrapper</span>
@@ -440,7 +440,7 @@
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_spota_ppo</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">spota_hparam</span><span class="p">):</span>
     <span class="c1"># Environment and domain randomization</span>
-    <span class="n">randomizer</span> <span class="o">=</span> <span class="n">get_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">randomizer</span> <span class="o">=</span> <span class="n">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="n">env</span> <span class="o">=</span> <span class="n">DomainRandWrapperBuffer</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">randomizer</span><span class="p">)</span>
 
     <span class="c1"># Policy and subroutines</span>
