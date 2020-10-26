@@ -205,26 +205,16 @@
 
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
-<span class="kn">from</span> <span class="nn">pytest_lazyfixture</span> <span class="kn">import</span> <span class="n">lazy_fixture</span>
 
 <span class="kn">from</span> <span class="nn">pyrado.policies.environment_specific</span> <span class="kn">import</span> <span class="n">DualRBFLinearPolicy</span>
-<span class="kn">from</span> <span class="nn">tests.conftest</span> <span class="kn">import</span> <span class="n">m_needs_cuda</span><span class="p">,</span> <span class="n">m_needs_bullet</span><span class="p">,</span> <span class="n">m_needs_mujoco</span><span class="p">,</span> <span class="n">m_needs_rcs</span><span class="p">,</span> <span class="n">m_needs_libtorch</span><span class="p">,</span> <span class="n">DefaultEnvs</span><span class="p">,</span> \
-    <span class="n">DefaultPolicies</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.adn</span> <span class="kn">import</span> <span class="n">ADNPolicy</span><span class="p">,</span> <span class="n">pd_cubic</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.dummy</span> <span class="kn">import</span> <span class="n">DummyPolicy</span><span class="p">,</span> <span class="n">IdlePolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.rnn</span> <span class="kn">import</span> <span class="n">RNNPolicy</span><span class="p">,</span> <span class="n">default_unpack_hidden</span><span class="p">,</span> <span class="n">default_pack_hidden</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.rnn</span> <span class="kn">import</span> <span class="n">LSTMPolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.rnn</span> <span class="kn">import</span> <span class="n">GRUPolicy</span>
+<span class="kn">from</span> <span class="nn">tests.conftest</span> <span class="kn">import</span> <span class="n">m_needs_cuda</span><span class="p">,</span> <span class="n">m_needs_bullet</span><span class="p">,</span> <span class="n">m_needs_mujoco</span><span class="p">,</span> <span class="n">m_needs_rcs</span><span class="p">,</span> <span class="n">m_needs_libtorch</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.rnn</span> <span class="kn">import</span> <span class="n">default_unpack_hidden</span><span class="p">,</span> <span class="n">default_pack_hidden</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.features</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.two_headed</span> <span class="kn">import</span> <span class="n">TwoHeadedGRUPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">RenderMode</span>
-
-
 
 
 <div class="viewcode-block" id="test_simple_feature_stack"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_simple_feature_stack">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">features</span>
@@ -539,11 +529,11 @@
 
 
 <div class="viewcode-block" id="test_any_policy_batching"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_any_policy_batching">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">([</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">],</span> <span class="p">[</span>
-    <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;linear_policy&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn_policy&#39;</span><span class="p">)</span>
+    <span class="p">(</span><span class="s1">&#39;default_qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;linear_policy&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;default_qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn_policy&#39;</span><span class="p">),</span>
 <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;batch_size&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_any_policy_batching</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_any_policy_batching</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">policy</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)])</span>  <span class="c1"># shape = (batch_size, 4)</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
     <span class="n">act</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
@@ -581,11 +571,10 @@
     <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;gru_policy&#39;</span><span class="p">),</span>
     <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;adn_policy&#39;</span><span class="p">)</span>
 <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lstm_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;gru_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;adn_bob&#39;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_recurrent_policy</span><span class="p">(</span><span class="n">policy</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_recurrent_policy</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">policy</span><span class="o">.</span><span class="n">is_recurrent</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()</span>  <span class="c1"># shape = (4,)</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-
-    <span class="k">assert</span> <span class="n">policy</span><span class="o">.</span><span class="n">is_recurrent</span>
 
     <span class="c1"># Do this in evaluation mode to disable dropout&amp;co</span>
     <span class="n">policy</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
@@ -593,7 +582,7 @@
     <span class="c1"># Create initial hidden state</span>
     <span class="n">hidden</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">init_hidden</span><span class="p">()</span>
     <span class="c1"># Use a random one to ensure we don&#39;t just run into the 0-special-case</span>
-    <span class="n">hidden</span><span class="o">.</span><span class="n">random_</span><span class="p">()</span>
+    <span class="n">hidden</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">rand_like</span><span class="p">(</span><span class="n">hidden</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">hidden</span><span class="p">)</span> <span class="o">==</span> <span class="n">policy</span><span class="o">.</span><span class="n">hidden_size</span>
 
     <span class="c1"># Test general conformity</span>
@@ -821,7 +810,8 @@
         <span class="s1">&#39;lstm_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;gru_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;adn_policy&#39;</span><span class="p">,</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;nf_policy&#39;</span><span class="p">,</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;nf&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -876,7 +866,8 @@
         <span class="s1">&#39;lstm_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;gru_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;adn_policy&#39;</span><span class="p">,</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;nf_policy&#39;</span><span class="p">,</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;nf&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_export_rcspysim</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">tmpdir</span><span class="p">):</span>

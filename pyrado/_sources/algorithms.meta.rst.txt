@@ -1,0 +1,77 @@
+
+
+meta
+====
+
+
+
+adr
+---
+
+.. automodule:: pyrado.algorithms.meta.adr
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+arpl
+----
+
+.. automodule:: pyrado.algorithms.meta.arpl
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+bayrn
+-----
+
+.. automodule:: pyrado.algorithms.meta.bayrn
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+epopt
+-----
+
+.. automodule:: pyrado.algorithms.meta.epopt
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+simopt
+------
+
+.. automodule:: pyrado.algorithms.meta.simopt
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+spota
+-----
+
+.. automodule:: pyrado.algorithms.meta.spota
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+udr
+---
+
+.. automodule:: pyrado.algorithms.meta.udr
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyrado.algorithms.meta
+   :members:
+   :undoc-members:
+   :show-inheritance:

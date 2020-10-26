@@ -214,18 +214,18 @@
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.timeseries_prediction</span> <span class="kn">import</span> <span class="n">TSPred</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.a2c</span> <span class="kn">import</span> <span class="n">A2C</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.bayrn</span> <span class="kn">import</span> <span class="n">BayRn</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.cem</span> <span class="kn">import</span> <span class="n">CEM</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.epopt</span> <span class="kn">import</span> <span class="n">EPOpt</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.hc</span> <span class="kn">import</span> <span class="n">HC</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.nes</span> <span class="kn">import</span> <span class="n">NES</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.pepg</span> <span class="kn">import</span> <span class="n">PEPG</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.power</span> <span class="kn">import</span> <span class="n">PoWER</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.ppo</span> <span class="kn">import</span> <span class="n">PPO</span><span class="p">,</span> <span class="n">PPO2</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.reps</span> <span class="kn">import</span> <span class="n">REPS</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.sac</span> <span class="kn">import</span> <span class="n">SAC</span>
-<span class="kn">from</span> <span class="nn">pyrado.algorithms.spota</span> <span class="kn">import</span> <span class="n">SPOTA</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.a2c</span> <span class="kn">import</span> <span class="n">A2C</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.bayrn</span> <span class="kn">import</span> <span class="n">BayRn</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.cem</span> <span class="kn">import</span> <span class="n">CEM</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.epopt</span> <span class="kn">import</span> <span class="n">EPOpt</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.hc</span> <span class="kn">import</span> <span class="n">HC</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.nes</span> <span class="kn">import</span> <span class="n">NES</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.pepg</span> <span class="kn">import</span> <span class="n">PEPG</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.power</span> <span class="kn">import</span> <span class="n">PoWER</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.ppo</span> <span class="kn">import</span> <span class="n">PPO</span><span class="p">,</span> <span class="n">PPO2</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.reps</span> <span class="kn">import</span> <span class="n">REPS</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.sac</span> <span class="kn">import</span> <span class="n">SAC</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.spota</span> <span class="kn">import</span> <span class="n">SPOTA</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_normalization</span> <span class="kn">import</span> <span class="n">ActNormWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.base</span> <span class="kn">import</span> <span class="n">EnvWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="n">DomainRandWrapperBuffer</span>
@@ -233,7 +233,6 @@
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.observation_normalization</span> <span class="kn">import</span> <span class="n">ObsNormWrapper</span><span class="p">,</span> <span class="n">ObsRunningNormWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.observation_partial</span> <span class="kn">import</span> <span class="n">ObsPartialWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">typed_env</span>
-<span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.real_base</span> <span class="kn">import</span> <span class="n">RealEnv</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
 <span class="kn">from</span> <span class="nn">pyrado.logger.experiment</span> <span class="kn">import</span> <span class="n">load_dict_from_yaml</span>

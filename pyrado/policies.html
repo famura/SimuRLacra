@@ -913,6 +913,25 @@ registered hooks while the latter silently ignores them.</p>
 <p>Simple recurrent policy which samples random values form the action space and
 always returns hidden states with value zero</p>
 <dl class="py method">
+<dt id="pyrado.policies.dummy.RecurrentDummyPolicy.evaluate">
+<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollout</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">hidden_states_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'hidden_states'</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/dummy.html#RecurrentDummyPolicy.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.dummy.RecurrentDummyPolicy.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-evaluate the given rollout and return a derivable action tensor.
+This method makes sure that the gradient is propagated through the hidden state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollout</strong> – complete rollout</p></li>
+<li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks.
+Change this string for value functions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>actions with gradient data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pyrado.policies.dummy.RecurrentDummyPolicy.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">obs: torch.Tensor = None</em>, <em class="sig-param">hidden: torch.Tensor = None) -&gt; (&lt;class 'torch.Tensor'&gt;</em>, <em class="sig-param">&lt;class 'torch.Tensor'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/dummy.html#RecurrentDummyPolicy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.dummy.RecurrentDummyPolicy.forward" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
