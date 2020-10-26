@@ -3,7 +3,7 @@ This file provides a step-by-step example of how to write a training script in P
 There are many valid possibilities to deviate from this scheme. However, the following sequence is battle-tested.
 """
 import pyrado
-from pyrado.algorithms.hc import HCNormal
+from pyrado.algorithms.episodic.hc import HCNormal
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
@@ -96,13 +96,13 @@ save_list_of_dicts_to_yaml([
 """
 Finally, start the training. The `train()` function is the same for all algorithms inheriting from the `Algorithm`
 base class. It repetitively calls the algorithm's custom `step()` and `update()` functions.
-You can specify a `load_dir` to load and continue a previous experiment. This uses the `load_snapshot()` which should
-be implemented for every algorithm. The `snapshot_mode()` determines when to save the current training state, e.g.
-'latest' saves after every step of the algorithm, and 'best' only saves if the average return is a new highscore.
+You can load and continue a previous experiment using the Algorithm's `load()` method. The `snapshot_mode()` method
+determines when to save the current training state, e.g. 'latest' saves after every step of the algorithm, and 'best'
+only saves if the average return is a new highscore.
 Moreover, you can set the random number generator's seed. This second option for setting the seed comes in handy when
 you want to continue from a previous experiment multiple times. 
 """
-algo.train(load_dir=None, snapshot_mode='latest', seed=None)
+algo.train(snapshot_mode='latest', seed=None)
 
 input('Finished training. Hit enter to simulate the policy.')
 

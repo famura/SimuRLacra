@@ -32,14 +32,14 @@ Train an agent to solve the Qube swing-up task using Simulation Optimization run
 import torch as to
 
 import pyrado
-from pyrado.algorithms.advantage import GAE
-from pyrado.algorithms.nes import NES
-from pyrado.algorithms.ppo import PPO
-from pyrado.algorithms.simopt import SimOpt
-from pyrado.algorithms.sysid_via_episodic_rl import SysIdViaEpisodicRL
+from pyrado.algorithms.step_based.gae import GAE
+from pyrado.algorithms.episodic.nes import NES
+from pyrado.algorithms.step_based.ppo import PPO
+from pyrado.algorithms.meta.simopt import SimOpt
+from pyrado.algorithms.episodic.sysid_via_episodic_rl import SysIdViaEpisodicRL
 from pyrado.environments.quanser.quanser_qube import QQubeReal
 from pyrado.policies.domain_distribution import DomainDistrParamPolicy
-from pyrado.domain_randomization.domain_parameter import UniformDomainParam, NormalDomainParam
+from pyrado.domain_randomization.domain_parameter import NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper, DomainRandWrapperLive
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim

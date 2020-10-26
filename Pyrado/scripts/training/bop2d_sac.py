@@ -35,7 +35,7 @@ Train an agent to solve the Ball-on-Plate environment using Soft Actor-Critic.
 import torch as to
 
 import pyrado
-from pyrado.algorithms.sac import SAC
+from pyrado.algorithms.step_based.sac import SAC
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate2DSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml

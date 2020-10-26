@@ -32,8 +32,7 @@ import torch as to
 from copy import deepcopy
 from torch.distributions.normal import Normal
 
-import pyrado
-from pyrado.algorithms.adr_discriminator import RewardGenerator
+from pyrado.algorithms.meta.adr import RewardGenerator
 from pyrado.algorithms.utils import compute_action_statistics, until_thold_exceeded, get_grad_via_torch
 from pyrado.domain_randomization.default_randomizers import get_default_randomizer_omo
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat

@@ -29,24 +29,28 @@
 import joblib
 import numpy as np
 import torch as to
-from typing import Sequence
 from init_args_serializer import Serializable
+from os import path as osp
+from torch import nn as nn
+from tqdm import tqdm
+from typing import Sequence, Optional
 
 import pyrado
-from pyrado.algorithms.adr_discriminator import RewardGenerator
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.svpg import SVPG, SVPGParticle
+from pyrado.algorithms.step_based.svpg import SVPG
+from pyrado.utils.saving_loading import save_prefix_suffix
 from pyrado.domain_randomization.domain_parameter import DomainParam
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.base import Env
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
+from pyrado.policies.fnn import FNNPolicy
 from pyrado.sampling.parallel_evaluation import eval_domain_params
 from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.spaces.box import BoxSpace
-from os import path as osp
+from pyrado.utils.data_types import EnvSpec
 
 
 class ADR(Algorithm):
@@ -62,7 +66,7 @@ class ADR(Algorithm):
     def __init__(self,
                  save_dir: str,
                  env: Env,
-                 subroutine: Algorithm,
+                 subtrn: Algorithm,
                  max_iter: int,
                  svpg_particle_hparam: dict,
                  num_svpg_particles: int,
@@ -79,13 +83,13 @@ class ADR(Algorithm):
                  num_trajs_per_config: int = 8,
                  max_step_length: float = 0.05,
                  randomized_params: Sequence[str] = None,
-                 logger: StepLogger = None):
+                 logger: Optional[StepLogger] = None):
         """
         Constructor
 
         :param save_dir: directory to save the snapshots i.e. the results in
         :param env: the environment to train in
-        :param subroutine: algorithm which performs the policy / value-function optimization
+        :param subtrn: algorithm which performs the policy / value-function optimization
         :param max_iter: maximum number of iterations
         :param svpg_particle_hparam: SVPG particle hyperparameters
         :param num_svpg_particles: number of SVPG particles
@@ -102,22 +106,23 @@ class ADR(Algorithm):
         :param num_trajs_per_config: number of trajectories to sample from each config
         :param max_step_length: maximum change of physics parameters per step
         :param randomized_params: which parameters to randomize
-        :param logger: see Logger
+        :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         if not isinstance(env, Env):
             raise pyrado.TypeErr(given=env, expected_type=Env)
-        if not isinstance(subroutine, Algorithm):
-            raise pyrado.TypeErr(given=subroutine, expected_type=Algorithm)
-        if not isinstance(subroutine.policy, Policy):
-            raise pyrado.TypeErr(given=subroutine.policy, expected_type=Policy)
+        if not isinstance(subtrn, Algorithm):
+            raise pyrado.TypeErr(given=subtrn, expected_type=Algorithm)
+        if not isinstance(subtrn.policy, Policy):
+            raise pyrado.TypeErr(given=subtrn.policy, expected_type=Policy)
 
         # Call Algorithm's constructor
-        super().__init__(save_dir, max_iter, subroutine.policy, logger)
+        super().__init__(save_dir, max_iter, subtrn.policy, logger)
         self.log_loss = True
 
         # Store the inputs
         self.env = env
-        self.subroutine = subroutine
+        self._subtrn = subtrn
+        self._subtrn.save_name = 'subrtn'
         self.num_particles = num_svpg_particles
         self.num_discriminator_epoch = num_discriminator_epoch
         self.batch_size = batch_size
@@ -130,14 +135,14 @@ class ADR(Algorithm):
         self.svpg_horizon = svpg_horizon
         self.svpg_kl_factor = svpg_kl_factor
 
+        self.pool = SamplerPool(num_workers)
+        self.curr_time_step = 0
+
         # Get the number of params
-        if(isinstance(randomized_params, list) and len(randomized_params) == 0):
+        if (isinstance(randomized_params, list) and len(randomized_params) == 0):
             randomized_params = inner_env(self.env).get_nominal_domain_param().keys()
         self.params = [DomainParam(param, 1) for param in randomized_params]
         self.num_params = len(self.params)
-
-        # Initialize the sampler
-        self.pool = SamplerPool(num_workers)
 
         # Initialize reward generator
         self.reward_generator = RewardGenerator(
@@ -148,25 +153,21 @@ class ADR(Algorithm):
             logger=self.logger
         )
 
-        # Initialize step counter
-        self.curr_time_step = 0
-
         # Initialize logbook
         self.sim_instances_full_horizon = np.random.random_sample(
             (self.num_particles, self.svpg_horizon, self.svpg_evaluation_steps, self.num_params)
         )
 
+        # Initialize SVPG
         self.svpg_wrapper = SVPGAdapter(
             env,
             self.params,
-            subroutine.expl_strat,
+            subtrn.expl_strat,
             self.reward_generator,
             horizon=self.svpg_horizon,
-            num_trajs_per_config=self.num_trajs_per_config,
+            num_rollouts_per_config=self.num_trajs_per_config,
             num_workers=num_workers,
         )
-
-        # Initialize SVPG
         self.svpg = SVPG(
             save_dir,
             self.svpg_wrapper,
@@ -180,6 +181,7 @@ class ADR(Algorithm):
             num_workers=num_workers,
             logger=logger
         )
+        self.svpg.save_name = 'subtrn_svpg'
 
     def compute_params(self, sim_instances: to.Tensor, t: int):
         """
@@ -249,7 +251,7 @@ class ADR(Algorithm):
                 rt.torch(data_type=to.double)
                 rt.observations = rt.observations.double().detach()
                 rt.actions = rt.actions.double().detach()
-            self.subroutine.update(rand_trajs_now)
+            self._subtrn.update(rand_trajs_now)
 
         # Logging
         rets = [ro.undiscounted_return() for ro in rand_trajs]
@@ -268,6 +270,8 @@ class ADR(Algorithm):
         flattened_reference = StepSequence.concat(ref_trajs)
         flattened_reference.torch(data_type=to.double)
         self.reward_generator.train(flattened_reference, flattened_randomized, self.num_discriminator_epoch)
+        save_prefix_suffix(self.reward_generator.discriminator, 'discriminator', 'pt', self._save_dir,
+                           meta_info=dict(prefix='adr'))
 
         if self.curr_time_step > self.warm_up_time:
             # Update the particles
@@ -279,30 +283,18 @@ class ADR(Algorithm):
 
         # np.save(f'{self.save_dir}actions{self.curr_iter}', flattened_randomized.actions)
         self.make_snapshot(snapshot_mode, float(ret_avg), meta_info)
-        self.subroutine.make_snapshot(snapshot_mode='best', curr_avg_ret=float(ret_avg))
+        self._subtrn.make_snapshot(snapshot_mode='best', curr_avg_ret=float(ret_avg))
         self.curr_time_step += 1
 
     def save_snapshot(self, meta_info: dict = None):
-        if meta_info is None:
-            # This algorithm instance is not a subroutine of another algorithm
-            joblib.dump(self.env, osp.join(self._save_dir, 'env.pkl'))
-            to.save(self.reward_generator.discriminator, osp.join(self._save_dir, 'discriminator.pt'))
-            self.svpg.save_snapshot(meta_info=None)
-        else:
-            raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
-
-    def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
-        # Get the directory to load from
-        ld = load_dir if load_dir is not None else self._save_dir
+        super().save_snapshot(meta_info)
 
         if meta_info is None:
-            # This algorithm instance is not a subroutine of another algorithm
-            self.reward_generator.discriminator.load_state_dict(
-                to.load(osp.join(ld, 'discriminator.pt')).state_dict()
-            )
-            self.svpg.load_snapshot(ld)
+            # This algorithm instance is not a subtrn of another algorithm
+            save_prefix_suffix(self.env, 'env', 'pkl', self._save_dir, meta_info)
+            self.svpg.save_snapshot(meta_info)
         else:
-            raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
+            raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subtrn!')
 
 
 class SVPGAdapter(EnvWrapper, Serializable):
@@ -312,21 +304,21 @@ class SVPGAdapter(EnvWrapper, Serializable):
                  wrapped_env: Env,
                  parameters: Sequence[DomainParam],
                  inner_policy: Policy,
-                 discriminator: RewardGenerator,
+                 discriminator,
                  step_length: float = 0.01,
                  horizon: int = 50,
-                 num_trajs_per_config: int = 8,
+                 num_rollouts_per_config: int = 8,
                  num_workers: int = 4):
         """
         Constructor
 
         :param wrapped_env: the environment to wrap
         :param parameters: which physics parameters should be randomized
-        :param inner_policy: the policy to train the subroutine on
-        :param discriminator: the discriminator to distinguish reference envs from randomized ones
+        :param inner_policy: the policy to train the subtrn on
+        :param discriminator: the discriminator to distinguish reference environments from randomized ones
         :param step_length: the step size
         :param horizon: an svpg horizon
-        :param num_trajs_per_config: number of trajectories to sample per physics configuration
+        :param num_rollouts_per_config: number of trajectories to sample per physics configuration
         :param num_workers: number of environments for parallel sampling
         """
         Serializable._init(self, locals())
@@ -338,7 +330,7 @@ class SVPGAdapter(EnvWrapper, Serializable):
         self.inner_policy = inner_policy
         self.svpg_state = None
         self.count = 0
-        self.num_trajs = num_trajs_per_config
+        self.num_trajs = num_rollouts_per_config
         self.svpg_max_step_length = step_length
         self.discriminator = discriminator
         self.max_steps = 8
@@ -430,3 +422,89 @@ class SVPGAdapter(EnvWrapper, Serializable):
 
     def array_to_dict(self, arr):
         return {k: a for k, a in zip(self.params(), arr)}
+
+
+class RewardGenerator:
+    """
+    Class for generating the discriminator rewards in ADR. Generates a reward using a trained discriminator network.
+    """
+
+    def __init__(self,
+                 env_spec: EnvSpec,
+                 batch_size: int,
+                 reward_multiplier: float,
+                 lr: float = 3e-3,
+                 logger: StepLogger = None,
+                 device: str = 'cuda' if to.cuda.is_available() else 'cpu'):
+
+        """
+        Constructor
+
+        :param env_spec: environment specification
+        :param batch_size: batch size for each update step
+        :param reward_multiplier: factor for the predicted probability
+        :param lr: learning rate
+        :param logger: logger for every step of the algorithm, if `None` the default logger will be created
+        """
+        self.device = device
+        self.batch_size = batch_size
+        self.reward_multiplier = reward_multiplier
+        self.lr = lr
+        spec = EnvSpec(obs_space=BoxSpace.cat([env_spec.obs_space, env_spec.obs_space, env_spec.act_space]),
+                       act_space=BoxSpace(bound_lo=[0], bound_up=[1]))
+        self.discriminator = FNNPolicy(spec=spec, hidden_nonlin=to.tanh, hidden_sizes=[62], output_nonlin=to.sigmoid)
+        self.loss_fcn = nn.BCELoss()
+        self.optimizer = to.optim.Adam(self.discriminator.parameters(), lr=lr, eps=1e-5)
+        self.logger = logger
+
+    def get_reward(self, traj: StepSequence):
+        traj = convert_step_sequence(traj)
+        with to.no_grad():
+            reward = self.discriminator.forward(traj).cpu()
+            return to.log(reward.mean())*self.reward_multiplier
+
+    def train(self,
+              reference_trajectory: StepSequence,
+              randomized_trajectory: StepSequence,
+              num_epoch: int) -> to.Tensor:
+
+        reference_batch = reference_trajectory.split_shuffled_batches(self.batch_size)
+        random_batch = randomized_trajectory.split_shuffled_batches(self.batch_size)
+
+        for _ in tqdm(range(num_epoch), 'Discriminator Epoch', num_epoch):
+            try:
+                reference_batch_now = convert_step_sequence(next(reference_batch))
+                random_batch_now = convert_step_sequence(next(random_batch))
+            except StopIteration:
+                break
+            if reference_batch_now.shape[0] < self.batch_size - 1 or random_batch_now.shape[0] < self.batch_size - 1:
+                break
+            random_results = self.discriminator(random_batch_now)
+            reference_results = self.discriminator(reference_batch_now)
+            self.optimizer.zero_grad()
+            loss = self.loss_fcn(random_results,
+                                 to.ones(self.batch_size - 1)) + self.loss_fcn(reference_results,
+                                                                               to.zeros(self.batch_size - 1))
+            loss.backward()
+            self.optimizer.step()
+
+            # Logging
+            if self.logger is not None:
+                self.logger.add_value('discriminator_loss', loss)
+        return loss
+
+
+def convert_step_sequence(trajectory: StepSequence):
+    """
+    Converts a StepSequence to a Tensor which can be fed through a Network
+
+    :param trajectory: A step sequence containing a trajectory
+    :return: A Tensor containing the trajectory
+    """
+    assert isinstance(trajectory, StepSequence)
+    trajectory.torch()
+    state = trajectory.get_data_values('observations')[:-1].double()
+    next_state = trajectory.get_data_values('observations')[1::].double()
+    action = trajectory.get_data_values('actions').narrow(0, 0, next_state.shape[0]).double()
+    trajectory = to.cat((state, next_state, action), 1).cpu().double()
+    return trajectory

@@ -30,13 +30,12 @@
 Train an agent to solve the WAM Ball-in-cup environment using Policy learning by Weighting Exploration with the Returns.
 Set the seed using --seed ${SLURM_ARRAY_TASK_ID} to make use of SLURM array.
 """
-import numpy as np
 import os.path as osp
 import torch as to
 
 import pyrado
-from pyrado.algorithms.power import PoWER
-from pyrado.algorithms.bayrn import BayRn
+from pyrado.algorithms.episodic.power import PoWER
+from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam, NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive

@@ -51,8 +51,7 @@ def all_envs(env):
 
 def typed_env(env, tp):
     """
-    Locate the first element in the chain that is an instance of the given type.
-    Returns `None` if not found.
+    Locate the first element in the chain that is an instance of the given type. Returns `None` if not found.
 
     :param env: outermost environment of the chain
     :param tp: the environment type to find, see isinstance for possible values.
@@ -66,8 +65,7 @@ def typed_env(env, tp):
 
 def attr_env(env, attr):
     """
-    Locate the first element in the chain that has an attribute of the given name.
-    Returns `None` if not found.
+    Locate the first element in the chain that has an attribute of the given name.  Returns `None` if not found.
 
     :param env: outermost environment of the chain
     :param attr: attribute name to search

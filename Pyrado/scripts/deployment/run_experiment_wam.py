@@ -34,7 +34,7 @@ import os.path as osp
 from datetime import datetime
 
 import pyrado
-from pyrado.algorithms.bayrn import BayRn
+from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.barrett_wam.wam import WAMBallInCupReal
 from pyrado.logger.experiment import ask_for_experiment, timestamp_format

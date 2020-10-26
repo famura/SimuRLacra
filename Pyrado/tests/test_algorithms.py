@@ -28,23 +28,24 @@
 
 import pytest
 
-from pyrado.algorithms.a2c import A2C
-from pyrado.algorithms.actor_critic import ActorCritic
-from pyrado.algorithms.adr import ADR
-from pyrado.algorithms.advantage import GAE
-from pyrado.algorithms.arpl import ARPL
-from pyrado.algorithms.cem import CEM
-from pyrado.algorithms.hc import HCNormal, HCHyper
-from pyrado.algorithms.nes import NES
-from pyrado.algorithms.parameter_exploring import ParameterExploring
-from pyrado.algorithms.pepg import PEPG
-from pyrado.algorithms.power import PoWER
-from pyrado.algorithms.ppo import PPO, PPO2
-from pyrado.algorithms.reps import REPS
-from pyrado.algorithms.sac import SAC
-from pyrado.algorithms.spota import SPOTA
-from pyrado.algorithms.svpg import SVPG
-from pyrado.algorithms.sysid_via_episodic_rl import DomainDistrParamPolicy, SysIdViaEpisodicRL
+from pyrado.algorithms.step_based.a2c import A2C
+from pyrado.algorithms.step_based.actor_critic import ActorCritic
+from pyrado.algorithms.meta.adr import ADR
+from pyrado.algorithms.step_based.gae import GAE
+from pyrado.algorithms.meta.arpl import ARPL
+from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.episodic.cem import CEM
+from pyrado.algorithms.episodic.hc import HCNormal, HCHyper
+from pyrado.algorithms.episodic.nes import NES
+from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
+from pyrado.algorithms.episodic.pepg import PEPG
+from pyrado.algorithms.episodic.power import PoWER
+from pyrado.algorithms.step_based.ppo import PPO, PPO2
+from pyrado.algorithms.episodic.reps import REPS
+from pyrado.algorithms.step_based.sac import SAC
+from pyrado.algorithms.meta.spota import SPOTA
+from pyrado.algorithms.step_based.svpg import SVPG
+from pyrado.algorithms.episodic.sysid_via_episodic_rl import DomainDistrParamPolicy, SysIdViaEpisodicRL
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
@@ -61,7 +62,6 @@ from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sequences import *
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.data_types import EnvSpec
-from tests.conftest import m_needs_bullet, policy
 
 
 # Fixture providing an experiment directory
@@ -104,9 +104,9 @@ def ex_dir(tmpdir):
         (PEPG, dict(expl_std_init=0.1, pop_size=None)),
         (PoWER, dict(expl_std_init=0.1, pop_size=100, num_is_samples=10)),
         (CEM, dict(expl_std_init=0.1, pop_size=100, num_is_samples=10)),
-        # (REPS, dict(eps=0.1, pop_size=500, expl_std_init=0.1)),
+        (REPS, dict(eps=0.1, pop_size=500, expl_std_init=0.1)),
     ],
-    ids=['a2c', 'ppo', 'ppo2', 'hc_normal', 'hc_hyper', 'nes', 'pepg', 'power', 'cem'])  # , 'reps'])
+    ids=['a2c', 'ppo', 'ppo2', 'hc_normal', 'hc_hyper', 'nes', 'pepg', 'power', 'cem', 'reps'])  # SAC and DQL are out
 def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
     # Collect hyper-parameters, create algorithm, and train
     common_hparam = dict(max_iter=1, num_workers=1)
@@ -122,25 +122,24 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
     else:
         raise NotImplementedError
 
-    # Train
+    # Simulate training
     algo = algo_class(ex_dir, env, policy, **common_hparam)
-    algo.train()
+    algo.policy.param_values += to.tensor([42.])
     if isinstance(algo, ActorCritic):
-        policy_posttrn_param_values = algo.policy.param_values
-        critic_posttrn_value_fcn_param_values = algo.critic.value_fcn.param_values
-    elif isinstance(algo, ParameterExploring):
-        policy_posttrn_param_values = algo.best_policy_param
+        algo.critic.value_fcn.param_values += to.tensor([42.])
 
     # Save and load
-    algo.save_snapshot(meta_info=None)
-    algo.load_snapshot(load_dir=ex_dir, meta_info=None)
-    policy_loaded = deepcopy(algo.policy)
+    algo.save_snapshot(meta_info=None, algo_name=policy.name)
+    algo_loaded = Algorithm.load_snapshot(load_dir=ex_dir, algo_name=policy.name)
+    assert isinstance(algo_loaded, Algorithm)
+    policy_loaded = algo_loaded.policy
+    if isinstance(algo, ActorCritic):
+        critic_loaded = algo_loaded.critic
 
     # Check
-    assert all(policy_posttrn_param_values == policy_loaded.param_values)
-    if algo_class in [A2C, PPO, PPO2]:
-        critic_loaded = deepcopy(algo.critic)
-        assert all(critic_posttrn_value_fcn_param_values == critic_loaded.value_fcn.param_values)
+    assert all(algo.policy.param_values == policy_loaded.param_values)
+    if isinstance(algo, ActorCritic):
+        assert all(algo.critic.value_fcn.param_values == critic_loaded.value_fcn.param_values)
 
 
 @pytest.mark.parametrize(

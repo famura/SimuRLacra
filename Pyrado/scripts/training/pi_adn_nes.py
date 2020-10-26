@@ -32,7 +32,7 @@ Train an agent to solve the PlanarInsert task using Activation Dynamics Networks
 import torch as to
 
 import pyrado
-from pyrado.algorithms.nes import NES
+from pyrado.algorithms.episodic.nes import NES
 from pyrado.domain_randomization.default_randomizers import get_empty_randomizer
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper

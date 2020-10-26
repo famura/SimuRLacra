@@ -36,8 +36,8 @@ from optuna.pruners import MedianPruner
 from torch.optim import lr_scheduler
 
 import pyrado
-from pyrado.algorithms.ppo import PPO
-from pyrado.algorithms.advantage import GAE
+from pyrado.algorithms.step_based.ppo import PPO
+from pyrado.algorithms.step_based.gae import GAE
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.logger.experiment import save_list_of_dicts_to_yaml, setup_experiment

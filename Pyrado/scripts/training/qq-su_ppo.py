@@ -32,14 +32,13 @@ Train an agent to solve the Qube swing-up task using Proximal Policy Optimizatio
 import torch as to
 
 import pyrado
-from pyrado.algorithms.advantage import GAE
+from pyrado.algorithms.step_based.gae import GAE
 from pyrado.spaces import ValueFunctionSpace
-from pyrado.algorithms.ppo import PPO
+from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.fnn import FNNPolicy
-from pyrado.policies.rnn import RNNPolicy, LSTMPolicy, GRUPolicy
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 

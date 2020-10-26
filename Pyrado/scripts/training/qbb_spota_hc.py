@@ -35,15 +35,14 @@ from numpy import pi
 import torch as to
 
 import pyrado
-from pyrado.algorithms.hc import HCNormal
-from pyrado.algorithms.spota import SPOTA
+from pyrado.algorithms.episodic.hc import HCNormal
+from pyrado.algorithms.meta.spota import SPOTA
 from pyrado.domain_randomization.default_randomizers import get_default_randomizer
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environment_wrappers.observation_noise import GaussianObsNoiseWrapper
-from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.features import FeatureStack, identity_feat
 from pyrado.policies.linear import LinearPolicy
@@ -78,8 +77,8 @@ if __name__ == '__main__':
     policy = LinearPolicy(spec=env.spec, **policy_hparam)
 
     # Initialize with Quanser's PD gains
-    init_policy_param_values = to.tensor([[-14., 0, -14*3.45, 0, 0, 0, -14*2.11, 0],
-                                          [0, -14., 0, -14*3.45, 0, 0, 0, -14*2.11]])
+    init_policy_param_values = to.tensor([-14., 0, -14*3.45, 0, 0, 0, -14*2.11, 0,
+                                          0, -14., 0, -14*3.45, 0, 0, 0, -14*2.11])
 
     # Algorithm
     subrtn_hparam_cand = dict(
@@ -88,6 +87,7 @@ if __name__ == '__main__':
         pop_size=50,
         expl_factor=1.1,
         expl_std_init=0.5,
+        num_workers=8
     )
     subrtn_hparam_refs = deepcopy(subrtn_hparam_cand)
 

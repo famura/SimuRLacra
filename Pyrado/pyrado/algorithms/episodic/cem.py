@@ -29,7 +29,7 @@
 import torch as to
 
 import pyrado
-from pyrado.algorithms.parameter_exploring import ParameterExploring
+from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
 from pyrado.environments.base import Env
 from pyrado.exploration.normal_noise import FullNormalNoise, DiagNormalNoise
 from pyrado.exploration.stochastic_params import NormalParamNoise, SymmParamExplStrat
@@ -49,7 +49,6 @@ class CEM(ParameterExploring):
     .. seealso::
         [1] P.T. de Boer, D.P. Kroese, S. Mannor, R.Y. Rubinstein, "A Tutorial on the Cross-Entropy Method",
         Annals OR, 2005
-
         [2] I. Szita, A. Lörnicz, "Learning Tetris Using the NoisyCross-Entropy Method", Neural Computation, 2006
     """
 

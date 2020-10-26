@@ -37,16 +37,17 @@ from botorch.acquisition import UpperConfidenceBound, ExpectedImprovement, Proba
 from botorch.optim import optimize_acqf
 from gpytorch.constraints import GreaterThan
 from gpytorch.mlls import ExactMarginalLogLikelihood
-from shutil import copyfile
 from tabulate import tabulate
+from typing import Optional
 
 import pyrado
-from pyrado.algorithms.actor_critic import ActorCritic
-from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.base import Algorithm, InterruptableAlgorithm
 from pyrado.algorithms.utils import until_thold_exceeded
+from pyrado.logger.step import StepLogger
+from pyrado.utils.saving_loading import save_prefix_suffix, load_prefix_suffix
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
-from pyrado.environment_wrappers.utils import inner_env
+from pyrado.environment_wrappers.utils import inner_env, typed_env
 from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
@@ -59,7 +60,7 @@ from pyrado.utils.math import UnitCubeProjector
 from pyrado.utils.data_processing import standardize
 
 
-class BayRn(Algorithm):
+class BayRn(InterruptableAlgorithm):
     """
     Bayesian Domain Randomization (BayRn)
 
@@ -86,16 +87,17 @@ class BayRn(Algorithm):
                  acq_restarts: int,
                  acq_samples: int,
                  acq_param: dict = None,
+                 num_init_cand: int = 5,
                  mc_estimator: bool = True,
                  num_eval_rollouts_real: int = 5,
                  num_eval_rollouts_sim: int = 50,
-                 num_init_cand: int = 5,
                  thold_succ: float = pyrado.inf,
                  thold_succ_subrtn: float = -pyrado.inf,
                  warmstart: bool = True,
-                 policy_param_init: to.Tensor = None,
-                 valuefcn_param_init: to.Tensor = None,
-                 subrtn_snapshot_mode: str = 'best'):
+                 policy_param_init: Optional[to.Tensor] = None,
+                 valuefcn_param_init: Optional[to.Tensor] = None,
+                 subrtn_snapshot_mode: str = 'best',
+                 logger: Optional[StepLogger] = None):
         """
         Constructor
 
@@ -116,11 +118,11 @@ class BayRn(Algorithm):
         :param acq_restarts: number of restarts for optimizing the acquisition function
         :param acq_samples: number of initial samples for optimizing the acquisition function
         :param acq_param: hyper-parameter for the acquisition function, e.g. $\beta$ for UCB
+        :param num_init_cand: number of initial policies to train, ignored if `init_dir` is provided
         :param mc_estimator: estimate the return with a sample average (`True`) or a lower confidence
                                      bound (`False`) obtained from bootstrapping
         :param num_eval_rollouts_real: number of rollouts in the target domain to estimate the return
         :param num_eval_rollouts_sim: number of rollouts in simulation to estimate the return after training
-        :param num_init_cand: number of initial policies to train, ignored if `init_dir` is provided
         :param thold_succ: success threshold on the real system's return for BayRn, stop the algorithm if exceeded
         :param thold_succ_subrtn: success threshold on the simulated system's return for the subroutine, repeat the
                                       subroutine until the threshold is exceeded or the for a given number of iterations
@@ -129,29 +131,36 @@ class BayRn(Algorithm):
         :param policy_param_init: initial policy parameter values for the subroutine, set `None` to be random
         :param valuefcn_param_init: initial value function parameter values for the subroutine, set `None` to be random
         :param subrtn_snapshot_mode: snapshot mode for saving during training of the subroutine
+        :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
-        assert isinstance(env_sim, MetaDomainRandWrapper)
-        assert isinstance(subrtn, Algorithm)
+        if typed_env(env_sim, MetaDomainRandWrapper) is None:
+            raise pyrado.TypeErr(given=env_sim, expected_type=MetaDomainRandWrapper)
+        if not isinstance(subrtn, Algorithm):
+            raise pyrado.TypeErr(given=subrtn, expected_type=Algorithm)
         assert bounds.shape[0] == 2
         assert all(bounds[1] > bounds[0])
+        if num_init_cand < 1:
+            raise pyrado.ValueErr(given=num_init_cand, ge_constraint='1')
 
-        # Call Algorithm's constructor
-        super().__init__(save_dir, max_iter, subrtn.policy, logger=None)
+        # Call InterruptableAlgorithm's constructor without specifying the policy
+        super().__init__(num_checkpoints=2, init_checkpoint=-2, save_dir=save_dir, max_iter=max_iter,
+                         policy=subrtn.policy, logger=logger)
 
-        # Store the inputs and initialize
         self._env_sim = env_sim
         self._env_real = env_real
         self._subrtn = subrtn
+        self._subrtn.save_name = 'subtrn'
         self.bounds = bounds
         self.cand_dim = bounds.shape[1]
         self.cands = None  # called x in the context of GPs
         self.cands_values = None  # called y in the context of GPs
         self.argmax_cand = to.Tensor()
-        self.mc_estimator = mc_estimator
         self.acq_fcn_type = acq_fc.upper()
         self.acq_restarts = acq_restarts
         self.acq_samples = acq_samples
         self.acq_param = acq_param
+        self.num_init_cand = num_init_cand
+        self.mc_estimator = mc_estimator
         self.policy_param_init = policy_param_init
         self.valuefcn_param_init = valuefcn_param_init.detach() if valuefcn_param_init is not None else None
         self.warmstart = warmstart
@@ -169,15 +178,10 @@ class BayRn(Algorithm):
                 self.policy_param_init.detach()
             else:
                 self.policy_param_init = to.tensor(self.policy_param_init)
-        # Set the flag to run the initialization phase. This is overruled if load_snapshot is called.
-        self.initialized = False
-        if num_init_cand > 0:
-            self.num_init_cand = num_init_cand
-        else:
-            raise pyrado.ValueErr(given=num_init_cand, g_constraint='0')
 
-        # Save initial environments
-        self.save_snapshot()
+        # Save initial environments and bounds
+        self.save_snapshot(meta_info=None)
+        to.save(self.bounds, osp.join(self._save_dir, 'bounds.pt'))
 
     def stopping_criterion_met(self) -> bool:
         return self.curr_cand_value > self.thold_succ
@@ -224,6 +228,7 @@ class BayRn(Algorithm):
                       'g', bright=True)
             # Generate random samples within bounds
             cands[i, :] = (self.bounds[1, :] - self.bounds[0, :])*to.rand(self.bounds.shape[1]) + self.bounds[0, :]
+
             # Train a policy for each candidate, repeat if the resulting policy did not exceed the success threshold
             print_cbt(f'Randomly sampled the next candidate: {cands[i].numpy()}', 'g')
             wrapped_trn_fcn = until_thold_exceeded(
@@ -232,7 +237,7 @@ class BayRn(Algorithm):
             wrapped_trn_fcn(cands[i], prefix=f'init_{i}')
 
         # Save candidates into a single tensor (policy is saved during training or exists already)
-        to.save(cands, osp.join(self._save_dir, 'candidates.pt'))
+        save_prefix_suffix(cands, 'candidates', 'pt', self._save_dir, meta_info=None)
         self.cands = cands
 
     def eval_init_policies(self):
@@ -259,13 +264,13 @@ class BayRn(Algorithm):
 
         # Evaluate learned policies from random candidates on the target environment (real-world) system
         for i in range(num_init_cand):
-            policy = to.load(osp.join(self._save_dir, f'init_{i}_policy.pt'))
+            policy = load_prefix_suffix(self.policy, 'policy', 'pt', self._save_dir, meta_info=dict(prefix=f'init_{i}'))
             cands_values[i] = self.eval_policy(self._save_dir, self._env_real, policy, self.mc_estimator,
                                                prefix=f'init_{i}', num_rollouts=self.num_eval_rollouts_real)
 
         # Save candidates's and their returns into tensors (policy is saved during training or exists already)
-        # to.save(cands, osp.join(self._save_dir, 'candidates.pt'))
-        to.save(cands_values, osp.join(self._save_dir, 'candidates_values.pt'))
+        # save_prefix_suffix(cands, 'candidates', 'pt', self._save_dir, meta_info)
+        save_prefix_suffix(cands_values, 'candidates_values', 'pt', self._save_dir, meta_info=None)
         self.cands, self.cands_values = cands, cands_values
 
     @staticmethod
@@ -330,216 +335,87 @@ class BayRn(Algorithm):
                                               num_reps=1000, alpha=0.05, ci_sides=1, studentized=False)[1])
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
-        if not self.initialized:
-            # Start initialization phase
+        if self.curr_checkpoint == -2:
+            # Train the initial policies in the source domain
             self.train_init_policies()
+            self.reached_checkpoint()  # setting counter to -1
+
+        if self.curr_checkpoint == -1:
+            # Evaluate the initial policies in the target domain
             self.eval_init_policies()
-            self.initialized = True
+            self.reached_checkpoint()  # setting counter to 0
 
-        # Normalize the input data and standardize the output data
-        cands_norm = self.uc_normalizer.project_to(self.cands)
-        cands_values_stdized = standardize(self.cands_values).unsqueeze(1)
+        if self.curr_checkpoint == 0:
+            # Normalize the input data and standardize the output data
+            cands_norm = self.uc_normalizer.project_to(self.cands)
+            cands_values_stdized = standardize(self.cands_values).unsqueeze(1)
 
-        # Create and fit the GP model
-        gp = SingleTaskGP(cands_norm, cands_values_stdized)
-        gp.likelihood.noise_covar.register_constraint('raw_noise', GreaterThan(1e-5))
-        mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
-        fit_gpytorch_model(mll)
-        print_cbt('Fitted the GP.', 'g')
+            # Create and fit the GP model
+            gp = SingleTaskGP(cands_norm, cands_values_stdized)
+            gp.likelihood.noise_covar.register_constraint('raw_noise', GreaterThan(1e-5))
+            mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
+            fit_gpytorch_model(mll)
+            print_cbt('Fitted the GP.', 'g')
 
-        # Acquisition functions
-        if self.acq_fcn_type == 'UCB':
-            acq_fcn = UpperConfidenceBound(gp, beta=self.acq_param.get('beta', 0.1), maximize=True)
-        elif self.acq_fcn_type == 'EI':
-            acq_fcn = ExpectedImprovement(gp, best_f=cands_values_stdized.max().item(), maximize=True)
-        elif self.acq_fcn_type == 'PI':
-            acq_fcn = ProbabilityOfImprovement(gp, best_f=cands_values_stdized.max().item(), maximize=True)
-        else:
-            raise pyrado.ValueErr(given=self.acq_fcn_type, eq_constraint="'UCB', 'EI', 'PI'")
+            # Acquisition functions
+            if self.acq_fcn_type == 'UCB':
+                acq_fcn = UpperConfidenceBound(gp, beta=self.acq_param.get('beta', 0.1), maximize=True)
+            elif self.acq_fcn_type == 'EI':
+                acq_fcn = ExpectedImprovement(gp, best_f=cands_values_stdized.max().item(), maximize=True)
+            elif self.acq_fcn_type == 'PI':
+                acq_fcn = ProbabilityOfImprovement(gp, best_f=cands_values_stdized.max().item(), maximize=True)
+            else:
+                raise pyrado.ValueErr(given=self.acq_fcn_type, eq_constraint="'UCB', 'EI', 'PI'")
 
-        # Optimize acquisition function and get new candidate point
-        cand_norm, acq_value = optimize_acqf(
-            acq_function=acq_fcn,
-            bounds=to.stack([to.zeros(self.cand_dim), to.ones(self.cand_dim)]),
-            q=1,
-            num_restarts=self.acq_restarts,
-            raw_samples=self.acq_samples
-        )
-        next_cand = self.uc_normalizer.project_back(cand_norm)
-        print_cbt(f'Found the next candidate: {next_cand.numpy()}', 'g')
-        self.cands = to.cat([self.cands, next_cand], dim=0)
-        to.save(self.cands, osp.join(self._save_dir, 'candidates.pt'))
+            # Optimize acquisition function and get new candidate point
+            cand_norm, acq_value = optimize_acqf(
+                acq_function=acq_fcn,
+                bounds=to.stack([to.zeros(self.cand_dim), to.ones(self.cand_dim)]),
+                q=1,
+                num_restarts=self.acq_restarts,
+                raw_samples=self.acq_samples
+            )
+            next_cand = self.uc_normalizer.project_back(cand_norm)
+            print_cbt(f'Found the next candidate: {next_cand.numpy()}', 'g')
+            self.cands = to.cat([self.cands, next_cand], dim=0)
+            save_prefix_suffix(self.cands, 'candidates', 'pt', self._save_dir, meta_info)
+            self.reached_checkpoint()  # setting counter to 1
 
-        # Train and evaluate a new policy, repeat if the resulting policy did not exceed the success threshold
-        prefix = f'iter_{self._curr_iter}'
-        wrapped_trn_fcn = until_thold_exceeded(
-            self.thold_succ_subrtn.item(), self.max_subrtn_rep
-        )(self.train_policy_sim)
-        wrapped_trn_fcn(next_cand, prefix)
+        if self.curr_checkpoint == 1:
+            # Train and evaluate a new policy, repeat if the resulting policy did not exceed the success threshold
+            wrapped_trn_fcn = until_thold_exceeded(
+                self.thold_succ_subrtn.item(), self.max_subrtn_rep
+            )(self.train_policy_sim)
+            wrapped_trn_fcn(self.cands[-1, :], prefix=f'iter_{self._curr_iter}')
+            self.reached_checkpoint()  # setting counter to 2
 
-        # Evaluate the current policy in the target domain
-        policy = to.load(osp.join(self._save_dir, f'{prefix}_policy.pt'))
-        self.curr_cand_value = self.eval_policy(
-            self._save_dir, self._env_real, policy, self.mc_estimator, prefix, self.num_eval_rollouts_real)
+        if self.curr_checkpoint == 2:
+            # Evaluate the current policy in the target domain
+            policy = load_prefix_suffix(self.policy, 'policy', 'pt', self._save_dir,
+                                        meta_info=dict(prefix=f'iter_{self._curr_iter}'))
+            self.curr_cand_value = self.eval_policy(
+                self._save_dir, self._env_real, policy, self.mc_estimator, f'iter_{self._curr_iter}',
+                self.num_eval_rollouts_real
+            )
+            self.cands_values = to.cat([self.cands_values, self.curr_cand_value.view(1)], dim=0)
+            save_prefix_suffix(self.cands_values, 'candidates_values', 'pt', self._save_dir, meta_info)
 
-        self.cands_values = to.cat([self.cands_values, self.curr_cand_value.view(1)], dim=0)
-        to.save(self.cands_values, osp.join(self._save_dir, 'candidates_values.pt'))
-
-        # Store the argmax after training and evaluating
-        curr_argmax_cand = BayRn.argmax_posterior_mean(self.cands, self.cands_values.unsqueeze(1),
-                                                       self.uc_normalizer, self.acq_restarts, self.acq_samples)
-        self.argmax_cand = to.cat([self.argmax_cand, curr_argmax_cand], dim=0)
-        to.save(self.argmax_cand, osp.join(self._save_dir, 'candidates_argmax.pt'))
-
-        # Save snapshot data
-        self.make_snapshot(snapshot_mode, float(to.mean(self.cands_values)), meta_info)
+            # Store the argmax after training and evaluating
+            curr_argmax_cand = BayRn.argmax_posterior_mean(
+                self.cands, self.cands_values.unsqueeze(1), self.uc_normalizer, self.acq_restarts, self.acq_samples
+            )
+            self.argmax_cand = to.cat([self.argmax_cand, curr_argmax_cand], dim=0)
+            save_prefix_suffix(self.argmax_cand, 'candidates_argmax', 'pt', self._save_dir, meta_info)
+            self.reached_checkpoint()  # setting counter to 0
 
     def save_snapshot(self, meta_info: dict = None):
-        # Policies (and value functions) are saved by the subroutine in train_policy_sim()
+        super().save_snapshot(meta_info)
+
+        # Policies (and value functions) of every iteration are saved by the subroutine in train_policy_sim()
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
             joblib.dump(self._env_sim, osp.join(self._save_dir, 'env_sim.pkl'))
             joblib.dump(self._env_real, osp.join(self._save_dir, 'env_real.pkl'))
-            to.save(self.bounds, osp.join(self._save_dir, 'bounds.pt'))
-            to.save(self._subrtn.policy, osp.join(self._save_dir, 'policy.pt'))
-            if isinstance(self._subrtn, ActorCritic):
-                to.save(self._subrtn.critic.value_fcn, osp.join(self._save_dir, 'valuefcn.pt'))
-        else:
-            raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
-
-    def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
-        # Get the directory to load from
-        ld = load_dir if load_dir is not None else self._save_dir
-        if not osp.isdir(ld):
-            raise pyrado.PathErr(given=ld)
-
-        if meta_info is None:
-            # Crawl through the given directory and check how many policies and candidates there are
-            found_policies, found_cands = None, None
-            for root, dirs, files in os.walk(ld):
-                dirs.clear()  # prevents walk() from going into subdirectories
-                found_policies = [p for p in files if p.endswith('_policy.pt')]  # 'policy.pt' file should not be found
-                found_cands = [c for c in files if c.endswith('_candidate.pt')]
-
-            # Copy to the current experiment's directory. Not necessary if we are continuing in that directory.
-            if ld != self._save_dir:
-                for p in found_policies:
-                    copyfile(osp.join(ld, p), osp.join(self._save_dir, p))
-                for c in found_cands:
-                    copyfile(osp.join(ld, c), osp.join(self._save_dir, c))
-
-            if len(found_policies) > 0:
-                # Load all found candidates to save them into a single tensor
-                found_cands = natural_sort(found_cands)  # the order is important since it determines the tensor's rows
-                self.cands = to.stack([to.load(osp.join(ld, c)) for c in found_cands])
-                to.save(self.cands, osp.join(self._save_dir, 'candidates.pt'))
-
-                # Catch the case that the algorithm stopped before evaluating a sampled candidate
-                if not len(found_policies) == len(found_cands):
-                    print_cbt(f'Found {len(found_policies)} policies, but {len(found_cands)} candidates!', 'r')
-                    n = len(found_cands) - len(found_policies)
-                    delete = input_timeout('Delete the superfluous candidates? [any / n]', default='').lower()
-                    if n > 0 and not delete == 'n':
-                        # Delete the superfluous candidates
-                        print_cbt(f'Candidates before:\n{self.cands.numpy()}', 'w')
-                        self.cands = self.cands[:-n, :]
-                        found_cands = found_cands[:-n]
-                        to.save(self.cands, osp.join(self._save_dir, 'candidates.pt'))
-                        print_cbt(f'Candidates after:\n{self.cands.numpy()}', 'c')
-                    else:
-                        raise pyrado.ShapeErr(msg=f'Found {len(found_policies)} policies,'
-                                                  f'but {len(found_cands)} candidates!')
-
-            else:
-                # Assuming not even the training of the initial policies has not been finished. Redo it all.
-                print_cbt('No policies have been found. Basically starting from scratch.', 'y', bright=True)
-                self.train_init_policies()
-                self.eval_init_policies()
-                self.initialized = True
-
-            try:
-                # Crawl through the load_dir and copy all previous evaluations.
-                # Not necessary if we are continuing in that directory.
-                if ld != self._save_dir:
-                    for root, dirs, files in os.walk(ld):
-                        dirs.clear()  # prevents walk() from going into subdirectories
-                        [copyfile(osp.join(ld, c), osp.join(self._save_dir, c))
-                         for c in files if c.endswith('_returns_real.pt')]
-
-                # Get all previously done evaluations. If we don't find any, the exception is caught.
-                found_evals = None
-                for root, dirs, files in os.walk(ld):
-                    dirs.clear()  # prevents walk() from going into subdirectories
-                    found_evals = [v for v in files if v.endswith('_returns_real.pt')]
-                found_evals = natural_sort(found_evals)  # the order determines the rows of the tensor
-
-                # Reconstruct candidates_values.pt
-                self.cands_values = to.zeros(self.cands.shape[0])
-                for i, fe in enumerate(found_evals):
-                    # Get the return estimate from the raw evaluations as in eval_policy()
-                    if self.mc_estimator:
-                        self.cands_values[i] = to.mean(to.load(osp.join(ld, fe)))
-                    else:
-                        self.cands_values[i] = to.from_numpy(bootstrap_ci(
-                            to.load(osp.join(ld, fe)).numpy(), np.mean,
-                            num_reps=1000, alpha=0.05, ci_sides=1, studentized=False)[1])
-
-                if len(found_evals) < len(found_cands):
-                    print_cbt(f'Found {len(found_evals)} real-world evaluation files but {len(found_cands)} candidates.'
-                              f' Now evaluating the remaining ones.', 'c', bright=True)
-                for i in range(len(found_cands) - len(found_evals)):
-                    # Evaluate the current policy in the target domain
-                    if len(found_evals) < self.num_init_cand:
-                        prefix = f'init_{i + len(found_evals)}'
-                    else:
-                        prefix = f'iter_{i + len(found_evals) - self.num_init_cand}'
-                    policy = to.load(osp.join(self._save_dir, f'{prefix}_policy.pt'))
-                    self.cands_values[i + len(found_evals)] = self.eval_policy(
-                        self._save_dir, self._env_real, policy, self.mc_estimator, prefix,
-                        self.num_eval_rollouts_real
-                    )
-                to.save(self.cands_values, osp.join(self._save_dir, 'candidates_values.pt'))
-
-                if len(found_cands) < self.num_init_cand:
-                    print_cbt('Found less candidates than the number of initial candidates.', 'y')
-                    if input('Do you want to skip training and evaluating the remaining ones? [any / n]') == 'y':
-                        self.initialized = True
-                    else:
-                        print_cbt('Redoing all init policies', 'y', bright=True)
-                else:
-                    self.initialized = True
-
-            except (FileNotFoundError, RuntimeError):
-                # If there are returns_real.pt files but len(found_policies) > 0 (was checked earlier),
-                # then the initial policies have not been evaluated yet
-                self.eval_init_policies()
-                self.initialized = True
-
-            # Get current iteration count
-            found_iter_policies = None
-            for root, dirs, files in os.walk(ld):
-                dirs.clear()  # prevents walk() from going into subdirectories
-                found_iter_policies = [p for p in files if p.startswith('iter_') and p.endswith('_policy.pt')]
-
-            if not found_iter_policies:
-                self._curr_iter = 0
-                # We don't need to init the subroutine since it will be reset for iteration 0 anyway
-            else:
-                self._curr_iter = len(found_iter_policies)  # continue with next
-
-                # Initialize subroutine with previous iteration
-                self._subrtn.load_snapshot(ld, meta_info=dict(prefix=f'iter_{self._curr_iter - 1}'))
-
-                # This is the case if we found iter_i_candidate.pt but not iter_i_returns_real.pt
-                if self.cands.shape[0] == self.cands_values.shape[0] + 1:
-                    # Evaluate and save the latest candidate on the target system.
-                    curr_cand_value = self.eval_policy(
-                        self._save_dir, self._env_real, self._subrtn.policy, self.mc_estimator,
-                        prefix=f'iter_{self._curr_iter - 1}', num_rollouts=self.num_eval_rollouts_real
-                    )
-                    self.cands_values = to.cat([self.cands_values, curr_cand_value.view(1)], dim=0)
-                    to.save(self.cands_values, osp.join(self._save_dir, 'candidates_values.pt'))
-
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
 

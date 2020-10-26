@@ -33,11 +33,11 @@ import torch as to
 from pyrado.utils.argparser import get_argparser
 
 import pyrado
-from pyrado.algorithms.cem import CEM
-from pyrado.algorithms.nes import NES
-from pyrado.algorithms.reps import REPS
-from pyrado.algorithms.sysid_via_episodic_rl import SysIdViaEpisodicRL
-from pyrado.domain_randomization.domain_parameter import UniformDomainParam, NormalDomainParam
+from pyrado.algorithms.episodic.cem import CEM
+from pyrado.algorithms.episodic.nes import NES
+from pyrado.algorithms.episodic.reps import REPS
+from pyrado.algorithms.episodic.sysid_via_episodic_rl import SysIdViaEpisodicRL
+from pyrado.domain_randomization.domain_parameter import NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper, DomainRandWrapperLive
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim

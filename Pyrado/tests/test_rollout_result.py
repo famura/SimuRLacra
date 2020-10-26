@@ -34,10 +34,9 @@ import numpy as np
 import torch as to
 import itertools
 import pickle
-from pytest_lazyfixture import lazy_fixture
 from typing import NamedTuple
 
-from pyrado.algorithms.sysid_via_episodic_rl import SysIdViaEpisodicRL
+from pyrado.algorithms.episodic.sysid_via_episodic_rl import SysIdViaEpisodicRL
 from pyrado.algorithms.utils import ReplayMemory
 from pyrado.policies.dummy import DummyPolicy
 from pyrado.sampling.step_sequence import StepSequence

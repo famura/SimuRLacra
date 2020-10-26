@@ -36,11 +36,11 @@ import torch as to
 from optuna.pruners import MedianPruner
 
 import pyrado
-from pyrado.algorithms.advantage import GAE
-from pyrado.algorithms.cem import CEM
-from pyrado.algorithms.ppo import PPO
-from pyrado.algorithms.simopt import SimOpt
-from pyrado.algorithms.sysid_via_episodic_rl import SysIdViaEpisodicRL
+from pyrado.algorithms.step_based.gae import GAE
+from pyrado.algorithms.episodic.cem import CEM
+from pyrado.algorithms.step_based.ppo import PPO
+from pyrado.algorithms.meta.simopt import SimOpt
+from pyrado.algorithms.episodic.sysid_via_episodic_rl import SysIdViaEpisodicRL
 from pyrado.domain_randomization.domain_parameter import NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper

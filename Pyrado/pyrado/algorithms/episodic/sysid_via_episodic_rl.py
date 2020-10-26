@@ -36,8 +36,8 @@ from typing import Callable, Sequence, Tuple, Union
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.parameter_exploring import ParameterExploring
-from pyrado.algorithms.utils import save_prefix_suffix
+from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
+from pyrado.utils.saving_loading import save_prefix_suffix
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.policies.base import Policy
@@ -58,7 +58,7 @@ class SysIdViaEpisodicRL(Algorithm):
     iteration_key: str = 'sysiderl_iteration'  # logger's iteration key
 
     def __init__(self,
-                 subrtn: Algorithm,
+                 subrtn: ParameterExploring,
                  behavior_policy: Policy,
                  num_rollouts_per_distr: int,
                  metric: Union[Callable[[np.ndarray], np.ndarray], None],
@@ -104,6 +104,7 @@ class SysIdViaEpisodicRL(Algorithm):
 
         # Store inputs
         self._subrtn = subrtn
+        self._subrtn.save_name = 'subrtn'
         self._behavior_policy = behavior_policy
         self.obs_dim_weight = np.diag(obs_dim_weight)  # weighting factor between the different observations
         if metric is None or metric == 'None':
@@ -325,6 +326,8 @@ class SysIdViaEpisodicRL(Algorithm):
         return rollouts_real_tr, rollouts_sim_tr
 
     def save_snapshot(self, meta_info: dict = None):
+        super().save_snapshot(meta_info)
+
         # ParameterExploring subroutine saves the best policy (in this case a DomainDistrParamPolicy)
         self._subrtn.save_snapshot(meta_info=dict(prefix=f"{meta_info['prefix']}_ddp"))  # save iter_X_ddp_policy.pt
         self._subrtn.save_snapshot(meta_info=dict(prefix='ddp'))  # override ddp_policy.pt
@@ -333,12 +336,13 @@ class SysIdViaEpisodicRL(Algorithm):
         cpp = self._subrtn.policy.transform_to_ddp_space(self._subrtn.policy.param_values)
         self._subrtn.env.adapt_randomizer(domain_distr_param_values=cpp.detach().cpu().numpy())
         print_cbt(f'Current policy domain parameter distribution\n{self._subrtn.env.randomizer}', 'g')
+        joblib.dump(self._subrtn.env, osp.join(self._save_dir, 'env_sim.pkl'))
 
         # Set the randomizer to best fitted domain distribution
         cbp = self._subrtn.policy.transform_to_ddp_space(self._subrtn.best_policy_param)
         self._subrtn.env.adapt_randomizer(domain_distr_param_values=cbp.detach().cpu().numpy())
         print_cbt(f'Best fitted domain parameter distribution\n{self._subrtn.env.randomizer}', 'g')
-        joblib.dump(self._subrtn.env, osp.join(self._save_dir, 'env_sim.pkl'))
 
-    def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
-        return self._subrtn.load_snapshot(load_dir, meta_info)
+        if 'rollouts_real' not in meta_info:
+            raise pyrado.KeyErr(key='rollouts_real', container=meta_info)
+        save_prefix_suffix(meta_info['rollouts_real'], 'rollouts_real', 'pkl', self._save_dir, meta_info)

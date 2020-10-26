@@ -34,62 +34,34 @@ from pyrado.algorithms.base import Algorithm
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
-from pyrado.sampling.cvar_sampler import CVaRSampler
 
 
-class EPOpt(Algorithm):
+class UDR(Algorithm):
     """
-    Ensemble Policy Optimization (EPOpt)
+    Uniform Domain Randomization (UDR)
 
-    This algorithm wraps another algorithm on a shallow level. It replaces the subroutine's sampler with a
-    `CVaRSampler`, but does not have its own logger.
-
-    .. seealso::
-        [1] A. Rajeswaran, S. Ghotra, B. Ravindran, S. Levine, "EPOpt: Learning Robust Neural Network Policies using
-        Model Ensembles", ICLR, 2017
+    This algorithm barely wraps another algorithm. The main purpose is to check if the domain randomizer is set up.
     """
 
-    name: str = 'epopt'
+    name: str = 'udr'
 
-    def __init__(self,
-                 env: EnvWrapper,
-                 subrtn: Algorithm,
-                 skip_iter: int,
-                 epsilon: float,
-                 gamma: float = 1.):
+    def __init__(self, env: EnvWrapper, subrtn: Algorithm):
         """
         Constructor
 
         :param env: same environment as the subroutine runs in. Only used for checking and saving the randomizer.
         :param subrtn: algorithm which performs the policy / value-function optimization
-        :param skip_iter: number of iterations for which all rollouts will be used (see prefix 'full')
-        :param epsilon: quantile of (worst) rollouts that will be kept
-        :param gamma: discount factor to compute the discounted return, default is 1 (no discount)
         """
         if not isinstance(subrtn, Algorithm):
             raise pyrado.TypeErr(given=subrtn, expected_type=Algorithm)
         if not typed_env(env, DomainRandWrapper):  # there is a DR wrapper
             raise pyrado.TypeErr(given=env, expected_type=DomainRandWrapper)
-        if not hasattr(subrtn, 'sampler'):
-            raise AttributeError('The subroutine must have a sampler attribute!')
 
         # Call Algorithm's constructor with the subroutine's properties
         super().__init__(subrtn.save_dir, subrtn.max_iter, subrtn.policy, subrtn.logger)
 
-        # Store inputs
         self._subrtn = subrtn
-        self.epsilon = epsilon
-        self.gamma = gamma
-        self.skip_iter = skip_iter
-
-        # Override the subroutine's sampler
-        self._subrtn.sampler = CVaRSampler(
-            self._subrtn.sampler,
-            epsilon=1.,  # keep all rollouts until curr_iter = skip_iter
-            gamma=self.gamma,
-            min_rollouts=self._subrtn.sampler.min_rollouts,
-            min_steps=self._subrtn.sampler.min_steps,
-        )
+        self._subrtn.save_name = 'subtrn'
 
         # Save initial randomizer
         joblib.dump(env.randomizer, osp.join(self.save_dir, 'randomizer.pkl'))
@@ -99,38 +71,16 @@ class EPOpt(Algorithm):
         return self._subrtn
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
-        # Activate the CVaR mechanism after skip_iter iterations
-        if self.curr_iter == self.skip_iter:
-            self._subrtn.sampler.epsilon = self.epsilon
-
-        # Call subroutine
+        # Forward to subroutine
         self._subrtn.step(snapshot_mode, meta_info)
 
     def reset(self, seed: int = None):
-        # Reset the internal variables and the random seeds
-        super().reset(seed)
-
-        # Reset the subroutine and deactivate the CVaR mechanism
+        # Forward to subroutine
         self._subrtn.reset(seed)
-        self._subrtn.sampler.epsilon = 1
 
     def save_snapshot(self, meta_info: dict = None):
+        super().save_snapshot(meta_info)
+
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            if self.curr_iter == self.skip_iter - 1:
-                # Save the last snapshot before applying the CVaR
-                self._subrtn.save_snapshot(meta_info=dict(prefix=f'iter_{self.skip_iter - 1}'))
-            else:
-                self._subrtn.save_snapshot(meta_info=None)
-        else:
-            raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
-
-    def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
-        # Get the directory to load from
-        ld = load_dir if load_dir is not None else self._save_dir
-
-        if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
-            self._subrtn.load_snapshot(ld, meta_info)
-        else:
-            raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
+            self._subrtn.save_snapshot(meta_info)

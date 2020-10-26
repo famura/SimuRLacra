@@ -32,8 +32,7 @@ Train an agent to solve the Planar-3-Link task using Neural Fields and Hill Clim
 import torch as to
 
 import pyrado
-from pyrado.algorithms.cem import CEM
-from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
+from pyrado.algorithms.episodic.cem import CEM
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
 from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim, Planar3LinkTASim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml

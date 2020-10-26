@@ -33,12 +33,12 @@ import numpy as np
 import torch as to
 
 import pyrado
-from pyrado.algorithms.power import PoWER
+from pyrado.algorithms.episodic.power import PoWER
 from pyrado.domain_randomization.default_randomizers import get_zero_var_randomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
 from pyrado.environments.barrett_wam.wam import WAMBallInCupReal
 from pyrado.environments.mujoco.wam import WAMBallInCupSim
-from pyrado.algorithms.bayrn import BayRn
+from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.environment_specific import DualRBFLinearPolicy
 from pyrado.utils.argparser import get_argparser

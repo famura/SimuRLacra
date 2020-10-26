@@ -36,8 +36,8 @@ from optuna.pruners import MedianPruner
 from torch.optim import lr_scheduler
 
 import pyrado
-from pyrado.algorithms.ppo import PPO2
-from pyrado.algorithms.advantage import GAE
+from pyrado.algorithms.step_based.ppo import PPO2
+from pyrado.algorithms.step_based.gae import GAE
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim

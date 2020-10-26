@@ -26,13 +26,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import os.path as osp
 import pytest
-import torch as to
 import torch.nn as nn
 from functools import partial
 from math import ceil
 from tqdm import tqdm
 
+from pyrado.utils.saving_loading import save_prefix_suffix, load_prefix_suffix
+from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate5DSim
 from pyrado.sampling.utils import gen_batch_idcs, gen_ordered_batch_idcs, gen_ordered_batches
 from pyrado.utils.data_types import *
 from pyrado.utils.functions import noisy_nonlin_fcn
@@ -47,6 +49,7 @@ from pyrado.utils.optimizers import GSS
 from pyrado.utils.averaging import RunningExpDecayingAverage, RunningMemoryAverage
 from pyrado.utils.data_processing import RunningStandardizer, Standardizer, scale_min_max, MinMaxScaler
 from pyrado.utils.data_processing import RunningNormalizer, normalize
+from tests.conftest import m_needs_bullet
 
 
 @pytest.mark.parametrize(
@@ -608,4 +611,40 @@ def test_logmeanexp(x, dim):
     if isinstance(x, to.Tensor):
         assert to.allclose(lme, to.log(to.mean(to.exp(x), dim=dim)))
     if isinstance(x, np.ndarray):
-        assert np.allclose(lme, np.log(np.mean(np.exp(x), axiswow=dim)))
+        assert np.allclose(lme, np.log(np.mean(np.exp(x), axis=dim)))
+
+
+@pytest.mark.parametrize('obj, file_ext', [
+    (to.rand((5, 3)), 'pt'),
+    (np.random.rand(5, 3), 'npy'),
+    (DummyPolicy(BallOnBeamSim(dt=0.01, max_steps=500).spec), 'pt'),
+    (BallOnBeamSim(dt=0.01, max_steps=500), 'pkl'),
+    (pytest.param(BallOnPlate5DSim(physicsEngine='Bullet', dt=0.01, max_steps=3000, marks=m_needs_bullet), 'pkl', )),
+], ids=['tensor', 'ndarray', 'dummypol', 'pyenv', 'rcssimenv'])
+@pytest.mark.parametrize('meta_info', [
+    None,
+    dict(prefix='pre', suffix='suf'),
+    dict(prefix='pre'),
+    dict(suffix='suf'),
+    dict(foo='baz'),
+], ids=['None', 'pre_suf', 'pre', 'suf', 'neither'])
+@pytest.mark.parametrize('use_state_dict', [
+    True, False
+], ids=['use_state_dict', 'not-use_state_dict'])
+def test_save_load_prefix_suffix(obj, file_ext, tmpdir, meta_info, use_state_dict):
+    # Save
+    save_prefix_suffix(obj, 'tmpname', file_ext, tmpdir, meta_info, use_state_dict)
+
+    # Check if sth has been saved with the correct pre- and suffix
+    if meta_info is None:
+        assert osp.exists(osp.join(tmpdir, f"tmpname.{file_ext}"))
+    elif 'prefix' in meta_info and 'suffix' in meta_info:
+        assert osp.exists(osp.join(tmpdir, f"{meta_info['prefix']}_tmpname_{meta_info['suffix']}.{file_ext}"))
+    elif 'prefix' in meta_info and 'suffix' not in meta_info:
+        assert osp.exists(osp.join(tmpdir, f"{meta_info['prefix']}_tmpname.{file_ext}"))
+    elif 'prefix' not in meta_info and 'suffix' in meta_info:
+        assert osp.exists(osp.join(tmpdir, f"tmpname_{meta_info['suffix']}.{file_ext}"))
+
+    # Check if sth has been loaded with the correct pre- and suffix
+    res = load_prefix_suffix(obj, 'tmpname', file_ext, tmpdir, meta_info)
+    assert res is not None

@@ -26,15 +26,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import joblib
 import os.path as osp
-import pandas as pd
-import torch as to
 import torch.nn as nn
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 import pyrado
-from pyrado.algorithms.utils import save_prefix_suffix, load_prefix_suffix
+from pyrado.utils.saving_loading import save_prefix_suffix, load_prefix_suffix
 from pyrado.exploration.stochastic_action import StochasticActionExplStrat
 from pyrado.exploration.stochastic_params import StochasticParamExplStrat
 from pyrado.logger import get_log_prefix_dir
@@ -54,7 +53,12 @@ class Algorithm(ABC, LoggerAware):
     name: str = None  # unique identifier
     iteration_key: str = 'iteration'
 
-    def __init__(self, save_dir: str, max_iter: int, policy: Optional[Policy], logger: Optional[StepLogger] = None):
+    def __init__(self,
+                 save_dir: str,
+                 max_iter: int,
+                 policy: Optional[Policy],
+                 logger: Optional[StepLogger] = None,
+                 save_name: str = 'algo'):
         """
         Constructor
 
@@ -62,14 +66,22 @@ class Algorithm(ABC, LoggerAware):
         :param max_iter: maximum number of iterations
         :param policy: Pyrado policy (subclass of PyTorch's Module) to train
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
+        :param save_name: name of the algorithm's pickle file without the ending, this becomes important if the
+                          algorithm is run as a subroutine
         """
         if not isinstance(max_iter, int) and max_iter > 0:
             raise pyrado.ValueErr(given=max_iter, g_constraint='0')
-        assert isinstance(policy, Policy) or policy is None
+        if not isinstance(policy, Policy) and policy is not None:
+            raise pyrado.TypeErr(msg='If a policy is given, it needs to be of type Policy!')
+        if not isinstance(logger, StepLogger) and logger is not None:
+            raise pyrado.TypeErr(msg='If a logger is given, it needs to be of type StepLogger!')
+        if not isinstance(save_name, str):
+            raise pyrado.TypeErr(given=save_name, expected_type=str)
 
         if save_dir is None:
             save_dir = get_log_prefix_dir()
         self._save_dir = save_dir
+        self._save_name = save_name
         self._max_iter = max_iter
         self._curr_iter = 0
         self._policy = policy
@@ -80,6 +92,18 @@ class Algorithm(ABC, LoggerAware):
     def save_dir(self) -> str:
         """ Get the directory where the data is saved to. """
         return self._save_dir
+
+    @property
+    def save_name(self) -> str:
+        """ Get the name for saving this algorithm instance, e.g. 'algo' if saved to 'algo.pkl'. """
+        return self._save_name
+
+    @save_name.setter
+    def save_name(self, name: str):
+        """ Set the name for saving this algorithm instance, e.g. 'subtrn' if saved to 'subrtn.pkl'. """
+        if not isinstance(name, str):
+            raise pyrado.TypeErr(given=name, expected_type=str)
+        self._save_name = name
 
     @property
     def max_iter(self) -> int:
@@ -103,7 +127,7 @@ class Algorithm(ABC, LoggerAware):
         return self._policy
 
     @property
-    def expl_strat(self) -> [StochasticActionExplStrat, StochasticParamExplStrat]:
+    def expl_strat(self) -> Union[StochasticActionExplStrat, StochasticParamExplStrat, None]:
         """ Get the algorithm's exploration strategy. """
         return None
 
@@ -142,7 +166,6 @@ class Algorithm(ABC, LoggerAware):
         """
         Initialize the algorithm's learnable modules, e.g. a policy or value function.
         Overwrite this method if the algorithm uses a learnable module aside the policy, e.g. a value function.
-        This method is similar to `load_snapshot()` which also loads additional algorithm members like environments.
 
         :param warmstart: if `True`, the algorithm starts learning with an initialization. This can either be the a
                           fixed parameter vector, or the results of the previous iteration
@@ -168,24 +191,17 @@ class Algorithm(ABC, LoggerAware):
             print_cbt('Learning from scratch.', 'w')
 
     def train(self,
-              load_dir: str = None,
               snapshot_mode: str = 'latest',
               seed: int = None,
               meta_info: dict = None):
         """
         Train one/multiple policy/policies in a given environment.
 
-        :param load_dir: if not `None` the training snapshot will be loaded from the given directory, i.e. the training
-                         does not start from scratch
         :param snapshot_mode: determines when the snapshots are stored (e.g. on every iteration or on new high-score)
         :param seed: seed value for the random number generators, pass `None` for no seeding
         :param meta_info: is not `None` if this algorithm is run as a subroutine of a meta-algorithm,
                           contains a dict of information about the current iteration of the meta-algorithm
         """
-        if load_dir is not None:
-            self.load_snapshot(load_dir)
-            print_cbt(f'Loaded the snapshot from {load_dir}.', 'g', bright=True)
-
         if self._policy is not None:
             print_cbt(f'{get_class_name(self)} started training a {get_class_name(self._policy)} '
                       f'with {self._policy.num_param} parameters using the snapshot mode {snapshot_mode}.', 'g')
@@ -240,6 +256,60 @@ class Algorithm(ABC, LoggerAware):
         """ Update the policy's (and value functions') parameters based on the collected rollout data. """
         pass
 
+    def make_snapshot(self,
+                      snapshot_mode: str,
+                      curr_avg_ret: float = None,
+                      meta_info: dict = None):
+        """
+        Make a snapshot of the training progress.
+        This method is called from the subclasses and delegates to the custom method `save_snapshot()`.
+
+        :param snapshot_mode: determines when the snapshots are stored (e.g. on every iteration or on new highscore)
+        :param curr_avg_ret: current average return used for the snapshot_mode 'best' to trigger `save_snapshot()`
+        :param meta_info: is not `None` if this algorithm is run as a subroutine of a meta-algorithm,
+                          contains a dict of information about the current iteration of the meta-algorithm
+        """
+        if snapshot_mode == 'latest':
+            self.save_snapshot(meta_info)
+        elif snapshot_mode == 'best':
+            if curr_avg_ret is None:
+                raise pyrado.ValueErr(msg="curr_avg_ret must not be None when snapshot_mode = 'best'!")
+            if curr_avg_ret > self._highest_avg_ret:
+                self._highest_avg_ret = curr_avg_ret
+                self.save_snapshot(meta_info)
+        elif snapshot_mode in {'no', 'None'}:
+            pass  # don't save anything
+        else:
+            raise pyrado.ValueErr(given=snapshot_mode, eq_constraint="'latest', 'best', or 'no'")
+
+    def save_snapshot(self, meta_info: dict = None):
+        """
+        Save the algorithm information (e.g., environment, policy, ect.).
+        Subclasses should call the base method to save the policy.
+
+        :param meta_info: is not `None` if this algorithm is run as a subroutine of a meta-algorithm,
+                          contains a `dict` of information about the current iteration of the meta-algorithm
+        """
+        joblib.dump(self, osp.join(self._save_dir, f'{self._save_name}.pkl'))
+
+    @staticmethod
+    def load_snapshot(load_dir: str, load_name: str = 'algo'):
+        """
+        Load an algorithm from file, i.e. unpickle it.
+
+        :param load_dir: experiment directory to load from
+        :param load_name: name of the algorithm's pickle file without the ending
+        """
+        if not osp.isdir(load_dir):
+            raise pyrado.PathErr(given=load_dir)
+
+        algo = joblib.load(osp.join(load_dir, f'{load_name}.pkl'))
+
+        if not isinstance(algo, Algorithm):
+            raise pyrado.TypeErr(given=algo, expected_type=Algorithm)
+
+        return algo
+
     @staticmethod
     def clip_grad(module: nn.Module, max_grad_norm: [float, None]) -> float:
         """
@@ -262,57 +332,65 @@ class Algorithm(ABC, LoggerAware):
             total_norm += param_norm.item()**2
         return total_norm**0.5
 
-    def make_snapshot(self, snapshot_mode: str, curr_avg_ret: float = None, meta_info: dict = None):
-        """
-        Make a snapshot of the training progress.
-        This method is called from the subclasses and delegates to the custom method `save_snapshot()`.
 
-        :param snapshot_mode: determines when the snapshots are stored (e.g. on every iteration or on new highscore)
-        :param curr_avg_ret: current average return used for the snapshot_mode 'best' to trigger `save_snapshot()`
-        :param meta_info: is not `None` if this algorithm is run as a subroutine of a meta-algorithm,
-                          contains a dict of information about the current iteration of the meta-algorithm
-        """
-        if snapshot_mode == 'latest':
-            self.save_snapshot(meta_info)
-        elif snapshot_mode == 'best':
-            if curr_avg_ret is None:
-                raise pyrado.ValueErr(msg="curr_avg_ret must not be None when snapshot_mode = 'best'!")
-            if curr_avg_ret > self._highest_avg_ret:
-                self._highest_avg_ret = curr_avg_ret
-                self.save_snapshot(meta_info)
-        elif snapshot_mode in {'no', 'none'}:
-            pass  # don't save anything
-        else:
-            raise pyrado.ValueErr(given=snapshot_mode, eq_constraint="'latest', 'best', or 'no'")
+class InterruptableAlgorithm(Algorithm, ABC):
+    """
+    A simple checkpoint system too keep track of the algorithms progress. The cyclic counter starts at `init_checkpoint`
+    and counts until (including) `num_checkpoints`, and is then reset to zero.
+    """
 
-    def save_snapshot(self, meta_info: dict = None):
+    def __init__(self, num_checkpoints: int, init_checkpoint: int = 0, *args, **kwargs):
         """
-        Save the algorithm information (e.g., environment, policy, ect.).
-        Subclasses should call the base method to save the policy.
+        Constructor
 
-        :param meta_info: is not `None` if this algorithm is run as a subroutine of a meta-algorithm,
-                          contains a `dict` of information about the current iteration of the meta-algorithm
+        :param num_checkpoints: total number of checkpoints
+        :param init_checkpoint: initial value of the cyclic counter, defaults to 0, use negative values can to mark
+                                sections that should only be executed once
+        :param args: positional arguments forwarded to Algorithm's constructor
+        :param kwargs: keyword arguments forwarded to Algorithm's constructor
         """
-        # Does not matter if this algorithm instance is a subroutine of another algorithm
-        save_prefix_suffix(self._policy, 'policy', 'pt', self._save_dir, meta_info)
+        if not isinstance(num_checkpoints, int):
+            raise pyrado.TypeErr(given=num_checkpoints, expected_type=int)
+        if num_checkpoints < 1:
+            raise pyrado.ValueErr(given=num_checkpoints, ge_constraint='1')
+        if not isinstance(init_checkpoint, int):
+            raise pyrado.TypeErr(given=init_checkpoint, expected_type=int)
 
-    def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
+        self._num_checkpoints = num_checkpoints
+        self._curr_checkpoint = init_checkpoint
+
+        # Call Algorithm's constructor
+        super().__init__(*args, **kwargs)
+
+    @property
+    def curr_checkpoint(self) -> int:
+        """ Get the current checkpoint counter. """
+        return self._curr_checkpoint
+
+    def reset_checkpoint(self, curr: int = 0):
         """
-        Load the algorithm information (e.g., environment, policy, ect.).
-        Subclasses should call the base method to load the policy.
+        Explicitly reset the cyclic counter.
 
-        :param load_dir: explicit directory to load from, if `None` (default) `self._save_dir` is used
-        :param meta_info: is not `None` if this algorithm is run as a subroutine of a meta-algorithm,
-                          contains a `dict` of information about the current iteration of the meta-algorithm
+        :param curr: value to set the counter to, defaults to 0
         """
-        ld = load_dir if load_dir is not None else self._save_dir
-        try:
-            self._curr_iter = pd.read_csv(osp.join(ld, 'progress.csv'))[self.iteration_key].iloc[-1]
-        except (FileNotFoundError, pd.errors.EmptyDataError):
-            self._curr_iter = 0
-        except pd.errors.ParserError:
-            print_cbt('Pandas parser error occured during reading the progress.csv file. Setting curr_iter to 0.', 'y')
-            self._curr_iter = 0
+        if not isinstance(curr, int):
+            raise pyrado.TypeErr(given=curr, expected_type=int)
+        self._curr_checkpoint = curr
 
-        # Does not matter if this algorithm instance is a subroutine of another algorithm
-        self._policy = load_prefix_suffix(self._policy, 'policy', 'pt', ld, meta_info)
+    def reset(self, seed: int = None):
+        super().reset(seed)
+        self.reset_checkpoint()
+
+    def reached_checkpoint(self, meta_info: dict = None):
+        """
+        Increase the cyclic counter by 1. When the counter reached the maximum number of checkpoints, defined in the
+        constructor, it is automatically reset to zero.
+        This method also saves the algorithm instance using `save_snapshot()`, otherwise increasing the checkpoint
+        counter can have no effect.
+
+        :param meta_info: information forwarded to `save_snapshot()`
+        """
+        next = self._curr_checkpoint + 1
+        self._curr_checkpoint = next%(self._num_checkpoints + 1) if next > 0 else next  # no modulo for negative count
+
+        self.save_snapshot(meta_info)

@@ -35,11 +35,10 @@ from matplotlib import pyplot as plt
 from torch.distributions import Normal, Uniform
 
 import pyrado
-from pyrado.algorithms.bayrn import BayRn
-from pyrado.algorithms.simopt import SimOpt
+from pyrado.algorithms.meta.bayrn import BayRn
+from pyrado.algorithms.meta.simopt import SimOpt
 from pyrado.logger.experiment import ask_for_experiment, load_dict_from_yaml
 from pyrado.plotting.distribution import render_distr_evo
-from pyrado.policies.domain_distribution import DomainDistrParamPolicy
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.input_output import print_cbt
 

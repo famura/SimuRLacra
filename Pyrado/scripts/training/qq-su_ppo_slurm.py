@@ -34,19 +34,16 @@ import os.path as osp
 import torch as to
 
 import pyrado
-from pyrado.algorithms.advantage import GAE
-from pyrado.algorithms.bayrn import BayRn
-from pyrado.algorithms.ppo import PPO
-from pyrado.algorithms.udr import UDR
-from pyrado.domain_randomization.domain_parameter import UniformDomainParam, NormalDomainParam
+from pyrado.algorithms.step_based.gae import GAE
+from pyrado.algorithms.meta.bayrn import BayRn
+from pyrado.algorithms.step_based.ppo import PPO
+from pyrado.domain_randomization.domain_parameter import NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml, load_dict_from_yaml
 from pyrado.policies.fnn import FNNPolicy
-from pyrado.spaces import ValueFunctionSpace
-from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.argparser import get_argparser
 
 

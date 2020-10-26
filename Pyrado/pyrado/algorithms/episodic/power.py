@@ -28,14 +28,14 @@
 
 import torch as to
 
-from pyrado.algorithms.parameter_exploring import ParameterExploring
+from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import NormalParamNoise, SymmParamExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.policies.linear import LinearPolicy
 from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult
-from pyrado.utils.input_output import print_cbt
+from pyrado.utils.input_output import print_cbt, print_cbt_once
 
 
 class PoWER(ParameterExploring):
@@ -82,7 +82,7 @@ class PoWER(ParameterExploring):
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         if not isinstance(policy, LinearPolicy):
-            print_cbt('REPS was designed for linear policies.', 'y')
+            print_cbt_once('PoWER was designed for linear policies.', 'y')
 
         # Call ParameterExploring's constructor
         super().__init__(

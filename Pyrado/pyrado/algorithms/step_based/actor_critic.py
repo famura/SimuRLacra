@@ -33,9 +33,9 @@ from abc import ABC, abstractmethod
 from typing import Sequence
 
 import pyrado
-from pyrado.algorithms.advantage import GAE
+from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.utils import save_prefix_suffix, load_prefix_suffix
+from pyrado.utils.saving_loading import save_prefix_suffix, load_prefix_suffix
 from pyrado.environments.base import Env
 from pyrado.logger.step import StepLogger
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
@@ -62,7 +62,7 @@ class ActorCritic(Algorithm, ABC):
         :param critic: estimates the value of states (e.g. advantage or return)
         :param save_dir: directory to save the snapshots i.e. the results in
         :param max_iter: maximum number of iterations
-        :param logger: logger for every step of the algorithm
+        :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         if not isinstance(env, Env):
             raise pyrado.TypeErr(given=env, expected_type=Env)
@@ -180,15 +180,4 @@ class ActorCritic(Algorithm, ABC):
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            joblib.dump(self._env, osp.join(self._save_dir, 'env.pkl'))
-
-    def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
-        # Get the directory to load from
-        ld = load_dir if load_dir is not None else self._save_dir
-
-        super().load_snapshot(ld, meta_info)
-        self._critic.value_fcn = load_prefix_suffix(self._critic.value_fcn, 'valuefcn', 'pt', ld, meta_info)
-
-        if meta_info is None:
-            # This algorithm instance is not a subroutine of another algorithm
-            self._env = joblib.load(osp.join(ld, 'env.pkl'))
+            save_prefix_suffix(self._env, 'env', 'pkl', self._save_dir, meta_info)

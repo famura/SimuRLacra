@@ -37,7 +37,8 @@ from tqdm import tqdm
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.utils import ReplayMemory, save_prefix_suffix, load_prefix_suffix
+from pyrado.algorithms.utils import ReplayMemory
+from pyrado.utils.saving_loading import save_prefix_suffix, load_prefix_suffix
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.base import Env
@@ -381,8 +382,9 @@ class SAC(Algorithm):
         # Reset the exploration strategy, internal variables and the random seeds
         super().reset(seed)
 
-        # Re-initialize sampler in case env or policy changed
+        # Re-initialize samplers in case env or policy changed
         self.sampler.reinit(self._env, self._expl_strat)
+        self.sampler_eval.reinit(self._env, self._policy)
 
         # Reset the replay memory
         self._memory.reset()
@@ -431,21 +433,10 @@ class SAC(Algorithm):
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
+        save_prefix_suffix(self._expl_strat.policy, 'policy', 'pt', self._save_dir, meta_info)
         save_prefix_suffix(self.q_targ_1, 'target1', 'pt', self._save_dir, meta_info)
         save_prefix_suffix(self.q_targ_2, 'target2', 'pt', self._save_dir, meta_info)
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            joblib.dump(self._env, osp.join(self._save_dir, 'env.pkl'))
-
-    def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
-        # Get the directory to load from
-        ld = load_dir if load_dir is not None else self._save_dir
-        super().load_snapshot(ld, meta_info)
-
-        self.q_targ_1 = load_prefix_suffix(self.q_targ_1, 'target1', 'pt', ld, meta_info)
-        self.q_targ_2 = load_prefix_suffix(self.q_targ_2, 'target2', 'pt', ld, meta_info)
-
-        if meta_info is None:
-            # This algorithm instance is not a subroutine of another algorithm
-            self._env = joblib.load(osp.join(ld, 'env.pkl'))
+            save_prefix_suffix(self._env, 'env', 'pkl', self._save_dir, meta_info)

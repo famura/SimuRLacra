@@ -35,7 +35,7 @@ from typing import Optional
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.utils import save_prefix_suffix
+from pyrado.utils.saving_loading import save_prefix_suffix
 from pyrado.utils.data_sets import TimeSeriesDataSet
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy

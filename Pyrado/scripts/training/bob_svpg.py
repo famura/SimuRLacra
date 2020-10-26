@@ -32,7 +32,7 @@ Train agents to solve the Ball-on-Beam environment using Stein Variational Polic
 import torch as to
 
 import pyrado
-from pyrado.algorithms.svpg import SVPG
+from pyrado.algorithms.step_based.svpg import SVPG
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml

@@ -32,13 +32,11 @@ Train an agent to solve the Planar-3-Link task using Activation Dynamics Network
 import torch as to
 
 import pyrado
-from pyrado.algorithms.reps import REPS
-from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
+from pyrado.algorithms.episodic.reps import REPS
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
-from pyrado.environments.rcspysim.planar_3_link import Planar3LinkTASim, Planar3LinkIKActivationSim
+from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.adn import pd_cubic, ADNPolicy, pd_linear
+from pyrado.policies.adn import pd_cubic, ADNPolicy
 from pyrado.utils.argparser import get_argparser
 
 

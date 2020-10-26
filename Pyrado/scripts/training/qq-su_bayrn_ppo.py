@@ -29,22 +29,20 @@
 """
 Train an agent to solve the Qube swing-up task using Bayesian Domain Randomization.
 """
-import os.path as osp
 import torch as to
 
 import pyrado
-from pyrado.algorithms.advantage import GAE
+from pyrado.algorithms.step_based.gae import GAE
 from pyrado.spaces import ValueFunctionSpace
-from pyrado.algorithms.ppo import PPO
+from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.domain_randomization.default_randomizers import get_zero_var_randomizer, get_default_domain_param_map_qq
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
 from pyrado.environments.quanser.quanser_qube import QQubeReal
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-from pyrado.algorithms.bayrn import BayRn
+from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.fnn import FNNPolicy
-from pyrado.policies.rnn import LSTMPolicy, GRUPolicy
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.experiments import wrap_like_other_env

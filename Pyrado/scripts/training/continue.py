@@ -27,20 +27,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Learn the domain parameter distribution of masses and lengths of the Quanser Qube while using a handcrafted
-randomization for the remaining domain parameters. Continue in the same directory of a previous experiment.
+Continue a training run in the same folder
 """
-import joblib
 import os.path as osp
-import torch as to
 
-from pyrado.algorithms.advantage import GAE
-from pyrado.algorithms.ppo import PPO
-from pyrado.algorithms.bayrn import BayRn
-from pyrado.environments.quanser.quanser_qube import QQubeReal
-from pyrado.logger.experiment import load_dict_from_yaml, ask_for_experiment
+from pyrado.algorithms.base import Algorithm
+from pyrado.logger.experiment import ask_for_experiment, load_dict_from_yaml
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.experiments import wrap_like_other_env
 
 
 if __name__ == '__main__':
@@ -50,35 +43,11 @@ if __name__ == '__main__':
     # Get the experiment's directory to load from
     ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
 
-    # Environments
+    # Load the
     hparams = load_dict_from_yaml(osp.join(ex_dir, 'hyperparams.yaml'))
-    env_sim = joblib.load(osp.join(ex_dir, 'env_sim.pkl'))
-    # env_real = joblib.load(osp.join(ex_dir, 'env_real.pkl'))
-    env_real = QQubeReal(dt=1/500, max_steps=3000, ip='192.168.2.40')
 
-    # Wrap the real environment in the same way as done during training
-    env_real = wrap_like_other_env(env_real, env_sim)
-
-    # Policy
-    policy = to.load(osp.join(ex_dir, 'policy.pt'))
-
-    # Critic
-    valuefcn = to.load(osp.join(ex_dir, 'valuefcn.pt'))
-    critic = GAE(valuefcn, **hparams['critic'])
-
-    # Subroutine
-    subrtn_hparam = hparams['subrtn']
-    subrtn_hparam.update({'num_workers': 1})
-    ppo = PPO(ex_dir, env_sim, policy, critic, **subrtn_hparam)
-
-    # Set the boundaries for the GP
-    bounds = to.load(osp.join(ex_dir, 'bounds.pt'))
-
-    # Algorithm
-    algo_hparam = hparams['algo']
-    algo_hparam.update({'thold_succ_subrtn': 100})
-    algo = BayRn(ex_dir, env_sim, env_real, subrtn=ppo, bounds=bounds, **algo_hparam)
+    # Load the complete algorithm
+    algo = Algorithm.load_snapshot(ex_dir)
 
     # Jeeeha
-    seed = hparams['seed'] if isinstance(hparams['seed'], int) else None
-    algo.train(snapshot_mode='latest', seed=seed, load_dir=ex_dir)
+    algo.train(seed=hparams.get('seed', None))

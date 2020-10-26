@@ -35,7 +35,7 @@ import torch as to
 from datetime import datetime
 
 import pyrado
-from pyrado.algorithms.bayrn import BayRn
+from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.environments.quanser.quanser_qube import QQubeReal
 from pyrado.logger.experiment import ask_for_experiment, timestamp_format
 from pyrado.utils.experiments import wrap_like_other_env, load_experiment

@@ -30,11 +30,11 @@
 Train an agent to solve the Quanser Cart-Pole swing-up task using Natural Evolution Strategies.
 """
 import pyrado
-from pyrado.algorithms.nes import NES
+from pyrado.algorithms.episodic.nes import NES
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.policies.rnn import LSTMPolicy, GRUPolicy
+from pyrado.policies.rnn import GRUPolicy
 from pyrado.utils.argparser import get_argparser
 
 

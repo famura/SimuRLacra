@@ -33,8 +33,8 @@ from torch.distributions.kl import kl_divergence
 from tqdm import tqdm
 from typing import Sequence
 
-from pyrado.algorithms.actor_critic import ActorCritic
-from pyrado.algorithms.advantage import GAE
+from pyrado.algorithms.step_based.actor_critic import ActorCritic
+from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.utils import compute_action_statistics, num_iter_from_rollouts
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
@@ -89,7 +89,7 @@ class A2C(ActorCritic):
                    By default, the learning rate is constant.
         :param lr_scheduler: learning rate scheduler that does one step per epoch (pass through the whole data set)
         :param lr_scheduler_hparam: hyper-parameters for the learning rate scheduler
-        :param logger: logger for every step of the algorithm
+        :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         # Call ActorCritic's constructor
         super().__init__(env, policy, critic, save_dir, max_iter, logger)

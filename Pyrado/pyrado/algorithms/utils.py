@@ -27,13 +27,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import functools
-import joblib
 import numpy as np
 import os.path as osp
 import torch as to
 from copy import deepcopy
 from torch.distributions import Distribution
-from typing import NamedTuple, Optional, Union, Sequence, Callable
+from typing import NamedTuple, Union, Sequence, Callable
 
 import pyrado
 from pyrado.sampling.step_sequence import StepSequence
@@ -69,158 +68,6 @@ def compute_action_statistics(steps: StepSequence, expl_strat: StochasticActionE
 
     # Collect results
     return ActionStatistics(distr, distr.log_prob(steps.actions.to(expl_strat.device)), distr.entropy())
-
-
-def until_thold_exceeded(thold: float, max_iter: int = None):
-    """
-    Designed to wrap a function and repeat it until the return value exceeds a threshold.
-
-    :param thold: threshold
-    :param max_iter: maximum number of iterations of the wrapped function, set to `None` to run the loop relentlessly
-    :return: wrapped function
-    """
-
-    def actual_decorator(trn_eval_fcn):
-        """
-        Designed to wrap a training + evaluation function and repeat it  it until the return value exceeds a threshold.
-
-        :param trn_eval_fcn: function to wrap
-        :return: wrapped function
-        """
-
-        @functools.wraps(trn_eval_fcn)
-        def wrapper_trn_eval_fcn(*args, **kwargs):
-            ret = -pyrado.inf
-            cnt_iter = 0
-            while ret <= thold:  # <= guarantees that we at least train once, even if thold is -inf
-                # Train and evaluate
-                ret = trn_eval_fcn(*args, **kwargs)
-                cnt_iter += 1
-
-                # Break if done
-                if ret >= thold:
-                    print_cbt(f'The policy exceeded the threshold {thold}.', 'g', True)
-                    break
-
-                # Break if max_iter is reached
-                if max_iter is not None and cnt_iter == max_iter:
-                    print_cbt(f'Exiting the training and evaluation loop after {max_iter} iterations.', 'y', True)
-                    break
-
-                # Else repeat training
-                print_cbt(f'The policy did not exceed the threshold {thold}. Repeating training and evaluation ...',
-                          'w', True)
-            return ret
-
-        return wrapper_trn_eval_fcn
-
-    return actual_decorator
-
-
-def save_prefix_suffix(obj, name: str, file_ext: str, save_dir: str, meta_info: Optional[dict]):
-    """
-    Save an arbitrary object object using a prefix or suffix, depending on the meta information.
-
-    :param obj: object to save
-    :param name: name of the object for saving
-    :param file_ext: file extension, e.g. 'pt' for policies
-    :param save_dir: directory to save in
-    :param meta_info: meta information that can contain a pre- and/or suffix for altering the name
-    """
-    if not isinstance(name, str):
-        raise pyrado.TypeErr(given=name, expected_type=str)
-    if not (file_ext == 'pt' or file_ext == 'pkl'):
-        raise pyrado.ValueErr(given=file_ext, eq_constraint='pt or pkl')
-    if not osp.isdir(save_dir):
-        raise pyrado.PathErr(given=save_dir)
-
-    if meta_info is None:
-        if file_ext == 'pt':
-            to.save(obj, osp.join(save_dir, f"{name}.{file_ext}"))
-
-        elif file_ext == 'pkl':
-            joblib.dump(obj, osp.join(save_dir, f"{name}.{file_ext}"))
-
-    else:
-        if not isinstance(meta_info, dict):
-            raise pyrado.TypeErr(given=meta_info, expected_type=dict)
-
-        if file_ext == 'pt':
-            if 'prefix' in meta_info and 'suffix' in meta_info:
-                to.save(obj, osp.join(save_dir, f"{meta_info['prefix']}_{name}_{meta_info['suffix']}.{file_ext}"))
-            elif 'prefix' in meta_info and 'suffix' not in meta_info:
-                to.save(obj, osp.join(save_dir, f"{meta_info['prefix']}_{name}.{file_ext}"))
-            elif 'prefix' not in meta_info and 'suffix' in meta_info:
-                to.save(obj, osp.join(save_dir, f"{name}_{meta_info['suffix']}.{file_ext}"))
-            else:
-                to.save(obj, osp.join(save_dir, f"{name}.{file_ext}"))
-
-        elif file_ext == 'pkl':
-            if 'prefix' in meta_info and 'suffix' in meta_info:
-                joblib.dump(obj, osp.join(save_dir, f"{meta_info['prefix']}_{name}_{meta_info['suffix']}.{file_ext}"))
-            elif 'prefix' in meta_info and 'suffix' not in meta_info:
-                joblib.dump(obj, osp.join(save_dir, f"{meta_info['prefix']}_{name}.{file_ext}"))
-            elif 'prefix' not in meta_info and 'suffix' in meta_info:
-                joblib.dump(obj, osp.join(save_dir, f"{name}_{meta_info['suffix']}.{file_ext}"))
-            else:
-                joblib.dump(obj, osp.join(save_dir, f"{name}.{file_ext}"))
-
-
-def load_prefix_suffix(obj, name: str, file_ext: str, load_dir: str, meta_info: Optional[dict]):
-    """
-    Load an arbitrary object object using a prefix or suffix, depending on the meta information.
-
-    :param obj: object to load into
-    :param name: name of the object for loading
-    :param file_ext: file extension, e.g. 'pt' for policies
-    :param load_dir: directory to load from
-    :param meta_info: meta information that can contain a pre- and/or suffix for altering the name
-    """
-    if not isinstance(name, str):
-        raise pyrado.TypeErr(given=name, expected_type=str)
-    if not (file_ext == 'pt' or file_ext == 'pkl'):
-        raise pyrado.ValueErr(given=file_ext, eq_constraint='pt or pkl')
-    if not osp.isdir(load_dir):
-        raise pyrado.PathErr(given=load_dir)
-
-    if meta_info is None:
-        if file_ext == 'pt':
-            obj.load_state_dict(to.load(osp.join(load_dir, f"{name}.{file_ext}")).state_dict())
-
-        elif file_ext == 'pkl':
-            obj = joblib.load(osp.join(load_dir, f"{name}.{file_ext}"))
-
-    else:
-        if not isinstance(meta_info, dict):
-            raise pyrado.TypeErr(given=meta_info, expected_type=dict)
-
-        if file_ext == 'pt':
-            if 'prefix' in meta_info and 'suffix' in meta_info:
-                obj.load_state_dict(to.load(osp.join(
-                    load_dir, f"{meta_info['prefix']}_{name}_{meta_info['suffix']}.{file_ext}")
-                ).state_dict())
-            elif 'prefix' in meta_info and 'suffix' not in meta_info:
-                obj.load_state_dict(to.load(osp.join(
-                    load_dir, f"{meta_info['prefix']}_{name}.{file_ext}")
-                ).state_dict())
-            elif 'prefix' not in meta_info and 'suffix' in meta_info:
-                obj.load_state_dict(to.load(osp.join(
-                    load_dir, f"{name}_{meta_info['suffix']}.{file_ext}")
-                ).state_dict())
-            else:
-                obj.load_state_dict(to.load(osp.join(load_dir, f"{name}.{file_ext}")).state_dict())
-
-        if file_ext == 'pkl':
-            if 'prefix' in meta_info and 'suffix' in meta_info:
-                obj = joblib.load(osp.join(load_dir, f"{meta_info['prefix']}_{name}_{meta_info['suffix']}.{file_ext}"))
-            elif 'prefix' in meta_info and 'suffix' not in meta_info:
-                obj = joblib.load(osp.join(load_dir, f"{meta_info['prefix']}_{name}.{file_ext}"))
-            elif 'prefix' not in meta_info and 'suffix' in meta_info:
-                obj = joblib.load(osp.join(load_dir, f"{name}_{meta_info['suffix']}.{file_ext}"))
-            else:
-                obj = joblib.load(osp.join(load_dir, f"{name}.{file_ext}"))
-
-    return obj
 
 
 class ReplayMemory:
@@ -297,6 +144,52 @@ class ReplayMemory:
             raise pyrado.TypeErr(msg='The replay memory is empty!')
         else:
             return sum(self._memory.rewards)/self._memory.length
+
+
+def until_thold_exceeded(thold: float, max_iter: int = None):
+    """
+    Designed to wrap a function and repeat it until the return value exceeds a threshold.
+
+    :param thold: threshold
+    :param max_iter: maximum number of iterations of the wrapped function, set to `None` to run the loop relentlessly
+    :return: wrapped function
+    """
+
+    def actual_decorator(trn_eval_fcn):
+        """
+        Designed to wrap a training + evaluation function and repeat it  it until the return value exceeds a threshold.
+
+        :param trn_eval_fcn: function to wrap
+        :return: wrapped function
+        """
+
+        @functools.wraps(trn_eval_fcn)
+        def wrapper_trn_eval_fcn(*args, **kwargs):
+            ret = -pyrado.inf
+            cnt_iter = 0
+            while ret <= thold:  # <= guarantees that we at least train once, even if thold is -inf
+                # Train and evaluate
+                ret = trn_eval_fcn(*args, **kwargs)
+                cnt_iter += 1
+
+                # Break if done
+                if ret >= thold:
+                    print_cbt(f'The policy exceeded the threshold {thold}.', 'g', True)
+                    break
+
+                # Break if max_iter is reached
+                if max_iter is not None and cnt_iter == max_iter:
+                    print_cbt(f'Exiting the training and evaluation loop after {max_iter} iterations.', 'y', True)
+                    break
+
+                # Else repeat training
+                print_cbt(f'The policy did not exceed the threshold {thold}. Repeating training and evaluation ...',
+                          'w', True)
+            return ret
+
+        return wrapper_trn_eval_fcn
+
+    return actual_decorator
 
 
 def num_iter_from_rollouts(ros: [Sequence[StepSequence], None],

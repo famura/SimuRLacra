@@ -32,8 +32,8 @@ Train an agent to solve the Half-Cheetah environment using Proximal Policy Optim
 import torch as to
 
 import pyrado
-from pyrado.algorithms.ppo import PPO
-from pyrado.algorithms.advantage import GAE
+from pyrado.algorithms.step_based.ppo import PPO
+from pyrado.algorithms.step_based.gae import GAE
 from pyrado.domain_randomization.domain_parameter import NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive

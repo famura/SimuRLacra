@@ -37,7 +37,8 @@ from tqdm import tqdm
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.utils import ReplayMemory, save_prefix_suffix, load_prefix_suffix
+from pyrado.algorithms.utils import ReplayMemory
+from pyrado.utils.saving_loading import save_prefix_suffix, load_prefix_suffix
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import EpsGreedyExplStrat
 from pyrado.logger.step import StepLogger, ConsolePrinter, CSVPrinter, TensorBoardPrinter
@@ -98,7 +99,7 @@ class DQL(Algorithm):
                    By default, the learning rate is constant.
         :param lr_scheduler: learning rate scheduler that does one step per epoch (pass through the whole data set)
         :param lr_scheduler_hparam: hyper-parameters for the learning rate scheduler
-        :param logger: logger for every step of the algorithm
+        :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         if not isinstance(env, Env):
             raise pyrado.TypeErr(given=env, expected_type=Env)
@@ -298,19 +299,9 @@ class DQL(Algorithm):
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
+        save_prefix_suffix(self._expl_strat.policy, 'policy', 'pt', self._save_dir, meta_info)
         save_prefix_suffix(self.target, 'target', 'pt', self._save_dir, meta_info)
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            joblib.dump(self._env, osp.join(self._save_dir, 'env.pkl'))
-
-    def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
-        # Get the directory to load from
-        ld = load_dir if load_dir is not None else self._save_dir
-
-        super().load_snapshot(ld, meta_info)
-        self.target = load_prefix_suffix(self.target, 'target', 'pt', ld, meta_info)
-
-        if meta_info is None:
-            # This algorithm instance is not a subroutine of another algorithm
-            self._env = joblib.load(osp.join(ld, 'env.pkl'))
+            save_prefix_suffix(self._env, 'env', 'pkl', self._save_dir, meta_info)

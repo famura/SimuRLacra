@@ -36,12 +36,13 @@ from torch.distributions.kl import kl_divergence
 from typing import Sequence
 
 import pyrado
-from pyrado.algorithms.advantage import GAE
+from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.utils import compute_action_statistics, save_prefix_suffix, load_prefix_suffix
+from pyrado.algorithms.utils import compute_action_statistics
+from pyrado.utils.saving_loading import save_prefix_suffix
 from pyrado.environments.base import Env
 from pyrado.policies.fnn import FNNPolicy
-from pyrado.algorithms.advantage import ValueFunctionSpace
+from pyrado.algorithms.step_based.gae import ValueFunctionSpace
 from pyrado.utils.data_types import EnvSpec
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 from pyrado.logger.step import StepLogger
@@ -142,7 +143,7 @@ class SVPG(Algorithm):
         :param min_steps: minimum number of state transitions sampled per policy update batch
         :param num_workers: number of environments for parallel sampling
         :param serial: serial mode can be switched off which can be used to partly control the flow of SVPG from outside
-        :param logger: logger for every step of the algorithm
+        :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         if not isinstance(env, Env):
             raise pyrado.TypeErr(given=env, expected_type=Env)
@@ -313,17 +314,11 @@ class SVPG(Algorithm):
         self.update_count += 1
 
     def save_snapshot(self, meta_info: dict = None):
+        super().save_snapshot(meta_info)
 
         for idx, p in enumerate(self.particles):
             save_prefix_suffix(p, f'particle_{idx}', 'pt', self._save_dir, meta_info)
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            joblib.dump(self._env, osp.join(self._save_dir, 'env.pkl'))
-
-    def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
-        # Get the directory to load from
-        ld = load_dir if load_dir is not None else self._save_dir
-
-        for idx in range(self.num_particles):
-            self.particles[idx] = load_prefix_suffix(self.particles[idx], f'particle_{idx}.pt', 'pt', ld, meta_info)
+            save_prefix_suffix(self._env, 'env', 'pkl', self._save_dir, meta_info)

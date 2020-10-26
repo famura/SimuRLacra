@@ -31,6 +31,7 @@ from torch.distributions.uniform import Uniform
 
 from pyrado.policies.base import Policy
 from pyrado.policies.base_recurrent import RecurrentPolicy
+from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import EnvSpec
 
 
@@ -115,3 +116,6 @@ class RecurrentDummyPolicy(RecurrentPolicy):
     def forward(self, obs: to.Tensor = None, hidden: to.Tensor = None) -> (to.Tensor, to.Tensor):
         # Observations and hidden states are ignored
         return self._distr.sample(), to.zeros(self._hidden_size)
+
+    def evaluate(self, rollout: StepSequence, hidden_states_name: str = 'hidden_states') -> to.Tensor:
+        raise NotImplemented

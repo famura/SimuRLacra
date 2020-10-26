@@ -26,13 +26,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import joblib
 import numpy as np
-import os.path as osp
 import torch as to
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
+from pyrado.utils.saving_loading import save_prefix_suffix
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate5DSim
 from pyrado.environment_wrappers.utils import inner_env
@@ -179,8 +178,8 @@ class LQR(Algorithm):
         return (self.eigvals < 0).all()
 
     def save_snapshot(self, meta_info: dict = None):
-        super().save_snapshot()
+        super().save_snapshot(meta_info)
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            joblib.dump(self._env, osp.join(self._save_dir, 'env.pkl'))
+            save_prefix_suffix(self._env, 'env', 'pkl', self._save_dir, meta_info)

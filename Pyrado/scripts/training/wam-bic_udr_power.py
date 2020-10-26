@@ -32,8 +32,8 @@ Train an agent to solve the WAM Ball-in-cup environment using Policy learning by
 import numpy as np
 
 import pyrado
-from pyrado.algorithms.power import PoWER
-from pyrado.algorithms.udr import UDR
+from pyrado.algorithms.episodic.power import PoWER
+from pyrado.algorithms.meta.udr import UDR
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam, NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive

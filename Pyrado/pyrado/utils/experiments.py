@@ -35,18 +35,18 @@ from typing import Callable, Any, Optional, Union
 from pyrado.algorithms.timeseries_prediction import TSPred
 
 import pyrado
-from pyrado.algorithms.a2c import A2C
-from pyrado.algorithms.bayrn import BayRn
-from pyrado.algorithms.cem import CEM
-from pyrado.algorithms.epopt import EPOpt
-from pyrado.algorithms.hc import HC
-from pyrado.algorithms.nes import NES
-from pyrado.algorithms.pepg import PEPG
-from pyrado.algorithms.power import PoWER
-from pyrado.algorithms.ppo import PPO, PPO2
-from pyrado.algorithms.reps import REPS
-from pyrado.algorithms.sac import SAC
-from pyrado.algorithms.spota import SPOTA
+from pyrado.algorithms.step_based.a2c import A2C
+from pyrado.algorithms.meta.bayrn import BayRn
+from pyrado.algorithms.episodic.cem import CEM
+from pyrado.algorithms.meta.epopt import EPOpt
+from pyrado.algorithms.episodic.hc import HC
+from pyrado.algorithms.episodic.nes import NES
+from pyrado.algorithms.episodic.pepg import PEPG
+from pyrado.algorithms.episodic.power import PoWER
+from pyrado.algorithms.step_based.ppo import PPO, PPO2
+from pyrado.algorithms.episodic.reps import REPS
+from pyrado.algorithms.step_based.sac import SAC
+from pyrado.algorithms.meta.spota import SPOTA
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
@@ -54,7 +54,6 @@ from pyrado.environment_wrappers.downsampling import DownsamplingWrapper
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper, ObsRunningNormWrapper
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
 from pyrado.environment_wrappers.utils import typed_env
-from pyrado.environments.base import Env
 from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.experiment import load_dict_from_yaml

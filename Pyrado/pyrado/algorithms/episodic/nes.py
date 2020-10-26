@@ -29,7 +29,7 @@
 import numpy as np
 import torch as to
 
-from pyrado.algorithms.parameter_exploring import ParameterExploring
+from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import NormalParamNoise, SymmParamExplStrat
 from pyrado.logger.step import StepLogger

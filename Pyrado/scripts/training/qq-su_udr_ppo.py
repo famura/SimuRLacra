@@ -32,10 +32,10 @@ Train an agent to solve the Qube swing-up task using Uniform Domain Randomizatio
 import torch as to
 
 import pyrado
-from pyrado.algorithms.advantage import GAE
-from pyrado.algorithms.udr import UDR
+from pyrado.algorithms.step_based.gae import GAE
+from pyrado.algorithms.meta.udr import UDR
 from pyrado.spaces import ValueFunctionSpace
-from pyrado.algorithms.ppo import PPO
+from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.domain_randomization.default_randomizers import get_default_randomizer
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive

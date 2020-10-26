@@ -32,7 +32,7 @@ Script to get the maximizer of a GP's posterior mean given saved data from a Bay
 import os.path as osp
 import torch as to
 
-from pyrado.algorithms.bayrn import BayRn
+from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.math import UnitCubeProjector

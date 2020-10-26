@@ -32,21 +32,14 @@ Train an agent to solve the Qube swing-up task using Bayesian Domain Randomizati
 import torch as to
 
 import pyrado
-from pyrado.algorithms.advantage import GAE
-from pyrado.algorithms.power import PoWER
-from pyrado.algorithms.ppo import PPO
-from pyrado.algorithms.bayrn import BayRn
+from pyrado.algorithms.episodic.power import PoWER
+from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.domain_randomization.default_randomizers import get_zero_var_randomizer, get_default_domain_param_map_qq
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.environment_specific import QQubeSwingUpAndBalanceCtrl
-from pyrado.policies.features import FeatureStack, identity_feat, sign_feat, abs_feat, squared_feat, MultFeat
-from pyrado.policies.fnn import FNNPolicy
-from pyrado.policies.linear import LinearPolicy
-from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.experiments import wrap_like_other_env
 
 
@@ -81,14 +74,14 @@ if __name__ == '__main__':
     policy_hparam = dict(energy_gain=0.587, ref_energy=0.827, acc_max=10.)
     policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec, **policy_hparam)
     subrtn_hparam = dict(
-        max_iter=10,
-        pop_size=50,
+        max_iter=3,
+        pop_size=10,
         num_rollouts=6,
         num_is_samples=5,
         expl_std_init=2.0,
         expl_std_min=0.02,
         symm_sampling=False,
-        num_workers=32,
+        num_workers=4,
     )
     subrtn = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
 
@@ -153,10 +146,10 @@ if __name__ == '__main__':
         acq_param=dict(beta=0.25),
         acq_restarts=500,
         acq_samples=1000,
-        num_init_cand=5,
+        num_init_cand=2,
         warmstart=False,
-        num_eval_rollouts_real=100,  # sim-2-sim
-        thold_succ_subrtn=300,
+        num_eval_rollouts_real=10,  # sim-2-sim
+        # thold_succ_subrtn=300,
     )
 
     # Save the environments and the hyper-parameters (do it before the init routine of BayRn)

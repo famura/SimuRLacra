@@ -37,15 +37,14 @@ from tqdm import tqdm
 from typing import Callable, Union
 
 import pyrado
-from pyrado.algorithms.parameter_exploring import ParameterExploring
+from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
 from pyrado.algorithms.utils import get_grad_via_torch
 from pyrado.policies.domain_distribution import DomainDistrParamPolicy
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import NormalParamNoise, SymmParamExplStrat
 from pyrado.policies.linear import LinearPolicy
-from pyrado.utils.input_output import print_cbt
+from pyrado.utils.input_output import print_cbt, print_cbt_once
 from pyrado.utils.math import logmeanexp
-from pyrado.utils.optimizers import GSS
 from pyrado.policies.base import Policy
 from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult
 
@@ -53,6 +52,9 @@ from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResul
 class REPS(ParameterExploring):
     """
     Episodic variant of Relative Entropy Policy Search (REPS)
+
+    .. note::
+        REPS was designed for linear policies.
 
     .. seealso::
         [1] J. Peters, K. Mülling, Y. Altuen, "Relative Entropy Policy Search", AAAI, 2010
@@ -102,7 +104,7 @@ class REPS(ParameterExploring):
         :param lr_dual: learning rate for the dual's optimizer (ignored if `grad_free_optim = True`)
         """
         if not isinstance(policy, (LinearPolicy, DomainDistrParamPolicy)):
-            print_cbt('REPS was designed for linear policies.', 'y')
+            print_cbt_once('REPS was designed for linear policies.', 'y')
 
         # Call ParameterExploring's constructor
         super().__init__(

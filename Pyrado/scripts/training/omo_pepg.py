@@ -32,7 +32,7 @@ Train an agent to solve the One-Mass-Oscillator environment using Parameter-Expl
 import numpy as np
 
 import pyrado
-from pyrado.algorithms.pepg import PEPG
+from pyrado.algorithms.episodic.pepg import PEPG
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml

@@ -30,7 +30,7 @@ import numpy as np
 import torch as to
 
 import pyrado
-from pyrado.algorithms.parameter_exploring import ParameterExploring
+from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
 from pyrado.environments.base import Env
 from pyrado.policies.base import Policy
 from pyrado.utils.input_output import print_cbt

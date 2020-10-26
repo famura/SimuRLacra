@@ -31,9 +31,9 @@ Train an agent to solve the Quanser Ball-Balancer environment using Ensemble Pol
 """
 from numpy import pi
 
-from pyrado.algorithms.epopt import EPOpt
-from pyrado.algorithms.ppo import PPO
-from pyrado.algorithms.advantage import GAE
+from pyrado.algorithms.meta.epopt import EPOpt
+from pyrado.algorithms.step_based.ppo import PPO
+from pyrado.algorithms.step_based.gae import GAE
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim

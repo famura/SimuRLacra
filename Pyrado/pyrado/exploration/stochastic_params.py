@@ -125,7 +125,11 @@ class SymmParamExplStrat(StochasticParamExplStrat):
 
         :param name: name of the attribute
         """
-        # getattr raises an AttributeError if not found, just as this method should.
+        if name == "wrapped":
+            # Can happen while unpickling, when the wrapped attr isn't set yet. Since it should normally reside in
+            # __dict__, it's correct to raise a missing attr here
+            raise AttributeError
+        # The getattr method raises an AttributeError if not found, just as this method should
         return getattr(self.wrapped, name)
 
 

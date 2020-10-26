@@ -25,6 +25,7 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.environment_wrappers.adversarial import AdversarialDynamicsWrapper, AdversarialStateWrapper, \
@@ -94,13 +95,12 @@ class ARPL(Algorithm):
         :param obs_phi: the probability of applying observation noise
         :param torch_observation: a function to provide a differentiable observation
         :param num_workers: number of environments for parallel sampling
-        :param logger: the logger
+        :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         assert isinstance(subrtn, Algorithm)
         assert isinstance(max_iter, int) and max_iter > 0
 
         super().__init__(save_dir, max_iter, policy, logger)
-        # Get the randomized environment (recommended to make it the most outer one in the chain)
 
         # Initialize adversarial wrappers
         if apply_dynamics_noise:
@@ -119,7 +119,10 @@ class ARPL(Algorithm):
             min_steps=steps_num,
             min_rollouts=num_rollouts,
         )
+
+        # Subroutine
         self._subrtn = subrtn
+        self._subrtn.save_name = 'subrtn'
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
         rollouts = self.sampler.sample()
@@ -139,18 +142,10 @@ class ARPL(Algorithm):
         self._subrtn.make_snapshot(snapshot_mode, ret_avg.item())
 
     def save_snapshot(self, meta_info: dict = None):
-        if meta_info is None:
-            # This algorithm instance is not a subroutine of a meta-algorithm
-            self._subrtn.save_snapshot(meta_info=None)
-        else:
-            raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
-
-    def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
-        # Get the directory to load from
-        ld = load_dir if load_dir is not None else self._save_dir
+        super().save_snapshot(meta_info)
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of a meta-algorithm
-            self._subrtn.load_snapshot(ld, meta_info)
+            self._subrtn.save_snapshot(meta_info)
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')

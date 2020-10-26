@@ -33,11 +33,11 @@ Train an agent to solve the Ball-on-Beam environment using Relative Entropy Sear
     The hyper-parameters are not tuned at all!
 """
 import pyrado
-from pyrado.algorithms.reps import REPS
+from pyrado.algorithms.episodic.reps import REPS
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.features import FeatureStack, RandFourierFeat, RBFFeat, identity_feat, sin_feat
+from pyrado.policies.features import FeatureStack, identity_feat, sin_feat
 from pyrado.policies.linear import LinearPolicy
 from pyrado.utils.argparser import get_argparser
 

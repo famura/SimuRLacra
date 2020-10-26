@@ -29,14 +29,11 @@
 """
 Train an agent to solve the Qube swing-up task using Policy learning by Weighting Exploration with the Returns.
 """
-from pyrado.algorithms.power import PoWER
+from pyrado.algorithms.episodic.power import PoWER
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.environment_specific import QQubeSwingUpAndBalanceCtrl
-from pyrado.policies.features import FeatureStack, identity_feat, sign_feat, abs_feat, squared_feat, qubic_feat, \
-    bell_feat, RandFourierFeat, MultFeat
-from pyrado.policies.linear import LinearPolicy
 from pyrado.utils.argparser import get_argparser
 
 

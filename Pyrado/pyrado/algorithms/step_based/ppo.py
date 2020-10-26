@@ -34,8 +34,8 @@ from tqdm import tqdm
 from typing import Sequence
 
 import pyrado
-from pyrado.algorithms.actor_critic import ActorCritic
-from pyrado.algorithms.advantage import GAE
+from pyrado.algorithms.step_based.actor_critic import ActorCritic
+from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.utils import compute_action_statistics, num_iter_from_rollouts
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat

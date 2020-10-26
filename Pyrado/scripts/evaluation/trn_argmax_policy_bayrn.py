@@ -30,12 +30,12 @@
 Script to get the maximizer of a GP's posterior given saved data from a BayRn experiment
 """
 import pyrado
-from pyrado.algorithms.advantage import GAE
-from pyrado.algorithms.bayrn import BayRn
-from pyrado.algorithms.cem import CEM
-from pyrado.algorithms.nes import NES
-from pyrado.algorithms.power import PoWER
-from pyrado.algorithms.ppo import PPO, PPO2
+from pyrado.algorithms.step_based.gae import GAE
+from pyrado.algorithms.meta.bayrn import BayRn
+from pyrado.algorithms.episodic.cem import CEM
+from pyrado.algorithms.episodic.nes import NES
+from pyrado.algorithms.episodic.power import PoWER
+from pyrado.algorithms.step_based.ppo import PPO, PPO2
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment

@@ -36,15 +36,14 @@ from optuna.pruners import MedianPruner
 from torch.optim import lr_scheduler
 
 import pyrado
-from pyrado.algorithms.ppo import PPO
-from pyrado.algorithms.advantage import GAE
+from pyrado.algorithms.step_based.ppo import PPO
+from pyrado.algorithms.step_based.gae import GAE
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import save_list_of_dicts_to_yaml, setup_experiment
 from pyrado.logger.step import create_csv_step_logger
 from pyrado.policies.fnn import FNNPolicy
-from pyrado.policies.rnn import GRUPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec

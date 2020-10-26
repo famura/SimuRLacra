@@ -32,13 +32,12 @@ Simulation-based Policy Optimization with Transferability Assessment.
 """
 from copy import deepcopy
 from numpy import pi
-import torch as to
 
 import pyrado
-from pyrado.algorithms.advantage import GAE
+from pyrado.algorithms.step_based.gae import GAE
 from pyrado.spaces import ValueFunctionSpace
-from pyrado.algorithms.ppo import PPO
-from pyrado.algorithms.spota import SPOTA
+from pyrado.algorithms.step_based.ppo import PPO
+from pyrado.algorithms.meta.spota import SPOTA
 from pyrado.domain_randomization.default_randomizers import get_conservative_randomizer
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
@@ -47,8 +46,7 @@ from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.observation_noise import GaussianObsNoiseWrapper
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.fnn import FNNPolicy
-from pyrado.policies.rnn import RNNPolicy, LSTMPolicy, GRUPolicy
+from pyrado.policies.rnn import GRUPolicy
 from pyrado.sampling.sequences import *
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec

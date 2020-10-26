@@ -48,6 +48,7 @@ from pyrado.policies.features import *
 from pyrado.policies.fnn import FNNPolicy
 from pyrado.policies.linear import LinearPolicy
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
+from pyrado.policies.neural_fields import NFPolicy
 from pyrado.policies.rnn import RNNPolicy, GRUPolicy, LSTMPolicy
 from pyrado.policies.time import TimePolicy, TraceableTimePolicy
 from pyrado.policies.two_headed import TwoHeadedFNNPolicy, TwoHeadedGRUPolicy
@@ -546,6 +547,11 @@ class DefaultPolicies:
     @staticmethod
     def adn_policy(env):
         return ADNPolicy(env.spec, dt=env.dt, activation_nonlin=to.sigmoid, potentials_dyn_fcn=pd_cubic)
+
+    @staticmethod
+    def adn_policy(env):
+        return NFPolicy(env.spec, dt=env.dt, hidden_size=5, mirrored_conv_weights=True, tau_learnable=True,
+                        init_param_kwargs=dict(bell=True), kappa_learnable=True, potential_init_learnable=True)
 
     @staticmethod
     def thfnn_policy(env):

@@ -35,12 +35,12 @@ from torch.optim import lr_scheduler
 import pyrado
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
-from pyrado.algorithms.a2c import A2C
-from pyrado.algorithms.advantage import GAE
+from pyrado.algorithms.step_based.a2c import A2C
+from pyrado.algorithms.step_based.gae import GAE
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.features import FeatureStack, identity_feat, sin_feat, RandFourierFeat
+from pyrado.policies.features import FeatureStack, identity_feat, sin_feat
 from pyrado.policies.fnn import FNNPolicy
 from pyrado.policies.linear import LinearPolicy
 
