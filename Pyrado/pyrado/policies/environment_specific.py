@@ -227,7 +227,7 @@ class QBallBalancerPDCtrl(Policy):
 class QCartPoleSwingUpAndBalanceCtrl(Policy):
     """ Swing-up and balancing controller for the Quanser Cart-Pole """
 
-    name: str = 'qcp_sub'
+    name: str = 'qcp-sub'
 
     def __init__(self,
                  env_spec: EnvSpec,
@@ -314,7 +314,7 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
         Extracted Quanser's values from q_qube2_swingup.mdl
     """
 
-    name: str = 'qq_sub'
+    name: str = 'qq-sub'
 
     def __init__(self,
                  env_spec: EnvSpec,
