@@ -50,7 +50,7 @@ if __name__ == '__main__':
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(QQubeSwingUpSim.name,
                               f'{BayRn.name}-{PoWER.name}_{QQubeSwingUpAndBalanceCtrl.name}_sim2sim',
-                              f'rand-Mp-Mr_seed-{args.seed}_ucb')
+                              f'rand-Mp-Mr_seed-{args.seed}')
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)

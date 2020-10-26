@@ -53,9 +53,7 @@ if __name__ == '__main__':
     args = get_argparser().parse_args()
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment()
-    if not osp.isdir(ex_dir):
-        raise pyrado.PathErr(given=ex_dir)
+    ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
 
     # Load the environment randomizer
     env_sim = joblib.load(osp.join(ex_dir, 'env_sim.pkl'))

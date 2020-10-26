@@ -30,8 +30,9 @@
 Simulate (with animation) a rollout in a live perturbed environment.
 """
 import pyrado
+from pyrado.domain_randomization.default_randomizers import get_default_randomizer
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
-from pyrado.domain_randomization.utils import print_domain_params, get_default_randomizer
+from pyrado.domain_randomization.utils import print_domain_params
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.logger.experiment import ask_for_experiment
@@ -47,7 +48,7 @@ if __name__ == '__main__':
     args = get_argparser().parse_args()
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment()
+    ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
 
     # Get the simulation environment
     env, policy, kwout = load_experiment(ex_dir, args)
@@ -71,7 +72,7 @@ if __name__ == '__main__':
     done, state, param = False, None, None
     while not done:
         ro = rollout(env, policy, render_mode=RenderMode(text=args.verbose, video=True), eval=True,
-                     reset_kwargs=dict(domain_param=param, init_state=state))  # calls env.reset()
+                     reset_kwargs=dict(domain_param=param, init_state=state))
         print_domain_params(env.domain_param)
         print_cbt(f'Return: {ro.undiscounted_return()}', 'g', bright=True)
         done, state, param = after_rollout_query(env, policy, ro)

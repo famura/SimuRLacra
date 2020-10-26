@@ -55,8 +55,8 @@ if __name__ == '__main__':
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{SimOpt.name}-{NES.name}_{PPO.name}_{FNNPolicy.name}')
-    num_workers = 12
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{SimOpt.name}-{NES.name}-{PPO.name}_{FNNPolicy.name}')
+    num_workers = 16
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)

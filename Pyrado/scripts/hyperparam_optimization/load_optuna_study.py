@@ -38,14 +38,18 @@ from optuna.structs import StudyDirection
 from prettyprinter import pprint
 
 import pyrado
-from pyrado.logger.experiment import ask_for_experiment
 from matplotlib import pyplot as plt
+from pyrado.logger.experiment import ask_for_experiment
+from pyrado.utils.argparser import get_argparser
 from pyrado.utils.input_output import print_cbt
 
 
 if __name__ == '__main__':
+    # Parse command line arguments
+    args = get_argparser().parse_args()
+
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment()
+    ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
 
     # Find and load the Optuna data base
     study, study_name = None, None

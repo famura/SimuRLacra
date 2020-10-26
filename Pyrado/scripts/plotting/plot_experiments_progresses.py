@@ -46,8 +46,7 @@ if __name__ == '__main__':
     plt.rc('text', usetex=args.use_tex)
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment()
-    # ex_dir = input('Enter a root directory that contains one or more experiment directories:\n')
+    ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
 
     # Get all sub-directories (these should contain the policy files)
     dirs = [tmp[0] for tmp in os.walk(ex_dir)][1:]

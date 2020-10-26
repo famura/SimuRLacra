@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     # Directory of reference (BayRn) experiment
     ref_ex_name = '2020-09-16_13-46-57--rand-rl-rd-bm-js-jd'
-    ref_ex_dir = osp.join(pyrado.EXP_DIR, WAMBallInCupSim.name, f'{BayRn.name}_{PoWER.name}', ref_ex_name)
+    ref_ex_dir = osp.join(pyrado.EXP_DIR, WAMBallInCupSim.name, f'{BayRn.name}-{PoWER.name}', ref_ex_name)
 
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(

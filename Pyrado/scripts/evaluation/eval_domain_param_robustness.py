@@ -51,9 +51,8 @@ if __name__ == '__main__':
         args.max_steps = 600
         print_cbt(f'Set maximum number of time steps to {args.max_steps}', 'y')
 
-    # ex_dir = input('Enter a root directory that contains one or more experiment directories:\n')
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment()
+    ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
     dirs = [tmp[0] for tmp in os.walk(ex_dir)][1:]
     num_policies = len(dirs)
     print(f'Found {num_policies} policies.')
