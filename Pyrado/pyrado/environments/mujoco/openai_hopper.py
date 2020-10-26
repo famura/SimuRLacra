@@ -26,11 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import os.path as osp
-from typing import Optional
-
 import numpy as np
+import os.path as osp
 from init_args_serializer import Serializable
+from typing import Optional
 
 import pyrado
 from pyrado.environments.mujoco.base import MujocoSimEnv
@@ -42,7 +41,7 @@ from pyrado.tasks.reward_functions import ForwardVelocityRewFcn, CompoundRewFcn,
 
 class HopperSim(MujocoSimEnv, Serializable):
     """
-    The Hopper MuJoCo simulation environment where a planar simplified one-legged robot tries to run forward.
+    The Hopper (v3) MuJoCo simulation environment where a planar simplified one-legged robot tries to run forward.
 
     .. note::
         In contrast to the OpenAI Gym MoJoCo environments, Pyrado enables the randomization of the hoppers "healthy"
@@ -50,16 +49,17 @@ class HopperSim(MujocoSimEnv, Serializable):
         original environment, the `terminate_when_unhealthy` is `True` by default.
 
     .. seealso::
-        https://github.com/openai/gym/blob/master/gym/envs/mujoco/hopper_v3.py
+        [1] https://github.com/openai/gym/blob/master/gym/envs/mujoco/hopper_v3.py
     """
 
     name: str = 'hop'
 
-    def __init__(self, frame_skip: int = 5, max_steps: int = 500, task_args: Optional[dict] = None):
+    def __init__(self, frame_skip: int = 5, max_steps: int = 1000, task_args: Optional[dict] = None):
         """
         Constructor
 
-        :param frame_skip: number of frames for holding the same action, i.e. multiplier of the time step size
+        :param frame_skip: number of frames for holding the same action, i.e. multiplier of the time step size,
+                           directly passed to `self.sim`
         :param max_steps: max number of simulation time steps
         :param task_args: arguments for the task construction, e.g `dict(fwd_rew_weight=1.)`
         """
@@ -123,13 +123,12 @@ class HopperSim(MujocoSimEnv, Serializable):
 
         rew_fcn = CompoundRewFcn([
             ForwardVelocityRewFcn(self._dt, idx_fwd=0, **task_args),
-            PlusOnePerStepRewFcn()  # equivalent to the "healthy_reward"
+            PlusOnePerStepRewFcn()  # equivalent to the "healthy_reward" in [1]
         ])
         return GoallessTask(self.spec, rew_fcn)
 
     def _mujoco_step(self, act: np.ndarray) -> dict:
         self.sim.data.ctrl[:] = act
-        # Changelog: frame_skip is now directly passed to self.sim
         self.sim.step()
 
         pos = self.sim.data.qpos.copy()

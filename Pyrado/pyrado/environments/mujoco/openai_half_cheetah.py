@@ -26,11 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import os.path as osp
-from typing import Optional
-
 import numpy as np
+import os.path as osp
 from init_args_serializer import Serializable
+from typing import Optional
 
 import pyrado
 from pyrado.environments.mujoco.base import MujocoSimEnv
@@ -42,7 +41,7 @@ from pyrado.tasks.reward_functions import ForwardVelocityRewFcn
 
 class HalfCheetahSim(MujocoSimEnv, Serializable):
     """
-    The Half-Cheetah MuJoCo simulation environment where a planar simplified cheetah-like robot tries to run forward.
+    The Half-Cheetah (v3) MuJoCo simulation environment where a planar cheetah-like robot tries to run forward.
 
     .. seealso::
         https://github.com/openai/gym/blob/master/gym/envs/mujoco/half_cheetah.py
@@ -50,11 +49,12 @@ class HalfCheetahSim(MujocoSimEnv, Serializable):
 
     name: str = 'cth'
 
-    def __init__(self, frame_skip: int = 5, max_steps: int = 500, task_args: Optional[dict] = None):
+    def __init__(self, frame_skip: int = 5, max_steps: int = 1000, task_args: Optional[dict] = None):
         """
         Constructor
 
-        :param frame_skip: number of frames for holding the same action, i.e. multiplier of the time step size
+        :param frame_skip: number of frames for holding the same action, i.e. multiplier of the time step size,
+                           directly passed to `self.sim`
         :param max_steps: max number of simulation time steps
         :param task_args: arguments for the task construction, e.g `dict(fwd_rew_weight=1.)`
         """
@@ -109,7 +109,6 @@ class HalfCheetahSim(MujocoSimEnv, Serializable):
 
     def _mujoco_step(self, act: np.ndarray) -> dict:
         self.sim.data.ctrl[:] = act
-        # Changelog: frame_skip is now directly passed to self.sim
         self.sim.step()
 
         pos = self.sim.data.qpos.copy()
