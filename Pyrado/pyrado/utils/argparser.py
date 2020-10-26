@@ -57,9 +57,6 @@ def get_argparser() -> argparse.ArgumentParser:
     parser.add_argument('--load_all', action='store_true', default=False,
                         help="load all quantities e.g. policies (default: False)")
 
-    parser.add_argument('--load_name', type=str, default='policy',
-                        help="name of the policy to load without type extension, (default: 'policy')")
-
     parser.add_argument('-d', '--ex_dir', type=str, nargs='?',
                         help="path to the experiment directory to load from")
 
@@ -94,7 +91,8 @@ def get_argparser() -> argparse.ArgumentParser:
                         help="remove all domain randomization wrappers (default: False)")
 
     parser.add_argument('--policy_name', type=str, nargs='?', default='policy',
-                        help="(partial) name of the policy to load, e.g. 'argmax', or 'iter_0' (default: policy)")
+                        help="(partial) name of the policy to load, e.g. 'argmax_policy', or 'iter_0_policy' "
+                             "(default: policy)")
 
     parser.add_argument('-s', '--save_figures', action='store_true', default=False,
                         help="save all generated figures (default: False)")
@@ -107,6 +105,10 @@ def get_argparser() -> argparse.ArgumentParser:
 
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', default=False,
                         help="display additional information (default: False)")
+
+    parser.add_argument('--valuefcn_name', type=str, nargs='?', default='policy',
+                        help="(partial) name of the value function to load, e.g. 'argmax_valuefcn', or "
+                             "'iter_0_valuefcn' (default: valuefcn)")
 
     parser.add_argument('--warmstart', dest='warmstart', action='store_true',
                         help="start a procedure with initialized parameters (e.g. for the policy")

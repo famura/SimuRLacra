@@ -27,29 +27,26 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os.path as osp
-import joblib
 import pandas as pd
 import torch as to
-from typing import Callable, Any, Optional, Union
-
-from pyrado.algorithms.timeseries_prediction import TSPred
+from typing import Callable, Any, Union
 
 import pyrado
-from pyrado.algorithms.step_based.a2c import A2C
+from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
 from pyrado.algorithms.meta.bayrn import BayRn
-from pyrado.algorithms.episodic.cem import CEM
 from pyrado.algorithms.meta.epopt import EPOpt
-from pyrado.algorithms.episodic.hc import HC
-from pyrado.algorithms.episodic.nes import NES
-from pyrado.algorithms.episodic.pepg import PEPG
-from pyrado.algorithms.episodic.power import PoWER
-from pyrado.algorithms.step_based.ppo import PPO, PPO2
-from pyrado.algorithms.episodic.reps import REPS
-from pyrado.algorithms.step_based.sac import SAC
+from pyrado.algorithms.meta.simopt import SimOpt
 from pyrado.algorithms.meta.spota import SPOTA
+from pyrado.algorithms.meta.udr import UDR
+from pyrado.algorithms.step_based.actor_critic import ActorCritic
+from pyrado.algorithms.step_based.dql import DQL
+from pyrado.algorithms.step_based.sac import SAC
+from pyrado.algorithms.step_based.svpg import SVPG
+from pyrado.algorithms.timeseries_prediction import TSPred
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.base import EnvWrapper
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer, DomainRandWrapperLive
 from pyrado.environment_wrappers.downsampling import DownsamplingWrapper
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper, ObsRunningNormWrapper
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
@@ -61,9 +58,10 @@ from pyrado.policies.adn import pd_linear, pd_cubic, pd_capacity_21_abs, pd_capa
     pd_capacity_32_abs
 from pyrado.policies.base import Policy
 from pyrado.utils.input_output import print_cbt
+from pyrado.utils.saving_loading import load_prefix_suffix
 
 
-def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper], Policy, Optional[dict]):
+def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper], Policy, dict):
     """
     Load the (training) environment and the policy.
     This helper function first tries to read the hyper-parameters yaml-file in the experiment's directory to infer
@@ -73,144 +71,152 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
     :param args: arguments from the argument parser
     :return: environment, policy, and optional output (e.g. valuefcn)
     """
-    hparams_file_name = 'hyperparams.yaml'
-    env, policy, kwout = None, None, dict()
+    env, policy, extra = None, None, dict()
 
+    # Hyper-parameters
+    hparams_file_name = 'hyperparams.yaml'
     try:
         hparams = load_dict_from_yaml(osp.join(ex_dir, hparams_file_name))
-        kwout['hparams'] = hparams
-
-        # Check which algorithm has been used for training, i.e. what can be loaded, by crawing the hyper-parameters
-        # First check meta algorithms so they don't get masked by their subroutines
-        if SPOTA.name in hparams.get('algo_name', ''):
-            # Environment
-            env = joblib.load(osp.join(ex_dir, 'init_env.pkl'))
-            typed_env(env, DomainRandWrapperBuffer).fill_buffer(100)
-            print_cbt(f"Loaded {osp.join(ex_dir, 'init_env.pkl')} and filled it with 100 random instances.", 'g')
-            # Policy
-            if args.iter == -1:
-                policy = to.load(osp.join(ex_dir, 'final_policy_cand.pt'))
-                print_cbt(f"Loaded {osp.join(ex_dir, 'final_policy_cand.pt')}", 'g')
-            else:
-                policy = to.load(osp.join(ex_dir, f'iter_{args.iter}_policy_cand.pt'))
-                print_cbt(f"Loaded {osp.join(ex_dir, f'iter_{args.iter}_policy_cand.pt')}", 'g')
-            # Value function (optional)
-            if any([a.name in hparams.get('subrtn_name', '') for a in [PPO, PPO2, A2C]]):
-                try:
-                    kwout['value_fcn'] = to.load(osp.join(ex_dir, 'final_valuefcn.pt'))
-                    print_cbt(f"Loaded {osp.join(ex_dir, 'final_valuefcn.pt')}", 'g')
-                except FileNotFoundError:
-                    kwout['value_fcn'] = to.load(osp.join(ex_dir, 'valuefcn.pt'))
-                    print_cbt(f"Loaded {osp.join(ex_dir, 'valuefcn.pt')}", 'g')
-
-        elif BayRn.name in hparams.get('algo_name', ''):
-            # Environment
-            env = joblib.load(osp.join(ex_dir, 'env_sim.pkl'))
-            print_cbt(f"Loaded {osp.join(ex_dir, 'env_sim.pkl')}.", 'g')
-            if hasattr(env, 'randomizer'):
-                last_cand = to.load(osp.join(ex_dir, 'candidates.pt'))[-1, :]
-                env.adapt_randomizer(last_cand.numpy())
-                print_cbt(f'Loaded the domain randomizer\n{env.randomizer}', 'w')
-                # Policy
-                policy = to.load(osp.join(ex_dir, f'{args.load_name}.pt'))
-                print_cbt(f"Loaded {osp.join(ex_dir, f'{args.load_name}.pt')}", 'g')
-            # Value function (optional)
-            if any([a.name in hparams.get('subrtn_name', '') for a in [PPO, PPO2, A2C]]):
-                try:
-                    kwout['value_fcn'] = to.load(osp.join(ex_dir, 'final_valuefcn.pt'))
-                    print_cbt(f"Loaded {osp.join(ex_dir, 'final_valuefcn.pt')}", 'g')
-                except FileNotFoundError:
-                    kwout['value_fcn'] = to.load(osp.join(ex_dir, 'valuefcn.pt'))
-                    print_cbt(f"Loaded {osp.join(ex_dir, 'valuefcn.pt')}", 'g')
-
-        elif EPOpt.name in hparams.get('algo_name', ''):
-            # Environment
-            env = joblib.load(osp.join(ex_dir, 'env.pkl'))
-            # Policy
-            policy = to.load(osp.join(ex_dir, 'policy.pt'))
-            print_cbt(f"Loaded {osp.join(ex_dir, 'policy.pt')}", 'g')
-
-        elif any([a.name in hparams.get('algo_name', '') for a in [PPO, PPO2, A2C]]):
-            # Environment
-            env = joblib.load(osp.join(ex_dir, 'env.pkl'))
-            # Policy
-            policy = to.load(osp.join(ex_dir, 'policy.pt'))
-            print_cbt(f"Loaded {osp.join(ex_dir, 'policy.pt')}", 'g')
-            # Value function
-            kwout['value_fcn'] = to.load(osp.join(ex_dir, 'valuefcn.pt'))
-            print_cbt(f"Loaded {osp.join(ex_dir, 'valuefcn.pt')}", 'g')
-
-        elif SAC.name in hparams.get('algo_name', ''):
-            # Environment
-            env = joblib.load(osp.join(ex_dir, 'env.pkl'))
-            # Policy
-            policy = to.load(osp.join(ex_dir, 'policy.pt'))
-            print_cbt(f"Loaded {osp.join(ex_dir, 'policy.pt')}", 'g')
-            # Target value functions
-            kwout['target1'] = to.load(osp.join(ex_dir, 'target1.pt'))
-            kwout['target2'] = to.load(osp.join(ex_dir, 'target2.pt'))
-            print_cbt(f"Loaded {osp.join(ex_dir, 'target1.pt')} and {osp.join(ex_dir, 'target2.pt')}", 'g')
-
-        elif any([a.name in hparams.get('algo_name', '') for a in [HC, PEPG, NES, REPS, PoWER, CEM]]):
-            # Environment
-            env = joblib.load(osp.join(ex_dir, 'env.pkl'))
-            # Policy
-            policy = to.load(osp.join(ex_dir, 'policy.pt'))
-            print_cbt(f"Loaded {osp.join(ex_dir, 'policy.pt')}", 'g')
-
-        elif TSPred.name in hparams.get('algo_name', ''):
-            # Dataset
-            kwout['dataset'] = to.load(osp.join(ex_dir, 'dataset.pt'))
-            # Policy
-            policy = to.load(osp.join(ex_dir, 'policy.pt'))
-
-        else:
-            raise KeyError('No matching algorithm name found during loading the experiment.'
-                           'Check for the algo_name field in the yaml-file.')
-
+        extra['hparams'] = hparams
     except (FileNotFoundError, KeyError):
         print_cbt(f'Did not find {hparams_file_name} in {ex_dir} or could not crawl the loaded hyper-parameters.',
                   'y', bright=True)
 
-        try:
-            # Results of a standard algorithm
-            env = joblib.load(osp.join(ex_dir, 'env.pkl'))
-            policy = to.load(osp.join(ex_dir, 'policy.pt'))
-            print_cbt(f"Loaded {osp.join(ex_dir, 'policy.pt')}", 'g')
-        except FileNotFoundError:
-            try:
-                # Results of SPOTA
-                env = joblib.load(osp.join(ex_dir, 'init_env.pkl'))
-                typed_env(env, DomainRandWrapperBuffer).fill_buffer(100)
-                print_cbt(f"Loaded {osp.join(ex_dir, 'init_env.pkl')} and filled it with 100 random instances.", 'g')
-            except FileNotFoundError:
-                # Results of BayRn
-                env = joblib.load(osp.join(ex_dir, 'env_sim.pkl'))
+    # Algorithm specific
+    algo = Algorithm.load_snapshot(load_dir=ex_dir, load_name='algo')
+    if isinstance(algo, BayRn):
+        # Environment
+        env = load_prefix_suffix(None, 'env_sim', 'pkl', ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, 'env_sim.pkl')}.", 'g')
+        if hasattr(env, 'randomizer'):
+            last_cand = to.load(osp.join(ex_dir, 'candidates.pt'))[-1, :]
+            env.adapt_randomizer(last_cand.numpy())
+            print_cbt(f'Loaded the domain randomizer\n{env.randomizer}', 'w')
+        else:
+            print_cbt('Loaded environment has no randomizer.', 'r')
+        # Policy
+        policy = load_prefix_suffix(algo.policy, f'{args.policy_name}', 'pt', ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", 'g')
+        # Extra (value function)
+        if isinstance(algo.subroutine, ActorCritic):
+            extra['value_fcn'] = load_prefix_suffix(
+                algo.subroutine.critic.value_fcn, f'{args.valuefcn_name}', 'pt', ex_dir, None)
+            print_cbt(f"Loaded {osp.join(ex_dir, f'{args.valuefcn_name}.pt')}", 'g')
 
-            try:
-                # Results of SPOTA
-                if args.iter == -1:
-                    policy = to.load(osp.join(ex_dir, 'final_policy_cand.pt'))
-                    print_cbt(f'Loaded final_policy_cand.pt', 'g')
-                else:
-                    policy = to.load(osp.join(ex_dir, f'iter_{args.iter}_policy_cand.pt'))
-                    print_cbt(f'Loaded iter_{args.iter}_policy_cand.pt', 'g')
-            except FileNotFoundError:
-                # Results of BayRn
-                if args.iter == -1:
-                    policy = to.load(osp.join(ex_dir, 'policy.pt'))
-                    print_cbt(f'Loaded policy.pt', 'g')
-                else:
-                    policy = to.load(osp.join(ex_dir, f'iter_{args.iter}_policy.pt'))
-                    print_cbt(f'Loaded iter_{args.iter}_policy.pt', 'g')
+    elif isinstance(algo, SPOTA):
+        # Environment
+        env = load_prefix_suffix(None, 'env', 'pkl', ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')}.", 'g')
+        if hasattr(env, 'randomizer'):
+            if not isinstance(env.randomizer, DomainRandWrapperBuffer):
+                raise pyrado.TypeErr(given=env.randomizer, expected_type=DomainRandWrapperBuffer)
+            typed_env(env, DomainRandWrapperBuffer).fill_buffer(100)
+            print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')} and filled it with 100 random instances.", 'g')
+        else:
+            print_cbt('Loaded environment has no randomizer.', 'r')
+        # Policy
+        policy = load_prefix_suffix(algo.subroutine_cand.policy, f'{args.policy_name}', 'pt', ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", 'g')
+        # Extra (value function)
+        if isinstance(algo.subroutine_cand, ActorCritic):
+            extra['value_fcn'] = load_prefix_suffix(
+                algo.subroutine_cand.critic.value_fcn, f'{args.valuefcn_name}', 'pt', ex_dir, None)
+            print_cbt(f"Loaded {osp.join(ex_dir, f'{args.valuefcn_name}.pt')}", 'g')
+
+    elif isinstance(algo, SimOpt):
+        # Environment
+        env = load_prefix_suffix(None, 'env_sim', 'pkl', ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, 'env_sim.pkl')}.", 'g')
+        if hasattr(env, 'randomizer'):
+            last_cand = to.load(osp.join(ex_dir, 'candidates.pt'))[-1, :]
+            env.adapt_randomizer(last_cand.numpy())
+            print_cbt(f'Loaded the domain randomizer\n{env.randomizer}', 'w')
+        else:
+            print_cbt('Loaded environment has no randomizer.', 'r')
+        # Policy
+        policy = load_prefix_suffix(algo.subroutine_policy.policy, f'{args.policy_name}', 'pt', ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", 'g')
+        # Extra (domain parameter distribution policy)
+        extra['ddp_policy'] = load_prefix_suffix(algo.subroutine_distr.policy, 'ddp_policy', 'pt', ex_dir, None)
+
+    elif isinstance(algo, (EPOpt, UDR)):
+        # Environment
+        env = load_prefix_suffix(None, 'env_sim', 'pkl', ex_dir, None)
+        if hasattr(env, 'randomizer'):
+            if not isinstance(env.randomizer, DomainRandWrapperLive):
+                raise pyrado.TypeErr(given=env.randomizer, expected_type=DomainRandWrapperLive)
+            print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')} with DomainRandWrapperLive randomizer.", 'g')
+        else:
+            print_cbt('Loaded environment has no randomizer.', 'y')
+        # Policy
+        policy = load_prefix_suffix(algo.policy, f'{args.policy_name}', 'pt', ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", 'g')
+        # Extra (value function)
+        if isinstance(algo.subroutine, ActorCritic):
+            extra['value_fcn'] = load_prefix_suffix(
+                algo.subroutine.critic.value_fcn, f'{args.valuefcn_name}', 'pt', ex_dir, None)
+            print_cbt(f"Loaded {osp.join(ex_dir, f'{args.valuefcn_name}.pt')}", 'g')
+
+    elif isinstance(algo, ActorCritic):
+        # Environment
+        env = load_prefix_suffix(None, 'env', 'pkl', ex_dir, None)
+        # Policy
+        policy = load_prefix_suffix(algo.policy, f'{args.policy_name}', 'pt', ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", 'g')
+        # Extra (value function)
+        extra['value_fcn'] = load_prefix_suffix(algo.critic.value_fcn, f'{args.valuefcn_name}', 'pt', ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.valuefcn_name}.pt')}", 'g')
+
+    elif isinstance(algo, ParameterExploring):
+        # Environment
+        env = load_prefix_suffix(None, 'env', 'pkl', ex_dir, None)
+        # Policy
+        policy = load_prefix_suffix(algo.policy, f'{args.policy_name}', 'pt', ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", 'g')
+
+    elif isinstance(algo, (DQL, SAC)):
+        # Environment
+        env = load_prefix_suffix(None, 'env', 'pkl', ex_dir, None)
+        # Policy
+        policy = load_prefix_suffix(algo.policy, f'{args.policy_name}', 'pt', ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", 'g')
+        # Target value functions
+        if isinstance(algo, DQL):
+            extra['target'] = load_prefix_suffix(algo.target, 'target', 'pt', ex_dir, None)
+            print_cbt(f"Loaded {osp.join(ex_dir, 'target.pt')}", 'g')
+        else:
+            extra['target1'] = load_prefix_suffix(algo.q_targ_1, 'target1', 'pt', ex_dir, None)
+            extra['target1'] = load_prefix_suffix(algo.q_targ_2, 'target1', 'pt', ex_dir, None)
+            print_cbt(f"Loaded {osp.join(ex_dir, 'target1.pt')} and {osp.join(ex_dir, 'target2.pt')}", 'g')
+
+    elif isinstance(algo, SVPG):
+        # Environment
+        env = load_prefix_suffix(None, 'env', 'pkl', ex_dir, None)
+        # Policy
+        policy = load_prefix_suffix(algo.policy, f'{args.policy_name}', 'pt', ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", 'g')
+        # Extra (particles)
+        for idx, p in enumerate(algo.particles):
+            extra[f'particle{idx}'] = load_prefix_suffix(algo.particles[idx], f'particle_{idx}', 'pt', ex_dir, None)
+
+    elif isinstance(algo, TSPred):
+        # Dataset
+        extra['dataset'] = to.load(osp.join(ex_dir, 'dataset.pt'))
+        # Policy
+        policy = to.load(osp.join(ex_dir, 'policy.pt'))
+
+    else:
+        raise pyrado.TypeErr(msg='No matching algorithm name found during loading the experiment!')
 
     # Check if the return types are correct. They can be None, too.
     if env is not None and not isinstance(env, (SimEnv, EnvWrapper)):
         raise pyrado.TypeErr(given=env, expected_type=[SimEnv, EnvWrapper])
     if policy is not None and not isinstance(policy, Policy):
         raise pyrado.TypeErr(given=policy, expected_type=Policy)
+    if extra is not None and not isinstance(extra, dict):
+        raise pyrado.TypeErr(given=extra, expected_type=dict)
 
-    return env, policy, kwout
+    return env, policy, extra
 
 
 def wrap_like_other_env(env_targ: Union[SimEnv, RealEnv], env_src: [SimEnv, EnvWrapper], use_downsampling: bool = False
