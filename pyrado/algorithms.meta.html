@@ -549,6 +549,12 @@ contains a dict of information about the current iteration of the meta-algorithm
 </dd></dl>
 
 <dl class="py method">
+<dt id="pyrado.algorithms.meta.bayrn.BayRn.subroutine">
+<em class="property">property </em><code class="sig-name descname">subroutine</code><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn.subroutine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the policy optimization subroutine.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pyrado.algorithms.meta.bayrn.BayRn.train_argmax_policy">
 <em class="property">static </em><code class="sig-name descname">train_argmax_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">load_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">env_sim</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environment_wrappers.html#pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper" title="pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper">pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper</a></span></em>, <em class="sig-param"><span class="n">subrtn</span><span class="p">:</span> <span class="n"><a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm">pyrado.algorithms.base.Algorithm</a></span></em>, <em class="sig-param"><span class="n">num_restarts</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num_samples</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">policy_param_init</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">valuefcn_param_init</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">subrtn_snapshot_mode</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'best'</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayrn.html#BayRn.train_argmax_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn.train_argmax_policy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Train a policy based on the maximizer of the posterior mean.</p>
@@ -662,7 +668,8 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dl class="py method">
 <dt id="pyrado.algorithms.meta.epopt.EPOpt.subroutine">
 <em class="property">property </em><code class="sig-name descname">subroutine</code><a class="headerlink" href="#pyrado.algorithms.meta.epopt.EPOpt.subroutine" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the policy optimization subroutine.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -764,6 +771,18 @@ contains a dict of information about the current iteration of the meta-algorithm
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.simopt.SimOpt.subroutine_distr">
+<em class="property">property </em><code class="sig-name descname">subroutine_distr</code><a class="headerlink" href="#pyrado.algorithms.meta.simopt.SimOpt.subroutine_distr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the system identification subroutine.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.meta.simopt.SimOpt.subroutine_policy">
+<em class="property">property </em><code class="sig-name descname">subroutine_policy</code><a class="headerlink" href="#pyrado.algorithms.meta.simopt.SimOpt.subroutine_policy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the policy optimization subroutine.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -870,9 +889,10 @@ contains a dict of information about the current iteration of the meta-algorithm
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyrado.algorithms.meta.spota.SPOTA.subroutines">
-<em class="property">property </em><code class="sig-name descname">subroutines</code><a class="headerlink" href="#pyrado.algorithms.meta.spota.SPOTA.subroutines" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="pyrado.algorithms.meta.spota.SPOTA.subroutine_cand">
+<em class="property">property </em><code class="sig-name descname">subroutine_cand</code><a class="headerlink" href="#pyrado.algorithms.meta.spota.SPOTA.subroutine_cand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the candidate subroutine.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -935,7 +955,8 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dl class="py method">
 <dt id="pyrado.algorithms.meta.udr.UDR.subroutine">
 <em class="property">property </em><code class="sig-name descname">subroutine</code><a class="headerlink" href="#pyrado.algorithms.meta.udr.UDR.subroutine" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the policy optimization subroutine.</p>
+</dd></dl>
 
 </dd></dl>
 

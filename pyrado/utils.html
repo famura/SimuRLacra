@@ -803,7 +803,7 @@ not pass functions directly, we pass a sting.</p>
 
 <dl class="py function">
 <dt id="pyrado.utils.experiments.load_experiment">
-<code class="sig-name descname">load_experiment</code><span class="sig-paren">(</span><em class="sig-param">ex_dir: str, args: Any = None) -&gt; (typing.Union[pyrado.environments.sim_base.SimEnv, pyrado.environment_wrappers.base.EnvWrapper], &lt;class 'pyrado.policies.base.Policy'&gt;, typing.Union[dict, NoneType]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#load_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.load_experiment" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_experiment</code><span class="sig-paren">(</span><em class="sig-param">ex_dir: str, args: Any = None) -&gt; (typing.Union[pyrado.environments.sim_base.SimEnv, pyrado.environment_wrappers.base.EnvWrapper], &lt;class 'pyrado.policies.base.Policy'&gt;, &lt;class 'dict'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#load_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.load_experiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load the (training) environment and the policy.
 This helper function first tries to read the hyper-parameters yaml-file in the experiment’s directory to infer
 why entities should be loaded. If no file was found, we fall back to some heuristic and hope for the best.</p>

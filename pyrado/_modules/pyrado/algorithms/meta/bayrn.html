@@ -360,6 +360,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">to</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="s1">&#39;bounds.pt&#39;</span><span class="p">))</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">subroutine</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Algorithm</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Get the policy optimization subroutine. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span>
+
 <div class="viewcode-block" id="BayRn.stopping_criterion_met"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.stopping_criterion_met">[docs]</a>    <span class="k">def</span> <span class="nf">stopping_criterion_met</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_cand_value</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">thold_succ</span></div>
 

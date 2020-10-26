@@ -220,7 +220,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
 <span class="kn">from</span> <span class="nn">pyrado.exploration.stochastic_params</span> <span class="kn">import</span> <span class="n">NormalParamNoise</span><span class="p">,</span> <span class="n">SymmParamExplStrat</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span><span class="p">,</span> <span class="n">print_cbt_once</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt_once</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.math</span> <span class="kn">import</span> <span class="n">logmeanexp</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.parameter_exploration_sampler</span> <span class="kn">import</span> <span class="n">ParameterSamplingResult</span>
@@ -278,7 +278,7 @@
 <span class="sd">        :param use_map: use maximum a-posteriori likelihood (`True`) or maximum likelihood (`False`) update rule</span>
 <span class="sd">        :param optim_mode: choose the type of optimizer: &#39;torch&#39; for a SGD-based optimizer or &#39;scipy&#39; for optimizers</span>
 <span class="sd">                           from scipy (here SLSQP)</span>
-<span class="sd">        :param lr_dual: learning rate for the dual&#39;s optimizer (ignored if `grad_free_optim = True`)</span>
+<span class="sd">        :param lr_dual: learning rate for the dual&#39;s optimizer, ignored for `optim_mode` `&#39;scipy&#39;`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="p">(</span><span class="n">LinearPolicy</span><span class="p">,</span> <span class="n">DomainDistrParamPolicy</span><span class="p">)):</span>
             <span class="n">print_cbt_once</span><span class="p">(</span><span class="s1">&#39;REPS was designed for linear policies.&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span>
