@@ -36,7 +36,7 @@ from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.meta.udr import UDR
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.algorithms.step_based.ppo import PPO
-from pyrado.domain_randomization.default_randomizers import get_default_randomizer
+from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
@@ -61,7 +61,7 @@ if __name__ == '__main__':
     env = QQubeSwingUpSim(**env_hparams)
     env = ActNormWrapper(env)
 
-    randomizer = get_default_randomizer(env)
+    randomizer = create_default_randomizer(env)
     env = DomainRandWrapperLive(env, randomizer)
 
     # Policy

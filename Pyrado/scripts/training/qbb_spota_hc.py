@@ -37,7 +37,7 @@ import torch as to
 import pyrado
 from pyrado.algorithms.episodic.hc import HCNormal
 from pyrado.algorithms.meta.spota import SPOTA
-from pyrado.domain_randomization.default_randomizers import get_default_randomizer
+from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
@@ -68,7 +68,7 @@ if __name__ == '__main__':
                                                   10/180*pi, 10/180*pi, 0.05, 0.05])  # ... rad/s, rad/s, m/s, m/s]
     # env = ObsPartialWrapper(env, mask=[0, 0, 0, 0, 1, 1, 0, 0])
     env = ActDelayWrapper(env)
-    randomizer = get_default_randomizer(env)
+    randomizer = create_default_randomizer(env)
     randomizer.add_domain_params(UniformDomainParam(name='act_delay', mean=5, halfspan=5, clip_lo=0, roundint=True))
     env = DomainRandWrapperBuffer(env, randomizer)
 

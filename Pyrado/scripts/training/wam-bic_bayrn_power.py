@@ -34,7 +34,7 @@ import torch as to
 
 import pyrado
 from pyrado.algorithms.episodic.power import PoWER
-from pyrado.domain_randomization.default_randomizers import get_zero_var_randomizer
+from pyrado.domain_randomization.default_randomizers import create_zero_var_randomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
 from pyrado.environments.barrett_wam.wam import WAMBallInCupReal
 from pyrado.environments.mujoco.wam import WAMBallInCupSim
@@ -64,7 +64,7 @@ if __name__ == '__main__':
         task_args=dict(final_factor=0.2)
     )
     env_sim = WAMBallInCupSim(**env_sim_hparams)
-    env_sim = DomainRandWrapperLive(env_sim, get_zero_var_randomizer(env_sim))
+    env_sim = DomainRandWrapperLive(env_sim, create_zero_var_randomizer(env_sim))
     dp_map = {
         0: ('rope_length', 'mean'),
         1: ('rope_length', 'std'),

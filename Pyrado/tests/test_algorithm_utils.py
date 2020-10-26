@@ -34,7 +34,7 @@ from torch.distributions.normal import Normal
 
 from pyrado.algorithms.meta.adr import RewardGenerator
 from pyrado.algorithms.utils import compute_action_statistics, until_thold_exceeded, get_grad_via_torch
-from pyrado.domain_randomization.default_randomizers import get_default_randomizer_omo
+from pyrado.domain_randomization.default_randomizers import create_default_randomizer_omo
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 from pyrado.policies.fnn import FNNPolicy
 from pyrado.policies.two_headed import TwoHeadedPolicy
@@ -123,7 +123,7 @@ def test_adr_reward_generator(env):
         logger=None
     )
     policy = FNNPolicy(reference_env.spec, hidden_sizes=[16], hidden_nonlin=to.tanh)
-    dr = get_default_randomizer_omo()
+    dr = create_default_randomizer_omo()
     dr.randomize(num_samples=1)
     random_env.domain_param = dr.get_params(format='dict', dtype='numpy')
     reference_sampler = ParallelRolloutSampler(reference_env, policy, num_workers=4, min_steps=10000)

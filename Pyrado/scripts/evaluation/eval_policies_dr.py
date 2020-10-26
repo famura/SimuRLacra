@@ -34,7 +34,7 @@ import pandas as pd
 from prettyprinter import pprint
 
 import pyrado
-from pyrado.domain_randomization.default_randomizers import get_conservative_randomizer
+from pyrado.domain_randomization.default_randomizers import create_conservative_randomizer
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim, QCartPoleStabSim
@@ -98,7 +98,7 @@ if __name__ == '__main__':
                                   f'but they are {len(prefixes)}, {len(ex_names)}, and {len(ex_labels)}!')
 
     # Create Randomizer
-    pert = get_conservative_randomizer(env)
+    pert = create_conservative_randomizer(env)
     pert.add_domain_params(UniformDomainParam(name='act_delay', mean=20, halfspan=20, clip_lo=0, roundint=True))
 
     # Loading the policies

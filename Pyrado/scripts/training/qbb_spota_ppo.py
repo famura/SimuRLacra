@@ -38,7 +38,7 @@ from pyrado.algorithms.step_based.gae import GAE
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.algorithms.meta.spota import SPOTA
-from pyrado.domain_randomization.default_randomizers import get_conservative_randomizer
+from pyrado.domain_randomization.default_randomizers import create_conservative_randomizer
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
@@ -70,7 +70,7 @@ if __name__ == '__main__':
                                                   10/180*pi, 10/180*pi, 0.05, 0.05])  # ... rad/s, rad/s, m/s, m/s]
     env = ActNormWrapper(env)
     env = ActDelayWrapper(env)
-    randomizer = get_conservative_randomizer(env)
+    randomizer = create_conservative_randomizer(env)
     randomizer.add_domain_params(UniformDomainParam(name='act_delay', mean=5, halfspan=5, clip_lo=0, roundint=True))
     env = DomainRandWrapperBuffer(env, randomizer)
 

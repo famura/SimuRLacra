@@ -51,12 +51,12 @@ def default_randomizer(env_module, env_class):
     .. code-block:: python
 
         @default_randomizer('pyrado.environments.xy.my', 'MyEnv')
-            def get_default_randomizer_my() -> DomainRandomizer:
+            def create_default_randomizer_my() -> DomainRandomizer:
                 <implementation>
     
-    :param env_module: Module in which the env class is defined.
-    :param env_class: Environment class name.
-    :return: decorator for default randomizer provider function.
+    :param env_module: module in which the env class is defined
+    :param env_class: environment class name
+    :return: decorator for default randomizer provider function
     """
 
     def register(func):
@@ -66,9 +66,9 @@ def default_randomizer(env_module, env_class):
     return register
 
 
-def get_default_randomizer(env: [SimEnv, EnvWrapper]) -> DomainRandomizer:
+def create_default_randomizer(env: [SimEnv, EnvWrapper]) -> DomainRandomizer:
     """
-    Get the default randomizer depending on the passed environment.
+    Create the default randomizer depending on the passed environment.
 
     :param env: (wrapped) environment that should be perturbed
     :return: default randomizer
@@ -87,23 +87,23 @@ def get_default_randomizer(env: [SimEnv, EnvWrapper]) -> DomainRandomizer:
         raise ValueError(f'No default randomizer settings for env of type {env_type}!')
 
 
-def get_conservative_randomizer(env: [SimEnv, EnvWrapper]) -> DomainRandomizer:
+def create_conservative_randomizer(env: [SimEnv, EnvWrapper]) -> DomainRandomizer:
     """
-    Get the default conservative randomizer depending on the passed environment.
+    Create the default conservative randomizer depending on the passed environment.
 
     :param env: environment that should be perturbed
     :return: default conservative randomizer
     """
-    randomizer = get_default_randomizer(env)
+    randomizer = create_default_randomizer(env)
     randomizer.rescale_distr_param('std', 0.5)
     randomizer.rescale_distr_param('cov', 0.5)
     randomizer.rescale_distr_param('halfspan', 0.5)
     return randomizer
 
 
-def get_zero_var_randomizer(env: [SimEnv, EnvWrapper], eps: float = 1e-18) -> DomainRandomizer:
+def create_zero_var_randomizer(env: [SimEnv, EnvWrapper], eps: float = 1e-18) -> DomainRandomizer:
     """
-    Get the randomizer which always returns the nominal domain parameter values.
+    Create the randomizer which always returns the nominal domain parameter values.
 
     .. note::
         The variance will not be completely zero as this would lead to invalid distributions (PyTorch checks)
@@ -112,25 +112,25 @@ def get_zero_var_randomizer(env: [SimEnv, EnvWrapper], eps: float = 1e-18) -> Do
     :param eps: factor to scale the distributions variance with
     :return: randomizer with zero variance for all parameters
     """
-    randomizer = get_default_randomizer(env)
+    randomizer = create_default_randomizer(env)
     randomizer.rescale_distr_param('std', np.sqrt(eps))
     randomizer.rescale_distr_param('cov', eps)
     randomizer.rescale_distr_param('halfspan', np.sqrt(eps))  # var(U) = 1/12 halspan**2
     return randomizer
 
 
-def get_empty_randomizer() -> DomainRandomizer:
+def create_empty_randomizer() -> DomainRandomizer:
     """
-    Get an empty randomizer independent of the environment to be filled later (using `add_domain_params`).
+    Create an empty randomizer independent of the environment to be filled later (using `add_domain_params`).
 
     :return: empty randomizer
     """
     return DomainRandomizer()
 
 
-def get_example_randomizer_cata() -> DomainRandomizer:
+def create_example_randomizer_cata() -> DomainRandomizer:
     """
-    Get the randomizer for the `CatapultSim` used for the 'illustrative example' in F. Muratore et al, 2019, TAMPI.
+    Create the randomizer for the `CatapultSim` used for the 'illustrative example' in F. Muratore et al, 2019, TAMPI.
 
     :return: randomizer based on the nominal domain parameter values
     """
@@ -140,9 +140,9 @@ def get_example_randomizer_cata() -> DomainRandomizer:
 
 
 @default_randomizer('pyrado.environments.one_step.catapult', 'CatapultSim')
-def get_default_randomizer_cata() -> DomainRandomizer:
+def create_default_randomizer_cata() -> DomainRandomizer:
     """
-    Get the default randomizer for the `CatapultSim`.
+    Create the default randomizer for the `CatapultSim`.
 
     :return: randomizer based on the nominal domain parameter values
     """
@@ -157,9 +157,9 @@ def get_default_randomizer_cata() -> DomainRandomizer:
 
 
 @default_randomizer('pyrado.environments.pysim.ball_on_beam', 'BallOnBeamSim')
-def get_default_randomizer_bob() -> DomainRandomizer:
+def create_default_randomizer_bob() -> DomainRandomizer:
     """
-    Get the default randomizer for the `BallOnBeamSim`.
+    Create the default randomizer for the `BallOnBeamSim`.
 
     :return: randomizer based on the nominal domain parameter values
     """
@@ -178,9 +178,9 @@ def get_default_randomizer_bob() -> DomainRandomizer:
 
 
 @default_randomizer('pyrado.environments.pysim.one_mass_oscillator', 'OneMassOscillatorSim')
-def get_default_randomizer_omo() -> DomainRandomizer:
+def create_default_randomizer_omo() -> DomainRandomizer:
     """
-    Get the default randomizer for the `OneMassOscillatorSim`.
+    Create the default randomizer for the `OneMassOscillatorSim`.
 
     :return: randomizer based on the nominal domain parameter values
     """
@@ -194,9 +194,9 @@ def get_default_randomizer_omo() -> DomainRandomizer:
 
 
 @default_randomizer('pyrado.environments.pysim.pendulum', 'PendulumSim')
-def get_default_randomizer_pend() -> DomainRandomizer:
+def create_default_randomizer_pend() -> DomainRandomizer:
     """
-    Get the default randomizer for the `PendulumSim`.
+    Create the default randomizer for the `PendulumSim`.
 
     :return: randomizer based on the nominal domain parameter values
     """
@@ -212,9 +212,9 @@ def get_default_randomizer_pend() -> DomainRandomizer:
 
 
 @default_randomizer('pyrado.environments.pysim.quanser_ball_balancer', 'QBallBalancerSim')
-def get_default_randomizer_qbb() -> DomainRandomizer:
+def create_default_randomizer_qbb() -> DomainRandomizer:
     """
-    Get the default randomizer for the `QBallBalancerSim`.
+    Create the default randomizer for the `QBallBalancerSim`.
 
     :return: randomizer based on the nominal domain parameter values
     """
@@ -246,9 +246,9 @@ def get_default_randomizer_qbb() -> DomainRandomizer:
 
 @default_randomizer('pyrado.environments.pysim.quanser_cartpole', 'QCartPoleStabSim')
 @default_randomizer('pyrado.environments.pysim.quanser_cartpole', 'QCartPoleSwingUpSim')
-def get_default_randomizer_qcp() -> DomainRandomizer:
+def create_default_randomizer_qcp() -> DomainRandomizer:
     """
-    Get the default randomizer for the `QCartPoleSim`.
+    Create the default randomizer for the `QCartPoleSim`.
 
     :return: randomizer based on the nominal domain parameter values
     """
@@ -274,9 +274,9 @@ def get_default_randomizer_qcp() -> DomainRandomizer:
 
 @default_randomizer('pyrado.environments.pysim.quanser_qube', 'QQubeSwingUpSim')
 @default_randomizer('pyrado.environments.pysim.quanser_qube', 'QQubeStabSim')
-def get_default_randomizer_qq() -> DomainRandomizer:
+def create_default_randomizer_qq() -> DomainRandomizer:
     """
-    Get the default randomizer for the `QQubeSim`.
+    Create the default randomizer for the `QQubeSim`.
 
     :return: randomizer based on the nominal domain parameter values
     """
@@ -314,9 +314,9 @@ def get_uniform_masses_lengths_randomizer_qq(frac_halfspan: float):
 
 
 @default_randomizer('pyrado.environments.sim_rcs.ball_on_plate', 'BallOnPlateSim')
-def get_default_randomizer_bop() -> DomainRandomizer:
+def create_default_randomizer_bop() -> DomainRandomizer:
     """
-    Get the default randomizer for the `BallOnPlateSim`.
+    Create the default randomizer for the `BallOnPlateSim`.
 
     :return: randomizer based on the nominal domain parameter values
     """
@@ -340,9 +340,9 @@ def get_default_randomizer_bop() -> DomainRandomizer:
 
 
 @default_randomizer('pyrado.environments.sim_rcs.planar_insert', 'PlanarInsertSim')
-def get_default_randomizer_pi() -> DomainRandomizer:
+def create_default_randomizer_pi() -> DomainRandomizer:
     """
-    Get the default randomizer for the `PlanarInsertSim`.
+    Create the default randomizer for the `PlanarInsertSim`.
 
     :return: randomizer based on the nominal domain parameter values
     """
@@ -360,9 +360,9 @@ def get_default_randomizer_pi() -> DomainRandomizer:
 
 @default_randomizer('pyrado.environments.sim_rcs.box_shelving', 'BoxShelvingPosDSSim')
 @default_randomizer('pyrado.environments.sim_rcs.box_shelving', 'BoxShelvingVelDSSim')
-def get_default_randomizer_bs() -> DomainRandomizer:
+def create_default_randomizer_bs() -> DomainRandomizer:
     """
-    Get the default randomizer for the `BoxShelvingSim`.
+    Create the default randomizer for the `BoxShelvingSim`.
 
     :return: randomizer based on the nominal domain parameter values
     """
@@ -381,9 +381,9 @@ def get_default_randomizer_bs() -> DomainRandomizer:
 @default_randomizer('pyrado.environments.sim_rcs.box_lifting', 'BoxLiftingVelDSSim')
 @default_randomizer('pyrado.environments.sim_rcs.box_lifting', 'BoxLiftingSimplePosDSSim')
 @default_randomizer('pyrado.environments.sim_rcs.box_lifting', 'BoxLiftingSimpleVelDSSim')
-def get_default_randomizer_bl() -> DomainRandomizer:
+def create_default_randomizer_bl() -> DomainRandomizer:
     """
-    Get the default randomizer for the `BoxLifting`.
+    Create the default randomizer for the `BoxLifting`.
 
     :return: randomizer based on the nominal domain parameter values
     """
@@ -402,7 +402,7 @@ def get_default_randomizer_bl() -> DomainRandomizer:
 
 
 @default_randomizer('pyrado.environments.mujoco.wam', 'WAMBallInCupSim')
-def get_default_randomizer_wambic() -> DomainRandomizer:
+def create_default_randomizer_wambic() -> DomainRandomizer:
     from pyrado.environments.mujoco.wam import WAMBallInCupSim
     dp_nom = WAMBallInCupSim.get_nominal_domain_param()
     return DomainRandomizer(

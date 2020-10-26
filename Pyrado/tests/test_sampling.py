@@ -32,7 +32,7 @@ import time
 from matplotlib import pyplot as plt
 from torch.distributions.multivariate_normal import MultivariateNormal
 
-from pyrado.domain_randomization.default_randomizers import get_default_randomizer
+from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.policies.fnn import FNNPolicy
 from pyrado.sampling.data_format import to_format
@@ -333,7 +333,7 @@ def test_bootsrapping():
     ], ids=['bob_fnnpol'], indirect=True)
 def test_param_expl_sampler(env, policy):
     # Add randomizer
-    pert = get_default_randomizer(env)
+    pert = create_default_randomizer(env)
     env = DomainRandWrapperLive(env, pert)
 
     # Create the sampler

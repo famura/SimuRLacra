@@ -355,6 +355,6 @@ class QCartPoleSwingUpSim(QCartPoleSim, Serializable):
             state_des = np.array([0., np.pi, 0., 0.])
 
         return FinalRewTask(
-            RadiallySymmDesStateTask(self.spec, state_des, UnderActuatedSwingUpRewFcn(), idcs=[1]),
+            RadiallySymmDesStateTask(self.spec, state_des, UnderActuatedSwingUpRewFcn(c_act=1e-2), idcs=[1]),
             mode=FinalRewMode(always_negative=True)
         )

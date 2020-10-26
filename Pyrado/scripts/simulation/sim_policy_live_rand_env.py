@@ -30,7 +30,7 @@
 Simulate (with animation) a rollout in a live perturbed environment.
 """
 import pyrado
-from pyrado.domain_randomization.default_randomizers import get_default_randomizer
+from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.domain_randomization.utils import print_domain_params
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
@@ -59,7 +59,7 @@ if __name__ == '__main__':
 
     if not isinstance(env, DomainRandWrapperLive):
         # Add default domain randomization wrapper with action delay
-        randomizer = get_default_randomizer(env)
+        randomizer = create_default_randomizer(env)
         env = ActDelayWrapper(env)
         randomizer.add_domain_params(
             UniformDomainParam(name='act_delay', mean=5, halfspan=5, clip_lo=0, roundint=True))

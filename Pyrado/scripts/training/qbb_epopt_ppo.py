@@ -37,7 +37,7 @@ from pyrado.algorithms.step_based.gae import GAE
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
-from pyrado.domain_randomization.default_randomizers import get_default_randomizer_qbb
+from pyrado.domain_randomization.default_randomizers import create_default_randomizer_qbb
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
@@ -67,7 +67,7 @@ if __name__ == '__main__':
                                                   2/180*pi, 2/180*pi, 0.05, 0.05])  # ... rad/s, rad/s, m/s, m/s]
     env = ActNormWrapper(env)
     env = ActDelayWrapper(env)
-    randomizer = get_default_randomizer_qbb()
+    randomizer = create_default_randomizer_qbb()
     randomizer.add_domain_params(UniformDomainParam(name='act_delay', mean=15, halfspan=15, clip_lo=0, roundint=True))
     env = DomainRandWrapperLive(env, randomizer)
 

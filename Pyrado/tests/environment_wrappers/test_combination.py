@@ -29,7 +29,7 @@
 import numpy as np
 import pytest
 
-from pyrado.domain_randomization.default_randomizers import get_default_randomizer
+from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.action_noise import GaussianActNoiseWrapper
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
@@ -47,7 +47,7 @@ from pyrado.utils.data_types import RenderMode
 def test_combination():
     env = QCartPoleSwingUpSim(dt=1/50., max_steps=20)
 
-    randomizer = get_default_randomizer(env)
+    randomizer = create_default_randomizer(env)
     env_r = DomainRandWrapperBuffer(env, randomizer)
     env_r.fill_buffer(num_domains=3)
 

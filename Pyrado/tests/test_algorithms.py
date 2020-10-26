@@ -49,7 +49,7 @@ from pyrado.algorithms.episodic.sysid_via_episodic_rl import DomainDistrParamPol
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.domain_randomization.default_randomizers import get_default_randomizer
+from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer, DomainRandWrapperLive, \
     MetaDomainRandWrapper
 from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
@@ -263,7 +263,7 @@ def test_adr(ex_dir, env, subrtn_hparam, actor_hparam, value_fcn_hparam, critic_
 )
 def test_spota_ppo(ex_dir, env, spota_hparam):
     # Environment and domain randomization
-    randomizer = get_default_randomizer(env)
+    randomizer = create_default_randomizer(env)
     env = DomainRandWrapperBuffer(env, randomizer)
 
     # Policy and subroutines

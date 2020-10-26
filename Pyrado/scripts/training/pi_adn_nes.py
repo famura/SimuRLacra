@@ -33,7 +33,7 @@ import torch as to
 
 import pyrado
 from pyrado.algorithms.episodic.nes import NES
-from pyrado.domain_randomization.default_randomizers import get_empty_randomizer
+from pyrado.domain_randomization.default_randomizers import create_empty_randomizer
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
@@ -88,7 +88,7 @@ if __name__ == '__main__':
     }
     env = ObsNormWrapper(env, explicit_lb=elb, explicit_ub=eub)
 
-    randomizer = get_empty_randomizer()
+    randomizer = create_empty_randomizer()
     env = ActDelayWrapper(env)
     randomizer.add_domain_params(UniformDomainParam(name='act_delay', mean=2, halfspan=2, clip_lo=0, roundint=True))
     env = DomainRandWrapperLive(env, randomizer)
