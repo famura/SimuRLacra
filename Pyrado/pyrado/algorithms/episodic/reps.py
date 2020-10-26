@@ -43,7 +43,7 @@ from pyrado.policies.domain_distribution import DomainDistrParamPolicy
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import NormalParamNoise, SymmParamExplStrat
 from pyrado.policies.linear import LinearPolicy
-from pyrado.utils.input_output import print_cbt, print_cbt_once
+from pyrado.utils.input_output import print_cbt_once
 from pyrado.utils.math import logmeanexp
 from pyrado.policies.base import Policy
 from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult
@@ -101,7 +101,7 @@ class REPS(ParameterExploring):
         :param use_map: use maximum a-posteriori likelihood (`True`) or maximum likelihood (`False`) update rule
         :param optim_mode: choose the type of optimizer: 'torch' for a SGD-based optimizer or 'scipy' for optimizers
                            from scipy (here SLSQP)
-        :param lr_dual: learning rate for the dual's optimizer (ignored if `grad_free_optim = True`)
+        :param lr_dual: learning rate for the dual's optimizer, ignored for `optim_mode` `'scipy'`
         """
         if not isinstance(policy, (LinearPolicy, DomainDistrParamPolicy)):
             print_cbt_once('REPS was designed for linear policies.', 'y')

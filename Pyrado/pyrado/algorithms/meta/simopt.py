@@ -139,6 +139,16 @@ class SimOpt(InterruptableAlgorithm):
         self.save_snapshot(meta_info=None)
         joblib.dump(self._subrtn_distr.policy.prior, osp.join(self._save_dir, 'prior.pkl'))
 
+    @property
+    def subroutine_policy(self) -> Algorithm:
+        """ Get the policy optimization subroutine. """
+        return self._subrtn_policy
+
+    @property
+    def subroutine_distr(self) -> SysIdViaEpisodicRL:
+        """ Get the system identification subroutine. """
+        return self._subrtn_distr
+
     def train_policy_sim(self, cand: to.Tensor, prefix: str) -> float:
         """
         Train a policy in simulation for given hyper-parameters from the domain randomizer.

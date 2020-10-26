@@ -183,6 +183,11 @@ class BayRn(InterruptableAlgorithm):
         self.save_snapshot(meta_info=None)
         to.save(self.bounds, osp.join(self._save_dir, 'bounds.pt'))
 
+    @property
+    def subroutine(self) -> Algorithm:
+        """ Get the policy optimization subroutine. """
+        return self._subrtn
+
     def stopping_criterion_met(self) -> bool:
         return self.curr_cand_value > self.thold_succ
 

@@ -84,12 +84,12 @@ class DQL(Algorithm):
         :param env: the environment which the policy operates
         :param policy: (current) Q-network updated by this algorithm
         :param memory_size: number of transitions in the replay memory buffer
-        :param eps_init: initial value for the probability of taking a random action, constant if `eps_schedule_gamma==1`
+        :param eps_init: initial value for the probability of taking a random action, constant if `eps_schedule_gamma=1`
         :param eps_schedule_gamma: temporal discount factor for the exponential decay of epsilon
         :param gamma: temporal discount factor for the state values
         :param max_iter: number of iterations (policy updates)
         :param num_batch_updates: number of batch updates per algorithm steps
-        :param target_update_intvl: number of iterations that pass before updating the target network
+        :param target_update_intvl: number of iterations that pass before updating the q_targ network
         :param min_rollouts: minimum number of rollouts sampled per policy update batch
         :param min_steps: minimum number of state transitions sampled per policy update batch
         :param batch_size: number of samples per policy update batch
@@ -118,8 +118,8 @@ class DQL(Algorithm):
 
         # Store the inputs
         self._env = env
-        self.target = deepcopy(self._policy)
-        self.target.eval()  # will not be trained using the optimizer
+        self.q_targ = deepcopy(self._policy)
+        self.q_targ.eval()  # will not be trained using the optimizer
         self._memory_size = memory_size
         self.eps = eps_init
         self.gamma = gamma
@@ -190,7 +190,7 @@ class DQL(Algorithm):
         self.logger.add_value('num rollouts', len(ros))
         self.logger.add_value('avg memory reward', np.round(self._memory.avg_reward(), 4))
 
-        # Use data in the memory to update the policy and the target Q-function
+        # Use data in the memory to update the policy and the q_targ Q-function
         self.update()
 
         # Save snapshot data
@@ -207,7 +207,7 @@ class DQL(Algorithm):
         return nn.functional.smooth_l1_loss(q_vals, expected_q_vals)
 
     def update(self):
-        """ Update the policy's and target Q-function's parameters on transitions sampled from the replay memory. """
+        """ Update the policy's and q_targ Q-function's parameters on transitions sampled from the replay memory. """
         losses = to.zeros(self.num_batch_updates)
         policy_grad_norm = to.zeros(self.num_batch_updates)
 
@@ -226,7 +226,7 @@ class DQL(Algorithm):
             q_vals = self.expl_strat.policy.q_values_chosen(steps.observations)
 
             # Compute the second term of TD-error
-            next_v_vals = self.target.q_values_chosen(next_steps.observations).detach()
+            next_v_vals = self.q_targ.q_values_chosen(next_steps.observations).detach()
             expected_q_val = steps.rewards + not_done*self.gamma*next_v_vals
 
             # Compute the loss, clip the gradients if desired, and do one optimization step
@@ -237,9 +237,9 @@ class DQL(Algorithm):
             policy_grad_norm[b] = self.clip_grad(self.expl_strat.policy, self.max_grad_norm)
             self.optim.step()
 
-            # Update the target network by copying all weights and biases from the DQN policy
+            # Update the q_targ network by copying all weights and biases from the DQN policy
             if (self._curr_iter*self.num_batch_updates + b)%self.target_update_intvl == 0:
-                self.target.load_state_dict(self.expl_strat.policy.state_dict())
+                self.q_targ.load_state_dict(self.expl_strat.policy.state_dict())
 
         # Schedule the exploration parameter epsilon
         self.expl_strat.schedule_eps(self._curr_iter)
@@ -276,7 +276,7 @@ class DQL(Algorithm):
 
         if warmstart and ppi is not None and tpi is not None:
             self._policy.init_param(ppi)
-            self.target.init_param(tpi)
+            self.q_targ.init_param(tpi)
             print_cbt('Learning given an fixed parameter initialization.', 'w')
 
         elif warmstart and ppi is None and self._curr_iter > 0:
@@ -284,8 +284,8 @@ class DQL(Algorithm):
                 self._policy, 'policy', 'pt', self._save_dir,
                 meta_info=dict(prefix=f'iter_{self._curr_iter - 1}', suffix=suffix)
             )
-            self.target = load_prefix_suffix(
-                self.target, 'target', 'pt', self._save_dir,
+            self.q_targ = load_prefix_suffix(
+                self.q_targ, 'target', 'pt', self._save_dir,
                 meta_info=dict(prefix=f'iter_{self._curr_iter - 1}', suffix=suffix)
             )
             print_cbt(f'Learning given the results from iteration {self._curr_iter - 1}', 'w')
@@ -293,14 +293,14 @@ class DQL(Algorithm):
         else:
             # Reset the policy
             self._policy.init_param()
-            self.target.init_param()
+            self.q_targ.init_param()
             print_cbt('Learning from scratch.', 'w')
 
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
         save_prefix_suffix(self._expl_strat.policy, 'policy', 'pt', self._save_dir, meta_info)
-        save_prefix_suffix(self.target, 'target', 'pt', self._save_dir, meta_info)
+        save_prefix_suffix(self.q_targ, 'target', 'pt', self._save_dir, meta_info)
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm

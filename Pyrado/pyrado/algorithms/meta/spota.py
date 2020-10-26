@@ -163,8 +163,9 @@ class SPOTA(InterruptableAlgorithm):
         self.save_snapshot(meta_info=None)
 
     @property
-    def subroutines(self) -> dict:
-        return dict(cand=self._subrtn_cand, refs=self._subrtn_refs)
+    def subroutine_cand(self) -> Algorithm:
+        """ Get the candidate subroutine. """
+        return self._subrtn_cand
 
     def _adapt_batch_size(self, subroutine: Algorithm, n: int):
         """
