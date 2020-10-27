@@ -41,17 +41,19 @@ class Polar2DPosSpace(BoxSpace):
     def __init__(self,
                  bound_lo: [float, list, np.ndarray],
                  bound_up: [float, list, np.ndarray],
+                 shape: [tuple, int] = None,
                  labels: Sequence[str] = None):
         """
         Constructor
 
         :param bound_lo: minimal distance and the minimal angle (polar coordinates)
         :param bound_up: maximal distance and the maximal angle (polar coordinates)
+        :param shape: tuple specifying the shape, useful if all lower and upper bounds are identical
         :param labels: label for each dimension of the space
         """
         assert bound_lo.size == bound_up.size == 2
         # Actually, this space is a BoxSpace
-        super().__init__(bound_lo, bound_up, labels=labels)
+        super().__init__(bound_lo, bound_up, shape, labels=labels)
 
     def sample_uniform(self, concrete_inf: float = 1e6) -> np.ndarray:
         # Get a random sample from the polar space
@@ -77,17 +79,19 @@ class Polar2DPosVelSpace(BoxSpace):
     def __init__(self,
                  bound_lo: [float, list, np.ndarray],
                  bound_up: [float, list, np.ndarray],
+                 shape: [tuple, int] = None,
                  labels: Sequence[str] = None):
         """
         Constructor
 
         :param bound_lo: minimal distance, the minimal angle, and the 2D minimal cartesian initial velocity
         :param bound_up: maximal distance, the maximal angle, and the 2D minimal cartesian initial velocity
+        :param shape: tuple specifying the shape, useful if all lower and upper bounds are identical
         :param labels: label for each dimension of the space
         """
         assert bound_lo.size == bound_up.size == 4
         # Actually, this space is a BoxSpace
-        super().__init__(bound_lo, bound_up, labels=labels)
+        super().__init__(bound_lo, bound_up, shape, labels=labels)
 
     def sample_uniform(self, concrete_inf: float = 1e6) -> np.ndarray:
         # Get a random sample from the half-polar / half-cartesian space
