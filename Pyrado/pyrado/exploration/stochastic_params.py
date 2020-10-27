@@ -33,7 +33,6 @@ from warnings import warn
 
 import pyrado
 from pyrado.exploration.normal_noise import DiagNormalNoise, FullNormalNoise
-from pyrado.utils.properties import Delegate
 from pyrado.sampling.hyper_sphere import sample_from_hyper_sphere_surface
 
 
