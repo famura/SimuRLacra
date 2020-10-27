@@ -79,7 +79,12 @@ class Space(ABC):
 
     @property
     def labels(self) -> (np.ndarray, None):
-        """ Get the labels for space entries, or None if not supported. """
+        """ Get the labels for space entries, or `None` if not supported. """
+        return None
+
+    @property
+    def labels_tex(self) -> (np.ndarray, None):
+        """ Get the texified labels for space entries, or `None` if not supported. """
         return None
 
     @abstractmethod

@@ -78,8 +78,8 @@ class QCartPoleReal(QuanserReal, Serializable):
         self._state_space = None  # needs to be set in subclasses
         max_obs = np.array([0.814/2., 1., 1., pyrado.inf, pyrado.inf])
         self._obs_space = BoxSpace(-max_obs, max_obs,
-                                   labels=['$x$', r'$\sin\theta$', r'$\cos\theta$', r'$\dot{x}$', r'$\dot{\theta}$'])
-        self._act_space = BoxSpace(-max_act_qcp, max_act_qcp, labels=['$V$'])
+                                   labels=['x', 'sin_theta', 'cos_theta', 'x_dot', 'theta_dot'])
+        self._act_space = BoxSpace(-max_act_qcp, max_act_qcp, labels=['V'])
 
     @abstractmethod
     def _create_task(self, task_args: dict):
@@ -187,8 +187,8 @@ class QCartPoleStabReal(QCartPoleReal):
         min_state_2 = np.array([-self._l_rail/2. + self._x_buffer, -np.pi - stab_thold, -np.inf, -np.inf])
         max_state_2 = np.array([+self._l_rail/2. - self._x_buffer, -np.pi + stab_thold, np.inf, np.inf])
 
-        bs_1 = BoxSpace(min_state_1, max_state_1, labels=['$x$', r'$\theta$', r'$\dot{x}$', r'$\dot{\theta}$'])
-        bs_2 = BoxSpace(min_state_2, max_state_2, labels=['$x$', r'$\theta$', r'$\dot{x}$', r'$\dot{\theta}$'])
+        bs_1 = BoxSpace(min_state_1, max_state_1, labels=['x', 'theta', 'x_dot', 'theta_dot'])
+        bs_2 = BoxSpace(min_state_2, max_state_2, labels=['x', 'theta', 'x_dot', 'theta_dot'])
 
         self._state_space = CompoundSpace([bs_1, bs_2])
 
@@ -280,7 +280,7 @@ class QCartPoleSwingUpReal(QCartPoleReal):
         # Define the task-specific state space
         max_state = np.array([self._l_rail/2. - self._x_buffer, +4*np.pi, np.inf, np.inf])  # [m, rad, m/s, rad/s]
         min_state = np.array([-self._l_rail/2. + self._x_buffer, -4*np.pi, -np.inf, -np.inf])  # [m, rad, m/s, rad/s]
-        self._state_space = BoxSpace(min_state, max_state, labels=['$x$', r'$\theta$', r'$\dot{x}$', r'$\dot{\theta}$'])
+        self._state_space = BoxSpace(min_state, max_state, labels=['x', 'theta', 'x_dot', 'theta_dot'])
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function

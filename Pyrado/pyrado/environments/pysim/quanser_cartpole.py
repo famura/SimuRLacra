@@ -73,10 +73,9 @@ class QCartPoleSim(SimPyEnv, Serializable):
         max_obs = np.array([l_rail/2., 1., 1., np.inf, np.inf])
 
         self._state_space = None
-        self._obs_space = BoxSpace(-max_obs, max_obs, labels=['$x$', r'$\sin(\theta)$', r'$\cos(\theta)$',
-                                                              r'$\dot{x}$', r'$\dot{\theta}$'])
+        self._obs_space = BoxSpace(-max_obs, max_obs, labels=['x', 'sin_theta', 'cos_theta', 'x_dot', 'theta_dot'])
         self._init_space = None
-        self._act_space = BoxSpace(-max_act_qcp, max_act_qcp, labels=['$V$'])
+        self._act_space = BoxSpace(-max_act_qcp, max_act_qcp, labels=['V'])
 
     @abstractmethod
     def _create_task(self, task_args: dict) -> Task:
@@ -294,10 +293,8 @@ class QCartPoleStabSim(QCartPoleSim, Serializable):
         min_init_state = np.array(
             [-0.05, np.pi - self.max_init_th_offset, -0.05, -8/180*np.pi])  # [m, rad, m/s, rad/s]
 
-        self._state_space = BoxSpace(min_state, max_state,
-                                     labels=['$x$', r'$\theta$', r'$\dot{x}$', r'$\dot{\theta}$'])
-        self._init_space = BoxSpace(min_init_state, max_init_state,
-                                    labels=['$x$', r'$\theta$', r'$\dot{x}$', r'$\dot{\theta}$'])
+        self._state_space = BoxSpace(min_state, max_state, labels=['x', 'theta', 'x_dot', 'theta_dot'])
+        self._init_space = BoxSpace(min_init_state, max_init_state, labels=['x', 'theta', 'x_dot', 'theta_dot'])
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
@@ -344,9 +341,8 @@ class QCartPoleSwingUpSim(QCartPoleSim, Serializable):
         min_state = np.array([-l_rail/2. + self.x_buffer, -4*np.pi, -np.inf, -np.inf])  # [m, rad, m/s, rad/s]
         max_init_state = np.array([0.03, 1/180.*np.pi, 0.005, 2/180.*np.pi])  # [m, rad, m/s, rad/s]
 
-        self._state_space = BoxSpace(min_state, max_state, labels=['$x$', r'$\theta$', r'$\dot{x}$', r'$\dot{\theta}$'])
-        self._init_space = BoxSpace(-max_init_state, max_init_state,
-                                    labels=['$x$', r'$\theta$', r'$\dot{x}$', r'$\dot{\theta}$'])
+        self._state_space = BoxSpace(min_state, max_state, labels=['x', 'theta', 'x_dot', 'theta_dot'])
+        self._init_space = BoxSpace(-max_init_state, max_init_state, labels=['x', 'theta', 'x_dot', 'theta_dot'])
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function

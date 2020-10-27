@@ -166,12 +166,11 @@ def insert_newlines(string: str, every: int) -> str:
     return '\n'.join(string[i:i + every] for i in range(0, len(string), every))
 
 
-def ensure_math_mode(inp: [str, Sequence[str]], no_subscript: bool = False) -> [str, list]:
+def ensure_math_mode(inp: [str, Sequence[str]]) -> [str, list]:
     """
     Naive way to ensure that a sting is compatible with LaTeX math mode for printing.
 
     :param inp: input string
-    :param no_subscript: force no subscript (sometimes there might be problems due to double subscript
     :return s: sting in math mode
     """
     if isinstance(inp, str):
@@ -186,40 +185,18 @@ def ensure_math_mode(inp: [str, Sequence[str]], no_subscript: bool = False) -> [
             pass
         else:
             raise pyrado.ValueErr(msg=f"The string {inp} must contain an even number of '$' symbols!")
-        if no_subscript:
-            inp = ensure_no_subscript(inp)
 
     elif inp is None:
         return None  # in case there a Space has 1 one dimension but no labels
 
     elif isinstance(inp, Iterable):
         # Do it recursively
-        return [ensure_math_mode(s, no_subscript) if s is not None else None for s in inp]  # skip None entries
+        return [ensure_math_mode(s) if s is not None else None for s in inp]  # skip None entries
 
     else:
         raise pyrado.TypeErr(given=inp, expected_type=[str, list])
 
     return inp
-
-
-def ensure_no_subscript(inp: [str, Sequence[str]]) -> [str, list]:
-    """
-    Naive way to ensure that a sting is compatible with LaTeX for printing by removing the math mode symbols.
-
-    :param inp: input string or iterable of stings
-    :return: sting without subscript
-    """
-    if isinstance(inp, str):
-        return inp.replace('_', '\_')  # just hoping that there is no \_ which we are replacing with \\_
-
-    elif inp is None:
-        return None  # in case there a Space has 1 one dimension but no labels
-
-    elif isinstance(inp, Iterable):
-        return [s.replace('_', '\_') if s is not None else None for s in inp]  # skip None entries
-
-    else:
-        raise pyrado.TypeErr(given=inp, expected_type=[str, list])
 
 
 def color_validity(data: np.ndarray, valids: np.ndarray) -> list:

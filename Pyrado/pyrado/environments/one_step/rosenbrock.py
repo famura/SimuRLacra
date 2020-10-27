@@ -56,10 +56,10 @@ class RosenSim(SimEnv, Serializable):
         max_act = max_state
         self._curr_act = np.zeros_like(max_act)  # just for usage in render function
 
-        self._state_space = BoxSpace(-max_state, max_state, labels=['$x_1$', '$x_2$'])
+        self._state_space = BoxSpace(-max_state, max_state, labels=['x_1', 'x_2'])
         self._init_space = SingularStateSpace(np.zeros(self._state_space.shape),
-                                              labels=['$x_1_{init}$', '$x_2_{init}$'])
-        self._act_space = BoxSpace(-max_act, max_act, labels=['$x_1_{next}$', '$x_2_{next}$'])
+                                              labels=['x_1_init', 'x_2_init'])
+        self._act_space = BoxSpace(-max_act, max_act, labels=['x_1_next', 'x_2_next'])
 
         # Define the task including the reward function
         self._task = self._create_task()

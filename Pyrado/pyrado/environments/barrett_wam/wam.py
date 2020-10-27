@@ -147,7 +147,7 @@ class WAMBallInCupReal(RealEnv, Serializable):
             self._act_space = act_space_wam_7dof
 
         # Observation space (normalized time)
-        self._obs_space = BoxSpace(np.array([0.]), np.array([1.]), labels=['$t$'])
+        self._obs_space = BoxSpace(np.array([0.]), np.array([1.]), labels=['t'])
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         if not self._connected:

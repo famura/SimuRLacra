@@ -45,7 +45,6 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.gaussian_process import render_singletask_gp
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.input_output import ensure_no_subscript
 
 
 if __name__ == '__main__':
@@ -90,13 +89,13 @@ if __name__ == '__main__':
     # Select dimensions to plot (ignored for 1D mode)
     if len(args.idcs) == 1:
         # Plot 1D
-        x_label = ensure_no_subscript(labels_sel_dims[0])  # could override manually here
+        x_label = labels_sel_dims[0]  # could override manually here
         y_label = r'$\hat{J}^{\textrm{real}}$'
         fig, ax = plt.subplots(1, figsize=(6, 4), constrained_layout=True)
 
     elif len(args.idcs) == 2:
-        x_label = ensure_no_subscript(labels_sel_dims[0])  # could override manually here
-        y_label = ensure_no_subscript(labels_sel_dims[1])  # could override manually here
+        x_label = labels_sel_dims[0]  # could override manually here
+        y_label = labels_sel_dims[1]  # could override manually here
 
         if not args.render3D:
             # Plot 2D

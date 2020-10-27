@@ -61,8 +61,8 @@ def test_combination():
     assert dp_after[0] == dp_after[3]
 
     env_rn = ActNormWrapper(env)
-    elb = {r'$\dot{x}$': -213., r'$\dot{\theta}$': -42.}
-    eub = {r'$\dot{x}$': 213., r'$\dot{\theta}$': 42., r'$x$': 0.123}
+    elb = {'x_dot': -213., 'theta_dot': -42.}
+    eub = {'x_dot': 213., 'theta_dot': 42., 'x': 0.123}
     env_rn = ObsNormWrapper(env_rn, explicit_lb=elb, explicit_ub=eub)
     alb, aub = env_rn.act_space.bounds
     assert all(alb == -1)
@@ -75,7 +75,7 @@ def test_combination():
     ro_rn = rollout(env_rn, DummyPolicy(env_rn.spec), eval=True, seed=0, render_mode=RenderMode())
     assert np.allclose(env_rn._process_obs(ro_r.observations), ro_rn.observations)
 
-    env_rnp = ObsPartialWrapper(env_rn, idcs=[r'$\dot{x}$', r'$\cos(\theta)$'])
+    env_rnp = ObsPartialWrapper(env_rn, idcs=['x_dot', r'$\cos(\theta)$'])
     ro_rnp = rollout(env_rnp, DummyPolicy(env_rnp.spec), eval=True, seed=0, render_mode=RenderMode())
 
     env_rnpa = GaussianActNoiseWrapper(env_rnp,

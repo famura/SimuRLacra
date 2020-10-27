@@ -79,11 +79,11 @@ class QQubeReal(QuanserReal, Serializable):
         max_state = np.array([120./180*np.pi, 4*np.pi, 20*np.pi, 20*np.pi])  # [rad, rad, rad/s, rad/s]
         max_obs = np.array([1., 1., 1., 1., pyrado.inf, pyrado.inf])  # [-, -, -, -, rad/s, rad/s]
         self._state_space = BoxSpace(-max_state, max_state,
-                                     labels=[r'$\theta$', r'$\alpha$', r'$\dot{\theta}$', r'$\dot{\alpha}$'])
+                                     labels=['theta', 'alpha', 'theta_dot', 'alpha_dot'])
         self._obs_space = BoxSpace(-max_obs, max_obs,
-                                   labels=[r'$\sin\theta$', r'$\cos\theta$', r'$\sin\alpha$', r'$\cos\alpha$',
-                                           r'$\dot{\theta}$', r'$\dot{\alpha}$'])
-        self._act_space = BoxSpace(-max_act_qq, max_act_qq, labels=['$V$'])
+                                   labels=['sin_theta', 'cos_theta', 'sin_alpha', 'cos_alpha',
+                                           'theta_dot', 'alpha_dot'])
+        self._act_space = BoxSpace(-max_act_qq, max_act_qq, labels=['V'])
 
     @property
     def task(self) -> Task:

@@ -258,7 +258,7 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             self._act_space = act_space_wam_7dof
 
         # Observation space (normalized time)
-        self._obs_space = BoxSpace(np.array([0.]), np.array([1.]), labels=['$t$'])
+        self._obs_space = BoxSpace(np.array([0.]), np.array([1.]), labels=['t'])
 
     def _create_task(self, task_args: dict) -> Task:
         if task_args.get('sparse_rew_fcn', False):

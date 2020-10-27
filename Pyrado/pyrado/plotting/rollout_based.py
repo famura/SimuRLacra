@@ -50,20 +50,20 @@ def _get_obs_label(rollout: StepSequence, idx: int):
     try:
         label = f"{rollout.rollout_info['env_spec'].obs_space.labels[idx]}"
         if label == 'None':
-            label = 'o_{' + f'{idx}' + '}'
+            label = f'o_{idx}'
     except (AttributeError, KeyError):
-        label = 'o_{' + f'{idx}' + '}'
-    return ensure_math_mode(label, no_subscript=True)
+        label = f'o_{idx}'
+    return label
 
 
 def _get_act_label(rollout: StepSequence, idx: int):
     try:
         label = f"{rollout.rollout_info['env_spec'].act_space.labels[idx]}"
         if label == 'None':
-            label = 'a_{' + f'{idx}' + '}'
+            label = f'a_{idx}'
     except (AttributeError, KeyError):
-        label = 'a_{' + f'{idx}' + '}'
-    return ensure_math_mode(label, no_subscript=True)
+        label = f'a_{idx}'
+    return label
 
 
 def plot_observations_actions_rewards(ro: StepSequence):

@@ -41,7 +41,7 @@ from pyrado.policies.adn import ADNPolicy
 from pyrado.policies.base import Policy
 from pyrado.policies.neural_fields import NFPolicy
 from pyrado.utils.data_types import EnvSpec
-from pyrado.utils.input_output import ensure_no_subscript, ensure_math_mode, print_cbt
+from pyrado.utils.input_output import print_cbt
 
 
 def _annotate_img(img,
@@ -161,18 +161,18 @@ def render_policy_params(policy: Policy,
             if name == 'obs_layer.weight':
                 ax.set_xticks(np.arange(env_spec.obs_space.flat_dim))
                 ax.set_yticks(np.arange(env_spec.act_space.flat_dim))
-                ax.set_xticklabels(ensure_no_subscript(env_spec.obs_space.labels))
-                ax.set_yticklabels(ensure_math_mode(env_spec.act_space.labels))
+                ax.set_xticklabels(env_spec.obs_space.labels)
+                ax.set_yticklabels(env_spec.act_space.labels)
             elif name in ['obs_layer.bias', 'nonlin_layer.log_weight', 'nonlin_layer.bias']:
                 ax.set_xticks(np.arange(env_spec.act_space.flat_dim))
-                ax.set_xticklabels(ensure_math_mode(env_spec.act_space.labels))
+                ax.set_xticklabels(env_spec.act_space.labels)
                 ax.yaxis.set_major_locator(ticker.NullLocator())
                 ax.yaxis.set_minor_formatter(ticker.NullFormatter())
             elif name == 'prev_act_layer.weight':
                 ax.set_xticks(np.arange(env_spec.act_space.flat_dim))
                 ax.set_yticks(np.arange(env_spec.act_space.flat_dim))
-                ax.set_xticklabels(ensure_math_mode(env_spec.act_space.labels))
-                ax.set_yticklabels(ensure_math_mode(env_spec.act_space.labels))
+                ax.set_xticklabels(env_spec.act_space.labels)
+                ax.set_yticklabels(env_spec.act_space.labels)
             elif name in ['_log_tau', '_log_kappa', '_log_capacity']:
                 ax.xaxis.set_major_locator(ticker.NullLocator())
                 ax.yaxis.set_major_locator(ticker.NullLocator())
@@ -186,7 +186,7 @@ def render_policy_params(policy: Policy,
             if name == 'obs_layer.weight':
                 ax.set_xticks(np.arange(env_spec.obs_space.flat_dim))
                 ax.yaxis.set_major_locator(ticker.NullLocator())
-                ax.set_xticklabels(ensure_no_subscript(env_spec.obs_space.labels))
+                ax.set_xticklabels(env_spec.obs_space.labels)
                 ax.yaxis.set_minor_formatter(ticker.NullFormatter())
             elif name in ['_log_tau', '_log_kappa', '_potentials_init', 'resting_level', 'obs_layer.bias',
                           'conv_layer.weight', 'nonlin_layer.log_weight', 'nonlin_layer.bias']:
@@ -198,7 +198,7 @@ def render_policy_params(policy: Policy,
                 ax.xaxis.set_major_locator(ticker.NullLocator())
                 ax.set_yticks(np.arange(env_spec.act_space.flat_dim))
                 ax.xaxis.set_minor_formatter(ticker.NullFormatter())
-                ax.set_yticklabels(ensure_math_mode(env_spec.act_space.labels))
+                ax.set_yticklabels(env_spec.act_space.labels)
             else:
                 ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
                 ax.yaxis.set_major_locator(ticker.MaxNLocator(integer=True))

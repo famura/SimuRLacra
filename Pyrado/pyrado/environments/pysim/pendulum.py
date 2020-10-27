@@ -50,10 +50,10 @@ class PendulumSim(SimPyEnv, Serializable):
         max_obs = np.array([1., 1., np.inf])  # [-, -, rad/s]
         init_state = np.zeros(2)  # [rad, rad/s]
 
-        self._state_space = BoxSpace(-max_state, max_state, labels=[r'$\theta$', r'$\dot{\theta}$'])
-        self._obs_space = BoxSpace(-max_obs, max_obs, labels=[r'$\sin\theta$', r'$\cos\theta$', r'$\dot{\theta}$'])
-        self._init_space = SingularStateSpace(init_state, labels=[r'$\theta$', r'$\dot{\theta}$'])
-        self._act_space = BoxSpace(-tau_max, tau_max, labels=[r'$\tau$'])
+        self._state_space = BoxSpace(-max_state, max_state, labels=['theta', 'theta_dot'])
+        self._obs_space = BoxSpace(-max_obs, max_obs, labels=['sin_theta', 'cos_theta', 'theta_dot'])
+        self._init_space = SingularStateSpace(init_state, labels=['theta', 'theta_dot'])
+        self._act_space = BoxSpace(-tau_max, tau_max, labels=['tau'])
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function

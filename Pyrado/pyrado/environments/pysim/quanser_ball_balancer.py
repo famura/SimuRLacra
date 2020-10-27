@@ -95,13 +95,11 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         min_init_state = np.array([0.75*l_plate/2, -np.pi, -0.05*max_state[6], -0.05*max_state[7]])
         max_init_state = np.array([0.8*l_plate/2, np.pi, 0.05*max_state[6], 0.05*max_state[7]])
 
-        self._state_space = BoxSpace(-max_state, max_state,
-                                     labels=[r'$\theta_x$', r'$\theta_y$', '$x$', '$y$',
-                                             r'$\dot{\theta}_x$', r'$\dot{\theta}_y$', r'$\dot{x}$', r'$\dot{y}$'])
+        self._state_space = BoxSpace(-max_state, max_state, labels=['theta_x', 'theta_y', 'x', 'y',
+                                                                    'theta_x_dot', 'theta_y_dot', 'x_dot', 'y_dot'])
         self._obs_space = self._state_space.copy()
-        self._init_space = Polar2DPosVelSpace(min_init_state, max_init_state,
-                                              labels=['$r$', r'$\phi$', '$\dot{x}$', '$\dot{y}$'])
-        self._act_space = BoxSpace(-max_act_qbb, max_act_qbb, labels=['$V_x$', '$V_y$'])
+        self._init_space = Polar2DPosVelSpace(min_init_state, max_init_state, labels=['r', 'phi', 'x_dot', 'y_dot'])
+        self._act_space = BoxSpace(-max_act_qbb, max_act_qbb, labels=['V_x', 'V_y'])
 
         self._curr_act = np.zeros_like(max_act_qbb)  # just for usage in render function
 

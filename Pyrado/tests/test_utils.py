@@ -555,7 +555,7 @@ def test_gss_optimizer_nlin_fcn():
         plt.plot(x_grid, noisy_nonlin_fcn(x=x_grid, f=f, noise_std=noise_std), alpha=0.2)
         plt.scatter(x.data.numpy(), obj_fcn().numpy(), s=16, color=colors[e])
 
-    plt.xlabel('$x$')
+    plt.xlabel('x')
     plt.ylabel('$f(x)$')
     plt.legend()
     plt.show()

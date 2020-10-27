@@ -73,9 +73,9 @@ class CatapultSim(SimEnv, Serializable):
         max_act = max_state
         self._curr_act = np.zeros_like(max_act)  # just for usage in render function
 
-        self._state_space = BoxSpace(-max_state, max_state, labels=['$h$'])
-        self._init_space = SingularStateSpace(np.zeros(self._state_space.shape), labels=['$h_0$'])
-        self._act_space = BoxSpace(-max_act, max_act, labels=[r'$\theta$'])
+        self._state_space = BoxSpace(-max_state, max_state, labels=['h'])
+        self._init_space = SingularStateSpace(np.zeros(self._state_space.shape), labels=['h_0'])
+        self._act_space = BoxSpace(-max_act, max_act, labels=['theta'])
 
         # Define the task including the reward function
         self._task = self._create_task(task_args=dict())

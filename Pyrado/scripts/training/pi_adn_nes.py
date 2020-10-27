@@ -132,5 +132,4 @@ if __name__ == '__main__':
     )
 
     # Jeeeha
-    print(env.obs_space.labels)
     algo.train(snapshot_mode='latest', seed=args.seed)

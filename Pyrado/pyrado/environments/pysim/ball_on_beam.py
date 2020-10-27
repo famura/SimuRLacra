@@ -56,21 +56,21 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         self._curr_act = np.zeros_like(max_act)  # just for usage in render function
 
         self._state_space = BoxSpace(-max_state, max_state,
-                                     labels=['$x$', r'$\alpha$', r'$\dot{x}$', r'$\dot{\alpha}$'])
+                                     labels=['x', 'alpha', 'x_dot', 'alpha_dot'])
         self._obs_space = self._state_space
         self._init_space = CompoundSpace([
             BoxSpace(
                 np.array([-0.8*l_beam/2., -5/180.*np.pi, -0.02*max_state[2], -0.02*max_state[3]]),
                 np.array([-0.7*l_beam/2., +5/180.*np.pi, +0.02*max_state[2], +0.02*max_state[3]]),
-                labels=['$x$', r'$\alpha$', r'$\dot{x}$', r'$\dot{\alpha}$']
+                labels=['x', 'alpha', 'x_dot', 'alpha_dot']
             ),
             BoxSpace(
                 np.array([0.7*l_beam/2., -5/180.*np.pi, -0.02*max_state[2], -0.02*max_state[3]]),
                 np.array([0.8*l_beam/2., +5/180.*np.pi, +0.02*max_state[2], +0.02*max_state[3]]),
-                labels=['$x$', r'$\alpha$', r'$\dot{x}$', r'$\dot{\alpha}$']
+                labels=['x', 'alpha', 'x_dot', 'alpha_dot']
             )
         ])
-        self._act_space = BoxSpace(-max_act, max_act, labels=[r'$\tau$'])
+        self._act_space = BoxSpace(-max_act, max_act, labels=['tau'])
 
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
@@ -238,4 +238,4 @@ class BallOnBeamDiscSim(BallOnBeamSim, Serializable):
         min_act, max_act = self._act_space.bounds
         num_act = 3
         linspaced = np.linspace(min_act, max_act, num=num_act, endpoint=True)
-        self._act_space = DiscreteSpace(linspaced, labels=[r'$\tau$'])
+        self._act_space = DiscreteSpace(linspaced, labels=['tau'])

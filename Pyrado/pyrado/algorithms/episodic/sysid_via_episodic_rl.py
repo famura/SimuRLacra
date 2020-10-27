@@ -114,12 +114,12 @@ class SysIdViaEpisodicRL(Algorithm):
 
         elb = ObsNormWrapper.override_bounds(
             subrtn.env.obs_space.bound_lo,
-            {r'$\dot{\theta}$': -20., r'$\dot{\alpha}$': -20.},
+            {'theta_dot': -20., 'alpha_dot': -20.},
             subrtn.env.obs_space.labels
         )
         eub = ObsNormWrapper.override_bounds(
             subrtn.env.obs_space.bound_up,
-            {r'$\dot{\theta}$': 20., r'$\dot{\alpha}$': 20.},
+            {'theta_dot': 20., 'alpha_dot': 20.},
             subrtn.env.obs_space.labels
         )
         self.obs_normalizer = UnitCubeProjector(bound_lo=elb, bound_up=eub)

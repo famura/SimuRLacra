@@ -225,14 +225,12 @@ class QQubeSwingUpSim(QQubeSim):
         max_obs = np.array([1., 1., 1., 1., np.inf, np.inf])  # [-, -, -, -, rad/s, rad/s]
         max_init_state = np.array([2., 1., 0.5, 0.5])/180*np.pi  # [rad, rad, rad/s, rad/s]
 
-        self._state_space = BoxSpace(-max_state, max_state,
-                                     labels=[r'$\theta$', r'$\alpha$', r'$\dot{\theta}$', r'$\dot{\alpha}$'])
-        self._obs_space = BoxSpace(-max_obs, max_obs,
-                                   labels=[r'$\sin\theta$', r'$\cos\theta$', r'$\sin\alpha$', r'$\cos\alpha$',
-                                           r'$\dot{\theta}$', r'$\dot{\alpha}$'])
+        self._state_space = BoxSpace(-max_state, max_state, labels=['theta', 'alpha', 'theta_dot', 'alpha_dot'])
+        self._obs_space = BoxSpace(-max_obs, max_obs, labels=['sin_theta', 'cos_theta', 'sin_alpha', 'cos_alpha',
+                                                              'theta_dot', 'alpha_dot'])
         self._init_space = BoxSpace(-max_init_state, max_init_state,
-                                    labels=[r'$\theta$', r'$\alpha$', r'$\dot{\theta}$', r'$\dot{\alpha}$'])
-        self._act_space = BoxSpace(-max_act_qq, max_act_qq, labels=['$V$'])
+                                    labels=['theta', 'alpha', 'theta_dot', 'alpha_dot'])
+        self._act_space = BoxSpace(-max_act_qq, max_act_qq, labels=['V'])
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
@@ -270,12 +268,11 @@ class QQubeStabSim(QQubeSim):
         min_init_state = np.array([-5./180*np.pi, 175./180*np.pi, 0, 0])  # [rad, rad, rad/s, rad/s]
         max_init_state = np.array([5./180*np.pi, 185./180*np.pi, 0, 0])  # [rad, rad, rad/s, rad/s]
 
-        self._state_space = BoxSpace(-max_state, max_state,
-                                     labels=[r'$\theta$', r'$\alpha$', r'$\dot{\theta}$', r'$\dot{\alpha}$'])
+        self._state_space = BoxSpace(-max_state, max_state, labels=['theta', 'alpha', 'theta_dot', 'alpha_dot'])
         self._obs_space = self._state_space
         self._init_space = BoxSpace(min_init_state, max_init_state,
-                                    labels=[r'$\theta$', r'$\alpha$', r'$\dot{\theta}$', r'$\dot{\alpha}$'])
-        self._act_space = BoxSpace(-max_act_qq, max_act_qq, labels=['$V$'])
+                                    labels=['theta', 'alpha', 'theta_dot', 'alpha_dot'])
+        self._act_space = BoxSpace(-max_act_qq, max_act_qq, labels=['V'])
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
