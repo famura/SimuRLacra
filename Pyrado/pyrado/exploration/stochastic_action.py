@@ -231,7 +231,7 @@ class UniformActNoiseExplStrat(StochasticActionExplStrat):
 
     @halfspan.setter
     def halfspan(self, val):
-        return self._noise.halfspan = val
+        self._noise.halfspan = val
 
 
 class SACExplStrat(StochasticActionExplStrat):
