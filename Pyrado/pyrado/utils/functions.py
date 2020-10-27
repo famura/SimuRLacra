@@ -29,20 +29,21 @@
 """
 A small collection of well-known functions for testing or benchmarking
 """
-from typing import Union
-
 import numpy as np
 import torch as to
+from typing import Union
 
 import pyrado
+from pyrado.spaces import BoxSpace
 
 
 def rosenbrock(x: Union[to.Tensor, np.ndarray]) -> (to.Tensor, np.ndarray):
     """
     The Rosenbrock function
     (consistent with https://docs.scipy.org/doc/scipy/reference/tutorial/optimize.html)
+
     :param x: multi-dim column vector, or array thereof
-    :return: value of the rosenbrock function at the input point, or array thereof
+    :return: value of the Rosenbrock function at the input point, or array thereof
     """
     if isinstance(x, to.Tensor):
         return to.sum(100.*to.pow(x[1:] - to.pow(x[:-1], 2), 2) + to.pow((1. - x[:-1]), 2), dim=0)
@@ -67,3 +68,50 @@ def noisy_nonlin_fcn(x: [to.Tensor, np.ndarray], f: float = 1., noise_std: float
         return -np.sin(2*np.pi*f*x) - np.power(x, 2) + 0.7*x + noise_std*np.random.randn(*x.shape)
     else:
         raise pyrado.TypeErr(given=x, expected_type=[np.ndarray, to.Tensor])
+
+
+def skyline(dt: Union[int, float], t_end: Union[int, float], t_intvl_space: BoxSpace, val_space: BoxSpace
+            ) -> (np.ndarray, np.ndarray):
+    """
+    Step function that randomly samples a value from the given range, and then holds this value for a time interval
+    which is also randomly sampled given a range of time intervals. This procedure is repeated until the sequence is
+    long enough, i.e. `dt * t_end` samples.
+
+    :param dt: time step size
+    :param t_end: final time
+    :param t_intvl_space: 1-dim `BoxSpace` determining the range of time intervals that can be sampled
+    :param val_space: 1-dim `BoxSpace` determining the range of values that can be sampled
+    :return: array of time steps together with the associated array of values
+    """
+    if dt <= 0:
+        raise pyrado.ValueErr(given=dt, g_constraint='0')
+    if t_end < dt:
+        raise pyrado.ValueErr(given=t_end, ge_constraint=f'{dt}')
+    if not isinstance(t_intvl_space, BoxSpace):
+        raise pyrado.TypeErr(given=t_intvl_space, expected_type=BoxSpace)
+    if not isinstance(val_space, BoxSpace):
+        raise pyrado.TypeErr(given=val_space, expected_type=BoxSpace)
+    if not t_intvl_space.flat_dim == 1:
+        raise pyrado.ShapeErr(given=t_intvl_space, expected_match=(1,))
+    if not val_space.flat_dim == 1:
+        raise pyrado.ShapeErr(given=val_space, expected_match=(1,))
+
+    dt = np.asarray(dt, dtype=np.float32)
+    t_end = np.asarray(t_end, dtype=np.float32)
+
+    # First iter
+    t_itvl = t_intvl_space.sample_uniform()
+    t_itvl = np.clip(t_itvl, dt, t_end + dt)
+    t = np.arange(start=0., stop=t_itvl, step=dt)
+    vals = val_space.sample_uniform() * np.ones_like(t)
+
+    # Iterate until the time is up
+    while t[-1] < t_end:
+        t_itvl = t_intvl_space.sample_uniform()
+        t_itvl = np.clip(t_itvl, dt, t_end - t[-1] + dt)
+        t_new = np.arange(start=t[-1]+dt, stop=t[-1]+t_itvl, step=dt)
+        t = np.concatenate([t, t_new])
+        val_new = val_space.sample_uniform() * np.ones_like(t_new)
+        vals = np.concatenate([vals, val_new])
+
+    return t, vals

@@ -29,7 +29,11 @@
 import pytest
 import os.path as osp
 
+import torch
+from torch import nn as nn
+
 from pyrado.policies.environment_specific import DualRBFLinearPolicy
+from pyrado.utils.nn_layers import IndiNonlinLayer
 from tests.conftest import m_needs_cuda, m_needs_bullet, m_needs_mujoco, m_needs_rcs, m_needs_libtorch
 from pyrado.policies.rnn import default_unpack_hidden, default_pack_hidden
 from pyrado.policies.linear import LinearPolicy
@@ -757,3 +761,21 @@ def test_export_rcspysim(env, policy, tmpdir):
         act_script = scripted(to.from_numpy(obs)).numpy()
         act_cpp = cpp(obs, policy.env_spec.act_space.flat_dim)
         assert act_cpp == pytest.approx(act_script)
+
+
+@pytest.mark.parametrize('in_features', [1, 3], ids=['1dim', '3dim'])
+@pytest.mark.parametrize('same_nonlin', [True, False], ids=['same_nonlin', 'different_nonlin'])
+@pytest.mark.parametrize('bias', [True, False], ids=['bias', 'no_bias'])
+@pytest.mark.parametrize('weight', [True, False], ids=['weight', 'no_weight'])
+def test_indi_nonlin_layer(in_features, same_nonlin, bias, weight):
+    if not same_nonlin and in_features > 1:
+        nonlin = in_features*[to.tanh]
+    else:
+        nonlin = to.sigmoid
+    layer = IndiNonlinLayer(in_features, nonlin, bias, weight)
+    assert isinstance(layer, nn.Module)
+
+    i = to.randn(in_features)
+    o = layer(i)
+    assert isinstance(o, to.Tensor)
+    assert i.shape == o.shape

@@ -33,18 +33,18 @@ from functools import partial
 from math import ceil
 from tqdm import tqdm
 
+from pyrado.spaces import BoxSpace
 from pyrado.utils.saving_loading import save_prefix_suffix, load_prefix_suffix
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate5DSim
 from pyrado.sampling.utils import gen_batch_idcs, gen_ordered_batch_idcs, gen_ordered_batches
 from pyrado.utils.data_types import *
-from pyrado.utils.functions import noisy_nonlin_fcn
+from pyrado.utils.functions import noisy_nonlin_fcn, skyline
 from pyrado.utils.input_output import completion_context, print_cbt_once
 from pyrado.utils.math import cosine_similarity, cov, rmse, logmeanexp
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.policies.dummy import DummyPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
-from pyrado.utils.nn_layers import IndiNonlinLayer
 from pyrado.utils.optimizers import GSS
 from pyrado.utils.averaging import RunningExpDecayingAverage, RunningMemoryAverage
 from pyrado.utils.data_processing import RunningStandardizer, Standardizer, scale_min_max, MinMaxScaler
@@ -542,7 +542,7 @@ def test_gss_optimizer_nlin_fcn():
     num_epochs = 10
 
     # Init plotting
-    fig = plt.figure()
+    plt.figure()
     plt.plot(x_grid, noisy_nonlin_fcn(x=x_grid, f=f), label='noise free fcn')
     plt.scatter(x.data.numpy(), obj_fcn().numpy(), s=40, marker='x', color='k', label='init guess')
     colors = plt.get_cmap('inferno')(np.linspace(0, 1, num_epochs))
@@ -555,29 +555,36 @@ def test_gss_optimizer_nlin_fcn():
         plt.plot(x_grid, noisy_nonlin_fcn(x=x_grid, f=f, noise_std=noise_std), alpha=0.2)
         plt.scatter(x.data.numpy(), obj_fcn().numpy(), s=16, color=colors[e])
 
-    plt.xlabel('x')
+    plt.xlabel('$x$')
     plt.ylabel('$f(x)$')
     plt.legend()
     plt.show()
     assert noisy_nonlin_fcn(x, f=f, noise_std=noise_std) < noisy_nonlin_fcn(x_init, f=f, noise_std=noise_std)
 
 
-@pytest.mark.parametrize('in_features', [1, 3], ids=['1dim', '3dim'])
-@pytest.mark.parametrize('same_nonlin', [True, False], ids=['same_nonlin', 'different_nonlin'])
-@pytest.mark.parametrize('bias', [True, False], ids=['bias', 'no_bias'])
-@pytest.mark.parametrize('weight', [True, False], ids=['weight', 'no_weight'])
-def test_indi_nonlin_layer(in_features, same_nonlin, bias, weight):
-    if not same_nonlin and in_features > 1:
-        nonlin = in_features*[to.tanh]
-    else:
-        nonlin = to.sigmoid
-    layer = IndiNonlinLayer(in_features, nonlin, bias, weight)
-    assert isinstance(layer, nn.Module)
+@pytest.mark.visualization
+@pytest.mark.parametrize('dt', [0.1], ids=['0.1'])
+@pytest.mark.parametrize('t_end', [6.], ids=['1.'])
+@pytest.mark.parametrize(
+    't_intvl_space', [
+        BoxSpace(0.1, 0.11, shape=1),
+        BoxSpace(0.123, 0.456, shape=1),
+        BoxSpace(10., 20., shape=1),
+    ], ids=['small_time_intvl', 'real_time_intvl', 'large_time_intvl'])
+@pytest.mark.parametrize('val_space', [BoxSpace(-5., 3., shape=1)], ids=['-5_to_3'])
+def test_skyline(dt: Union[int, float], t_end: Union[int, float], t_intvl_space: BoxSpace, val_space: BoxSpace):
+    from matplotlib import pyplot as plt
+    # Create the skyline function
+    t, vals = skyline(dt, t_end, t_intvl_space, val_space)
+    assert isinstance(t, np.ndarray) and isinstance(vals, np.ndarray)
+    assert len(t) == len(vals)
 
-    i = to.randn(in_features)
-    o = layer(i)
-    assert isinstance(o, to.Tensor)
-    assert i.shape == o.shape
+    plt.figure()
+    plt.step(t, vals, label=f't_intvl_space: ({t_intvl_space.bound_lo.item()}, {t_intvl_space.bound_up.item()})')
+    plt.xlabel('$x$')
+    plt.ylabel('$f(x)$')
+    plt.legend()
+    plt.show()
 
 
 @pytest.mark.visualization
