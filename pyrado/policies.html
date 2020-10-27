@@ -913,25 +913,6 @@ registered hooks while the latter silently ignores them.</p>
 <p>Simple recurrent policy which samples random values form the action space and
 always returns hidden states with value zero</p>
 <dl class="py method">
-<dt id="pyrado.policies.dummy.RecurrentDummyPolicy.evaluate">
-<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollout</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">hidden_states_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'hidden_states'</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/dummy.html#RecurrentDummyPolicy.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.dummy.RecurrentDummyPolicy.evaluate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Re-evaluate the given rollout and return a derivable action tensor.
-This method makes sure that the gradient is propagated through the hidden state.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>rollout</strong> – complete rollout</p></li>
-<li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks.
-Change this string for value functions.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>actions with gradient data</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="pyrado.policies.dummy.RecurrentDummyPolicy.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">obs: torch.Tensor = None</em>, <em class="sig-param">hidden: torch.Tensor = None) -&gt; (&lt;class 'torch.Tensor'&gt;</em>, <em class="sig-param">&lt;class 'torch.Tensor'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/dummy.html#RecurrentDummyPolicy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.dummy.RecurrentDummyPolicy.forward" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
@@ -1105,7 +1086,7 @@ The only but significant difference of this controller to the other PD controlle
 
 <dl class="py attribute">
 <dt id="pyrado.policies.environment_specific.QCartPoleSwingUpAndBalanceCtrl.name">
-<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'qcp-sub'</em><a class="headerlink" href="#pyrado.policies.environment_specific.QCartPoleSwingUpAndBalanceCtrl.name" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'qcp_sub'</em><a class="headerlink" href="#pyrado.policies.environment_specific.QCartPoleSwingUpAndBalanceCtrl.name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1239,7 +1220,7 @@ Flag done is set when <span class="math notranslate nohighlight">\(|x_des - x| &
 
 <dl class="py attribute">
 <dt id="pyrado.policies.environment_specific.QQubeSwingUpAndBalanceCtrl.name">
-<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'qq-sub'</em><a class="headerlink" href="#pyrado.policies.environment_specific.QQubeSwingUpAndBalanceCtrl.name" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'qq_sub'</em><a class="headerlink" href="#pyrado.policies.environment_specific.QQubeSwingUpAndBalanceCtrl.name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1282,13 +1263,6 @@ of the ball in the state vector, i.e. state is 14-dim instead of 16-dim</p></li>
 </div>
 <div class="section" id="module-pyrado.policies.features">
 <span id="features"></span><h2>features<a class="headerlink" href="#module-pyrado.policies.features" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="pyrado.policies.features.ATan2Feat">
-<em class="property">class </em><code class="sig-name descname">ATan2Feat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">idx_sin</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">idx_cos</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#ATan2Feat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.ATan2Feat" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Feature that computes the atan2 from two dimensions of the given input / observation.</p>
-</dd></dl>
-
 <dl class="py class">
 <dt id="pyrado.policies.features.FeatureStack">
 <em class="property">class </em><code class="sig-name descname">FeatureStack</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">feat_fcns</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>Callable<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#FeatureStack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.FeatureStack" title="Permalink to this definition">¶</a></dt>
@@ -2076,11 +2050,6 @@ registered hooks while the latter silently ignores them.</p>
 <dl class="py attribute">
 <dt id="pyrado.policies.time.TraceableTimePolicy.input_size">
 <code class="sig-name descname">input_size</code><em class="property">: int</em><a class="headerlink" href="#pyrado.policies.time.TraceableTimePolicy.input_size" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pyrado.policies.time.TraceableTimePolicy.name">
-<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'trtime'</em><a class="headerlink" href="#pyrado.policies.time.TraceableTimePolicy.name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">

@@ -272,12 +272,18 @@ Any subclass of <cite>Algorithm</cite> will always stop if the <cite>curr_iter</
     <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># TODO specify a stopping criterion for your algorithm</span>
 </pre></div>
 </div>
-<p>The following function is called for saving (every step). The base class <cite>Algorithm</cite> saves the policy.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">save_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;algo&#39;</span><span class="p">):</span>
+<p>The following functions are called for saving (every step) and loading. The base class <cite>Algorithm</cite> saves the policy.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">save_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="c1"># Call Algorithm&#39;s save method</span>
-    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">)</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="p">)</span>
 
     <span class="c1"># TODO save what needs to be saved (specific to your algorithm)</span>
+
+<span class="k">def</span> <span class="nf">load_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">load_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># By default load from the directory where the algorithm saved to</span>
+    <span class="n">ld</span> <span class="o">=</span> <span class="n">load_dir</span> <span class="k">if</span> <span class="n">load_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span>
+
+    <span class="c1"># TODO load what needs to be loaded (specific to your algorithm)</span>
 </pre></div>
 </div>
 <p>This tutorial is not meant to be exhaustive, but to give you an intuition what needs to be done.

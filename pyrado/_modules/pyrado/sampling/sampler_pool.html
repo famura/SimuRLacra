@@ -625,7 +625,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">invoke_all_map</span><span class="p">(</span><span class="n">_run_set_seed</span><span class="p">,</span> <span class="p">[</span><span class="n">seed</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_threads</span><span class="p">)])</span></div>
 
     <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># We cannot really pickle this object since it has a lot of hidden state in the worker processes</span>
+        <span class="c1"># We cannot really pickle this object since it has a ton of hidden state in the worker processes.</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;The sampler pool is not serializable!&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

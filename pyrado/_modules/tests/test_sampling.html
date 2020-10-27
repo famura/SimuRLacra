@@ -206,11 +206,13 @@
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">pytest_lazyfixture</span> <span class="kn">import</span> <span class="n">lazy_fixture</span>
 <span class="kn">from</span> <span class="nn">torch.distributions.multivariate_normal</span> <span class="kn">import</span> <span class="n">MultivariateNormal</span>
 
-<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="n">create_default_randomizer</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="n">DomainRandWrapperLive</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.pysim.ball_on_beam</span> <span class="kn">import</span> <span class="n">BallOnBeamSim</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_ball_balancer</span> <span class="kn">import</span> <span class="n">QBallBalancerSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.data_format</span> <span class="kn">import</span> <span class="n">to_format</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.hyper_sphere</span> <span class="kn">import</span> <span class="n">sample_from_hyper_sphere_surface</span>
@@ -221,6 +223,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sampler_pool</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sequences</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.bootstrapping</span> <span class="kn">import</span> <span class="n">bootstrap_ci</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.features</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.cvar_sampler</span> <span class="kn">import</span> <span class="n">select_cvar</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">RenderMode</span>
@@ -366,29 +369,21 @@
 
 
 <div class="viewcode-block" id="test_rollout_wo_exploration"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_rollout_wo_exploration">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="p">[</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">],</span> <span class="p">[</span>
-        <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;idle_policy&#39;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;dummy_policy&#39;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;time_policy&#39;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;linear_policy&#39;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn_policy&#39;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn_policy&#39;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm_policy&#39;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;gru_policy&#39;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;adn_policy&#39;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;nf_policy&#39;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;thfnn_policy&#39;</span><span class="p">),</span>
-        <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;thgru_policy&#39;</span><span class="p">),</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob_idle&#39;</span><span class="p">,</span> <span class="s1">&#39;bob_dummy&#39;</span><span class="p">,</span> <span class="s1">&#39;bob_time&#39;</span><span class="p">,</span> <span class="s1">&#39;bob_lin&#39;</span><span class="p">,</span> <span class="s1">&#39;bob_fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;bob_rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;bob_lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;bob_gru&#39;</span><span class="p">,</span> <span class="s1">&#39;bob_adn&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;bob_nf&#39;</span><span class="p">,</span> <span class="s1">&#39;bob_thfnn&#39;</span><span class="p">,</span> <span class="s1">&#39;bob_thgru&#39;</span><span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_rollout_wo_exploration</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
+    <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">),</span>
+        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_qbb&#39;</span><span class="p">),</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob_linpol&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb_linpol&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_rollout_wo_exploration</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+    <span class="c1"># Create an arbitrary policy of type Policy</span>
+    <span class="n">policy</span> <span class="o">=</span> <span class="n">LinearPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">FeatureStack</span><span class="p">([</span><span class="n">const_feat</span><span class="p">,</span> <span class="n">identity_feat</span><span class="p">,</span> <span class="n">squared_feat</span><span class="p">]))</span>
+
     <span class="n">ro</span> <span class="o">=</span> <span class="n">rollout</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="n">RenderMode</span><span class="p">())</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">StepSequence</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span></div>
 
 
-<div class="viewcode-block" id="test_rollout_wo_policy"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_rollout_wo_policy">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;default_qbb&#39;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="viewcode-block" id="test_rollout_wo_policy"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_rollout_wo_policy">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_qbb&#39;</span><span class="p">)],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;qbb&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">test_rollout_wo_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">policy</span><span class="p">(</span><span class="n">obs</span><span class="p">):</span>
         <span class="c1"># Callable must receive and return tensors</span>
@@ -504,18 +499,21 @@
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[use_t_for_ci=True] CI: &#39;</span><span class="p">,</span> <span class="n">ci</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="test_param_expl_sampler"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_param_expl_sampler">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="p">[</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">],</span> <span class="p">[</span>
-        <span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn_policy&#39;</span><span class="p">),</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob_fnnpol&#39;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_param_expl_sampler</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
+<div class="viewcode-block" id="test_param_expl_sampler"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_param_expl_sampler">[docs]</a><span class="k">def</span> <span class="nf">test_param_expl_sampler</span><span class="p">(</span><span class="n">default_bob</span><span class="p">,</span> <span class="n">bob_pert</span><span class="p">):</span>
     <span class="c1"># Add randomizer</span>
-    <span class="n">pert</span> <span class="o">=</span> <span class="n">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-    <span class="n">env</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pert</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">default_bob</span><span class="p">,</span> <span class="n">bob_pert</span><span class="p">)</span>
+
+    <span class="c1"># Use a simple policy</span>
+    <span class="n">policy</span> <span class="o">=</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span>
 
     <span class="c1"># Create the sampler</span>
     <span class="n">num_rollouts_per_param</span> <span class="o">=</span> <span class="mi">12</span>
-    <span class="n">sampler</span> <span class="o">=</span> <span class="n">ParameterExplorationSampler</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_rollouts_per_param</span><span class="o">=</span><span class="n">num_rollouts_per_param</span><span class="p">)</span>
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">ParameterExplorationSampler</span><span class="p">(</span>
+        <span class="n">env</span><span class="p">,</span>
+        <span class="n">policy</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_rollouts_per_param</span><span class="o">=</span><span class="n">num_rollouts_per_param</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="c1"># Use some random parameters</span>
     <span class="n">num_ps</span> <span class="o">=</span> <span class="mi">12</span>

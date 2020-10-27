@@ -347,15 +347,14 @@
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_setting_dp_vals</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
     <span class="c1"># Loop over all possible domain parameters and set them to a random value</span>
-    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">dp_key</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">supported_domain_param</span><span class="p">:</span>
-            <span class="n">rand_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span>  <span class="c1"># [0, 1[</span>
-            <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">domain_param</span><span class="o">=</span><span class="p">{</span><span class="n">dp_key</span><span class="p">:</span> <span class="n">rand_val</span><span class="p">})</span>
-            <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">s</span> <span class="ow">in</span> <span class="n">dp_key</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;slip&#39;</span><span class="p">,</span> <span class="s1">&#39;compliance&#39;</span><span class="p">,</span> <span class="s1">&#39;linearvelocitydamping&#39;</span><span class="p">,</span> <span class="s1">&#39;angularvelocitydamping&#39;</span><span class="p">]]):</span>
-                <span class="c1"># Skip the parameters that are only available in Vortex but not in Bullet</span>
-                <span class="k">assert</span> <span class="kc">True</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="n">env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="n">dp_key</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">rand_val</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span></div>
+    <span class="k">for</span> <span class="n">dp_key</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">supported_domain_param</span><span class="p">:</span>
+        <span class="n">rand_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span>  <span class="c1"># [0, 1[</span>
+        <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">domain_param</span><span class="o">=</span><span class="p">{</span><span class="n">dp_key</span><span class="p">:</span> <span class="n">rand_val</span><span class="p">})</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">s</span> <span class="ow">in</span> <span class="n">dp_key</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;slip&#39;</span><span class="p">,</span> <span class="s1">&#39;compliance&#39;</span><span class="p">,</span> <span class="s1">&#39;linearvelocitydamping&#39;</span><span class="p">,</span> <span class="s1">&#39;angularvelocitydamping&#39;</span><span class="p">]]):</span>
+            <span class="c1"># Skip the parameters that are only available in Vortex but not in Bullet</span>
+            <span class="k">assert</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="n">dp_key</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">rand_val</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

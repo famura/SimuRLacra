@@ -104,15 +104,15 @@ you to later see which hyper-parameters you used, i.e. which setting leads to a 
 
 Finally, start the training. The `train()` function is the same for all algorithms inheriting from the `Algorithm`
 base class. It repetitively calls the algorithm's custom `step()` and `update()` functions.
-You can load and continue a previous experiment using the Algorithm's `load()` method. The `snapshot_mode()` method
-determines when to save the current training state, e.g. 'latest' saves after every step of the algorithm, and 'best'
-only saves if the average return is a new highscore.
+You can specify a `load_dir` to load and continue a previous experiment. This uses the `load_snapshot()` which should
+be implemented for every algorithm. The `snapshot_mode()` determines when to save the current training state, e.g.
+'latest' saves after every step of the algorithm, and 'best' only saves if the average return is a new highscore.
 Moreover, you can set the random number generator's seed. This second option for setting the seed comes in handy when
-you want to continue from a previous experiment multiple times.
+you want to continue from a previous experiment multiple times. 
 
 .. code-block:: python
 
-    algo.train(snapshot_mode='latest', seed=None)
+    algo.train(load_dir=None, snapshot_mode='latest', seed=None)
 
     input('Finished training. Hit enter to simulate the policy.')
 

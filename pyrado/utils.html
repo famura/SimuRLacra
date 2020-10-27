@@ -127,7 +127,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.optimizers">optimizers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.order">order</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.properties">properties</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.saving_loading">saving_loading</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils.tensor">tensor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.utils">Module contents</a></li>
 </ul>
@@ -803,7 +802,7 @@ not pass functions directly, we pass a sting.</p>
 
 <dl class="py function">
 <dt id="pyrado.utils.experiments.load_experiment">
-<code class="sig-name descname">load_experiment</code><span class="sig-paren">(</span><em class="sig-param">ex_dir: str, args: Any = None) -&gt; (typing.Union[pyrado.environments.sim_base.SimEnv, pyrado.environment_wrappers.base.EnvWrapper], &lt;class 'pyrado.policies.base.Policy'&gt;, &lt;class 'dict'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#load_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.load_experiment" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_experiment</code><span class="sig-paren">(</span><em class="sig-param">ex_dir: str, args: Any = None) -&gt; (typing.Union[pyrado.environments.sim_base.SimEnv, pyrado.environment_wrappers.base.EnvWrapper], &lt;class 'pyrado.policies.base.Policy'&gt;, typing.Union[dict, NoneType]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#load_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.load_experiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load the (training) environment and the policy.
 This helper function first tries to read the hyper-parameters yaml-file in the experiment’s directory to infer
 why entities should be loaded. If no file was found, we fall back to some heuristic and hope for the best.</p>
@@ -921,14 +920,31 @@ exception is raised).</p>
 
 <dl class="py function">
 <dt id="pyrado.utils.input_output.ensure_math_mode">
-<code class="sig-name descname">ensure_math_mode</code><span class="sig-paren">(</span><em class="sig-param">inp: [&lt;class 'str'&gt;, typing.Sequence[str]]</em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘str’&gt;, &lt;class ‘list’&gt;]<a class="reference internal" href="_modules/pyrado/utils/input_output.html#ensure_math_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.ensure_math_mode" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">ensure_math_mode</code><span class="sig-paren">(</span><em class="sig-param">inp: [&lt;class 'str'&gt;, typing.Sequence[str]], no_subscript: bool = False</em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘str’&gt;, &lt;class ‘list’&gt;]<a class="reference internal" href="_modules/pyrado/utils/input_output.html#ensure_math_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.ensure_math_mode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Naive way to ensure that a sting is compatible with LaTeX math mode for printing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>inp</strong> – input string</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inp</strong> – input string</p></li>
+<li><p><strong>no_subscript</strong> – force no subscript (sometimes there might be problems due to double subscript</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return s</dt>
 <dd class="field-even"><p>sting in math mode</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.input_output.ensure_no_subscript">
+<code class="sig-name descname">ensure_no_subscript</code><span class="sig-paren">(</span><em class="sig-param">inp: [&lt;class 'str'&gt;, typing.Sequence[str]]</em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘str’&gt;, &lt;class ‘list’&gt;]<a class="reference internal" href="_modules/pyrado/utils/input_output.html#ensure_no_subscript"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.ensure_no_subscript" title="Permalink to this definition">¶</a></dt>
+<dd><p>Naive way to ensure that a sting is compatible with LaTeX for printing by removing the math mode symbols.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inp</strong> – input string or iterable of stings</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>sting without subscript</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1424,54 +1440,6 @@ foo.baz &lt;=&gt; foo.bar.baz</p>
 <p>Decorator that turns a function into a cached property.
 When the property is first accessed, the function is called to compute the value. Later calls use the cached value.
 .. note:: Requires a <cite>__dict__</cite> field, so it won’t work on named tuples.</p>
-</dd></dl>
-
-</div>
-<div class="section" id="module-pyrado.utils.saving_loading">
-<span id="saving-loading"></span><h2>saving_loading<a class="headerlink" href="#module-pyrado.utils.saving_loading" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="pyrado.utils.saving_loading.load_prefix_suffix">
-<code class="sig-name descname">load_prefix_suffix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">file_ext</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">load_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/saving_loading.html#load_prefix_suffix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.saving_loading.load_prefix_suffix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load an object object using a prefix or suffix, depending on the meta information.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>obj</strong> – PyTorch modeule to load into, this can be <cite>None</cite> except for the case if you want to load and save the
-module’s <cite>state_dict</cite></p></li>
-<li><p><strong>name</strong> – name of the object for loading</p></li>
-<li><p><strong>file_ext</strong> – file extension, e.g. ‘pt’ for PyTorch modules like the Pyrado policies</p></li>
-<li><p><strong>load_dir</strong> – directory to load from</p></li>
-<li><p><strong>meta_info</strong> – meta information that can contain a pre- and/or suffix for altering the name</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><a class="reference external" href="https://pytorch.org/tutorials/beginner/saving_loading_models.html#saving-loading-model-for-inference">https://pytorch.org/tutorials/beginner/saving_loading_models.html#saving-loading-model-for-inference</a></p>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.utils.saving_loading.save_prefix_suffix">
-<code class="sig-name descname">save_prefix_suffix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">file_ext</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">save_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">use_state_dict</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/saving_loading.html#save_prefix_suffix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.saving_loading.save_prefix_suffix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save an object object using a prefix or suffix, depending on the meta information.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>obj</strong> – PyTorch or pickled object to save</p></li>
-<li><p><strong>name</strong> – name of the object for saving</p></li>
-<li><p><strong>file_ext</strong> – file extension, e.g. ‘pt’ for PyTorch modules like the Pyrado policies</p></li>
-<li><p><strong>save_dir</strong> – directory to save in</p></li>
-<li><p><strong>meta_info</strong> – meta information that can contain a pre- and/or suffix for altering the name</p></li>
-<li><p><strong>use_state_dict</strong> – if <cite>True</cite> save the <cite>state_dict</cite>, else save the entire module. This only has an effect if
-PyTorch modules (file_ext = ‘pt’) are saved.</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><a class="reference external" href="https://pytorch.org/tutorials/beginner/saving_loading_models.html#saving-loading-model-for-inference">https://pytorch.org/tutorials/beginner/saving_loading_models.html#saving-loading-model-for-inference</a></p>
-</div>
 </dd></dl>
 
 </div>

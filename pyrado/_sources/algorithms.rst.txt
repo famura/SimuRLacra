@@ -3,12 +3,60 @@
 algorithms
 ==========
 
-.. toctree::
 
-   pyrado.algorithms.episodic
-   pyrado.algorithms.meta
-   pyrado.algorithms.step_based
 
+a2c
+---
+
+.. automodule:: pyrado.algorithms.a2c
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+actor\_critic
+-------------
+
+.. automodule:: pyrado.algorithms.actor_critic
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+adr
+---
+
+.. automodule:: pyrado.algorithms.adr
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+adr\_discriminator
+------------------
+
+.. automodule:: pyrado.algorithms.adr_discriminator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+advantage
+---------
+
+.. automodule:: pyrado.algorithms.advantage
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+arpl
+----
+
+.. automodule:: pyrado.algorithms.arpl
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 
 base
@@ -20,10 +68,172 @@ base
    :show-inheritance:
 
 
+bayrn
+-----
+
+.. automodule:: pyrado.algorithms.bayrn
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+cem
+---
+
+.. automodule:: pyrado.algorithms.cem
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+dql
+---
+
+.. automodule:: pyrado.algorithms.dql
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+epopt
+-----
+
+.. automodule:: pyrado.algorithms.epopt
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+hc
+--
+
+.. automodule:: pyrado.algorithms.hc
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+nes
+---
+
+.. automodule:: pyrado.algorithms.nes
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+parameter\_exploring
+--------------------
+
+.. automodule:: pyrado.algorithms.parameter_exploring
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+pepg
+----
+
+.. automodule:: pyrado.algorithms.pepg
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+power
+-----
+
+.. automodule:: pyrado.algorithms.power
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+ppo
+---
+
+.. automodule:: pyrado.algorithms.ppo
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+predefined\_lqr
+---------------
+
+.. automodule:: pyrado.algorithms.predefined_lqr
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+reps
+----
+
+.. automodule:: pyrado.algorithms.reps
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+sac
+---
+
+.. automodule:: pyrado.algorithms.sac
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+simopt
+------
+
+.. automodule:: pyrado.algorithms.simopt
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+spota
+-----
+
+.. automodule:: pyrado.algorithms.spota
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+svpg
+----
+
+.. automodule:: pyrado.algorithms.svpg
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+sysid\_via\_episodic\_rl
+------------------------
+
+.. automodule:: pyrado.algorithms.sysid_via_episodic_rl
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 timeseries\_prediction
 ----------------------
 
 .. automodule:: pyrado.algorithms.timeseries_prediction
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+udr
+---
+
+.. automodule:: pyrado.algorithms.udr
    :members:
    :undoc-members:
    :show-inheritance:

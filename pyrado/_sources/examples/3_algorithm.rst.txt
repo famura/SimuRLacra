@@ -105,15 +105,21 @@ Any subclass of `Algorithm` will always stop if the `curr_iter` counter is equal
         def stopping_criterion_met(self) -> bool:
             return False  # TODO specify a stopping criterion for your algorithm
 
-The following function is called for saving (every step). The base class `Algorithm` saves the policy.
+The following functions are called for saving (every step) and loading. The base class `Algorithm` saves the policy.
 
 .. code-block:: python
 
-    def save_snapshot(self, meta_info: dict = None, algo_name: str = 'algo'):
+    def save_snapshot(self, meta_info: dict = None):
         # Call Algorithm's save method
-        super().save_snapshot(meta_info, algo_name)
+        super().save_snapshot(meta_info)
 
         # TODO save what needs to be saved (specific to your algorithm)
+
+    def load_snapshot(self, load_dir: str = None, meta_info: dict = None):
+        # By default load from the directory where the algorithm saved to
+        ld = load_dir if load_dir is not None else self._save_dir
+
+        # TODO load what needs to be loaded (specific to your algorithm)
 
 This tutorial is not meant to be exhaustive, but to give you an intuition what needs to be done.
 I suggest to have a look at the existing algorithms and get some inspiration.

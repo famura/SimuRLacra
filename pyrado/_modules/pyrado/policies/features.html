@@ -283,12 +283,6 @@
                 <span class="k">if</span> <span class="n">rbfs</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
                     <span class="n">num_feat</span> <span class="o">+=</span> <span class="n">fcn</span><span class="o">.</span><span class="n">num_feat</span>
 
-        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">ATan2Feat</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">feat_fcns</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">fcn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">feat_fcns</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fcn</span><span class="p">,</span> <span class="n">ATan2Feat</span><span class="p">):</span>
-                    <span class="c1"># We do not care about the number of observations, but we added them before</span>
-                    <span class="n">num_feat</span> <span class="o">=</span> <span class="n">num_feat</span> <span class="o">-</span> <span class="n">inp_flat_dim</span> <span class="o">+</span> <span class="mi">1</span>
-
         <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">MultFeat</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">feat_fcns</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">fcn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">feat_fcns</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fcn</span><span class="p">,</span> <span class="n">MultFeat</span><span class="p">):</span>
@@ -370,43 +364,12 @@
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Evaluate the feature.</span>
+<span class="sd">        Evaluate the features.</span>
 
 <span class="sd">        :param inp: input i.e. observations in the RL setting</span>
 <span class="sd">        :return: feature value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">reduce</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">mul</span><span class="p">,</span> <span class="p">[</span><span class="n">inp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idcs</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># unsqueeze for later concatenation</span></div>
-
-
-<div class="viewcode-block" id="ATan2Feat"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.features.ATan2Feat">[docs]</a><span class="k">class</span> <span class="nc">ATan2Feat</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Feature that computes the atan2 from two dimensions of the given input / observation. &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx_sin</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">idx_cos</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor</span>
-
-<span class="sd">        :param idx_sin: indices of the numerator, i.e. the sin-transformed observation dimension</span>
-<span class="sd">        :param idx_cos: indices of the denominator, i.e. the cos-transformed observation dimension</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx_sin</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">idx_sin</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx_cos</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">idx_cos</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_idx_sin</span> <span class="o">=</span> <span class="n">idx_sin</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_idx_cos</span> <span class="o">=</span> <span class="n">idx_cos</span>
-
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get an information string. &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s1"> (index for numerator </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_sin</span><span class="si">}</span><span class="s1">, index for denominator </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_cos</span><span class="si">}</span><span class="s1">)&#39;</span>
-
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Evaluate the feature.</span>
-
-<span class="sd">        :param inp: input i.e. observations in the RL setting</span>
-<span class="sd">        :return: feature value</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">inp</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_sin</span><span class="p">],</span> <span class="n">inp</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_cos</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># unsqueeze for later concatenation</span></div>
 
 
 <div class="viewcode-block" id="RandFourierFeat"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.features.RandFourierFeat">[docs]</a><span class="k">class</span> <span class="nc">RandFourierFeat</span><span class="p">:</span>

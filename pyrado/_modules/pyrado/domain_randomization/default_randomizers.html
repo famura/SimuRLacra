@@ -228,12 +228,12 @@
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        @default_randomizer(&#39;pyrado.environments.xy.my&#39;, &#39;MyEnv&#39;)</span>
-<span class="sd">            def create_default_randomizer_my() -&gt; DomainRandomizer:</span>
+<span class="sd">            def get_default_randomizer_my() -&gt; DomainRandomizer:</span>
 <span class="sd">                &lt;implementation&gt;</span>
 <span class="sd">    </span>
-<span class="sd">    :param env_module: module in which the env class is defined</span>
-<span class="sd">    :param env_class: environment class name</span>
-<span class="sd">    :return: decorator for default randomizer provider function</span>
+<span class="sd">    :param env_module: Module in which the env class is defined.</span>
+<span class="sd">    :param env_class: Environment class name.</span>
+<span class="sd">    :return: decorator for default randomizer provider function.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
@@ -243,9 +243,9 @@
     <span class="k">return</span> <span class="n">register</span></div>
 
 
-<div class="viewcode-block" id="create_default_randomizer"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer">[docs]</a><span class="k">def</span> <span class="nf">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="p">[</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+<div class="viewcode-block" id="get_default_randomizer"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.get_default_randomizer">[docs]</a><span class="k">def</span> <span class="nf">get_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="p">[</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create the default randomizer depending on the passed environment.</span>
+<span class="sd">    Get the default randomizer depending on the passed environment.</span>
 
 <span class="sd">    :param env: (wrapped) environment that should be perturbed</span>
 <span class="sd">    :return: default randomizer</span>
@@ -264,23 +264,23 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No default randomizer settings for env of type </span><span class="si">{</span><span class="n">env_type</span><span class="si">}</span><span class="s1">!&#39;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_conservative_randomizer"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_conservative_randomizer">[docs]</a><span class="k">def</span> <span class="nf">create_conservative_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="p">[</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+<div class="viewcode-block" id="get_conservative_randomizer"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.get_conservative_randomizer">[docs]</a><span class="k">def</span> <span class="nf">get_conservative_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="p">[</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create the default conservative randomizer depending on the passed environment.</span>
+<span class="sd">    Get the default conservative randomizer depending on the passed environment.</span>
 
 <span class="sd">    :param env: environment that should be perturbed</span>
 <span class="sd">    :return: default conservative randomizer</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">randomizer</span> <span class="o">=</span> <span class="n">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">randomizer</span> <span class="o">=</span> <span class="n">get_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="n">randomizer</span><span class="o">.</span><span class="n">rescale_distr_param</span><span class="p">(</span><span class="s1">&#39;std&#39;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
     <span class="n">randomizer</span><span class="o">.</span><span class="n">rescale_distr_param</span><span class="p">(</span><span class="s1">&#39;cov&#39;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
     <span class="n">randomizer</span><span class="o">.</span><span class="n">rescale_distr_param</span><span class="p">(</span><span class="s1">&#39;halfspan&#39;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">randomizer</span></div>
 
 
-<div class="viewcode-block" id="create_zero_var_randomizer"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_zero_var_randomizer">[docs]</a><span class="k">def</span> <span class="nf">create_zero_var_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="p">[</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">],</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-18</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+<div class="viewcode-block" id="get_zero_var_randomizer"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.get_zero_var_randomizer">[docs]</a><span class="k">def</span> <span class="nf">get_zero_var_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="p">[</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">],</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-18</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create the randomizer which always returns the nominal domain parameter values.</span>
+<span class="sd">    Get the randomizer which always returns the nominal domain parameter values.</span>
 
 <span class="sd">    .. note::</span>
 <span class="sd">        The variance will not be completely zero as this would lead to invalid distributions (PyTorch checks)</span>
@@ -289,25 +289,25 @@
 <span class="sd">    :param eps: factor to scale the distributions variance with</span>
 <span class="sd">    :return: randomizer with zero variance for all parameters</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">randomizer</span> <span class="o">=</span> <span class="n">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">randomizer</span> <span class="o">=</span> <span class="n">get_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="n">randomizer</span><span class="o">.</span><span class="n">rescale_distr_param</span><span class="p">(</span><span class="s1">&#39;std&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">eps</span><span class="p">))</span>
     <span class="n">randomizer</span><span class="o">.</span><span class="n">rescale_distr_param</span><span class="p">(</span><span class="s1">&#39;cov&#39;</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
     <span class="n">randomizer</span><span class="o">.</span><span class="n">rescale_distr_param</span><span class="p">(</span><span class="s1">&#39;halfspan&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">eps</span><span class="p">))</span>  <span class="c1"># var(U) = 1/12 halspan**2</span>
     <span class="k">return</span> <span class="n">randomizer</span></div>
 
 
-<div class="viewcode-block" id="create_empty_randomizer"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_empty_randomizer">[docs]</a><span class="k">def</span> <span class="nf">create_empty_randomizer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+<div class="viewcode-block" id="get_empty_randomizer"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.get_empty_randomizer">[docs]</a><span class="k">def</span> <span class="nf">get_empty_randomizer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create an empty randomizer independent of the environment to be filled later (using `add_domain_params`).</span>
+<span class="sd">    Get an empty randomizer independent of the environment to be filled later (using `add_domain_params`).</span>
 
 <span class="sd">    :return: empty randomizer</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="create_example_randomizer_cata"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_example_randomizer_cata">[docs]</a><span class="k">def</span> <span class="nf">create_example_randomizer_cata</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+<div class="viewcode-block" id="get_example_randomizer_cata"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.get_example_randomizer_cata">[docs]</a><span class="k">def</span> <span class="nf">get_example_randomizer_cata</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create the randomizer for the `CatapultSim` used for the &#39;illustrative example&#39; in F. Muratore et al, 2019, TAMPI.</span>
+<span class="sd">    Get the randomizer for the `CatapultSim` used for the &#39;illustrative example&#39; in F. Muratore et al, 2019, TAMPI.</span>
 
 <span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -316,10 +316,10 @@
     <span class="p">)</span>  <span class="c1"># 0 = Mars, 1 = Venus</span></div>
 
 
-<div class="viewcode-block" id="create_default_randomizer_cata"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_cata">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.one_step.catapult&#39;</span><span class="p">,</span> <span class="s1">&#39;CatapultSim&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">create_default_randomizer_cata</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+<div class="viewcode-block" id="get_default_randomizer_cata"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.get_default_randomizer_cata">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.one_step.catapult&#39;</span><span class="p">,</span> <span class="s1">&#39;CatapultSim&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_default_randomizer_cata</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create the default randomizer for the `CatapultSim`.</span>
+<span class="sd">    Get the default randomizer for the `CatapultSim`.</span>
 
 <span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -333,10 +333,10 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_default_randomizer_bob"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_bob">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.pysim.ball_on_beam&#39;</span><span class="p">,</span> <span class="s1">&#39;BallOnBeamSim&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">create_default_randomizer_bob</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+<div class="viewcode-block" id="get_default_randomizer_bob"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.get_default_randomizer_bob">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.pysim.ball_on_beam&#39;</span><span class="p">,</span> <span class="s1">&#39;BallOnBeamSim&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_default_randomizer_bob</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create the default randomizer for the `BallOnBeamSim`.</span>
+<span class="sd">    Get the default randomizer for the `BallOnBeamSim`.</span>
 
 <span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -354,10 +354,10 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_default_randomizer_omo"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_omo">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.pysim.one_mass_oscillator&#39;</span><span class="p">,</span> <span class="s1">&#39;OneMassOscillatorSim&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">create_default_randomizer_omo</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+<div class="viewcode-block" id="get_default_randomizer_omo"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.get_default_randomizer_omo">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.pysim.one_mass_oscillator&#39;</span><span class="p">,</span> <span class="s1">&#39;OneMassOscillatorSim&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_default_randomizer_omo</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create the default randomizer for the `OneMassOscillatorSim`.</span>
+<span class="sd">    Get the default randomizer for the `OneMassOscillatorSim`.</span>
 
 <span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -370,10 +370,10 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_default_randomizer_pend"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_pend">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.pysim.pendulum&#39;</span><span class="p">,</span> <span class="s1">&#39;PendulumSim&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">create_default_randomizer_pend</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+<div class="viewcode-block" id="get_default_randomizer_pend"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.get_default_randomizer_pend">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.pysim.pendulum&#39;</span><span class="p">,</span> <span class="s1">&#39;PendulumSim&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_default_randomizer_pend</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create the default randomizer for the `PendulumSim`.</span>
+<span class="sd">    Get the default randomizer for the `PendulumSim`.</span>
 
 <span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -388,10 +388,10 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_default_randomizer_qbb"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_qbb">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.pysim.quanser_ball_balancer&#39;</span><span class="p">,</span> <span class="s1">&#39;QBallBalancerSim&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">create_default_randomizer_qbb</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+<div class="viewcode-block" id="get_default_randomizer_qbb"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.get_default_randomizer_qbb">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.pysim.quanser_ball_balancer&#39;</span><span class="p">,</span> <span class="s1">&#39;QBallBalancerSim&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_default_randomizer_qbb</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create the default randomizer for the `QBallBalancerSim`.</span>
+<span class="sd">    Get the default randomizer for the `QBallBalancerSim`.</span>
 
 <span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -421,11 +421,11 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_default_randomizer_qcp"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_qcp">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.pysim.quanser_cartpole&#39;</span><span class="p">,</span> <span class="s1">&#39;QCartPoleStabSim&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="get_default_randomizer_qcp"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.get_default_randomizer_qcp">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.pysim.quanser_cartpole&#39;</span><span class="p">,</span> <span class="s1">&#39;QCartPoleStabSim&#39;</span><span class="p">)</span>
 <span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.pysim.quanser_cartpole&#39;</span><span class="p">,</span> <span class="s1">&#39;QCartPoleSwingUpSim&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">create_default_randomizer_qcp</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">get_default_randomizer_qcp</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create the default randomizer for the `QCartPoleSim`.</span>
+<span class="sd">    Get the default randomizer for the `QCartPoleSim`.</span>
 
 <span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -449,11 +449,11 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_default_randomizer_qq"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_qq">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.pysim.quanser_qube&#39;</span><span class="p">,</span> <span class="s1">&#39;QQubeSwingUpSim&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="get_default_randomizer_qq"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.get_default_randomizer_qq">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.pysim.quanser_qube&#39;</span><span class="p">,</span> <span class="s1">&#39;QQubeSwingUpSim&#39;</span><span class="p">)</span>
 <span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.pysim.quanser_qube&#39;</span><span class="p">,</span> <span class="s1">&#39;QQubeStabSim&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">create_default_randomizer_qq</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">get_default_randomizer_qq</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create the default randomizer for the `QQubeSim`.</span>
+<span class="sd">    Get the default randomizer for the `QQubeSim`.</span>
 
 <span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -490,10 +490,10 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_default_randomizer_bop"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_bop">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.sim_rcs.ball_on_plate&#39;</span><span class="p">,</span> <span class="s1">&#39;BallOnPlateSim&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">create_default_randomizer_bop</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+<div class="viewcode-block" id="get_default_randomizer_bop"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.get_default_randomizer_bop">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.sim_rcs.ball_on_plate&#39;</span><span class="p">,</span> <span class="s1">&#39;BallOnPlateSim&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_default_randomizer_bop</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create the default randomizer for the `BallOnPlateSim`.</span>
+<span class="sd">    Get the default randomizer for the `BallOnPlateSim`.</span>
 
 <span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -516,10 +516,10 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_default_randomizer_pi"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_pi">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.sim_rcs.planar_insert&#39;</span><span class="p">,</span> <span class="s1">&#39;PlanarInsertSim&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">create_default_randomizer_pi</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+<div class="viewcode-block" id="get_default_randomizer_pi"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.get_default_randomizer_pi">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.sim_rcs.planar_insert&#39;</span><span class="p">,</span> <span class="s1">&#39;PlanarInsertSim&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_default_randomizer_pi</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create the default randomizer for the `PlanarInsertSim`.</span>
+<span class="sd">    Get the default randomizer for the `PlanarInsertSim`.</span>
 
 <span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -535,11 +535,11 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_default_randomizer_bs"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_bs">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.sim_rcs.box_shelving&#39;</span><span class="p">,</span> <span class="s1">&#39;BoxShelvingPosDSSim&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="get_default_randomizer_bs"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.get_default_randomizer_bs">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.sim_rcs.box_shelving&#39;</span><span class="p">,</span> <span class="s1">&#39;BoxShelvingPosDSSim&#39;</span><span class="p">)</span>
 <span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.sim_rcs.box_shelving&#39;</span><span class="p">,</span> <span class="s1">&#39;BoxShelvingVelDSSim&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">create_default_randomizer_bs</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">get_default_randomizer_bs</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create the default randomizer for the `BoxShelvingSim`.</span>
+<span class="sd">    Get the default randomizer for the `BoxShelvingSim`.</span>
 
 <span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -554,13 +554,13 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_default_randomizer_bl"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_bl">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.sim_rcs.box_lifting&#39;</span><span class="p">,</span> <span class="s1">&#39;BoxLiftingPosDSSim&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="get_default_randomizer_bl"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.get_default_randomizer_bl">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.sim_rcs.box_lifting&#39;</span><span class="p">,</span> <span class="s1">&#39;BoxLiftingPosDSSim&#39;</span><span class="p">)</span>
 <span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.sim_rcs.box_lifting&#39;</span><span class="p">,</span> <span class="s1">&#39;BoxLiftingVelDSSim&#39;</span><span class="p">)</span>
 <span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.sim_rcs.box_lifting&#39;</span><span class="p">,</span> <span class="s1">&#39;BoxLiftingSimplePosDSSim&#39;</span><span class="p">)</span>
 <span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.sim_rcs.box_lifting&#39;</span><span class="p">,</span> <span class="s1">&#39;BoxLiftingSimpleVelDSSim&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">create_default_randomizer_bl</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">get_default_randomizer_bl</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create the default randomizer for the `BoxLifting`.</span>
+<span class="sd">    Get the default randomizer for the `BoxLifting`.</span>
 
 <span class="sd">    :return: randomizer based on the nominal domain parameter values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -578,8 +578,8 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_default_randomizer_wambic"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.create_default_randomizer_wambic">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.mujoco.wam&#39;</span><span class="p">,</span> <span class="s1">&#39;WAMBallInCupSim&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">create_default_randomizer_wambic</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+<div class="viewcode-block" id="get_default_randomizer_wambic"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.default_randomizers.get_default_randomizer_wambic">[docs]</a><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.mujoco.wam&#39;</span><span class="p">,</span> <span class="s1">&#39;WAMBallInCupSim&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_default_randomizer_wambic</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">pyrado.environments.mujoco.wam</span> <span class="kn">import</span> <span class="n">WAMBallInCupSim</span>
     <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">WAMBallInCupSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">(</span>

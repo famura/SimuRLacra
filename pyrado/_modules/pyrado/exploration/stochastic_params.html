@@ -302,11 +302,7 @@
 
 <span class="sd">        :param name: name of the attribute</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;wrapped&quot;</span><span class="p">:</span>
-            <span class="c1"># Can happen while unpickling, when the wrapped attr isn&#39;t set yet. Since it should normally reside in</span>
-            <span class="c1"># __dict__, it&#39;s correct to raise a missing attr here</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span>
-        <span class="c1"># The getattr method raises an AttributeError if not found, just as this method should</span>
+        <span class="c1"># getattr raises an AttributeError if not found, just as this method should.</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wrapped</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
 
 
