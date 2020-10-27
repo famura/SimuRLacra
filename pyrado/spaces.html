@@ -286,7 +286,7 @@ Every index should be a number or a name in labels.</p>
 <dl class="py method">
 <dt id="pyrado.spaces.base.Space.labels">
 <em class="property">property </em><code class="sig-name descname">labels</code><a class="headerlink" href="#pyrado.spaces.base.Space.labels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the labels for space entries, or None if not supported.</p>
+<dd><p>Get the labels for space entries, or <cite>None</cite> if not supported.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -410,7 +410,7 @@ bounds are replaced with this value.</p>
 <dl class="py method">
 <dt id="pyrado.spaces.box.BoxSpace.labels">
 <em class="property">property </em><code class="sig-name descname">labels</code><a class="headerlink" href="#pyrado.spaces.box.BoxSpace.labels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the labels for space entries, or None if not supported.</p>
+<dd><p>Get the labels for space entries, or <cite>None</cite> if not supported.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -657,7 +657,7 @@ bounds are replaced with this value.</p>
 <dl class="py method">
 <dt id="pyrado.spaces.discrete.DiscreteSpace.labels">
 <em class="property">property </em><code class="sig-name descname">labels</code><a class="headerlink" href="#pyrado.spaces.discrete.DiscreteSpace.labels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the labels for space entries, or None if not supported.</p>
+<dd><p>Get the labels for space entries, or <cite>None</cite> if not supported.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -772,7 +772,7 @@ bounds are replaced with this value.</p>
 <dl class="py method">
 <dt id="pyrado.spaces.empty.EmptySpace.labels">
 <em class="property">property </em><code class="sig-name descname">labels</code><a class="headerlink" href="#pyrado.spaces.empty.EmptySpace.labels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the labels for space entries, or None if not supported.</p>
+<dd><p>Get the labels for space entries, or <cite>None</cite> if not supported.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -848,7 +848,7 @@ bounds are replaced with this value.</p>
 <span id="polar"></span><h2>polar<a class="headerlink" href="#module-pyrado.spaces.polar" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.spaces.polar.Polar2DPosSpace">
-<em class="property">class </em><code class="sig-name descname">Polar2DPosSpace</code><span class="sig-paren">(</span><em class="sig-param">bound_lo: [&lt;class 'float'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], bound_up: [&lt;class 'float'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], labels: Sequence[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosSpace" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Polar2DPosSpace</code><span class="sig-paren">(</span><em class="sig-param">bound_lo: [&lt;class 'float'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], bound_up: [&lt;class 'float'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], shape: [&lt;class 'tuple'&gt;, &lt;class 'int'&gt;] = None, labels: Sequence[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosSpace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.spaces.box.BoxSpace" title="pyrado.spaces.box.BoxSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.spaces.box.BoxSpace</span></code></a></p>
 <p>Samples positions on a 2-dim torus, i.e. the area between two concentric circles.
 Can also be a section of a 2-dim torus, i.e. not a full circle.</p>
@@ -898,7 +898,7 @@ bounds are replaced with this value.</p>
 
 <dl class="py class">
 <dt id="pyrado.spaces.polar.Polar2DPosVelSpace">
-<em class="property">class </em><code class="sig-name descname">Polar2DPosVelSpace</code><span class="sig-paren">(</span><em class="sig-param">bound_lo: [&lt;class 'float'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], bound_up: [&lt;class 'float'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], labels: Sequence[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosVelSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosVelSpace" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Polar2DPosVelSpace</code><span class="sig-paren">(</span><em class="sig-param">bound_lo: [&lt;class 'float'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], bound_up: [&lt;class 'float'&gt;, &lt;class 'list'&gt;, &lt;class 'numpy.ndarray'&gt;], shape: [&lt;class 'tuple'&gt;, &lt;class 'int'&gt;] = None, labels: Sequence[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/spaces/polar.html#Polar2DPosVelSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.spaces.polar.Polar2DPosVelSpace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.spaces.box.BoxSpace" title="pyrado.spaces.box.BoxSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.spaces.box.BoxSpace</span></code></a></p>
 <p>Samples positions on a 2-dim torus, i.e. the area between 2 circles augmented with cartesian velocities.
 Can also be a section of a 2-dim torus, i.e. not a full circle.</p>

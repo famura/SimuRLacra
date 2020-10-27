@@ -345,12 +345,11 @@
     <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">string</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">every</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">string</span><span class="p">),</span> <span class="n">every</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="ensure_math_mode"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.input_output.ensure_math_mode">[docs]</a><span class="k">def</span> <span class="nf">ensure_math_mode</span><span class="p">(</span><span class="n">inp</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">no_subscript</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]:</span>
+<div class="viewcode-block" id="ensure_math_mode"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.input_output.ensure_math_mode">[docs]</a><span class="k">def</span> <span class="nf">ensure_math_mode</span><span class="p">(</span><span class="n">inp</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Naive way to ensure that a sting is compatible with LaTeX math mode for printing.</span>
 
 <span class="sd">    :param inp: input string</span>
-<span class="sd">    :param no_subscript: force no subscript (sometimes there might be problems due to double subscript</span>
 <span class="sd">    :return s: sting in math mode</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -365,40 +364,18 @@
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;The string </span><span class="si">{</span><span class="n">inp</span><span class="si">}</span><span class="s2"> must contain an even number of &#39;$&#39; symbols!&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">no_subscript</span><span class="p">:</span>
-            <span class="n">inp</span> <span class="o">=</span> <span class="n">ensure_no_subscript</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
 
     <span class="k">elif</span> <span class="n">inp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># in case there a Space has 1 one dimension but no labels</span>
 
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
         <span class="c1"># Do it recursively</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">ensure_math_mode</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">no_subscript</span><span class="p">)</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">inp</span><span class="p">]</span>  <span class="c1"># skip None entries</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">ensure_math_mode</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">inp</span><span class="p">]</span>  <span class="c1"># skip None entries</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">inp</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">])</span>
 
     <span class="k">return</span> <span class="n">inp</span></div>
-
-
-<div class="viewcode-block" id="ensure_no_subscript"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.input_output.ensure_no_subscript">[docs]</a><span class="k">def</span> <span class="nf">ensure_no_subscript</span><span class="p">(</span><span class="n">inp</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Naive way to ensure that a sting is compatible with LaTeX for printing by removing the math mode symbols.</span>
-
-<span class="sd">    :param inp: input string or iterable of stings</span>
-<span class="sd">    :return: sting without subscript</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">inp</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;\_&#39;</span><span class="p">)</span>  <span class="c1"># just hoping that there is no \_ which we are replacing with \\_</span>
-
-    <span class="k">elif</span> <span class="n">inp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># in case there a Space has 1 one dimension but no labels</span>
-
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;\_&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">inp</span><span class="p">]</span>  <span class="c1"># skip None entries</span>
-
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">inp</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="color_validity"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.input_output.color_validity">[docs]</a><span class="k">def</span> <span class="nf">color_validity</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">valids</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>

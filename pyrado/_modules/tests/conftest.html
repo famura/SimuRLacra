@@ -225,9 +225,11 @@
 <span class="kn">from</span> <span class="nn">pyrado.policies.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_randomizer</span> <span class="kn">import</span> <span class="n">DomainRandomizer</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.neural_fields</span> <span class="kn">import</span> <span class="n">NFPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.rnn</span> <span class="kn">import</span> <span class="n">RNNPolicy</span><span class="p">,</span> <span class="n">GRUPolicy</span><span class="p">,</span> <span class="n">LSTMPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.time</span> <span class="kn">import</span> <span class="n">TimePolicy</span><span class="p">,</span> <span class="n">TraceableTimePolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.two_headed</span> <span class="kn">import</span> <span class="n">TwoHeadedFNNPolicy</span><span class="p">,</span> <span class="n">TwoHeadedGRUPolicy</span>
+
 
 <span class="c1"># set spawn method to spawn for parallel test runs</span>
 <span class="n">mp</span><span class="o">.</span><span class="n">set_start_method</span><span class="p">(</span><span class="s1">&#39;spawn&#39;</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -306,75 +308,61 @@
     <span class="k">def</span> <span class="nf">default_cata</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">CatapultSim</span><span class="p">(</span><span class="n">max_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">example_config</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="DefaultEnvs.default_rosen"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_rosen">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">default_rosen</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">RosenSim</span><span class="p">()</span></div>
-
 
 <div class="viewcode-block" id="DefaultEnvs.default_bob"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bob">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">default_bob</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BallOnBeamSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="DefaultEnvs.default_omo"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_omo">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">default_omo</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">OneMassOscillatorSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="DefaultEnvs.default_pend"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_pend">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">default_pend</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">PendulumSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="DefaultEnvs.default_qbb"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_qbb">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">default_qbb</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">QBallBalancerSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="DefaultEnvs.default_qcpst"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_qcpst">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">default_qcpst</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">QCartPoleStabSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="DefaultEnvs.default_qcpsu"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_qcpsu">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">default_qcpsu</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">QCartPoleSwingUpSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.002</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">8000</span><span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="DefaultEnvs.default_qqst"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_qqst">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">default_qqst</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">QQubeStabSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="DefaultEnvs.default_qqsu"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_qqsu">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">default_qqsu</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">QQubeSwingUpSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.004</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">4000</span><span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="DefaultEnvs.default_bop2d_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bop2d_bt">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_bullet</span>
     <span class="k">def</span> <span class="nf">default_bop2d_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BallOnPlate2DSim</span><span class="p">(</span><span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Bullet&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">checkJointLimits</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="DefaultEnvs.default_bop2d_vx"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bop2d_vx">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_vortex</span>
     <span class="k">def</span> <span class="nf">default_bop2d_vx</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BallOnPlate2DSim</span><span class="p">(</span><span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Vortex&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">checkJointLimits</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="DefaultEnvs.default_bop5d_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bop5d_bt">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_bullet</span>
     <span class="k">def</span> <span class="nf">default_bop5d_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BallOnPlate5DSim</span><span class="p">(</span><span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Bullet&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">checkJointLimits</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="DefaultEnvs.default_bop5d_vx"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bop5d_vx">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_vortex</span>
     <span class="k">def</span> <span class="nf">default_bop5d_vx</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BallOnPlate5DSim</span><span class="p">(</span><span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Vortex&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">checkJointLimits</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="DefaultEnvs.default_p3l_ik_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_p3l_ik_bt">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_bullet</span>
@@ -396,7 +384,6 @@
             <span class="n">observeTaskSpaceDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="DefaultEnvs.default_p3l_ik_vx"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_p3l_ik_vx">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_vortex</span>
     <span class="k">def</span> <span class="nf">default_p3l_ik_vx</span><span class="p">():</span>
@@ -416,7 +403,6 @@
             <span class="n">observeCurrentManipulability</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">observeTaskSpaceDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="DefaultEnvs.default_p3l_ta_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_p3l_ta_bt">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_bullet</span>
@@ -441,7 +427,6 @@
             <span class="n">observeDynamicalSystemDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="DefaultEnvs.default_p3l_ta_vx"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_p3l_ta_vx">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_vortex</span>
     <span class="k">def</span> <span class="nf">default_p3l_ta_vx</span><span class="p">():</span>
@@ -465,7 +450,6 @@
             <span class="n">observeDynamicalSystemDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="DefaultEnvs.default_pi_ik_6l_vx"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_pi_ik_6l_vx">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_vortex</span>
     <span class="k">def</span> <span class="nf">default_pi_ik_6l_vx</span><span class="p">():</span>
@@ -486,7 +470,6 @@
             <span class="n">observeDynamicalSystemDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">observeTaskSpaceDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="DefaultEnvs.default_pi_ik_5l_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_pi_ik_5l_bt">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_bullet</span>
@@ -509,7 +492,6 @@
             <span class="n">observeTaskSpaceDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="DefaultEnvs.default_pi_ta_6l_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_pi_ta_6l_bt">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_bullet</span>
     <span class="k">def</span> <span class="nf">default_pi_ta_6l_bt</span><span class="p">():</span>
@@ -531,9 +513,8 @@
             <span class="n">observeTaskSpaceDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-
+<div class="viewcode-block" id="DefaultEnvs.default_pi_ta_5l_vx"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_pi_ta_5l_vx">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_vortex</span>
-    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">default_pi_ta_5l_vx</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">PlanarInsertTASim</span><span class="p">(</span>
             <span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Vortex&#39;</span><span class="p">,</span>
@@ -551,8 +532,7 @@
             <span class="n">observeDynamicalSystemGoalDistance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">observeDynamicalSystemDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">observeTaskSpaceDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span>
-
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_blpos_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_blpos_bt">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_bullet</span>
@@ -578,9 +558,8 @@
             <span class="n">observeTaskSpaceDiscrepancy</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span></div>
 
-
+<div class="viewcode-block" id="DefaultEnvs.default_bspos_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bspos_bt">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_bullet</span>
-    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">default_bspos_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BoxShelvingPosDSSim</span><span class="p">(</span>
             <span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Bullet&#39;</span><span class="p">,</span>
@@ -603,8 +582,7 @@
             <span class="n">observeDynamicalSystemDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">observeTaskSpaceDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">observeDynamicalSystemGoalDistance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span>
-
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_bspos_vx"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bspos_vx">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_vortex</span>
@@ -632,24 +610,20 @@
             <span class="n">observeDynamicalSystemGoalDistance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="DefaultEnvs.default_qqsurcs_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_qqsurcs_bt">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_bullet</span>
     <span class="k">def</span> <span class="nf">default_qqsurcs_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">QQubeRcsSim</span><span class="p">(</span><span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Bullet&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">250.</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">3000</span><span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="DefaultEnvs.default_cth"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_cth">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_mujoco</span>
     <span class="k">def</span> <span class="nf">default_cth</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">HalfCheetahSim</span><span class="p">()</span></div>
 
-
+<div class="viewcode-block" id="DefaultEnvs.default_hop"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_hop">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_mujoco</span>
-    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">default_hop</span><span class="p">():</span>
-        <span class="k">return</span> <span class="n">HopperSim</span><span class="p">()</span>
-
+        <span class="k">return</span> <span class="n">HopperSim</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_wambic"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_wambic">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_mujoco</span>
@@ -669,8 +643,6 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No policy specified&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">DefaultPolicies</span><span class="p">,</span> <span class="n">selected_policy</span><span class="p">)(</span><span class="n">env</span><span class="p">)</span></div>
-
-
 
 
 <div class="viewcode-block" id="DefaultPolicies"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies">[docs]</a><span class="k">class</span> <span class="nc">DefaultPolicies</span><span class="p">:</span>
@@ -723,6 +695,11 @@
 <div class="viewcode-block" id="DefaultPolicies.adn_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.adn_policy">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">adn_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">ADNPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">activation_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">,</span> <span class="n">potentials_dyn_fcn</span><span class="o">=</span><span class="n">pd_cubic</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DefaultPolicies.nf_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.nf_policy">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">nf_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">NFPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">mirrored_conv_weights</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tau_learnable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">init_param_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">bell</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">kappa_learnable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">potential_init_learnable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.thfnn_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.thfnn_policy">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">thfnn_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>

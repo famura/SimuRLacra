@@ -254,9 +254,9 @@
 <em class="property">static </em><code class="sig-name descname">default_bop5d_vx</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/conftest.html#DefaultEnvs.default_bop5d_vx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.conftest.DefaultEnvs.default_bop5d_vx" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute">
+<dl class="py method">
 <dt id="tests.conftest.DefaultEnvs.default_bspos_bt">
-<code class="sig-name descname">default_bspos_bt</code><em class="property"> = MarkDecorator(mark=Mark(name='skipif', args=(False, &lt;staticmethod object&gt;), kwargs={'reason': 'Bullet physics engine is not supported in this setup.'}))</em><a class="headerlink" href="#tests.conftest.DefaultEnvs.default_bspos_bt" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">default_bspos_bt</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/conftest.html#DefaultEnvs.default_bspos_bt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.conftest.DefaultEnvs.default_bspos_bt" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -274,9 +274,9 @@
 <em class="property">static </em><code class="sig-name descname">default_cth</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/conftest.html#DefaultEnvs.default_cth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.conftest.DefaultEnvs.default_cth" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute">
+<dl class="py method">
 <dt id="tests.conftest.DefaultEnvs.default_hop">
-<code class="sig-name descname">default_hop</code><em class="property"> = MarkDecorator(mark=Mark(name='skip', args=(&lt;staticmethod object&gt;,), kwargs={'reason': 'mujoco-py is not supported in this setup.'}))</em><a class="headerlink" href="#tests.conftest.DefaultEnvs.default_hop" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">default_hop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/conftest.html#DefaultEnvs.default_hop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.conftest.DefaultEnvs.default_hop" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -319,9 +319,9 @@
 <em class="property">static </em><code class="sig-name descname">default_pi_ik_6l_vx</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/conftest.html#DefaultEnvs.default_pi_ik_6l_vx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.conftest.DefaultEnvs.default_pi_ik_6l_vx" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute">
+<dl class="py method">
 <dt id="tests.conftest.DefaultEnvs.default_pi_ta_5l_vx">
-<code class="sig-name descname">default_pi_ta_5l_vx</code><em class="property"> = MarkDecorator(mark=Mark(name='skipif', args=(True, &lt;staticmethod object&gt;), kwargs={'reason': 'Vortex physics engine is not supported in this setup.'}))</em><a class="headerlink" href="#tests.conftest.DefaultEnvs.default_pi_ta_5l_vx" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">default_pi_ta_5l_vx</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/conftest.html#DefaultEnvs.default_pi_ta_5l_vx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.conftest.DefaultEnvs.default_pi_ta_5l_vx" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -413,6 +413,11 @@
 <dl class="py method">
 <dt id="tests.conftest.DefaultPolicies.lstm_policy">
 <em class="property">static </em><code class="sig-name descname">lstm_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/conftest.html#DefaultPolicies.lstm_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.conftest.DefaultPolicies.lstm_policy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="tests.conftest.DefaultPolicies.nf_policy">
+<em class="property">static </em><code class="sig-name descname">nf_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/conftest.html#DefaultPolicies.nf_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.conftest.DefaultPolicies.nf_policy" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -525,7 +530,7 @@
 
 <dl class="py function">
 <dt id="tests.test_algorithms.test_soft_update">
-<code class="sig-name descname">test_soft_update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">module</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_soft_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_soft_update" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">test_soft_update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_soft_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_soft_update" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -667,11 +672,6 @@
 <div class="section" id="module-tests.test_policies">
 <span id="test-policies"></span><h2>test_policies<a class="headerlink" href="#module-tests.test_policies" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="tests.test_policies.test_any_policy_batching">
-<code class="sig-name descname">test_any_policy_batching</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy</span></em>, <em class="sig-param"><span class="n">batch_size</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_any_policy_batching"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_any_policy_batching" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt id="tests.test_policies.test_dualrbf_policy">
 <code class="sig-name descname">test_dualrbf_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">dim_mask</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_dualrbf_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_dualrbf_policy" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -687,8 +687,13 @@
 <dd></dd></dl>
 
 <dl class="py function">
+<dt id="tests.test_policies.test_feedforward_policy_batching">
+<code class="sig-name descname">test_feedforward_policy_batching</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em>, <em class="sig-param"><span class="n">batch_size</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_feedforward_policy_batching"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_feedforward_policy_batching" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt id="tests.test_policies.test_feedforward_policy_one_step">
-<code class="sig-name descname">test_feedforward_policy_one_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_feedforward_policy_one_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_feedforward_policy_one_step" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">test_feedforward_policy_one_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_feedforward_policy_one_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_feedforward_policy_one_step" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -702,13 +707,8 @@
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="tests.test_policies.test_linear_policy_one_step_wo_exploration">
-<code class="sig-name descname">test_linear_policy_one_step_wo_exploration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_linear_policy_one_step_wo_exploration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_linear_policy_one_step_wo_exploration" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_policies.test_lstm_policy">
-<code class="sig-name descname">test_lstm_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_lstm_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_lstm_policy" title="Permalink to this definition">¶</a></dt>
+<dt id="tests.test_policies.test_indi_nonlin_layer">
+<code class="sig-name descname">test_indi_nonlin_layer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">in_features</span></em>, <em class="sig-param"><span class="n">same_nonlin</span></em>, <em class="sig-param"><span class="n">bias</span></em>, <em class="sig-param"><span class="n">weight</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_indi_nonlin_layer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_indi_nonlin_layer" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -722,6 +722,11 @@
 <dd></dd></dl>
 
 <dl class="py function">
+<dt id="tests.test_policies.test_pytorch_recurrent_policy_rollout">
+<code class="sig-name descname">test_pytorch_recurrent_policy_rollout</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_pytorch_recurrent_policy_rollout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_pytorch_recurrent_policy_rollout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt id="tests.test_policies.test_rbf_feat_batched">
 <code class="sig-name descname">test_rbf_feat_batched</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch_size</span></em>, <em class="sig-param"><span class="n">obs_dim</span></em>, <em class="sig-param"><span class="n">num_feat_per_dim</span></em>, <em class="sig-param"><span class="n">bounds</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_rbf_feat_batched"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_rbf_feat_batched" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -729,11 +734,6 @@
 <dl class="py function">
 <dt id="tests.test_policies.test_rbf_serial">
 <code class="sig-name descname">test_rbf_serial</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs_dim</span></em>, <em class="sig-param"><span class="n">num_feat_per_dim</span></em>, <em class="sig-param"><span class="n">bounds</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_rbf_serial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_rbf_serial" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_policies.test_recurrent_policy">
-<code class="sig-name descname">test_recurrent_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_recurrent_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_recurrent_policy" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -830,7 +830,7 @@
 
 <dl class="py function">
 <dt id="tests.test_rollout_result.test_advantage_calculation">
-<code class="sig-name descname">test_advantage_calculation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">linear_policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_rollout_result.html#test_advantage_calculation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_rollout_result.test_advantage_calculation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">test_advantage_calculation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_rollout_result.html#test_advantage_calculation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_rollout_result.test_advantage_calculation" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -903,7 +903,7 @@
 
 <dl class="py function">
 <dt id="tests.test_sampling.test_param_expl_sampler">
-<code class="sig-name descname">test_param_expl_sampler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_bob</span></em>, <em class="sig-param"><span class="n">bob_pert</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_sampling.html#test_param_expl_sampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_sampling.test_param_expl_sampler" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">test_param_expl_sampler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_sampling.html#test_param_expl_sampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_sampling.test_param_expl_sampler" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -913,7 +913,7 @@
 
 <dl class="py function">
 <dt id="tests.test_sampling.test_rollout_wo_exploration">
-<code class="sig-name descname">test_rollout_wo_exploration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_sampling.html#test_rollout_wo_exploration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_sampling.test_rollout_wo_exploration" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">test_rollout_wo_exploration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_sampling.html#test_rollout_wo_exploration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_sampling.test_rollout_wo_exploration" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -1212,11 +1212,6 @@
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="tests.test_utils.test_indi_nonlin_layer">
-<code class="sig-name descname">test_indi_nonlin_layer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">in_features</span></em>, <em class="sig-param"><span class="n">same_nonlin</span></em>, <em class="sig-param"><span class="n">bias</span></em>, <em class="sig-param"><span class="n">weight</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_utils.html#test_indi_nonlin_layer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_utils.test_indi_nonlin_layer" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt id="tests.test_utils.test_logmeanexp">
 <code class="sig-name descname">test_logmeanexp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">dim</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_utils.html#test_logmeanexp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_utils.test_logmeanexp" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1267,8 +1262,18 @@
 <dd></dd></dl>
 
 <dl class="py function">
+<dt id="tests.test_utils.test_save_load_prefix_suffix">
+<code class="sig-name descname">test_save_load_prefix_suffix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em>, <em class="sig-param"><span class="n">file_ext</span></em>, <em class="sig-param"><span class="n">tmpdir</span></em>, <em class="sig-param"><span class="n">meta_info</span></em>, <em class="sig-param"><span class="n">use_state_dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_utils.html#test_save_load_prefix_suffix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_utils.test_save_load_prefix_suffix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt id="tests.test_utils.test_scale_min_max">
 <code class="sig-name descname">test_scale_min_max</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dtype</span></em>, <em class="sig-param"><span class="n">lb</span></em>, <em class="sig-param"><span class="n">ub</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_utils.html#test_scale_min_max"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_utils.test_scale_min_max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_utils.test_skyline">
+<code class="sig-name descname">test_skyline</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dt</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">t_end</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">t_intvl_space</span><span class="p">:</span> <span class="n"><a class="reference internal" href="spaces.html#pyrado.spaces.box.BoxSpace" title="pyrado.spaces.box.BoxSpace">pyrado.spaces.box.BoxSpace</a></span></em>, <em class="sig-param"><span class="n">val_space</span><span class="p">:</span> <span class="n"><a class="reference internal" href="spaces.html#pyrado.spaces.box.BoxSpace" title="pyrado.spaces.box.BoxSpace">pyrado.spaces.box.BoxSpace</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_utils.html#test_skyline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_utils.test_skyline" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">

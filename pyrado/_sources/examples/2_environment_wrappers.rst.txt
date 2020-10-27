@@ -65,8 +65,8 @@ provide and explicit limit for normalizing. We can also provide explicit bounds 
     print(env_rn.act_space)
 
     print(env_rn.obs_space)
-    elb = {r'$\dot{x}$': -213., r'$\dot{\theta}$': -42.}
-    eub = {r'$\dot{x}$': 213., r'$\dot{\theta}$': 42., r'$x$': 0.123}
+    elb = {'x_dot': -213., 'theta_dot': -42.}
+    eub = {'x_dot': 213., 'theta_dot': 42., 'x': 0.123}
     env_rn = ObsNormWrapper(env_rn, explicit_lb=elb, explicit_ub=eub)
     print(env_rn.obs_space)
 
@@ -88,7 +88,7 @@ of zeros and ones, or by passing a list of the exact labels.
 
 .. code-block:: python
 
-    env_rnp = ObsPartialWrapper(env_rn, idcs=[r'$\dot{x}$', r'$\cos(\theta)$'])
+    env_rnp = ObsPartialWrapper(env_rn, idcs=['x_dot', 'cos_theta'])
     print(env_rnp.obs_space)
     ro_rnp = rollout(env_rnp, DummyPolicy(env_rnp.spec), eval=True, seed=0, render_mode=RenderMode())
     print(f'partial observations with normalization:\n{ro_rnp.observations}')

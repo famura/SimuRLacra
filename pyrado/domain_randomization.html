@@ -191,6 +191,203 @@
 <span id="default-randomizers"></span><h2>default_randomizers<a class="headerlink" href="#module-pyrado.domain_randomization.default_randomizers" title="Permalink to this headline">¶</a></h2>
 <p>Storage for default a.k.a. nominal domain parameter values and default randomizers</p>
 <dl class="py function">
+<dt id="pyrado.domain_randomization.default_randomizers.create_conservative_randomizer">
+<code class="sig-name descname">create_conservative_randomizer</code><span class="sig-paren">(</span><em class="sig-param">env: [&lt;class 'pyrado.environments.sim_base.SimEnv'&gt;, &lt;class 'pyrado.environment_wrappers.base.EnvWrapper'&gt;]</em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_conservative_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_conservative_randomizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the default conservative randomizer depending on the passed environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>env</strong> – environment that should be perturbed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>default conservative randomizer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.domain_randomization.default_randomizers.create_default_randomizer">
+<code class="sig-name descname">create_default_randomizer</code><span class="sig-paren">(</span><em class="sig-param">env: [&lt;class 'pyrado.environments.sim_base.SimEnv'&gt;, &lt;class 'pyrado.environment_wrappers.base.EnvWrapper'&gt;]</em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_default_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_default_randomizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the default randomizer depending on the passed environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>env</strong> – (wrapped) environment that should be perturbed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>default randomizer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.domain_randomization.default_randomizers.create_default_randomizer_bl">
+<code class="sig-name descname">create_default_randomizer_bl</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_default_randomizer_bl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_default_randomizer_bl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the default randomizer for the <cite>BoxLifting</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.domain_randomization.default_randomizers.create_default_randomizer_bob">
+<code class="sig-name descname">create_default_randomizer_bob</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_default_randomizer_bob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_default_randomizer_bob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the default randomizer for the <cite>BallOnBeamSim</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.domain_randomization.default_randomizers.create_default_randomizer_bop">
+<code class="sig-name descname">create_default_randomizer_bop</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_default_randomizer_bop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_default_randomizer_bop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the default randomizer for the <cite>BallOnPlateSim</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.domain_randomization.default_randomizers.create_default_randomizer_bs">
+<code class="sig-name descname">create_default_randomizer_bs</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_default_randomizer_bs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_default_randomizer_bs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the default randomizer for the <cite>BoxShelvingSim</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.domain_randomization.default_randomizers.create_default_randomizer_cata">
+<code class="sig-name descname">create_default_randomizer_cata</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_default_randomizer_cata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_default_randomizer_cata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the default randomizer for the <cite>CatapultSim</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.domain_randomization.default_randomizers.create_default_randomizer_omo">
+<code class="sig-name descname">create_default_randomizer_omo</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_default_randomizer_omo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_default_randomizer_omo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the default randomizer for the <cite>OneMassOscillatorSim</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.domain_randomization.default_randomizers.create_default_randomizer_pend">
+<code class="sig-name descname">create_default_randomizer_pend</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_default_randomizer_pend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_default_randomizer_pend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the default randomizer for the <cite>PendulumSim</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.domain_randomization.default_randomizers.create_default_randomizer_pi">
+<code class="sig-name descname">create_default_randomizer_pi</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_default_randomizer_pi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_default_randomizer_pi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the default randomizer for the <cite>PlanarInsertSim</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.domain_randomization.default_randomizers.create_default_randomizer_qbb">
+<code class="sig-name descname">create_default_randomizer_qbb</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_default_randomizer_qbb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_default_randomizer_qbb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the default randomizer for the <cite>QBallBalancerSim</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.domain_randomization.default_randomizers.create_default_randomizer_qcp">
+<code class="sig-name descname">create_default_randomizer_qcp</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_default_randomizer_qcp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_default_randomizer_qcp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the default randomizer for the <cite>QCartPoleSim</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.domain_randomization.default_randomizers.create_default_randomizer_qq">
+<code class="sig-name descname">create_default_randomizer_qq</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_default_randomizer_qq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_default_randomizer_qq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the default randomizer for the <cite>QQubeSim</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.domain_randomization.default_randomizers.create_default_randomizer_wambic">
+<code class="sig-name descname">create_default_randomizer_wambic</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_default_randomizer_wambic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_default_randomizer_wambic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.domain_randomization.default_randomizers.create_empty_randomizer">
+<code class="sig-name descname">create_empty_randomizer</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_empty_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_empty_randomizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an empty randomizer independent of the environment to be filled later (using <cite>add_domain_params</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>empty randomizer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.domain_randomization.default_randomizers.create_example_randomizer_cata">
+<code class="sig-name descname">create_example_randomizer_cata</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_example_randomizer_cata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_example_randomizer_cata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the randomizer for the <cite>CatapultSim</cite> used for the ‘illustrative example’ in F. Muratore et al, 2019, TAMPI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.domain_randomization.default_randomizers.create_zero_var_randomizer">
+<code class="sig-name descname">create_zero_var_randomizer</code><span class="sig-paren">(</span><em class="sig-param">env: [&lt;class 'pyrado.environments.sim_base.SimEnv'&gt;, &lt;class 'pyrado.environment_wrappers.base.EnvWrapper'&gt;], eps: float = 1e-18</em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_zero_var_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_zero_var_randomizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the randomizer which always returns the nominal domain parameter values.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The variance will not be completely zero as this would lead to invalid distributions (PyTorch checks)</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – environment that should be perturbed</p></li>
+<li><p><strong>eps</strong> – factor to scale the distributions variance with</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>randomizer with zero variance for all parameters</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="pyrado.domain_randomization.default_randomizers.default_randomizer">
 <code class="sig-name descname">default_randomizer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_module</span></em>, <em class="sig-param"><span class="n">env_class</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#default_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.default_randomizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register a default randomizer provider for a given environment type.
@@ -200,33 +397,19 @@ The environment type is referenced by name to avoid eager loading of all environ
 <dd class="field-odd"><p></p></dd>
 </dl>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@default_randomizer</span><span class="p">(</span><span class="s1">&#39;pyrado.environments.xy.my&#39;</span><span class="p">,</span> <span class="s1">&#39;MyEnv&#39;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">get_default_randomizer_my</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">create_default_randomizer_my</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">DomainRandomizer</span><span class="p">:</span>
         <span class="o">&lt;</span><span class="n">implementation</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>env_module</strong> – Module in which the env class is defined.</p></li>
-<li><p><strong>env_class</strong> – Environment class name.</p></li>
+<li><p><strong>env_module</strong> – module in which the env class is defined</p></li>
+<li><p><strong>env_class</strong> – environment class name</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>decorator for default randomizer provider function.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.domain_randomization.default_randomizers.get_conservative_randomizer">
-<code class="sig-name descname">get_conservative_randomizer</code><span class="sig-paren">(</span><em class="sig-param">env: [&lt;class 'pyrado.environments.sim_base.SimEnv'&gt;, &lt;class 'pyrado.environment_wrappers.base.EnvWrapper'&gt;]</em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#get_conservative_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.get_conservative_randomizer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the default conservative randomizer depending on the passed environment.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>env</strong> – environment that should be perturbed</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>default conservative randomizer</p>
+<dd class="field-even"><p>decorator for default randomizer provider function</p>
 </dd>
 </dl>
 </dd></dl>
@@ -292,168 +475,6 @@ distribution parameter</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pyrado.domain_randomization.default_randomizers.get_default_randomizer">
-<code class="sig-name descname">get_default_randomizer</code><span class="sig-paren">(</span><em class="sig-param">env: [&lt;class 'pyrado.environments.sim_base.SimEnv'&gt;, &lt;class 'pyrado.environment_wrappers.base.EnvWrapper'&gt;]</em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#get_default_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.get_default_randomizer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the default randomizer depending on the passed environment.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>env</strong> – (wrapped) environment that should be perturbed</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>default randomizer</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.domain_randomization.default_randomizers.get_default_randomizer_bl">
-<code class="sig-name descname">get_default_randomizer_bl</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#get_default_randomizer_bl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.get_default_randomizer_bl" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the default randomizer for the <cite>BoxLifting</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.domain_randomization.default_randomizers.get_default_randomizer_bob">
-<code class="sig-name descname">get_default_randomizer_bob</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#get_default_randomizer_bob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.get_default_randomizer_bob" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the default randomizer for the <cite>BallOnBeamSim</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.domain_randomization.default_randomizers.get_default_randomizer_bop">
-<code class="sig-name descname">get_default_randomizer_bop</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#get_default_randomizer_bop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.get_default_randomizer_bop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the default randomizer for the <cite>BallOnPlateSim</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.domain_randomization.default_randomizers.get_default_randomizer_bs">
-<code class="sig-name descname">get_default_randomizer_bs</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#get_default_randomizer_bs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.get_default_randomizer_bs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the default randomizer for the <cite>BoxShelvingSim</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.domain_randomization.default_randomizers.get_default_randomizer_cata">
-<code class="sig-name descname">get_default_randomizer_cata</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#get_default_randomizer_cata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.get_default_randomizer_cata" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the default randomizer for the <cite>CatapultSim</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.domain_randomization.default_randomizers.get_default_randomizer_omo">
-<code class="sig-name descname">get_default_randomizer_omo</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#get_default_randomizer_omo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.get_default_randomizer_omo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the default randomizer for the <cite>OneMassOscillatorSim</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.domain_randomization.default_randomizers.get_default_randomizer_pend">
-<code class="sig-name descname">get_default_randomizer_pend</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#get_default_randomizer_pend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.get_default_randomizer_pend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the default randomizer for the <cite>PendulumSim</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.domain_randomization.default_randomizers.get_default_randomizer_pi">
-<code class="sig-name descname">get_default_randomizer_pi</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#get_default_randomizer_pi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.get_default_randomizer_pi" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the default randomizer for the <cite>PlanarInsertSim</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.domain_randomization.default_randomizers.get_default_randomizer_qbb">
-<code class="sig-name descname">get_default_randomizer_qbb</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#get_default_randomizer_qbb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.get_default_randomizer_qbb" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the default randomizer for the <cite>QBallBalancerSim</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.domain_randomization.default_randomizers.get_default_randomizer_qcp">
-<code class="sig-name descname">get_default_randomizer_qcp</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#get_default_randomizer_qcp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.get_default_randomizer_qcp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the default randomizer for the <cite>QCartPoleSim</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.domain_randomization.default_randomizers.get_default_randomizer_qq">
-<code class="sig-name descname">get_default_randomizer_qq</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#get_default_randomizer_qq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.get_default_randomizer_qq" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the default randomizer for the <cite>QQubeSim</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.domain_randomization.default_randomizers.get_default_randomizer_wambic">
-<code class="sig-name descname">get_default_randomizer_wambic</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#get_default_randomizer_wambic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.get_default_randomizer_wambic" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.domain_randomization.default_randomizers.get_empty_randomizer">
-<code class="sig-name descname">get_empty_randomizer</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#get_empty_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.get_empty_randomizer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get an empty randomizer independent of the environment to be filled later (using <cite>add_domain_params</cite>).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>empty randomizer</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.domain_randomization.default_randomizers.get_example_randomizer_cata">
-<code class="sig-name descname">get_example_randomizer_cata</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#get_example_randomizer_cata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.get_example_randomizer_cata" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the randomizer for the <cite>CatapultSim</cite> used for the ‘illustrative example’ in F. Muratore et al, 2019, TAMPI.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>randomizer based on the nominal domain parameter values</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt id="pyrado.domain_randomization.default_randomizers.get_uniform_masses_lengths_randomizer_qq">
 <code class="sig-name descname">get_uniform_masses_lengths_randomizer_qq</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frac_halfspan</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#get_uniform_masses_lengths_randomizer_qq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.get_uniform_masses_lengths_randomizer_qq" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a uniform randomizer that applies to all masses and lengths of the Quanser Qube according to a fraction of their
@@ -464,27 +485,6 @@ nominal parameter values</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><cite>DomainRandomizer</cite> with uniformly distributed masses and lengths</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.domain_randomization.default_randomizers.get_zero_var_randomizer">
-<code class="sig-name descname">get_zero_var_randomizer</code><span class="sig-paren">(</span><em class="sig-param">env: [&lt;class 'pyrado.environments.sim_base.SimEnv'&gt;, &lt;class 'pyrado.environment_wrappers.base.EnvWrapper'&gt;], eps: float = 1e-18</em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#get_zero_var_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.get_zero_var_randomizer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the randomizer which always returns the nominal domain parameter values.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The variance will not be completely zero as this would lead to invalid distributions (PyTorch checks)</p>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>env</strong> – environment that should be perturbed</p></li>
-<li><p><strong>eps</strong> – factor to scale the distributions variance with</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>randomizer with zero variance for all parameters</p>
 </dd>
 </dl>
 </dd></dl>
