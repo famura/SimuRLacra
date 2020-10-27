@@ -267,7 +267,7 @@
         <span class="s1">&#39;thfnn_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;thgru_policy&#39;</span><span class="p">,</span>
     <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;thfnn&#39;</span><span class="p">,</span> <span class="s1">&#39;thgru&#39;</span><span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;thfnn&#39;</span><span class="p">,</span> <span class="s1">&#39;thgru&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -330,7 +330,7 @@
     <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="s1">&#39;linear_policy&#39;</span>
     <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -364,7 +364,7 @@
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;default_bob&#39;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;linear_policy&#39;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
+    <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;linear_policy&#39;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;actor_hparam&#39;</span><span class="p">,</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;casual&#39;</span><span class="p">]</span>
@@ -474,7 +474,7 @@
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="s1">&#39;linear_policy&#39;</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">],</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -598,7 +598,7 @@
         <span class="s1">&#39;lstm_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;gru_policy&#39;</span><span class="p">,</span>
     <span class="p">]</span>
-    <span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">],</span>
+    <span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_soft_update</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>

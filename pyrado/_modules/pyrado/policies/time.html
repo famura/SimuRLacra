@@ -262,6 +262,8 @@
 <span class="sd">    Better to just write another class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;trtime&#39;</span>
+
     <span class="c1"># Attributes</span>
     <span class="n">input_size</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">output_size</span><span class="p">:</span> <span class="nb">int</span>
@@ -270,13 +272,13 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">fcn_of_time</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span> <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env_spec</span> <span class="o">=</span> <span class="n">spec</span>
 
         <span class="c1"># Setup attributes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_size</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">flat_dim</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_size</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="n">dt</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">env_spec</span> <span class="o">=</span> <span class="n">spec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_time</span> <span class="o">=</span> <span class="mf">0.</span>
 
         <span class="c1"># Validate function signature</span>
         <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">fcn_of_time</span><span class="p">,</span> <span class="n">follow_wrapped</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -292,11 +294,7 @@
         <span class="c1"># check return type</span>
         <span class="k">if</span> <span class="n">sig</span><span class="o">.</span><span class="n">return_annotation</span> <span class="o">!=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Signature</span><span class="o">.</span><span class="n">empty</span> <span class="ow">and</span> <span class="n">sig</span><span class="o">.</span><span class="n">return_annotation</span> <span class="o">!=</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Malformed fcn_of_time with signature </span><span class="si">{</span><span class="n">sig</span><span class="si">}</span><span class="s2"> - return type must be List[float]&quot;</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">fcn_of_time</span> <span class="o">=</span> <span class="n">fcn_of_time</span>
-
-        <span class="c1"># setup current time buffer</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">current_time</span> <span class="o">=</span> <span class="mf">0.</span>
 
 <div class="viewcode-block" id="TraceableTimePolicy.reset"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.time.TraceableTimePolicy.reset">[docs]</a>    <span class="nd">@export</span>
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

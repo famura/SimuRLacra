@@ -672,11 +672,6 @@
 <div class="section" id="module-tests.test_policies">
 <span id="test-policies"></span><h2>test_policies<a class="headerlink" href="#module-tests.test_policies" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="tests.test_policies.test_any_policy_batching">
-<code class="sig-name descname">test_any_policy_batching</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em>, <em class="sig-param"><span class="n">batch_size</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_any_policy_batching"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_any_policy_batching" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt id="tests.test_policies.test_dualrbf_policy">
 <code class="sig-name descname">test_dualrbf_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">dim_mask</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_dualrbf_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_dualrbf_policy" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -692,8 +687,13 @@
 <dd></dd></dl>
 
 <dl class="py function">
+<dt id="tests.test_policies.test_feedforward_policy_batching">
+<code class="sig-name descname">test_feedforward_policy_batching</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em>, <em class="sig-param"><span class="n">batch_size</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_feedforward_policy_batching"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_feedforward_policy_batching" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt id="tests.test_policies.test_feedforward_policy_one_step">
-<code class="sig-name descname">test_feedforward_policy_one_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_feedforward_policy_one_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_feedforward_policy_one_step" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">test_feedforward_policy_one_step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_feedforward_policy_one_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_feedforward_policy_one_step" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -707,16 +707,6 @@
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="tests.test_policies.test_linear_policy_one_step_wo_exploration">
-<code class="sig-name descname">test_linear_policy_one_step_wo_exploration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_linear_policy_one_step_wo_exploration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_linear_policy_one_step_wo_exploration" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_policies.test_lstm_policy">
-<code class="sig-name descname">test_lstm_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_lstm_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_lstm_policy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt id="tests.test_policies.test_mul_feat">
 <code class="sig-name descname">test_mul_feat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs_dim</span></em>, <em class="sig-param"><span class="n">idcs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_mul_feat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_mul_feat" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -727,6 +717,11 @@
 <dd></dd></dl>
 
 <dl class="py function">
+<dt id="tests.test_policies.test_pytorch_recurrent_policy_rollout">
+<code class="sig-name descname">test_pytorch_recurrent_policy_rollout</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_pytorch_recurrent_policy_rollout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_pytorch_recurrent_policy_rollout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt id="tests.test_policies.test_rbf_feat_batched">
 <code class="sig-name descname">test_rbf_feat_batched</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch_size</span></em>, <em class="sig-param"><span class="n">obs_dim</span></em>, <em class="sig-param"><span class="n">num_feat_per_dim</span></em>, <em class="sig-param"><span class="n">bounds</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_rbf_feat_batched"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_rbf_feat_batched" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -734,11 +729,6 @@
 <dl class="py function">
 <dt id="tests.test_policies.test_rbf_serial">
 <code class="sig-name descname">test_rbf_serial</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs_dim</span></em>, <em class="sig-param"><span class="n">num_feat_per_dim</span></em>, <em class="sig-param"><span class="n">bounds</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_rbf_serial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_rbf_serial" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_policies.test_recurrent_policy">
-<code class="sig-name descname">test_recurrent_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_policies.html#test_recurrent_policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_policies.test_recurrent_policy" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
