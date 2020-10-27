@@ -921,31 +921,14 @@ exception is raised).</p>
 
 <dl class="py function">
 <dt id="pyrado.utils.input_output.ensure_math_mode">
-<code class="sig-name descname">ensure_math_mode</code><span class="sig-paren">(</span><em class="sig-param">inp: [&lt;class 'str'&gt;, typing.Sequence[str]], no_subscript: bool = False</em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘str’&gt;, &lt;class ‘list’&gt;]<a class="reference internal" href="_modules/pyrado/utils/input_output.html#ensure_math_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.ensure_math_mode" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">ensure_math_mode</code><span class="sig-paren">(</span><em class="sig-param">inp: [&lt;class 'str'&gt;, typing.Sequence[str]]</em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘str’&gt;, &lt;class ‘list’&gt;]<a class="reference internal" href="_modules/pyrado/utils/input_output.html#ensure_math_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.ensure_math_mode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Naive way to ensure that a sting is compatible with LaTeX math mode for printing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>inp</strong> – input string</p></li>
-<li><p><strong>no_subscript</strong> – force no subscript (sometimes there might be problems due to double subscript</p></li>
-</ul>
+<dd class="field-odd"><p><strong>inp</strong> – input string</p>
 </dd>
 <dt class="field-even">Return s</dt>
 <dd class="field-even"><p>sting in math mode</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.utils.input_output.ensure_no_subscript">
-<code class="sig-name descname">ensure_no_subscript</code><span class="sig-paren">(</span><em class="sig-param">inp: [&lt;class 'str'&gt;, typing.Sequence[str]]</em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘str’&gt;, &lt;class ‘list’&gt;]<a class="reference internal" href="_modules/pyrado/utils/input_output.html#ensure_no_subscript"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.ensure_no_subscript" title="Permalink to this definition">¶</a></dt>
-<dd><p>Naive way to ensure that a sting is compatible with LaTeX for printing by removing the math mode symbols.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>inp</strong> – input string or iterable of stings</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>sting without subscript</p>
 </dd>
 </dl>
 </dd></dl>
