@@ -262,7 +262,7 @@ def test_dualrbf_policy(env, dim_mask):
         'default_qbb'
     ], ids=['bob', 'qbb'],
     indirect=True
-)  # only for using lazy policy fixture
+)
 @pytest.mark.parametrize(
     'policy', [
         'linear_policy',
@@ -271,10 +271,11 @@ def test_dualrbf_policy(env, dim_mask):
         'lstm_policy',
         'gru_policy',
         'adn_policy',
+        'nf_policy',
         'thfnn_policy',
         'thgru_policy',
     ],
-    ids=['linear', 'fnn', 'rnn', 'lstm', 'gru', 'adn', 'thfnn', 'thgru'],
+    ids=['lin', 'fnn', 'rnn', 'lstm', 'gru', 'adn', 'nf', 'thfnn', 'thgru'],
     indirect=True
 )
 def test_parameterized_policies_init_param(env, policy):
@@ -283,15 +284,23 @@ def test_parameterized_policies_init_param(env, policy):
     to.testing.assert_allclose(policy.param_values, some_values)
 
 
-@pytest.mark.parametrize(['env', 'policy'], [
-    ('default_bob', 'idle_policy'),
-    ('default_bob', 'dummy_policy'),
-    ('default_bob', 'linear_policy'),
-    ('default_bob', 'fnn_policy')
-], ids=['idle', 'dummy', 'linear', 'fnn'],
-     indirect=True)
-def test_feedforward_policy_one_step(policy):
-    obs = policy.env_spec.obs_space.sample_uniform()  # shape = (4,)
+@pytest.mark.parametrize(
+    'env', [
+        'default_bob',
+        'default_qbb'
+    ], ids=['bob', 'qbb'],
+    indirect=True
+)
+@pytest.mark.parametrize(
+    'policy', [
+        'idle_policy',
+        'dummy_policy',
+        'linear_policy',
+        'fnn_policy'
+    ], ids=['idle', 'dummy', 'lin', 'fnn'],
+    indirect=True)
+def test_feedforward_policy_one_step(env, policy):
+    obs = env.spec.obs_space.sample_uniform()
     obs = to.from_numpy(obs)
     act = policy(obs)
     assert isinstance(act, to.Tensor)
@@ -303,7 +312,7 @@ def test_feedforward_policy_one_step(policy):
         'default_qbb'
     ], ids=['bob', 'qbb'],
     indirect=True
-)  # only for using lazy policy fixture
+)
 @pytest.mark.parametrize(
     'policy', [
         'time_policy',
@@ -327,16 +336,17 @@ def test_time_policy_one_step(env, policy):
         'default_qbb'
     ], ids=['bob', 'qbb'],
     indirect=True
-)  # only for using lazy policy fixture
+)
 @pytest.mark.parametrize(
     'policy', [
         'rnn_policy',
         'lstm_policy',
         'gru_policy',
         'adn_policy',
+        'nf_policy',
         'thgru_policy',
     ],
-    ids=['rnn', 'lstm', 'gru', 'adn', 'thgru'],
+    ids=['rnn', 'lstm', 'gru', 'adn', 'nf', 'thgru'],
     indirect=True
 )
 def test_recurrent_policy_one_step(env, policy):
@@ -351,71 +361,26 @@ def test_recurrent_policy_one_step(env, policy):
     assert isinstance(act, to.Tensor) and isinstance(hid, to.Tensor)
 
 
-@pytest.mark.parametrize(['env', 'policy'], [
-    ('default_qbb', 'linear_policy'),
-    ('default_qbb', 'fnn_policy'),
-], ids=['linear', 'fnn'], indirect=True)
+@pytest.mark.parametrize(
+    'env', [
+        'default_bob',
+        'default_qbb',
+        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    ], ids=['bob', 'qbb', 'bop5D'],
+    indirect=True
+)
+@pytest.mark.parametrize(
+    'policy', [
+        # dummy_policy and idle_policy are not supported
+        'linear_policy',
+        'fnn_policy',
+    ], ids=['lin', 'fnn'], indirect=True)
 @pytest.mark.parametrize('batch_size', [1, 2, 3])
-def test_any_policy_batching(env, policy, batch_size):
+def test_feedforward_policy_batching(env, policy, batch_size):
     obs = np.stack([policy.env_spec.obs_space.sample_uniform() for _ in range(batch_size)])  # shape = (batch_size, 4)
     obs = to.from_numpy(obs)
     act = policy(obs)
     assert act.shape[0] == batch_size
-
-
-@pytest.mark.parametrize(['env', 'policy'], [
-    ('default_bob', 'linear_policy')
-], ids=['linear'], indirect=True)
-def test_linear_policy_one_step_wo_exploration(policy):
-    obs = policy.env_spec.obs_space.sample_uniform()  # shape = (4,)
-    obs = to.from_numpy(obs)
-    val = policy.eval_feats(obs)
-    assert isinstance(val, to.Tensor)
-    # __call__ uses eval_feats
-    act = policy(obs)
-    assert isinstance(act, to.Tensor)
-
-
-@pytest.mark.recurrent_policy
-@pytest.mark.parametrize(['env', 'policy'], [
-    ('default_bob', 'lstm_policy'),
-    ('default_bob', 'rnn_policy'),
-    ('default_bob', 'gru_policy')
-], ids=['lstm_bob', 'rnn_bob', 'gru_bob'], indirect=True)
-def test_lstm_policy(env, policy):
-    ro = rollout(env, policy, render_mode=RenderMode(text=True))
-    assert isinstance(ro, StepSequence)
-
-
-@pytest.mark.recurrent_policy
-@pytest.mark.parametrize(['env', 'policy'], [
-    ('default_bob', 'lstm_policy'),
-    ('default_bob', 'rnn_policy'),
-    ('default_bob', 'gru_policy'),
-    ('default_bob', 'adn_policy')
-], ids=['lstm_bob', 'rnn_bob', 'gru_bob', 'adn_bob'], indirect=True)
-def test_recurrent_policy(env, policy):
-    assert policy.is_recurrent
-    obs = policy.env_spec.obs_space.sample_uniform()  # shape = (4,)
-    obs = to.from_numpy(obs)
-
-    # Do this in evaluation mode to disable dropout&co
-    policy.eval()
-
-    # Create initial hidden state
-    hidden = policy.init_hidden()
-    # Use a random one to ensure we don't just run into the 0-special-case
-    hidden = to.rand_like(hidden)
-    assert len(hidden) == policy.hidden_size
-
-    # Test general conformity
-    act, hid_new = policy(obs, hidden)
-    assert len(hid_new) == policy.hidden_size
-
-    # test reproducibility
-    act2, hid_new2 = policy(obs, hidden)
-    to.testing.assert_allclose(act, act2)
-    to.testing.assert_allclose(hid_new2, hid_new2)
 
 
 @pytest.mark.recurrent_policy
@@ -438,10 +403,9 @@ def test_recurrent_policy(env, policy):
 )
 @pytest.mark.parametrize('batch_size', [1, 2, 4])
 def test_recurrent_policy_batching(env, policy, batch_size):
+    assert policy.is_recurrent
     obs = np.stack([policy.env_spec.obs_space.sample_uniform() for _ in range(batch_size)])  # shape = (batch_size, 4)
     obs = to.from_numpy(obs)
-
-    assert policy.is_recurrent
 
     # Do this in evaluation mode to disable dropout&co
     policy.eval()
@@ -468,6 +432,76 @@ def test_recurrent_policy_batching(env, policy, batch_size):
 @pytest.mark.parametrize(
     'env', [
         'default_bob',
+        'default_qbb'
+    ], ids=['bob', 'qbb'],
+    indirect=True
+)
+@pytest.mark.parametrize(
+    'policy', [
+        'rnn_policy',
+        'lstm_policy',
+        'gru_policy'
+    ], ids=['rnn', 'lstm', 'gru'], indirect=True)
+def test_pytorch_recurrent_policy_rollout(env, policy):
+    ro = rollout(env, policy, render_mode=RenderMode())
+    assert isinstance(ro, StepSequence)
+
+
+@pytest.mark.recurrent_policy
+@pytest.mark.parametrize(
+    'env', [
+        'default_bob',
+        'default_qbb'
+    ], ids=['bob', 'qbb'],
+    indirect=True
+)
+@pytest.mark.parametrize(
+    'policy', [
+        'rnn_policy',
+        'lstm_policy',
+        'gru_policy',
+        'adn_policy',
+        'nf_policy',
+        'thgru_policy',
+    ], ids=['rnn', 'lstm', 'gru', 'adn', 'nf', 'thgru'], indirect=True)
+def test_recurrent_policy_one_step(env, policy):
+    assert policy.is_recurrent
+    obs = policy.env_spec.obs_space.sample_uniform()
+    obs = to.from_numpy(obs)
+
+    # Do this in evaluation mode to disable dropout & co
+    policy.eval()
+
+    # Create initial hidden state
+    hidden = policy.init_hidden()
+    # Use a random one to ensure we don't just run into the 0-special-case
+    hidden = to.rand_like(hidden)
+    assert len(hidden) == policy.hidden_size
+
+    # Test general conformity
+    if isinstance(policy, TwoHeadedGRUPolicy):
+        act, otherhead, hid_new = policy(obs, hidden)
+        assert len(hid_new) == policy.hidden_size
+    else:
+        act, hid_new = policy(obs, hidden)
+        assert len(hid_new) == policy.hidden_size
+
+    # Test reproducibility
+    if isinstance(policy, TwoHeadedGRUPolicy):
+        act2, otherhead2, hid_new2 = policy(obs, hidden)
+        to.testing.assert_allclose(act, act2)
+        to.testing.assert_allclose(otherhead, otherhead2)
+        to.testing.assert_allclose(hid_new2, hid_new2)
+    else:
+        act2, hid_new2 = policy(obs, hidden)
+        to.testing.assert_allclose(act, act2)
+        to.testing.assert_allclose(hid_new2, hid_new2)
+
+
+@pytest.mark.recurrent_policy
+@pytest.mark.parametrize(
+    'env', [
+        'default_bob',
         pytest.param('default_bop5d_bt', marks=m_needs_bullet),
     ], ids=['bob', 'bop5D'],
     indirect=True
@@ -478,12 +512,13 @@ def test_recurrent_policy_batching(env, policy, batch_size):
         'lstm_policy',
         'gru_policy',
         'adn_policy',
-    ], ids=['rnn', 'lstm', 'gru', 'adn'],
+        'nf_policy',
+    ], ids=['rnn', 'lstm', 'gru', 'adn', 'nf'],
     indirect=True
 )
 def test_recurrent_policy_evaluate(env, policy):
     # Make a rollout
-    ro = rollout(env, policy, render_mode=RenderMode(text=True))
+    ro = rollout(env, policy, eval=True, render_mode=RenderMode())
     ro.torch(to.get_default_dtype())
 
     # Evaluate first and second action manually

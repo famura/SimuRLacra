@@ -45,7 +45,7 @@ from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 @pytest.mark.parametrize(
     'policy',
         ['linear_policy', 'fnn_policy']
-    , ids=['linear_policy', 'fnn_policy'],
+    , ids=['lin', 'fnn'],
     indirect=True
 )
 def test_noise_on_act(env, policy):
@@ -82,7 +82,7 @@ def test_noise_on_act(env, policy):
 @pytest.mark.parametrize(
     'policy', lazy_fixture(
         ['linear_policy', 'fnn_policy']
-    ), ids=['linear_policy', 'fnn_policy'],
+    ), ids=['lin', 'fnn'],
     indirect=True
 )
 def test_noise_on_param(env, policy):

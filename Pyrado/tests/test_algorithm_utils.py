@@ -62,7 +62,7 @@ from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
         'thfnn_policy',
         'thgru_policy',
     ],
-    ids=['linear', 'fnn', 'rnn', 'lstm', 'gru', 'adn', 'thfnn', 'thgru'],
+    ids=['lin', 'fnn', 'rnn', 'lstm', 'gru', 'adn', 'thfnn', 'thgru'],
     indirect=True
 )
 def test_action_statistics(env, policy):

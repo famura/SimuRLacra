@@ -85,6 +85,8 @@ class TraceableTimePolicy(Module):
     Better to just write another class.
     """
 
+    name: str = 'trtime'
+
     # Attributes
     input_size: int
     output_size: int
@@ -93,13 +95,13 @@ class TraceableTimePolicy(Module):
 
     def __init__(self, spec: EnvSpec, fcn_of_time: Callable[[float], Sequence[float]], dt: float):
         super().__init__()
+        self.env_spec = spec
 
         # Setup attributes
         self.input_size = spec.obs_space.flat_dim
         self.output_size = spec.act_space.flat_dim
         self.dt = dt
-
-        self.env_spec = spec
+        self.current_time = 0.
 
         # Validate function signature
         sig = inspect.signature(fcn_of_time, follow_wrapped=False)
@@ -115,11 +117,7 @@ class TraceableTimePolicy(Module):
         # check return type
         if sig.return_annotation != inspect.Signature.empty and sig.return_annotation != List[float]:
             raise ValueError(f"Malformed fcn_of_time with signature {sig} - return type must be List[float]")
-
         self.fcn_of_time = fcn_of_time
-
-        # setup current time buffer
-        self.current_time = 0.
 
     @export
     def reset(self):

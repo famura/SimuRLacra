@@ -90,7 +90,7 @@ def ex_dir(tmpdir):
         'thfnn_policy',
         'thgru_policy',
     ],
-    ids=['linear', 'fnn', 'rnn', 'lstm', 'gru', 'adn', 'thfnn', 'thgru'],
+    ids=['lin', 'fnn', 'rnn', 'lstm', 'gru', 'adn', 'thfnn', 'thgru'],
     indirect=True
 )
 @pytest.mark.parametrize(
@@ -153,7 +153,7 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
     'policy', [
         'linear_policy'
     ],
-    ids=['linear'],
+    ids=['lin'],
     indirect=True
 )
 @pytest.mark.parametrize(
@@ -187,7 +187,7 @@ def test_param_expl(ex_dir, env, policy, algo_class, algo_hparam):
     'env', ['default_bob'], ids=['bob'], indirect=True
 )
 @pytest.mark.parametrize(
-    'policy', ['linear_policy'], ids=['linear'], indirect=True
+    'policy', ['linear_policy'], ids=['lin'], indirect=True
 )
 @pytest.mark.parametrize(
     'actor_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)], ids=['casual']
@@ -297,7 +297,7 @@ def test_spota_ppo(ex_dir, env, spota_hparam):
 @pytest.mark.parametrize(
     'policy', [
         'linear_policy'
-    ], ids=['linear'],
+    ], ids=['lin'],
     indirect=True
 )
 @pytest.mark.parametrize(
@@ -421,7 +421,7 @@ def test_training_parameter_exploring(ex_dir, env, algo, algo_hparam):
         'lstm_policy',
         'gru_policy',
     ]
-    , ids=['linear', 'fnn', 'rnn', 'lstm', 'gru'],
+    , ids=['lin', 'fnn', 'rnn', 'lstm', 'gru'],
     indirect=True
 )
 def test_soft_update(env, policy):
