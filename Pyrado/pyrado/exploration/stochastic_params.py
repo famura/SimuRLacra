@@ -163,9 +163,14 @@ class NormalParamNoise(StochasticParamExplStrat):
                 use_cuda=False, noise_dim=param_dim, std_init=std_init, std_min=std_min, train_mean=train_mean
             )
 
-        self.reset_expl_params = self._noise.reset_expl_params
-        self.adapt = self._noise.adapt
-        self.get_entropy = self._noise.get_entropy
+    def reset_expl_params(self, *args, **kwargs):
+        return self.reset_expl_params(*args, **kwargs)
+
+    def adapt(self, *args, **kwargs):
+        return self.adapt(*args, **kwargs)
+
+    def get_entropy(self, *args, **kwargs):
+        return self.get_entropy(*args, **kwargs)
 
     @property
     def noise(self) -> [FullNormalNoise, DiagNormalNoise]:
@@ -187,7 +192,6 @@ class NormalParamNoise(StochasticParamExplStrat):
 
     # Make NormalParamNoise appear as if it would have the following functions / properties
 
-
     @property
     def std(self):
         return self._noise.std
@@ -203,7 +207,6 @@ class NormalParamNoise(StochasticParamExplStrat):
     @cov.setter
     def cov(self, value):
         self._noise.cov = value
-
 
 
 class HyperSphereParamNoise(StochasticParamExplStrat):
