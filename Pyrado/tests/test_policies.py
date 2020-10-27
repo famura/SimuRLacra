@@ -642,7 +642,8 @@ def test_script_feedforward(env, policy):
         'lstm_policy',
         'gru_policy',
         'adn_policy',
-    ], ids=['rnn', 'lstm', 'gru', 'adn'],
+        'nf_policy',
+    ], ids=['rnn', 'lstm', 'gru', 'adn', 'nf'],
     indirect=True
 )
 def test_script_recurrent(env, policy):

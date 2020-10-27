@@ -136,7 +136,7 @@ class StatefulRecurrentNetwork(nn.Module):
                 to.from_numpy(net.env_spec.obs_space.sample_uniform()).to(to.get_default_dtype()),
                 hidden.to(to.get_default_dtype())
             ),
-            'init_hidden': tuple()  # TODO @Felix: why tuple()?
+            'init_hidden': tuple()  # auto nesting doesn't know how to process an input of type int, but tuples of them
         }
         self.net = trace_module(net, inputs)
 

@@ -64,7 +64,7 @@ if __name__ == '__main__':
 
     time = to.linspace(0., num_steps*dt_eval, num_steps)  # endpoint included
     p_init = to.linspace(p_init_min, p_init_max, num_p_init)  # endpoint included
-    num_p = len(policy.potentials)
+    num_p = policy.hidden_size
 
     # For mode = standalone they are currently all the same because all neuron potential-based obey the same dynamics.
     # However, this does not necessarily have to be that way. Thus we plot the same way as for mode = policy.
@@ -82,7 +82,7 @@ if __name__ == '__main__':
             p = to.zeros(num_steps, num_p)
             s = to.zeros(num_steps, num_p)
 
-            potentials_init = p_0*to.ones_like(policy.potentials)
+            potentials_init = p_0*to.ones(policy.hidden_size)
             if isinstance(policy, ADNPolicy):
                 hidden = to.cat([to.zeros(policy.env_spec.act_space.shape), potentials_init], dim=-1)  # pack hidden
             elif isinstance(policy, NFPolicy):
@@ -90,8 +90,8 @@ if __name__ == '__main__':
 
             for i in range(num_steps):
                 # Use the loaded ADNPolicy's forward method and pass zero-observations
-                _, hidden = policy(to.zeros(policy.env_spec.obs_space.shape), hidden)  # previous action is in hidden
-                p[i, :] = policy.potentials.clone()
+                _, hidden = policy(to.zeros(policy.env_spec.obs_space.shape), hidden)  # hidden = packed potentials
+                p[i, :] = hidden.clone()  # former: policy._unpack_hidden(hidden)
 
             # Extract final value
             final_values[idx_p_init] = p[-1, idx_p]

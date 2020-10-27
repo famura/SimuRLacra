@@ -224,22 +224,21 @@ class ADNPolicy(RecurrentPolicy):
         self.obs_layer = nn.Linear(self._input_size, self._hidden_size, bias=False) if obs_layer is None else obs_layer
         self.resting_level = nn.Parameter(to.zeros(self._hidden_size), requires_grad=True)
         self.prev_act_layer = nn.Linear(self._hidden_size, self._hidden_size, bias=False)
-        self.nonlin_layer = IndiNonlinLayer(self._hidden_size, nonlin=activation_nonlin, bias=False,
-                                            weight=True)  # scaling weight equals beta in eq (4) of [1]
+        self.pot_to_act_layer = IndiNonlinLayer(self._hidden_size, nonlin=activation_nonlin, bias=False,
+                                                weight=True)  # scaling weight equals beta in eq (4) of [1]
 
         # Call custom initialization function after PyTorch network parameter initialization
-        self._potentials = to.empty(self._hidden_size)
         self._potentials_max = 100.  # clip potentials symmetrically at a very large value (for debugging)
-        self._stimuli_external = to.zeros_like(self._potentials)
-        self._stimuli_internal = to.zeros_like(self._potentials)
+        self._stimuli_external = to.zeros(self.hidden_size)
+        self._stimuli_internal = to.zeros(self.hidden_size)
         self.potential_init_learnable = potential_init_learnable
         if potential_init_learnable:
-            self._potentials_init = nn.Parameter(to.randn_like(self._potentials), requires_grad=True)
+            self._potentials_init = nn.Parameter(to.randn(self.hidden_size), requires_grad=True)
         else:
             if activation_nonlin is to.sigmoid:
-                self._potentials_init = -7.*to.ones_like(self._potentials)
+                self._potentials_init = -7.*to.ones(self.hidden_size)
             else:
-                self._potentials_init = to.zeros_like(self._potentials)
+                self._potentials_init = to.zeros(self.hidden_size)
 
         # Potential dynamics
         # time constant
@@ -289,11 +288,6 @@ class ADNPolicy(RecurrentPolicy):
         return self.num_recurrent_layers*self._hidden_size
 
     @property
-    def potentials(self) -> to.Tensor:
-        """ Get the neurons' potentials. """
-        return self._potentials
-
-    @property
     def stimuli_external(self) -> to.Tensor:
         """
         Get the neurons' external stimuli, resulting from the current observations.
@@ -324,15 +318,16 @@ class ADNPolicy(RecurrentPolicy):
         """ Get the capacity parameter (exists for capacity-based dynamics functions), else return `None`. """
         return None if self._log_capacity is None else to.exp(self._log_capacity)
 
-    def potentials_dot(self, stimuli: to.Tensor) -> to.Tensor:
+    def potentials_dot(self, potentials: to.Tensor, stimuli: to.Tensor) -> to.Tensor:
         """
         Compute the derivative of the neurons' potentials per time step.
         $/tau /dot{u} = f(u, s, h)$
 
+        :param potentials: current potential values
         :param stimuli: sum of external and internal stimuli at the current point in time
         :return: time derivative of the potentials
         """
-        return self.potentials_dot_fcn(self._potentials, stimuli, self.resting_level, self.tau,
+        return self.potentials_dot_fcn(potentials, stimuli, self.resting_level, self.tau,
                                        kappa=self.kappa, capacity=self.capacity)
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
@@ -345,7 +340,7 @@ class ADNPolicy(RecurrentPolicy):
                 self.prev_act_layer.weight.data.fill_(-0.5)  # inhibit others
                 for i in range(self.prev_act_layer.weight.data.shape[0]):
                     self.prev_act_layer.weight.data[i, i] = 1.  # excite self
-            init_param(self.nonlin_layer, **kwargs)
+            init_param(self.pot_to_act_layer, **kwargs)
 
             # Initialize time constant if learnable
             if self.tau_learnable:
@@ -360,16 +355,16 @@ class ADNPolicy(RecurrentPolicy):
                     self._log_capacity.data = self._log_capacity_init
             # Initialize the potentials if learnable
             if self.potential_init_learnable:
-                self._potentials_init.data = to.randn_like(self._potentials)
+                self._potentials_init.data = to.randn(self.hidden_size)
 
         else:
             self.param_values = init_values
 
     def init_hidden(self, batch_size: int = None) -> to.Tensor:
         if batch_size is None:
-            return self._potentials_init
+            return self._potentials_init.detach()  # needs to be detached for torch.jit.script()
         else:
-            return self._potentials_init.repeat(batch_size, 1)
+            return self._potentials_init.detach().repeat(batch_size, 1)  # needs to be detached for torch.jit.script()
 
     def _unpack_hidden(self, hidden: to.Tensor, batch_size: int = None):
         """
@@ -434,14 +429,13 @@ class ADNPolicy(RecurrentPolicy):
                                       f"but shape should be 1- or 2-dim")
 
         # Unpack hidden tensor (i.e. the potentials of the last step) if specified, else initialize them
-        potentials = self._unpack_hidden(hidden, batch_size) if hidden is not None else self.init_hidden(batch_size)
+        pot = self._unpack_hidden(hidden, batch_size) if hidden is not None else self.init_hidden(batch_size)
 
         # Don't track the gradient through the potentials
-        potentials = potentials.detach()
-        self._potentials = potentials.clone()  # saved in rollout()
+        pot = pot.detach()
 
         # Scale the previous potentials, and pass them through a nonlinearity. Could also subtract a bias.
-        act_prev = self.nonlin_layer(potentials)
+        act_prev = self.pot_to_act_layer(pot)
 
         # ----------------
         # Activation Logic
@@ -452,16 +446,16 @@ class ADNPolicy(RecurrentPolicy):
         self._stimuli_internal = self.prev_act_layer(act_prev)
 
         # Potential dynamics forward integration
-        potentials = potentials + self._dt*self.potentials_dot(self._stimuli_external + self._stimuli_internal)
+        pot = pot + self._dt*self.potentials_dot(pot, self._stimuli_external + self._stimuli_internal)
 
         # Clip the potentials
-        potentials = potentials.clamp(min=-self._potentials_max, max=self._potentials_max)
+        pot = pot.clamp(min=-self._potentials_max, max=self._potentials_max)
 
-        # Scale the potentials, and pass them through a nonlinearity. Could also subtract a bias.
-        act = self.nonlin_layer(potentials)
+        # Compute the actions (scale the potentials, subtract a bias, and pass them through a nonlinearity)
+        act = self.pot_to_act_layer(pot)  # actions = activations
 
         # Pack hidden state
-        hidden_out = self._pack_hidden(potentials, batch_size)
+        hidden_out = self._pack_hidden(pot, batch_size)
 
         # Return the next action and store the last one as a hidden variable
         return act, hidden_out
