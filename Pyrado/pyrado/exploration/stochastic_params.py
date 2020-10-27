@@ -163,13 +163,13 @@ class NormalParamNoise(StochasticParamExplStrat):
             )
 
     def reset_expl_params(self, *args, **kwargs):
-        return self.reset_expl_params(*args, **kwargs)
+        return self._noise.reset_expl_params(*args, **kwargs)
 
     def adapt(self, *args, **kwargs):
-        return self.adapt(*args, **kwargs)
+        return self._noise.adapt(*args, **kwargs)
 
     def get_entropy(self, *args, **kwargs):
-        return self.get_entropy(*args, **kwargs)
+        return self._noise.get_entropy(*args, **kwargs)
 
     @property
     def noise(self) -> [FullNormalNoise, DiagNormalNoise]:
