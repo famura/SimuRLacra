@@ -150,6 +150,27 @@ class NormalActNoiseExplStrat(StochasticActionExplStrat):
             learnable=learnable
         )
 
+        self.reset_expl_params = self._noise.reset_expl_params
+        self.get_entropy = self._noise.get_entropy
+
+
+
+    @property
+    def std(self):
+        return self._noise.std
+
+    @std.setter
+    def std(self, value):
+        self._noise.std = value
+
+    @property
+    def mean(self):
+        return self._noise.mean
+
+    @mean.setter
+    def mean(self, value):
+        self._noise.mean = value
+
     @property
     def noise(self) -> DiagNormalNoise:
         """ Get the exploration noise. """
@@ -157,12 +178,6 @@ class NormalActNoiseExplStrat(StochasticActionExplStrat):
 
     def action_dist_at(self, policy_output: to.Tensor) -> Distribution:
         return self._noise(policy_output)
-
-    # Make NormalActNoiseExplStrat appear as if it would have the following functions / properties
-    reset_expl_params = Delegate('_noise')
-    std = Delegate('_noise')
-    mean = Delegate('_noise')
-    get_entropy = Delegate('_noise')
 
 
 class UniformActNoiseExplStrat(StochasticActionExplStrat):
@@ -203,6 +218,7 @@ class UniformActNoiseExplStrat(StochasticActionExplStrat):
         return self._noise(policy_output)
 
     # Make NormalActNoiseExplStrat appear as if it would have the following functions / properties
+
     reset_expl_params = Delegate('_noise')
     halfspan = Delegate('_noise')
     get_entropy = Delegate('_noise')
