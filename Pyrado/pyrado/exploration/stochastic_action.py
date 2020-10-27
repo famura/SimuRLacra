@@ -151,10 +151,10 @@ class NormalActNoiseExplStrat(StochasticActionExplStrat):
         )
 
     def reset_expl_params(self, *args, **kwargs):
-        self._noise.reset_expl_params(*args, **kwargs)
+        return self._noise.reset_expl_params(*args, **kwargs)
 
     def get_entropy(self, *args, **kwargs):
-        self._noise.get_entropy(*args, **kwargs)
+        return self._noise.get_entropy(*args, **kwargs)
 
     @property
     def std(self):
