@@ -76,7 +76,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
         lr_sched = lr_scheduler.ExponentialLR
         lr_sched_hparam = dict(gamma=lrs_gamma)
     else:
-        lr_sched, lr_scheduler_hparam = None, dict()
+        lr_sched, lr_sched_hparam = None, dict()
 
     # Policy
     policy_hparam = dict(
@@ -117,7 +117,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
     # Algorithm
     algo_hparam = dict(
         num_workers=1,  # parallelize via optuna n_jobs
-        max_iter=200,
+        max_iter=250,
         batch_size=500,
         min_steps=trial.suggest_int('num_rollouts_algo', 10, 30)*env.max_steps,
         num_epoch=trial.suggest_int('num_epoch_algo', 1, 10),
@@ -160,7 +160,7 @@ if __name__ == '__main__':
         pruner=MedianPruner(),
         load_if_exists=True
     )
-    study.optimize(functools.partial(train_and_eval, ex_dir=ex_dir, seed=args.seed), n_trials=100, n_jobs=16)
+    study.optimize(functools.partial(train_and_eval, ex_dir=ex_dir, seed=args.seed), n_trials=150, n_jobs=30)
 
     # Save the best hyper-parameters
     save_list_of_dicts_to_yaml([study.best_params, dict(seed=args.seed)], ex_dir, 'best_hyperparams')
