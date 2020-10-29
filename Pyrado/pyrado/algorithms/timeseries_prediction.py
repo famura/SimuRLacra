@@ -26,11 +26,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import sys
 import torch as to
 import torch.nn as nn
 from torch import optim
-from tqdm import tqdm
 from typing import Optional
 
 import pyrado
@@ -55,14 +53,14 @@ class TSPred(Algorithm):
                  dataset: TimeSeriesDataSet,
                  policy: Policy,
                  max_iter: int,
-                 windowed_mode: bool = False,
+                 windowed: bool = False,
+                 cascaded: bool = False,
                  optim_class=optim.Adam,
                  optim_hparam: dict = None,
                  loss_fcn=nn.MSELoss(),
                  lr_scheduler=None,
                  lr_scheduler_hparam: Optional[dict] = None,
                  num_workers: int = 1,
-                 seed: Optional[int] = None,
                  logger: StepLogger = None):
         """
         Constructor
@@ -70,10 +68,11 @@ class TSPred(Algorithm):
         :param save_dir: directory to save the snapshots i.e. the results in
         :param dataset: complete data set, where the samples are along the first dimension
         :param policy: Pyrado policy (subclass of PyTorch's Module) to train
-        :param windowed_mode: if `True`, fixed length input sequences are provided to the policy which then predicts
-                              one sample, else the complete input sequence is fed to the policy which then predicts
-                              an equally long sequence of samples
         :param max_iter: maximum number of iterations
+        :param windowed: if `True`, one fixed-length (short) input sequence is provided to the policy which then
+                         predicts one sample, else the complete (long) input sequence is fed to the policy which then
+                         predicts an sequence of samples of equal length
+        :param cascaded: it `True`, the predictions are made based on previous predictions instead of the current input
         :param optim_class: PyTorch optimizer class
         :param optim_hparam: hyper-parameters for the PyTorch optimizer
         :param loss_fcn: loss function for training, by default `torch.nn.MSELoss()`
@@ -92,7 +91,8 @@ class TSPred(Algorithm):
 
         # Store the inputs
         self.dataset = dataset
-        self.windowed_mode = windowed_mode
+        self.cascaded = cascaded
+        self.windowed = windowed
         self.loss_fcn = loss_fcn
 
         optim_hparam = dict(lr=1e-1, eps=1e-8, weight_decay=1e-4) if optim_hparam is None else optim_hparam
@@ -107,13 +107,12 @@ class TSPred(Algorithm):
         self.optim.zero_grad()
 
         # Feed one epoch of the training set to the policy
-        if self.windowed_mode:
-            pred_targ_tup_trn = [(TSPred.predict(self._policy, inp_seq, windowed_mode=True, hidden=None)[0], targ)
-                                 for inp_seq, targ in self.dataset.seqs_trn]
-            preds_trn = to.stack([ptt[0] for ptt in pred_targ_tup_trn])
-            targs_trn = to.stack([ptt[1] for ptt in pred_targ_tup_trn])
-        else:
-            preds_trn = TSPred.predict(self._policy, self.dataset.data_trn_inp, windowed_mode=False, hidden=None)[0]
+        if self.windowed:
+            preds_trn = to.stack([TSPred.predict(self._policy, inp_seq, self.windowed, self.cascaded)[0]
+                                  for inp_seq, _ in self.dataset.data_trn_seqs])
+            targs_trn = to.stack([targ.unsqueeze(0) for _, targ in self.dataset.data_trn_seqs])
+        elif not self.windowed:
+            preds_trn = TSPred.predict(self._policy, self.dataset.data_trn_inp, self.windowed, self.cascaded)[0]
             targs_trn = self.dataset.data_trn_targ
 
         # Compute the loss, backpropagate, and call the optimizer
@@ -127,13 +126,13 @@ class TSPred(Algorithm):
 
         # Logging the loss on the test set
         with to.no_grad():
-            if self.windowed_mode:
-                pred_targ_tup_tst = [(TSPred.predict(self._policy, inp_seq, windowed_mode=True, hidden=None)[0], targ)
-                                     for inp_seq, targ in self.dataset.seqs_tst]
-                preds_tst = to.stack([ptt[0] for ptt in pred_targ_tup_tst])
-                targs_tst = to.stack([ptt[1] for ptt in pred_targ_tup_tst])
-            else:
-                preds_tst = TSPred.predict(self._policy, self.dataset.data_tst_inp, windowed_mode=False, hidden=None)[0]
+            # Feed one epoch of the testing set to the policy
+            if self.windowed:
+                preds_tst = to.stack([TSPred.predict(self._policy, inp_seq, self.windowed, self.cascaded)[0]
+                                      for inp_seq, _ in self.dataset.data_tst_seqs])
+                targs_tst = to.stack([targ.unsqueeze(0) for _, targ in self.dataset.data_tst_seqs])
+            elif not self.windowed:
+                preds_tst = TSPred.predict(self._policy, self.dataset.data_tst_inp, self.windowed, self.cascaded)[0]
                 targs_tst = self.dataset.data_tst_targ
             loss_tst = self.loss_fcn(targs_tst, preds_tst)
 
@@ -153,67 +152,78 @@ class TSPred(Algorithm):
     @staticmethod
     def predict(policy: Policy,
                 inp_seq: to.Tensor,
-                windowed_mode: bool,
+                windowed: bool,
+                cascaded: bool,
                 hidden: Optional[to.Tensor] = None) -> (to.Tensor, to.Tensor):
         """
         Reset the hidden states, predict one output given a arbitrary long sequence of inputs.
 
         :param policy: policy used to make the predictions
         :param inp_seq: input sequence
-        :param hidden: initial hidden states
-        :param windowed_mode: if `True`, fixed length input sequences are provided to the policy which then predicts
-                              one sample, else the complete input sequence is fed to the policy which then predicts
-                              an equally long sequence of samples
+        :param hidden: initial hidden states, pass `None` to let the network pick its default hidden state
+        :param windowed: if `True`, one fixed-length (short) input sequence is provided to the policy which then
+                         predicts one sample, else the complete (long) input sequence is fed to the policy which then
+                         predicts an sequence of samples of equal length
+        :param cascaded: it `True`, the predictions are made based on previous predictions instead of the current input
         :return: predicted output and latest hidden state
         """
-        if hidden is not None:
-            # Get initial hidden state from first step
-            hidden = policy._unpack_hidden(hidden)
-        else:
-            # Let the network pick the default hidden state
-            hidden = None
-
+        # Custom RNNs
         if isinstance(policy, (ADNPolicy, NFPolicy)):
-            out = to.empty(inp_seq.shape[0], policy.env_spec.act_space.flat_dim)
+            preds = []
+            last_pred = None
+
             # Run steps consecutively reusing the hidden state
             for idx, inp in enumerate(inp_seq):
-                out[idx, :], hidden = policy(inp, hidden)
+                if cascaded and idx > 0:
+                    # Use the latest prediction instead of the current input
+                    inp = last_pred
+                last_pred, hidden = policy(inp, hidden)  # hidden is unpacked at the beginning and packed at the end
+                preds.append(last_pred)
 
-            # Return the (latest if windowed) prediction and hidden state
-            if windowed_mode:
-                out = out[-1, ...]
-            return out, hidden
-
-        elif isinstance(policy, RNNPolicyBase):
-            if True:
-                # Reshape observations to match PyTorchs's RNN sequence protocol
-                inp_seq = inp_seq.unsqueeze(1).to(policy.device)
-
-                # Run them through the network
-                out, hidden = policy.rnn_layers(inp_seq, hidden)
-
+            if windowed:
                 # Select the latest (hidden is already the latest)
-                if windowed_mode:
-                    out = out[-1, ...]
-                hidden = policy._pack_hidden(hidden)
+                preds = preds[-1].view(1, -1)
+            else:
+                preds = to.stack(preds)
 
-                # And through the output layer
-                pred = policy.output_layer(out.squeeze(1))
-                if policy.output_nonlin is not None:
-                    pred = policy.output_nonlin(pred)
+        # PyTorch RNNs
+        elif isinstance(policy, RNNPolicyBase):
+            if cascaded:
+                preds = []
+                last_pred = None
+
+                # Run steps consecutively reusing the hidden state
+                for idx, inp in enumerate(inp_seq):
+                    if idx > 0:
+                        # Use the latest prediction instead of the current input
+                        inp = last_pred
+                    last_pred, hidden = policy(inp, hidden)  # hidden is unpacked at the beginning and packed at the end
+                    preds.append(last_pred)
+
+                # Return the (latest if windowed) prediction and hidden state
+                if windowed:
+                    preds = preds[-1].view(1, -1)
+                else:
+                    preds = to.stack(preds)
 
             else:
-                pred, hidden = policy(inp_seq, hidden)
-                pred = pred[-1, ...]
-                hidden = hidden[-1, ...]
+                # Pass all inputs at once
+                preds, hidden = policy(inp_seq, hidden)
 
-            # Return the latest prediction and hidden state
-            return pred, hidden
+                # Select the latest
+                if windowed:
+                    preds = preds[-1].view(1, -1)
+                hidden = hidden[-1].view(1, -1)
 
         else:
             raise pyrado.TypeErr(given=policy, expected_type=[ADNPolicy, NFPolicy, RNNPolicyBase])
 
+        # Return the (latest if windowed) prediction and the latest hidden state
+        return preds, hidden
+
     def save_snapshot(self, meta_info: dict = None):
+        super().save_snapshot()
+
         # Does not matter if this algorithm instance is a subroutine of another algorithm
         save_prefix_suffix(self._policy, 'policy', 'pt', self._save_dir, meta_info)
         save_prefix_suffix(self.dataset, 'dataset', 'pt', self._save_dir, meta_info)
@@ -222,9 +232,9 @@ class TSPred(Algorithm):
     def evaluate(policy: Policy,
                  inps: to.Tensor,
                  targs: to.Tensor,
-                 windowed_mode: bool,
+                 windowed: bool,
+                 cascaded: bool,
                  num_init_samples: int,
-                 cascaded_predictions: bool = False,
                  hidden: Optional[to.Tensor] = None,
                  loss_fcn=nn.MSELoss(),
                  verbose: bool = True):
@@ -237,18 +247,18 @@ class TSPred(Algorithm):
 
         # Pass the first samples through the network in order to initialize the hidden state
         inp = inps[:num_init_samples, :] if num_init_samples > 0 else inps[0].unsqueeze(0)  # running input
-        pred, hidden = TSPred.predict(policy, inp, windowed_mode, hidden)
+        pred, hidden = TSPred.predict(policy, inp, windowed, cascaded=False, hidden=hidden)
 
         # Run steps consecutively reusing the hidden state
         for idx in range(inps.shape[0] - num_init_samples):
-            if not cascaded_predictions or idx == 0:
+            if not cascaded or idx == 0:
                 # Forget the oldest input and append the latest input
                 inp = inps[idx + num_init_samples, :].unsqueeze(0)
             else:
                 # Forget the oldest input and append the latest prediction
-                inp = pred  # former .unsqueeze(0)
+                inp = pred
 
-            pred, hidden = TSPred.predict(policy, inp, windowed_mode, hidden)
+            pred, hidden = TSPred.predict(policy, inp, windowed, cascaded=False, hidden=hidden)
             preds[idx, :] = pred
 
         # Compute loss for the entire data set at once

@@ -41,16 +41,18 @@ import pyrado
 from pyrado.algorithms.timeseries_prediction import TSPred
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.spaces import BoxSpace
+from pyrado.spaces.box import InfBoxSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_sets import TimeSeriesDataSet
 from pyrado.utils.data_types import EnvSpec
+from pyrado.utils.functions import skyline
 
 
 if __name__ == '__main__':
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    data_set_name = 'monthly_sunspots'
+    data_set_name = 'skyline'
 
     # Experiment
     ex_dir = setup_experiment(TSPred.name, ADNPolicy.name)
@@ -59,32 +61,41 @@ if __name__ == '__main__':
     pyrado.set_seed(args.seed, verbose=True)
 
     # Load the data
-    data = pd.read_csv(osp.join(pyrado.PERMA_DIR, 'time_series', f'{data_set_name}.csv'))
-    if data_set_name == 'daily_min_temperatures':
-        data = to.tensor(data['Temp'].values, dtype=to.get_default_dtype()).view(-1, 1)
-    elif data_set_name == 'monthly_sunspots':
-        data = to.tensor(data['Sunspots'].values, dtype=to.get_default_dtype()).view(-1, 1)
-    elif 'oscillation' in data_set_name:
-        data = to.tensor(data['Positions'].values, dtype=to.get_default_dtype()).view(-1, 1)
+    if data_set_name == 'skyline':
+        dt = 0.01
+        _, vals = skyline(dt=dt, t_end=20.,
+                          t_intvl_space=BoxSpace(0.5, 3, shape=(1,)),
+                          val_space=BoxSpace(-2., 3., shape=(1,)))
+        data = to.from_numpy(vals).view(-1, 1)
     else:
-        raise pyrado.ValueErr(
-            given=data_set_name, eq_constraint="'daily_min_temperatures', 'monthly_sunspots', "
-                                               "'oscillation_50Hz_initpos-0.5', or 'oscillation_100Hz_initpos-0.4")
+        data = pd.read_csv(osp.join(pyrado.PERMA_DIR, 'time_series', f'{data_set_name}.csv'))
+        if data_set_name == 'daily_min_temperatures':
+            data = to.tensor(data['Temp'].values, dtype=to.get_default_dtype()).view(-1, 1)
+            dt = 1.
+        elif data_set_name == 'monthly_sunspots':
+            data = to.tensor(data['Sunspots'].values, dtype=to.get_default_dtype()).view(-1, 1)
+            dt = 1.
+        elif 'oscillation' in data_set_name:
+            data = to.tensor(data['Positions'].values, dtype=to.get_default_dtype()).view(-1, 1)
+            dt = 0.02
+        else:
+            raise pyrado.ValueErr(
+                given=data_set_name, eq_constraint="'daily_min_temperatures', 'monthly_sunspots', "
+                                                   "'oscillation_50Hz_initpos-0.5', or 'oscillation_100Hz_initpos-0.4")
 
     # Dataset
     data_set_hparam = dict(
         name=data_set_name,
         ratio_train=0.8,
-        window_size=20,
+        window_size=50,
         standardize_data=False,
         scale_min_max_data=True
     )
     dataset = TimeSeriesDataSet(data, **data_set_hparam)
 
     # Policy
-    infspace = BoxSpace(-pyrado.inf, pyrado.inf, shape=data.unsqueeze(1).shape[1])
     policy_hparam = dict(
-        dt=0.02 if 'oscillation' in data_set_name else 1.,
+        dt=dt,
         activation_nonlin=to.tanh,
         potentials_dyn_fcn=pd_linear,
         obs_layer=None,
@@ -97,12 +108,13 @@ if __name__ == '__main__':
         init_param_kwargs=None,
         use_cuda=False
     )
-    policy = ADNPolicy(spec=EnvSpec(act_space=infspace, obs_space=infspace), **policy_hparam)
+    policy = ADNPolicy(spec=EnvSpec(act_space=InfBoxSpace(shape=1), obs_space=InfBoxSpace(shape=1)), **policy_hparam)
 
     # Algorithm
     algo_hparam = dict(
         max_iter=1000,
-        windowed_mode=False,
+        windowed=False,
+        cascaded=True,
         optim_class=optim.Adam,
         optim_hparam=dict(lr=1e-1, eps=1e-8, weight_decay=1e-4),  # momentum=0.7
         loss_fcn=nn.MSELoss(),

@@ -50,6 +50,7 @@ class MockEnv(SimEnv):
 
         # Set empty domain param
         self._domain_param = {}
+        self._dt = 1.
 
         # Init check attributes
         self.next_obs = None

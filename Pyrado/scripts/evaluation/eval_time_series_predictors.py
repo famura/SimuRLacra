@@ -47,8 +47,7 @@ if __name__ == '__main__':
     # Get the experiments' directories to load from
     ex_dirs = [
         # osp.join(pyrado.EXP_DIR, 'ENV_NAME', 'ALGO_NAME', 'EX_NAME'),
-        '/home/muratore/localdisk/Software/SimuRLacra/Pyrado/data/temp/tspred/aadn/2020-09-24_16-04-24',
-        # '',
+        # '/home/muratore/Software/SimuRLacra/Pyrado/data/temp/tspred/lstm/2020-10-27_17-35-05'
         # '',
     ]
 
@@ -72,14 +71,18 @@ if __name__ == '__main__':
         idx = 0  # we only need one since they are all equal
     dataset = datasets[idx]
 
+    # Adaptable settings
+    num_init_samples = dataset.window_size
+    windowed = False
+    cascaded = False
+
     # Evaluate the policies on training and testing data
-    num_init_samples = 0  # dataset.window_size
     preds_trn_list, loss_trn_list, preds_tst_list, loss_tst_list = [], [], [], []
     for policy in policies:
-        preds_trn, loss_trn = TSPred.evaluate(policy, dataset.data_trn_inp, dataset.data_trn_targ, windowed_mode=False,
-                                              num_init_samples=num_init_samples, cascaded_predictions=True)
-        preds_tst, loss_tst = TSPred.evaluate(policy, dataset.data_tst_inp, dataset.data_tst_targ, windowed_mode=False,
-                                              num_init_samples=num_init_samples, cascaded_predictions=False)
+        preds_trn, loss_trn = TSPred.evaluate(policy, dataset.data_trn_inp, dataset.data_trn_targ, windowed,
+                                              cascaded, num_init_samples=num_init_samples)
+        preds_tst, loss_tst = TSPred.evaluate(policy, dataset.data_tst_inp, dataset.data_tst_targ, windowed,
+                                              cascaded, num_init_samples=num_init_samples)
         preds_trn_list.append(preds_trn)
         loss_trn_list.append(loss_trn)
         preds_tst_list.append(preds_tst)
@@ -93,7 +96,7 @@ if __name__ == '__main__':
     else:
         prefix = ''
 
-    # Plot training and testing preditions
+    # Plot training and testing predictions
     fig_pred, axs_pred = plt.subplots(nrows=2, figsize=(16, 10))
     fig_pred.canvas.set_window_title(dataset.name)
 

@@ -133,10 +133,10 @@ class TimeSeriesDataSet(Dataset):
         self.data_tst_targ = self.data_tst[1:, :]
 
         # Create sequences
-        self.data_trn_ws = self.cut_to_window_size(self.data_trn, window_size)
-        self.data_tst_ws = self.cut_to_window_size(self.data_tst, window_size)
-        self.seqs_trn = create_sequences(self.data_trn_ws, len_seq=self._window_size + 1)
-        self.seqs_tst = create_sequences(self.data_tst_ws, len_seq=self._window_size + 1)
+        self.data_trn_ws = self.cut_to_window_size(self.data_trn, self._window_size)
+        self.data_tst_ws = self.cut_to_window_size(self.data_tst, self._window_size)
+        self.data_trn_seqs = create_sequences(self.data_trn_ws, len_seq=self._window_size + 1)
+        self.data_tst_seqs = create_sequences(self.data_tst_ws, len_seq=self._window_size + 1)
 
         print_cbt(f'Created {str(self)}', 'w')
 
@@ -160,7 +160,7 @@ class TimeSeriesDataSet(Dataset):
         return f'TimeSeriesDataSet (id {id(self)})\n' + \
                tabulate([['num all samples', len(self)],
                          ['ratio trn samples', self.ratio_train],
-                         ['num training sequences', len(self.seqs_trn)],
+                         ['num training sequences', len(self.data_trn_seqs)],
                          ['window size', self.window_size]])
 
     @property

@@ -36,7 +36,7 @@ from pyrado.utils.input_output import color_validity
 
 
 class BoxSpace(Space):
-    """ Multidimensional box space. (This class can also be used to describe a sphere.) """
+    """ Multidimensional box space. This class can also be used to describe a sphere. """
 
     def __init__(self,
                  bound_lo: [float, list, np.ndarray],
@@ -48,7 +48,7 @@ class BoxSpace(Space):
 
         :param bound_lo: array_like containing the minimal values for each dimension of the space
         :param bound_up: array_like containing the maximal values for each dimension of the space
-        :param shape: tuple specifying the shape, usefull if all lower and upper bounds are identical
+        :param shape: tuple specifying the shape, useful if all lower and upper bounds are identical
         :param labels: label for each dimension of the space (e.g. list of strings)
         """
         if shape is not None:
@@ -198,3 +198,16 @@ class BoxSpace(Space):
             labels_cat.extend(s.labels)
 
         return BoxSpace(bound_lo_cat, bound_up_cat, labels=labels_cat)
+
+
+class InfBoxSpace(BoxSpace):
+    r""" Multidimensional box space where all limits are $\pm \inf$. """
+
+    def __init__(self, shape: [tuple, int], labels: Sequence[str] = None):
+        """
+        Constructor
+
+        :param shape: tuple specifying the shape, useful if all lower and upper bounds are identical
+        :param labels: label for each dimension of the space (e.g. list of strings)
+        """
+        super().__init__(-pyrado.inf, pyrado.inf, shape=shape, labels=labels)

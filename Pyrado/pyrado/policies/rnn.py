@@ -210,10 +210,10 @@ class RNNPolicyBase(RecurrentPolicy):
                 # Let the network pick the default hidden state
                 hidden = None
 
-            # Reshape observations to match PyTorchs's RNN sequence protocol
+            # Reshape observations to match PyTorch's RNN sequence protocol
             obs = ro.get_data_values('observations', True).unsqueeze(1).to(self.device)
 
-            # Run them through the network
+            # Pass the input through hidden RNN layers
             out, _ = self.rnn_layers(obs, hidden)
 
             # And through the output layer

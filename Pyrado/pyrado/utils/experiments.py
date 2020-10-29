@@ -203,7 +203,7 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
         # Dataset
         extra['dataset'] = to.load(osp.join(ex_dir, 'dataset.pt'))
         # Policy
-        policy = to.load(osp.join(ex_dir, 'policy.pt'))
+        policy = load_prefix_suffix(algo.policy, f'{args.policy_name}', 'pt', ex_dir, None)
 
     else:
         raise pyrado.TypeErr(msg='No matching algorithm name found during loading the experiment!')

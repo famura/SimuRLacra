@@ -43,6 +43,7 @@ from pyrado.logger.experiment import save_list_of_dicts_to_yaml, setup_experimen
 from pyrado.logger.step import create_csv_step_logger
 from pyrado.policies.neural_fields import NFPolicy
 from pyrado.spaces import BoxSpace
+from pyrado.spaces.box import InfBoxSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_sets import TimeSeriesDataSet
 from pyrado.utils.data_types import EnvSpec
@@ -89,7 +90,6 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
     dataset = TimeSeriesDataSet(data, **data_set_hparam)
 
     # Policy
-    infspace = BoxSpace(-pyrado.inf, pyrado.inf, shape=data.unsqueeze(1).shape[1])
     policy_hparam = dict(
         dt=0.02 if 'oscillation' in data_set_name else 1.,
         hidden_size=trial.suggest_int('policy_hidden_size', 2, 51),
@@ -108,11 +108,11 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
         init_param_kwargs=trial.suggest_categorical('policy_init_param_kwargs', [None, dict(bell=True)]),
         use_cuda=False
     )
-    policy = NFPolicy(spec=EnvSpec(act_space=infspace, obs_space=infspace), **policy_hparam)
+    policy = NFPolicy(spec=EnvSpec(act_space=InfBoxSpace(shape=1), obs_space=InfBoxSpace(shape=1)), **policy_hparam)
 
     # Algorithm
     algo_hparam = dict(
-        windowed_mode=trial.suggest_categorical('algo_windowed_mode', [True, False]),
+        windowed=trial.suggest_categorical('algo_windowed', [True, False]),
         max_iter=1000,
         optim_class=optim.Adam,
         optim_hparam=dict(
@@ -130,10 +130,10 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
 
     # Evaluate
     num_init_samples = dataset.window_size
-    _, loss_trn = TSPred.evaluate(policy, dataset.data_trn_inp, dataset.data_trn_targ, windowed_mode=algo.windowed_mode,
-                                  num_init_samples=num_init_samples, cascaded_predictions=False)
-    _, loss_tst = TSPred.evaluate(policy, dataset.data_tst_inp, dataset.data_tst_targ, windowed_mode=algo.windowed_mode,
-                                  num_init_samples=num_init_samples, cascaded_predictions=False)
+    _, loss_trn = TSPred.evaluate(policy, dataset.data_trn_inp, dataset.data_trn_targ, windowed=algo.windowed,
+                                  num_init_samples=num_init_samples, cascaded=False)
+    _, loss_tst = TSPred.evaluate(policy, dataset.data_tst_inp, dataset.data_tst_targ, windowed=algo.windowed,
+                                  num_init_samples=num_init_samples, cascaded=False)
 
     return loss_trn
 
