@@ -205,13 +205,15 @@
 
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-
-<span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span> <span class="k">as</span> <span class="n">nn</span>
 
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.timeseries_prediction</span> <span class="kn">import</span> <span class="n">TSPred</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.environment_specific</span> <span class="kn">import</span> <span class="n">DualRBFLinearPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces.box</span> <span class="kn">import</span> <span class="n">InfBoxSpace</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.data_sets</span> <span class="kn">import</span> <span class="n">TimeSeriesDataSet</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.functions</span> <span class="kn">import</span> <span class="n">skyline</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.nn_layers</span> <span class="kn">import</span> <span class="n">IndiNonlinLayer</span>
-<span class="kn">from</span> <span class="nn">tests.conftest</span> <span class="kn">import</span> <span class="n">m_needs_cuda</span><span class="p">,</span> <span class="n">m_needs_bullet</span><span class="p">,</span> <span class="n">m_needs_mujoco</span><span class="p">,</span> <span class="n">m_needs_rcs</span><span class="p">,</span> <span class="n">m_needs_libtorch</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.rnn</span> <span class="kn">import</span> <span class="n">default_unpack_hidden</span><span class="p">,</span> <span class="n">default_pack_hidden</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.features</span> <span class="kn">import</span> <span class="o">*</span>
@@ -219,6 +221,24 @@
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">RenderMode</span>
+<span class="kn">from</span> <span class="nn">tests.conftest</span> <span class="kn">import</span> <span class="n">m_needs_cuda</span><span class="p">,</span> <span class="n">m_needs_bullet</span><span class="p">,</span> <span class="n">m_needs_mujoco</span><span class="p">,</span> <span class="n">m_needs_rcs</span><span class="p">,</span> <span class="n">m_needs_libtorch</span>
+<span class="kn">from</span> <span class="nn">tests.environment_wrappers.mock_env</span> <span class="kn">import</span> <span class="n">MockEnv</span>
+
+
+<div class="viewcode-block" id="tsdataset"><a class="viewcode-back" href="../../tests.html#tests.test_policies.tsdataset">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">,</span>
+                <span class="n">params</span><span class="o">=</span><span class="p">[</span>
+                    <span class="p">(</span><span class="n">skyline</span><span class="p">(</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">20.</span><span class="p">,</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,)),</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,)))[</span><span class="mi">1</span><span class="p">],</span>
+                     <span class="mf">0.7</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+                <span class="p">],</span>
+                <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;skyline_0.8_50_notstdized_scaled&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">tsdataset</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">TimeSeriesDataSet</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="n">ratio_train</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">window_size</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="n">standardize_data</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="n">scale_min_max_data</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">param</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_simple_feature_stack"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_simple_feature_stack">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">features</span>
@@ -956,6 +976,42 @@
     <span class="n">o</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">i</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">o</span><span class="o">.</span><span class="n">shape</span></div>
+
+
+<div class="viewcode-block" id="test_tspred"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_tspred">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">MockEnv</span><span class="p">(</span><span class="n">obs_space</span><span class="o">=</span><span class="n">InfBoxSpace</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">act_space</span><span class="o">=</span><span class="n">InfBoxSpace</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="mi">1</span><span class="p">))]</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="s1">&#39;rnn_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;lstm_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;gru_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;adn_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;nf_policy&#39;</span><span class="p">,</span>
+    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;nf&#39;</span><span class="p">],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;windowed&#39;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;windowed&#39;</span><span class="p">,</span> <span class="s1">&#39;not_windowed&#39;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;cascaded&#39;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;cascaded&#39;</span><span class="p">,</span> <span class="s1">&#39;not_cascaded&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_tspred</span><span class="p">(</span><span class="n">tsdataset</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">windowed</span><span class="p">,</span> <span class="n">cascaded</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">windowed</span><span class="p">:</span>
+        <span class="n">inp_seq</span> <span class="o">=</span> <span class="n">tsdataset</span><span class="o">.</span><span class="n">data_trn_inp</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">inp_seq</span> <span class="o">=</span> <span class="n">tsdataset</span><span class="o">.</span><span class="n">data_trn_ws</span>
+
+    <span class="c1"># Make the predictions</span>
+    <span class="n">preds</span><span class="p">,</span> <span class="n">hidden</span> <span class="o">=</span> <span class="n">TSPred</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">inp_seq</span><span class="p">,</span> <span class="n">windowed</span><span class="p">,</span> <span class="n">cascaded</span><span class="p">,</span> <span class="n">hidden</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># Check types</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+    <span class="c1"># Check sizes</span>
+    <span class="k">if</span> <span class="n">windowed</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">preds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">preds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">inp_seq</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">preds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span>
+    <span class="k">assert</span> <span class="n">hidden</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="n">policy</span><span class="o">.</span><span class="n">hidden_size</span></div>
 </pre></div>
 
            </div>

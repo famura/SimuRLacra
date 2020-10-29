@@ -213,7 +213,7 @@
 
 
 <div class="viewcode-block" id="BoxSpace"><a class="viewcode-back" href="../../../spaces.html#pyrado.spaces.box.BoxSpace">[docs]</a><span class="k">class</span> <span class="nc">BoxSpace</span><span class="p">(</span><span class="n">Space</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Multidimensional box space. (This class can also be used to describe a sphere.) &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Multidimensional box space. This class can also be used to describe a sphere. &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">bound_lo</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
@@ -225,7 +225,7 @@
 
 <span class="sd">        :param bound_lo: array_like containing the minimal values for each dimension of the space</span>
 <span class="sd">        :param bound_up: array_like containing the maximal values for each dimension of the space</span>
-<span class="sd">        :param shape: tuple specifying the shape, usefull if all lower and upper bounds are identical</span>
+<span class="sd">        :param shape: tuple specifying the shape, useful if all lower and upper bounds are identical</span>
 <span class="sd">        :param labels: label for each dimension of the space (e.g. list of strings)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">shape</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -375,6 +375,19 @@
             <span class="n">labels_cat</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="n">bound_lo_cat</span><span class="p">,</span> <span class="n">bound_up_cat</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels_cat</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="InfBoxSpace"><a class="viewcode-back" href="../../../spaces.html#pyrado.spaces.box.InfBoxSpace">[docs]</a><span class="k">class</span> <span class="nc">InfBoxSpace</span><span class="p">(</span><span class="n">BoxSpace</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot; Multidimensional box space where all limits are $\pm \inf$. &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">labels</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param shape: tuple specifying the shape, useful if all lower and upper bounds are identical</span>
+<span class="sd">        :param labels: label for each dimension of the space (e.g. list of strings)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

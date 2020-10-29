@@ -203,11 +203,9 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">optim</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
@@ -232,14 +230,14 @@
                  <span class="n">dataset</span><span class="p">:</span> <span class="n">TimeSeriesDataSet</span><span class="p">,</span>
                  <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
                  <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                 <span class="n">windowed_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">windowed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">cascaded</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="n">optim_class</span><span class="o">=</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">,</span>
                  <span class="n">optim_hparam</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">loss_fcn</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">(),</span>
                  <span class="n">lr_scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">lr_scheduler_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-                 <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">logger</span><span class="p">:</span> <span class="n">StepLogger</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
@@ -247,10 +245,11 @@
 <span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
 <span class="sd">        :param dataset: complete data set, where the samples are along the first dimension</span>
 <span class="sd">        :param policy: Pyrado policy (subclass of PyTorch&#39;s Module) to train</span>
-<span class="sd">        :param windowed_mode: if `True`, fixed length input sequences are provided to the policy which then predicts</span>
-<span class="sd">                              one sample, else the complete input sequence is fed to the policy which then predicts</span>
-<span class="sd">                              an equally long sequence of samples</span>
 <span class="sd">        :param max_iter: maximum number of iterations</span>
+<span class="sd">        :param windowed: if `True`, one fixed-length (short) input sequence is provided to the policy which then</span>
+<span class="sd">                         predicts one sample, else the complete (long) input sequence is fed to the policy which then</span>
+<span class="sd">                         predicts an sequence of samples of equal length</span>
+<span class="sd">        :param cascaded: it `True`, the predictions are made based on previous predictions instead of the current input</span>
 <span class="sd">        :param optim_class: PyTorch optimizer class</span>
 <span class="sd">        :param optim_hparam: hyper-parameters for the PyTorch optimizer</span>
 <span class="sd">        :param loss_fcn: loss function for training, by default `torch.nn.MSELoss()`</span>
@@ -269,7 +268,8 @@
 
         <span class="c1"># Store the inputs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">windowed_mode</span> <span class="o">=</span> <span class="n">windowed_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cascaded</span> <span class="o">=</span> <span class="n">cascaded</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">windowed</span> <span class="o">=</span> <span class="n">windowed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loss_fcn</span> <span class="o">=</span> <span class="n">loss_fcn</span>
 
         <span class="n">optim_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">1e-1</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span> <span class="k">if</span> <span class="n">optim_hparam</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">optim_hparam</span>
@@ -284,13 +284,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
 
         <span class="c1"># Feed one epoch of the training set to the policy</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowed_mode</span><span class="p">:</span>
-            <span class="n">pred_targ_tup_trn</span> <span class="o">=</span> <span class="p">[(</span><span class="n">TSPred</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="n">inp_seq</span><span class="p">,</span> <span class="n">windowed_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hidden</span><span class="o">=</span><span class="kc">None</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">targ</span><span class="p">)</span>
-                                 <span class="k">for</span> <span class="n">inp_seq</span><span class="p">,</span> <span class="n">targ</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">seqs_trn</span><span class="p">]</span>
-            <span class="n">preds_trn</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">ptt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">ptt</span> <span class="ow">in</span> <span class="n">pred_targ_tup_trn</span><span class="p">])</span>
-            <span class="n">targs_trn</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">ptt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">ptt</span> <span class="ow">in</span> <span class="n">pred_targ_tup_trn</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">preds_trn</span> <span class="o">=</span> <span class="n">TSPred</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">data_trn_inp</span><span class="p">,</span> <span class="n">windowed_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hidden</span><span class="o">=</span><span class="kc">None</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowed</span><span class="p">:</span>
+            <span class="n">preds_trn</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">TSPred</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="n">inp_seq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cascaded</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                                  <span class="k">for</span> <span class="n">inp_seq</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">data_trn_seqs</span><span class="p">])</span>
+            <span class="n">targs_trn</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">targ</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">targ</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">data_trn_seqs</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowed</span><span class="p">:</span>
+            <span class="n">preds_trn</span> <span class="o">=</span> <span class="n">TSPred</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">data_trn_inp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cascaded</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">targs_trn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">data_trn_targ</span>
 
         <span class="c1"># Compute the loss, backpropagate, and call the optimizer</span>
@@ -304,13 +303,13 @@
 
         <span class="c1"># Logging the loss on the test set</span>
         <span class="k">with</span> <span class="n">to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowed_mode</span><span class="p">:</span>
-                <span class="n">pred_targ_tup_tst</span> <span class="o">=</span> <span class="p">[(</span><span class="n">TSPred</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="n">inp_seq</span><span class="p">,</span> <span class="n">windowed_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hidden</span><span class="o">=</span><span class="kc">None</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">targ</span><span class="p">)</span>
-                                     <span class="k">for</span> <span class="n">inp_seq</span><span class="p">,</span> <span class="n">targ</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">seqs_tst</span><span class="p">]</span>
-                <span class="n">preds_tst</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">ptt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">ptt</span> <span class="ow">in</span> <span class="n">pred_targ_tup_tst</span><span class="p">])</span>
-                <span class="n">targs_tst</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">ptt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">ptt</span> <span class="ow">in</span> <span class="n">pred_targ_tup_tst</span><span class="p">])</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">preds_tst</span> <span class="o">=</span> <span class="n">TSPred</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">data_tst_inp</span><span class="p">,</span> <span class="n">windowed_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hidden</span><span class="o">=</span><span class="kc">None</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># Feed one epoch of the testing set to the policy</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowed</span><span class="p">:</span>
+                <span class="n">preds_tst</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">TSPred</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="n">inp_seq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cascaded</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                                      <span class="k">for</span> <span class="n">inp_seq</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">data_tst_seqs</span><span class="p">])</span>
+                <span class="n">targs_tst</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">targ</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">targ</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">data_tst_seqs</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowed</span><span class="p">:</span>
+                <span class="n">preds_tst</span> <span class="o">=</span> <span class="n">TSPred</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">data_tst_inp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cascaded</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">targs_tst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">data_tst_targ</span>
             <span class="n">loss_tst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_fcn</span><span class="p">(</span><span class="n">targs_tst</span><span class="p">,</span> <span class="n">preds_tst</span><span class="p">)</span>
 
@@ -330,67 +329,78 @@
 <div class="viewcode-block" id="TSPred.predict"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.timeseries_prediction.TSPred.predict">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
                 <span class="n">inp_seq</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-                <span class="n">windowed_mode</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                <span class="n">windowed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                <span class="n">cascaded</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
                 <span class="n">hidden</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reset the hidden states, predict one output given a arbitrary long sequence of inputs.</span>
 
 <span class="sd">        :param policy: policy used to make the predictions</span>
 <span class="sd">        :param inp_seq: input sequence</span>
-<span class="sd">        :param hidden: initial hidden states</span>
-<span class="sd">        :param windowed_mode: if `True`, fixed length input sequences are provided to the policy which then predicts</span>
-<span class="sd">                              one sample, else the complete input sequence is fed to the policy which then predicts</span>
-<span class="sd">                              an equally long sequence of samples</span>
+<span class="sd">        :param hidden: initial hidden states, pass `None` to let the network pick its default hidden state</span>
+<span class="sd">        :param windowed: if `True`, one fixed-length (short) input sequence is provided to the policy which then</span>
+<span class="sd">                         predicts one sample, else the complete (long) input sequence is fed to the policy which then</span>
+<span class="sd">                         predicts an sequence of samples of equal length</span>
+<span class="sd">        :param cascaded: it `True`, the predictions are made based on previous predictions instead of the current input</span>
 <span class="sd">        :return: predicted output and latest hidden state</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">hidden</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># Get initial hidden state from first step</span>
-            <span class="n">hidden</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">_unpack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Let the network pick the default hidden state</span>
-            <span class="n">hidden</span> <span class="o">=</span> <span class="kc">None</span>
-
+        <span class="c1"># Custom RNNs</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="p">(</span><span class="n">ADNPolicy</span><span class="p">,</span> <span class="n">NFPolicy</span><span class="p">)):</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">inp_seq</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">policy</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)</span>
+            <span class="n">preds</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">last_pred</span> <span class="o">=</span> <span class="kc">None</span>
+
             <span class="c1"># Run steps consecutively reusing the hidden state</span>
             <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">inp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inp_seq</span><span class="p">):</span>
-                <span class="n">out</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:],</span> <span class="n">hidden</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">cascaded</span> <span class="ow">and</span> <span class="n">idx</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="c1"># Use the latest prediction instead of the current input</span>
+                    <span class="n">inp</span> <span class="o">=</span> <span class="n">last_pred</span>
+                <span class="n">last_pred</span><span class="p">,</span> <span class="n">hidden</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>  <span class="c1"># hidden is unpacked at the beginning and packed at the end</span>
+                <span class="n">preds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">last_pred</span><span class="p">)</span>
 
-            <span class="c1"># Return the (latest if windowed) prediction and hidden state</span>
-            <span class="k">if</span> <span class="n">windowed_mode</span><span class="p">:</span>
-                <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
-            <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">hidden</span>
-
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">RNNPolicyBase</span><span class="p">):</span>
-            <span class="k">if</span> <span class="kc">True</span><span class="p">:</span>
-                <span class="c1"># Reshape observations to match PyTorchs&#39;s RNN sequence protocol</span>
-                <span class="n">inp_seq</span> <span class="o">=</span> <span class="n">inp_seq</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">policy</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-
-                <span class="c1"># Run them through the network</span>
-                <span class="n">out</span><span class="p">,</span> <span class="n">hidden</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">rnn_layers</span><span class="p">(</span><span class="n">inp_seq</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
-
+            <span class="k">if</span> <span class="n">windowed</span><span class="p">:</span>
                 <span class="c1"># Select the latest (hidden is already the latest)</span>
-                <span class="k">if</span> <span class="n">windowed_mode</span><span class="p">:</span>
-                    <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
-                <span class="n">hidden</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">_pack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">)</span>
+                <span class="n">preds</span> <span class="o">=</span> <span class="n">preds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">preds</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">preds</span><span class="p">)</span>
 
-                <span class="c1"># And through the output layer</span>
-                <span class="n">pred</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">output_layer</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-                <span class="k">if</span> <span class="n">policy</span><span class="o">.</span><span class="n">output_nonlin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">pred</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">output_nonlin</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span>
+        <span class="c1"># PyTorch RNNs</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">RNNPolicyBase</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">cascaded</span><span class="p">:</span>
+                <span class="n">preds</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">last_pred</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="c1"># Run steps consecutively reusing the hidden state</span>
+                <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">inp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inp_seq</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="c1"># Use the latest prediction instead of the current input</span>
+                        <span class="n">inp</span> <span class="o">=</span> <span class="n">last_pred</span>
+                    <span class="n">last_pred</span><span class="p">,</span> <span class="n">hidden</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>  <span class="c1"># hidden is unpacked at the beginning and packed at the end</span>
+                    <span class="n">preds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">last_pred</span><span class="p">)</span>
+
+                <span class="c1"># Return the (latest if windowed) prediction and hidden state</span>
+                <span class="k">if</span> <span class="n">windowed</span><span class="p">:</span>
+                    <span class="n">preds</span> <span class="o">=</span> <span class="n">preds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">preds</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">preds</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">pred</span><span class="p">,</span> <span class="n">hidden</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">inp_seq</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
-                <span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
-                <span class="n">hidden</span> <span class="o">=</span> <span class="n">hidden</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+                <span class="c1"># Pass all inputs at once</span>
+                <span class="n">preds</span><span class="p">,</span> <span class="n">hidden</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">inp_seq</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
 
-            <span class="c1"># Return the latest prediction and hidden state</span>
-            <span class="k">return</span> <span class="n">pred</span><span class="p">,</span> <span class="n">hidden</span>
+                <span class="c1"># Select the latest</span>
+                <span class="k">if</span> <span class="n">windowed</span><span class="p">:</span>
+                    <span class="n">preds</span> <span class="o">=</span> <span class="n">preds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">hidden</span> <span class="o">=</span> <span class="n">hidden</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">policy</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="p">[</span><span class="n">ADNPolicy</span><span class="p">,</span> <span class="n">NFPolicy</span><span class="p">,</span> <span class="n">RNNPolicyBase</span><span class="p">])</span></div>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">policy</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="p">[</span><span class="n">ADNPolicy</span><span class="p">,</span> <span class="n">NFPolicy</span><span class="p">,</span> <span class="n">RNNPolicyBase</span><span class="p">])</span>
+
+        <span class="c1"># Return the (latest if windowed) prediction and the latest hidden state</span>
+        <span class="k">return</span> <span class="n">preds</span><span class="p">,</span> <span class="n">hidden</span></div>
 
 <div class="viewcode-block" id="TSPred.save_snapshot"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.timeseries_prediction.TSPred.save_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">save_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">()</span>
+
         <span class="c1"># Does not matter if this algorithm instance is a subroutine of another algorithm</span>
         <span class="n">save_prefix_suffix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span>
         <span class="n">save_prefix_suffix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="s1">&#39;dataset&#39;</span><span class="p">,</span> <span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span></div>
@@ -399,9 +409,9 @@
     <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
                  <span class="n">inps</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
                  <span class="n">targs</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-                 <span class="n">windowed_mode</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                 <span class="n">windowed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                 <span class="n">cascaded</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
                  <span class="n">num_init_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                 <span class="n">cascaded_predictions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="n">hidden</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">loss_fcn</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">(),</span>
                  <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
@@ -414,18 +424,18 @@
 
         <span class="c1"># Pass the first samples through the network in order to initialize the hidden state</span>
         <span class="n">inp</span> <span class="o">=</span> <span class="n">inps</span><span class="p">[:</span><span class="n">num_init_samples</span><span class="p">,</span> <span class="p">:]</span> <span class="k">if</span> <span class="n">num_init_samples</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">inps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># running input</span>
-        <span class="n">pred</span><span class="p">,</span> <span class="n">hidden</span> <span class="o">=</span> <span class="n">TSPred</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">inp</span><span class="p">,</span> <span class="n">windowed_mode</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
+        <span class="n">pred</span><span class="p">,</span> <span class="n">hidden</span> <span class="o">=</span> <span class="n">TSPred</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">inp</span><span class="p">,</span> <span class="n">windowed</span><span class="p">,</span> <span class="n">cascaded</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hidden</span><span class="o">=</span><span class="n">hidden</span><span class="p">)</span>
 
         <span class="c1"># Run steps consecutively reusing the hidden state</span>
         <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">inps</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">num_init_samples</span><span class="p">):</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">cascaded_predictions</span> <span class="ow">or</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">cascaded</span> <span class="ow">or</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="c1"># Forget the oldest input and append the latest input</span>
                 <span class="n">inp</span> <span class="o">=</span> <span class="n">inps</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="n">num_init_samples</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Forget the oldest input and append the latest prediction</span>
-                <span class="n">inp</span> <span class="o">=</span> <span class="n">pred</span>  <span class="c1"># former .unsqueeze(0)</span>
+                <span class="n">inp</span> <span class="o">=</span> <span class="n">pred</span>
 
-            <span class="n">pred</span><span class="p">,</span> <span class="n">hidden</span> <span class="o">=</span> <span class="n">TSPred</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">inp</span><span class="p">,</span> <span class="n">windowed_mode</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
+            <span class="n">pred</span><span class="p">,</span> <span class="n">hidden</span> <span class="o">=</span> <span class="n">TSPred</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">inp</span><span class="p">,</span> <span class="n">windowed</span><span class="p">,</span> <span class="n">cascaded</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hidden</span><span class="o">=</span><span class="n">hidden</span><span class="p">)</span>
             <span class="n">preds</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">pred</span>
 
         <span class="c1"># Compute loss for the entire data set at once</span>

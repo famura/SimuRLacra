@@ -387,10 +387,10 @@
                 <span class="c1"># Let the network pick the default hidden state</span>
                 <span class="n">hidden</span> <span class="o">=</span> <span class="kc">None</span>
 
-            <span class="c1"># Reshape observations to match PyTorchs&#39;s RNN sequence protocol</span>
+            <span class="c1"># Reshape observations to match PyTorch&#39;s RNN sequence protocol</span>
             <span class="n">obs</span> <span class="o">=</span> <span class="n">ro</span><span class="o">.</span><span class="n">get_data_values</span><span class="p">(</span><span class="s1">&#39;observations&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 
-            <span class="c1"># Run them through the network</span>
+            <span class="c1"># Pass the input through hidden RNN layers</span>
             <span class="n">out</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rnn_layers</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
 
             <span class="c1"># And through the output layer</span>
