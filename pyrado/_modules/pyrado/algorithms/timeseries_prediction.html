@@ -280,22 +280,38 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler</span> <span class="o">=</span> <span class="n">lr_scheduler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="p">,</span> <span class="o">**</span><span class="n">lr_scheduler_hparam</span><span class="p">)</span>
 
 <div class="viewcode-block" id="TSPred.step"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.timeseries_prediction.TSPred.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="c1"># Reset the gradients</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
 
         <span class="c1"># Feed one epoch of the training set to the policy</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowed</span><span class="p">:</span>
-            <span class="n">preds_trn</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">TSPred</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="n">inp_seq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cascaded</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                                  <span class="k">for</span> <span class="n">inp_seq</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">data_trn_seqs</span><span class="p">])</span>
-            <span class="n">targs_trn</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">targ</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">targ</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">data_trn_seqs</span><span class="p">])</span>
+            <span class="c1"># Predict</span>
+            <span class="n">loss_trn</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">inp_seq</span><span class="p">,</span> <span class="n">targ</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">data_trn_seqs</span><span class="p">:</span>
+                <span class="c1"># Reset the gradients</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+
+                <span class="c1"># Predict</span>
+                <span class="n">pred_trn</span> <span class="o">=</span> <span class="n">TSPred</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="n">inp_seq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cascaded</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">targ_trn</span> <span class="o">=</span> <span class="n">targ</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+                <span class="c1"># Compute the loss, backpropagate, and call the optimizer</span>
+                <span class="n">loss_trn_single</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_fcn</span><span class="p">(</span><span class="n">targ_trn</span><span class="p">,</span> <span class="n">pred_trn</span><span class="p">)</span>
+                <span class="n">loss_trn_single</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+                <span class="n">loss_trn</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss_trn_single</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+            <span class="n">loss_trn</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">loss_trn</span><span class="p">))</span>
+
         <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowed</span><span class="p">:</span>
+            <span class="c1"># Reset the gradients</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+
+            <span class="c1"># Predict</span>
             <span class="n">preds_trn</span> <span class="o">=</span> <span class="n">TSPred</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">data_trn_inp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cascaded</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">targs_trn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">data_trn_targ</span>
 
-        <span class="c1"># Compute the loss, backpropagate, and call the optimizer</span>
-        <span class="n">loss_trn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_fcn</span><span class="p">(</span><span class="n">targs_trn</span><span class="p">,</span> <span class="n">preds_trn</span><span class="p">)</span>
-        <span class="n">loss_trn</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="c1"># Compute the loss, backpropagate, and call the optimizer</span>
+            <span class="n">loss_trn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_fcn</span><span class="p">(</span><span class="n">targs_trn</span><span class="p">,</span> <span class="n">preds_trn</span><span class="p">)</span>
+            <span class="n">loss_trn</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
         <span class="c1"># Update the learning rate if a scheduler has been specified</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
