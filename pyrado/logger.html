@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>logger &mdash; Pyrado 0.2 documentation</title>
+  <title>logger &mdash; Pyrado 0.3 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.2
+                0.3
               </div>
             
           
@@ -289,7 +289,7 @@ This is a path-like object, and as such it can be used everywhere a normal path 
 
 <dl class="py function">
 <dt id="pyrado.logger.experiment.select_by_hint">
-<code class="sig-name descname">select_by_hint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">exps</span></em>, <em class="sig-param"><span class="n">hint</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#select_by_hint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.select_by_hint" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">select_by_hint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">exps</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference internal" href="#pyrado.logger.experiment.Experiment" title="pyrado.logger.experiment.Experiment">pyrado.logger.experiment.Experiment</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">hint</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#select_by_hint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.select_by_hint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select experiment by hint.</p>
 </dd></dl>
 
@@ -297,6 +297,21 @@ This is a path-like object, and as such it can be used everywhere a normal path 
 <dt id="pyrado.logger.experiment.setup_experiment">
 <code class="sig-name descname">setup_experiment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">algo_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">extra_info</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">base_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'/home/user/SimuRLacra/Pyrado/pyrado/../data/temp'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#setup_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.setup_experiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Setup a new experiment for recording.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.logger.experiment.split_path_custom_common">
+<code class="sig-name descname">split_path_custom_common</code><span class="sig-paren">(</span><em class="sig-param">path: Union[str</em>, <em class="sig-param">pyrado.logger.experiment.Experiment]) -&gt; (&lt;class 'str'&gt;</em>, <em class="sig-param">&lt;class 'str'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#split_path_custom_common"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.split_path_custom_common" title="Permalink to this definition">¶</a></dt>
+<dd><p>Split a path at the point where the machine-dependent and the machine-independent part can be separated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> – (complete) experiment path to be split</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>name of the base directory (‘experiments’ for <cite>pyrado.EXP_DIR</cite> or ‘temp’ for <cite>pyrado.TEMP_DIR</cite>) where the
+experiment was located, and machine-independent part of the path</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -565,19 +580,19 @@ To properly support nesting, this method does nothing if called twice in a row w
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.logger" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.logger.get_log_prefix_dir">
-<code class="sig-name descname">get_log_prefix_dir</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger.html#get_log_prefix_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.get_log_prefix_dir" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_log_prefix_dir</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Optional<span class="p">[</span>str<span class="p">]</span><a class="reference internal" href="_modules/pyrado/logger.html#get_log_prefix_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.get_log_prefix_dir" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the log prefix directory for this session.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="pyrado.logger.resolve_log_path">
-<code class="sig-name descname">resolve_log_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger.html#resolve_log_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.resolve_log_path" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">resolve_log_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pyrado/logger.html#resolve_log_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.resolve_log_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resolve path against the global log dir if path is relative.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="pyrado.logger.set_log_prefix_dir">
-<code class="sig-name descname">set_log_prefix_dir</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">log_dir</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger.html#set_log_prefix_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.set_log_prefix_dir" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_log_prefix_dir</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">log_dir</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger.html#set_log_prefix_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.set_log_prefix_dir" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the log prefix directory for this session.</p>
 </dd></dl>
 

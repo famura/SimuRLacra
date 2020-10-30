@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>meta &mdash; Pyrado 0.2 documentation</title>
+  <title>meta &mdash; Pyrado 0.3 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.2
+                0.3
               </div>
             
           
@@ -519,7 +519,7 @@ contains a <cite>dict</cite> of information about the current iteration of the m
 
 <dl class="py method">
 <dt id="pyrado.algorithms.meta.bayrn.BayRn.step">
-<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snapshot_mode</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayrn.html#BayRn.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn.step" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snapshot_mode</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'latest'</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/bayrn.html#BayRn.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.meta.bayrn.BayRn.step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
 adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
 <dl class="field-list simple">
@@ -867,7 +867,7 @@ contains a <cite>dict</cite> of information about the current iteration of the m
 
 <dl class="py method">
 <dt id="pyrado.algorithms.meta.spota.SPOTA.step">
-<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snapshot_mode</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/spota.html#SPOTA.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.meta.spota.SPOTA.step" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snapshot_mode</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'latest'</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/meta/spota.html#SPOTA.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.meta.spota.SPOTA.step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
 adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
 <dl class="field-list simple">

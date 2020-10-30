@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.logger.step &mdash; Pyrado 0.2 documentation</title>
+  <title>pyrado.logger.step &mdash; Pyrado 0.3 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.2
+                0.3
               </div>
             
           
@@ -159,6 +159,8 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
+          <li><a href="../../pyrado.html">pyrado</a> &raquo;</li>
+        
           <li><a href="../logger.html">pyrado.logger</a> &raquo;</li>
         
       <li>pyrado.logger.step</li>
@@ -217,6 +219,7 @@
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.logger</span> <span class="kn">import</span> <span class="n">resolve_log_path</span>
+<span class="kn">from</span> <span class="nn">pyrado.logger.experiment</span> <span class="kn">import</span> <span class="n">split_path_custom_common</span>
 
 
 <div class="viewcode-block" id="StepLogger"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.StepLogger">[docs]</a><span class="k">class</span> <span class="nc">StepLogger</span><span class="p">:</span>
@@ -406,13 +409,22 @@
         <span class="c1"># Make sure we update the disk</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fd</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
 
-    <span class="c1"># Only serialize file name</span>
+    <span class="c1"># Only serialize the machine-independent part of the file name</span>
     <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">}</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">common_part</span> <span class="o">=</span> <span class="n">split_path_custom_common</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;file_common&#39;</span><span class="p">:</span> <span class="n">common_part</span><span class="p">}</span>
 
     <span class="c1"># And reopen the file for append on reload</span>
     <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">file</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">]</span>
+        <span class="n">common_part</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;file_common&#39;</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pyrado</span><span class="o">.</span><span class="n">EXP_DIR</span><span class="p">,</span> <span class="n">common_part</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pyrado</span><span class="o">.</span><span class="n">TEMP_DIR</span><span class="p">,</span> <span class="n">common_part</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_fd</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fd</span><span class="p">)</span></div>
@@ -445,15 +457,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
 
-    <span class="c1"># Only serialize dir and step</span>
+    <span class="c1"># Only serialize machine-independent part of the directory, as well as the step</span>
     <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;dir&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s1">&#39;step&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">}</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">common_part</span> <span class="o">=</span> <span class="n">split_path_custom_common</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;dir_common&#39;</span><span class="p">:</span> <span class="n">common_part</span><span class="p">,</span> <span class="s1">&#39;step&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">}</span>
 
     <span class="c1"># And reopen the writer on reload</span>
     <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;dir&#39;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">]</span>
+        <span class="n">common_part</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;dir_common&#39;</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pyrado</span><span class="o">.</span><span class="n">EXP_DIR</span><span class="p">,</span> <span class="n">common_part</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pyrado</span><span class="o">.</span><span class="n">TEMP_DIR</span><span class="p">,</span> <span class="n">common_part</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">writer</span> <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="n">log_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span></div>
 
 
@@ -463,20 +484,9 @@
 <span class="sd">    Features automatic detection of child LoggerAware objects. Override to customize.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="c1"># Set these in the constructor of subclasses like Algorithm</span>
     <span class="n">_logger</span><span class="p">:</span> <span class="n">StepLogger</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">_save_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># set this in the constructor of subclasses like Algorithm</span>
-
-    <span class="k">def</span> <span class="nf">_create_default_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepLogger</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Create a step-based logger which safes to a csv-file and prints to the console. &quot;&quot;&quot;</span>
-        <span class="n">logger</span> <span class="o">=</span> <span class="n">StepLogger</span><span class="p">()</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ConsolePrinter</span><span class="p">())</span>
-
-        <span class="n">logfile</span> <span class="o">=</span> <span class="s1">&#39;progress.csv&#39;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logfile</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">logfile</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CSVPrinter</span><span class="p">(</span><span class="n">logfile</span><span class="p">))</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TensorBoardPrinter</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="s1">&#39;tb&#39;</span><span class="p">)))</span>
-        <span class="k">return</span> <span class="n">logger</span>
+    <span class="n">_save_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">logger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepLogger</span><span class="p">:</span>
@@ -498,6 +508,18 @@
             <span class="n">value</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;_logger_parent&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_default_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepLogger</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Create a step-based logger which safes to a csv-file and prints to the console. &quot;&quot;&quot;</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">StepLogger</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ConsolePrinter</span><span class="p">())</span>
+
+        <span class="n">logfile</span> <span class="o">=</span> <span class="s1">&#39;progress.csv&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logfile</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">logfile</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CSVPrinter</span><span class="p">(</span><span class="n">logfile</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TensorBoardPrinter</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="s1">&#39;tb&#39;</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">logger</span>
 
 <div class="viewcode-block" id="LoggerAware.register_as_logger_parent"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.LoggerAware.register_as_logger_parent">[docs]</a>    <span class="k">def</span> <span class="nf">register_as_logger_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
         <span class="n">child</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;_logger_parent&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span></div></div>

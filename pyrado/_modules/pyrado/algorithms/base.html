@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.algorithms.base &mdash; Pyrado 0.2 documentation</title>
+  <title>pyrado.algorithms.base &mdash; Pyrado 0.3 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.2
+                0.3
               </div>
             
           
@@ -159,6 +159,8 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
+          <li><a href="../../pyrado.html">pyrado</a> &raquo;</li>
+        
       <li>pyrado.algorithms.base</li>
     
     
@@ -210,10 +212,10 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.saving_loading</span> <span class="kn">import</span> <span class="n">save_prefix_suffix</span><span class="p">,</span> <span class="n">load_prefix_suffix</span>
+<span class="kn">from</span> <span class="nn">pyrado.logger.experiment</span> <span class="kn">import</span> <span class="n">split_path_custom_common</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.saving_loading</span> <span class="kn">import</span> <span class="n">load_prefix_suffix</span>
 <span class="kn">from</span> <span class="nn">pyrado.exploration.stochastic_action</span> <span class="kn">import</span> <span class="n">StochasticActionExplStrat</span>
 <span class="kn">from</span> <span class="nn">pyrado.exploration.stochastic_params</span> <span class="kn">import</span> <span class="n">StochasticParamExplStrat</span>
-<span class="kn">from</span> <span class="nn">pyrado.logger</span> <span class="kn">import</span> <span class="n">get_log_prefix_dir</span>
 <span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span><span class="p">,</span> <span class="n">LoggerAware</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 <span class="kn">from</span> <span class="nn">pyrado</span> <span class="kn">import</span> <span class="n">set_seed</span>
@@ -255,8 +257,6 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">save_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">save_name</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">save_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">save_dir</span> <span class="o">=</span> <span class="n">get_log_prefix_dir</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span> <span class="o">=</span> <span class="n">save_dir</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_name</span> <span class="o">=</span> <span class="n">save_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
@@ -339,7 +339,7 @@
         <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Algorithm.init_modules"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.base.Algorithm.init_modules">[docs]</a>    <span class="k">def</span> <span class="nf">init_modules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">warmstart</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Algorithm.init_modules"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.base.Algorithm.init_modules">[docs]</a>    <span class="k">def</span> <span class="nf">init_modules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">warmstart</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize the algorithm&#39;s learnable modules, e.g. a policy or value function.</span>
 <span class="sd">        Overwrite this method if the algorithm uses a learnable module aside the policy, e.g. a value function.</span>
@@ -347,8 +347,12 @@
 <span class="sd">        :param warmstart: if `True`, the algorithm starts learning with an initialization. This can either be the a</span>
 <span class="sd">                          fixed parameter vector, or the results of the previous iteration</span>
 <span class="sd">        :param suffix: keyword for `meta_info` when loading from previous iteration</span>
+<span class="sd">        :param prefix: keyword for `meta_info` when loading from previous iteration</span>
 <span class="sd">        :param kwargs: keyword arguments for initialization, e.g. `policy_param_init` or `valuefcn_param_init`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span>
+
         <span class="n">ppi</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;policy_param_init&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">warmstart</span> <span class="ow">and</span> <span class="n">ppi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -357,8 +361,8 @@
 
         <span class="k">elif</span> <span class="n">warmstart</span> <span class="ow">and</span> <span class="n">ppi</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span> <span class="o">=</span> <span class="n">load_prefix_suffix</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span>
-                <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
+                <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
             <span class="p">)</span>
             <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Learning given the results from iteration </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
 
@@ -467,7 +471,7 @@
 <span class="sd">        :param meta_info: is not `None` if this algorithm is run as a subroutine of a meta-algorithm,</span>
 <span class="sd">                          contains a `dict` of information about the current iteration of the meta-algorithm</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_name</span><span class="si">}</span><span class="s1">.pkl&#39;</span><span class="p">))</span></div>
+        <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_name</span><span class="si">}</span><span class="s1">.pkl&#39;</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Algorithm.load_snapshot"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.base.Algorithm.load_snapshot">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">load_snapshot</span><span class="p">(</span><span class="n">load_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">load_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;algo&#39;</span><span class="p">):</span>
@@ -480,7 +484,11 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">load_dir</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">load_dir</span><span class="p">)</span>
 
-        <span class="n">algo</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">load_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">load_name</span><span class="si">}</span><span class="s1">.pkl&#39;</span><span class="p">))</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">load_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">load_name</span><span class="si">}</span><span class="s1">.pkl&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">file</span><span class="p">)</span>
+
+        <span class="n">algo</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">algo</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Algorithm</span><span class="p">)</span>
@@ -507,7 +515,26 @@
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="n">module</span><span class="o">.</span><span class="n">parameters</span><span class="p">())):</span>
             <span class="n">param_norm</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
             <span class="n">total_norm</span> <span class="o">+=</span> <span class="n">param_norm</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="o">**</span><span class="mi">2</span>
-        <span class="k">return</span> <span class="n">total_norm</span><span class="o">**</span><span class="mf">0.5</span></div></div>
+        <span class="k">return</span> <span class="n">total_norm</span><span class="o">**</span><span class="mf">0.5</span></div>
+
+    <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Disassemble the directory on pickling</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">common_part</span> <span class="o">=</span> <span class="n">split_path_custom_common</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;_save_dir_common&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">common_part</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span>
+
+    <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="c1"># Assemble the directory on unpickling</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="n">common_part</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;_save_dir_common&#39;</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pyrado</span><span class="o">.</span><span class="n">EXP_DIR</span><span class="p">,</span> <span class="n">common_part</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pyrado</span><span class="o">.</span><span class="n">TEMP_DIR</span><span class="p">,</span> <span class="n">common_part</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="InterruptableAlgorithm"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.base.InterruptableAlgorithm">[docs]</a><span class="k">class</span> <span class="nc">InterruptableAlgorithm</span><span class="p">(</span><span class="n">Algorithm</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>

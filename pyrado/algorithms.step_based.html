@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>step_based &mdash; Pyrado 0.2 documentation</title>
+  <title>step_based &mdash; Pyrado 0.3 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.2
+                0.3
               </div>
             
           
@@ -244,7 +244,7 @@
 
 <dl class="py method">
 <dt id="pyrado.algorithms.step_based.actor_critic.ActorCritic.init_modules">
-<code class="sig-name descname">init_modules</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">warmstart</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">suffix</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/actor_critic.html#ActorCritic.init_modules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.actor_critic.ActorCritic.init_modules" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">init_modules</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">warmstart</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">suffix</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/actor_critic.html#ActorCritic.init_modules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.actor_critic.ActorCritic.init_modules" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the algorithm’s learnable modules, e.g. a policy or value function.
 Overwrite this method if the algorithm uses a learnable module aside the policy, e.g. a value function.</p>
 <dl class="field-list simple">
@@ -253,6 +253,7 @@ Overwrite this method if the algorithm uses a learnable module aside the policy,
 <li><p><strong>warmstart</strong> – if <cite>True</cite>, the algorithm starts learning with an initialization. This can either be the a
 fixed parameter vector, or the results of the previous iteration</p></li>
 <li><p><strong>suffix</strong> – keyword for <cite>meta_info</cite> when loading from previous iteration</p></li>
+<li><p><strong>prefix</strong> – keyword for <cite>meta_info</cite> when loading from previous iteration</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments for initialization, e.g. <cite>policy_param_init</cite> or <cite>valuefcn_param_init</cite></p></li>
 </ul>
 </dd>
@@ -334,7 +335,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 
 <dl class="py method">
 <dt id="pyrado.algorithms.step_based.dql.DQL.init_modules">
-<code class="sig-name descname">init_modules</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">warmstart</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">suffix</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/dql.html#DQL.init_modules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.dql.DQL.init_modules" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">init_modules</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">warmstart</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">suffix</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/dql.html#DQL.init_modules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.dql.DQL.init_modules" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the algorithm’s learnable modules, e.g. a policy or value function.
 Overwrite this method if the algorithm uses a learnable module aside the policy, e.g. a value function.</p>
 <dl class="field-list simple">
@@ -343,6 +344,7 @@ Overwrite this method if the algorithm uses a learnable module aside the policy,
 <li><p><strong>warmstart</strong> – if <cite>True</cite>, the algorithm starts learning with an initialization. This can either be the a
 fixed parameter vector, or the results of the previous iteration</p></li>
 <li><p><strong>suffix</strong> – keyword for <cite>meta_info</cite> when loading from previous iteration</p></li>
+<li><p><strong>prefix</strong> – keyword for <cite>meta_info</cite> when loading from previous iteration</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments for initialization, e.g. <cite>policy_param_init</cite> or <cite>valuefcn_param_init</cite></p></li>
 </ul>
 </dd>
@@ -671,7 +673,7 @@ Reinforcement Learning with a Stochastic Actor”, ICML, 2018</p>
 
 <dl class="py method">
 <dt id="pyrado.algorithms.step_based.sac.SAC.init_modules">
-<code class="sig-name descname">init_modules</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">warmstart</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">suffix</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/sac.html#SAC.init_modules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.sac.SAC.init_modules" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">init_modules</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">warmstart</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">suffix</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/sac.html#SAC.init_modules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.sac.SAC.init_modules" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the algorithm’s learnable modules, e.g. a policy or value function.
 Overwrite this method if the algorithm uses a learnable module aside the policy, e.g. a value function.</p>
 <dl class="field-list simple">
@@ -680,6 +682,7 @@ Overwrite this method if the algorithm uses a learnable module aside the policy,
 <li><p><strong>warmstart</strong> – if <cite>True</cite>, the algorithm starts learning with an initialization. This can either be the a
 fixed parameter vector, or the results of the previous iteration</p></li>
 <li><p><strong>suffix</strong> – keyword for <cite>meta_info</cite> when loading from previous iteration</p></li>
+<li><p><strong>prefix</strong> – keyword for <cite>meta_info</cite> when loading from previous iteration</p></li>
 <li><p><strong>kwargs</strong> – keyword arguments for initialization, e.g. <cite>policy_param_init</cite> or <cite>valuefcn_param_init</cite></p></li>
 </ul>
 </dd>

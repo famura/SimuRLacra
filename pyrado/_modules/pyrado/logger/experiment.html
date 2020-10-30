@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.logger.experiment &mdash; Pyrado 0.2 documentation</title>
+  <title>pyrado.logger.experiment &mdash; Pyrado 0.3 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.2
+                0.3
               </div>
             
           
@@ -159,6 +159,8 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
+          <li><a href="../../pyrado.html">pyrado</a> &raquo;</li>
+        
           <li><a href="../logger.html">pyrado.logger</a> &raquo;</li>
         
       <li>pyrado.logger.experiment</li>
@@ -249,7 +251,7 @@
 <span class="sd">        :param env_name: environment trained on</span>
 <span class="sd">        :param algo_name: algorithm trained with, usually also includes the policy type, e.g. &#39;a2c_fnn&#39;</span>
 <span class="sd">        :param extra_info: additional information on the experiment (free form)</span>
-<span class="sd">        :param exp_id: combined timestamp and extra_info, usually the final folder name.</span>
+<span class="sd">        :param exp_id: combined timestamp and extra_info, usually the final folder name</span>
 <span class="sd">        :param timestamp: experiment creation timestamp</span>
 <span class="sd">        :param base_dir: base storage directory</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -286,6 +288,10 @@
         <span class="sd">&quot;&quot;&quot; Allows to use the experiment object where the experiment path is needed. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_id</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get an information string. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env_name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_id</span><span class="si">}</span><span class="s1">&#39;</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Combination of experiment and algorithm &quot;&quot;&quot;</span>
@@ -306,11 +312,7 @@
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
             <span class="c1"># Filter by exp name only</span>
             <span class="n">env_name</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">,</span> <span class="n">eid</span> <span class="o">=</span> <span class="n">parts</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_name</span> <span class="o">==</span> <span class="n">env_name</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span> <span class="o">==</span> <span class="n">algo_name</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_id</span> <span class="o">==</span> <span class="n">eid</span></div>
-
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get an information string. &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env_name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_id</span><span class="si">}</span><span class="s1">&#39;</span></div>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_name</span> <span class="o">==</span> <span class="n">env_name</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span> <span class="o">==</span> <span class="n">algo_name</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_id</span> <span class="o">==</span> <span class="n">eid</span></div></div>
 
 
 <div class="viewcode-block" id="setup_experiment"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.setup_experiment">[docs]</a><span class="k">def</span> <span class="nf">setup_experiment</span><span class="p">(</span><span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -415,7 +417,7 @@
     <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">se</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">se</span>
 
 
-<div class="viewcode-block" id="select_by_hint"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.select_by_hint">[docs]</a><span class="k">def</span> <span class="nf">select_by_hint</span><span class="p">(</span><span class="n">exps</span><span class="p">,</span> <span class="n">hint</span><span class="p">):</span>
+<div class="viewcode-block" id="select_by_hint"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.select_by_hint">[docs]</a><span class="k">def</span> <span class="nf">select_by_hint</span><span class="p">(</span><span class="n">exps</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Experiment</span><span class="p">],</span> <span class="n">hint</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Select experiment by hint. &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">hint</span><span class="p">):</span>
         <span class="c1"># Hint is a full experiment path</span>
@@ -428,6 +430,40 @@
     <span class="k">if</span> <span class="n">sl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No experiment matching hint </span><span class="si">{</span><span class="n">hint</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">sl</span></div>
+
+
+<div class="viewcode-block" id="split_path_custom_common"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.split_path_custom_common">[docs]</a><span class="k">def</span> <span class="nf">split_path_custom_common</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Experiment</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Split a path at the point where the machine-dependent and the machine-independent part can be separated.</span>
+
+<span class="sd">    :param path: (complete) experiment path to be split</span>
+<span class="sd">    :return: name of the base directory (&#39;experiments&#39; for `pyrado.EXP_DIR` or &#39;temp&#39; for `pyrado.TEMP_DIR`) where the</span>
+<span class="sd">             experiment was located, and machine-independent part of the path</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Split a path at the point where the machine-dependent and the machine-independent part can be separated.</span>
+<span class="sd">        In general, the paths look like this</span>
+<span class="sd">        `/CUSTOM_FOR_EVERY_MACHINE/SimuRLacra/Pyrado/pyrado/../data/CUSTOM_FOR_EVERY_EXPERIMENT&#39;`</span>
+<span class="sd">        Thus, we look for the first occurrence of the word &#39;data&#39;.</span>
+
+<span class="sd">        :param path: (complete) experiment path to be split</span>
+<span class="sd">        :return: part of the path until &#39;data/, and machine-independent part of the path</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">Experiment</span><span class="p">):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>  <span class="c1"># convert Experiment to PathLike a.k.a. string</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;The key word was not found in the path!&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># +1 for the &#39;/&#39;</span>
+        <span class="k">return</span> <span class="n">path</span><span class="p">[:</span><span class="n">idx</span><span class="p">],</span> <span class="n">path</span><span class="p">[</span><span class="n">idx</span><span class="p">:]</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;experiments&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;temp&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ask_for_experiment"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.ask_for_experiment">[docs]</a><span class="k">def</span> <span class="nf">ask_for_experiment</span><span class="p">(</span><span class="n">latest_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>

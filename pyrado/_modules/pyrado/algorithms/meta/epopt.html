@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.algorithms.meta.epopt &mdash; Pyrado 0.2 documentation</title>
+  <title>pyrado.algorithms.meta.epopt &mdash; Pyrado 0.3 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.2
+                0.3
               </div>
             
           
@@ -158,6 +158,8 @@
       <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../pyrado.html">pyrado</a> &raquo;</li>
         
       <li>pyrado.algorithms.meta.epopt</li>
     
@@ -269,7 +271,7 @@
         <span class="p">)</span>
 
         <span class="c1"># Save initial environment and randomizer</span>
-        <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="s1">&#39;env.pkl&#39;</span><span class="p">))</span>
+        <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="s1">&#39;env.pkl&#39;</span><span class="p">))</span>
         <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">randomizer</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="s1">&#39;randomizer.pkl&#39;</span><span class="p">))</span>
 
     <span class="nd">@property</span>

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.algorithms.step_based.dql &mdash; Pyrado 0.2 documentation</title>
+  <title>pyrado.algorithms.step_based.dql &mdash; Pyrado 0.3 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.2
+                0.3
               </div>
             
           
@@ -158,6 +158,8 @@
       <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../pyrado.html">pyrado</a> &raquo;</li>
         
       <li>pyrado.algorithms.step_based.dql</li>
     
@@ -447,7 +449,10 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler</span><span class="o">.</span><span class="n">last_epoch</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span></div>
 
-<div class="viewcode-block" id="DQL.init_modules"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.dql.DQL.init_modules">[docs]</a>    <span class="k">def</span> <span class="nf">init_modules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">warmstart</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DQL.init_modules"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.dql.DQL.init_modules">[docs]</a>    <span class="k">def</span> <span class="nf">init_modules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">warmstart</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span>
+
         <span class="n">ppi</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;policy_param_init&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">tpi</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target_param_init&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
@@ -458,12 +463,12 @@
 
         <span class="k">elif</span> <span class="n">warmstart</span> <span class="ow">and</span> <span class="n">ppi</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span> <span class="o">=</span> <span class="n">load_prefix_suffix</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span>
-                <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
+                <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">q_targ</span> <span class="o">=</span> <span class="n">load_prefix_suffix</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">q_targ</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span>
-                <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;iter_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">q_targ</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
+                <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
             <span class="p">)</span>
             <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Learning given the results from iteration </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
 
@@ -476,12 +481,12 @@
 <div class="viewcode-block" id="DQL.save_snapshot"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.dql.DQL.save_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">save_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="p">)</span>
 
-        <span class="n">save_prefix_suffix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span>
-        <span class="n">save_prefix_suffix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_targ</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span>
+        <span class="n">save_prefix_suffix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span>
+        <span class="n">save_prefix_suffix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_targ</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># This algorithm instance is not a subroutine of another algorithm</span>
-            <span class="n">save_prefix_suffix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="s1">&#39;pkl&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span></div></div>
+            <span class="n">save_prefix_suffix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="s1">&#39;pkl&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
