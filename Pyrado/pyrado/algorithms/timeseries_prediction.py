@@ -103,22 +103,38 @@ class TSPred(Algorithm):
             self._lr_scheduler = lr_scheduler(self.optim, **lr_scheduler_hparam)
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
-        # Reset the gradients
-        self.optim.zero_grad()
 
         # Feed one epoch of the training set to the policy
         if self.windowed:
-            preds_trn = to.stack([TSPred.predict(self._policy, inp_seq, self.windowed, self.cascaded)[0]
-                                  for inp_seq, _ in self.dataset.data_trn_seqs])
-            targs_trn = to.stack([targ.unsqueeze(0) for _, targ in self.dataset.data_trn_seqs])
+            # Predict
+            loss_trn = []
+            for inp_seq, targ in self.dataset.data_trn_seqs:
+                # Reset the gradients
+                self.optim.zero_grad()
+
+                # Predict
+                pred_trn = TSPred.predict(self._policy, inp_seq, self.windowed, self.cascaded)[0]
+                targ_trn = targ.unsqueeze(0)
+
+                # Compute the loss, backpropagate, and call the optimizer
+                loss_trn_single = self.loss_fcn(targ_trn, pred_trn)
+                loss_trn_single.backward()
+                self.optim.step()
+                loss_trn.append(loss_trn_single.item())
+            loss_trn = to.mean(to.tensor(loss_trn))
+
         elif not self.windowed:
+            # Reset the gradients
+            self.optim.zero_grad()
+
+            # Predict
             preds_trn = TSPred.predict(self._policy, self.dataset.data_trn_inp, self.windowed, self.cascaded)[0]
             targs_trn = self.dataset.data_trn_targ
 
-        # Compute the loss, backpropagate, and call the optimizer
-        loss_trn = self.loss_fcn(targs_trn, preds_trn)
-        loss_trn.backward()
-        self.optim.step()
+            # Compute the loss, backpropagate, and call the optimizer
+            loss_trn = self.loss_fcn(targs_trn, preds_trn)
+            loss_trn.backward()
+            self.optim.step()
 
         # Update the learning rate if a scheduler has been specified
         if self._lr_scheduler is not None:

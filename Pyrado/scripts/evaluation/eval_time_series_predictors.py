@@ -47,8 +47,7 @@ if __name__ == '__main__':
     # Get the experiments' directories to load from
     ex_dirs = [
         # osp.join(pyrado.EXP_DIR, 'ENV_NAME', 'ALGO_NAME', 'EX_NAME'),
-        # '/home/muratore/Software/SimuRLacra/Pyrado/data/temp/tspred/lstm/2020-10-27_17-35-05'
-        # '',
+        ''
     ]
 
     # Loading the policies data sets

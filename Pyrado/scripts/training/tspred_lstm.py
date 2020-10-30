@@ -96,7 +96,7 @@ if __name__ == '__main__':
     # Algorithm
     algo_hparam = dict(
         max_iter=1000,
-        windowed=False,
+        windowed=True,
         cascaded=False,
         optim_class=optim.Adam,
         optim_hparam=dict(lr=1e-2, eps=1e-8, weight_decay=1e-4),  # momentum=0.7
