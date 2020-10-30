@@ -336,7 +336,7 @@ class SysIdViaEpisodicRL(Algorithm):
         cpp = self._subrtn.policy.transform_to_ddp_space(self._subrtn.policy.param_values)
         self._subrtn.env.adapt_randomizer(domain_distr_param_values=cpp.detach().cpu().numpy())
         print_cbt(f'Current policy domain parameter distribution\n{self._subrtn.env.randomizer}', 'g')
-        joblib.dump(self._subrtn.env, osp.join(self._save_dir, 'env_sim.pkl'))
+        joblib.dump(self._subrtn.env, osp.join(self.save_dir, 'env_sim.pkl'))
 
         # Set the randomizer to best fitted domain distribution
         cbp = self._subrtn.policy.transform_to_ddp_space(self._subrtn.best_policy_param)
@@ -345,4 +345,4 @@ class SysIdViaEpisodicRL(Algorithm):
 
         if 'rollouts_real' not in meta_info:
             raise pyrado.KeyErr(key='rollouts_real', container=meta_info)
-        save_prefix_suffix(meta_info['rollouts_real'], 'rollouts_real', 'pkl', self._save_dir, meta_info)
+        save_prefix_suffix(meta_info['rollouts_real'], 'rollouts_real', 'pkl', self.save_dir, meta_info)

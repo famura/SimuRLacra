@@ -70,7 +70,7 @@ class Experiment:
         :param env_name: environment trained on
         :param algo_name: algorithm trained with, usually also includes the policy type, e.g. 'a2c_fnn'
         :param extra_info: additional information on the experiment (free form)
-        :param exp_id: combined timestamp and extra_info, usually the final folder name.
+        :param exp_id: combined timestamp and extra_info, usually the final folder name
         :param timestamp: experiment creation timestamp
         :param base_dir: base storage directory
         """
@@ -107,6 +107,10 @@ class Experiment:
         """ Allows to use the experiment object where the experiment path is needed. """
         return osp.join(self.base_dir, self.env_name, self.algo_name, self.exp_id)
 
+    def __str__(self):
+        """ Get an information string. """
+        return f'{self.env_name}/{self.algo_name}/{self.exp_id}'
+
     @property
     def prefix(self):
         """ Combination of experiment and algorithm """
@@ -128,10 +132,6 @@ class Experiment:
             # Filter by exp name only
             env_name, algo_name, eid = parts
             return self.env_name == env_name and self.algo_name == algo_name and self.exp_id == eid
-
-    def __str__(self):
-        """ Get an information string. """
-        return f'{self.env_name}/{self.algo_name}/{self.exp_id}'
 
 
 def setup_experiment(env_name: str,
@@ -236,7 +236,7 @@ def _select_all(exps: Iterable) -> Union[List[Experiment], None]:
     return None if len(se) == 0 else se
 
 
-def select_by_hint(exps, hint):
+def select_by_hint(exps: Sequence[Experiment], hint: str):
     """ Select experiment by hint. """
     if osp.isabs(hint):
         # Hint is a full experiment path
@@ -249,6 +249,40 @@ def select_by_hint(exps, hint):
     if sl is None:
         print_cbt(f'No experiment matching hint {hint}', 'r')
     return sl
+
+
+def split_path_custom_common(path: Union[str, Experiment]) -> (str, str):
+    """
+    Split a path at the point where the machine-dependent and the machine-independent part can be separated.
+
+    :param path: (complete) experiment path to be split
+    :return: name of the base directory ('experiments' for `pyrado.EXP_DIR` or 'temp' for `pyrado.TEMP_DIR`) where the
+             experiment was located, and machine-independent part of the path
+    """
+
+    def _split_path_at(path, key):
+        """
+        Split a path at the point where the machine-dependent and the machine-independent part can be separated.
+        In general, the paths look like this
+        `/CUSTOM_FOR_EVERY_MACHINE/SimuRLacra/Pyrado/pyrado/../data/CUSTOM_FOR_EVERY_EXPERIMENT'`
+        Thus, we look for the first occurrence of the word 'data'.
+
+        :param path: (complete) experiment path to be split
+        :return: part of the path until 'data/, and machine-independent part of the path
+        """
+        if isinstance(path, Experiment):
+            path = os.fspath(path)  # convert Experiment to PathLike a.k.a. string
+        idx = path.find(key + '/')
+        if idx == -1:
+            raise pyrado.PathErr(msg='The key word was not found in the path!')
+        else:
+            idx += len(key) + 1  # +1 for the '/'
+        return path[:idx], path[idx:]
+
+    try:
+        return _split_path_at(path, key='experiments')
+    except pyrado.PathErr:
+        return _split_path_at(path, key='temp')
 
 
 def ask_for_experiment(latest_only: bool = False):

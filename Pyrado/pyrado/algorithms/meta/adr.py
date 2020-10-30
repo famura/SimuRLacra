@@ -270,7 +270,7 @@ class ADR(Algorithm):
         flattened_reference = StepSequence.concat(ref_trajs)
         flattened_reference.torch(data_type=to.double)
         self.reward_generator.train(flattened_reference, flattened_randomized, self.num_discriminator_epoch)
-        save_prefix_suffix(self.reward_generator.discriminator, 'discriminator', 'pt', self._save_dir,
+        save_prefix_suffix(self.reward_generator.discriminator, 'discriminator', 'pt', self.save_dir,
                            meta_info=dict(prefix='adr'))
 
         if self.curr_time_step > self.warm_up_time:
@@ -291,7 +291,7 @@ class ADR(Algorithm):
 
         if meta_info is None:
             # This algorithm instance is not a subtrn of another algorithm
-            save_prefix_suffix(self.env, 'env', 'pkl', self._save_dir, meta_info)
+            save_prefix_suffix(self.env, 'env', 'pkl', self.save_dir, meta_info)
             self.svpg.save_snapshot(meta_info)
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subtrn!')

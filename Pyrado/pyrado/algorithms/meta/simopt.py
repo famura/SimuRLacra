@@ -137,7 +137,7 @@ class SimOpt(InterruptableAlgorithm):
 
         # Save initial environments and the prior
         self.save_snapshot(meta_info=None)
-        joblib.dump(self._subrtn_distr.policy.prior, osp.join(self._save_dir, 'prior.pkl'))
+        joblib.dump(self._subrtn_distr.policy.prior, osp.join(self.save_dir, 'prior.pkl'))
 
     @property
     def subroutine_policy(self) -> Algorithm:
@@ -158,7 +158,7 @@ class SimOpt(InterruptableAlgorithm):
         :return: estimated return of the trained policy in the target domain
         """
         # Save the current candidate
-        save_prefix_suffix(cand.view(-1), 'candidate', 'pt', self._save_dir, meta_info=dict(prefix=prefix))
+        save_prefix_suffix(cand.view(-1), 'candidate', 'pt', self.save_dir, meta_info=dict(prefix=prefix))
 
         # Set the domain randomizer
         self._env_sim.adapt_randomizer(cand.detach().cpu().numpy())
@@ -297,6 +297,9 @@ class SimOpt(InterruptableAlgorithm):
         return ros_real
 
     def step(self, snapshot_mode: str = 'latest', meta_info: dict = None):
+        # Save snapshot to save the correct iteration count
+        self.save_snapshot()
+
         if self.curr_checkpoint == 0:
             if self._curr_iter == 0:
                 # First iteration, use the policy parameters (initialized from a prior)
@@ -321,10 +324,10 @@ class SimOpt(InterruptableAlgorithm):
         if self.curr_checkpoint == 1:
             # Evaluate the current policy in the target domain
             policy = load_prefix_suffix(
-                self.policy, 'policy', 'pt', self._save_dir, meta_info=dict(prefix=f'iter_{self._curr_iter}')
+                self.policy, 'policy', 'pt', self.save_dir, meta_info=dict(prefix=f'iter_{self._curr_iter}')
             )
             self.eval_behav_policy(
-                self._save_dir, self._env_real, policy, f'iter_{self._curr_iter}', self.num_eval_rollouts, None
+                self.save_dir, self._env_real, policy, f'iter_{self._curr_iter}', self.num_eval_rollouts, None
             )
             # if self._curr_iter == 0:
             #     # First iteration, also evaluate the random initialization
@@ -337,19 +340,19 @@ class SimOpt(InterruptableAlgorithm):
         if self.curr_checkpoint == 2:
             # Train and evaluate the policy that represents domain parameter distribution
             rollouts_real = load_prefix_suffix(
-                None, 'rollouts_real', 'pkl', self._save_dir, meta_info=dict(prefix=f'iter_{self._curr_iter}')
+                None, 'rollouts_real', 'pkl', self.save_dir, meta_info=dict(prefix=f'iter_{self._curr_iter}')
             )
             curr_cand_value = self.train_ddp_policy(rollouts_real, prefix=f'iter_{self._curr_iter}')
             if self._curr_iter == 0:
                 self.cands_values = to.tensor(curr_cand_value).unsqueeze(0)
             else:
                 self.cands_values = to.cat([self.cands_values, to.tensor(curr_cand_value).unsqueeze(0)], dim=0)
-            save_prefix_suffix(self.cands_values, 'candidates_values', 'pt', self._save_dir, meta_info)
+            save_prefix_suffix(self.cands_values, 'candidates_values', 'pt', self.save_dir, meta_info)
 
             # The next candidate is the current search distribution and not the best policy parameter set (is saved)
             next_cand = self._subrtn_distr.policy.transform_to_ddp_space(self._subrtn_distr.policy.param_values)
             self.cands = to.cat([self.cands, next_cand.unsqueeze(0)], dim=0)
-            save_prefix_suffix(self.cands, 'candidates', 'pt', self._save_dir, meta_info)
+            save_prefix_suffix(self.cands, 'candidates', 'pt', self.save_dir, meta_info)
 
             # Save the latest domain distribution parameter policy
             self._subrtn_distr.save_snapshot(meta_info=dict(prefix='ddp', rollouts_real=rollouts_real))
@@ -361,7 +364,7 @@ class SimOpt(InterruptableAlgorithm):
         # The subroutines are saving their snapshots during their training
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            joblib.dump(self._env_sim, osp.join(self._save_dir, 'env_sim.pkl'))
-            joblib.dump(self._env_real, osp.join(self._save_dir, 'env_real.pkl'))
+            joblib.dump(self._env_sim, osp.join(self.save_dir, 'env_sim.pkl'))
+            joblib.dump(self._env_real, osp.join(self.save_dir, 'env_real.pkl'))
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subrtn!')

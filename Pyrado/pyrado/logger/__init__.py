@@ -28,13 +28,14 @@
 
 import os
 import os.path as osp
+from typing import Optional
 
 
 # Global log prefix directory
 _log_prefix_dir = None
 
 
-def set_log_prefix_dir(log_dir):
+def set_log_prefix_dir(log_dir: str):
     """ Set the log prefix directory for this session. """
     if not osp.exists(log_dir):
         os.makedirs(log_dir)
@@ -45,14 +46,14 @@ def set_log_prefix_dir(log_dir):
     _log_prefix_dir = log_dir
 
 
-def get_log_prefix_dir():
+def get_log_prefix_dir() -> Optional[str]:
     """ Get the log prefix directory for this session. """
     return _log_prefix_dir
 
 
-def resolve_log_path(path):
+def resolve_log_path(path) -> str:
     """ Resolve path against the global log dir if path is relative. """
-    if _log_prefix_dir is not None:
+    if get_log_prefix_dir() is not None:
         # Join properly handles absolute path
-        path = osp.join(_log_prefix_dir, path)
+        path = osp.join(get_log_prefix_dir(), path)
     return path

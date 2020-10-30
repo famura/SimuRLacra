@@ -241,8 +241,8 @@ class TSPred(Algorithm):
         super().save_snapshot()
 
         # Does not matter if this algorithm instance is a subroutine of another algorithm
-        save_prefix_suffix(self._policy, 'policy', 'pt', self._save_dir, meta_info)
-        save_prefix_suffix(self.dataset, 'dataset', 'pt', self._save_dir, meta_info)
+        save_prefix_suffix(self._policy, 'policy', 'pt', self.save_dir, meta_info)
+        save_prefix_suffix(self.dataset, 'dataset', 'pt', self.save_dir, meta_info)
 
     @staticmethod
     def evaluate(policy: Policy,

@@ -146,7 +146,10 @@ class ActorCritic(Algorithm, ABC):
         if self._lr_scheduler is not None:
             self._lr_scheduler.last_epoch = -1
 
-    def init_modules(self, warmstart: bool, suffix: str = '', **kwargs):
+    def init_modules(self, warmstart: bool, suffix: str = '', prefix: str = None, **kwargs):
+        if prefix is None:
+            prefix = f'iter_{self._curr_iter - 1}'
+
         ppi = kwargs.get('policy_param_init', None)
         vpi = kwargs.get('valuefcn_param_init', None)
 
@@ -157,12 +160,12 @@ class ActorCritic(Algorithm, ABC):
 
         elif warmstart and ppi is None and self._curr_iter > 0:
             self._policy = load_prefix_suffix(
-                self._policy, 'policy', 'pt', self._save_dir,
-                meta_info=dict(prefix=f'iter_{self._curr_iter - 1}', suffix=suffix)
+                self._policy, 'policy', 'pt', self.save_dir,
+                meta_info=dict(prefix=prefix, suffix=suffix)
             )
             self._critic.value_fcn = load_prefix_suffix(
-                self._critic.value_fcn, 'valuefcn', 'pt', self._save_dir,
-                meta_info=dict(prefix=f'iter_{self._curr_iter - 1}', suffix=suffix)
+                self._critic.value_fcn, 'valuefcn', 'pt', self.save_dir,
+                meta_info=dict(prefix=prefix, suffix=suffix)
             )
             print_cbt(f'Learning given the results from iteration {self._curr_iter - 1}', 'w')
 
@@ -175,9 +178,9 @@ class ActorCritic(Algorithm, ABC):
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
-        save_prefix_suffix(self._expl_strat.policy, 'policy', 'pt', self._save_dir, meta_info)
-        save_prefix_suffix(self._critic.value_fcn, 'valuefcn', 'pt', self._save_dir, meta_info)
+        save_prefix_suffix(self._expl_strat.policy, 'policy', 'pt', self.save_dir, meta_info)
+        save_prefix_suffix(self._critic.value_fcn, 'valuefcn', 'pt', self.save_dir, meta_info)
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            save_prefix_suffix(self._env, 'env', 'pkl', self._save_dir, meta_info)
+            save_prefix_suffix(self._env, 'env', 'pkl', self.save_dir, meta_info)

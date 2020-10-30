@@ -38,6 +38,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 import pyrado
 from pyrado.logger import resolve_log_path
+from pyrado.logger.experiment import split_path_custom_common
 
 
 class StepLogger:
@@ -227,13 +228,22 @@ class CSVPrinter(StepLogPrinter):
         # Make sure we update the disk
         self._fd.flush()
 
-    # Only serialize file name
+    # Only serialize the machine-independent part of the file name
     def __getstate__(self):
-        return {'file': self.file}
+        _, common_part = split_path_custom_common(self.file)
+        return {'file_common': common_part}
 
     # And reopen the file for append on reload
     def __setstate__(self, state):
-        self.file = state['file']
+        common_part = state['file_common']
+        try:
+            self.file = osp.join(pyrado.EXP_DIR, common_part)
+            if not osp.isfile(self.file):
+                raise pyrado.PathErr(given=self.file)
+        except pyrado.PathErr:
+            self.file = osp.join(pyrado.TEMP_DIR, common_part)
+            if not osp.isfile(self.file):
+                raise pyrado.PathErr(given=self.file)
 
         self._fd = open(self.file, 'a')
         self._writer = csv.writer(self._fd)
@@ -266,15 +276,24 @@ class TensorBoardPrinter(StepLogPrinter):
         self.step += 1
         self.writer.flush()
 
-    # Only serialize dir and step
+    # Only serialize machine-independent part of the directory, as well as the step
     def __getstate__(self):
-        return {'dir': self.dir, 'step': self.step}
+        _, common_part = split_path_custom_common(self.dir)
+        return {'dir_common': common_part, 'step': self.step}
 
     # And reopen the writer on reload
     def __setstate__(self, state):
-        self.dir = state['dir']
-        self.step = state['step']
+        common_part = state['dir_common']
+        try:
+            self.dir = osp.join(pyrado.EXP_DIR, common_part)
+            if not osp.isdir(self.dir):
+                raise pyrado.PathErr(given=self.dir)
+        except pyrado.PathErr:
+            self.dir = osp.join(pyrado.TEMP_DIR, common_part)
+            if not osp.isdir(self.dir):
+                raise pyrado.PathErr(given=self.dir)
 
+        self.step = state['step']
         self.writer = SummaryWriter(log_dir=self.dir)
 
 
@@ -284,20 +303,9 @@ class LoggerAware:
     Features automatic detection of child LoggerAware objects. Override to customize.
     """
 
+    # Set these in the constructor of subclasses like Algorithm
     _logger: StepLogger = None
-    _save_dir: str = None  # set this in the constructor of subclasses like Algorithm
-
-    def _create_default_logger(self) -> StepLogger:
-        """ Create a step-based logger which safes to a csv-file and prints to the console. """
-        logger = StepLogger()
-        logger.printers.append(ConsolePrinter())
-
-        logfile = 'progress.csv'
-        if self._save_dir is not None:
-            logfile = osp.join(self._save_dir, logfile)
-        logger.printers.append(CSVPrinter(logfile))
-        logger.printers.append(TensorBoardPrinter(osp.join(self._save_dir, 'tb')))
-        return logger
+    _save_dir: str = None
 
     @property
     def logger(self) -> StepLogger:
@@ -319,6 +327,18 @@ class LoggerAware:
             value.__dict__['_logger_parent'] = self
 
         super().__setattr__(key, value)
+
+    def _create_default_logger(self) -> StepLogger:
+        """ Create a step-based logger which safes to a csv-file and prints to the console. """
+        logger = StepLogger()
+        logger.printers.append(ConsolePrinter())
+
+        logfile = 'progress.csv'
+        if self._save_dir is not None:
+            logfile = osp.join(self._save_dir, logfile)
+        logger.printers.append(CSVPrinter(logfile))
+        logger.printers.append(TensorBoardPrinter(osp.join(self._save_dir, 'tb')))
+        return logger
 
     def register_as_logger_parent(self, child):
         child.__dict__['_logger_parent'] = self

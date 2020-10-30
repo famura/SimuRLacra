@@ -182,4 +182,4 @@ class LQR(Algorithm):
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            save_prefix_suffix(self._env, 'env', 'pkl', self._save_dir, meta_info)
+            save_prefix_suffix(self._env, 'env', 'pkl', self.save_dir, meta_info)

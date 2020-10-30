@@ -192,8 +192,8 @@ class ParameterExploring(Algorithm):
         # Save the best element of the current population
         best_policy = deepcopy(self._policy)
         best_policy.param_values = self.best_policy_param
-        save_prefix_suffix(best_policy, 'policy', 'pt', self._save_dir, meta_info)
+        save_prefix_suffix(best_policy, 'policy', 'pt', self.save_dir, meta_info)
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            save_prefix_suffix(self._env, 'env', 'pkl', self._save_dir, meta_info)
+            save_prefix_suffix(self._env, 'env', 'pkl', self.save_dir, meta_info)

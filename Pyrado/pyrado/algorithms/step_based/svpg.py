@@ -315,8 +315,8 @@ class SVPG(Algorithm):
         super().save_snapshot(meta_info)
 
         for idx, p in enumerate(self.particles):
-            save_prefix_suffix(p, f'particle_{idx}', 'pt', self._save_dir, meta_info)
+            save_prefix_suffix(p, f'particle_{idx}', 'pt', self.save_dir, meta_info)
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            save_prefix_suffix(self._env, 'env', 'pkl', self._save_dir, meta_info)
+            save_prefix_suffix(self._env, 'env', 'pkl', self.save_dir, meta_info)

@@ -74,9 +74,9 @@ if __name__ == '__main__':
     policy_hparam = dict(energy_gain=0.587, ref_energy=0.827, acc_max=10.)
     policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec, **policy_hparam)
     subrtn_hparam = dict(
-        max_iter=3,
-        pop_size=10,
-        num_rollouts=6,
+        max_iter=10,
+        pop_size=50,
+        num_rollouts=8,
         num_is_samples=5,
         expl_std_init=2.0,
         expl_std_min=0.02,
@@ -146,7 +146,7 @@ if __name__ == '__main__':
         acq_param=dict(beta=0.25),
         acq_restarts=500,
         acq_samples=1000,
-        num_init_cand=2,
+        num_init_cand=4,
         warmstart=False,
         num_eval_rollouts_real=10,  # sim-2-sim
         # thold_succ_subrtn=300,

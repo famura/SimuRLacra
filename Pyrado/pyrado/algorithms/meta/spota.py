@@ -198,7 +198,10 @@ class SPOTA(InterruptableAlgorithm):
         else:
             return False
 
-    def step(self, snapshot_mode: str, meta_info: dict = None):
+    def step(self, snapshot_mode: str = 'latest', meta_info: dict = None):
+        # Save snapshot to save the correct iteration count
+        self.save_snapshot()
+
         if self.curr_checkpoint == 0:
             # Candidate solution
             nc, _ = self.seq_cand(self.nc_init, self._curr_iter, dtype=int)
@@ -218,7 +221,7 @@ class SPOTA(InterruptableAlgorithm):
         if self.curr_checkpoint == 2:
             # Estimate the upper confidence bound on the optimality gap
             self._estimate_ucbog(nr)
-            np.save(osp.join(self._save_dir, f'iter_{self._curr_iter}_diffs.npy'), self.Gn_diffs)
+            np.save(osp.join(self.save_dir, f'iter_{self._curr_iter}_diffs.npy'), self.Gn_diffs)
             self.reached_checkpoint()  # setting counter to 0
 
     def _compute_candidate(self, nc: int):
@@ -229,7 +232,7 @@ class SPOTA(InterruptableAlgorithm):
         """
         # Do a warm start if desired
         self._subrtn_cand.init_modules(
-            self.warmstart_cand, suffix='cand',
+            self.warmstart_cand, prefix=f'iter_{self._curr_iter - 1}', suffix='cand',
             policy_param_init=self.cand_policy_param_init,
             valuefcn_param_init=self.cand_critic_param_init
         )
@@ -237,7 +240,7 @@ class SPOTA(InterruptableAlgorithm):
         # Sample sets of physics params xi_{1}, ..., xi_{nc}
         self.env_dr.fill_buffer(nc)
         env_params_cand = self.env_dr.randomizer.get_params()
-        joblib.dump(env_params_cand, osp.join(self._save_dir, f'iter_{self._curr_iter}_env_params_cand.pkl'))
+        joblib.dump(env_params_cand, osp.join(self.save_dir, f'iter_{self._curr_iter}_env_params_cand.pkl'))
         print('Randomized parameters of for the candidate solution:')
         print_domain_params(env_params_cand)
 
@@ -278,7 +281,7 @@ class SPOTA(InterruptableAlgorithm):
 
             # Do a warm start if desired
             self._subrtn_refs.init_modules(
-                self.warmstart_refs, suffix='cand',
+                self.warmstart_refs, prefix=f'iter_{self._curr_iter}', suffix='cand',
                 policy_param_init=self.cand_policy_param_init,
                 valuefcn_param_init=self.cand_critic_param_init
             )
@@ -286,7 +289,7 @@ class SPOTA(InterruptableAlgorithm):
             # Sample new sets of physics params xi_{k,1}, ..., xi_{k,nr}
             self.env_dr.fill_buffer(nr)
             env_params_ref = self.env_dr.randomizer.get_params()
-            joblib.dump(env_params_ref, osp.join(self._save_dir, f'iter_{self._curr_iter}_env_params_ref_{k}.pkl'))
+            joblib.dump(env_params_ref, osp.join(self.save_dir, f'iter_{self._curr_iter}_env_params_ref_{k}.pkl'))
             print('Randomized parameters of for the current reference solution:')
             print_domain_params(env_params_ref)
 
@@ -354,16 +357,16 @@ class SPOTA(InterruptableAlgorithm):
         for k in range(self.nG):
             print_cbt(f'Estimating the UCBOG | Reference {k + 1} of {self.nG} ...', 'c')
             # Load the domain parameters corresponding to the k-th reference solution
-            env_params_ref = joblib.load(osp.join(self._save_dir, f'iter_{self._curr_iter}_env_params_ref_{k}.pkl'))
+            env_params_ref = joblib.load(osp.join(self.save_dir, f'iter_{self._curr_iter}_env_params_ref_{k}.pkl'))
             self.env_dr.buffer = env_params_ref
 
             # Load the policies (makes a difference for snapshot_mode = best)
             self._subrtn_cand._policy = load_prefix_suffix(
-                self._subrtn_cand._policy, 'policy', 'pt', self._save_dir,
+                self._subrtn_cand._policy, 'policy', 'pt', self.save_dir,
                 dict(prefix=f'iter_{self._curr_iter}', suffix='cand')
             )
             self._subrtn_refs._policy = load_prefix_suffix(
-                self._subrtn_refs._policy, 'policy', 'pt', self._save_dir,
+                self._subrtn_refs._policy, 'policy', 'pt', self.save_dir,
                 dict(prefix=f'iter_{self._curr_iter}', suffix=f'ref_{k}')
             )
 
@@ -405,7 +408,7 @@ class SPOTA(InterruptableAlgorithm):
 
         # Log the optimality gap data
         mode = 'w' if self.curr_iter == 0 else 'a'
-        with open(osp.join(self._save_dir, 'OG_log.csv'), mode, newline='') as csvfile:
+        with open(osp.join(self.save_dir, 'OG_log.csv'), mode, newline='') as csvfile:
             fieldnames = list(log_dict.keys())
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             if self.curr_iter == 0:
@@ -436,7 +439,7 @@ class SPOTA(InterruptableAlgorithm):
                 else:
                     # Load a reference solution different from the the k-th
                     other_ref = load_prefix_suffix(
-                        self._subrtn_refs._policy, 'policy', 'pt', self._save_dir,
+                        self._subrtn_refs._policy, 'policy', 'pt', self.save_dir,
                         dict(prefix=f'iter_{self._curr_iter}', suffix=f'ref_{other_k}')
                     )
                     other_ref_ret = 0
@@ -472,7 +475,7 @@ class SPOTA(InterruptableAlgorithm):
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            save_prefix_suffix(self.env_dr, 'env', 'pkl', self._save_dir, meta_info)
-            save_prefix_suffix(self.env_dr.randomizer, 'randomizer', 'pkl', self._save_dir, meta_info)
+            save_prefix_suffix(self.env_dr, 'env', 'pkl', self.save_dir, meta_info)
+            save_prefix_suffix(self.env_dr.randomizer, 'randomizer', 'pkl', self.save_dir, meta_info)
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')

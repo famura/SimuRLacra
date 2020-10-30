@@ -33,10 +33,10 @@ from abc import ABC, abstractmethod
 from typing import Any, Optional, Union
 
 import pyrado
-from pyrado.utils.saving_loading import save_prefix_suffix, load_prefix_suffix
+from pyrado.logger.experiment import split_path_custom_common
+from pyrado.utils.saving_loading import load_prefix_suffix
 from pyrado.exploration.stochastic_action import StochasticActionExplStrat
 from pyrado.exploration.stochastic_params import StochasticParamExplStrat
-from pyrado.logger import get_log_prefix_dir
 from pyrado.logger.step import StepLogger, LoggerAware
 from pyrado.policies.base import Policy
 from pyrado import set_seed
@@ -78,8 +78,6 @@ class Algorithm(ABC, LoggerAware):
         if not isinstance(save_name, str):
             raise pyrado.TypeErr(given=save_name, expected_type=str)
 
-        if save_dir is None:
-            save_dir = get_log_prefix_dir()
         self._save_dir = save_dir
         self._save_name = save_name
         self._max_iter = max_iter
@@ -162,7 +160,7 @@ class Algorithm(ABC, LoggerAware):
         if seed is not None:
             set_seed(seed, verbose=True)
 
-    def init_modules(self, warmstart: bool, suffix: str = '', **kwargs):
+    def init_modules(self, warmstart: bool, suffix: str = '', prefix: str = None, **kwargs):
         """
         Initialize the algorithm's learnable modules, e.g. a policy or value function.
         Overwrite this method if the algorithm uses a learnable module aside the policy, e.g. a value function.
@@ -170,8 +168,12 @@ class Algorithm(ABC, LoggerAware):
         :param warmstart: if `True`, the algorithm starts learning with an initialization. This can either be the a
                           fixed parameter vector, or the results of the previous iteration
         :param suffix: keyword for `meta_info` when loading from previous iteration
+        :param prefix: keyword for `meta_info` when loading from previous iteration
         :param kwargs: keyword arguments for initialization, e.g. `policy_param_init` or `valuefcn_param_init`
         """
+        if prefix is None:
+            prefix = f'iter_{self._curr_iter - 1}'
+
         ppi = kwargs.get('policy_param_init', None)
 
         if warmstart and ppi is not None:
@@ -180,8 +182,8 @@ class Algorithm(ABC, LoggerAware):
 
         elif warmstart and ppi is None and self._curr_iter > 0:
             self._policy = load_prefix_suffix(
-                self._policy, 'policy', 'pt', self._save_dir,
-                meta_info=dict(prefix=f'iter_{self._curr_iter - 1}', suffix=suffix)
+                self._policy, 'policy', 'pt', self.save_dir,
+                meta_info=dict(prefix=prefix, suffix=suffix)
             )
             print_cbt(f'Learning given the results from iteration {self._curr_iter - 1}', 'w')
 
@@ -290,7 +292,7 @@ class Algorithm(ABC, LoggerAware):
         :param meta_info: is not `None` if this algorithm is run as a subroutine of a meta-algorithm,
                           contains a `dict` of information about the current iteration of the meta-algorithm
         """
-        joblib.dump(self, osp.join(self._save_dir, f'{self._save_name}.pkl'))
+        joblib.dump(self, osp.join(self.save_dir, f'{self._save_name}.pkl'))
 
     @staticmethod
     def load_snapshot(load_dir: str, load_name: str = 'algo'):
@@ -303,7 +305,11 @@ class Algorithm(ABC, LoggerAware):
         if not osp.isdir(load_dir):
             raise pyrado.PathErr(given=load_dir)
 
-        algo = joblib.load(osp.join(load_dir, f'{load_name}.pkl'))
+        file = osp.join(load_dir, f'{load_name}.pkl')
+        if not osp.isfile(file):
+            raise pyrado.PathErr(given=file)
+
+        algo = joblib.load(file)
 
         if not isinstance(algo, Algorithm):
             raise pyrado.TypeErr(given=algo, expected_type=Algorithm)
@@ -331,6 +337,25 @@ class Algorithm(ABC, LoggerAware):
             param_norm = p.grad.data.norm(2)
             total_norm += param_norm.item()**2
         return total_norm**0.5
+
+    def __getstate__(self):
+        # Disassemble the directory on pickling
+        _, common_part = split_path_custom_common(self._save_dir)
+        self.__dict__['_save_dir_common'] = common_part
+        return self.__dict__
+
+    def __setstate__(self, state):
+        # Assemble the directory on unpickling
+        self.__dict__ = state
+        common_part = state['_save_dir_common']
+        try:
+            self._save_dir = osp.join(pyrado.EXP_DIR, common_part)
+            if not osp.isdir(self._save_dir):
+                raise pyrado.PathErr(given=self._save_dir)
+        except pyrado.PathErr:
+            self._save_dir = osp.join(pyrado.TEMP_DIR, common_part)
+            if not osp.isdir(self._save_dir):
+                raise pyrado.PathErr(given=self._save_dir)
 
 
 class InterruptableAlgorithm(Algorithm, ABC):

@@ -149,7 +149,7 @@ class BayRn(InterruptableAlgorithm):
         self._env_sim = env_sim
         self._env_real = env_real
         self._subrtn = subrtn
-        self._subrtn.save_name = 'subtrn'
+        self._subrtn.save_name = 'subrtn'
         self.bounds = bounds
         self.cand_dim = bounds.shape[1]
         self.cands = None  # called x in the context of GPs
@@ -181,7 +181,7 @@ class BayRn(InterruptableAlgorithm):
 
         # Save initial environments and bounds
         self.save_snapshot(meta_info=None)
-        to.save(self.bounds, osp.join(self._save_dir, 'bounds.pt'))
+        to.save(self.bounds, osp.join(self.save_dir, 'bounds.pt'))
 
     @property
     def subroutine(self) -> Algorithm:
@@ -200,7 +200,7 @@ class BayRn(InterruptableAlgorithm):
         :return: estimated return of the trained policy in the target domain
         """
         # Save the current candidate
-        to.save(cand.view(-1), osp.join(self._save_dir, f'{prefix}_candidate.pt'))
+        to.save(cand.view(-1), osp.join(self.save_dir, f'{prefix}_candidate.pt'))
 
         # Set the domain randomizer
         self._env_sim.adapt_randomizer(cand.detach().cpu().numpy())
@@ -242,7 +242,7 @@ class BayRn(InterruptableAlgorithm):
             wrapped_trn_fcn(cands[i], prefix=f'init_{i}')
 
         # Save candidates into a single tensor (policy is saved during training or exists already)
-        save_prefix_suffix(cands, 'candidates', 'pt', self._save_dir, meta_info=None)
+        save_prefix_suffix(cands, 'candidates', 'pt', self.save_dir, meta_info=None)
         self.cands = cands
 
     def eval_init_policies(self):
@@ -251,7 +251,7 @@ class BayRn(InterruptableAlgorithm):
         The number of initial policies to evaluate is the number of found policies.
         """
         # Crawl through the experiment's directory
-        for root, dirs, files in os.walk(self._save_dir):
+        for root, dirs, files in os.walk(self.save_dir):
             dirs.clear()  # prevents walk() from going into subdirectories
             found_policies = [p for p in files if p.startswith('init_') and p.endswith('_policy.pt')]
             found_cands = [c for c in files if c.startswith('init_') and c.endswith('_candidate.pt')]
@@ -265,17 +265,17 @@ class BayRn(InterruptableAlgorithm):
 
         # Load all found candidates to save them into a single tensor
         found_cands = natural_sort(found_cands)  # the order is important since it determines the rows of the tensor
-        cands = to.stack([to.load(osp.join(self._save_dir, c)) for c in found_cands])
+        cands = to.stack([to.load(osp.join(self.save_dir, c)) for c in found_cands])
 
         # Evaluate learned policies from random candidates on the target environment (real-world) system
         for i in range(num_init_cand):
-            policy = load_prefix_suffix(self.policy, 'policy', 'pt', self._save_dir, meta_info=dict(prefix=f'init_{i}'))
-            cands_values[i] = self.eval_policy(self._save_dir, self._env_real, policy, self.mc_estimator,
+            policy = load_prefix_suffix(self.policy, 'policy', 'pt', self.save_dir, meta_info=dict(prefix=f'init_{i}'))
+            cands_values[i] = self.eval_policy(self.save_dir, self._env_real, policy, self.mc_estimator,
                                                prefix=f'init_{i}', num_rollouts=self.num_eval_rollouts_real)
 
         # Save candidates's and their returns into tensors (policy is saved during training or exists already)
         # save_prefix_suffix(cands, 'candidates', 'pt', self._save_dir, meta_info)
-        save_prefix_suffix(cands_values, 'candidates_values', 'pt', self._save_dir, meta_info=None)
+        save_prefix_suffix(cands_values, 'candidates_values', 'pt', self.save_dir, meta_info=None)
         self.cands, self.cands_values = cands, cands_values
 
     @staticmethod
@@ -339,7 +339,10 @@ class BayRn(InterruptableAlgorithm):
             return to.from_numpy(bootstrap_ci(rets_real.numpy(), np.mean,
                                               num_reps=1000, alpha=0.05, ci_sides=1, studentized=False)[1])
 
-    def step(self, snapshot_mode: str, meta_info: dict = None):
+    def step(self, snapshot_mode: str = 'latest', meta_info: dict = None):
+        # Save snapshot to save the correct iteration count
+        self.save_snapshot()
+
         if self.curr_checkpoint == -2:
             # Train the initial policies in the source domain
             self.train_init_policies()
@@ -383,7 +386,7 @@ class BayRn(InterruptableAlgorithm):
             next_cand = self.uc_normalizer.project_back(cand_norm)
             print_cbt(f'Found the next candidate: {next_cand.numpy()}', 'g')
             self.cands = to.cat([self.cands, next_cand], dim=0)
-            save_prefix_suffix(self.cands, 'candidates', 'pt', self._save_dir, meta_info)
+            save_prefix_suffix(self.cands, 'candidates', 'pt', self.save_dir, meta_info)
             self.reached_checkpoint()  # setting counter to 1
 
         if self.curr_checkpoint == 1:
@@ -396,21 +399,21 @@ class BayRn(InterruptableAlgorithm):
 
         if self.curr_checkpoint == 2:
             # Evaluate the current policy in the target domain
-            policy = load_prefix_suffix(self.policy, 'policy', 'pt', self._save_dir,
+            policy = load_prefix_suffix(self.policy, 'policy', 'pt', self.save_dir,
                                         meta_info=dict(prefix=f'iter_{self._curr_iter}'))
             self.curr_cand_value = self.eval_policy(
-                self._save_dir, self._env_real, policy, self.mc_estimator, f'iter_{self._curr_iter}',
+                self.save_dir, self._env_real, policy, self.mc_estimator, f'iter_{self._curr_iter}',
                 self.num_eval_rollouts_real
             )
             self.cands_values = to.cat([self.cands_values, self.curr_cand_value.view(1)], dim=0)
-            save_prefix_suffix(self.cands_values, 'candidates_values', 'pt', self._save_dir, meta_info)
+            save_prefix_suffix(self.cands_values, 'candidates_values', 'pt', self.save_dir, meta_info)
 
             # Store the argmax after training and evaluating
             curr_argmax_cand = BayRn.argmax_posterior_mean(
                 self.cands, self.cands_values.unsqueeze(1), self.uc_normalizer, self.acq_restarts, self.acq_samples
             )
             self.argmax_cand = to.cat([self.argmax_cand, curr_argmax_cand], dim=0)
-            save_prefix_suffix(self.argmax_cand, 'candidates_argmax', 'pt', self._save_dir, meta_info)
+            save_prefix_suffix(self.argmax_cand, 'candidates_argmax', 'pt', self.save_dir, meta_info)
             self.reached_checkpoint()  # setting counter to 0
 
     def save_snapshot(self, meta_info: dict = None):
@@ -419,8 +422,8 @@ class BayRn(InterruptableAlgorithm):
         # Policies (and value functions) of every iteration are saved by the subroutine in train_policy_sim()
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            joblib.dump(self._env_sim, osp.join(self._save_dir, 'env_sim.pkl'))
-            joblib.dump(self._env_real, osp.join(self._save_dir, 'env_real.pkl'))
+            joblib.dump(self._env_sim, osp.join(self.save_dir, 'env_sim.pkl'))
+            joblib.dump(self._env_real, osp.join(self.save_dir, 'env_real.pkl'))
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
 

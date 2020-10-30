@@ -92,7 +92,7 @@ class EPOpt(Algorithm):
         )
 
         # Save initial environment and randomizer
-        joblib.dump(env, osp.join(self._save_dir, 'env.pkl'))
+        joblib.dump(env, osp.join(self.save_dir, 'env.pkl'))
         joblib.dump(env.randomizer, osp.join(self.save_dir, 'randomizer.pkl'))
 
     @property
