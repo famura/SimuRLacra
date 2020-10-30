@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Optimize the hyper-parameters of the Proximal Policy Optimization algorithm for the Quanser Ball-Balancer environment.
+Optimize the hyper-parameters of SimOpt for the Quanser Qube swing-up task.
 """
 import functools
 import optuna

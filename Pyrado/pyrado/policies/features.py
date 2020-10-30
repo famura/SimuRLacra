@@ -146,7 +146,7 @@ def squared_feat(inp: to.Tensor):
     return to.pow(inp, 2)
 
 
-def qubic_feat(inp: to.Tensor):
+def cubic_feat(inp: to.Tensor):
     return to.pow(inp, 3)
 
 

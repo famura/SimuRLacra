@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Qube swing-up task using Proximal Policy Optimization.
+Train an agent to solve the Quanser Qube swing-up task using Proximal Policy Optimization.
 """
 import torch as to
 

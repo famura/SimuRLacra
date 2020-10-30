@@ -35,7 +35,7 @@ from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yam
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.policies.features import FeatureStack, identity_feat, sign_feat, abs_feat, squared_feat, const_feat, \
-    MultFeat, ATan2Feat, qubic_feat
+    MultFeat, ATan2Feat, cubic_feat
 from pyrado.policies.linear import LinearPolicy
 from pyrado.utils.argparser import get_argparser
 
@@ -58,7 +58,7 @@ if __name__ == '__main__':
     # Policy
     policy_hparam = dict(
         # feats=FeatureStack([RandFourierFeat(env.obs_space.flat_dim, num_feat=20, bandwidth=env.obs_space.bound_up)])
-        feats=FeatureStack([const_feat, identity_feat, sign_feat, abs_feat, squared_feat, qubic_feat, ATan2Feat(1, 2),
+        feats=FeatureStack([const_feat, identity_feat, sign_feat, abs_feat, squared_feat, cubic_feat, ATan2Feat(1, 2),
                             MultFeat([3, 4])])
     )
     policy = LinearPolicy(spec=env.spec, **policy_hparam)

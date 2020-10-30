@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Optimize the hyper-parameters of the Proximal Policy Optimization algorithm for the Quanser Ball-Balancer environment.
+Optimize the hyper-parameters for a time series prediction task using a potential-based recurrent neural network.
 """
 import functools
 import optuna

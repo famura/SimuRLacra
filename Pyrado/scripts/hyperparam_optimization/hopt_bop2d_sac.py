@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Optimize the hyper-parameters of the Deep Q-Leaning algorithm for the Ball-on-Beam environment.
+Optimize the hyper-parameters of Soft Actor-Critic for the Ball-on-Plate environment.
 """
 import functools
 import optuna

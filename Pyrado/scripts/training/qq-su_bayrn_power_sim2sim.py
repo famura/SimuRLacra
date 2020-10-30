@@ -81,7 +81,7 @@ if __name__ == '__main__':
         expl_std_init=2.0,
         expl_std_min=0.02,
         symm_sampling=False,
-        num_workers=4,
+        num_workers=1,
     )
     subrtn = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
 
