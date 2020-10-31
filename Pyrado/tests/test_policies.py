@@ -31,19 +31,20 @@ import os.path as osp
 from torch import nn as nn
 
 from pyrado.algorithms.timeseries_prediction import TSPred
-from pyrado.policies.environment_specific import DualRBFLinearPolicy
 from pyrado.spaces import BoxSpace
 from pyrado.spaces.box import InfBoxSpace
-from pyrado.utils.data_sets import TimeSeriesDataSet
-from pyrado.utils.functions import skyline
-from pyrado.utils.nn_layers import IndiNonlinLayer
+from pyrado.policies.base import Policy
+from pyrado.policies.environment_specific import DualRBFLinearPolicy
 from pyrado.policies.rnn import default_unpack_hidden, default_pack_hidden
 from pyrado.policies.linear import LinearPolicy
 from pyrado.policies.features import *
 from pyrado.policies.two_headed import TwoHeadedGRUPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
+from pyrado.utils.data_sets import TimeSeriesDataSet
 from pyrado.utils.data_types import RenderMode
+from pyrado.utils.functions import skyline
+from pyrado.utils.nn_layers import IndiNonlinLayer
 from tests.conftest import m_needs_cuda, m_needs_bullet, m_needs_mujoco, m_needs_rcs, m_needs_libtorch
 from tests.environment_wrappers.mock_env import MockEnv
 
@@ -700,7 +701,7 @@ def test_script_recurrent(env, policy):
 @pytest.mark.parametrize(
     'file_type', ['.pt', '.zip'], ids=['pt', 'zip']
 )
-def test_export_cpp(env, policy, tmpdir, file_type):
+def test_export_cpp(env, policy: Policy, tmpdir, file_type):
     # Generate scripted version (in double mode for CPP compatibility)
     scripted = policy.double().script()
 
@@ -712,21 +713,22 @@ def test_export_cpp(env, policy, tmpdir, file_type):
     loaded = to.jit.load(export_file)
 
     # Compare a couple of inputs
-    for _ in range(50):
+    for i in range(50):
         obs = policy.env_spec.obs_space.sample_uniform()
         act_scripted = scripted(to.from_numpy(obs)).cpu().numpy()
         act_loaded = loaded(to.from_numpy(obs)).cpu().numpy()
-        assert act_loaded == pytest.approx(act_scripted)
+        assert act_loaded == pytest.approx(act_scripted), f"Wrong action values on step #{i}"
 
     # Test after reset
     if hasattr(scripted, 'reset'):
         scripted.reset()
         loaded.reset()
+        assert loaded.hidden.numpy() == pytest.approx(scripted.hidden.numpy()), "Wrong hidden state after reset"
 
         obs = policy.env_spec.obs_space.sample_uniform()
         act_scripted = scripted(to.from_numpy(obs)).numpy()
         act_loaded = loaded(to.from_numpy(obs)).numpy()
-        assert act_loaded == pytest.approx(act_scripted)
+        assert act_loaded == pytest.approx(act_scripted), "Wrong action values after reset"
 
 
 @to.no_grad()

@@ -128,22 +128,25 @@ class StatefulRecurrentNetwork(nn.Module):
 
         # Setup hidden state buffer
         hidden = net.init_hidden()
-        self.register_buffer('hidden', hidden)
+        # Make absolutely sure there are no leftover back-connections here!
+        hidden_buf = to.zeros_like(hidden)
+        hidden_buf.data.copy_(hidden.data)
+        self.register_buffer('hidden', hidden_buf)
 
         # Trace network (using random observation and init hidden state)
         inputs = {
             'forward': (
                 to.from_numpy(net.env_spec.obs_space.sample_uniform()).to(to.get_default_dtype()),
-                hidden.to(to.get_default_dtype())
+                hidden_buf.to(to.get_default_dtype())
             ),
-            'init_hidden': tuple()  # auto nesting doesn't know how to process an input of type int, but tuples of them
+            'init_hidden': tuple()  # call with no arguments
         }
         self.net = trace_module(net, inputs)
 
     @export
     def reset(self):
         """ Reset the hidden states. """
-        self.hidden.data.copy_(self.net.init_hidden())  # in most cases all zeros
+        self.hidden.data.copy_(self.net.init_hidden().data)  # in most cases all zeros
 
     def forward(self, inp):
         # Run through network
