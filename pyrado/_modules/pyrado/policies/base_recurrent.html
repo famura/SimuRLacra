@@ -307,22 +307,25 @@
 
         <span class="c1"># Setup hidden state buffer</span>
         <span class="n">hidden</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">init_hidden</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;hidden&#39;</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
+        <span class="c1"># Make absolutely sure there are no leftover back-connections here!</span>
+        <span class="n">hidden_buf</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">hidden</span><span class="p">)</span>
+        <span class="n">hidden_buf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">hidden</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;hidden&#39;</span><span class="p">,</span> <span class="n">hidden_buf</span><span class="p">)</span>
 
         <span class="c1"># Trace network (using random observation and init hidden state)</span>
         <span class="n">inputs</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;forward&#39;</span><span class="p">:</span> <span class="p">(</span>
                 <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">())</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
-                <span class="n">hidden</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
+                <span class="n">hidden_buf</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
             <span class="p">),</span>
-            <span class="s1">&#39;init_hidden&#39;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">()</span>  <span class="c1"># TODO @Felix: why tuple()?</span>
+            <span class="s1">&#39;init_hidden&#39;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">()</span>  <span class="c1"># call with no arguments</span>
         <span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">trace_module</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="StatefulRecurrentNetwork.reset"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base_recurrent.StatefulRecurrentNetwork.reset">[docs]</a>    <span class="nd">@export</span>
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Reset the hidden states. &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hidden</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">init_hidden</span><span class="p">())</span>  <span class="c1"># in most cases all zeros</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">init_hidden</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># in most cases all zeros</span></div>
 
 <div class="viewcode-block" id="StatefulRecurrentNetwork.forward"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base_recurrent.StatefulRecurrentNetwork.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
         <span class="c1"># Run through network</span>

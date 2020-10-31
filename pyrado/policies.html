@@ -307,19 +307,16 @@ Then pass it to the wrapped RNN.</p>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pyrado.policies.adn.ADNPolicy.potentials">
-<em class="property">property </em><code class="sig-name descname">potentials</code><a class="headerlink" href="#pyrado.policies.adn.ADNPolicy.potentials" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the neurons’ potentials.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt id="pyrado.policies.adn.ADNPolicy.potentials_dot">
-<code class="sig-name descname">potentials_dot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stimuli</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/adn.html#ADNPolicy.potentials_dot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.adn.ADNPolicy.potentials_dot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">potentials_dot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">potentials</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">stimuli</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/adn.html#ADNPolicy.potentials_dot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.adn.ADNPolicy.potentials_dot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the derivative of the neurons’ potentials per time step.
 <span class="math notranslate nohighlight">\(/tau /dot{u} = f(u, s, h)\)</span></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>stimuli</strong> – sum of external and internal stimuli at the current point in time</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>potentials</strong> – current potential values</p></li>
+<li><p><strong>stimuli</strong> – sum of external and internal stimuli at the current point in time</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>time derivative of the potentials</p>
@@ -1770,20 +1767,17 @@ Then pass it to the wrapped RNN.</p>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pyrado.policies.neural_fields.NFPolicy.potentials">
-<em class="property">property </em><code class="sig-name descname">potentials</code><a class="headerlink" href="#pyrado.policies.neural_fields.NFPolicy.potentials" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the neurons’ potentials.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt id="pyrado.policies.neural_fields.NFPolicy.potentials_dot">
-<code class="sig-name descname">potentials_dot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stimuli</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/neural_fields.html#NFPolicy.potentials_dot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.neural_fields.NFPolicy.potentials_dot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">potentials_dot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">potentials</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">stimuli</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/neural_fields.html#NFPolicy.potentials_dot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.neural_fields.NFPolicy.potentials_dot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the derivative of the neurons’ potentials per time step.
 <span class="math notranslate nohighlight">\(/tau /dot{u} = s + h - u + /kappa (h - u)^3,
 /quad /text{with} s = s_{int} + s_{ext} = W*o + /int{w(u, v) f(u) dv}\)</span></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>stimuli</strong> – sum of external and internal stimuli at the current point in time</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>potentials</strong> – current potential values</p></li>
+<li><p><strong>stimuli</strong> – sum of external and internal stimuli at the current point in time</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>time derivative of the potentials</p>
