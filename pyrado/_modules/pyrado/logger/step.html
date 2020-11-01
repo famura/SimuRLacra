@@ -208,14 +208,15 @@
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
 <span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
 <span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
 <span class="kn">from</span> <span class="nn">torch.utils.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.logger</span> <span class="kn">import</span> <span class="n">resolve_log_path</span>
@@ -224,18 +225,20 @@
 
 <div class="viewcode-block" id="StepLogger"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.StepLogger">[docs]</a><span class="k">class</span> <span class="nc">StepLogger</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Step-based progress logger.</span>
-<span class="sd">    This class collects progress values during a step. At the end, the record_step function will pass the collected</span>
-<span class="sd">    values to one or more StepLogPrinters.</span>
-<span class="sd">    The logger also validates that no values  are added unexpectedly, which i.e. a csv printer would not support.</span>
+<span class="sd">    Step-based progress logger. This class collects progress values during a step. At the end, the `record_step`</span>
+<span class="sd">    function will pass the collected values to one or more StepLogPrinters.</span>
+<span class="sd">    The logger also validates that no values are added unexpectedly, which i.e. a csv printer would not support.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">print_interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">print_intvl</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
-<span class="sd">        :param print_interval: interval size, by default the logger records and prints on every call, i.e. every step</span>
+<span class="sd">        :param print_intvl: interval size, by default the logger records and prints on every call, i.e. every step</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">print_intvl</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">print_intvl</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
         <span class="c1"># Printer list (starts empty)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">printers</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="c1"># Values for current step</span>
@@ -252,17 +255,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_prefix_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
         <span class="c1"># Internal interval and counter</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">print_interval</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">print_interval</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_intvl</span> <span class="o">=</span> <span class="n">print_intvl</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="c1"># Value management</span>
-<div class="viewcode-block" id="StepLogger.add_value"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.StepLogger.add_value">[docs]</a>    <span class="k">def</span> <span class="nf">add_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="StepLogger.add_value"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.step.StepLogger.add_value">[docs]</a>    <span class="k">def</span> <span class="nf">add_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">round_digits</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a column value to the current step.</span>
 
 <span class="sd">        :param key: data key</span>
 <span class="sd">        :param value: value to record, pass &#39;&#39; to print nothing</span>
+<span class="sd">        :param round_digits: digits to rounds to, pass `None` (default) for no rounding</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">round_digits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">round_digits</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">round_digits</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
         <span class="c1"># Compute full prefixed key</span>
         <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefix_str</span> <span class="o">+</span> <span class="n">key</span>
 
@@ -271,16 +279,28 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_value_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_keys</span><span class="p">:</span>
             <span class="c1"># Make sure the key was used during first step</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;New value keys may only be added before the first step is finished&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">KeyErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;New value keys may only be added before the first step is finished&#39;</span><span class="p">)</span>
 
-        <span class="c1"># Pre-process non-scalar values</span>
+        <span class="c1"># Pre-process PyTorch tensors and numpy arrays</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-            <span class="c1"># Only support scalar tensor for now</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">round_digits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">value</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="n">round_digits</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">round_digits</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">ndimension</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Logger only support scalar PyTorch Tensors, otherwise the progress.csv file&#39;</span>
-                                          <span class="s1">&#39; gets meed up.&#39;</span><span class="p">)</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">round_digits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">round_digits</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">ndim</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="c1"># Pre-process floats</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">round_digits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">round_digits</span><span class="p">)</span>
 
         <span class="c1"># Record value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
@@ -299,8 +319,8 @@
             <span class="c1"># (Only affects the mock in the tests right now, but you never know...)</span>
             <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_values</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-            <span class="c1"># Print only once every print_interval calls</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">print_interval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Print only once every print_intvl calls</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">print_intvl</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="c1"># Pass values to printers</span>
                 <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">printers</span><span class="p">:</span>
                     <span class="n">p</span><span class="o">.</span><span class="n">print_values</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_keys</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_step</span><span class="p">)</span>

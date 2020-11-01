@@ -279,6 +279,10 @@
         <span class="sd">&quot;&quot;&quot; Get the policy optimization subroutine. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sample_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">sample_count</span>
+
 <div class="viewcode-block" id="EPOpt.step"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.epopt.EPOpt.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Activate the CVaR mechanism after skip_iter iterations</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">skip_iter</span><span class="p">:</span>
@@ -288,9 +292,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="EPOpt.reset"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.epopt.EPOpt.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="c1"># Reset the internal variables and the random seeds</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-
         <span class="c1"># Reset the subroutine and deactivate the CVaR mechanism</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="mi">1</span></div>

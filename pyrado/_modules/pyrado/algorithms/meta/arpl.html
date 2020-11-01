@@ -303,6 +303,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span> <span class="o">=</span> <span class="n">subrtn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">save_name</span> <span class="o">=</span> <span class="s1">&#39;subrtn&#39;</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sample_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">sample_count</span>
+
 <div class="viewcode-block" id="ARPL.step"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.arpl.ARPL.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="n">rollouts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
         <span class="n">rets</span> <span class="o">=</span> <span class="p">[</span><span class="n">ro</span><span class="o">.</span><span class="n">undiscounted_return</span><span class="p">()</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rollouts</span><span class="p">]</span>

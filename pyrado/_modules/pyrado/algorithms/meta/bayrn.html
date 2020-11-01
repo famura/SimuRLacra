@@ -367,6 +367,10 @@
         <span class="sd">&quot;&quot;&quot; Get the policy optimization subroutine. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sample_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_samples</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">sample_count</span>
+
 <div class="viewcode-block" id="BayRn.stopping_criterion_met"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.stopping_criterion_met">[docs]</a>    <span class="k">def</span> <span class="nf">stopping_criterion_met</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_cand_value</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">thold_succ</span></div>
 
@@ -385,6 +389,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_env_sim</span><span class="o">.</span><span class="n">adapt_randomizer</span><span class="p">(</span><span class="n">cand</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
 
         <span class="c1"># Reset the subroutine&#39;s algorithm which includes resetting the exploration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_samples</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">sample_count</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
         <span class="c1"># Do a warm start if desired</span>

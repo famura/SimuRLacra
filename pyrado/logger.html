@@ -479,21 +479,21 @@ Features automatic detection of child LoggerAware objects. Override to customize
 
 <dl class="py class">
 <dt id="pyrado.logger.step.StepLogger">
-<em class="property">class </em><code class="sig-name descname">StepLogger</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">print_interval</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.StepLogger" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">StepLogger</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">print_intvl</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.StepLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Step-based progress logger.
-This class collects progress values during a step. At the end, the record_step function will pass the collected
-values to one or more StepLogPrinters.
-The logger also validates that no values  are added unexpectedly, which i.e. a csv printer would not support.</p>
+<p>Step-based progress logger. This class collects progress values during a step. At the end, the <cite>record_step</cite>
+function will pass the collected values to one or more StepLogPrinters.
+The logger also validates that no values are added unexpectedly, which i.e. a csv printer would not support.</p>
 <dl class="py method">
 <dt id="pyrado.logger.step.StepLogger.add_value">
-<code class="sig-name descname">add_value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogger.add_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.StepLogger.add_value" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">round_digits</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/step.html#StepLogger.add_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.step.StepLogger.add_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a column value to the current step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>key</strong> – data key</p></li>
 <li><p><strong>value</strong> – value to record, pass ‘’ to print nothing</p></li>
+<li><p><strong>round_digits</strong> – digits to rounds to, pass <cite>None</cite> (default) for no rounding</p></li>
 </ul>
 </dd>
 </dl>

@@ -263,6 +263,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span> <span class="o">=</span> <span class="n">policy</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_samples</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_highest_avg_ret</span> <span class="o">=</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span>  <span class="c1"># for snapshot_mode = &#39;best&#39;</span>
 
     <span class="nd">@property</span>
@@ -299,6 +300,11 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sample_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Get the total number of samples, i.e. steps of a rollout, used for training so far. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_samples</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">policy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Policy</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Get the algorithm&#39;s policy. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span>
@@ -333,6 +339,7 @@
 
         <span class="c1"># Reset internal variables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_samples</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_highest_avg_ret</span> <span class="o">=</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span>
 
         <span class="c1"># Set all rngs&#39; seeds</span>
