@@ -100,6 +100,10 @@ class EPOpt(Algorithm):
         """ Get the policy optimization subroutine. """
         return self._subrtn
 
+    @property
+    def sample_count(self) -> int:
+        return self._subrtn.sample_count
+
     def step(self, snapshot_mode: str, meta_info: dict = None):
         # Activate the CVaR mechanism after skip_iter iterations
         if self.curr_iter == self.skip_iter:
@@ -109,9 +113,6 @@ class EPOpt(Algorithm):
         self._subrtn.step(snapshot_mode, meta_info)
 
     def reset(self, seed: int = None):
-        # Reset the internal variables and the random seeds
-        super().reset(seed)
-
         # Reset the subroutine and deactivate the CVaR mechanism
         self._subrtn.reset(seed)
         self._subrtn.sampler.epsilon = 1

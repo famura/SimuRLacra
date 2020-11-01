@@ -84,6 +84,7 @@ class Algorithm(ABC, LoggerAware):
         self._curr_iter = 0
         self._policy = policy
         self._logger = logger
+        self._cnt_samples = 0
         self._highest_avg_ret = -pyrado.inf  # for snapshot_mode = 'best'
 
     @property
@@ -120,6 +121,11 @@ class Algorithm(ABC, LoggerAware):
         return self._curr_iter
 
     @property
+    def sample_count(self) -> int:
+        """ Get the total number of samples, i.e. steps of a rollout, used for training so far. """
+        return self._cnt_samples
+
+    @property
     def policy(self) -> Policy:
         """ Get the algorithm's policy. """
         return self._policy
@@ -154,6 +160,7 @@ class Algorithm(ABC, LoggerAware):
 
         # Reset internal variables
         self._curr_iter = 0
+        self._cnt_samples = 0
         self._highest_avg_ret = -pyrado.inf
 
         # Set all rngs' seeds

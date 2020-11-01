@@ -213,15 +213,15 @@ class PPO(ActorCritic):
                 act_distr_new = act_stats.act_distr
                 loss_after = self.loss_fcn(log_probs_new, log_probs_old, adv)
                 kl_avg = to.mean(kl_divergence(act_distr_old, act_distr_new))  # mean seeking a.k.a. inclusive KL
-                self.logger.add_value('loss after', loss_after.detach().cpu().numpy())
-                self.logger.add_value('KL(old_new)', kl_avg.item())
+                self.logger.add_value('loss after', loss_after, 4)
+                self.logger.add_value('KL(old_new)', kl_avg, 4)
 
         # Logging
-        self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.noise.std.data).detach().cpu().numpy())
-        self.logger.add_value('expl strat entropy', self._expl_strat.noise.get_entropy().item())
-        self.logger.add_value('avg policy grad norm', np.mean(policy_grad_norm))
+        self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.noise.std), 4)
+        self.logger.add_value('expl strat entropy', self._expl_strat.noise.get_entropy(), 4)
+        self.logger.add_value('avg policy grad norm', np.mean(policy_grad_norm), 4)
         if self._lr_scheduler is not None:
-            self.logger.add_value('learning rate', self._lr_scheduler.get_lr())
+            self.logger.add_value('learning rate', self._lr_scheduler.get_lr(), 6)
 
 
 class PPO2(ActorCritic):
@@ -449,16 +449,15 @@ class PPO2(ActorCritic):
                 kl_avg = to.mean(kl_divergence(act_distr_old, act_distr_new))  # mean seeking a.k.a. inclusive KL
 
                 # Compute explained variance (after the updates)
-                explvar = explained_var(v_pred, v_targ)
-                self.logger.add_value('explained var', explvar.detach().cpu().numpy())
-                self.logger.add_value('V-fcn loss improvement', value_fcn_loss_impr.detach().cpu().numpy())
-                self.logger.add_value('loss after', loss_after.detach().cpu().numpy())
-                self.logger.add_value('KL(old_new)', kl_avg.item())
+                self.logger.add_value('explained var', explained_var(v_pred, v_targ), 4)
+                self.logger.add_value('V-fcn loss improvement', value_fcn_loss_impr, 4)
+                self.logger.add_value('loss after', loss_after, 4)
+                self.logger.add_value('KL(old_new)', kl_avg, 4)
 
         # Logging
-        self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.noise.std.data).detach().cpu().numpy())
-        self.logger.add_value('expl strat entropy', self._expl_strat.noise.get_entropy().item())
-        self.logger.add_value('avg policy grad norm', np.mean(policy_grad_norm))
-        self.logger.add_value('avg V-fcn grad norm', np.mean(value_fcn_grad_norm))
+        self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.noise.std), 4)
+        self.logger.add_value('expl strat entropy', self._expl_strat.noise.get_entropy(), 4)
+        self.logger.add_value('avg policy grad norm', np.mean(policy_grad_norm), 4)
+        self.logger.add_value('avg V-fcn grad norm', np.mean(value_fcn_grad_norm), 4)
         if self._lr_scheduler is not None:
-            self.logger.add_value('learning rate', self._lr_scheduler.get_lr())
+            self.logger.add_value('learning rate', self._lr_scheduler.get_lr(), 6)

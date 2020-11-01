@@ -26,7 +26,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import joblib
 import numpy as np
 import os.path as osp
 import sys
@@ -108,7 +107,7 @@ class DQL(Algorithm):
 
         if logger is None:
             # Create logger that only logs every 100 steps of the algorithm
-            logger = StepLogger(print_interval=100)
+            logger = StepLogger(print_intvl=100)
             logger.printers.append(ConsolePrinter())
             logger.printers.append(CSVPrinter(osp.join(save_dir, 'progress.csv')))
             logger.printers.append(TensorBoardPrinter(osp.join(save_dir, 'tb')))
@@ -162,6 +161,7 @@ class DQL(Algorithm):
         # Sample steps and store them in the replay memory
         ros = self.sampler.sample()
         self._memory.push(ros)
+        self._cnt_samples += sum([ro.length for ro in ros])  # don't count the evaluation samples
 
         while len(self._memory) < self.memory.capacity:
             # Warm-up phase
@@ -169,9 +169,10 @@ class DQL(Algorithm):
             # Sample steps and store them in the replay memory
             ros = self.sampler.sample()
             self._memory.push(ros)
+            self._cnt_samples += sum([ro.length for ro in ros])  # don't count the evaluation samples
 
         # Log return-based metrics
-        if self._curr_iter%self.logger.print_interval == 0:
+        if self._curr_iter%self.logger.print_intvl == 0:
             ros = self.sampler_eval.sample()
             rets = [ro.undiscounted_return() for ro in ros]
             ret_max = np.max(rets)
@@ -250,11 +251,11 @@ class DQL(Algorithm):
 
         # Logging
         with to.no_grad():
-            self.logger.add_value('loss after', to.mean(losses).item())
-        self.logger.add_value('expl strat eps', self.expl_strat.eps.item())
-        self.logger.add_value('avg policy grad norm', to.mean(policy_grad_norm).item())
+            self.logger.add_value('loss after', to.mean(losses), 4)
+        self.logger.add_value('expl strat eps', self.expl_strat.eps, 4)
+        self.logger.add_value('avg policy grad norm', to.mean(policy_grad_norm), 4)
         if self._lr_scheduler is not None:
-            self.logger.add_value('learning rate', self._lr_scheduler.get_lr())
+            self.logger.add_value('learning rate', self._lr_scheduler.get_lr(), 6)
 
     def reset(self, seed: int = None):
         # Reset the exploration strategy, internal variables and the random seeds

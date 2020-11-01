@@ -180,7 +180,7 @@ class PEPG(ParameterExploring):
         self._expl_strat.adapt(std=new_std)
 
         # Logging
-        self.logger.add_value('policy param', self._policy.param_values.detach().cpu().numpy())
-        self.logger.add_value('delta policy param', (delta_mean*self.lr).detach().cpu().numpy())
-        self.logger.add_value('expl strat std', self._expl_strat.std.data.detach().cpu().numpy())
-        self.logger.add_value('expl strat entropy', self._expl_strat.get_entropy().item())
+        self.logger.add_value('policy param', self._policy.param_values, 4)
+        self.logger.add_value('delta policy param', delta_mean*self.lr, 4)
+        self.logger.add_value('expl strat std', self._expl_strat.std, 4)
+        self.logger.add_value('expl strat entropy', self._expl_strat.get_entropy(), 4)

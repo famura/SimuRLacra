@@ -157,7 +157,7 @@ class A2C(ActorCritic):
             log_probs_old = act_stats.log_probs
             act_distr_old = act_stats.act_distr
             loss_before = self.loss_fcn(log_probs_old, adv, v_pred, v_targ)
-            self.logger.add_value('loss before', loss_before.item())
+            self.logger.add_value('loss before', loss_before, 4)
 
         concat_ros.add_data('adv', adv)
         concat_ros.add_data('v_targ', v_targ)
@@ -211,13 +211,13 @@ class A2C(ActorCritic):
             kl_avg = to.mean(
                 kl_divergence(act_distr_old, act_distr_new))  # mean seeking a.k.a. inclusive KL
             explvar = explained_var(v_pred, v_targ)  # values close to 1 are desired
-            self.logger.add_value('loss after', loss_after.item())
-            self.logger.add_value('KL(old_new)', kl_avg.item())
-            self.logger.add_value('explained var', explvar.item())
+            self.logger.add_value('loss after', loss_after, 4)
+            self.logger.add_value('KL(old_new)', kl_avg, 4)
+            self.logger.add_value('explained var', explvar, 4)
 
         ent = self.expl_strat.noise.get_entropy()
-        self.logger.add_value('avg expl strat std', to.mean(self.expl_strat.noise.std.data).item())
-        self.logger.add_value('expl strat entropy', to.mean(ent).item())
-        self.logger.add_value('avg policy grad norm', np.mean(policy_grad_norm))
+        self.logger.add_value('avg expl strat std', to.mean(self.expl_strat.noise.std), 4)
+        self.logger.add_value('expl strat entropy', to.mean(ent), 4)
+        self.logger.add_value('avg policy grad norm', np.mean(policy_grad_norm), 4)
         if self._lr_scheduler is not None:
-            self.logger.add_value('learning rate', self._lr_scheduler.get_lr())
+            self.logger.add_value('learning rate', self._lr_scheduler.get_lr(), 6)

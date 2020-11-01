@@ -124,6 +124,10 @@ class ARPL(Algorithm):
         self._subrtn = subrtn
         self._subrtn.save_name = 'subrtn'
 
+    @property
+    def sample_count(self) -> int:
+        return self._subrtn.sample_count
+
     def step(self, snapshot_mode: str, meta_info: dict = None):
         rollouts = self.sampler.sample()
         rets = [ro.undiscounted_return() for ro in rollouts]

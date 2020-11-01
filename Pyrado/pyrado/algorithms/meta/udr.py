@@ -71,6 +71,10 @@ class UDR(Algorithm):
         """ Get the policy optimization subroutine. """
         return self._subrtn
 
+    @property
+    def sample_count(self) -> int:
+        return self._subrtn.sample_count
+
     def step(self, snapshot_mode: str, meta_info: dict = None):
         # Forward to subroutine
         self._subrtn.step(snapshot_mode, meta_info)

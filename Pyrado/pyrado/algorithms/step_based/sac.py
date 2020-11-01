@@ -133,7 +133,7 @@ class SAC(Algorithm):
 
         if logger is None:
             # Create logger that only logs every 100 steps of the algorithm
-            logger = StepLogger(print_interval=100)
+            logger = StepLogger(print_intvl=100)
             logger.printers.append(ConsolePrinter())
             logger.printers.append(CSVPrinter(osp.join(save_dir, 'progress.csv')))
 
@@ -225,9 +225,10 @@ class SAC(Algorithm):
             # Sample steps and store them in the replay memory
             ros = self.sampler.sample()
             self._memory.push(ros)
+        self._cnt_samples += sum([ro.length for ro in ros])  # don't count the evaluation samples
 
-        # Log return-based metrics
-        if self._curr_iter%self.logger.print_interval == 0:
+        # Log metrics computed from the old policy (before the update)
+        if self._curr_iter%self.logger.print_intvl == 0:
             ros = self.sampler_eval.sample()
             rets = [ro.undiscounted_return() for ro in ros]
             ret_max = np.max(rets)
@@ -237,14 +238,14 @@ class SAC(Algorithm):
             ret_std = np.std(rets)
         else:
             ret_max, ret_med, ret_avg, ret_min, ret_std = 5*[-pyrado.inf]  # dummy values
-        self.logger.add_value('max return', np.round(ret_max, 4))
-        self.logger.add_value('median return', np.round(ret_med, 4))
-        self.logger.add_value('avg return', np.round(ret_avg, 4))
-        self.logger.add_value('min return', np.round(ret_min, 4))
-        self.logger.add_value('std return', np.round(ret_std, 4))
-        self.logger.add_value('avg rollout length', np.round(np.mean([ro.length for ro in ros]), 2))
+        self.logger.add_value('max return', ret_max, 4)
+        self.logger.add_value('median return', ret_med, 4)
+        self.logger.add_value('avg return', ret_avg, 4)
+        self.logger.add_value('min return', ret_min, 4)
+        self.logger.add_value('std return', ret_std, 4)
+        self.logger.add_value('avg rollout length', np.mean([ro.length for ro in ros]), 4)
         self.logger.add_value('num rollouts', len(ros))
-        self.logger.add_value('avg memory reward', np.round(self._memory.avg_reward(), 4))
+        self.logger.add_value('avg memory reward', self._memory.avg_reward(), 4)
 
         # Use data in the memory to update the policy and the Q-functions
         self.update()
@@ -369,14 +370,14 @@ class SAC(Algorithm):
             self._lr_scheduler_q_fcn_2.step()
 
         # Logging
-        self.logger.add_value('Q1 loss', to.mean(q_fcn_1_losses).item())
-        self.logger.add_value('Q2 loss', to.mean(q_fcn_2_losses).item())
-        self.logger.add_value('policy loss', to.mean(policy_losses).item())
-        self.logger.add_value('avg policy grad norm', to.mean(policy_grad_norm).item())
-        self.logger.add_value('avg expl strat std', to.mean(expl_strat_stds).item())
-        self.logger.add_value('alpha', self.alpha.item())
+        self.logger.add_value('Q1 loss', to.mean(q_fcn_1_losses))
+        self.logger.add_value('Q2 loss', to.mean(q_fcn_2_losses))
+        self.logger.add_value('policy loss', to.mean(policy_losses))
+        self.logger.add_value('avg policy grad norm', to.mean(policy_grad_norm))
+        self.logger.add_value('avg expl strat std', to.mean(expl_strat_stds))
+        self.logger.add_value('alpha', self.alpha)
         if self._lr_scheduler_policy is not None:
-            self.logger.add_value('learning rate', self._lr_scheduler_policy.get_lr())
+            self.logger.add_value('learning rate', self._lr_scheduler_policy.get_lr(), 6)
 
     def reset(self, seed: int = None):
         # Reset the exploration strategy, internal variables and the random seeds

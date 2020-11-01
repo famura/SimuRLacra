@@ -28,19 +28,17 @@
 
 import torch as to
 import numpy as np
-import joblib
-import os.path as osp
 from abc import abstractmethod
 from copy import deepcopy
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.utils.saving_loading import save_prefix_suffix
 from pyrado.environments.base import Env
+from pyrado.exploration.stochastic_params import StochasticParamExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.sampling.parameter_exploration_sampler import ParameterExplorationSampler, ParameterSamplingResult
-from pyrado.exploration.stochastic_params import StochasticParamExplStrat
+from pyrado.utils.saving_loading import save_prefix_suffix
 from pyrado.utils.input_output import print_cbt
 
 
@@ -155,13 +153,15 @@ class ParameterExploring(Algorithm):
         all_lengths = np.array([len(ro) for pss in param_samp_res for ro in pss.rollouts])
 
         # Log metrics computed from the old policy (before the update)
-        self.logger.add_value('curr policy return', ret_avg_curr)
-        self.logger.add_value('max return', float(np.max(all_rets)))
-        self.logger.add_value('median return', float(np.median(all_rets)))
-        self.logger.add_value('min return', float(np.min(all_rets)))
-        self.logger.add_value('avg return', float(np.mean(all_rets)))
-        self.logger.add_value('std return', float(np.std(all_rets)))
-        self.logger.add_value('avg rollout len', float(np.mean(all_lengths)))
+        self._cnt_samples += int(np.sum(all_lengths))
+        self.logger.add_value('curr policy return', ret_avg_curr, 4)
+        self.logger.add_value('max return', np.max(all_rets), 4)
+        self.logger.add_value('median return', np.median(all_rets), 4)
+        self.logger.add_value('min return', np.min(all_rets), 4)
+        self.logger.add_value('avg return', np.mean(all_rets), 4)
+        self.logger.add_value('std return', np.std(all_rets), 4)
+        self.logger.add_value('avg rollout len', np.mean(all_lengths), 4)
+        self.logger.add_value('num total samples', self._cnt_samples)
         self.logger.add_value('min mag policy param',
                               self._policy.param_values[to.argmin(abs(self._policy.param_values))])
         self.logger.add_value('max mag policy param',

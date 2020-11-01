@@ -188,6 +188,10 @@ class BayRn(InterruptableAlgorithm):
         """ Get the policy optimization subroutine. """
         return self._subrtn
 
+    @property
+    def sample_count(self) -> int:
+        return self._cnt_samples + self._subrtn.sample_count
+
     def stopping_criterion_met(self) -> bool:
         return self.curr_cand_value > self.thold_succ
 
@@ -206,6 +210,7 @@ class BayRn(InterruptableAlgorithm):
         self._env_sim.adapt_randomizer(cand.detach().cpu().numpy())
 
         # Reset the subroutine's algorithm which includes resetting the exploration
+        self._cnt_samples += self._subrtn.sample_count
         self._subrtn.reset()
 
         # Do a warm start if desired

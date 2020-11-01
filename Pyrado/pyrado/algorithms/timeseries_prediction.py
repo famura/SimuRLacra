@@ -153,14 +153,14 @@ class TSPred(Algorithm):
             loss_tst = self.loss_fcn(targs_tst, preds_tst)
 
         # Log metrics computed from the old/updated policy (loss value from update on this training sample)
-        self.logger.add_value('trn loss', loss_trn.item())
-        self.logger.add_value('tst loss', loss_tst.item())
+        self.logger.add_value('trn loss', loss_trn, 6)
+        self.logger.add_value('tst loss', loss_tst, 6)
         self.logger.add_value('min mag policy param',
                               self._policy.param_values[to.argmin(abs(self._policy.param_values))])
         self.logger.add_value('max mag policy param',
                               self._policy.param_values[to.argmax(abs(self._policy.param_values))])
         if self._lr_scheduler is not None:
-            self.logger.add_value('learning rate', *self._lr_scheduler.get_lr())
+            self.logger.add_value('learning rate', *self._lr_scheduler.get_lr(), 6)
 
         # Save snapshot data
         self.make_snapshot(snapshot_mode, -loss_trn.item(), meta_info)

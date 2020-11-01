@@ -143,6 +143,7 @@ class SysIdViaEpisodicRL(Algorithm):
     def reset(self, seed: int = None):
         # Reset internal variables inherited from Algorithm
         self._curr_iter = 0
+        self._cnt_samples = 0
         self._highest_avg_ret = -pyrado.inf
 
         # Forward to subroutine
@@ -218,14 +219,15 @@ class SysIdViaEpisodicRL(Algorithm):
 
         # Bind the parameter samples and their rollouts in the usual container
         param_samp_res = ParameterSamplingResult(param_samples)
+        self._cnt_samples += sum([len(ro) for pss in param_samp_res for ro in pss.rollouts])
 
         # Log metrics computed from the old policy (before the update)
         loss_hist = np.asarray(loss_hist)
-        self.logger.add_value('min sysid loss', float(np.min(loss_hist)))
-        self.logger.add_value('median sysid loss', float(np.median(loss_hist)))
-        self.logger.add_value('avg sysid loss', float(np.mean(loss_hist)))
-        self.logger.add_value('max sysid loss', float(np.max(loss_hist)))
-        self.logger.add_value('std sysid loss', float(np.std(loss_hist)))
+        self.logger.add_value('min sysid loss', np.min(loss_hist), 6)
+        self.logger.add_value('median sysid loss', np.median(loss_hist), 6)
+        self.logger.add_value('avg sysid loss', np.mean(loss_hist), 6)
+        self.logger.add_value('max sysid loss', np.max(loss_hist), 6)
+        self.logger.add_value('std sysid loss', np.std(loss_hist), 6)
 
         # Extract the best policy parameter sample for saving it later
         self._subrtn.best_policy_param = param_samp_res.parameters[np.argmax(param_samp_res.mean_returns)].clone()

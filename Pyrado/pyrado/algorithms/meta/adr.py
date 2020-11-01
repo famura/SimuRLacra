@@ -26,11 +26,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import joblib
 import numpy as np
 import torch as to
 from init_args_serializer import Serializable
-from os import path as osp
 from torch import nn as nn
 from tqdm import tqdm
 from typing import Sequence, Optional
@@ -182,6 +180,10 @@ class ADR(Algorithm):
             logger=logger
         )
         self.svpg.save_name = 'subtrn_svpg'
+
+    @property
+    def sample_count(self) -> int:
+        return self._subrtn.sample_count  # TODO @Robin: account for multiple particles
 
     def compute_params(self, sim_instances: to.Tensor, t: int):
         """

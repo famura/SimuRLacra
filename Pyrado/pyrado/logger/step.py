@@ -27,14 +27,15 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import csv
+import numpy as np
 import os
 import os.path as osp
 import torch as to
-import numpy as np
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from tabulate import tabulate
 from torch.utils.tensorboard import SummaryWriter
+from typing import Optional
 
 import pyrado
 from pyrado.logger import resolve_log_path
@@ -43,18 +44,20 @@ from pyrado.logger.experiment import split_path_custom_common
 
 class StepLogger:
     """
-    Step-based progress logger.
-    This class collects progress values during a step. At the end, the record_step function will pass the collected
-    values to one or more StepLogPrinters.
-    The logger also validates that no values  are added unexpectedly, which i.e. a csv printer would not support.
+    Step-based progress logger. This class collects progress values during a step. At the end, the `record_step`
+    function will pass the collected values to one or more StepLogPrinters.
+    The logger also validates that no values are added unexpectedly, which i.e. a csv printer would not support.
     """
 
-    def __init__(self, print_interval: int = 1):
+    def __init__(self, print_intvl: int = 1):
         """
         Constructor
 
-        :param print_interval: interval size, by default the logger records and prints on every call, i.e. every step
+        :param print_intvl: interval size, by default the logger records and prints on every call, i.e. every step
         """
+        if not isinstance(print_intvl, int):
+            raise pyrado.TypeErr(given=print_intvl, expected_type=int)
+
         # Printer list (starts empty)
         self.printers = []
         # Values for current step
@@ -71,17 +74,22 @@ class StepLogger:
         self._prefix_str = ''
 
         # Internal interval and counter
-        self.print_interval = int(print_interval)
+        self.print_intvl = print_intvl
         self._counter = 0
 
-    # Value management
-    def add_value(self, key: str, value):
+    def add_value(self, key: str, value, round_digits: Optional[int] = None):
         """
         Add a column value to the current step.
 
         :param key: data key
         :param value: value to record, pass '' to print nothing
+        :param round_digits: digits to rounds to, pass `None` (default) for no rounding
         """
+        if not isinstance(key, str):
+            raise pyrado.TypeErr(given=key, expected_type=str)
+        if round_digits is not None and not isinstance(round_digits, int):
+            raise pyrado.TypeErr(given=round_digits, expected_type=int)
+
         # Compute full prefixed key
         key = self._prefix_str + key
 
@@ -90,16 +98,28 @@ class StepLogger:
             self._value_keys.append(key)
         elif key not in self._value_keys:
             # Make sure the key was used during first step
-            raise KeyError('New value keys may only be added before the first step is finished')
+            raise pyrado.KeyErr(msg='New value keys may only be added before the first step is finished')
 
-        # Pre-process non-scalar values
+        # Pre-process PyTorch tensors and numpy arrays
         if isinstance(value, to.Tensor):
-            # Only support scalar tensor for now
+            value = value.detach().cpu()
+            if round_digits is not None:
+                value = to.round(value*10**round_digits)/(10**round_digits)
             if value.ndimension() <= 1:
                 value = value.item()
             else:
-                raise pyrado.ShapeErr(msg='Logger only support scalar PyTorch Tensors, otherwise the progress.csv file'
-                                          ' gets meed up.')
+                value = value.tolist()
+        elif isinstance(value, np.ndarray):
+            if round_digits is not None:
+                value = np.round(value, round_digits)
+            if value.ndim() <= 1:
+                value = value.item()
+            else:
+                value = value.tolist()
+        # Pre-process floats
+        elif isinstance(value, float):
+            if round_digits is not None:
+                value = round(value, round_digits)
 
         # Record value
         self._current_values[key] = value
@@ -118,8 +138,8 @@ class StepLogger:
             # (Only affects the mock in the tests right now, but you never know...)
             values = self._current_values.copy()
 
-            # Print only once every print_interval calls
-            if self._counter%self.print_interval == 0:
+            # Print only once every print_intvl calls
+            if self._counter%self.print_intvl == 0:
                 # Pass values to printers
                 for p in self.printers:
                     p.print_values(values, self._value_keys, self._first_step)

@@ -259,19 +259,18 @@ class GAE(LoggerAware, nn.Module):
         # Estimate the advantage after fitting the parameters of the V-fcn
         adv = self.gae(concat_ros)  # is done with to.no_grad()
 
-        # Logging
         with to.no_grad():
             v_pred_new = self.values(concat_ros)
             loss_new = self.loss_fcn(v_pred_new, v_targ)
             value_fcn_loss_impr = loss_old - loss_new  # positive values are desired
             explvar = explained_var(v_pred_new, v_targ)  # values close to 1 are desired
 
-        self.logger.add_value('explained var', explvar)
-        self.logger.add_value('V-fcn loss impr', value_fcn_loss_impr)
-        self.logger.add_value('avg V-fcn grad norm', np.mean(value_fcn_grad_norm))
-
+        # Log metrics computed from the old value function (before the update)
+        self.logger.add_value('explained var', explvar, 4)
+        self.logger.add_value('V-fcn loss impr', value_fcn_loss_impr, 4)
+        self.logger.add_value('avg V-fcn grad norm', np.mean(value_fcn_grad_norm), 4)
         if self._lr_scheduler is not None:
-            self.logger.add_value('V-fcn learning rate', self._lr_scheduler.get_lr())
+            self.logger.add_value('V-fcn learning rate', self._lr_scheduler.get_lr(), 6)
 
         return adv
 

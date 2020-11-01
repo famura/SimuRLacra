@@ -26,9 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import joblib
 import numpy as np
-import os.path as osp
 from abc import ABC, abstractmethod
 from typing import Sequence
 
@@ -102,26 +100,23 @@ class ActorCritic(Algorithm, ABC):
         # Sample rollouts
         ros = self.sampler.sample()
 
-        # Log return-based metrics
+        # Log metrics computed from the old policy (before the update)
+        all_lengths = np.array([ro.length for ro in ros])
+        self._cnt_samples += int(np.sum(all_lengths))
         rets = [ro.undiscounted_return() for ro in ros]
-        ret_min = np.min(rets)
-        ret_avg = np.mean(rets)
-        ret_med = np.median(rets)
-        ret_max = np.max(rets)
-        ret_std = np.std(rets)
-        self.logger.add_value('max return', ret_max)
-        self.logger.add_value('median return', ret_med)
-        self.logger.add_value('avg return', ret_avg)
-        self.logger.add_value('min return', ret_min)
-        self.logger.add_value('std return', ret_std)
+        self.logger.add_value('max return', np.max(rets), 4)
+        self.logger.add_value('median return', np.median(rets), 4)
+        self.logger.add_value('avg return', np.mean(rets), 4)
+        self.logger.add_value('min return', np.min(rets), 4)
+        self.logger.add_value('std return', np.std(rets), 4)
         self.logger.add_value('num rollouts', len(ros))
-        self.logger.add_value('avg rollout len', np.mean([ro.length for ro in ros]))
+        self.logger.add_value('avg rollout len', np.mean(all_lengths), 4)
 
         # Update the advantage estimator and the policy
         self.update(ros)
 
         # Save snapshot data
-        self.make_snapshot(snapshot_mode, float(ret_avg), meta_info)
+        self.make_snapshot(snapshot_mode, float(np.mean(rets)), meta_info)
 
     @abstractmethod
     def update(self, rollouts: Sequence[StepSequence]):

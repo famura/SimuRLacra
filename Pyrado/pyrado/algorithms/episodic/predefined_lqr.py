@@ -161,17 +161,19 @@ class LQR(Algorithm):
 
         # Logging
         rets = [ro.undiscounted_return() for ro in ros]
-        ret_avg = np.mean(rets)
-        ret_med = np.median(rets)
-        ret_std = np.std(rets)
-        self.logger.add_value('num rollouts', len(ros))
-        self.logger.add_value('avg rollout len', np.mean([ro.length for ro in ros]))
-        self.logger.add_value('avg return', ret_avg)
-        self.logger.add_value('median return', ret_med)
-        self.logger.add_value('std return', ret_std)
+        self.logger.add_value('max return', np.max(rets), 4)
+        self.logger.add_value('median return', np.median(rets), 4)
+        self.logger.add_value('min return', np.min(rets), 4)
+        self.logger.add_value('avg return', np.mean(rets), 4)
+        self.logger.add_value('std return', np.std(rets), 4)
+        self.logger.add_value('avg rollout len', np.mean([ro.length for ro in ros]), 4)
+        self.logger.add_value('min mag policy param',
+                              self._policy.param_values[to.argmin(abs(self._policy.param_values))])
+        self.logger.add_value('max mag policy param',
+                              self._policy.param_values[to.argmax(abs(self._policy.param_values))])
 
         # Save snapshot data
-        self.make_snapshot(snapshot_mode, float(ret_avg), meta_info)
+        self.make_snapshot(snapshot_mode, float(np.mean(rets)), meta_info)
 
     def stopping_criterion_met(self) -> bool:
         """ Checks if the all eigenvalues of the closed loop system are negative. """

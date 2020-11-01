@@ -167,6 +167,10 @@ class SPOTA(InterruptableAlgorithm):
         """ Get the candidate subroutine. """
         return self._subrtn_cand
 
+    @property
+    def sample_count(self) -> int:
+        return self._cnt_samples + self._subrtn_cand.sample_count + self._subrtn_refs.sample_count
+
     def _adapt_batch_size(self, subroutine: Algorithm, n: int):
         """
         Adapt the number of dynamics transitions (steps or rollouts) of the subroutines according to the number of
@@ -245,6 +249,7 @@ class SPOTA(InterruptableAlgorithm):
         print_domain_params(env_params_cand)
 
         # Reset the subroutine algorithm which includes resetting the exploration
+        self._cnt_samples += self._subrtn_cand.sample_count
         self._subrtn_cand.reset()
         print('Reset candidate exploration noise.')
 
@@ -294,6 +299,7 @@ class SPOTA(InterruptableAlgorithm):
             print_domain_params(env_params_ref)
 
             # Reset the subroutine algorithm which includes resetting the exploration
+            self._cnt_samples += self._subrtn_refs.sample_count
             self._subrtn_refs.reset()
             print_cbt('Reset reference exploration noise.', 'y')
 

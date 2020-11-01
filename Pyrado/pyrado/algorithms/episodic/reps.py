@@ -315,7 +315,7 @@ class REPS(ParameterExploring):
         with to.no_grad():
             distr_old = MultivariateNormal(self._policy.param_values, self._expl_strat.cov.data)
             loss = self.dual_evaluation(self.eta, rets_avg_ros)
-            self.logger.add_value('dual loss before', loss.item())
+            self.logger.add_value('dual loss before', loss, 4)
 
         # Reset dual's parameter
         self._log_eta.data.fill_(0.)
@@ -325,8 +325,8 @@ class REPS(ParameterExploring):
 
         with to.no_grad():
             loss = self.dual_evaluation(self.eta, rets_avg_ros)
-            self.logger.add_value('dual loss after', loss.item())
-            self.logger.add_value('eta', self.eta.item())
+            self.logger.add_value('dual loss after', loss, 4)
+            self.logger.add_value('eta', self.eta, 4)
 
         # Compute the weights using the optimized eta
         w = self.weights(rets_avg_ros)
@@ -341,9 +341,9 @@ class REPS(ParameterExploring):
         distr_new = MultivariateNormal(self._policy.param_values, self._expl_strat.cov.data)
         kl_e = kl_divergence(distr_new, distr_old)  # mode seeking a.k.a. exclusive KL
         kl_i = kl_divergence(distr_old, distr_new)  # mean seeking a.k.a. inclusive KL
-        self.logger.add_value('min expl strat std', to.min(self._expl_strat.std))
-        self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.std.data).detach().cpu().numpy())
-        self.logger.add_value('max expl strat std', to.max(self._expl_strat.std))
-        self.logger.add_value('expl strat entropy', self._expl_strat.get_entropy().item())
-        self.logger.add_value('KL(new_old)', kl_e.item())
-        self.logger.add_value('KL(old_new)', kl_i.item())
+        self.logger.add_value('min expl strat std', to.min(self._expl_strat), 4)
+        self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.std), 4)
+        self.logger.add_value('max expl strat std', to.max(self._expl_strat.std), 4)
+        self.logger.add_value('expl strat entropy', self._expl_strat.get_entropy(), 4)
+        self.logger.add_value('KL(new_old)', kl_e, 6)
+        self.logger.add_value('KL(old_new)', kl_i, 6)

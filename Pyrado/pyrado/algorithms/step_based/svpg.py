@@ -206,34 +206,35 @@ class SVPG(Algorithm):
             # ro_concat.torch(data_type=to.get_default_dtype())
             ros_all_particles.append(ros_one_particle)
             rets_all_particles.append(np.array([ro.undiscounted_return() for ro in ros_one_particle]))
-            self.particleSteps[i] =+ 1
+            self.particleSteps[i] = + 1
             if self.horizon != 0 and (self.particleSteps[i] > self.horizon):
                 self.particles[i].init_param()
                 self.particleSteps[i] = 0
 
-        # Logging
+        # Log metrics computed from the old policy (before the update)
         num_ros_all_prtcls = np.array([len(p) for p in ros_all_particles])
-        len_ros_all_prtcls = np.array([np.mean([ro.length for ro in p]) for p in ros_all_particles])
+        avg_len_ros_all_prtcls = np.array([np.mean([ro.length for ro in p]) for p in ros_all_particles])
+        self._cnt_samples += sum([ro.length for p in ros_all_particles for ro in p])
         avg_rets_all_prtcls = np.array([np.mean(p) for p in rets_all_particles])
         median_rets_all_prtcls = np.array([np.median(p) for p in rets_all_particles])
         max_rets_all_prtcls = np.array([np.max(p) for p in rets_all_particles])
         std_rets_all_prtcls = np.array([np.std(p) for p in rets_all_particles])
         avg_explstrat_stds = np.array([to.mean(e.noise.std.data).item() for e in self.expl_strats])
         self.logger.add_value('num rollouts pp', num_ros_all_prtcls)
-        self.logger.add_value('avg rollout len pp', len_ros_all_prtcls)
-        self.logger.add_value('avg return pp', avg_rets_all_prtcls)
-        self.logger.add_value('median return pp', median_rets_all_prtcls)
-        self.logger.add_value('max return pp', max_rets_all_prtcls)
-        self.logger.add_value('std return pp', std_rets_all_prtcls)
-        self.logger.add_value('avg expl strat stds pp', avg_explstrat_stds)
+        self.logger.add_value('avg rollout len pp', avg_len_ros_all_prtcls, 2)
+        self.logger.add_value('avg return pp', avg_rets_all_prtcls, 2)
+        self.logger.add_value('median return pp', median_rets_all_prtcls, 2)
+        self.logger.add_value('max return pp', max_rets_all_prtcls, 2)
+        self.logger.add_value('std return pp', std_rets_all_prtcls, 2)
+        self.logger.add_value('avg expl strat stds pp', avg_explstrat_stds, 2)
 
-        # Logging for recording (averaged over particles
+        # Logging for recording (averaged over particles)
         self.logger.add_value('num rollouts', np.mean(num_ros_all_prtcls))
-        self.logger.add_value('avg rollout len', np.mean(len_ros_all_prtcls))
-        self.logger.add_value('avg return', np.mean(avg_rets_all_prtcls))
-        self.logger.add_value('median return', np.median(median_rets_all_prtcls))
-        self.logger.add_value('std return', np.mean(std_rets_all_prtcls))
-        self.logger.record_step()
+        self.logger.add_value('avg rollout len', np.mean(avg_len_ros_all_prtcls), 4)
+        self.logger.add_value('avg return', np.mean(avg_rets_all_prtcls), 4)
+        self.logger.add_value('median return', np.median(median_rets_all_prtcls), 4)
+        self.logger.add_value('std return', np.mean(std_rets_all_prtcls), 4)
+        self.logger.record_step()  # TODO @Robin necessary?
 
         self.update(ros_all_particles)
 

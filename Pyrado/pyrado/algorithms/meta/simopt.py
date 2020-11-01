@@ -149,6 +149,10 @@ class SimOpt(InterruptableAlgorithm):
         """ Get the system identification subroutine. """
         return self._subrtn_distr
 
+    @property
+    def sample_count(self) -> int:
+        return self._cnt_samples + self._subrtn_policy.sample_count + self._subrtn_distr.sample_count
+
     def train_policy_sim(self, cand: to.Tensor, prefix: str) -> float:
         """
         Train a policy in simulation for given hyper-parameters from the domain randomizer.
@@ -164,6 +168,7 @@ class SimOpt(InterruptableAlgorithm):
         self._env_sim.adapt_randomizer(cand.detach().cpu().numpy())
 
         # Reset the subroutine algorithm which includes resetting the exploration
+        self._cnt_samples += self._subrtn_policy.sample_count
         self._subrtn_policy.reset()
 
         # Do a warm start if desired
@@ -191,6 +196,7 @@ class SimOpt(InterruptableAlgorithm):
         :return: average system identification loss
         """
         # Reset the subroutine algorithm which includes resetting the exploration
+        self._cnt_samples += self._subrtn_distr.sample_count
         self._subrtn_distr.reset()
 
         # Train the domain distribution fitter using the subroutine
