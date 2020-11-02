@@ -204,7 +204,6 @@
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
 <span class="kn">import</span> <span class="nn">pytest</span>
-<span class="kn">from</span> <span class="nn">pytest_lazyfixture</span> <span class="kn">import</span> <span class="n">lazy_fixture</span>
 
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.ball_on_beam</span> <span class="kn">import</span> <span class="n">BallOnBeamSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_ball_balancer</span> <span class="kn">import</span> <span class="n">QBallBalancerSim</span>
@@ -221,8 +220,8 @@
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;policy&#39;</span><span class="p">,</span>
-        <span class="p">[</span><span class="s1">&#39;linear_policy&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn_policy&#39;</span><span class="p">]</span>
-    <span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;linear_policy&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn_policy&#39;</span><span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_noise_on_act</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
@@ -258,8 +257,8 @@
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;policy&#39;</span><span class="p">,</span>
-        <span class="p">[</span><span class="s1">&#39;linear_policy&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn_policy&#39;</span><span class="p">]</span>
-    <span class="p">,</span><span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s1">&#39;linear_policy&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn_policy&#39;</span><span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_noise_on_param</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>

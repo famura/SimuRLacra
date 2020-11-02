@@ -218,6 +218,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.policies.two_headed</span> <span class="kn">import</span> <span class="n">TwoHeadedPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.math</span> <span class="kn">import</span> <span class="n">clamp</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.properties</span> <span class="kn">import</span> <span class="n">Delegate</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.tensor</span> <span class="kn">import</span> <span class="n">atleast_2D</span>
 
 
@@ -329,35 +330,19 @@
             <span class="n">learnable</span><span class="o">=</span><span class="n">learnable</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="NormalActNoiseExplStrat.reset_expl_params"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat.reset_expl_params">[docs]</a>    <span class="k">def</span> <span class="nf">reset_expl_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">reset_expl_params</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="NormalActNoiseExplStrat.get_entropy"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat.get_entropy">[docs]</a>    <span class="k">def</span> <span class="nf">get_entropy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">get_entropy</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">std</span>
-
-    <span class="nd">@std</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">std</span> <span class="o">=</span> <span class="n">value</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">mean</span>
-
-    <span class="nd">@mean</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">value</span>
-
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">noise</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DiagNormalNoise</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Get the exploration noise. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span>
 
 <div class="viewcode-block" id="NormalActNoiseExplStrat.action_dist_at"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat.action_dist_at">[docs]</a>    <span class="k">def</span> <span class="nf">action_dist_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">policy_output</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Distribution</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="p">(</span><span class="n">policy_output</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="p">(</span><span class="n">policy_output</span><span class="p">)</span></div>
+
+    <span class="c1"># Make NormalActNoiseExplStrat appear as if it would have the following functions / properties</span>
+    <span class="n">reset_expl_params</span> <span class="o">=</span> <span class="n">Delegate</span><span class="p">(</span><span class="s1">&#39;_noise&#39;</span><span class="p">)</span>
+    <span class="n">std</span> <span class="o">=</span> <span class="n">Delegate</span><span class="p">(</span><span class="s1">&#39;_noise&#39;</span><span class="p">)</span>
+    <span class="n">mean</span> <span class="o">=</span> <span class="n">Delegate</span><span class="p">(</span><span class="s1">&#39;_noise&#39;</span><span class="p">)</span>
+    <span class="n">get_entropy</span> <span class="o">=</span> <span class="n">Delegate</span><span class="p">(</span><span class="s1">&#39;_noise&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="UniformActNoiseExplStrat"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_action.UniformActNoiseExplStrat">[docs]</a><span class="k">class</span> <span class="nc">UniformActNoiseExplStrat</span><span class="p">(</span><span class="n">StochasticActionExplStrat</span><span class="p">):</span>
@@ -398,20 +383,9 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="p">(</span><span class="n">policy_output</span><span class="p">)</span></div>
 
     <span class="c1"># Make NormalActNoiseExplStrat appear as if it would have the following functions / properties</span>
-
-<div class="viewcode-block" id="UniformActNoiseExplStrat.reset_expl_params"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_action.UniformActNoiseExplStrat.reset_expl_params">[docs]</a>    <span class="k">def</span> <span class="nf">reset_expl_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">reset_expl_params</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="UniformActNoiseExplStrat.get_entropy"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_action.UniformActNoiseExplStrat.get_entropy">[docs]</a>    <span class="k">def</span> <span class="nf">get_entropy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">get_entropy</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">halfspan</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">halfspan</span>
-
-    <span class="nd">@halfspan</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">halfspan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">halfspan</span> <span class="o">=</span> <span class="n">val</span></div>
+    <span class="n">reset_expl_params</span> <span class="o">=</span> <span class="n">Delegate</span><span class="p">(</span><span class="s1">&#39;_noise&#39;</span><span class="p">)</span>
+    <span class="n">halfspan</span> <span class="o">=</span> <span class="n">Delegate</span><span class="p">(</span><span class="s1">&#39;_noise&#39;</span><span class="p">)</span>
+    <span class="n">get_entropy</span> <span class="o">=</span> <span class="n">Delegate</span><span class="p">(</span><span class="s1">&#39;_noise&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="SACExplStrat"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_action.SACExplStrat">[docs]</a><span class="k">class</span> <span class="nc">SACExplStrat</span><span class="p">(</span><span class="n">StochasticActionExplStrat</span><span class="p">):</span>
@@ -467,27 +441,10 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="p">(</span><span class="n">policy_output_1</span><span class="p">)</span></div>
 
     <span class="c1"># Make NormalActNoiseExplStrat appear as if it would have the following functions / properties</span>
-<div class="viewcode-block" id="SACExplStrat.reset_expl_params"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_action.SACExplStrat.reset_expl_params">[docs]</a>    <span class="k">def</span> <span class="nf">reset_expl_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">reset_expl_params</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="SACExplStrat.get_entropy"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_action.SACExplStrat.get_entropy">[docs]</a>    <span class="k">def</span> <span class="nf">get_entropy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">get_entropy</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">std</span>
-
-    <span class="nd">@std</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">std</span> <span class="o">=</span> <span class="n">value</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">mean</span>
-
-    <span class="nd">@mean</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="n">reset_expl_params</span> <span class="o">=</span> <span class="n">Delegate</span><span class="p">(</span><span class="s1">&#39;_noise&#39;</span><span class="p">)</span>
+    <span class="n">std</span> <span class="o">=</span> <span class="n">Delegate</span><span class="p">(</span><span class="s1">&#39;_noise&#39;</span><span class="p">)</span>
+    <span class="n">mean</span> <span class="o">=</span> <span class="n">Delegate</span><span class="p">(</span><span class="s1">&#39;_noise&#39;</span><span class="p">)</span>
+    <span class="n">get_entropy</span> <span class="o">=</span> <span class="n">Delegate</span><span class="p">(</span><span class="s1">&#39;_noise&#39;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SACExplStrat.forward"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_action.SACExplStrat.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="o">*</span><span class="n">extra</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[(</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">),</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)]:</span>
         <span class="c1"># Get actions from policy (which for this class always have a two-headed architecture)</span>
@@ -589,7 +546,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">distr_eps</span> <span class="o">=</span> <span class="n">Bernoulli</span><span class="p">(</span><span class="n">probs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="EpsGreedyExplStrat.schedule_eps"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_action.EpsGreedyExplStrat.schedule_eps">[docs]</a>    <span class="k">def</span> <span class="nf">schedule_eps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eps_final</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_eps_init</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eps_final</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">eps_gamma</span> <span class="o">**</span> <span class="n">steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eps_final</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_eps_init</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eps_final</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">eps_gamma</span><span class="o">**</span><span class="n">steps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">distr_eps</span> <span class="o">=</span> <span class="n">Bernoulli</span><span class="p">(</span><span class="n">probs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="EpsGreedyExplStrat.forward"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_action.EpsGreedyExplStrat.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="o">*</span><span class="n">extra</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>

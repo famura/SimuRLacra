@@ -441,7 +441,7 @@
 <span class="sd">             experiment was located, and machine-independent part of the path</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">keyword</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Split a path at the point where the machine-dependent and the machine-independent part can be separated.</span>
 <span class="sd">        In general, the paths look like this</span>
@@ -449,21 +449,32 @@
 <span class="sd">        Thus, we look for the first occurrence of the word &#39;data&#39;.</span>
 
 <span class="sd">        :param path: (complete) experiment path to be split</span>
+<span class="sd">        :param keyword: keyword to split the path after</span>
 <span class="sd">        :return: part of the path until &#39;data/, and machine-independent part of the path</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">Experiment</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="p">(</span><span class="n">Experiment</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)):</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>  <span class="c1"># convert Experiment to PathLike a.k.a. string</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">keyword</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;The key word was not found in the path!&#39;</span><span class="p">)</span>
+            <span class="c1"># The keyword was not found in the path</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">idx</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># +1 for the &#39;/&#39;</span>
+            <span class="n">idx</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">keyword</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># +1 for the &#39;/&#39;</span>
         <span class="k">return</span> <span class="n">path</span><span class="p">[:</span><span class="n">idx</span><span class="p">],</span> <span class="n">path</span><span class="p">[</span><span class="n">idx</span><span class="p">:]</span>
 
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;experiments&#39;</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;temp&#39;</span><span class="p">)</span></div>
+    <span class="c1"># First try to split at pyrado.EXP_DIR</span>
+    <span class="n">custom</span><span class="p">,</span> <span class="n">common</span> <span class="o">=</span> <span class="n">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s1">&#39;experiments&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">custom</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">common</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># If that did not work, try to split at pyrado.TEMP_DIR</span>
+        <span class="n">custom</span><span class="p">,</span> <span class="n">common</span> <span class="o">=</span> <span class="n">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s1">&#39;temp&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">custom</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">common</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># If that did not work, try to split at the pytest&#39;s temporary path</span>
+        <span class="n">custom</span><span class="p">,</span> <span class="n">common</span> <span class="o">=</span> <span class="n">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s1">&#39;tmp&#39;</span><span class="p">)</span>  <span class="c1"># actually they are reversed, but we don&#39;t care for tests</span>
+    <span class="k">if</span> <span class="n">custom</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">common</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># If that also did not work, there is sth wrong</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Failed to split the path between the machine-dependent and machine-independent part.&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">custom</span><span class="p">,</span> <span class="n">common</span></div>
 
 
 <div class="viewcode-block" id="ask_for_experiment"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.ask_for_experiment">[docs]</a><span class="k">def</span> <span class="nf">ask_for_experiment</span><span class="p">(</span><span class="n">latest_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
