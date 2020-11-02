@@ -27,7 +27,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import pytest
-from pytest_lazyfixture import lazy_fixture
 
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
@@ -44,8 +43,8 @@ from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 )
 @pytest.mark.parametrize(
     'policy',
-        ['linear_policy', 'fnn_policy']
-    , ids=['lin', 'fnn'],
+    ['linear_policy', 'fnn_policy'],
+    ids=['lin', 'fnn'],
     indirect=True
 )
 def test_noise_on_act(env, policy):
@@ -80,9 +79,9 @@ def test_noise_on_act(env, policy):
     ], ids=['bob', 'qbb']
 )
 @pytest.mark.parametrize(
-    'policy', lazy_fixture(
-        ['linear_policy', 'fnn_policy']
-    ), ids=['lin', 'fnn'],
+    'policy',
+    ['linear_policy', 'fnn_policy'],
+    ids=['lin', 'fnn'],
     indirect=True
 )
 def test_noise_on_param(env, policy):

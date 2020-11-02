@@ -260,7 +260,7 @@ def split_path_custom_common(path: Union[str, Experiment]) -> (str, str):
              experiment was located, and machine-independent part of the path
     """
 
-    def _split_path_at(path, key):
+    def _split_path_at(path, keyword):
         """
         Split a path at the point where the machine-dependent and the machine-independent part can be separated.
         In general, the paths look like this
@@ -268,21 +268,32 @@ def split_path_custom_common(path: Union[str, Experiment]) -> (str, str):
         Thus, we look for the first occurrence of the word 'data'.
 
         :param path: (complete) experiment path to be split
+        :param keyword: keyword to split the path after
         :return: part of the path until 'data/, and machine-independent part of the path
         """
-        if isinstance(path, Experiment):
+        if isinstance(path, (Experiment, os.PathLike)):
             path = os.fspath(path)  # convert Experiment to PathLike a.k.a. string
-        idx = path.find(key + '/')
+        idx = path.find(keyword + '/')
         if idx == -1:
-            raise pyrado.PathErr(msg='The key word was not found in the path!')
+            # The keyword was not found in the path
+            return None, None
         else:
-            idx += len(key) + 1  # +1 for the '/'
+            idx += len(keyword) + 1  # +1 for the '/'
         return path[:idx], path[idx:]
 
-    try:
-        return _split_path_at(path, key='experiments')
-    except pyrado.PathErr:
-        return _split_path_at(path, key='temp')
+    # First try to split at pyrado.EXP_DIR
+    custom, common = _split_path_at(path, keyword='experiments')
+    if custom is None or common is None:
+        # If that did not work, try to split at pyrado.TEMP_DIR
+        custom, common = _split_path_at(path, keyword='temp')
+    if custom is None or common is None:
+        # If that did not work, try to split at the pytest's temporary path
+        custom, common = _split_path_at(path, keyword='tmp')  # actually they are reversed, but we don't care for tests
+    if custom is None or common is None:
+        # If that also did not work, there is sth wrong
+        raise pyrado.PathErr(msg='Failed to split the path between the machine-dependent and machine-independent part.')
+
+    return custom, common
 
 
 def ask_for_experiment(latest_only: bool = False):
