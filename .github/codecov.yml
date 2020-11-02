@@ -1,3 +1,5 @@
+codecov:
+  token: 7fe199ac-ee2b-4a80-b21f-17a9c37af37d
 ignore:
   - "Pyrado/tests"
   - "Pyrado/doc"
