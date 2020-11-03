@@ -355,14 +355,17 @@ class Algorithm(ABC, LoggerAware):
         # Assemble the directory on unpickling
         self.__dict__ = state
         common_part = state['_save_dir_common']
-        try:
-            self._save_dir = osp.join(pyrado.EXP_DIR, common_part)
-            if not osp.isdir(self._save_dir):
-                raise pyrado.PathErr(given=self._save_dir)
-        except pyrado.PathErr:
+
+        # First, try if it has been split at pyrado.EXP_DIR
+        self._save_dir = osp.join(pyrado.EXP_DIR, common_part)
+        if not osp.isdir(self._save_dir):
+            # If that did not work, try if it has been split at pyrado.TEMP_DIR
             self._save_dir = osp.join(pyrado.TEMP_DIR, common_part)
             if not osp.isdir(self._save_dir):
-                raise pyrado.PathErr(given=self._save_dir)
+                # If that did not work, try if it has been split at the pytest's temporary path
+                self._save_dir = osp.join('/tmp', common_part)
+                if not osp.isdir(self._save_dir):
+                    raise pyrado.PathErr(given=self._save_dir)
 
 
 class InterruptableAlgorithm(Algorithm, ABC):

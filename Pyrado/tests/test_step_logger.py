@@ -177,8 +177,9 @@ def test_csv_logger_serializer(tmpdir):
     logger.add_value('Value2', 20)
     logger.record_step()
 
-    # Ser/deser
+    # Serialize / deserialize
     logger_reser = pickle.loads(pickle.dumps(logger, pickle.HIGHEST_PROTOCOL))
+
     # Log values with new logger
     logger_reser.add_value('Value1', 100)
     logger_reser.add_value('Value2', 200)
@@ -192,3 +193,26 @@ def test_csv_logger_serializer(tmpdir):
     assert rows[0]['Value2'] == '20'
     assert rows[1]['Value1'] == '100'
     assert rows[1]['Value2'] == '200'
+
+
+def test_tb_logger_serializer(tmpdir):
+    # Create csv logger
+    cp = uut.TensorBoardPrinter(tmpdir)
+    logger = uut.StepLogger()
+    logger.printers.append(cp)
+
+    # Log some values
+    logger.add_value('Value1', 10)
+    logger.add_value('Value2', 20)
+    logger.record_step()
+
+    # Serialize / deserialize
+    logger_reser = pickle.loads(pickle.dumps(logger, pickle.HIGHEST_PROTOCOL))
+
+    # Log values with new logger
+    logger_reser.add_value('Value1', 100)
+    logger_reser.add_value('Value2', 200)
+    logger_reser.record_step()
+
+    assert len(logger_reser.printers) == 1
+    assert isinstance(logger_reser.printers[0], uut.TensorBoardPrinter)

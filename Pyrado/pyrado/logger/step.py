@@ -256,14 +256,17 @@ class CSVPrinter(StepLogPrinter):
     # And reopen the file for append on reload
     def __setstate__(self, state):
         common_part = state['file_common']
-        try:
-            self.file = osp.join(pyrado.EXP_DIR, common_part)
-            if not osp.isfile(self.file):
-                raise pyrado.PathErr(given=self.file)
-        except pyrado.PathErr:
+
+        # First, try if it has been split at pyrado.EXP_DIR
+        self.file = osp.join(pyrado.EXP_DIR, common_part)
+        if not osp.isfile(self.file):
+            # If that did not work, try if it has been split at pyrado.TEMP_DIR
             self.file = osp.join(pyrado.TEMP_DIR, common_part)
             if not osp.isfile(self.file):
-                raise pyrado.PathErr(given=self.file)
+                # If that did not work, try if it has been split at the pytest's temporary path
+                self.file = osp.join('/tmp', common_part)
+                if not osp.isfile(self.file):
+                    raise pyrado.PathErr(given=self.file)
 
         self._fd = open(self.file, 'a')
         self._writer = csv.writer(self._fd)
@@ -304,14 +307,17 @@ class TensorBoardPrinter(StepLogPrinter):
     # And reopen the writer on reload
     def __setstate__(self, state):
         common_part = state['dir_common']
-        try:
-            self.dir = osp.join(pyrado.EXP_DIR, common_part)
-            if not osp.isdir(self.dir):
-                raise pyrado.PathErr(given=self.dir)
-        except pyrado.PathErr:
+
+        # First, try if it has been split at pyrado.EXP_DIR
+        self.dir = osp.join(pyrado.EXP_DIR, common_part)
+        if not osp.isdir(self.dir):
+            # If that did not work, try if it has been split at pyrado.TEMP_DIR
             self.dir = osp.join(pyrado.TEMP_DIR, common_part)
             if not osp.isdir(self.dir):
-                raise pyrado.PathErr(given=self.dir)
+                # If that did not work, try if it has been split at the pytest's temporary path
+                self.dir = osp.join('/tmp', common_part)
+                if not osp.isdir(self.dir):
+                    raise pyrado.PathErr(given=self.dir)
 
         self.step = state['step']
         self.writer = SummaryWriter(log_dir=self.dir)

@@ -29,14 +29,14 @@ Additionally, you can set a seed for the random number generators. It is suggest
 compare changes of certain hyper-parameters to eliminate the effect of the initial state and the initial policy
 parameters (both are sampled randomly in most cases).
 """
-pyrado.set_seed(seed=1001, verbose=True)
+pyrado.set_seed(seed=0, verbose=True)
 
 """
 Set up the environment a.k.a. domain to train in. After creating the environment, you can apply various wrappers which
 are modular. Note that the order of wrappers might be of importance. For example, wrapping an environment with an
 `ObsNormWrapper` and then with an `GaussianObsNoiseWrapper` applies the noise on the normalized observations, and yields
 different results than the reverse order of wrapping.
-Environments in Pyrado can be of different types: (i) written in Python only (like the Qunaser simulations or simple
+Environments in Pyrado can be of different types: (i) written in Python only (like the Quanser simulations or simple
 OpenAI Gym environments), (ii) wrapped as well as self-designed MuJoCo-based simulations, or (iii) self-designed
 robotic environments powered by Rcs using either the Bullet or Vortex physics engine. None of the simulations includes
 any computer vision aspects. It is all about dynamics-based interaction and (continuous) control. The degree of
@@ -66,14 +66,15 @@ policy = LinearPolicy(spec=env.spec, **policy_hparam)
 Specify the algorithm you want to use for learning the policy parameters.
 For deterministic sampling, you need to set `num_workers=1`. If `num_workers>1`, PyTorch's multiprocessing
 library will be used to parallelize sampling from the environment on the CPU. The resulting behavior is non-deterministic,
-i.e. even for the same random seed, you will get different results.
+i.e. even for the same random seed, you will get different results. Moreover, it is advised to set `num_workers` to 1
+if you want to debug your code.
 The algorithms can be categorized in two different types: one type randomizes the action every step (their exploration
 strategy inherits from `StochasticActionExplStrat`), and the other type randomizes the policy parameters once every
 rollout their exploration strategy inherits from `StochasticParamExplStrat`). It goes without saying that every
 algorithm has different hyper-parameters. However, they all use the same `rollout()` function to generate their data.
 """
 algo_hparam = dict(
-    max_iter=10,
+    max_iter=8,
     pop_size=20,
     num_rollouts=10,
     expl_factor=1.1,
@@ -104,7 +105,7 @@ you want to continue from a previous experiment multiple times.
 """
 algo.train(snapshot_mode='latest', seed=None)
 
-input('Finished training. Hit enter to simulate the policy.')
+input('\nFinished training. Hit enter to simulate the policy.\n')
 
 """
 Simulate the learned policy in the environment it has been trained in. The following is a part of
