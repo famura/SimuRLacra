@@ -579,7 +579,7 @@ initial state space</p></li>
 
 <dl class="py class">
 <dt id="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult">
-<em class="property">class </em><code class="sig-name descname">ParameterSamplingResult</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parameter_exploration_sampler.html#ParameterSamplingResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">ParameterSamplingResult</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">samples</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference internal" href="#pyrado.sampling.parameter_exploration_sampler.ParameterSample" title="pyrado.sampling.parameter_exploration_sampler.ParameterSample">pyrado.sampling.parameter_exploration_sampler.ParameterSample</a><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parameter_exploration_sampler.html#ParameterSamplingResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Sequence</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></p>
 <p>Result of a parameter exploration sampling run.
 On one hand, this is a list of ParameterSamples.
@@ -984,36 +984,11 @@ There is no deterministic assignment of workers to arglist elements. Optionally 
 <p>This object is a proxy, referring a specific index in the rollout. When querying an attribute from the step,
 it will try to return the corresponding slice from the rollout. Additionally, one can prefix attributes with <cite>next_</cite>
 to access the value for the next step, i.e. <cite>next_observations</cite> the observation made at the start of the next step.</p>
-<dl class="py attribute">
-<dt id="pyrado.sampling.step_sequence.Step.l">
-<code class="sig-name descname">l</code><a class="headerlink" href="#pyrado.sampling.step_sequence.Step.l" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pyrado.sampling.step_sequence.Step.o">
-<code class="sig-name descname">o</code><a class="headerlink" href="#pyrado.sampling.step_sequence.Step.o" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pyrado.sampling.step_sequence.Step.r">
-<code class="sig-name descname">r</code><a class="headerlink" href="#pyrado.sampling.step_sequence.Step.r" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pyrado.sampling.step_sequence.Step.t">
-<code class="sig-name descname">t</code><a class="headerlink" href="#pyrado.sampling.step_sequence.Step.t" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pyrado.sampling.step_sequence.Step.u">
-<code class="sig-name descname">u</code><a class="headerlink" href="#pyrado.sampling.step_sequence.Step.u" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
 <dt id="pyrado.sampling.step_sequence.StepSequence">
-<em class="property">class </em><code class="sig-name descname">StepSequence</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#StepSequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">StepSequence</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">complete</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">rollout_info</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">data_format</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">done</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">continuous</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">rollout_bounds</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rewards</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/step_sequence.html#StepSequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.step_sequence.StepSequence" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Sequence</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></p>
 <p>A sequence of steps.</p>
 <p>During the rollout, the values of different variables are recorded. This class provides efficient storage and
