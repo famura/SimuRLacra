@@ -443,11 +443,24 @@ def setup_mujoco_py():
     sp.check_call([sys.executable, "setup.py", "install"], cwd=osp.join(project_dir, 'thirdParty', 'mujoco-py'))
 
 
-def setup_pytorch_based():
-    # Set up GPyTorch, BoTorch, Pyro without touching the PyTorch installation
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "gpytorch"])
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "botorch"])
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "pyro-ppl"])
+def setup_pytorch_based():  # tested with pip install torch==1.7.0+cpu torchvision==0.8.1+cpu torchaudio==0.7.0 -f https://download.pytorch.org/whl/torch_stable.html
+    # Set up GPyTorch without touching the PyTorch installation (requires scikit-learn which requires threadpoolctl)
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "threadpoolctl==2.1.0"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "scikit-learn==0.23.2"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "gpytorch==1.2.1"])
+    # Set up BoTorch without touching the PyTorch installation (requires gpytorch)
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "botorch==0.3.2"])
+    # Set up Pyro without touching the PyTorch installation (requires opt-einsum)
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "opt-einsum==3.3.0"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "pyro-api==0.1.2"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "pyro-ppl==1.5.0"])
+    # Set up SBI without touching the PyTorch installation (requires Pyro and pyknos which requires nflows)
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "nflows==0.13"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "pyknos==0.13.1"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "sbi==0.13.2"])
+    # Check the installations
+    print("Checking dependencies of the packages installed via pip:")
+    sp.check_call([sys.executable, "-m", "pip", "check", "--use-feature=2020-resolver"])
 
 
 def setup_cppsctp():
