@@ -34,7 +34,7 @@ __Cons__
 * __Hyper-parameters are not fully tuned.__ Sometimes the most important part of reinforcement learning is the time-consuming search for the right hyper-parameters. I only did this for the environment-algorithm combinations reported in my papers. But, for all the other cases there is [Optuna](https://optuna.org/) and some optuna-based example scripts that you can start from.
 * __Unfinished GPU-support.__ At the moment the porting of the policies is implemented but not fully tested. The GPU-enabled re-implementation of the simulation environments in the pysim folder (simple Python simulations) is at question. The environments based on [Rcs](https://github.com/HRI-EU/Rcs) which require the Bullet or Vortex physics engine will only be able to run on CPU.
 
-SimuRLacra was tested on Ubuntu 16.04, 18.04 (recommended), 19.10, and 20.04, with PyTorch 1.3.
+SimuRLacra was tested on Ubuntu 16.04, 18.04 (recommended), 19.10, and 20.04, with PyTorch 1.4.
 The part without C++ dependencies (Pyrado) also works under Windows 10, but is not supported.
 
 __Not the right framework for you?__
@@ -72,16 +72,14 @@ cd SimuRLacra
 
 Create an anaconda environment (without PyTorch)
 ```
-conda create -n pyrado python=3.7 blas cmake colorama coverage cython joblib lapack libgcc-ng mkl matplotlib-base numpy optuna pandas patchelf pip pycairo pytest pytest-cov pytest-xdist pyyaml scipy seaborn setuptools sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tqdm -c conda-forge
-
+conda create -n pyrado python=3.7
 conda activate pyrado
-
+conda install blas cmake colorama coverage cython joblib lapack libgcc-ng mkl matplotlib-base numpy optuna pandas patchelf pip pycairo pytest pytest-cov pytest-xdist pyyaml scipy seaborn setuptools sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tqdm -c conda-forge
 pip install git+https://github.com/Xfel/init-args-serializer.git@master argparse box2d glfw gym prettyprinter pytest-lazy-fixture tensorboard vpython
 ```
 Any warnings from VPython can be safely ignored.
 
 ### What do you want to be installed?
-
 If you just want to have a look at SimuRLacra, or don't care too much about the robotics part, I recommend going for [Red Velvet](#option-red-velvet). However, if you for example want to export your learned controller to a C++ program runnning on a phsical robot, I recommend [Black Forest](#option-black-forest). Here is an overview of the options:
 
 Options                              | PyTorch build | Policy export to C++ | CUDA support | Rcs-based environments (RcsPySim) | Pyrado and (subset of) mujoco-py environments
