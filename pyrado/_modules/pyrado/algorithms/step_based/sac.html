@@ -351,7 +351,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_grad_norm</span> <span class="o">=</span> <span class="n">max_grad_norm</span>
         <span class="k">if</span> <span class="n">num_init_memory_steps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">num_init_memory_steps</span> <span class="o">=</span> <span class="n">num_init_memory_steps</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_init_memory_steps</span> <span class="o">=</span> <span class="n">memory_size</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">num_init_memory_steps</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">num_init_memory_steps</span><span class="p">,</span> <span class="n">memory_size</span><span class="p">)</span>
 

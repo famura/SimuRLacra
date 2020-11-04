@@ -444,7 +444,7 @@
 <span class="sd">        oN a1</span>
 <span class="sd">        oN a2</span>
 
-<span class="sd">        :param obs: obersvations</span>
+<span class="sd">        :param obs: current observations</span>
 <span class="sd">        :return: Q-values for all state-action combinations, dim = batch_size x act_space_flat_sim</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Create batched state-action table</span>
@@ -463,10 +463,9 @@
 <span class="sd">        Compute the state-action values for the given observations and all possible actions.</span>
 <span class="sd">        Since we operate on a discrete ation space, we can construct a table.</span>
 
-<span class="sd">        :param obs: obersvations</span>
+<span class="sd">        :param obs: current observations</span>
 <span class="sd">        :return: Q-values for all state-action combinations, dimension equals flat action space dimension</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="c1"># Get the Q-values from the owned FNN</span>
         <span class="n">obs</span> <span class="o">=</span> <span class="n">atleast_2D</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
         <span class="n">q_vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>

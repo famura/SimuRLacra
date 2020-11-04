@@ -208,6 +208,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.a2c</span> <span class="kn">import</span> <span class="n">A2C</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.actor_critic</span> <span class="kn">import</span> <span class="n">ActorCritic</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.adr</span> <span class="kn">import</span> <span class="n">ADR</span>
+<span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.dql</span> <span class="kn">import</span> <span class="n">DQL</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.gae</span> <span class="kn">import</span> <span class="n">GAE</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.meta.arpl</span> <span class="kn">import</span> <span class="n">ARPL</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
@@ -231,23 +232,24 @@
     <span class="n">MetaDomainRandWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.state_augmentation</span> <span class="kn">import</span> <span class="n">StateAugmentationWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.pysim.ball_on_beam</span> <span class="kn">import</span> <span class="n">BallOnBeamDiscSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.logger</span> <span class="kn">import</span> <span class="n">set_log_prefix_dir</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.features</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span><span class="p">,</span> <span class="n">FNN</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span><span class="p">,</span> <span class="n">FNN</span><span class="p">,</span> <span class="n">DiscrActQValFNNPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.rnn</span> <span class="kn">import</span> <span class="n">RNNPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.two_headed</span> <span class="kn">import</span> <span class="n">TwoHeadedGRUPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sequences</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">ValueFunctionSpace</span>
+<span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">ValueFunctionSpace</span><span class="p">,</span> <span class="n">BoxSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
-
-<span class="c1"># Fixture providing an experiment directory</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.experiments</span> <span class="kn">import</span> <span class="n">load_experiment</span>
 
 
 <div class="viewcode-block" id="ex_dir"><a class="viewcode-back" href="../../tests.html#tests.test_algorithms.ex_dir">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
 <span class="k">def</span> <span class="nf">ex_dir</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">):</span>
+    <span class="c1"># Fixture providing an experiment directory</span>
     <span class="n">set_log_prefix_dir</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">tmpdir</span></div>
 
@@ -268,10 +270,8 @@
         <span class="s1">&#39;lstm_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;gru_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;adn_policy&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;thfnn_policy&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;thgru_policy&#39;</span><span class="p">,</span>
     <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;thfnn&#39;</span><span class="p">,</span> <span class="s1">&#39;thgru&#39;</span><span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -286,8 +286,11 @@
         <span class="p">(</span><span class="n">PoWER</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">expl_std_init</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">pop_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">num_is_samples</span><span class="o">=</span><span class="mi">10</span><span class="p">)),</span>
         <span class="p">(</span><span class="n">CEM</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">expl_std_init</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">pop_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">num_is_samples</span><span class="o">=</span><span class="mi">10</span><span class="p">)),</span>
         <span class="p">(</span><span class="n">REPS</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">pop_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">DQL</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">eps_init</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">eps_schedule_gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">SAC</span><span class="p">,</span> <span class="nb">dict</span><span class="p">()),</span>
     <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a2c&#39;</span><span class="p">,</span> <span class="s1">&#39;ppo&#39;</span><span class="p">,</span> <span class="s1">&#39;ppo2&#39;</span><span class="p">,</span> <span class="s1">&#39;hc_normal&#39;</span><span class="p">,</span> <span class="s1">&#39;hc_hyper&#39;</span><span class="p">,</span> <span class="s1">&#39;nes&#39;</span><span class="p">,</span> <span class="s1">&#39;pepg&#39;</span><span class="p">,</span> <span class="s1">&#39;power&#39;</span><span class="p">,</span> <span class="s1">&#39;cem&#39;</span><span class="p">,</span> <span class="s1">&#39;reps&#39;</span><span class="p">])</span>  <span class="c1"># SAC and DQL are out</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a2c&#39;</span><span class="p">,</span> <span class="s1">&#39;ppo&#39;</span><span class="p">,</span> <span class="s1">&#39;ppo2&#39;</span><span class="p">,</span> <span class="s1">&#39;hc_normal&#39;</span><span class="p">,</span> <span class="s1">&#39;hc_hyper&#39;</span><span class="p">,</span> <span class="s1">&#39;nes&#39;</span><span class="p">,</span> <span class="s1">&#39;pepg&#39;</span><span class="p">,</span> <span class="s1">&#39;power&#39;</span><span class="p">,</span> <span class="s1">&#39;cem&#39;</span><span class="p">,</span> <span class="s1">&#39;reps&#39;</span><span class="p">,</span> <span class="s1">&#39;dql&#39;</span><span class="p">,</span> <span class="s1">&#39;sac&#39;</span><span class="p">]</span>
+<span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_snapshots_notmeta</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">algo_class</span><span class="p">,</span> <span class="n">algo_hparam</span><span class="p">):</span>
     <span class="c1"># Collect hyper-parameters, create algorithm, and train</span>
     <span class="n">common_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -300,6 +303,20 @@
                                                             <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)))</span>
     <span class="k">elif</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">algo_class</span><span class="p">,</span> <span class="n">ParameterExploring</span><span class="p">):</span>
         <span class="n">common_hparam</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">num_rollouts</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">algo_class</span><span class="p">,</span> <span class="p">(</span><span class="n">DQL</span><span class="p">,</span> <span class="n">SAC</span><span class="p">)):</span>
+        <span class="n">common_hparam</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">memory_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">num_batch_updates</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">fnn_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">algo_class</span><span class="p">,</span> <span class="n">DQL</span><span class="p">):</span>
+            <span class="c1"># Override the setting</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">BallOnBeamDiscSim</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span><span class="p">)</span>
+            <span class="n">policy</span> <span class="o">=</span> <span class="n">DiscrActQValFNNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="o">**</span><span class="n">fnn_hparam</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Override the setting</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">ActNormWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+            <span class="n">policy</span> <span class="o">=</span> <span class="n">TwoHeadedGRUPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">shared_hidden_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">shared_num_recurrent_layers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">obsact_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">act_space</span><span class="p">])</span>
+            <span class="n">common_hparam</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">q_fcn_1</span><span class="o">=</span><span class="n">FNNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">EnvSpec</span><span class="p">(</span><span class="n">obsact_space</span><span class="p">,</span> <span class="n">ValueFunctionSpace</span><span class="p">),</span> <span class="o">**</span><span class="n">fnn_hparam</span><span class="p">))</span>
+            <span class="n">common_hparam</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">q_fcn_2</span><span class="o">=</span><span class="n">FNNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">EnvSpec</span><span class="p">(</span><span class="n">obsact_space</span><span class="p">,</span> <span class="n">ValueFunctionSpace</span><span class="p">),</span> <span class="o">**</span><span class="n">fnn_hparam</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
