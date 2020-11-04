@@ -246,7 +246,7 @@
                  <span class="n">lr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5e-4</span><span class="p">,</span>
                  <span class="n">lr_scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">lr_scheduler_hparam</span><span class="p">:</span> <span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param value_fcn: value function, which can be a `FNN` or a `Policy`</span>
@@ -254,7 +254,7 @@
 <span class="sd">        :param lamda: regulates the trade-off between bias (max for 0) and variance (max for 1), see [1]</span>
 <span class="sd">        :param num_epoch: number of iterations over all gathered samples during one estimator update</span>
 <span class="sd">        :param batch_size: number of samples per estimator update batch</span>
-<span class="sd">        :param standardize_adv: set `True` to standardize the advantages</span>
+<span class="sd">        :param standardize_adv: if `True`, the advantages are standardized to be $~ N(0,1)$</span>
 <span class="sd">        :param standardizer: pass `None` to use stateless standardisation, alternatively pass `RunningStandardizer()`</span>
 <span class="sd">                             to use a standardizer wich keeps track of past values</span>
 <span class="sd">        :param max_grad_norm: maximum L2 norm of the gradients for clipping, set to `None` to disable gradient clipping</span>

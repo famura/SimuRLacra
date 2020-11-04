@@ -205,14 +205,15 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="kn">import</span> <span class="nn">joblib</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">ceil</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
@@ -238,9 +239,15 @@
 <span class="sd">    .. seealso::</span>
 <span class="sd">        [1] T. Haarnoja, A. Zhou, P. Abbeel, S. Levine, &quot;Soft Actor-Critic: Off-Policy Maximum Entropy Deep</span>
 <span class="sd">        Reinforcement Learning with a Stochastic Actor&quot;, ICML, 2018</span>
-
 <span class="sd">        [2] This implementation was inspired by https://github.com/pranz24/pytorch-soft-actor-critic</span>
 <span class="sd">            which is seems to be based on https://github.com/vitchyr/rlkit</span>
+<span class="sd">        [3] This implementation also borrows (at least a bit) from</span>
+<span class="sd">            https://github.com/DLR-RM/stable-baselines3/tree/master/stable_baselines3/sac</span>
+<span class="sd">        [4] https://github.com/MushroomRL/mushroom-rl/blob/dev/mushroom_rl/algorithms/actor_critic/deep_actor_critic/sac.py</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        The update order of the policy, the Q-functions, (and the entropy coefficient) is different in almost every</span>
+<span class="sd">        implementation out there. Here we follow the one from [3].</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;sac&#39;</span>
@@ -254,22 +261,24 @@
                  <span class="n">memory_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                  <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                  <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                 <span class="n">num_batch_updates</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">num_batch_updates</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.995</span><span class="p">,</span>
-                 <span class="n">alpha_init</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
-                 <span class="n">learn_alpha</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">ent_coeff_init</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
+                 <span class="n">learn_ent_coeff</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                  <span class="n">target_update_intvl</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="n">num_init_memory_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">standardize_rew</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-                 <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+                 <span class="n">rew_scale</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
+                 <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span>
                  <span class="n">min_rollouts</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">min_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
                  <span class="n">max_grad_norm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.</span><span class="p">,</span>
                  <span class="n">lr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3e-4</span><span class="p">,</span>
                  <span class="n">lr_scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">lr_scheduler_hparam</span><span class="p">:</span> <span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">lr_scheduler_hparam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">logger</span><span class="p">:</span> <span class="n">StepLogger</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
@@ -282,13 +291,16 @@
 <span class="sd">        :param memory_size: number of transitions in the replay memory buffer, e.g. 1000000</span>
 <span class="sd">        :param gamma: temporal discount factor for the state values</span>
 <span class="sd">        :param max_iter: number of iterations (policy updates)</span>
-<span class="sd">        :param num_batch_updates: number of batch updates per algorithm steps</span>
+<span class="sd">        :param num_batch_updates: number of (batched) gradient updates per algorithm step</span>
 <span class="sd">        :param tau: interpolation factor in averaging for target networks, update used for the soft update a.k.a. polyak</span>
 <span class="sd">                    update, between 0 and 1</span>
-<span class="sd">        :param alpha_init: initial weighting factor of the entropy term in the loss function</span>
-<span class="sd">        :param learn_alpha: adapt the weighting factor of the entropy term</span>
+<span class="sd">        :param ent_coeff_init: initial weighting factor of the entropy term in the loss function</span>
+<span class="sd">        :param learn_ent_coeff: adapt the weighting factor of the entropy term</span>
 <span class="sd">        :param target_update_intvl: number of iterations that pass before updating the target network</span>
-<span class="sd">        :param standardize_rew: bool to flag if the rewards should be standardized</span>
+<span class="sd">        :param num_init_memory_steps: number of samples used to initially fill the replay buffer with, pass `None` to</span>
+<span class="sd">                                      fill the buffer completely</span>
+<span class="sd">        :param standardize_rew:  if `True`, the rewards are standardized to be $~ N(0,1)$</span>
+<span class="sd">        :param rew_scale: scaling factor for the rewards, defaults no scaling</span>
 <span class="sd">        :param batch_size: number of samples per policy update batch</span>
 <span class="sd">        :param min_rollouts: minimum number of rollouts sampled per policy update batch</span>
 <span class="sd">        :param min_steps: minimum number of state transitions sampled per policy update batch</span>
@@ -309,6 +321,10 @@
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">q_fcn_1</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Policy</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">q_fcn_2</span><span class="p">,</span> <span class="n">Policy</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">q_fcn_2</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Policy</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memory_size</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">memory_size</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">num_init_memory_steps</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_init_memory_steps</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_init_memory_steps</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Create logger that only logs every 100 steps of the algorithm</span>
@@ -319,7 +335,6 @@
         <span class="c1"># Call Algorithm&#39;s constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
 
-        <span class="c1"># Store the inputs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_env</span> <span class="o">=</span> <span class="n">env</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q_fcn_1</span> <span class="o">=</span> <span class="n">q_fcn_1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q_fcn_2</span> <span class="o">=</span> <span class="n">q_fcn_2</span>
@@ -329,55 +344,68 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">q_targ_2</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">tau</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">learn_alpha</span> <span class="o">=</span> <span class="n">learn_alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">learn_ent_coeff</span> <span class="o">=</span> <span class="n">learn_ent_coeff</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_update_intvl</span> <span class="o">=</span> <span class="n">target_update_intvl</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">standardize_rew</span> <span class="o">=</span> <span class="n">standardize_rew</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_batch_updates</span> <span class="o">=</span> <span class="n">num_batch_updates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rew_scale</span> <span class="o">=</span> <span class="n">rew_scale</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_grad_norm</span> <span class="o">=</span> <span class="n">max_grad_norm</span>
+        <span class="k">if</span> <span class="n">num_init_memory_steps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_init_memory_steps</span> <span class="o">=</span> <span class="n">num_init_memory_steps</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_init_memory_steps</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">num_init_memory_steps</span><span class="p">,</span> <span class="n">memory_size</span><span class="p">)</span>
 
-        <span class="c1"># Initialize</span>
+        <span class="c1"># Replay memory initialization (sample uniformly random from the action space)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span> <span class="o">=</span> <span class="n">ReplayMemory</span><span class="p">(</span><span class="n">memory_size</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">policy</span><span class="o">.</span><span class="n">is_recurrent</span><span class="p">:</span>
             <span class="n">init_expl_policy</span> <span class="o">=</span> <span class="n">RecurrentDummyPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">policy</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">init_expl_policy</span> <span class="o">=</span> <span class="n">DummyPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler_init</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="n">init_expl_policy</span><span class="p">,</span>  <span class="c1"># samples uniformly random from the action space</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="n">init_expl_policy</span><span class="p">,</span>
             <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
-            <span class="n">min_steps</span><span class="o">=</span><span class="n">memory_size</span><span class="p">,</span>
+            <span class="n">min_steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_init_memory_steps</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span> <span class="o">=</span> <span class="n">SACExplStrat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span> <span class="n">std_init</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>  <span class="c1"># std_init will be overwritten by 2nd policy head</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span> <span class="o">=</span> <span class="n">SACExplStrat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampler_trn</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="p">,</span>
             <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="n">min_steps</span><span class="o">=</span><span class="n">min_steps</span><span class="p">,</span>  <span class="c1"># in [2] this would be 1</span>
-            <span class="n">min_rollouts</span><span class="o">=</span><span class="n">min_rollouts</span>  <span class="c1"># in [2] this would be None</span>
+            <span class="n">min_rollouts</span><span class="o">=</span><span class="n">min_rollouts</span><span class="p">,</span>  <span class="c1"># in [2] this would be None</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler_eval</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span>
             <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
             <span class="n">min_steps</span><span class="o">=</span><span class="mi">100</span><span class="o">*</span><span class="n">env</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span>
-            <span class="n">min_rollouts</span><span class="o">=</span><span class="kc">None</span>
+            <span class="n">min_rollouts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">show_progress_bar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_optim_policy</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">parameters</span><span class="p">()}],</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_optim_q_fcn_1</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_fcn_1</span><span class="o">.</span><span class="n">parameters</span><span class="p">()}],</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_optim_q_fcn_2</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_fcn_2</span><span class="o">.</span><span class="n">parameters</span><span class="p">()}],</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
-        <span class="n">log_alpha_init</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">alpha_init</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()))</span>
-        <span class="k">if</span> <span class="n">learn_alpha</span><span class="p">:</span>
-            <span class="c1"># Automatic entropy tuning</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_log_alpha</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">log_alpha_init</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_alpha_optim</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_alpha</span><span class="p">}],</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_optim_q_fcns</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_fcn_1</span><span class="o">.</span><span class="n">parameters</span><span class="p">()},</span>
+                                            <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_fcn_2</span><span class="o">.</span><span class="n">parameters</span><span class="p">()}],</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+
+        <span class="c1"># Heuristic for number of gradient updates per step similar to the one in [3]</span>
+        <span class="k">if</span> <span class="n">num_batch_updates</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_batch_updates</span> <span class="o">=</span> <span class="n">ceil</span><span class="p">(</span><span class="n">min_steps</span><span class="o">/</span><span class="n">env</span><span class="o">.</span><span class="n">max_steps</span><span class="p">)</span> <span class="k">if</span> <span class="n">min_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">min_rollouts</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_batch_updates</span> <span class="o">=</span> <span class="n">num_batch_updates</span>
+
+        <span class="c1"># Automatic entropy tuning</span>
+        <span class="n">log_ent_coeff_init</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">ent_coeff_init</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">policy</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()))</span>
+        <span class="k">if</span> <span class="n">learn_ent_coeff</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log_ent_coeff</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">log_ent_coeff_init</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ent_coeff_optim</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_ent_coeff</span><span class="p">}],</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">target_entropy</span> <span class="o">=</span> <span class="o">-</span><span class="n">to</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_log_alpha</span> <span class="o">=</span> <span class="n">log_alpha_init</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log_ent_coeff</span> <span class="o">=</span> <span class="n">log_ent_coeff_init</span>
 
+        <span class="c1"># Learning rate scheduler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_policy</span> <span class="o">=</span> <span class="n">lr_scheduler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_hparam</span> <span class="o">=</span> <span class="n">lr_scheduler_hparam</span>
         <span class="k">if</span> <span class="n">lr_scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_policy</span> <span class="o">=</span> <span class="n">lr_scheduler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optim_policy</span><span class="p">,</span> <span class="o">**</span><span class="n">lr_scheduler_hparam</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_q_fcn_1</span> <span class="o">=</span> <span class="n">lr_scheduler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optim_q_fcn_1</span><span class="p">,</span> <span class="o">**</span><span class="n">lr_scheduler_hparam</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_q_fcn_2</span> <span class="o">=</span> <span class="n">lr_scheduler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optim_q_fcn_2</span><span class="p">,</span> <span class="o">**</span><span class="n">lr_scheduler_hparam</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_q_fcns</span> <span class="o">=</span> <span class="n">lr_scheduler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optim_q_fcns</span><span class="p">,</span> <span class="o">**</span><span class="n">lr_scheduler_hparam</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">expl_strat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SACExplStrat</span><span class="p">:</span>
@@ -389,20 +417,20 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">alpha</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">ent_coeff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Get the detached entropy coefficient. &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_alpha</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_ent_coeff</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
 
 <div class="viewcode-block" id="SAC.step"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.sac.SAC.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">isempty</span><span class="p">:</span>
             <span class="c1"># Warm-up phase</span>
-            <span class="n">print_cbt_once</span><span class="p">(</span><span class="s1">&#39;Collecting samples until replay memory contains if full.&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+            <span class="n">print_cbt_once</span><span class="p">(</span><span class="s1">&#39;Collecting samples until replay memory if full.&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
             <span class="c1"># Sample steps and store them in the replay memory</span>
             <span class="n">ros</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_init</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">ros</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Sample steps and store them in the replay memory</span>
-            <span class="n">ros</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+            <span class="n">ros</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_trn</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">ros</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_samples</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">ro</span><span class="o">.</span><span class="n">length</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">ros</span><span class="p">])</span>  <span class="c1"># don&#39;t count the evaluation samples</span>
 
@@ -451,29 +479,42 @@
 <div class="viewcode-block" id="SAC.update"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.sac.SAC.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the policy&#39;s and Q-functions&#39; parameters on transitions sampled from the replay memory. &quot;&quot;&quot;</span>
         <span class="c1"># Containers for logging</span>
-        <span class="n">policy_losses</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_batch_updates</span><span class="p">)</span>
         <span class="n">expl_strat_stds</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_batch_updates</span><span class="p">)</span>
         <span class="n">q_fcn_1_losses</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_batch_updates</span><span class="p">)</span>
         <span class="n">q_fcn_2_losses</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_batch_updates</span><span class="p">)</span>
-        <span class="n">policy_grad_norm</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_batch_updates</span><span class="p">)</span>
         <span class="n">q_fcn_1_grad_norm</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_batch_updates</span><span class="p">)</span>
         <span class="n">q_fcn_2_grad_norm</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_batch_updates</span><span class="p">)</span>
+        <span class="n">policy_losses</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_batch_updates</span><span class="p">)</span>
+        <span class="n">policy_grad_norm</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_batch_updates</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_batch_updates</span><span class="p">),</span> <span class="n">total</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_batch_updates</span><span class="p">,</span>
                       <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Updating&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;batches&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-
             <span class="c1"># Sample steps and the associated next step from the replay memory</span>
             <span class="n">steps</span><span class="p">,</span> <span class="n">next_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
             <span class="n">steps</span><span class="o">.</span><span class="n">torch</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
             <span class="n">next_steps</span><span class="o">.</span><span class="n">torch</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
 
-            <span class="c1"># Standardize rewards</span>
+            <span class="c1"># Standardize and optionally scale the rewards</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardize_rew</span><span class="p">:</span>
                 <span class="n">rewards</span> <span class="o">=</span> <span class="n">standardize</span><span class="p">(</span><span class="n">steps</span><span class="o">.</span><span class="n">rewards</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">rewards</span> <span class="o">=</span> <span class="n">steps</span><span class="o">.</span><span class="n">rewards</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">rew_scale</span> <span class="o">=</span> <span class="mf">1.</span>
-            <span class="n">rewards</span> <span class="o">*=</span> <span class="n">rew_scale</span>
+            <span class="n">rewards</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rew_scale</span>
+
+            <span class="c1"># Explore and compute the current log probs (later used for policy update)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">is_recurrent</span><span class="p">:</span>
+                <span class="n">act_expl</span><span class="p">,</span> <span class="n">log_probs_expl</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="p">(</span><span class="n">steps</span><span class="o">.</span><span class="n">observations</span><span class="p">,</span> <span class="n">steps</span><span class="o">.</span><span class="n">hidden_states</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">act_expl</span><span class="p">,</span> <span class="n">log_probs_expl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="p">(</span><span class="n">steps</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span>
+            <span class="n">expl_strat_stds</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">std</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+            <span class="c1"># Update the the entropy coefficient</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">learn_ent_coeff</span><span class="p">:</span>
+                <span class="c1"># Compute entropy coefficient loss</span>
+                <span class="n">ent_coeff_loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_ent_coeff</span><span class="o">*</span><span class="p">(</span><span class="n">log_probs_expl</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_entropy</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ent_coeff_optim</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+                <span class="n">ent_coeff_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ent_coeff_optim</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
             <span class="k">with</span> <span class="n">to</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
                 <span class="c1"># Create masks for the non-final observations</span>
@@ -487,55 +528,41 @@
                     <span class="n">next_act_expl</span><span class="p">,</span> <span class="n">next_log_probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="p">(</span><span class="n">next_steps</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span>
                 <span class="n">next_q_val_target_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_targ_1</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">next_steps</span><span class="o">.</span><span class="n">observations</span><span class="p">,</span> <span class="n">next_act_expl</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
                 <span class="n">next_q_val_target_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_targ_2</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">next_steps</span><span class="o">.</span><span class="n">observations</span><span class="p">,</span> <span class="n">next_act_expl</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-                <span class="n">next_q_val_target_min</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">next_q_val_target_1</span><span class="p">,</span> <span class="n">next_q_val_target_2</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">*</span><span class="n">next_log_probs</span>
-                <span class="n">next_q_val</span> <span class="o">=</span> <span class="n">rewards</span> <span class="o">+</span> <span class="n">not_done</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="o">*</span><span class="n">next_q_val_target_min</span>
+                <span class="n">next_q_val_target_min</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">next_q_val_target_1</span><span class="p">,</span> <span class="n">next_q_val_target_2</span><span class="p">)</span>
+                <span class="n">next_q_val_target_min</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ent_coeff</span><span class="o">*</span><span class="n">next_log_probs</span>  <span class="c1"># add entropy term</span>
+                <span class="c1"># TD error (including entropy term)</span>
+                <span class="n">next_q_val</span> <span class="o">=</span> <span class="n">rewards</span> <span class="o">+</span> <span class="n">not_done</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="o">*</span><span class="n">next_q_val_target_min</span>  <span class="c1"># [4] does not use the reward here</span>
 
-            <span class="c1"># Compute the two Q-function losses</span>
+            <span class="c1"># Compute the (current)state-(current)action values Q(s,a) from the two Q-networks</span>
             <span class="c1"># E_{(s_t, a_t) ~ D} [1/2 * (Q_i(s_t, a_t) - r_t - gamma * E_{s_{t+1} ~ p} [V(s_{t+1})] )^2]</span>
             <span class="n">q_val_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_fcn_1</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">steps</span><span class="o">.</span><span class="n">observations</span><span class="p">,</span> <span class="n">steps</span><span class="o">.</span><span class="n">actions</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
             <span class="n">q_val_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_fcn_2</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">steps</span><span class="o">.</span><span class="n">observations</span><span class="p">,</span> <span class="n">steps</span><span class="o">.</span><span class="n">actions</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
             <span class="n">q_1_loss</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">q_val_1</span><span class="p">,</span> <span class="n">next_q_val</span><span class="p">)</span>
             <span class="n">q_2_loss</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">q_val_2</span><span class="p">,</span> <span class="n">next_q_val</span><span class="p">)</span>
+            <span class="n">q_loss</span> <span class="o">=</span> <span class="p">(</span><span class="n">q_1_loss</span> <span class="o">+</span> <span class="n">q_2_loss</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span>  <span class="c1"># averaging the Q-functions is taken from [3]</span>
             <span class="n">q_fcn_1_losses</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">q_1_loss</span><span class="o">.</span><span class="n">data</span>
             <span class="n">q_fcn_2_losses</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">q_2_loss</span><span class="o">.</span><span class="n">data</span>
 
+            <span class="c1"># Update the Q-fcns</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_optim_q_fcns</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="n">q_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">q_fcn_1_grad_norm</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_grad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_fcn_1</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">q_fcn_2_grad_norm</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_grad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_fcn_2</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_optim_q_fcns</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
             <span class="c1"># Compute the policy loss</span>
             <span class="c1"># E_{s_t ~ D, eps_t ~ N} [log( pi( f(eps_t; s_t) ) ) - Q(s_t, f(eps_t; s_t))]</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">is_recurrent</span><span class="p">:</span>
-                <span class="n">act_expl</span><span class="p">,</span> <span class="n">log_probs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="p">(</span><span class="n">steps</span><span class="o">.</span><span class="n">observations</span><span class="p">,</span> <span class="n">steps</span><span class="o">.</span><span class="n">hidden_states</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">act_expl</span><span class="p">,</span> <span class="n">log_probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="p">(</span><span class="n">steps</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span>
-            <span class="n">q1_pi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_fcn_1</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">steps</span><span class="o">.</span><span class="n">observations</span><span class="p">,</span> <span class="n">act_expl</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-            <span class="n">q2_pi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_fcn_2</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">steps</span><span class="o">.</span><span class="n">observations</span><span class="p">,</span> <span class="n">act_expl</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-            <span class="n">min_q_pi</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">q1_pi</span><span class="p">,</span> <span class="n">q2_pi</span><span class="p">)</span>
-            <span class="n">policy_loss</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">*</span><span class="n">log_probs</span> <span class="o">-</span> <span class="n">min_q_pi</span><span class="p">)</span>
+            <span class="n">q_1_val_expl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_fcn_1</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">steps</span><span class="o">.</span><span class="n">observations</span><span class="p">,</span> <span class="n">act_expl</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">q_2_val_expl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_fcn_2</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">steps</span><span class="o">.</span><span class="n">observations</span><span class="p">,</span> <span class="n">act_expl</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">min_q_val_expl</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">q_1_val_expl</span><span class="p">,</span> <span class="n">q_2_val_expl</span><span class="p">)</span>
+            <span class="n">policy_loss</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ent_coeff</span><span class="o">*</span><span class="n">log_probs_expl</span> <span class="o">-</span> <span class="n">min_q_val_expl</span><span class="p">)</span>  <span class="c1"># self.ent_coeff is detached</span>
             <span class="n">policy_losses</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">policy_loss</span><span class="o">.</span><span class="n">data</span>
-            <span class="n">expl_strat_stds</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">std</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
-            <span class="c1"># Do one optimization step for each optimizer, and clip the gradients if desired</span>
-            <span class="c1"># Q-fcn 1</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_optim_q_fcn_1</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-            <span class="n">q_1_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-            <span class="n">q_fcn_1_grad_norm</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_grad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_fcn_1</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_optim_q_fcn_1</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-            <span class="c1"># Q-fcn 2</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_optim_q_fcn_2</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-            <span class="n">q_2_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-            <span class="n">q_fcn_2_grad_norm</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_grad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_fcn_2</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_optim_q_fcn_2</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-            <span class="c1"># Policy</span>
+            <span class="c1"># Update the policy</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_optim_policy</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
             <span class="n">policy_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
             <span class="n">policy_grad_norm</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_grad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_grad_norm</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_optim_policy</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">learn_alpha</span><span class="p">:</span>
-                <span class="c1"># Compute entropy coefficient loss</span>
-                <span class="n">alpha_loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_alpha</span><span class="o">*</span><span class="p">(</span><span class="n">log_probs</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_entropy</span><span class="p">))</span>
-                <span class="c1"># Do one optimizer step for the entropy coefficient optimizer</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_alpha_optim</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-                <span class="n">alpha_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_alpha_optim</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
             <span class="c1"># Soft-update the target networks</span>
             <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_curr_iter</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">num_batch_updates</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">target_update_intvl</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -545,8 +572,7 @@
         <span class="c1"># Update the learning rate if the schedulers have been specified</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_policy</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_q_fcn_1</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_q_fcn_2</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_q_fcns</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
         <span class="c1"># Logging</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Q1 loss&#39;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">q_fcn_1_losses</span><span class="p">))</span>
@@ -554,7 +580,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;policy loss&#39;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">policy_losses</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;avg policy grad norm&#39;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">policy_grad_norm</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;avg expl strat std&#39;</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">expl_strat_stds</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;ent_coeff&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ent_coeff</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;learning rate&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_policy</span><span class="o">.</span><span class="n">get_lr</span><span class="p">(),</span> <span class="mi">6</span><span class="p">)</span></div>
 
@@ -563,7 +589,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
         <span class="c1"># Re-initialize samplers in case env or policy changed</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">reinit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampler_trn</span><span class="o">.</span><span class="n">reinit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler_eval</span><span class="o">.</span><span class="n">reinit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">)</span>
 
         <span class="c1"># Reset the replay memory</span>
@@ -572,10 +598,8 @@
         <span class="c1"># Reset the learning rate schedulers</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_policy</span><span class="o">.</span><span class="n">last_epoch</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_q_fcn_1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_q_fcn_1</span><span class="o">.</span><span class="n">last_epoch</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_q_fcn_2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_q_fcn_2</span><span class="o">.</span><span class="n">last_epoch</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_q_fcns</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lr_scheduler_q_fcns</span><span class="o">.</span><span class="n">last_epoch</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span></div>
 
 <div class="viewcode-block" id="SAC.init_modules"><a class="viewcode-back" href="../../../../algorithms.step_based.html#pyrado.algorithms.step_based.sac.SAC.init_modules">[docs]</a>    <span class="k">def</span> <span class="nf">init_modules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">warmstart</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

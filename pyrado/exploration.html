@@ -473,7 +473,7 @@ foo.baz &lt;=&gt; foo.bar.baz</p>
 
 <dl class="py class">
 <dt id="pyrado.exploration.stochastic_action.SACExplStrat">
-<em class="property">class </em><code class="sig-name descname">SACExplStrat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">std_init</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>float<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#SACExplStrat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.SACExplStrat" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">SACExplStrat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#SACExplStrat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.SACExplStrat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat" title="pyrado.exploration.stochastic_action.StochasticActionExplStrat"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.exploration.stochastic_action.StochasticActionExplStrat</span></code></a></p>
 <p>State-dependent exploration strategy which adds normal noise squashed into by a tanh to the continuous actions.</p>
 <div class="admonition note">
@@ -483,18 +483,18 @@ Due to the tanh transformation, it returns action values within [-1,1].</p>
 </div>
 <dl class="py method">
 <dt id="pyrado.exploration.stochastic_action.SACExplStrat.action_dist_at">
-<code class="sig-name descname">action_dist_at</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy_output_1</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">policy_output_2</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.distributions.distribution.Distribution<a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#SACExplStrat.action_dist_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.SACExplStrat.action_dist_at" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">action_dist_at</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy_out_1</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">policy_out_2</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.distributions.distribution.Distribution<a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#SACExplStrat.action_dist_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.SACExplStrat.action_dist_at" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the action distribution for the given output from the wrapped policy.
 This method is made for two-headed policies, e.g. used with SAC.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>policy_output_1</strong> – first head’s output from the wrapped policy, noise-free action values</p></li>
-<li><p><strong>policy_output_2</strong> – first head’s output from the wrapped policy, state-dependent log std values</p></li>
+<li><p><strong>policy_out_1</strong> – first head’s output from the wrapped policy, noise-free action values</p></li>
+<li><p><strong>policy_out_2</strong> – second head’s output from the wrapped policy, state-dependent log std values</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>action distribution</p>
+<dd class="field-even"><p>action distribution at the mean given by <cite>policy_out_1</cite></p>
 </dd>
 </dl>
 </dd></dl>

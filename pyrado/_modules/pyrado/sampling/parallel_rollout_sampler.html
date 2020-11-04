@@ -278,6 +278,7 @@
                  <span class="o">*</span><span class="p">,</span>
                  <span class="n">min_rollouts</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">min_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">show_progress_bar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                  <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
@@ -287,6 +288,7 @@
 <span class="sd">        :param num_workers: number of parallel samplers</span>
 <span class="sd">        :param min_rollouts: minimum number of complete rollouts to sample</span>
 <span class="sd">        :param min_steps: minimum total number of steps to sample</span>
+<span class="sd">        :param show_progress_bar: it `True`, display a progress bar using `tqdm`</span>
 <span class="sd">        :param seed: seed value for the random number generators, pass `None` for no seeding</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
@@ -294,6 +296,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">policy</span> <span class="o">=</span> <span class="n">policy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">show_progress_bar</span> <span class="o">=</span> <span class="n">show_progress_bar</span>
 
         <span class="c1"># Set method to spawn if using cuda</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="s1">&#39;cuda&#39;</span><span class="p">:</span>
@@ -348,7 +351,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">invoke_all</span><span class="p">(</span><span class="n">_ps_update_policy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">state_dict</span><span class="p">())</span>
 
         <span class="c1"># Collect samples</span>
-        <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Sampling&#39;</span><span class="p">,</span>
+        <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">leave</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Sampling&#39;</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_progress_bar</span><span class="p">),</span>
                   <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;steps&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">&#39;rollouts&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pb</span><span class="p">:</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_steps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

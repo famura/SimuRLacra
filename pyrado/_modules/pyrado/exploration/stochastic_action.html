@@ -397,12 +397,11 @@
 <span class="sd">        Due to the tanh transformation, it returns action values within [-1,1].</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">std_init</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param policy: wrapped policy</span>
-<span class="sd">        :param std_init: initial standard deviation for the exploration noise</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">TwoHeadedPolicy</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">policy</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">TwoHeadedPolicy</span><span class="p">)</span>
@@ -413,32 +412,34 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span> <span class="o">=</span> <span class="n">DiagNormalNoise</span><span class="p">(</span>
             <span class="n">use_cuda</span><span class="o">=</span><span class="n">policy</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="s1">&#39;cuda&#39;</span><span class="p">,</span>
             <span class="n">noise_dim</span><span class="o">=</span><span class="n">policy</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">,</span>
-            <span class="n">std_init</span><span class="o">=</span><span class="n">std_init</span><span class="p">,</span>
+            <span class="n">std_init</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>  <span class="c1"># std_init will be overwritten by 2nd policy head</span>
             <span class="n">std_min</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span>  <span class="c1"># ignore since we are explicitly clipping in log space later</span>
             <span class="n">train_mean</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">learnable</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_log_std_min</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="o">-</span><span class="mf">10.</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_log_std_max</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_std_min</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="o">-</span><span class="mf">20.</span><span class="p">)</span>  <span class="c1"># approx 2.061e-10</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_std_max</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">2.</span><span class="p">)</span>  <span class="c1"># approx 7.389</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">noise</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DiagNormalNoise</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Get the exploration noise. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span>
 
-<div class="viewcode-block" id="SACExplStrat.action_dist_at"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_action.SACExplStrat.action_dist_at">[docs]</a>    <span class="k">def</span> <span class="nf">action_dist_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">policy_output_1</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">policy_output_2</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Distribution</span><span class="p">:</span>
+<div class="viewcode-block" id="SACExplStrat.action_dist_at"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_action.SACExplStrat.action_dist_at">[docs]</a>    <span class="k">def</span> <span class="nf">action_dist_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">policy_out_1</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">policy_out_2</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Distribution</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the action distribution for the given output from the wrapped policy.</span>
 <span class="sd">        This method is made for two-headed policies, e.g. used with SAC.</span>
 
-<span class="sd">        :param policy_output_1: first head&#39;s output from the wrapped policy, noise-free action values</span>
-<span class="sd">        :param policy_output_2: first head&#39;s output from the wrapped policy, state-dependent log std values</span>
-<span class="sd">        :return: action distribution</span>
+<span class="sd">        :param policy_out_1: first head&#39;s output from the wrapped policy, noise-free action values</span>
+<span class="sd">        :param policy_out_2: second head&#39;s output from the wrapped policy, state-dependent log std values</span>
+<span class="sd">        :return: action distribution at the mean given by `policy_out_1`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Manually adapt the Gaussian&#39;s covariance</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">std</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">policy_output_2</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="p">(</span><span class="n">policy_output_1</span><span class="p">)</span></div>
+        <span class="c1"># Manually adapt the Gaussian&#39;s variance to the clipped value</span>
+        <span class="n">log_std</span> <span class="o">=</span> <span class="n">clamp</span><span class="p">(</span><span class="n">policy_out_2</span><span class="p">,</span> <span class="n">lo</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_std_min</span><span class="p">,</span> <span class="n">up</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_std_max</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">std</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_std</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="p">(</span><span class="n">policy_out_1</span><span class="p">)</span></div>
 
     <span class="c1"># Make NormalActNoiseExplStrat appear as if it would have the following functions / properties</span>
     <span class="n">reset_expl_params</span> <span class="o">=</span> <span class="n">Delegate</span><span class="p">(</span><span class="s1">&#39;_noise&#39;</span><span class="p">)</span>
@@ -453,32 +454,30 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">act</span><span class="p">,</span> <span class="n">log_std</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="o">*</span><span class="n">extra</span><span class="p">)</span>
 
-        <span class="c1"># Clamp the log_std coming from the policy</span>
-        <span class="n">log_std</span> <span class="o">=</span> <span class="n">clamp</span><span class="p">(</span><span class="n">log_std</span><span class="p">,</span> <span class="n">lo</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_std_min</span><span class="p">,</span> <span class="n">up</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_std_max</span><span class="p">)</span>
-
         <span class="c1"># Compute exploration (use rsample to apply the reparametrization trick)</span>
-        <span class="n">noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_dist_at</span><span class="p">(</span><span class="n">act</span><span class="p">,</span> <span class="n">log_std</span><span class="p">)</span>
-        <span class="n">u</span> <span class="o">=</span> <span class="n">noise</span><span class="o">.</span><span class="n">rsample</span><span class="p">()</span>
-        <span class="n">act_expl</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
-        <span class="n">log_prob</span> <span class="o">=</span> <span class="n">noise</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">act_noise_distr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_dist_at</span><span class="p">(</span><span class="n">act</span><span class="p">,</span> <span class="n">log_std</span><span class="p">)</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">act_noise_distr</span><span class="o">.</span><span class="n">rsample</span><span class="p">()</span>
+        <span class="n">act_expl</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>  <span class="c1"># is in [-1, 1], this is why we always use an ActNormWrapper for SAC</span>
+        <span class="n">log_prob</span> <span class="o">=</span> <span class="n">act_noise_distr</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
         <span class="n">log_prob</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enforce_act_expl_bounds</span><span class="p">(</span><span class="n">log_prob</span><span class="p">,</span> <span class="n">act_expl</span><span class="p">)</span>
 
+        <span class="c1"># Return the action and the log of the exploration std, given the current observation</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">is_recurrent</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">act_expl</span><span class="p">,</span> <span class="n">log_std</span><span class="p">,</span> <span class="n">hidden</span>
+            <span class="k">return</span> <span class="n">act_expl</span><span class="p">,</span> <span class="n">log_prob</span><span class="p">,</span> <span class="n">hidden</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">act_expl</span><span class="p">,</span> <span class="n">log_prob</span></div>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_enforce_act_expl_bounds</span><span class="p">(</span><span class="n">log_probs</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">act_expl</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Transform the `log_probs` accounting for the squashed tanh exploration</span>
+<span class="sd">        Transform the `log_probs` accounting for the squashed tanh exploration.</span>
 
 <span class="sd">        .. seealso::</span>
 <span class="sd">            Eq. (21) in [2]</span>
 
 <span class="sd">        :param log_probs: $\log( \mu(u|s) )$</span>
 <span class="sd">        :param act_expl: action values with explorative noise</span>
-<span class="sd">        :param eps: additive term for numerical stability of the log</span>
+<span class="sd">        :param eps: additive term for numerical stability of the logarithm function</span>
 <span class="sd">        :return: $\log( \pi(a|s) )$</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Batch dim along the first dim</span>
