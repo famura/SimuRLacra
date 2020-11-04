@@ -711,9 +711,23 @@
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.adversarial.AdversarialWrapper.decide_apply">decide_apply() (AdversarialWrapper method)</a>
 </li>
-      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_blpos_bt">default_blpos_bt() (DefaultEnvs static method)</a>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bf_ik_bt">default_bf_ik_bt() (DefaultEnvs static method)</a>
+</li>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bf_vel_bt">default_bf_vel_bt() (DefaultEnvs static method)</a>
+</li>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bit_ik_bt">default_bit_ik_bt() (DefaultEnvs static method)</a>
+</li>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bit_vel_bt">default_bit_vel_bt() (DefaultEnvs static method)</a>
+</li>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bl_pos_bt">default_bl_pos_bt() (DefaultEnvs static method)</a>
+</li>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bl_pos_vx">default_bl_pos_vx() (DefaultEnvs static method)</a>
+</li>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bl_vel_bt">default_bl_vel_bt() (DefaultEnvs static method)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bob">default_bob() (DefaultEnvs static method)</a>
+</li>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bobd">default_bobd() (DefaultEnvs static method)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bop2d_bt">default_bop2d_bt() (DefaultEnvs static method)</a>
 </li>
@@ -723,9 +737,9 @@
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bop5d_vx">default_bop5d_vx() (DefaultEnvs static method)</a>
 </li>
-      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bspos_bt">default_bspos_bt() (DefaultEnvs static method)</a>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bs_pos_bt">default_bs_pos_bt() (DefaultEnvs static method)</a>
 </li>
-      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bspos_vx">default_bspos_vx() (DefaultEnvs static method)</a>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bs_pos_vx">default_bs_pos_vx() (DefaultEnvs static method)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_cata">default_cata() (DefaultEnvs static method)</a>
 </li>
@@ -767,7 +781,15 @@
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_qcpst">default_qcpst() (DefaultEnvs static method)</a>
 </li>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_qcpst_real">default_qcpst_real() (DefaultEnvs static method)</a>
+</li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_qcpsu">default_qcpsu() (DefaultEnvs static method)</a>
+</li>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_qcpsu_real">default_qcpsu_real() (DefaultEnvs static method)</a>
+</li>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_qq_real">default_qq_real() (DefaultEnvs static method)</a>
+</li>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_qqbb_real">default_qqbb_real() (DefaultEnvs static method)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_qqst">default_qqst() (DefaultEnvs static method)</a>
 </li>
@@ -781,6 +803,8 @@
 </li>
       <li><a href="policies.html#pyrado.policies.rnn.default_unpack_hidden">default_unpack_hidden() (in module pyrado.policies.rnn)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_wambic">default_wambic() (DefaultEnvs static method)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs">DefaultEnvs (class in tests.conftest)</a>
@@ -791,8 +815,6 @@
 </li>
       <li><a href="utils.html#pyrado.utils.properties.Delegate">Delegate (class in pyrado.utils.properties)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="policies.html#pyrado.policies.features.RBFFeat.derivative">derivative() (RBFFeat method)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.desired_space.DesSpaceTask">DesSpaceTask (class in pyrado.tasks.desired_space)</a>
@@ -1073,9 +1095,11 @@
 </li>
       <li><a href="tasks.html#pyrado.tasks.final_reward.FinalRewTask">FinalRewTask (class in pyrado.tasks.final_reward)</a>
 </li>
-      <li><a href="spaces.html#pyrado.spaces.discrete.DiscreteSpace.flat_dim">flat_dim() (DiscreteSpace property)</a>
+      <li><a href="spaces.html#pyrado.spaces.compound.CompoundSpace.flat_dim">flat_dim() (CompoundSpace property)</a>
 
       <ul>
+        <li><a href="spaces.html#pyrado.spaces.discrete.DiscreteSpace.flat_dim">(DiscreteSpace property)</a>
+</li>
         <li><a href="spaces.html#pyrado.spaces.base.Space.flat_dim">(Space property)</a>
 </li>
       </ul></li>
@@ -5047,7 +5071,7 @@
 </li>
       <li><a href="tests.html#tests.test_environments.test_qbb_kin">test_qbb_kin() (in module tests.test_environments)</a>
 </li>
-      <li><a href="tests.html#tests.test_environments.test_quanser_real_contructors">test_quanser_real_contructors() (in module tests.test_environments)</a>
+      <li><a href="tests.html#tests.test_environments.test_quanser_real_wo_connecting">test_quanser_real_wo_connecting() (in module tests.test_environments)</a>
 </li>
       <li><a href="tests.html#tests.test_domain_randomization.test_randomizer">test_randomizer() (in module tests.test_domain_randomization)</a>
 </li>

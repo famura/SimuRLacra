@@ -230,7 +230,9 @@
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="n">DomainRandWrapperBuffer</span><span class="p">,</span> <span class="n">DomainRandWrapperLive</span><span class="p">,</span> \
     <span class="n">MetaDomainRandWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.state_augmentation</span> <span class="kn">import</span> <span class="n">StateAugmentationWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
 <span class="kn">from</span> <span class="nn">pyrado.logger</span> <span class="kn">import</span> <span class="n">set_log_prefix_dir</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.features</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span><span class="p">,</span> <span class="n">FNN</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.rnn</span> <span class="kn">import</span> <span class="n">RNNPolicy</span>
@@ -240,8 +242,10 @@
 <span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">ValueFunctionSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
 
-
 <span class="c1"># Fixture providing an experiment directory</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.experiments</span> <span class="kn">import</span> <span class="n">load_experiment</span>
+
+
 <div class="viewcode-block" id="ex_dir"><a class="viewcode-back" href="../../tests.html#tests.test_algorithms.ex_dir">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
 <span class="k">def</span> <span class="nf">ex_dir</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">):</span>
     <span class="n">set_log_prefix_dir</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">)</span>
@@ -316,7 +320,13 @@
     <span class="c1"># Check</span>
     <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">algo</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span> <span class="o">==</span> <span class="n">policy_loaded</span><span class="o">.</span><span class="n">param_values</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">ActorCritic</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">algo</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">value_fcn</span><span class="o">.</span><span class="n">param_values</span> <span class="o">==</span> <span class="n">critic_loaded</span><span class="o">.</span><span class="n">value_fcn</span><span class="o">.</span><span class="n">param_values</span><span class="p">)</span></div>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">algo</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">value_fcn</span><span class="o">.</span><span class="n">param_values</span> <span class="o">==</span> <span class="n">critic_loaded</span><span class="o">.</span><span class="n">value_fcn</span><span class="o">.</span><span class="n">param_values</span><span class="p">)</span>
+
+    <span class="c1"># Load the experiment. Since we did not save any hyper-parameters, we ignore the errors when loading.</span>
+    <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">extra</span> <span class="o">=</span> <span class="n">load_experiment</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">Env</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">Policy</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extra</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_param_expl"><a class="viewcode-back" href="../../tests.html#tests.test_algorithms.test_param_expl">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>

@@ -213,12 +213,17 @@
     <span class="n">MultivariateNormalDomainParam</span><span class="p">,</span> <span class="n">DomainParam</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.one_step.catapult</span> <span class="kn">import</span> <span class="n">CatapultSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.one_step.rosenbrock</span> <span class="kn">import</span> <span class="n">RosenSim</span>
-<span class="kn">from</span> <span class="nn">pyrado.environments.pysim.ball_on_beam</span> <span class="kn">import</span> <span class="n">BallOnBeamSim</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.pysim.ball_on_beam</span> <span class="kn">import</span> <span class="n">BallOnBeamSim</span><span class="p">,</span> <span class="n">BallOnBeamDiscSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.one_mass_oscillator</span> <span class="kn">import</span> <span class="n">OneMassOscillatorSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.pendulum</span> <span class="kn">import</span> <span class="n">PendulumSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_ball_balancer</span> <span class="kn">import</span> <span class="n">QBallBalancerSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_cartpole</span> <span class="kn">import</span> <span class="n">QCartPoleStabSim</span><span class="p">,</span> <span class="n">QCartPoleSwingUpSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_qube</span> <span class="kn">import</span> <span class="n">QQubeSwingUpSim</span><span class="p">,</span> <span class="n">QQubeStabSim</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.quanser.quanser_ball_balancer</span> <span class="kn">import</span> <span class="n">QBallBalancerReal</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.quanser.quanser_cartpole</span> <span class="kn">import</span> <span class="n">QCartPoleStabReal</span><span class="p">,</span> <span class="n">QCartPoleSwingUpReal</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.quanser.quanser_qube</span> <span class="kn">import</span> <span class="n">QQubeReal</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.ball_in_tube</span> <span class="kn">import</span> <span class="n">BallInTubeIKActivationSim</span><span class="p">,</span> <span class="n">BallInTubeVelDSSim</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.box_flipping</span> <span class="kn">import</span> <span class="n">BoxFlippingVelDSSim</span><span class="p">,</span> <span class="n">BoxFlippingIKActivationSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.adn</span> <span class="kn">import</span> <span class="n">ADNPolicy</span><span class="p">,</span> <span class="n">pd_cubic</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.dummy</span> <span class="kn">import</span> <span class="n">DummyPolicy</span><span class="p">,</span> <span class="n">IdlePolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.features</span> <span class="kn">import</span> <span class="o">*</span>
@@ -241,7 +246,7 @@
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">rcsenv</span>
     <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.ball_on_plate</span> <span class="kn">import</span> <span class="n">BallOnPlate2DSim</span><span class="p">,</span> <span class="n">BallOnPlate5DSim</span>
-    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.box_lifting</span> <span class="kn">import</span> <span class="n">BoxLiftingPosDSSim</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.box_lifting</span> <span class="kn">import</span> <span class="n">BoxLiftingPosDSSim</span><span class="p">,</span> <span class="n">BoxLiftingVelDSSim</span>
     <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.box_shelving</span> <span class="kn">import</span> <span class="n">BoxShelvingVelDSSim</span><span class="p">,</span> <span class="n">BoxShelvingPosDSSim</span>
     <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.mp_blending</span> <span class="kn">import</span> <span class="n">MPBlendingSim</span>
     <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.planar_3_link</span> <span class="kn">import</span> <span class="n">Planar3LinkIKActivationSim</span><span class="p">,</span> <span class="n">Planar3LinkTASim</span>
@@ -315,6 +320,10 @@
 <div class="viewcode-block" id="DefaultEnvs.default_bob"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bob">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">default_bob</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BallOnBeamSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DefaultEnvs.default_bobd"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bobd">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">default_bobd</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">BallOnBeamDiscSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_omo"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_omo">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">default_omo</span><span class="p">():</span>
@@ -450,12 +459,12 @@
             <span class="n">observeDynamicalSystemDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="DefaultEnvs.default_pi_ik_6l_vx"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_pi_ik_6l_vx">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="nd">@m_needs_vortex</span>
-    <span class="k">def</span> <span class="nf">default_pi_ik_6l_vx</span><span class="p">():</span>
+<div class="viewcode-block" id="DefaultEnvs.default_pi_ik_5l_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_pi_ik_5l_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_bullet</span>
+    <span class="k">def</span> <span class="nf">default_pi_ik_5l_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">PlanarInsertIKActivationSim</span><span class="p">(</span>
-            <span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Vortex&#39;</span><span class="p">,</span>
-            <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gPlanarInsert6Link.xml&#39;</span><span class="p">,</span>
+            <span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Bullet&#39;</span><span class="p">,</span>
+            <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gPlanarInsert5Link.xml&#39;</span><span class="p">,</span>
             <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">50.</span><span class="p">,</span>
             <span class="n">max_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
             <span class="n">max_dist_force</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -471,12 +480,12 @@
             <span class="n">observeTaskSpaceDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="DefaultEnvs.default_pi_ik_5l_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_pi_ik_5l_bt">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="nd">@m_needs_bullet</span>
-    <span class="k">def</span> <span class="nf">default_pi_ik_5l_bt</span><span class="p">():</span>
+<div class="viewcode-block" id="DefaultEnvs.default_pi_ik_6l_vx"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_pi_ik_6l_vx">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_vortex</span>
+    <span class="k">def</span> <span class="nf">default_pi_ik_6l_vx</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">PlanarInsertIKActivationSim</span><span class="p">(</span>
-            <span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Bullet&#39;</span><span class="p">,</span>
-            <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gPlanarInsert5Link.xml&#39;</span><span class="p">,</span>
+            <span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Vortex&#39;</span><span class="p">,</span>
+            <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gPlanarInsert6Link.xml&#39;</span><span class="p">,</span>
             <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">50.</span><span class="p">,</span>
             <span class="n">max_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
             <span class="n">max_dist_force</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -534,14 +543,64 @@
             <span class="n">observeTaskSpaceDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="DefaultEnvs.default_blpos_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_blpos_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="DefaultEnvs.default_bit_ik_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bit_ik_bt">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_bullet</span>
-    <span class="k">def</span> <span class="nf">default_blpos_bt</span><span class="p">():</span>
+    <span class="k">def</span> <span class="nf">default_bit_ik_bt</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">BallInTubeIKActivationSim</span><span class="p">(</span>
+            <span class="n">usePhysicsNode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Bullet&#39;</span><span class="p">,</span>
+            <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gBallInTube_trqCtrl.xml&#39;</span><span class="p">,</span>
+            <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">100.</span><span class="p">,</span>
+            <span class="n">max_steps</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
+            <span class="n">fixed_init_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">ref_frame</span><span class="o">=</span><span class="s1">&#39;table&#39;</span><span class="p">,</span>
+            <span class="n">taskCombinationMethod</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span>
+            <span class="n">checkJointLimits</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">collisionAvoidanceIK</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeVelocities</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeCollisionCost</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observePredictedCollisionCost</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeManipulabilityIndex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeCurrentManipulability</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeDynamicalSystemDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeTaskSpaceDiscrepancy</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="DefaultEnvs.default_bit_vel_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bit_vel_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_bullet</span>
+    <span class="k">def</span> <span class="nf">default_bit_vel_bt</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">BallInTubeVelDSSim</span><span class="p">(</span>
+            <span class="n">usePhysicsNode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Bullet&#39;</span><span class="p">,</span>
+            <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gBallInTube_trqCtrl.xml&#39;</span><span class="p">,</span>
+            <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">100.</span><span class="p">,</span>
+            <span class="n">max_steps</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
+            <span class="n">fixed_init_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">mps_left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># use defaults</span>
+            <span class="n">mps_right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># use defaults</span>
+            <span class="n">ref_frame</span><span class="o">=</span><span class="s1">&#39;table&#39;</span><span class="p">,</span>
+            <span class="n">taskCombinationMethod</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span>
+            <span class="n">checkJointLimits</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">collisionAvoidanceIK</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeVelocity</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeCollisionCost</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observePredictedCollisionCost</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeManipulabilityIndex</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">observeCurrentManipulability</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeDynamicalSystemDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeTaskSpaceDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeForceTorque</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeDynamicalSystemGoalDistance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="DefaultEnvs.default_bl_pos_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bl_pos_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_bullet</span>
+    <span class="k">def</span> <span class="nf">default_bl_pos_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BoxLiftingPosDSSim</span><span class="p">(</span>
             <span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Bullet&#39;</span><span class="p">,</span>
             <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gBoxLifting_posCtrl.xml&#39;</span><span class="p">,</span>
             <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-            <span class="n">max_steps</span><span class="o">=</span><span class="mi">15000</span><span class="p">,</span>
+            <span class="n">max_steps</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span>
             <span class="n">mps_left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">mps_right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">ref_frame</span><span class="o">=</span><span class="s1">&#39;basket&#39;</span><span class="p">,</span>
@@ -558,9 +617,57 @@
             <span class="n">observeTaskSpaceDiscrepancy</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="DefaultEnvs.default_bspos_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bspos_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="DefaultEnvs.default_bl_vel_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bl_vel_bt">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_bullet</span>
-    <span class="k">def</span> <span class="nf">default_bspos_bt</span><span class="p">():</span>
+    <span class="k">def</span> <span class="nf">default_bl_vel_bt</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">BoxLiftingVelDSSim</span><span class="p">(</span>
+            <span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Bullet&#39;</span><span class="p">,</span>
+            <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gBoxLifting_trqCtrl.xml&#39;</span><span class="p">,</span>
+            <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+            <span class="n">max_steps</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span>
+            <span class="n">mps_left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">mps_right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">ref_frame</span><span class="o">=</span><span class="s1">&#39;basket&#39;</span><span class="p">,</span>
+            <span class="n">collisionConfig</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="s1">&#39;collisionModel.xml&#39;</span><span class="p">},</span>
+            <span class="n">taskCombinationMethod</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span>
+            <span class="n">checkJointLimits</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">collisionAvoidanceIK</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeVelocities</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeCollisionCost</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observePredictedCollisionCost</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeManipulabilityIndex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeCurrentManipulability</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeDynamicalSystemDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeTaskSpaceDiscrepancy</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="DefaultEnvs.default_bl_pos_vx"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bl_pos_vx">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_vortex</span>
+    <span class="k">def</span> <span class="nf">default_bl_pos_vx</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">BoxLiftingPosDSSim</span><span class="p">(</span>
+            <span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Vortex&#39;</span><span class="p">,</span>
+            <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gBoxLifting_posCtrl.xml&#39;</span><span class="p">,</span>
+            <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+            <span class="n">max_steps</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span>
+            <span class="n">mps_left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">mps_right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">ref_frame</span><span class="o">=</span><span class="s1">&#39;basket&#39;</span><span class="p">,</span>
+            <span class="n">collisionConfig</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="s1">&#39;collisionModel.xml&#39;</span><span class="p">},</span>
+            <span class="n">taskCombinationMethod</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span>
+            <span class="n">checkJointLimits</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">collisionAvoidanceIK</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeVelocities</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeCollisionCost</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observePredictedCollisionCost</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeManipulabilityIndex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeCurrentManipulability</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeDynamicalSystemDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeTaskSpaceDiscrepancy</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="DefaultEnvs.default_bs_pos_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bs_pos_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_bullet</span>
+    <span class="k">def</span> <span class="nf">default_bs_pos_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BoxShelvingPosDSSim</span><span class="p">(</span>
             <span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Bullet&#39;</span><span class="p">,</span>
             <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gBoxShelving_posCtrl.xml&#39;</span><span class="p">,</span>  <span class="c1"># gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml</span>
@@ -584,9 +691,9 @@
             <span class="n">observeDynamicalSystemGoalDistance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="DefaultEnvs.default_bspos_vx"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bspos_vx">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="DefaultEnvs.default_bs_pos_vx"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bs_pos_vx">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_vortex</span>
-    <span class="k">def</span> <span class="nf">default_bspos_vx</span><span class="p">():</span>
+    <span class="k">def</span> <span class="nf">default_bs_pos_vx</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BoxShelvingPosDSSim</span><span class="p">(</span>
             <span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Vortex&#39;</span><span class="p">,</span>
             <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gBoxShelving_posCtrl.xml&#39;</span><span class="p">,</span>  <span class="c1"># gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml</span>
@@ -594,6 +701,58 @@
             <span class="n">max_steps</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
             <span class="n">fix_init_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">ref_frame</span><span class="o">=</span><span class="s1">&#39;upperGoal&#39;</span><span class="p">,</span>
+            <span class="n">mps_left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">mps_right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">collisionConfig</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="s1">&#39;collisionModel.xml&#39;</span><span class="p">},</span>
+            <span class="n">taskCombinationMethod</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span>
+            <span class="n">checkJointLimits</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">collisionAvoidanceIK</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeVelocities</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeForceTorque</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeCollisionCost</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observePredictedCollisionCost</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeManipulabilityIndex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeDynamicalSystemDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeTaskSpaceDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeDynamicalSystemGoalDistance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="DefaultEnvs.default_bf_vel_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bf_vel_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_vortex</span>
+    <span class="k">def</span> <span class="nf">default_bf_vel_bt</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">BoxFlippingVelDSSim</span><span class="p">(</span>
+            <span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Bullet&#39;</span><span class="p">,</span>
+            <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gBoxFlipping_posCtrl.xml&#39;</span><span class="p">,</span>  <span class="c1"># gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml</span>
+            <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">100.</span><span class="p">,</span>
+            <span class="n">max_steps</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
+            <span class="n">fix_init_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">ref_frame</span><span class="o">=</span><span class="s1">&#39;table&#39;</span><span class="p">,</span>
+            <span class="n">mps_left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">mps_right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">collisionConfig</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="s1">&#39;collisionModel.xml&#39;</span><span class="p">},</span>
+            <span class="n">taskCombinationMethod</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span>
+            <span class="n">checkJointLimits</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">collisionAvoidanceIK</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeVelocities</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeForceTorque</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeCollisionCost</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observePredictedCollisionCost</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeManipulabilityIndex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeDynamicalSystemDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeTaskSpaceDiscrepancy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeDynamicalSystemGoalDistance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="DefaultEnvs.default_bf_ik_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bf_ik_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_vortex</span>
+    <span class="k">def</span> <span class="nf">default_bf_ik_bt</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">BoxFlippingIKActivationSim</span><span class="p">(</span>
+            <span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Bullet&#39;</span><span class="p">,</span>
+            <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gBoxFlipping_posCtrl.xml&#39;</span><span class="p">,</span>  <span class="c1"># gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml</span>
+            <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">100.</span><span class="p">,</span>
+            <span class="n">max_steps</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
+            <span class="n">fix_init_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">ref_frame</span><span class="o">=</span><span class="s1">&#39;table&#39;</span><span class="p">,</span>
             <span class="n">mps_left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">mps_right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">collisionConfig</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="s1">&#39;collisionModel.xml&#39;</span><span class="p">},</span>
@@ -628,7 +787,27 @@
 <div class="viewcode-block" id="DefaultEnvs.default_wambic"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_wambic">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="nd">@m_needs_mujoco</span>
     <span class="k">def</span> <span class="nf">default_wambic</span><span class="p">():</span>
-        <span class="k">return</span> <span class="n">WAMBallInCupSim</span><span class="p">(</span><span class="n">num_dof</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">1750</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">WAMBallInCupSim</span><span class="p">(</span><span class="n">num_dof</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">1750</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DefaultEnvs.default_qqbb_real"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_qqbb_real">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_bullet</span>
+    <span class="k">def</span> <span class="nf">default_qqbb_real</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">QBallBalancerReal</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">500.</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DefaultEnvs.default_qcpst_real"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_qcpst_real">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_bullet</span>
+    <span class="k">def</span> <span class="nf">default_qcpst_real</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">QCartPoleStabReal</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">500.</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DefaultEnvs.default_qcpsu_real"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_qcpsu_real">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_bullet</span>
+    <span class="k">def</span> <span class="nf">default_qcpsu_real</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">QCartPoleSwingUpReal</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">500.</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DefaultEnvs.default_qq_real"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_qq_real">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_bullet</span>
+    <span class="k">def</span> <span class="nf">default_qq_real</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">QQubeReal</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">500.</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span></div></div>
 
 
 <span class="c1"># ---------------</span>

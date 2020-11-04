@@ -238,6 +238,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.policies.adn</span> <span class="kn">import</span> <span class="n">pd_linear</span><span class="p">,</span> <span class="n">pd_cubic</span><span class="p">,</span> <span class="n">pd_capacity_21_abs</span><span class="p">,</span> <span class="n">pd_capacity_21</span><span class="p">,</span> <span class="n">pd_capacity_32</span><span class="p">,</span> \
     <span class="n">pd_capacity_32_abs</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.argparser</span> <span class="kn">import</span> <span class="n">get_argparser</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.saving_loading</span> <span class="kn">import</span> <span class="n">load_prefix_suffix</span>
 
@@ -249,17 +250,21 @@
 <span class="sd">    why entities should be loaded. If no file was found, we fall back to some heuristic and hope for the best.</span>
 
 <span class="sd">    :param ex_dir: experiment&#39;s parent directory</span>
-<span class="sd">    :param args: arguments from the argument parser</span>
+<span class="sd">    :param args: arguments from the argument parser, pass `None` to fall back to the values from the default argparser</span>
 <span class="sd">    :return: environment, policy, and optional output (e.g. valuefcn)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">extra</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Fall back to default arguments. By passing [], we ignore the command line arguments</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">get_argparser</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([])</span>
 
     <span class="c1"># Hyper-parameters</span>
     <span class="n">hparams_file_name</span> <span class="o">=</span> <span class="s1">&#39;hyperparams.yaml&#39;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">hparams</span> <span class="o">=</span> <span class="n">load_dict_from_yaml</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">hparams_file_name</span><span class="p">))</span>
         <span class="n">extra</span><span class="p">[</span><span class="s1">&#39;hparams&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hparams</span>
-    <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">,</span> <span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
         <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Did not find </span><span class="si">{</span><span class="n">hparams_file_name</span><span class="si">}</span><span class="s1"> in </span><span class="si">{</span><span class="n">ex_dir</span><span class="si">}</span><span class="s1"> or could not crawl the loaded hyper-parameters.&#39;</span><span class="p">,</span>
                   <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
