@@ -265,7 +265,7 @@ class DiscrActQValFNNPolicy(Policy):
         oN a1
         oN a2
 
-        :param obs: obersvations
+        :param obs: current observations
         :return: Q-values for all state-action combinations, dim = batch_size x act_space_flat_sim
         """
         # Create batched state-action table
@@ -284,10 +284,9 @@ class DiscrActQValFNNPolicy(Policy):
         Compute the state-action values for the given observations and all possible actions.
         Since we operate on a discrete ation space, we can construct a table.
 
-        :param obs: obersvations
+        :param obs: current observations
         :return: Q-values for all state-action combinations, dimension equals flat action space dimension
         """
-
         # Get the Q-values from the owned FNN
         obs = atleast_2D(obs)
         q_vals = self.q_values(obs)

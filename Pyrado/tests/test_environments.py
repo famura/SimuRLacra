@@ -30,11 +30,9 @@ import pytest
 import numpy as np
 import torch as to
 
+from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim, QBallBalancerKin
-from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal
-from pyrado.environments.quanser.quanser_cartpole import QCartPoleStabReal, QCartPoleSwingUpReal
-from pyrado.environments.quanser.quanser_qube import QQubeReal
 from pyrado.policies.dummy import DummyPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.data_types import RenderMode
@@ -45,6 +43,7 @@ from tests.conftest import m_needs_bullet, m_needs_mujoco, m_needs_vortex
     'env', [
         'default_cata',
         'default_rosen',
+        'default_bobd',
         'default_bob',
         'default_omo',
         'default_pend',
@@ -53,21 +52,31 @@ from tests.conftest import m_needs_bullet, m_needs_mujoco, m_needs_vortex
         'default_qqsu',
         'default_qcpst',
         'default_qcpsu',
+        pytest.param('default_qqsurcs_bt', marks=m_needs_bullet),
         pytest.param('default_p3l_ik_bt', marks=m_needs_bullet),
         pytest.param('default_p3l_ta_bt', marks=m_needs_bullet),
         pytest.param('default_p3l_ta_vx', marks=m_needs_vortex),
+        pytest.param('default_pi_ik_5l_bt', marks=m_needs_bullet),
+        pytest.param('default_pi_ta_6l_bt', marks=m_needs_bullet),
+        pytest.param('default_pi_ik_6l_vx', marks=m_needs_vortex),
         pytest.param('default_bop2d_bt', marks=m_needs_bullet),
         pytest.param('default_bop2d_vx', marks=m_needs_vortex),
         pytest.param('default_bop5d_bt', marks=m_needs_bullet),
         pytest.param('default_bop5d_vx', marks=m_needs_vortex),
-        pytest.param('default_bspos_bt', marks=m_needs_bullet),
-        pytest.param('default_bspos_vx', marks=m_needs_vortex),
+        pytest.param('default_bs_pos_bt', marks=m_needs_bullet),
+        pytest.param('default_bs_pos_vx', marks=m_needs_vortex),
+        pytest.param('default_bit_ik_bt', marks=m_needs_bullet),
+        pytest.param('default_bit_vel_bt', marks=m_needs_bullet),
+        pytest.param('default_bf_ik_bt', marks=m_needs_bullet),
+        pytest.param('default_bf_vel_bt', marks=m_needs_bullet),
         pytest.param('default_cth', marks=m_needs_mujoco),
         pytest.param('default_hop', marks=m_needs_mujoco),
         pytest.param('default_wambic', marks=m_needs_mujoco),
-    ], ids=['cata', 'rosen', 'bob', 'omo', 'pend', 'qbb', 'qq-st', 'qq-su', 'qcp-st', 'qcp-su', 'p3l_ik_bt',
-            'p3l_ta_bt', 'p3l_ta_vx', 'bop2d_bt', 'bop2d_vx', 'bop5d_bt', 'bop5d_vx', 'bspos_bt', 'bspos_vx', 'cth',
-            'hop', 'wam-bic'],
+    ], ids=['cata', 'rosen', 'bobd', 'bob', 'omo', 'pend', 'qbb', 'qq-st', 'qq-su', 'qcp-st', 'qcp-su',
+            'qqsurcs_bt', 'p3l_ik_bt', 'p3l_ta_bt', 'p3l_ta_vx', 'pi_ik_5l_bt', 'pi_ta_6l_bt', 'pi_ik_6l_vx',
+            'bop2d_bt', 'bop2d_vx', 'bop5d_bt', 'bop5d_vx', 'bspos_bt', 'bspos_vx', 'bit_ik_bt', 'bit_vel_bt',
+            'bf_ik_bt', 'bf_vel_bt',
+            'cth', 'hop', 'wam-bic'],
     indirect=True
 )
 def test_rollout(env):
@@ -90,6 +99,7 @@ def test_rollout(env):
     'env', [
         'default_cata',
         'default_rosen',
+        'default_bobd',
         'default_bob',
         'default_omo',
         'default_pend',
@@ -98,21 +108,31 @@ def test_rollout(env):
         'default_qqsu',
         'default_qcpst',
         'default_qcpsu',
+        pytest.param('default_qqsurcs_bt', marks=m_needs_bullet),
         pytest.param('default_p3l_ik_bt', marks=m_needs_bullet),
         pytest.param('default_p3l_ta_bt', marks=m_needs_bullet),
         pytest.param('default_p3l_ta_vx', marks=m_needs_vortex),
+        pytest.param('default_pi_ik_5l_bt', marks=m_needs_bullet),
+        pytest.param('default_pi_ta_6l_bt', marks=m_needs_bullet),
+        pytest.param('default_pi_ik_6l_vx', marks=m_needs_vortex),
         pytest.param('default_bop2d_bt', marks=m_needs_bullet),
         pytest.param('default_bop2d_vx', marks=m_needs_vortex),
         pytest.param('default_bop5d_bt', marks=m_needs_bullet),
         pytest.param('default_bop5d_vx', marks=m_needs_vortex),
-        pytest.param('default_bspos_bt', marks=m_needs_bullet),
-        pytest.param('default_bspos_vx', marks=m_needs_vortex),
+        pytest.param('default_bs_pos_bt', marks=m_needs_bullet),
+        pytest.param('default_bs_pos_vx', marks=m_needs_vortex),
+        pytest.param('default_bit_ik_bt', marks=m_needs_bullet),
+        pytest.param('default_bit_vel_bt', marks=m_needs_bullet),
+        pytest.param('default_bf_ik_bt', marks=m_needs_bullet),
+        pytest.param('default_bf_vel_bt', marks=m_needs_bullet),
         pytest.param('default_cth', marks=m_needs_mujoco),
         pytest.param('default_hop', marks=m_needs_mujoco),
         pytest.param('default_wambic', marks=m_needs_mujoco),
-    ], ids=['cata', 'rosen', 'bob', 'omo', 'pend', 'qbb', 'qq-st', 'qq-su', 'qcp-st', 'qcp-su', 'p3l_ik_bt',
-            'p3l_ta_bt', 'p3l_ta_vx', 'bop2d_bt', 'bop2d_vx', 'bop5d_bt', 'bop5d_vx', 'bspos_bt', 'bspos_vx', 'cth',
-            'hop', 'wam-bic'],
+    ], ids=['cata', 'rosen', 'bobd', 'bob', 'omo', 'pend', 'qbb', 'qq-st', 'qq-su', 'qcp-st', 'qcp-su',
+            'qqsurcs_bt', 'p3l_ik_bt', 'p3l_ta_bt', 'p3l_ta_vx', 'pi_ik_5l_bt', 'pi_ta_6l_bt', 'pi_ik_6l_vx',
+            'bop2d_bt', 'bop2d_vx', 'bop5d_bt', 'bop5d_vx', 'bspos_bt', 'bspos_vx', 'bit_ik_bt', 'bit_vel_bt',
+            'bf_ik_bt', 'bf_vel_bt',
+            'cth', 'hop', 'wam-bic'],
     indirect=True
 )
 def test_init_spaces(env):
@@ -130,28 +150,40 @@ def test_init_spaces(env):
     'env', [
         'default_cata',
         'default_rosen',
+        'default_bobd',
         'default_bob',
         'default_omo',
         'default_pend',
         'default_qbb',
+        'default_qqst',
         'default_qqsu',
         'default_qcpst',
         'default_qcpsu',
+        pytest.param('default_qqsurcs_bt', marks=m_needs_bullet),
         pytest.param('default_p3l_ik_bt', marks=m_needs_bullet),
         pytest.param('default_p3l_ta_bt', marks=m_needs_bullet),
         pytest.param('default_p3l_ta_vx', marks=m_needs_vortex),
+        pytest.param('default_pi_ik_5l_bt', marks=m_needs_bullet),
+        pytest.param('default_pi_ta_6l_bt', marks=m_needs_bullet),
+        pytest.param('default_pi_ik_6l_vx', marks=m_needs_vortex),
         pytest.param('default_bop2d_bt', marks=m_needs_bullet),
         pytest.param('default_bop2d_vx', marks=m_needs_vortex),
         pytest.param('default_bop5d_bt', marks=m_needs_bullet),
         pytest.param('default_bop5d_vx', marks=m_needs_vortex),
-        pytest.param('default_bspos_bt', marks=m_needs_bullet),
-        pytest.param('default_bspos_vx', marks=m_needs_vortex),
+        pytest.param('default_bs_pos_bt', marks=m_needs_bullet),
+        pytest.param('default_bs_pos_vx', marks=m_needs_vortex),
+        pytest.param('default_bit_ik_bt', marks=m_needs_bullet),
+        pytest.param('default_bit_vel_bt', marks=m_needs_bullet),
+        pytest.param('default_bf_ik_bt', marks=m_needs_bullet),
+        pytest.param('default_bf_vel_bt', marks=m_needs_bullet),
         pytest.param('default_cth', marks=m_needs_mujoco),
         pytest.param('default_hop', marks=m_needs_mujoco),
         pytest.param('default_wambic', marks=m_needs_mujoco),
-    ], ids=['cata', 'rosen', 'bob', 'omo', 'pend', 'qbb', 'qq-su', 'qcp-st', 'qcp-su', 'p3l_ik_bt', 'p3l_ta_bt',
-            'p3l_ta_vx', 'bop2d_bt', 'bop2d_vx', 'bop5d_bt', 'bop5d_vx', 'bspos_bt', 'bspos_vx', 'cth', 'hop',
-            'wam-bic'],
+    ], ids=['cata', 'rosen', 'bobd', 'bob', 'omo', 'pend', 'qbb', 'qq-st', 'qq-su', 'qcp-st', 'qcp-su',
+            'qqsurcs_bt', 'p3l_ik_bt', 'p3l_ta_bt', 'p3l_ta_vx', 'pi_ik_5l_bt', 'pi_ta_6l_bt', 'pi_ik_6l_vx',
+            'bop2d_bt', 'bop2d_vx', 'bop5d_bt', 'bop5d_vx', 'bspos_bt', 'bspos_vx', 'bit_ik_bt', 'bit_vel_bt',
+            'bf_ik_bt', 'bf_vel_bt',
+            'cth', 'hop', 'wam-bic'],
     indirect=True
 )
 def test_reset(env):
@@ -175,20 +207,20 @@ def test_reset(env):
 
     # Reset to fixed state again
     obs2 = env.reset(init_state=init_state)
-    # This should match
     assert obs2 == pytest.approx(obs1)
 
 
 @pytest.mark.visualization
 @pytest.mark.parametrize(
     'env', [
+        'default_bobd',
         'default_bob',
         'default_omo',
         'default_pend',
         'default_qbb',
         'default_qqsu',
         'default_qcpst',
-    ], ids=['bob', 'omo', 'pend', 'qbb', 'qq-su', 'qcp-st'],
+    ], ids=['bobd', 'bob', 'omo', 'pend', 'qbb', 'qq-su', 'qcp-st'],
     indirect=True
 )
 def test_vpython_animations(env):
@@ -200,27 +232,33 @@ def test_vpython_animations(env):
         env.render(mode=RenderMode(video=True))
         if done:
             break
+    env.reset()  # only calls _reset_anim if window is already existing
     assert env.curr_step <= env.max_steps
 
 
 @pytest.mark.visualization
 @pytest.mark.parametrize(
     'env', [
+        pytest.param('default_qqsurcs_bt', marks=m_needs_bullet),
         pytest.param('default_p3l_ik_bt', marks=m_needs_bullet),
         pytest.param('default_p3l_ta_bt', marks=m_needs_bullet),
         pytest.param('default_p3l_ta_vx', marks=m_needs_vortex),
-        pytest.param('default_pi_ik_6l_vx', marks=m_needs_vortex),
         pytest.param('default_pi_ik_5l_bt', marks=m_needs_bullet),
         pytest.param('default_pi_ta_6l_bt', marks=m_needs_bullet),
-        pytest.param('default_pi_ta_5l_vx', marks=m_needs_vortex),
+        pytest.param('default_pi_ik_6l_vx', marks=m_needs_vortex),
         pytest.param('default_bop2d_bt', marks=m_needs_bullet),
         pytest.param('default_bop2d_vx', marks=m_needs_vortex),
         pytest.param('default_bop5d_bt', marks=m_needs_bullet),
         pytest.param('default_bop5d_vx', marks=m_needs_vortex),
-        pytest.param('default_bspos_bt', marks=m_needs_bullet),
-        pytest.param('default_bspos_vx', marks=m_needs_vortex),
-    ], ids=['p3l_ik_bt', 'p3l_ta_bt', 'p3l_ta_vx', 'pi_ik_6l_vx', 'pi_ik_5l_bt', 'pi_ta_6l_bt', 'pi_ta_5l_vx',
-            'bop2d_bt', 'bop2d_vx', 'bop5d_bt', 'bop5d_vx', 'bspos_bt', 'bspos_vx'],
+        pytest.param('default_bs_pos_bt', marks=m_needs_bullet),
+        pytest.param('default_bs_pos_vx', marks=m_needs_vortex),
+        pytest.param('default_bit_ik_bt', marks=m_needs_bullet),
+        pytest.param('default_bit_vel_bt', marks=m_needs_bullet),
+        pytest.param('default_bf_ik_bt', marks=m_needs_bullet),
+        pytest.param('default_bf_vel_bt', marks=m_needs_bullet),
+    ], ids=['qqsurcs_bt', 'p3l_ik_bt', 'p3l_ta_bt', 'p3l_ta_vx', 'pi_ik_5l_bt', 'pi_ta_6l_bt', 'pi_ik_6l_vx',
+            'bop2d_bt', 'bop2d_vx', 'bop5d_bt', 'bop5d_vx', 'bspos_bt', 'bspos_vx', 'bit_ik_bt', 'bit_vel_bt',
+            'bf_ik_bt', 'bf_vel_bt'],
     indirect=True
 )
 def test_rcspysim_animations(env):
@@ -242,7 +280,8 @@ def test_rcspysim_animations(env):
         'default_cth',
         'default_hop',
         'default_wambic'
-    ], ids=['cth', 'hop', 'wam-bic']
+    ], ids=['cth', 'hop', 'wam-bic'],
+    indirect=True
 )
 def test_mujoco_animations(env):
     assert isinstance(env, SimEnv)
@@ -272,19 +311,17 @@ def test_qbb_kin(servo_ang):
 
 
 @pytest.mark.parametrize(
-    'dt, max_steps', [
-        (1/500., 1)
-    ], ids=['default']
+    'env', [
+        'default_qqbb_real',
+        'default_qcpst_real',
+        'default_qcpsu_real',
+        'default_qq_real'
+    ], ids=['qqbb_real', 'qcpst_real', 'qcpsu_real', 'qq_real'],
+    indirect=True
 )
-def test_quanser_real_contructors(dt, max_steps):
-    qbbr = QBallBalancerReal(dt=dt, max_steps=max_steps)
-    assert qbbr is not None
-    qcp_st = QCartPoleStabReal(dt=dt, max_steps=max_steps)
-    assert qcp_st is not None
-    qcp_su = QCartPoleSwingUpReal(dt=dt, max_steps=max_steps)
-    assert qcp_su is not None
-    qqr = QQubeReal(dt=dt, max_steps=max_steps)
-    assert qqr is not None
+def test_quanser_real_wo_connecting(env: RealEnv):
+    assert env is not None
+    env.render(RenderMode(text=True))
 
 
 @pytest.mark.visualization

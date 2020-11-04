@@ -36,12 +36,17 @@ from pyrado.domain_randomization.domain_parameter import UniformDomainParam, Nor
     MultivariateNormalDomainParam, DomainParam
 from pyrado.environments.one_step.catapult import CatapultSim
 from pyrado.environments.one_step.rosenbrock import RosenSim
-from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
+from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim, BallOnBeamDiscSim
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleStabSim, QCartPoleSwingUpSim
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim, QQubeStabSim
+from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal
+from pyrado.environments.quanser.quanser_cartpole import QCartPoleStabReal, QCartPoleSwingUpReal
+from pyrado.environments.quanser.quanser_qube import QQubeReal
+from pyrado.environments.rcspysim.ball_in_tube import BallInTubeIKActivationSim, BallInTubeVelDSSim
+from pyrado.environments.rcspysim.box_flipping import BoxFlippingVelDSSim, BoxFlippingIKActivationSim
 from pyrado.policies.adn import ADNPolicy, pd_cubic
 from pyrado.policies.dummy import DummyPolicy, IdlePolicy
 from pyrado.policies.features import *
@@ -64,7 +69,7 @@ to.set_default_dtype(to.double)
 try:
     import rcsenv
     from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate2DSim, BallOnPlate5DSim
-    from pyrado.environments.rcspysim.box_lifting import BoxLiftingPosDSSim
+    from pyrado.environments.rcspysim.box_lifting import BoxLiftingPosDSSim, BoxLiftingVelDSSim
     from pyrado.environments.rcspysim.box_shelving import BoxShelvingVelDSSim, BoxShelvingPosDSSim
     from pyrado.environments.rcspysim.mp_blending import MPBlendingSim
     from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim, Planar3LinkTASim
@@ -138,6 +143,10 @@ class DefaultEnvs:
     @staticmethod
     def default_bob():
         return BallOnBeamSim(dt=0.01, max_steps=500)
+
+    @staticmethod
+    def default_bobd():
+        return BallOnBeamDiscSim(dt=0.01, max_steps=500)
 
     @staticmethod
     def default_omo():
@@ -274,11 +283,11 @@ class DefaultEnvs:
         )
 
     @staticmethod
-    @m_needs_vortex
-    def default_pi_ik_6l_vx():
+    @m_needs_bullet
+    def default_pi_ik_5l_bt():
         return PlanarInsertIKActivationSim(
-            physicsEngine='Vortex',
-            graphFileName='gPlanarInsert6Link.xml',
+            physicsEngine='Bullet',
+            graphFileName='gPlanarInsert5Link.xml',
             dt=1/50.,
             max_steps=500,
             max_dist_force=None,
@@ -295,11 +304,11 @@ class DefaultEnvs:
         )
 
     @staticmethod
-    @m_needs_bullet
-    def default_pi_ik_5l_bt():
+    @m_needs_vortex
+    def default_pi_ik_6l_vx():
         return PlanarInsertIKActivationSim(
-            physicsEngine='Bullet',
-            graphFileName='gPlanarInsert5Link.xml',
+            physicsEngine='Vortex',
+            graphFileName='gPlanarInsert6Link.xml',
             dt=1/50.,
             max_steps=500,
             max_dist_force=None,
@@ -359,12 +368,62 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_bullet
-    def default_blpos_bt():
+    def default_bit_ik_bt():
+        return BallInTubeIKActivationSim(
+            usePhysicsNode=False,
+            physicsEngine='Bullet',
+            graphFileName='gBallInTube_trqCtrl.xml',
+            dt=1/100.,
+            max_steps=2000,
+            fixed_init_state=True,
+            ref_frame='table',
+            taskCombinationMethod='sum',
+            checkJointLimits=True,
+            collisionAvoidanceIK=True,
+            observeVelocities=True,
+            observeCollisionCost=True,
+            observePredictedCollisionCost=True,
+            observeManipulabilityIndex=True,
+            observeCurrentManipulability=True,
+            observeDynamicalSystemDiscrepancy=True,
+            observeTaskSpaceDiscrepancy=True
+        )
+
+    @staticmethod
+    @m_needs_bullet
+    def default_bit_vel_bt():
+        return BallInTubeVelDSSim(
+            usePhysicsNode=True,
+            physicsEngine='Bullet',
+            graphFileName='gBallInTube_trqCtrl.xml',
+            dt=1/100.,
+            max_steps=2000,
+            fixed_init_state=True,
+            mps_left=None,  # use defaults
+            mps_right=None,  # use defaults
+            ref_frame='table',
+            taskCombinationMethod='sum',
+            checkJointLimits=True,
+            collisionAvoidanceIK=True,
+            observeVelocity=True,
+            observeCollisionCost=True,
+            observePredictedCollisionCost=True,
+            observeManipulabilityIndex=False,
+            observeCurrentManipulability=True,
+            observeDynamicalSystemDiscrepancy=True,
+            observeTaskSpaceDiscrepancy=True,
+            observeForceTorque=True,
+            observeDynamicalSystemGoalDistance=True,
+        )
+
+    @staticmethod
+    @m_needs_bullet
+    def default_bl_pos_bt():
         return BoxLiftingPosDSSim(
             physicsEngine='Bullet',
             graphFileName='gBoxLifting_posCtrl.xml',
             dt=0.01,
-            max_steps=15000,
+            max_steps=1500,
             mps_left=None,
             mps_right=None,
             ref_frame='basket',
@@ -383,7 +442,55 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_bullet
-    def default_bspos_bt():
+    def default_bl_vel_bt():
+        return BoxLiftingVelDSSim(
+            physicsEngine='Bullet',
+            graphFileName='gBoxLifting_trqCtrl.xml',
+            dt=0.01,
+            max_steps=1500,
+            mps_left=None,
+            mps_right=None,
+            ref_frame='basket',
+            collisionConfig={'file': 'collisionModel.xml'},
+            taskCombinationMethod='sum',
+            checkJointLimits=True,
+            collisionAvoidanceIK=True,
+            observeVelocities=True,
+            observeCollisionCost=True,
+            observePredictedCollisionCost=True,
+            observeManipulabilityIndex=True,
+            observeCurrentManipulability=True,
+            observeDynamicalSystemDiscrepancy=True,
+            observeTaskSpaceDiscrepancy=True
+        )
+
+    @staticmethod
+    @m_needs_vortex
+    def default_bl_pos_vx():
+        return BoxLiftingPosDSSim(
+            physicsEngine='Vortex',
+            graphFileName='gBoxLifting_posCtrl.xml',
+            dt=0.01,
+            max_steps=1500,
+            mps_left=None,
+            mps_right=None,
+            ref_frame='basket',
+            collisionConfig={'file': 'collisionModel.xml'},
+            taskCombinationMethod='sum',
+            checkJointLimits=True,
+            collisionAvoidanceIK=True,
+            observeVelocities=True,
+            observeCollisionCost=True,
+            observePredictedCollisionCost=True,
+            observeManipulabilityIndex=True,
+            observeCurrentManipulability=True,
+            observeDynamicalSystemDiscrepancy=True,
+            observeTaskSpaceDiscrepancy=True
+        )
+
+    @staticmethod
+    @m_needs_bullet
+    def default_bs_pos_bt():
         return BoxShelvingPosDSSim(
             physicsEngine='Bullet',
             graphFileName='gBoxShelving_posCtrl.xml',  # gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml
@@ -409,7 +516,7 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_vortex
-    def default_bspos_vx():
+    def default_bs_pos_vx():
         return BoxShelvingPosDSSim(
             physicsEngine='Vortex',
             graphFileName='gBoxShelving_posCtrl.xml',  # gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml
@@ -417,6 +524,58 @@ class DefaultEnvs:
             max_steps=2000,
             fix_init_state=True,
             ref_frame='upperGoal',
+            mps_left=None,
+            mps_right=None,
+            collisionConfig={'file': 'collisionModel.xml'},
+            taskCombinationMethod='sum',
+            checkJointLimits=True,
+            collisionAvoidanceIK=True,
+            observeVelocities=True,
+            observeForceTorque=True,
+            observeCollisionCost=True,
+            observePredictedCollisionCost=True,
+            observeManipulabilityIndex=True,
+            observeDynamicalSystemDiscrepancy=True,
+            observeTaskSpaceDiscrepancy=True,
+            observeDynamicalSystemGoalDistance=True,
+        )
+
+    @staticmethod
+    @m_needs_vortex
+    def default_bf_vel_bt():
+        return BoxFlippingVelDSSim(
+            physicsEngine='Bullet',
+            graphFileName='gBoxFlipping_posCtrl.xml',  # gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml
+            dt=1/100.,
+            max_steps=2000,
+            fix_init_state=True,
+            ref_frame='table',
+            mps_left=None,
+            mps_right=None,
+            collisionConfig={'file': 'collisionModel.xml'},
+            taskCombinationMethod='sum',
+            checkJointLimits=True,
+            collisionAvoidanceIK=True,
+            observeVelocities=True,
+            observeForceTorque=True,
+            observeCollisionCost=True,
+            observePredictedCollisionCost=True,
+            observeManipulabilityIndex=True,
+            observeDynamicalSystemDiscrepancy=True,
+            observeTaskSpaceDiscrepancy=True,
+            observeDynamicalSystemGoalDistance=True,
+        )
+
+    @staticmethod
+    @m_needs_vortex
+    def default_bf_ik_bt():
+        return BoxFlippingIKActivationSim(
+            physicsEngine='Bullet',
+            graphFileName='gBoxFlipping_posCtrl.xml',  # gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml
+            dt=1/100.,
+            max_steps=2000,
+            fix_init_state=True,
+            ref_frame='table',
             mps_left=None,
             mps_right=None,
             collisionConfig={'file': 'collisionModel.xml'},
@@ -452,6 +611,26 @@ class DefaultEnvs:
     @m_needs_mujoco
     def default_wambic():
         return WAMBallInCupSim(num_dof=7, max_steps=1750)
+
+    @staticmethod
+    @m_needs_bullet
+    def default_qqbb_real():
+        return QBallBalancerReal(dt=1/500., max_steps=500)
+
+    @staticmethod
+    @m_needs_bullet
+    def default_qcpst_real():
+        return QCartPoleStabReal(dt=1/500., max_steps=500)
+
+    @staticmethod
+    @m_needs_bullet
+    def default_qcpsu_real():
+        return QCartPoleSwingUpReal(dt=1/500., max_steps=500)
+
+    @staticmethod
+    @m_needs_bullet
+    def default_qq_real():
+        return QQubeReal(dt=1/500., max_steps=500)
 
 
 # ---------------

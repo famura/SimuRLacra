@@ -50,6 +50,10 @@ class CompoundSpace(Space):
         # Return all shapes
         return (s for s in self._spaces)
 
+    @property
+    def flat_dim(self) -> int:
+        return sum([s.flat_dim for s in self._spaces])
+
     def _members(self):
         # Return the subspaces
         return self._spaces

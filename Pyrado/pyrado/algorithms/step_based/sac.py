@@ -172,7 +172,7 @@ class SAC(Algorithm):
         self.batch_size = batch_size
         self.max_grad_norm = max_grad_norm
         if num_init_memory_steps is None:
-            self.num_init_memory_steps = num_init_memory_steps
+            self.num_init_memory_steps = memory_size
         else:
             self.num_init_memory_steps = min(num_init_memory_steps, memory_size)
 

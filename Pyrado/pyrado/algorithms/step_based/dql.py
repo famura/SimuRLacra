@@ -115,7 +115,6 @@ class DQL(Algorithm):
         # Call Algorithm's constructor
         super().__init__(save_dir, max_iter, policy, logger)
 
-        # Store the inputs
         self._env = env
         self.q_targ = deepcopy(self._policy)
         self.q_targ.eval()  # will not be trained using the optimizer
@@ -127,7 +126,6 @@ class DQL(Algorithm):
         self.batch_size = batch_size
         self.max_grad_norm = max_grad_norm
 
-        # Initialize
         self._expl_strat = EpsGreedyExplStrat(self._policy, eps_init, eps_schedule_gamma)
         self._memory = ReplayMemory(memory_size)
         self.sampler = ParallelRolloutSampler(
@@ -142,6 +140,7 @@ class DQL(Algorithm):
             min_steps=100*env.max_steps,
             min_rollouts=None
         )
+
         self.optim = to.optim.RMSprop([{'params': self._policy.parameters()}], lr=lr)
         self._lr_scheduler = lr_scheduler
         self._lr_scheduler_hparam = lr_scheduler_hparam

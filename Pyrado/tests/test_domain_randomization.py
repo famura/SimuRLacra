@@ -160,7 +160,7 @@ def test_param_grid():
         'default_qcpsu',
         pytest.param('default_bop2d_bt', marks=m_needs_bullet),
         pytest.param('default_bop5d_bt', marks=m_needs_bullet),
-        pytest.param('default_blpos_bt', marks=m_needs_bullet),
+        pytest.param('default_bl_pos_bt', marks=m_needs_bullet),
         pytest.param('default_cth', marks=m_needs_mujoco),
         pytest.param('default_hop', marks=m_needs_mujoco),
         pytest.param('default_wambic', marks=m_needs_mujoco),

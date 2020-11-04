@@ -106,7 +106,7 @@ def get_argparser() -> argparse.ArgumentParser:
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', default=False,
                         help="display additional information (default: False)")
 
-    parser.add_argument('--valuefcn_name', type=str, nargs='?', default='policy',
+    parser.add_argument('--valuefcn_name', type=str, nargs='?', default='valuefcn',
                         help="(partial) name of the value function to load, e.g. 'argmax_valuefcn', or "
                              "'iter_0_valuefcn' (default: valuefcn)")
 

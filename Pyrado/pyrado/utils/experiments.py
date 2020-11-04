@@ -57,6 +57,7 @@ from pyrado.logger.experiment import load_dict_from_yaml
 from pyrado.policies.adn import pd_linear, pd_cubic, pd_capacity_21_abs, pd_capacity_21, pd_capacity_32, \
     pd_capacity_32_abs
 from pyrado.policies.base import Policy
+from pyrado.utils.argparser import get_argparser
 from pyrado.utils.input_output import print_cbt
 from pyrado.utils.saving_loading import load_prefix_suffix
 
@@ -68,17 +69,21 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
     why entities should be loaded. If no file was found, we fall back to some heuristic and hope for the best.
 
     :param ex_dir: experiment's parent directory
-    :param args: arguments from the argument parser
+    :param args: arguments from the argument parser, pass `None` to fall back to the values from the default argparser
     :return: environment, policy, and optional output (e.g. valuefcn)
     """
     env, policy, extra = None, None, dict()
+
+    if args is None:
+        # Fall back to default arguments. By passing [], we ignore the command line arguments
+        args = get_argparser().parse_args([])
 
     # Hyper-parameters
     hparams_file_name = 'hyperparams.yaml'
     try:
         hparams = load_dict_from_yaml(osp.join(ex_dir, hparams_file_name))
         extra['hparams'] = hparams
-    except (FileNotFoundError, KeyError):
+    except (pyrado.PathErr, FileNotFoundError, KeyError):
         print_cbt(f'Did not find {hparams_file_name} in {ex_dir} or could not crawl the loaded hyper-parameters.',
                   'y', bright=True)
 
@@ -182,7 +187,7 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
         print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", 'g')
         # Target value functions
         if isinstance(algo, DQL):
-            extra['target'] = load_prefix_suffix(algo.target, 'target', 'pt', ex_dir, None)
+            extra['target'] = load_prefix_suffix(algo.q_targ, 'target', 'pt', ex_dir, None)
             print_cbt(f"Loaded {osp.join(ex_dir, 'target.pt')}", 'g')
         else:
             extra['target1'] = load_prefix_suffix(algo.q_targ_1, 'target1', 'pt', ex_dir, None)

@@ -31,6 +31,7 @@ import pytest
 from pyrado.algorithms.step_based.a2c import A2C
 from pyrado.algorithms.step_based.actor_critic import ActorCritic
 from pyrado.algorithms.meta.adr import ADR
+from pyrado.algorithms.step_based.dql import DQL
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.meta.arpl import ARPL
 from pyrado.algorithms.base import Algorithm
@@ -53,20 +54,25 @@ from pyrado.domain_randomization.default_randomizers import create_default_rando
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer, DomainRandWrapperLive, \
     MetaDomainRandWrapper
 from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
+from pyrado.environments.base import Env
+from pyrado.environments.pysim.ball_on_beam import BallOnBeamDiscSim
 from pyrado.logger import set_log_prefix_dir
+from pyrado.policies.base import Policy
 from pyrado.policies.features import *
-from pyrado.policies.fnn import FNNPolicy, FNN
+from pyrado.policies.fnn import FNNPolicy, FNN, DiscrActQValFNNPolicy
 from pyrado.policies.rnn import RNNPolicy
 from pyrado.policies.linear import LinearPolicy
+from pyrado.policies.two_headed import TwoHeadedGRUPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sequences import *
-from pyrado.spaces import ValueFunctionSpace
+from pyrado.spaces import ValueFunctionSpace, BoxSpace
 from pyrado.utils.data_types import EnvSpec
+from pyrado.utils.experiments import load_experiment
 
 
-# Fixture providing an experiment directory
 @pytest.fixture
 def ex_dir(tmpdir):
+    # Fixture providing an experiment directory
     set_log_prefix_dir(tmpdir)
     return tmpdir
 
@@ -87,10 +93,8 @@ def ex_dir(tmpdir):
         'lstm_policy',
         'gru_policy',
         'adn_policy',
-        'thfnn_policy',
-        'thgru_policy',
     ],
-    ids=['lin', 'fnn', 'rnn', 'lstm', 'gru', 'adn', 'thfnn', 'thgru'],
+    ids=['lin', 'fnn', 'rnn', 'lstm', 'gru', 'adn'],
     indirect=True
 )
 @pytest.mark.parametrize(
@@ -105,8 +109,11 @@ def ex_dir(tmpdir):
         (PoWER, dict(expl_std_init=0.1, pop_size=100, num_is_samples=10)),
         (CEM, dict(expl_std_init=0.1, pop_size=100, num_is_samples=10)),
         (REPS, dict(eps=0.1, pop_size=500, expl_std_init=0.1)),
+        (DQL, dict(eps_init=0.2, eps_schedule_gamma=0.99)),
+        (SAC, dict()),
     ],
-    ids=['a2c', 'ppo', 'ppo2', 'hc_normal', 'hc_hyper', 'nes', 'pepg', 'power', 'cem', 'reps'])  # SAC and DQL are out
+    ids=['a2c', 'ppo', 'ppo2', 'hc_normal', 'hc_hyper', 'nes', 'pepg', 'power', 'cem', 'reps', 'dql', 'sac']
+)
 def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
     # Collect hyper-parameters, create algorithm, and train
     common_hparam = dict(max_iter=1, num_workers=1)
@@ -119,6 +126,20 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
                                                             hidden_nonlin=to.tanh)))
     elif issubclass(algo_class, ParameterExploring):
         common_hparam.update(num_rollouts=1)
+    elif issubclass(algo_class, (DQL, SAC)):
+        common_hparam.update(memory_size=1000, num_batch_updates=2, gamma=0.99, min_rollouts=1)
+        fnn_hparam = dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)
+        if issubclass(algo_class, DQL):
+            # Override the setting
+            env = BallOnBeamDiscSim(env.dt, env.max_steps)
+            policy = DiscrActQValFNNPolicy(spec=env.spec, **fnn_hparam)
+        else:
+            # Override the setting
+            env = ActNormWrapper(env)
+            policy = TwoHeadedGRUPolicy(env.spec, shared_hidden_size=8, shared_num_recurrent_layers=1)
+            obsact_space = BoxSpace.cat([env.obs_space, env.act_space])
+            common_hparam.update(q_fcn_1=FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **fnn_hparam))
+            common_hparam.update(q_fcn_2=FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **fnn_hparam))
     else:
         raise NotImplementedError
 
@@ -140,6 +161,12 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
     assert all(algo.policy.param_values == policy_loaded.param_values)
     if isinstance(algo, ActorCritic):
         assert all(algo.critic.value_fcn.param_values == critic_loaded.value_fcn.param_values)
+
+    # Load the experiment. Since we did not save any hyper-parameters, we ignore the errors when loading.
+    env, policy, extra = load_experiment(ex_dir)
+    assert isinstance(env, Env)
+    assert isinstance(policy, Policy)
+    assert isinstance(extra, dict)
 
 
 @pytest.mark.parametrize(

@@ -35,18 +35,19 @@ from scipy import signal
 class QSocket:
     """ Handles the communication with Quarc (TCP/IP connection) """
 
-    def __init__(self, ip: str, x_len: int, u_len: int):
+    def __init__(self, ip: str, x_len: int, u_len: int, port: int = 9095):
         """
         Prepare socket for communication.
 
         :param ip: IP address of the Windows PC
         :param x_len: number of measured state variables to receive
         :param u_len: number of control variables to send
+        :param port: port to connect to, see the server block in the Simulink models
         """
         self._x_fmt = '>' + x_len*'d'
         self._u_fmt = '>' + u_len*'d'
         self._buf_size = x_len*8  # 8 bytes for each double
-        self._port = 9095  # see the server block in the Simulink models
+        self._port = port
         self._ip = ip
         self._soc = None
 
