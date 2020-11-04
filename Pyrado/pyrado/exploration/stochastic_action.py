@@ -218,12 +218,11 @@ class SACExplStrat(StochasticActionExplStrat):
         Due to the tanh transformation, it returns action values within [-1,1].
     """
 
-    def __init__(self, policy: Policy, std_init: Union[float, to.Tensor]):
+    def __init__(self, policy: Policy):
         """
         Constructor
 
         :param policy: wrapped policy
-        :param std_init: initial standard deviation for the exploration noise
         """
         if not isinstance(policy, TwoHeadedPolicy):
             raise pyrado.TypeErr(given=policy, expected_type=TwoHeadedPolicy)
@@ -234,32 +233,34 @@ class SACExplStrat(StochasticActionExplStrat):
         self._noise = DiagNormalNoise(
             use_cuda=policy.device == 'cuda',
             noise_dim=policy.env_spec.act_space.flat_dim,
-            std_init=std_init,
+            std_init=1.,  # std_init will be overwritten by 2nd policy head
             std_min=0.,  # ignore since we are explicitly clipping in log space later
             train_mean=False,
             learnable=False
         )
 
-        self._log_std_min = to.tensor(-10.)
-        self._log_std_max = to.tensor(1.)
+        self._log_std_min = to.tensor(-20.)  # approx 2.061e-10
+        self._log_std_max = to.tensor(2.)  # approx 7.389
 
     @property
     def noise(self) -> DiagNormalNoise:
         """ Get the exploration noise. """
         return self._noise
 
-    def action_dist_at(self, policy_output_1: to.Tensor, policy_output_2: to.Tensor) -> Distribution:
+    def action_dist_at(self, policy_out_1: to.Tensor, policy_out_2: to.Tensor) -> Distribution:
         """
         Return the action distribution for the given output from the wrapped policy.
         This method is made for two-headed policies, e.g. used with SAC.
 
-        :param policy_output_1: first head's output from the wrapped policy, noise-free action values
-        :param policy_output_2: first head's output from the wrapped policy, state-dependent log std values
-        :return: action distribution
+        :param policy_out_1: first head's output from the wrapped policy, noise-free action values
+        :param policy_out_2: second head's output from the wrapped policy, state-dependent log std values
+        :return: action distribution at the mean given by `policy_out_1`
         """
-        # Manually adapt the Gaussian's covariance
-        self._noise.std = to.exp(policy_output_2)
-        return self._noise(policy_output_1)
+        # Manually adapt the Gaussian's variance to the clipped value
+        log_std = clamp(policy_out_2, lo=self._log_std_min, up=self._log_std_max)
+        self._noise.std = to.exp(log_std)
+
+        return self._noise(policy_out_1)
 
     # Make NormalActNoiseExplStrat appear as if it would have the following functions / properties
     reset_expl_params = Delegate('_noise')
@@ -274,32 +275,30 @@ class SACExplStrat(StochasticActionExplStrat):
         else:
             act, log_std = self.policy(obs, *extra)
 
-        # Clamp the log_std coming from the policy
-        log_std = clamp(log_std, lo=self._log_std_min, up=self._log_std_max)
-
         # Compute exploration (use rsample to apply the reparametrization trick)
-        noise = self.action_dist_at(act, log_std)
-        u = noise.rsample()
-        act_expl = to.tanh(u)
-        log_prob = noise.log_prob(u)
+        act_noise_distr = self.action_dist_at(act, log_std)
+        u = act_noise_distr.rsample()
+        act_expl = to.tanh(u)  # is in [-1, 1], this is why we always use an ActNormWrapper for SAC
+        log_prob = act_noise_distr.log_prob(u)
         log_prob = self._enforce_act_expl_bounds(log_prob, act_expl)
 
+        # Return the action and the log of the exploration std, given the current observation
         if self.policy.is_recurrent:
-            return act_expl, log_std, hidden
+            return act_expl, log_prob, hidden
         else:
             return act_expl, log_prob
 
     @staticmethod
     def _enforce_act_expl_bounds(log_probs: to.Tensor, act_expl: to.Tensor, eps: float = 1e-6):
         r"""
-        Transform the `log_probs` accounting for the squashed tanh exploration
+        Transform the `log_probs` accounting for the squashed tanh exploration.
 
         .. seealso::
             Eq. (21) in [2]
 
         :param log_probs: $\log( \mu(u|s) )$
         :param act_expl: action values with explorative noise
-        :param eps: additive term for numerical stability of the log
+        :param eps: additive term for numerical stability of the logarithm function
         :return: $\log( \pi(a|s) )$
         """
         # Batch dim along the first dim

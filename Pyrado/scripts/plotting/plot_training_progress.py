@@ -238,16 +238,16 @@ if __name__ == '__main__':
 
 
     @lfm.figure('SAC Temperature Parameter')
-    def eta(fig, df, args):
-        if not _keys_in_columns(df, 'alpha', verbose=args.verbose):
+    def eta_coeff(fig, df, args):
+        if not _keys_in_columns(df, 'ent_coeff', verbose=args.verbose):
             return False
-        plt.plot(np.arange(len(df.alpha)), df.alpha)
+        plt.plot(np.arange(len(df.ent_coeff)), df.ent_coeff)
         plt.xlabel('iteration')
-        plt.ylabel(r'$\alpha$')
+        plt.ylabel(r'entropy coefficient $\alpha$')
 
 
     @lfm.figure('Q-function Losses')
-    def loss_before_after(fig, df, args):
+    def sac_q1_q2_losses(fig, df, args):
         if not _keys_in_columns(df, 'Q1_loss', 'Q2_loss', verbose=args.verbose):
             return False
         plt.plot(np.arange(len(df.Q1_loss)), df.Q1_loss, label='$Q_1$')
@@ -258,12 +258,21 @@ if __name__ == '__main__':
 
 
     @lfm.figure('Policy Loss')
-    def loss_before_after(fig, df, args):
+    def sac_policy_loss(fig, df, args):
         if not _keys_in_columns(df, 'policy_loss', verbose=args.verbose):
             return False
         plt.plot(np.arange(len(df.policy_loss)), df.policy_loss)
         plt.xlabel('iteration')
         plt.ylabel('loss value')
+
+
+    @lfm.figure('Policy Loss')
+    def avg_memory_reward(fig, df, args):
+        if not _keys_in_columns(df, 'avg_memory_reward', verbose=args.verbose):
+            return False
+        plt.plot(np.arange(len(df.avg_memory_reward)), df.avg_memory_reward)
+        plt.xlabel('iteration')
+        plt.ylabel('average reward in replay buffer')
 
 
     """ CEM specific """

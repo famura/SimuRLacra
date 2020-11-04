@@ -32,12 +32,13 @@ Train an agent to solve the Ball-on-Plate environment using Soft Actor-Critic.
 .. note::
     The hyper-parameters are not tuned at all!
 """
+import numpy as np
 import torch as to
 
 import pyrado
 from pyrado.algorithms.step_based.sac import SAC
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate2DSim
+from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.fnn import FNNPolicy
 from pyrado.policies.two_headed import TwoHeadedFNNPolicy
@@ -51,18 +52,14 @@ if __name__ == '__main__':
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(BallOnPlate2DSim.name, f'{SAC.name}_{TwoHeadedFNNPolicy.name}')
+    ex_dir = setup_experiment(OneMassOscillatorSim.name, f'{SAC.name}_{TwoHeadedFNNPolicy.name}')
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(
-        physicsEngine='Bullet',
-        dt=1/100.,
-        max_steps=500
-    )
-    env = BallOnPlate2DSim(**env_hparams)
+    env_hparams = dict(dt=1/50., max_steps=200)
+    env = OneMassOscillatorSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
     env = ActNormWrapper(env)
 
     # Policy
@@ -84,13 +81,13 @@ if __name__ == '__main__':
     # Algorithm
     algo_hparam = dict(
         max_iter=1000*env.max_steps,
-        memory_size=1000*env.max_steps,
+        memory_size=100*env.max_steps,
         gamma=0.995,
         num_batch_updates=1,
-        tau=0.99,
+        tau=0.995,
         ent_coeff_init=0.2,
-        learn_ent_coeff=False,
-        target_update_intvl=1,
+        learn_ent_coeff=True,
+        target_update_intvl=5,
         standardize_rew=False,
         min_steps=1,
         batch_size=256,

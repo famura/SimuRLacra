@@ -99,8 +99,8 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
         min_steps=trial.suggest_categorical('min_steps_algo', [1]),  # 10, env.max_steps, 10*env.max_steps
         memory_size=trial.suggest_loguniform('memory_size_algo', 1e2*env.max_steps, 1e4*env.max_steps),
         tau=trial.suggest_uniform('tau_algo', 0.99, 1.),
-        alpha_init=trial.suggest_uniform('alpha_init_algo', 0.1, 0.9),
-        learn_alpha=trial.suggest_categorical('learn_alpha_algo', [True, False]),
+        ent_coeff_init=trial.suggest_uniform('ent_coeff_init_algo', 0.1, 0.9),
+        learn_ent_coeff=trial.suggest_categorical('learn_ent_coeff_algo', [True, False]),
         standardize_rew=trial.suggest_categorical('standardize_rew_algo', [False]),
         gamma=trial.suggest_uniform('gamma_algo', 0.99, 1.),
         target_update_intvl=trial.suggest_categorical('target_update_intvl_algo', [1, 5]),

@@ -26,14 +26,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import joblib
 import numpy as np
 import os.path as osp
 import sys
 import torch as to
 import torch.nn as nn
 from copy import deepcopy
+from math import ceil
 from tqdm import tqdm
+from typing import Optional, Union
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
@@ -59,9 +60,15 @@ class SAC(Algorithm):
     .. seealso::
         [1] T. Haarnoja, A. Zhou, P. Abbeel, S. Levine, "Soft Actor-Critic: Off-Policy Maximum Entropy Deep
         Reinforcement Learning with a Stochastic Actor", ICML, 2018
-
         [2] This implementation was inspired by https://github.com/pranz24/pytorch-soft-actor-critic
             which is seems to be based on https://github.com/vitchyr/rlkit
+        [3] This implementation also borrows (at least a bit) from
+            https://github.com/DLR-RM/stable-baselines3/tree/master/stable_baselines3/sac
+        [4] https://github.com/MushroomRL/mushroom-rl/blob/dev/mushroom_rl/algorithms/actor_critic/deep_actor_critic/sac.py
+
+    .. note::
+        The update order of the policy, the Q-functions, (and the entropy coefficient) is different in almost every
+        implementation out there. Here we follow the one from [3].
     """
 
     name: str = 'sac'
@@ -75,22 +82,24 @@ class SAC(Algorithm):
                  memory_size: int,
                  gamma: float,
                  max_iter: int,
-                 num_batch_updates: int,
+                 num_batch_updates: Optional[int] = None,
                  tau: float = 0.995,
-                 alpha_init: float = 0.2,
-                 learn_alpha: bool = True,
+                 ent_coeff_init: float = 0.2,
+                 learn_ent_coeff: bool = True,
                  target_update_intvl: int = 1,
+                 num_init_memory_steps: int = None,
                  standardize_rew: bool = True,
-                 batch_size: int = 500,
+                 rew_scale: Union[int, float] = 1.,
+                 batch_size: int = 256,
                  min_rollouts: int = None,
                  min_steps: int = None,
                  num_workers: int = 4,
                  max_grad_norm: float = 5.,
                  lr: float = 3e-4,
                  lr_scheduler=None,
-                 lr_scheduler_hparam: [dict, None] = None,
+                 lr_scheduler_hparam: Optional[dict] = None,
                  logger: StepLogger = None):
-        """
+        r"""
         Constructor
 
         :param save_dir: directory to save the snapshots i.e. the results in
@@ -103,13 +112,16 @@ class SAC(Algorithm):
         :param memory_size: number of transitions in the replay memory buffer, e.g. 1000000
         :param gamma: temporal discount factor for the state values
         :param max_iter: number of iterations (policy updates)
-        :param num_batch_updates: number of batch updates per algorithm steps
+        :param num_batch_updates: number of (batched) gradient updates per algorithm step
         :param tau: interpolation factor in averaging for target networks, update used for the soft update a.k.a. polyak
                     update, between 0 and 1
-        :param alpha_init: initial weighting factor of the entropy term in the loss function
-        :param learn_alpha: adapt the weighting factor of the entropy term
+        :param ent_coeff_init: initial weighting factor of the entropy term in the loss function
+        :param learn_ent_coeff: adapt the weighting factor of the entropy term
         :param target_update_intvl: number of iterations that pass before updating the target network
-        :param standardize_rew: bool to flag if the rewards should be standardized
+        :param num_init_memory_steps: number of samples used to initially fill the replay buffer with, pass `None` to
+                                      fill the buffer completely
+        :param standardize_rew:  if `True`, the rewards are standardized to be $~ N(0,1)$
+        :param rew_scale: scaling factor for the rewards, defaults no scaling
         :param batch_size: number of samples per policy update batch
         :param min_rollouts: minimum number of rollouts sampled per policy update batch
         :param min_steps: minimum number of state transitions sampled per policy update batch
@@ -130,6 +142,10 @@ class SAC(Algorithm):
             raise pyrado.TypeErr(given=q_fcn_1, expected_type=Policy)
         if not isinstance(q_fcn_2, Policy):
             raise pyrado.TypeErr(given=q_fcn_2, expected_type=Policy)
+        if not isinstance(memory_size, int):
+            raise pyrado.TypeErr(given=memory_size, expected_type=int)
+        if not (num_init_memory_steps is None or isinstance(num_init_memory_steps, int)):
+            raise pyrado.TypeErr(given=num_init_memory_steps, expected_type=int)
 
         if logger is None:
             # Create logger that only logs every 100 steps of the algorithm
@@ -140,7 +156,6 @@ class SAC(Algorithm):
         # Call Algorithm's constructor
         super().__init__(save_dir, max_iter, policy, logger)
 
-        # Store the inputs
         self._env = env
         self.q_fcn_1 = q_fcn_1
         self.q_fcn_2 = q_fcn_2
@@ -150,55 +165,68 @@ class SAC(Algorithm):
         self.q_targ_2.eval()
         self.gamma = gamma
         self.tau = tau
-        self.learn_alpha = learn_alpha
+        self.learn_ent_coeff = learn_ent_coeff
         self.target_update_intvl = target_update_intvl
         self.standardize_rew = standardize_rew
-        self.num_batch_updates = num_batch_updates
+        self.rew_scale = rew_scale
         self.batch_size = batch_size
         self.max_grad_norm = max_grad_norm
+        if num_init_memory_steps is None:
+            self.num_init_memory_steps = num_init_memory_steps
+        else:
+            self.num_init_memory_steps = min(num_init_memory_steps, memory_size)
 
-        # Initialize
+        # Replay memory initialization (sample uniformly random from the action space)
         self._memory = ReplayMemory(memory_size)
         if policy.is_recurrent:
             init_expl_policy = RecurrentDummyPolicy(env.spec, policy.hidden_size)
         else:
             init_expl_policy = DummyPolicy(env.spec)
         self.sampler_init = ParallelRolloutSampler(
-            self._env, init_expl_policy,  # samples uniformly random from the action space
+            self._env, init_expl_policy,
             num_workers=num_workers,
-            min_steps=memory_size,
+            min_steps=self.num_init_memory_steps,
         )
-        self._expl_strat = SACExplStrat(self._policy, std_init=1.)  # std_init will be overwritten by 2nd policy head
-        self.sampler = ParallelRolloutSampler(
+
+        self._expl_strat = SACExplStrat(self._policy)
+        self.sampler_trn = ParallelRolloutSampler(
             self._env, self._expl_strat,
             num_workers=1,
             min_steps=min_steps,  # in [2] this would be 1
-            min_rollouts=min_rollouts  # in [2] this would be None
+            min_rollouts=min_rollouts,  # in [2] this would be None
         )
         self.sampler_eval = ParallelRolloutSampler(
             self._env, self._policy,
             num_workers=num_workers,
             min_steps=100*env.max_steps,
-            min_rollouts=None
+            min_rollouts=None,
+            show_progress_bar=False,
         )
         self._optim_policy = to.optim.Adam([{'params': self._policy.parameters()}], lr=lr, eps=1e-5)
-        self._optim_q_fcn_1 = to.optim.Adam([{'params': self.q_fcn_1.parameters()}], lr=lr, eps=1e-5)
-        self._optim_q_fcn_2 = to.optim.Adam([{'params': self.q_fcn_2.parameters()}], lr=lr, eps=1e-5)
-        log_alpha_init = to.log(to.tensor(alpha_init, dtype=to.get_default_dtype()))
-        if learn_alpha:
-            # Automatic entropy tuning
-            self._log_alpha = nn.Parameter(log_alpha_init, requires_grad=True)
-            self._alpha_optim = to.optim.Adam([{'params': self._log_alpha}], lr=lr, eps=1e-5)
+        self._optim_q_fcns = to.optim.Adam([{'params': self.q_fcn_1.parameters()},
+                                            {'params': self.q_fcn_2.parameters()}], lr=lr, eps=1e-5)
+
+        # Heuristic for number of gradient updates per step similar to the one in [3]
+        if num_batch_updates is None:
+            self.num_batch_updates = ceil(min_steps/env.max_steps) if min_steps is not None else min_rollouts
+        else:
+            self.num_batch_updates = num_batch_updates
+
+        # Automatic entropy tuning
+        log_ent_coeff_init = to.log(to.tensor(ent_coeff_init, device=policy.device, dtype=to.get_default_dtype()))
+        if learn_ent_coeff:
+            self._log_ent_coeff = nn.Parameter(log_ent_coeff_init, requires_grad=True)
+            self._ent_coeff_optim = to.optim.Adam([{'params': self._log_ent_coeff}], lr=lr, eps=1e-5)
             self.target_entropy = -to.prod(to.tensor(env.act_space.shape))
         else:
-            self._log_alpha = log_alpha_init
+            self._log_ent_coeff = log_ent_coeff_init
 
+        # Learning rate scheduler
         self._lr_scheduler_policy = lr_scheduler
         self._lr_scheduler_hparam = lr_scheduler_hparam
         if lr_scheduler is not None:
             self._lr_scheduler_policy = lr_scheduler(self._optim_policy, **lr_scheduler_hparam)
-            self._lr_scheduler_q_fcn_1 = lr_scheduler(self._optim_q_fcn_1, **lr_scheduler_hparam)
-            self._lr_scheduler_q_fcn_2 = lr_scheduler(self._optim_q_fcn_2, **lr_scheduler_hparam)
+            self._lr_scheduler_q_fcns = lr_scheduler(self._optim_q_fcns, **lr_scheduler_hparam)
 
     @property
     def expl_strat(self) -> SACExplStrat:
@@ -210,20 +238,20 @@ class SAC(Algorithm):
         return self._memory
 
     @property
-    def alpha(self) -> to.Tensor:
+    def ent_coeff(self) -> to.Tensor:
         """ Get the detached entropy coefficient. """
-        return to.exp(self._log_alpha.detach())
+        return to.exp(self._log_ent_coeff.detach())
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
         if self._memory.isempty:
             # Warm-up phase
-            print_cbt_once('Collecting samples until replay memory contains if full.', 'w')
+            print_cbt_once('Collecting samples until replay memory if full.', 'w')
             # Sample steps and store them in the replay memory
             ros = self.sampler_init.sample()
             self._memory.push(ros)
         else:
             # Sample steps and store them in the replay memory
-            ros = self.sampler.sample()
+            ros = self.sampler_trn.sample()
             self._memory.push(ros)
         self._cnt_samples += sum([ro.length for ro in ros])  # don't count the evaluation samples
 
@@ -272,29 +300,42 @@ class SAC(Algorithm):
     def update(self):
         """ Update the policy's and Q-functions' parameters on transitions sampled from the replay memory. """
         # Containers for logging
-        policy_losses = to.zeros(self.num_batch_updates)
         expl_strat_stds = to.zeros(self.num_batch_updates)
         q_fcn_1_losses = to.zeros(self.num_batch_updates)
         q_fcn_2_losses = to.zeros(self.num_batch_updates)
-        policy_grad_norm = to.zeros(self.num_batch_updates)
         q_fcn_1_grad_norm = to.zeros(self.num_batch_updates)
         q_fcn_2_grad_norm = to.zeros(self.num_batch_updates)
+        policy_losses = to.zeros(self.num_batch_updates)
+        policy_grad_norm = to.zeros(self.num_batch_updates)
 
         for b in tqdm(range(self.num_batch_updates), total=self.num_batch_updates,
                       desc=f'Updating', unit='batches', file=sys.stdout, leave=False):
-
             # Sample steps and the associated next step from the replay memory
             steps, next_steps = self._memory.sample(self.batch_size)
             steps.torch(data_type=to.get_default_dtype())
             next_steps.torch(data_type=to.get_default_dtype())
 
-            # Standardize rewards
+            # Standardize and optionally scale the rewards
             if self.standardize_rew:
                 rewards = standardize(steps.rewards).unsqueeze(1)
             else:
                 rewards = steps.rewards.unsqueeze(1)
-            rew_scale = 1.
-            rewards *= rew_scale
+            rewards *= self.rew_scale
+
+            # Explore and compute the current log probs (later used for policy update)
+            if self.policy.is_recurrent:
+                act_expl, log_probs_expl, _ = self._expl_strat(steps.observations, steps.hidden_states)
+            else:
+                act_expl, log_probs_expl = self._expl_strat(steps.observations)
+            expl_strat_stds[b] = to.mean(self._expl_strat.std.data)
+
+            # Update the the entropy coefficient
+            if self.learn_ent_coeff:
+                # Compute entropy coefficient loss
+                ent_coeff_loss = -to.mean(self._log_ent_coeff*(log_probs_expl.detach() + self.target_entropy))
+                self._ent_coeff_optim.zero_grad()
+                ent_coeff_loss.backward()
+                self._ent_coeff_optim.step()
 
             with to.no_grad():
                 # Create masks for the non-final observations
@@ -308,55 +349,41 @@ class SAC(Algorithm):
                     next_act_expl, next_log_probs = self._expl_strat(next_steps.observations)
                 next_q_val_target_1 = self.q_targ_1(to.cat([next_steps.observations, next_act_expl], dim=1))
                 next_q_val_target_2 = self.q_targ_2(to.cat([next_steps.observations, next_act_expl], dim=1))
-                next_q_val_target_min = to.min(next_q_val_target_1, next_q_val_target_2) - self.alpha*next_log_probs
-                next_q_val = rewards + not_done*self.gamma*next_q_val_target_min
+                next_q_val_target_min = to.min(next_q_val_target_1, next_q_val_target_2)
+                next_q_val_target_min -= self.ent_coeff*next_log_probs  # add entropy term
+                # TD error (including entropy term)
+                next_q_val = rewards + not_done*self.gamma*next_q_val_target_min  # [4] does not use the reward here
 
-            # Compute the two Q-function losses
+            # Compute the (current)state-(current)action values Q(s,a) from the two Q-networks
             # E_{(s_t, a_t) ~ D} [1/2 * (Q_i(s_t, a_t) - r_t - gamma * E_{s_{t+1} ~ p} [V(s_{t+1})] )^2]
             q_val_1 = self.q_fcn_1(to.cat([steps.observations, steps.actions], dim=1))
             q_val_2 = self.q_fcn_2(to.cat([steps.observations, steps.actions], dim=1))
             q_1_loss = nn.functional.mse_loss(q_val_1, next_q_val)
             q_2_loss = nn.functional.mse_loss(q_val_2, next_q_val)
+            q_loss = (q_1_loss + q_2_loss)/2.  # averaging the Q-functions is taken from [3]
             q_fcn_1_losses[b] = q_1_loss.data
             q_fcn_2_losses[b] = q_2_loss.data
 
+            # Update the Q-fcns
+            self._optim_q_fcns.zero_grad()
+            q_loss.backward()
+            q_fcn_1_grad_norm[b] = self.clip_grad(self.q_fcn_1, None)
+            q_fcn_2_grad_norm[b] = self.clip_grad(self.q_fcn_2, None)
+            self._optim_q_fcns.step()
+
             # Compute the policy loss
             # E_{s_t ~ D, eps_t ~ N} [log( pi( f(eps_t; s_t) ) ) - Q(s_t, f(eps_t; s_t))]
-            if self.policy.is_recurrent:
-                act_expl, log_probs, _ = self._expl_strat(steps.observations, steps.hidden_states)
-            else:
-                act_expl, log_probs = self._expl_strat(steps.observations)
-            q1_pi = self.q_fcn_1(to.cat([steps.observations, act_expl], dim=1))
-            q2_pi = self.q_fcn_2(to.cat([steps.observations, act_expl], dim=1))
-            min_q_pi = to.min(q1_pi, q2_pi)
-            policy_loss = to.mean(self.alpha*log_probs - min_q_pi)
+            q_1_val_expl = self.q_fcn_1(to.cat([steps.observations, act_expl], dim=1))
+            q_2_val_expl = self.q_fcn_2(to.cat([steps.observations, act_expl], dim=1))
+            min_q_val_expl = to.min(q_1_val_expl, q_2_val_expl)
+            policy_loss = to.mean(self.ent_coeff*log_probs_expl - min_q_val_expl)  # self.ent_coeff is detached
             policy_losses[b] = policy_loss.data
-            expl_strat_stds[b] = to.mean(self._expl_strat.std.data)
 
-            # Do one optimization step for each optimizer, and clip the gradients if desired
-            # Q-fcn 1
-            self._optim_q_fcn_1.zero_grad()
-            q_1_loss.backward()
-            q_fcn_1_grad_norm[b] = self.clip_grad(self.q_fcn_1, None)
-            self._optim_q_fcn_1.step()
-            # Q-fcn 2
-            self._optim_q_fcn_2.zero_grad()
-            q_2_loss.backward()
-            q_fcn_2_grad_norm[b] = self.clip_grad(self.q_fcn_2, None)
-            self._optim_q_fcn_2.step()
-            # Policy
+            # Update the policy
             self._optim_policy.zero_grad()
             policy_loss.backward()
             policy_grad_norm[b] = self.clip_grad(self._expl_strat.policy, self.max_grad_norm)
             self._optim_policy.step()
-
-            if self.learn_alpha:
-                # Compute entropy coefficient loss
-                alpha_loss = -to.mean(self._log_alpha*(log_probs.detach() + self.target_entropy))
-                # Do one optimizer step for the entropy coefficient optimizer
-                self._alpha_optim.zero_grad()
-                alpha_loss.backward()
-                self._alpha_optim.step()
 
             # Soft-update the target networks
             if (self._curr_iter*self.num_batch_updates + b)%self.target_update_intvl == 0:
@@ -366,8 +393,7 @@ class SAC(Algorithm):
         # Update the learning rate if the schedulers have been specified
         if self._lr_scheduler_policy is not None:
             self._lr_scheduler_policy.step()
-            self._lr_scheduler_q_fcn_1.step()
-            self._lr_scheduler_q_fcn_2.step()
+            self._lr_scheduler_q_fcns.step()
 
         # Logging
         self.logger.add_value('Q1 loss', to.mean(q_fcn_1_losses))
@@ -375,7 +401,7 @@ class SAC(Algorithm):
         self.logger.add_value('policy loss', to.mean(policy_losses))
         self.logger.add_value('avg policy grad norm', to.mean(policy_grad_norm))
         self.logger.add_value('avg expl strat std', to.mean(expl_strat_stds))
-        self.logger.add_value('alpha', self.alpha)
+        self.logger.add_value('ent_coeff', self.ent_coeff)
         if self._lr_scheduler_policy is not None:
             self.logger.add_value('learning rate', self._lr_scheduler_policy.get_lr(), 6)
 
@@ -384,7 +410,7 @@ class SAC(Algorithm):
         super().reset(seed)
 
         # Re-initialize samplers in case env or policy changed
-        self.sampler.reinit(self._env, self._expl_strat)
+        self.sampler_trn.reinit(self._env, self._expl_strat)
         self.sampler_eval.reinit(self._env, self._policy)
 
         # Reset the replay memory
@@ -393,10 +419,8 @@ class SAC(Algorithm):
         # Reset the learning rate schedulers
         if self._lr_scheduler_policy is not None:
             self._lr_scheduler_policy.last_epoch = -1
-        if self._lr_scheduler_q_fcn_1 is not None:
-            self._lr_scheduler_q_fcn_1.last_epoch = -1
-        if self._lr_scheduler_q_fcn_2 is not None:
-            self._lr_scheduler_q_fcn_2.last_epoch = -1
+        if self._lr_scheduler_q_fcns is not None:
+            self._lr_scheduler_q_fcns.last_epoch = -1
 
     def init_modules(self, warmstart: bool, suffix: str = '', prefix: str = None, **kwargs):
         if prefix is None:

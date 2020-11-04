@@ -67,7 +67,7 @@ class GAE(LoggerAware, nn.Module):
                  lr: float = 5e-4,
                  lr_scheduler=None,
                  lr_scheduler_hparam: [dict, None] = None):
-        """
+        r"""
         Constructor
 
         :param value_fcn: value function, which can be a `FNN` or a `Policy`
@@ -75,7 +75,7 @@ class GAE(LoggerAware, nn.Module):
         :param lamda: regulates the trade-off between bias (max for 0) and variance (max for 1), see [1]
         :param num_epoch: number of iterations over all gathered samples during one estimator update
         :param batch_size: number of samples per estimator update batch
-        :param standardize_adv: set `True` to standardize the advantages
+        :param standardize_adv: if `True`, the advantages are standardized to be $~ N(0,1)$
         :param standardizer: pass `None` to use stateless standardisation, alternatively pass `RunningStandardizer()`
                              to use a standardizer wich keeps track of past values
         :param max_grad_norm: maximum L2 norm of the gradients for clipping, set to `None` to disable gradient clipping

@@ -99,6 +99,7 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
                  *,
                  min_rollouts: int = None,
                  min_steps: int = None,
+                 show_progress_bar: bool = True,
                  seed: int = None):
         """
         Constructor
@@ -108,6 +109,7 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         :param num_workers: number of parallel samplers
         :param min_rollouts: minimum number of complete rollouts to sample
         :param min_steps: minimum total number of steps to sample
+        :param show_progress_bar: it `True`, display a progress bar using `tqdm`
         :param seed: seed value for the random number generators, pass `None` for no seeding
         """
         Serializable._init(self, locals())
@@ -115,6 +117,7 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
 
         self.env = env
         self.policy = policy
+        self.show_progress_bar = show_progress_bar
 
         # Set method to spawn if using cuda
         if self.policy.device == 'cuda':
@@ -169,7 +172,7 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         self.pool.invoke_all(_ps_update_policy, self.policy.state_dict())
 
         # Collect samples
-        with tqdm(leave=False, file=sys.stdout, desc='Sampling',
+        with tqdm(leave=False, file=sys.stdout, desc='Sampling', disable=(not self.show_progress_bar),
                   unit='steps' if self.min_steps is not None else 'rollouts') as pb:
 
             if self.min_steps is None:

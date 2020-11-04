@@ -217,7 +217,7 @@ def clamp(inp: to.Tensor, lo: to.Tensor, up: to.Tensor) -> to.Tensor:
 
     :param inp: input tensor
     :param lo: lower bound for each entry
-    :param lo: upper bound for each entry
+    :param up: upper bound for each entry
     :return: clipped tensor
     """
     if not (lo < up).all():
