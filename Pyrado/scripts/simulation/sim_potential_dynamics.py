@@ -29,7 +29,6 @@
 """
 Script to simulate 1-dimensional dynamical systems used in Activation Dynamic Networks (ADN) for different hyper-parameters
 """
-import numpy as np
 import torch as to
 import os.path as osp
 from matplotlib import pyplot as plt
@@ -38,6 +37,7 @@ import pyrado
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.policies.adn import ADNPolicy
 from pyrado.policies.neural_fields import NFPolicy
+from pyrado.policies.potential_based import PotentialBasedPolicy
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment
 from pyrado.utils.input_output import print_cbt
@@ -52,8 +52,8 @@ if __name__ == '__main__':
 
     # Load the environment and the policy
     env, policy, _ = load_experiment(ex_dir, args)
-    if not isinstance(policy, (ADNPolicy, NFPolicy)):
-        raise pyrado.TypeErr(given=policy, expected_type=[ADNPolicy, NFPolicy])
+    if not isinstance(policy, PotentialBasedPolicy):
+        raise pyrado.TypeErr(given=policy, expected_type=PotentialBasedPolicy)
 
     # Define the parameters for evaluation
     num_steps, dt_eval = 1000, env.dt/2

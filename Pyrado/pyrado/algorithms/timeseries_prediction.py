@@ -33,12 +33,11 @@ from typing import Optional
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
+from pyrado.policies.potential_based import PotentialBasedPolicy
 from pyrado.utils.saving_loading import save_prefix_suffix
 from pyrado.utils.data_sets import TimeSeriesDataSet
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.policies.adn import ADNPolicy
-from pyrado.policies.neural_fields import NFPolicy
 from pyrado.policies.rnn import RNNPolicyBase
 from pyrado.utils.input_output import print_cbt
 
@@ -184,7 +183,7 @@ class TSPred(Algorithm):
         :return: predicted output and latest hidden state
         """
         # Custom RNNs
-        if isinstance(policy, (ADNPolicy, NFPolicy)):
+        if isinstance(policy, PotentialBasedPolicy):
             preds = []
             last_pred = None
 
@@ -232,7 +231,7 @@ class TSPred(Algorithm):
                 hidden = hidden[-1].view(1, -1)
 
         else:
-            raise pyrado.TypeErr(given=policy, expected_type=[ADNPolicy, NFPolicy, RNNPolicyBase])
+            raise pyrado.TypeErr(given=policy, expected_type=[PotentialBasedPolicy, RNNPolicyBase])
 
         # Return the (latest if windowed) prediction and the latest hidden state
         return preds, hidden

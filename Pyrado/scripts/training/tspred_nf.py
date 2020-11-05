@@ -104,7 +104,7 @@ if __name__ == '__main__':
         conv_padding_mode='circular',
         tau_init=0.2 if 'oscillation' in data_set_name else 1.,
         tau_learnable=True,
-        kappa_init=None,
+        kappa_init=1e-3,
         kappa_learnable=True,
         potential_init_learnable=True,
         # init_param_kwargs=dict(bell=True),

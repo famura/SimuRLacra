@@ -101,7 +101,7 @@ if __name__ == '__main__':
         obs_layer=None,
         tau_init=0.2 if 'oscillation' in data_set_name else 1.,
         tau_learnable=True,
-        kappa_init=None,  # 1e-3,
+        kappa_init=1e-3,
         kappa_learnable=True,
         capacity_learnable=True,
         potential_init_learnable=True,

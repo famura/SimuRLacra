@@ -31,12 +31,11 @@ import torch.nn as nn
 from typing import Callable, Sequence
 
 import pyrado
-from pyrado.sampling.step_sequence import StepSequence
-from pyrado.utils.data_types import EnvSpec
 from pyrado.policies.base import Policy
-from pyrado.utils.nn_layers import IndiNonlinLayer
-from pyrado.policies.base_recurrent import RecurrentPolicy
 from pyrado.policies.initialization import init_param
+from pyrado.policies.potential_based import PotentialBasedPolicy
+from pyrado.utils.data_types import EnvSpec
+from pyrado.utils.nn_layers import IndiNonlinLayer
 
 
 def pd_linear(p: to.Tensor, s: to.Tensor, h: to.Tensor, tau: to.Tensor, **kwargs) -> to.Tensor:
@@ -162,7 +161,7 @@ def pd_capacity_32_abs(p: to.Tensor, s: to.Tensor, h: to.Tensor, tau: to.Tensor,
             (to.ones_like(p) - 2*to.abs(h - p)/kwargs['capacity']))/tau
 
 
-class ADNPolicy(RecurrentPolicy):
+class ADNPolicy(PotentialBasedPolicy):
     """
     Activation Dynamic Network (ADN)
 
@@ -206,55 +205,16 @@ class ADNPolicy(RecurrentPolicy):
         :param init_param_kwargs: additional keyword arguments for the policy parameter initialization
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
-        super().__init__(spec, use_cuda)
-        if not isinstance(dt, (float, int)):
-            raise pyrado.TypeErr(given=dt, expected_type=float)
-        if not callable(activation_nonlin):
-            if activation_nonlin is not None and not len(activation_nonlin) == spec.act_space.flat_dim:
-                raise pyrado.ShapeErr(given=activation_nonlin, expected_match=spec.act_space.shape)
+        super().__init__(spec, dt, obs_layer, activation_nonlin, tau_init, tau_learnable, kappa_init, kappa_learnable,
+                         potential_init_learnable, use_cuda)
 
-        # Store inputs
-        self._dt = to.tensor([dt], dtype=to.get_default_dtype())
-        self._input_size = spec.obs_space.flat_dim  # observations include goal distance, prediction error, ect.
-        self._hidden_size = spec.act_space.flat_dim  # hidden_size = output_size = num actions
-        self.num_recurrent_layers = 1
-        self.potentials_dot_fcn = potentials_dyn_fcn
-
-        # Create the layers
-        self.obs_layer = nn.Linear(self._input_size, self._hidden_size, bias=False) if obs_layer is None else obs_layer
-        self.resting_level = nn.Parameter(to.zeros(self._hidden_size), requires_grad=True)
+        # Create custom ADNPolicy layers
         self.prev_act_layer = nn.Linear(self._hidden_size, self._hidden_size, bias=False)
         self.pot_to_act_layer = IndiNonlinLayer(self._hidden_size, nonlin=activation_nonlin, bias=False,
                                                 weight=True)  # scaling weight equals beta in eq (4) of [1]
 
-        # Call custom initialization function after PyTorch network parameter initialization
-        self._potentials_max = 100.  # clip potentials symmetrically at a very large value (for debugging)
-        self._stimuli_external = to.zeros(self.hidden_size)
-        self._stimuli_internal = to.zeros(self.hidden_size)
-        self.potential_init_learnable = potential_init_learnable
-        if potential_init_learnable:
-            self._potentials_init = nn.Parameter(to.randn(self.hidden_size), requires_grad=True)
-        else:
-            if activation_nonlin is to.sigmoid:
-                self._potentials_init = -7.*to.ones(self.hidden_size)
-            else:
-                self._potentials_init = to.zeros(self.hidden_size)
-
         # Potential dynamics
-        # time constant
-        self.tau_learnable = tau_learnable
-        self._log_tau_init = to.log(to.tensor([tau_init], dtype=to.get_default_dtype()))
-        self._log_tau = nn.Parameter(self._log_tau_init, requires_grad=True) \
-            if self.tau_learnable else self._log_tau_init
-        # cubic decay
-        self.kappa_learnable = kappa_learnable
-        if potentials_dyn_fcn == pd_cubic:
-            self._log_kappa_init = to.log(to.tensor([kappa_init], dtype=to.get_default_dtype()))
-            self._log_kappa = nn.Parameter(self._log_kappa_init, requires_grad=True) \
-                if self.kappa_learnable else self._log_kappa_init
-        else:
-            self._log_kappa = None
-        # capacity
+        self.potentials_dot_fcn = potentials_dyn_fcn
         self.capacity_learnable = capacity_learnable
         if potentials_dyn_fcn in [pd_capacity_21, pd_capacity_21_abs, pd_capacity_32, pd_capacity_32_abs]:
             if activation_nonlin is to.sigmoid:
@@ -279,39 +239,7 @@ class ADNPolicy(RecurrentPolicy):
         self.to(self.device)
 
     def extra_repr(self) -> str:
-        return f'tau_learnable={self.tau_learnable}, kappa_learnable={self.kappa_learnable},' \
-               f'capacity_learnable={self.capacity_learnable}, learn_init_potentials=' \
-               f'{isinstance(self._potentials_init, nn.Parameter)}'
-
-    @property
-    def hidden_size(self) -> int:
-        return self.num_recurrent_layers*self._hidden_size
-
-    @property
-    def stimuli_external(self) -> to.Tensor:
-        """
-        Get the neurons' external stimuli, resulting from the current observations.
-        This is used for recording during a rollout.
-        """
-        return self._stimuli_external
-
-    @property
-    def stimuli_internal(self) -> to.Tensor:
-        """
-        Get the neurons' internal stimuli, resulting from the previous activations of the neurons.
-        This is used for recording during a rollout.
-        """
-        return self._stimuli_internal
-
-    @property
-    def tau(self) -> to.Tensor:
-        """ Get the time scale parameter (exists for all potential dynamics functions). """
-        return to.exp(self._log_tau)
-
-    @property
-    def kappa(self) -> [None, to.Tensor]:
-        """ Get the cubic decay parameter (exists for cubic decay-based dynamics functions), else return `None`. """
-        return None if self._log_kappa is None else to.exp(self._log_kappa)
+        return super().extra_repr().join(f', capacity_learnable={self.capacity_learnable}')
 
     @property
     def capacity(self) -> [None, to.Tensor]:
@@ -327,14 +255,14 @@ class ADNPolicy(RecurrentPolicy):
         :param stimuli: sum of external and internal stimuli at the current point in time
         :return: time derivative of the potentials
         """
-        return self.potentials_dot_fcn(potentials, stimuli, self.resting_level, self.tau,
-                                       kappa=self.kappa, capacity=self.capacity)
+        return self.potentials_dot_fcn(
+            potentials, stimuli, self.resting_level, self.tau, kappa=self.kappa, capacity=self.capacity)
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
+        super().init_param(init_values, **kwargs)
+
         if init_values is None:
-            # Initialize RNN layers
-            init_param(self.obs_layer, **kwargs)
-            self.resting_level.data = to.randn_like(self.resting_level.data)
+            # Initialize layers
             init_param(self.prev_act_layer, **kwargs)
             if kwargs.get('sigmoid_nlin', False):
                 self.prev_act_layer.weight.data.fill_(-0.5)  # inhibit others
@@ -342,81 +270,17 @@ class ADNPolicy(RecurrentPolicy):
                     self.prev_act_layer.weight.data[i, i] = 1.  # excite self
             init_param(self.pot_to_act_layer, **kwargs)
 
-            # Initialize time constant if learnable
-            if self.tau_learnable:
-                self._log_tau.data = self._log_tau_init
-            # Initialize cubic decay if learnable
-            if self.potentials_dot_fcn == pd_cubic:
-                if self.kappa_learnable:
-                    self._log_kappa.data = self._log_kappa_init
-            # Initialize capacity if learnable
+            # Initialize cubic decay and capacity if learnable
+            if self.potentials_dot_fcn == pd_cubic and self.kappa_learnable:
+                self._log_kappa.data = self._log_kappa_init
             elif self.potentials_dot_fcn in [pd_capacity_21, pd_capacity_21_abs, pd_capacity_32, pd_capacity_32_abs]:
                 if self.capacity_learnable:
                     self._log_capacity.data = self._log_capacity_init
-            # Initialize the potentials if learnable
-            if self.potential_init_learnable:
-                self._potentials_init.data = to.randn(self.hidden_size)
 
         else:
             self.param_values = init_values
 
-    def init_hidden(self, batch_size: int = None) -> to.Tensor:
-        if batch_size is None:
-            return self._potentials_init.detach()  # needs to be detached for torch.jit.script()
-        else:
-            return self._potentials_init.detach().repeat(batch_size, 1)  # needs to be detached for torch.jit.script()
-
-    def _unpack_hidden(self, hidden: to.Tensor, batch_size: int = None):
-        """
-        Unpack the flat hidden state vector into a form the actual network module can use.
-        Since hidden usually comes from some outer source, this method should validate it's shape.
-
-        :param hidden: flat hidden state
-        :param batch_size: if not `None`, hidden is 2-dim and the first dim represents parts of a data batch
-        :return: unpacked hidden state of shape batch_size x channels_in x length_in, ready for the `Conv1d` module
-        """
-        if len(hidden.shape) == 1:
-            assert hidden.shape[0] == self.num_recurrent_layers*self._hidden_size, \
-                "Passed hidden variable's size doesn't match the one required by the network."
-            assert batch_size is None, 'Cannot use batched observations with unbatched hidden state'
-            return hidden.view(self.num_recurrent_layers*self._hidden_size)
-
-        elif len(hidden.shape) == 2:
-            assert hidden.shape[1] == self.num_recurrent_layers*self._hidden_size, \
-                "Passed hidden variable's size doesn't match the one required by the network."
-            assert hidden.shape[0] == batch_size, \
-                f'Batch size of hidden state ({hidden.shape[0]}) must match batch size of observations ({batch_size})'
-            return hidden.view(batch_size, self.num_recurrent_layers*self._hidden_size)
-
-        else:
-            raise RuntimeError(f"Improper shape of 'hidden'. Policy received {hidden.shape}, "
-                               f"but shape should be 1- or 2-dim")
-
-    def _pack_hidden(self, hidden: to.Tensor, batch_size: int = None):
-        """
-        Pack the hidden state returned by the network into an 1-dim state vector.
-        This should be the reverse operation of `_unpack_hidden`.
-
-        :param hidden: hidden state as returned by the network
-        :param batch_size: if not `None`, the result should be 2-dim and the first dim represents parts of a data batch
-        :return: packed hidden state
-        """
-        if batch_size is None:
-            # Simply flatten the hidden state
-            return hidden.view(self.num_recurrent_layers*self._hidden_size)
-        else:
-            # Make sure that the batch dimension is the first element
-            return hidden.view(batch_size, self.num_recurrent_layers*self._hidden_size)
-
     def forward(self, obs: to.Tensor, hidden: to.Tensor = None) -> (to.Tensor, to.Tensor):
-        """
-        Compute the goal distance, prediction error, and predicted cost.
-        Then pass it to the wrapped RNN.
-
-        :param obs: observations coming from the environment i.e. noisy
-        :param hidden: current hidden states, in this case action and potentials of the last time step
-        :return: current action and new hidden states
-        """
         obs = obs.to(self.device)
 
         # We assume flattened observations, if they are 2d, they're batched.
@@ -459,22 +323,3 @@ class ADNPolicy(RecurrentPolicy):
 
         # Return the next action and store the last one as a hidden variable
         return act, hidden_out
-
-    def evaluate(self, rollout: StepSequence, hidden_states_name: str = 'hidden_states') -> to.Tensor:
-        self.eval()
-        act_list = []
-
-        for ro in rollout.iterate_rollouts():
-            if hidden_states_name in rollout.data_names:
-                # Get initial hidden state from first step
-                hidden = ro[0][hidden_states_name]
-            else:
-                # Let the network pick the default hidden state
-                hidden = None
-
-            # Run steps consecutively reusing the hidden state
-            for step in ro:
-                act, hidden = self(step.observation, hidden)
-                act_list.append(act)
-
-        return to.stack(act_list)

@@ -156,7 +156,15 @@ class MirrConv1d(_ConvNd):
     The biases are left unchanged.
     """
 
-    def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, groups=1, bias=False,
+    def __init__(self,
+                 in_channels,
+                 out_channels,
+                 kernel_size,
+                 stride=1,
+                 padding=0,
+                 dilation=1,
+                 groups=1,
+                 bias=False,
                  padding_mode='zeros'):
         # Same as in PyTorch 1.4
         kernel_size = _single(kernel_size)

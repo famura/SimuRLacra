@@ -98,7 +98,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
             trial.suggest_categorical('policy_potentials_dyn_fcn', ['pd_linear', 'pd_cubic'])),
         tau_init=trial.suggest_uniform('policy_tau_init', 1., 10.),
         tau_learnable=True,
-        kappa_init=trial.suggest_categorical('policy_kappa_init', [1e-4, 1e-2]),
+        kappa_init=trial.suggest_categorical('policy_kappa_init', [0, 1e-4, 1e-2]),
         kappa_learnable=True,
         capacity_learnable=True,
         potential_init_learnable=trial.suggest_categorical('policy_potential_init_learnable', [True, False]),
