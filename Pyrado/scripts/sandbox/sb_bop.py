@@ -33,11 +33,10 @@ import math
 from matplotlib import pyplot as plt
 
 import rcsenv
-import pyrado
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate5DSim
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.domain_randomization.utils import print_domain_params
-from pyrado.policies.time import TimePolicy
+from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt

@@ -38,8 +38,8 @@ from typing import Callable
 import pyrado
 from matplotlib import pyplot as plt
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
-from pyrado.policies.dummy import IdlePolicy
-from pyrado.policies.time import TimePolicy
+from pyrado.policies.special.dummy import IdlePolicy
+from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import rollout
 
 

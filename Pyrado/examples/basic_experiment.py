@@ -8,7 +8,7 @@ from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.features import FeatureStack, identity_feat, sin_feat
-from pyrado.policies.linear import LinearPolicy
+from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.sampling.rollout import rollout, after_rollout_query
 from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt

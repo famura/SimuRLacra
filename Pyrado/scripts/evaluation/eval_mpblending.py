@@ -35,7 +35,7 @@ from matplotlib import pyplot as plt
 
 import rcsenv
 from pyrado.environments.rcspysim.mp_blending import MPBlendingSim
-from pyrado.policies.time import TimePolicy
+from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.data_types import RenderMode
 

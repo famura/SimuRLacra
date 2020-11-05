@@ -41,8 +41,7 @@ import pyrado
 from pyrado.algorithms.timeseries_prediction import TSPred
 from pyrado.logger.experiment import save_list_of_dicts_to_yaml, setup_experiment
 from pyrado.logger.step import create_csv_step_logger
-from pyrado.policies.adn import ADNPolicy, pd_linear
-from pyrado.spaces import BoxSpace
+from pyrado.policies.recurrent.adn import ADNPolicy
 from pyrado.spaces.box import InfBoxSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_sets import TimeSeriesDataSet

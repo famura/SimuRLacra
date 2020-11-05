@@ -34,7 +34,7 @@ import pandas as pd
 import torch as to
 import torch.nn as nn
 import torch.optim as optim
-from pyrado.policies.neural_fields import NFPolicy
+from pyrado.policies.recurrent.neural_fields import NFPolicy
 
 import pyrado
 from pyrado.algorithms.timeseries_prediction import TSPred

@@ -43,7 +43,7 @@ from pyrado.logger.experiment import save_list_of_dicts_to_yaml, setup_experimen
 from pyrado.logger.step import create_csv_step_logger
 from pyrado.policies.features import FeatureStack, identity_feat, sign_feat, abs_feat, squared_feat, \
     cubic_feat, MultFeat, ATan2Feat
-from pyrado.policies.linear import LinearPolicy
+from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.argparser import get_argparser
 

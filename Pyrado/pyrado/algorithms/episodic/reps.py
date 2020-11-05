@@ -39,10 +39,10 @@ from typing import Callable, Union
 import pyrado
 from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
 from pyrado.algorithms.utils import get_grad_via_torch
-from pyrado.policies.domain_distribution import DomainDistrParamPolicy
+from pyrado.policies.special.domain_distribution import DomainDistrParamPolicy
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import NormalParamNoise, SymmParamExplStrat
-from pyrado.policies.linear import LinearPolicy
+from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.utils.input_output import print_cbt_once
 from pyrado.utils.math import logmeanexp
 from pyrado.policies.base import Policy

@@ -41,7 +41,7 @@ from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.policies.base_recurrent import RecurrentPolicy
+from pyrado.policies.recurrent.base_recurrent import RecurrentPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.step_sequence import StepSequence, discounted_values
 from pyrado.utils.math import explained_var

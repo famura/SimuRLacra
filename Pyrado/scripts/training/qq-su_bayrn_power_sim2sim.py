@@ -38,7 +38,7 @@ from pyrado.domain_randomization.default_randomizers import create_zero_var_rand
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.environment_specific import QQubeSwingUpAndBalanceCtrl
+from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import wrap_like_other_env
 

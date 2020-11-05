@@ -36,7 +36,7 @@ from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.policies.features import FeatureStack, identity_feat, sign_feat, abs_feat, squared_feat, const_feat, \
     MultFeat, ATan2Feat, cubic_feat
-from pyrado.policies.linear import LinearPolicy
+from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.utils.argparser import get_argparser
 
 

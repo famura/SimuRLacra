@@ -36,8 +36,8 @@ from pyrado.algorithms.meta.adr import RewardGenerator
 from pyrado.algorithms.utils import compute_action_statistics, until_thold_exceeded, get_grad_via_torch
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer_omo
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
-from pyrado.policies.fnn import FNNPolicy
-from pyrado.policies.two_headed import TwoHeadedPolicy
+from pyrado.policies.feed_forward.fnn import FNNPolicy
+from pyrado.policies.base import TwoHeadedPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler

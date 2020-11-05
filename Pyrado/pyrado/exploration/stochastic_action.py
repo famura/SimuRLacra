@@ -33,10 +33,9 @@ from abc import ABC
 from torch.distributions import Distribution, Bernoulli, Categorical
 
 import pyrado
-from pyrado.policies.base import Policy
+from pyrado.policies.base import Policy, TwoHeadedPolicy
 from pyrado.exploration.normal_noise import DiagNormalNoise
 from pyrado.exploration.uniform_noise import UniformNoise
-from pyrado.policies.two_headed import TwoHeadedPolicy
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.math import clamp
 from pyrado.utils.properties import Delegate

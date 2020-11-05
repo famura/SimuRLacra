@@ -39,8 +39,8 @@ from pyrado.algorithms.step_based.sac import SAC
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate2DSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.fnn import FNNPolicy
-from pyrado.policies.two_headed import TwoHeadedFNNPolicy
+from pyrado.policies.feed_forward.fnn import FNNPolicy
+from pyrado.policies.feed_forward.two_headed_fnn import TwoHeadedFNNPolicy
 from pyrado.spaces import ValueFunctionSpace, BoxSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec

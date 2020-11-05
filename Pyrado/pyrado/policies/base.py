@@ -217,3 +217,15 @@ class TracedPolicyWrapper(nn.Module):
 
     def forward(self, obs):
         return self.module(obs)
+
+
+class TwoHeadedPolicy(Policy, ABC):
+    """ Base class for policies with a shared body and two separate heads. """
+
+    @abstractmethod
+    def init_param(self, init_values: to.Tensor = None, **kwargs):
+        raise NotImplementedError
+
+    @abstractmethod
+    def forward(self, obs: to.Tensor) -> [to.Tensor, (to.Tensor, to.Tensor)]:
+        raise NotImplementedError

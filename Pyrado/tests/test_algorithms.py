@@ -59,10 +59,10 @@ from pyrado.environments.pysim.ball_on_beam import BallOnBeamDiscSim
 from pyrado.logger import set_log_prefix_dir
 from pyrado.policies.base import Policy
 from pyrado.policies.features import *
-from pyrado.policies.fnn import FNNPolicy, FNN, DiscreteActQValPolicy
-from pyrado.policies.rnn import RNNPolicy
-from pyrado.policies.linear import LinearPolicy
-from pyrado.policies.two_headed import TwoHeadedGRUPolicy
+from pyrado.policies.feed_forward.fnn import FNNPolicy, FNN, DiscreteActQValPolicy
+from pyrado.policies.recurrent.rnn import RNNPolicy
+from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedGRUPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sequences import *
 from pyrado.spaces import ValueFunctionSpace, BoxSpace

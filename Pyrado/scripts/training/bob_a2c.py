@@ -41,8 +41,8 @@ from pyrado.spaces import ValueFunctionSpace
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.features import FeatureStack, identity_feat, sin_feat
-from pyrado.policies.fnn import FNNPolicy
-from pyrado.policies.linear import LinearPolicy
+from pyrado.policies.feed_forward.fnn import FNNPolicy
+from pyrado.policies.feed_forward.linear import LinearPolicy
 
 
 if __name__ == '__main__':

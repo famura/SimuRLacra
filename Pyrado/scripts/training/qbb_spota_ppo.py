@@ -46,7 +46,7 @@ from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.observation_noise import GaussianObsNoiseWrapper
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.rnn import GRUPolicy
+from pyrado.policies.recurrent.rnn import GRUPolicy
 from pyrado.sampling.sequences import *
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec

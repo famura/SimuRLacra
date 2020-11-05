@@ -28,9 +28,9 @@
 
 import inspect
 import torch as to
-from typing import Callable, List, Sequence
 from torch.jit import ScriptModule, script, export
 from torch.nn import Module
+from typing import Callable, List, Sequence
 
 from pyrado.utils.data_types import EnvSpec
 from pyrado.policies.base import Policy

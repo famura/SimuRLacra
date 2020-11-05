@@ -33,7 +33,7 @@ import torch.nn as nn
 
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from matplotlib import pyplot as plt
-from pyrado.policies.dummy import IdlePolicy
+from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.sampling.rollout import rollout
 from pyrado import set_seed
 

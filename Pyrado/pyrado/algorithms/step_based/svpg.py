@@ -39,7 +39,7 @@ from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.utils import compute_action_statistics
 from pyrado.utils.saving_loading import save_prefix_suffix
 from pyrado.environments.base import Env
-from pyrado.policies.fnn import FNNPolicy
+from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.algorithms.step_based.gae import ValueFunctionSpace
 from pyrado.utils.data_types import EnvSpec
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat

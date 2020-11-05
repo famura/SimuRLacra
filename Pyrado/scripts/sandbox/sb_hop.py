@@ -31,7 +31,7 @@ Test MuJoCo-based Hopper environment with a random policy.
 """
 from pyrado.environments.mujoco.openai_hopper import HopperSim
 from pyrado.domain_randomization.utils import print_domain_params
-from pyrado.policies.dummy import DummyPolicy, IdlePolicy
+from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.sampling.rollout import rollout, after_rollout_query
 from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt

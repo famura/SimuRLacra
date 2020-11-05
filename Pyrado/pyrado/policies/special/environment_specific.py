@@ -41,99 +41,10 @@ from pyrado.environments.pysim.quanser_cartpole import QCartPoleSim
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.policies.base import Policy
-from pyrado.policies.features import FeatureStack, identity_feat, RBFFeat
-from pyrado.policies.linear import LinearPolicy
+from pyrado.policies.features import FeatureStack, identity_feat
+from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.utils.math import clamp_symm
 from pyrado.utils.tensor import insert_tensor_col
-
-
-class DualRBFLinearPolicy(LinearPolicy):
-    """
-    A linear policy with RBF features which are also used to get the derivative of the features. The use-case in mind
-    is a simple policy which generates the joint position and joint velocity commands for the internal PD-controller
-    of a robot (e.g. Barrett WAM). By re-using the RBF, we reduce the number of parameters, while we can at the same
-    time get the velocity information from the features, i.e. the derivative of the normalized Gaussians.
-    """
-
-    name: str = 'dualrbf'
-
-    def __init__(self,
-                 spec: EnvSpec,
-                 rbf_hparam: dict,
-                 dim_mask: int = 2,
-                 init_param_kwargs: dict = None,
-                 use_cuda: bool = False):
-        """
-        Constructor
-
-        :param spec: specification of environment
-        :param rbf_hparam: hyper-parameters for the RBF-features, see `RBFFeat`
-        :param dim_mask: number of RBF features to mask out at the beginning and the end of every dimension,
-                         pass 1 to remove the first and the last features for the policy, pass 0 to use all
-                         RBF features. Masking out RBFs makes sense if you want to obtain a smooth starting behavior.
-        :param init_param_kwargs: additional keyword arguments for the policy parameter initialization
-        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
-        """
-        if not (0 <= dim_mask <= rbf_hparam['num_feat_per_dim']//2):
-            raise pyrado.ValueErr(
-                given=dim_mask, ge_constraint='0', le_constraint=f"{rbf_hparam['num_feat_per_dim']//2}"
-            )
-
-        # Construct the RBF features
-        self._feats = RBFFeat(**rbf_hparam)
-
-        # Call LinearPolicy's constructor (custom parts will be overridden later)
-        super().__init__(spec, FeatureStack([self._feats]), init_param_kwargs, use_cuda)
-        if not self._num_act%2 == 0:
-            raise pyrado.ShapeErr(msg='DualRBFLinearPolicy only works with an even number of actions,'
-                                      'since we are using the time derivative of the features to create the second'
-                                      'half of the outputs. This is done to use forward() in order to obtain'
-                                      'the joint position and the joint velocities.')
-
-        # Override custom parts
-        self._feats = RBFFeat(**rbf_hparam)
-        self.dim_mask = dim_mask
-        if self.dim_mask > 0:
-            self.num_active_feat = self._feats.num_feat - 2*self.dim_mask*spec.obs_space.flat_dim
-        else:
-            self.num_active_feat = self._feats.num_feat
-        self.net = nn.Linear(self.num_active_feat, self._num_act//2, bias=False)
-
-        # Create mask to deactivate first and last feature of every input dimension
-        self.feats_mask = to.ones(self._feats.centers.shape, dtype=to.bool)
-        self.feats_mask[:self.dim_mask, :] = False
-        self.feats_mask[-self.dim_mask:, :] = False
-        self.feats_mask = self.feats_mask.t().reshape(-1, )  # reshape the same way as in RBFFeat
-
-        # Call custom initialization function after PyTorch network parameter initialization
-        init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()
-        self.init_param(None, **init_param_kwargs)
-        self.to(self.device)
-
-    def forward(self, obs: to.Tensor) -> to.Tensor:
-        """
-        Evaluate the features at the given observation or use given feature values
-
-        :param obs: observations from the environment
-        :return: actions
-        """
-        obs = obs.to(self.device)
-        batched = obs.ndimension() == 2  # number of dim is 1 if unbatched, dim > 2 is cought by features
-        feats_val = self._feats(obs)
-        feats_dot = self._feats.derivative(obs)
-
-        if self.dim_mask > 0:
-            # Mask out first and last feature of every input dimension
-            feats_val = feats_val[:, self.feats_mask]
-            feats_dot = feats_dot[:, self.feats_mask]
-
-        # Inner product between policy parameters and the value of the features
-        act_pos = self.net(feats_val)
-        act_vel = self.net(feats_dot)
-        act = to.cat([act_pos, act_vel], dim=1)
-
-        # Return the flattened tensor if not run in a batch mode to be compatible with the action spaces
-        return act.flatten() if not batched else act
 
 
 class QBallBalancerPDCtrl(Policy):
@@ -145,7 +56,7 @@ class QBallBalancerPDCtrl(Policy):
         This class's desired state specification deviates from the Pyrado policies which interact with a `Task`.
     """
 
-    name: str = 'qbb_pd'
+    name: str = 'qbb-pd'
 
     def __init__(self,
                  env_spec: EnvSpec,
@@ -451,7 +362,7 @@ class QQubeEnergyCtrl(Policy):
 
 class QQubePDCtrl(Policy):
     r"""
-    PD-controller for the Qunaser Qube.
+    PD-controller for the Quanser Qube.
     Drives Qube to $x_{des} = [\theta_{des}, \alpha_{des}, 0.0, 0.0]$.
     Flag done is set when $|x_des - x| < tol$.
     """

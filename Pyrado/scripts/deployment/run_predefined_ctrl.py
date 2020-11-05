@@ -36,7 +36,7 @@ import pyrado
 from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal
 from pyrado.environments.quanser.quanser_cartpole import QCartPoleSwingUpReal, QCartPoleStabReal
 from pyrado.environments.quanser.quanser_qube import QQubeReal
-from pyrado.policies.environment_specific import QBallBalancerPDCtrl, QCartPoleSwingUpAndBalanceCtrl, \
+from pyrado.policies.special.environment_specific import QBallBalancerPDCtrl, QCartPoleSwingUpAndBalanceCtrl, \
     QQubeSwingUpAndBalanceCtrl
 from pyrado.sampling.rollout import rollout, after_rollout_query
 from pyrado.utils.argparser import get_argparser

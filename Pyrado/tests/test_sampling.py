@@ -29,12 +29,11 @@
 import pytest
 import random
 import time
-from matplotlib import pyplot as plt
 from torch.distributions.multivariate_normal import MultivariateNormal
 
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
-from pyrado.policies.fnn import FNNPolicy
+from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.sampling.data_format import to_format
 from pyrado.sampling.hyper_sphere import sample_from_hyper_sphere_surface
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler

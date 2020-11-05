@@ -36,8 +36,8 @@ from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environments.rcspysim.box_flipping import BoxFlippingVelDSSim, BoxFlippingPosDSSim, \
     BoxFlippingIKActivationSim
-from pyrado.policies.dummy import IdlePolicy
-from pyrado.policies.time import TimePolicy
+from pyrado.policies.special.dummy import IdlePolicy
+from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import rollout, after_rollout_query
 from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt

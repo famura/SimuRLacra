@@ -40,10 +40,10 @@ from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.utils import typed_env, inner_env
 from pyrado.environments.base import Env
 from pyrado.policies.base import Policy
-from pyrado.policies.linear import LinearPolicy
+from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import fill_list_of_arrays
-from pyrado.utils.input_output import ensure_math_mode, print_cbt
+from pyrado.utils.input_output import print_cbt
 
 
 def _get_obs_label(rollout: StepSequence, idx: int):

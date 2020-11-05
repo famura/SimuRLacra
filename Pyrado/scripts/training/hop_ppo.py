@@ -38,7 +38,7 @@ from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.environments.mujoco.openai_hopper import HopperSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.fnn import FNNPolicy
+from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 

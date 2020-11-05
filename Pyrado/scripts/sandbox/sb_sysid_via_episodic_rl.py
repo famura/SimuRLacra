@@ -43,10 +43,10 @@ from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapp
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.domain_distribution import DomainDistrParamPolicy
-from pyrado.policies.environment_specific import QQubeSwingUpAndBalanceCtrl
+from pyrado.policies.special.domain_distribution import DomainDistrParamPolicy
+from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.policies.features import FeatureStack, identity_feat, sin_feat
-from pyrado.policies.linear import LinearPolicy
+from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.input_output import print_cbt
 

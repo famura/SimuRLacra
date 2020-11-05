@@ -47,16 +47,17 @@ from pyrado.environments.quanser.quanser_cartpole import QCartPoleStabReal, QCar
 from pyrado.environments.quanser.quanser_qube import QQubeReal
 from pyrado.environments.rcspysim.ball_in_tube import BallInTubeIKActivationSim, BallInTubeVelDSSim
 from pyrado.environments.rcspysim.box_flipping import BoxFlippingVelDSSim, BoxFlippingIKActivationSim
-from pyrado.policies.adn import ADNPolicy, pd_cubic
-from pyrado.policies.dummy import DummyPolicy, IdlePolicy
+from pyrado.policies.recurrent.adn import ADNPolicy, pd_cubic
+from pyrado.policies.special.dummy import DummyPolicy, IdlePolicy
 from pyrado.policies.features import *
-from pyrado.policies.fnn import FNNPolicy
-from pyrado.policies.linear import LinearPolicy
+from pyrado.policies.feed_forward.fnn import FNNPolicy
+from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
-from pyrado.policies.neural_fields import NFPolicy
-from pyrado.policies.rnn import RNNPolicy, GRUPolicy, LSTMPolicy
-from pyrado.policies.time import TimePolicy, TraceableTimePolicy
-from pyrado.policies.two_headed import TwoHeadedFNNPolicy, TwoHeadedGRUPolicy
+from pyrado.policies.recurrent.neural_fields import NFPolicy
+from pyrado.policies.recurrent.rnn import RNNPolicy, GRUPolicy, LSTMPolicy
+from pyrado.policies.special.time import TimePolicy, TraceableTimePolicy
+from pyrado.policies.feed_forward.two_headed_fnn import TwoHeadedFNNPolicy
+from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedGRUPolicy
 
 
 # set spawn method to spawn for parallel test runs

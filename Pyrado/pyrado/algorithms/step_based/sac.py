@@ -45,9 +45,8 @@ from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import SACExplStrat
 from pyrado.logger.step import StepLogger, ConsolePrinter, CSVPrinter
-from pyrado.policies.base import Policy
-from pyrado.policies.dummy import RecurrentDummyPolicy, DummyPolicy
-from pyrado.policies.two_headed import TwoHeadedPolicy
+from pyrado.policies.base import Policy, TwoHeadedPolicy
+from pyrado.policies.special.dummy import RecurrentDummyPolicy, DummyPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.input_output import print_cbt, print_cbt_once
 from pyrado.utils.data_processing import standardize

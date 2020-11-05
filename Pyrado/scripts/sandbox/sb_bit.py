@@ -33,8 +33,8 @@ import rcsenv
 import pyrado
 from pyrado.environments.rcspysim.ball_in_tube import BallInTubeVelDSSim, BallInTubePosDSSim, BallInTubeIKActivationSim, \
     BallInTubeIKSim
-from pyrado.policies.dummy import IdlePolicy
-from pyrado.policies.time import TimePolicy
+from pyrado.policies.special.dummy import IdlePolicy
+from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import rollout, after_rollout_query
 from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt

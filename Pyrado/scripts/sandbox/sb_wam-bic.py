@@ -32,13 +32,12 @@ Test Linear Policy with RBF Features for the WAM Ball-in-a-cup task.
 import torch as to
 import numpy as np
 import matplotlib.pyplot as plt
-import mpl_toolkits.mplot3d
 
 import pyrado
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.mujoco.wam import WAMBallInCupSim
 from pyrado.logger.experiment import ask_for_experiment
-from pyrado.policies.environment_specific import DualRBFLinearPolicy
+from pyrado.policies.special.dual_rfb import DualRBFLinearPolicy
 from pyrado.utils.data_types import RenderMode
 from pyrado.policies.features import RBFFeat
 from pyrado.sampling.rollout import rollout, after_rollout_query

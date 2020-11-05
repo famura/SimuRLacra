@@ -35,9 +35,9 @@ from matplotlib import pyplot as plt
 
 import pyrado
 from pyrado.logger.experiment import ask_for_experiment
-from pyrado.policies.adn import ADNPolicy
-from pyrado.policies.neural_fields import NFPolicy
-from pyrado.policies.potential_based import PotentialBasedPolicy
+from pyrado.policies.recurrent.adn import ADNPolicy
+from pyrado.policies.recurrent.neural_fields import NFPolicy
+from pyrado.policies.recurrent.potential_based import PotentialBasedPolicy
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment
 from pyrado.utils.input_output import print_cbt

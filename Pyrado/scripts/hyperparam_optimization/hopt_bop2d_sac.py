@@ -40,8 +40,8 @@ from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate2DSim
 from pyrado.logger.experiment import save_list_of_dicts_to_yaml, setup_experiment
 from pyrado.logger.step import create_csv_step_logger
-from pyrado.policies.fnn import FNNPolicy
-from pyrado.policies.two_headed import TwoHeadedFNNPolicy
+from pyrado.policies.feed_forward.fnn import FNNPolicy
+from pyrado.policies.feed_forward.two_headed_fnn import TwoHeadedFNNPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.spaces import BoxSpace, ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser

@@ -38,7 +38,7 @@ import pyrado
 from pyrado.algorithms.step_based.dql import DQL
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamDiscSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.fnn import DiscreteActQValPolicy, FNN
+from pyrado.policies.feed_forward.fnn import DiscreteActQValPolicy, FNN
 from pyrado.utils.argparser import get_argparser
 
 

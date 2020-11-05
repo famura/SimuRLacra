@@ -37,9 +37,9 @@ from typing import Any
 
 import pyrado
 from pyrado.plotting.utils import AccNorm
-from pyrado.policies.adn import ADNPolicy
+from pyrado.policies.recurrent.adn import ADNPolicy
 from pyrado.policies.base import Policy
-from pyrado.policies.neural_fields import NFPolicy
+from pyrado.policies.recurrent.neural_fields import NFPolicy
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.input_output import print_cbt
 

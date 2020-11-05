@@ -31,7 +31,7 @@ Test the functionality of Pyrado using the Quanser Ball balancer setup.
 """
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.domain_randomization.utils import print_domain_params
-from pyrado.policies.time import TimePolicy
+from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.data_types import RenderMode
 

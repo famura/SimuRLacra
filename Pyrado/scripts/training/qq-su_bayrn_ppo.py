@@ -42,7 +42,7 @@ from pyrado.environments.quanser.quanser_qube import QQubeReal
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.fnn import FNNPolicy
+from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.experiments import wrap_like_other_env

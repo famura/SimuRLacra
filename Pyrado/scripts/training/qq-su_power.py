@@ -33,7 +33,7 @@ from pyrado.algorithms.episodic.power import PoWER
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.environment_specific import QQubeSwingUpAndBalanceCtrl
+from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.utils.argparser import get_argparser
 
 

@@ -33,8 +33,8 @@ import numpy as np
 import torch as to
 
 from rcsenv import ControlPolicy
-from pyrado.policies.linear import LinearPolicy
-from pyrado.policies.rnn import RNNPolicy
+from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.policies.recurrent.rnn import RNNPolicy
 from pyrado.spaces.box import BoxSpace
 from pyrado.utils.data_types import EnvSpec
 from pyrado.policies.features import FeatureStack, squared_feat, identity_feat, const_feat

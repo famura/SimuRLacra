@@ -36,7 +36,7 @@ from pyrado.algorithms.episodic.cem import CEM
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
 from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim, Planar3LinkTASim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.neural_fields import NFPolicy
+from pyrado.policies.recurrent.neural_fields import NFPolicy
 from pyrado.utils.argparser import get_argparser
 
 

@@ -45,7 +45,7 @@ from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBu
 from pyrado.environment_wrappers.observation_noise import GaussianObsNoiseWrapper
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.features import FeatureStack, identity_feat
-from pyrado.policies.linear import LinearPolicy
+from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.sampling.sequences import *
 from pyrado.utils.argparser import get_argparser
 

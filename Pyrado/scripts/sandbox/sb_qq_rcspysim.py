@@ -34,7 +34,7 @@ import numpy as np
 from pyrado.environments.rcspysim.quanser_qube import QQubeRcsSim
 from pyrado.domain_randomization.utils import print_domain_params
 from pyrado.plotting.rollout_based import plot_observations_actions_rewards
-from pyrado.policies.time import TimePolicy
+from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.data_types import RenderMode
 

@@ -33,7 +33,7 @@ from typing import Callable, Sequence
 import pyrado
 from pyrado.policies.base import Policy
 from pyrado.policies.initialization import init_param
-from pyrado.policies.potential_based import PotentialBasedPolicy
+from pyrado.policies.recurrent.potential_based import PotentialBasedPolicy
 from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.nn_layers import IndiNonlinLayer
 

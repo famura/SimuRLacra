@@ -41,7 +41,7 @@ from pyrado.utils.saving_loading import save_prefix_suffix
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.policies.base import Policy
-from pyrado.policies.domain_distribution import DomainDistrParamPolicy
+from pyrado.policies.special.domain_distribution import DomainDistrParamPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult, ParameterSample
 from pyrado.sampling.step_sequence import StepSequence

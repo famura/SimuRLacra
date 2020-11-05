@@ -38,7 +38,7 @@ from typing import NamedTuple
 
 from pyrado.algorithms.episodic.sysid_via_episodic_rl import SysIdViaEpisodicRL
 from pyrado.algorithms.utils import ReplayMemory
-from pyrado.policies.dummy import DummyPolicy
+from pyrado.policies.special.dummy import DummyPolicy
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.sampling.data_format import to_format
 from pyrado.sampling.step_sequence import discounted_value, gae_returns

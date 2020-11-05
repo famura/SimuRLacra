@@ -37,7 +37,7 @@ from matplotlib import pyplot as plt
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate5DSim
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.domain_randomization.utils import print_domain_params
-from pyrado.policies.rnn import LSTMPolicy
+from pyrado.policies.recurrent.rnn import LSTMPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.data_types import RenderMode
 

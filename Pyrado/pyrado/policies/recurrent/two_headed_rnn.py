@@ -27,113 +27,22 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import torch as to
-import torch.nn as nn
-from abc import ABC, abstractmethod
-from typing import Sequence, Callable, Tuple
+from pyrado.policies.recurrent.rnn import default_unpack_hidden, default_pack_hidden
+from torch import nn as nn
+from typing import Callable, Tuple
 
 import pyrado
-from pyrado.policies.base_recurrent import RecurrentPolicy
-from pyrado.policies.fnn import FNN
+from pyrado.policies.recurrent.base_recurrent import RecurrentPolicy
 from pyrado.policies.initialization import init_param
-from pyrado.policies.rnn import default_unpack_hidden, default_pack_hidden
+from pyrado.policies.base import TwoHeadedPolicy
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import EnvSpec
-from pyrado.policies.base import Policy
-
-
-class TwoHeadedPolicy(Policy, ABC):
-    """ Base class for policies with a shared body and two separate heads. """
-
-    @abstractmethod
-    def init_param(self, init_values: to.Tensor = None, **kwargs):
-        raise NotImplementedError
-
-    @abstractmethod
-    def forward(self, obs: to.Tensor) -> [to.Tensor, (to.Tensor, to.Tensor)]:
-        raise NotImplementedError
-
-
-class TwoHeadedFNNPolicy(TwoHeadedPolicy):
-    """ Policy architecture which has a common body and two heads that have a separate last layer """
-
-    name: str = '2h_fnn'
-
-    def __init__(self,
-                 spec: EnvSpec,
-                 shared_hidden_sizes: Sequence[int],
-                 shared_hidden_nonlin: [Callable, Sequence[Callable]],
-                 head_1_size: int = None,
-                 head_2_size: int = None,
-                 head_1_output_nonlin: Callable = None,
-                 head_2_output_nonlin: Callable = None,
-                 shared_dropout: float = 0.,
-                 init_param_kwargs: dict = None,
-                 use_cuda: bool = False):
-        """
-        Constructor
-
-        :param spec: environment specification
-        :param shared_hidden_sizes: sizes of shared hidden layer outputs. Every entry creates one shared hidden layer.
-        :param shared_hidden_nonlin: nonlinearity for the shared hidden layers
-        :param head_1_size: size of the fully connected layer for head 1, if `None` this is set to the action space dim
-        :param head_2_size: size of the fully connected layer for head 2, if `None` this is set to the action space dim
-        :param head_1_output_nonlin: nonlinearity for output layer of the first head
-        :param head_2_output_nonlin: nonlinearity for output layer of the second head
-        :param shared_dropout: dropout probability, default = 0 deactivates dropout
-        :param init_param_kwargs: additional keyword arguments for the policy parameter initialization
-        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
-        """
-        super().__init__(spec, use_cuda)
-
-        # Create the feed-forward neural network
-        self.shared = FNN(
-            input_size=spec.obs_space.flat_dim,
-            output_size=shared_hidden_sizes[-1],
-            hidden_sizes=shared_hidden_sizes,
-            hidden_nonlin=shared_hidden_nonlin,
-            dropout=shared_dropout,
-            output_nonlin=None
-        )
-
-        # Create output layer
-        head_1_size = spec.act_space.flat_dim if head_1_size is None else head_1_size
-        head_2_size = spec.act_space.flat_dim if head_2_size is None else head_2_size
-        self.head_1 = nn.Linear(shared_hidden_sizes[-1], head_1_size)
-        self.head_2 = nn.Linear(shared_hidden_sizes[-1], head_2_size)
-        self.head_1_output_nonlin = head_1_output_nonlin
-        self.head_2_output_nonlin = head_2_output_nonlin
-
-        # Call custom initialization function after PyTorch network parameter initialization
-        init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()
-        self.init_param(None, **init_param_kwargs)
-        self.to(self.device)
-
-    def init_param(self, init_values: to.Tensor = None, **kwargs):
-        if init_values is None:
-            self.shared.init_param(None, **kwargs)
-            init_param(self.head_1, **kwargs)
-            init_param(self.head_2, **kwargs)
-        else:
-            self.param_values = init_values
-
-    def forward(self, obs: to.Tensor) -> Tuple[to.Tensor, to.Tensor]:
-        obs = obs.to(self.device)
-
-        # Get the output of the last shared layer and pass this to the two headers separately
-        x = self.shared(obs)
-        output_1 = self.head_1(x)
-        output_2 = self.head_2(x)
-        if self.head_1_output_nonlin is not None:
-            output_1 = self.head_1_output_nonlin(output_1)
-        if self.head_2_output_nonlin is not None:
-            output_2 = self.head_2_output_nonlin(output_2)
-        return output_1, output_2
 
 
 class TwoHeadedGRUPolicy(TwoHeadedPolicy, RecurrentPolicy):
     """ Policy architecture which has a common body and two heads that have a separate last layer """
 
-    name: str = '2h_gru'
+    name: str = 'thgru'
 
     def __init__(self,
                  spec: EnvSpec,

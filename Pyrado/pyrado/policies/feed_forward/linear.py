@@ -51,18 +51,15 @@ class LinearPolicy(Policy):
         :param feats: list of feature functions
         :param init_param_kwargs: additional keyword arguments for the policy parameter initialization
         """
-        super().__init__(spec, use_cuda)
-
         if not isinstance(feats, FeatureStack):
             raise pyrado.TypeErr(given=feats, expected_type=FeatureStack)
 
-        # Store inputs
-        self._num_act = spec.act_space.flat_dim
-        self._num_obs = spec.obs_space.flat_dim
+        # Call Policy's constructor
+        super().__init__(spec, use_cuda)
 
         self._feats = feats
-        self.num_active_feat = feats.get_num_feat(self._num_obs)
-        self.net = nn.Linear(self.num_active_feat, self._num_act, bias=False)
+        self.num_active_feat = feats.get_num_feat(self.spec.obs_space.flat_dim)
+        self.net = nn.Linear(self.num_active_feat, self.spec.act_space.flat_dim, bias=False)
 
         # Call custom initialization function after PyTorch network parameter initialization
         init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()

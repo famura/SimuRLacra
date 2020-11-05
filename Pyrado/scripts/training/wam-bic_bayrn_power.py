@@ -40,7 +40,7 @@ from pyrado.environments.barrett_wam.wam import WAMBallInCupReal
 from pyrado.environments.mujoco.wam import WAMBallInCupSim
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.environment_specific import DualRBFLinearPolicy
+from pyrado.policies.special.dual_rfb import DualRBFLinearPolicy
 from pyrado.utils.argparser import get_argparser
 
 

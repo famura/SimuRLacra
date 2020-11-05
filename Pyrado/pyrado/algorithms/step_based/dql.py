@@ -37,12 +37,12 @@ from tqdm import tqdm
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.utils import ReplayMemory
-from pyrado.policies.dummy import RecurrentDummyPolicy, DummyPolicy
+from pyrado.policies.special.dummy import RecurrentDummyPolicy, DummyPolicy
 from pyrado.utils.saving_loading import save_prefix_suffix, load_prefix_suffix
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import EpsGreedyExplStrat
 from pyrado.logger.step import StepLogger, ConsolePrinter, CSVPrinter, TensorBoardPrinter
-from pyrado.policies.fnn import DiscreteActQValPolicy
+from pyrado.policies.feed_forward.fnn import DiscreteActQValPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.input_output import print_cbt, print_cbt_once
 

@@ -54,7 +54,7 @@ from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.experiment import load_dict_from_yaml
-from pyrado.policies.adn import pd_linear, pd_cubic, pd_capacity_21_abs, pd_capacity_21, pd_capacity_32, \
+from pyrado.policies.recurrent.adn import pd_linear, pd_cubic, pd_capacity_21_abs, pd_capacity_21, pd_capacity_32, \
     pd_capacity_32_abs
 from pyrado.policies.base import Policy
 from pyrado.utils.argparser import get_argparser

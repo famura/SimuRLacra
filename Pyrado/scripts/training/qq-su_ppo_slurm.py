@@ -43,7 +43,7 @@ from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml, load_dict_from_yaml
-from pyrado.policies.fnn import FNNPolicy
+from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.utils.argparser import get_argparser
 
 

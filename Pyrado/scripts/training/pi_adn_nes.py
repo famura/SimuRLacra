@@ -40,8 +40,8 @@ from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLi
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.environments.rcspysim.planar_insert import PlanarInsertTASim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.adn import ADNPolicy, pd_cubic
-from pyrado.policies.fnn import FNN
+from pyrado.policies.recurrent.adn import ADNPolicy, pd_cubic
+from pyrado.policies.feed_forward.fnn import FNN
 from pyrado.utils.argparser import get_argparser
 
 

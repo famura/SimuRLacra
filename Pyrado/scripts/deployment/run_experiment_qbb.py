@@ -35,7 +35,7 @@ import os.path as osp
 
 import pyrado
 from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal
-from pyrado.policies.environment_specific import QBallBalancerPDCtrl
+from pyrado.policies.special.environment_specific import QBallBalancerPDCtrl
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.logger.experiment import ask_for_experiment, save_list_of_dicts_to_yaml, setup_experiment
 from pyrado.sampling.rollout import rollout

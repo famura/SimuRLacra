@@ -34,7 +34,7 @@ from tabulate import tabulate
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.policies.features import FeatureStack, identity_feat, squared_feat
-from pyrado.policies.linear import LinearPolicy
+from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 
 

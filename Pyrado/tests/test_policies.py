@@ -34,18 +34,18 @@ from pyrado.algorithms.timeseries_prediction import TSPred
 from pyrado.spaces import BoxSpace
 from pyrado.spaces.box import InfBoxSpace
 from pyrado.policies.base import Policy
-from pyrado.policies.environment_specific import DualRBFLinearPolicy
-from pyrado.policies.rnn import default_unpack_hidden, default_pack_hidden
-from pyrado.policies.linear import LinearPolicy
+from pyrado.policies.special.dual_rfb import DualRBFLinearPolicy
+from pyrado.policies.recurrent.rnn import default_unpack_hidden, default_pack_hidden
+from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.policies.features import *
-from pyrado.policies.two_headed import TwoHeadedGRUPolicy
+from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedGRUPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_sets import TimeSeriesDataSet
 from pyrado.utils.data_types import RenderMode
 from pyrado.utils.functions import skyline
 from pyrado.utils.nn_layers import IndiNonlinLayer
-from tests.conftest import m_needs_cuda, m_needs_bullet, m_needs_mujoco, m_needs_rcs, m_needs_libtorch
+from tests.conftest import m_needs_bullet, m_needs_mujoco, m_needs_rcs, m_needs_libtorch
 from tests.environment_wrappers.mock_env import MockEnv
 
 

@@ -33,7 +33,7 @@ import pyrado
 from pyrado.algorithms.episodic.reps import REPS
 from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.neural_fields import NFPolicy
+from pyrado.policies.recurrent.neural_fields import NFPolicy
 from pyrado.utils.argparser import get_argparser
 
 

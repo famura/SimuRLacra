@@ -34,7 +34,7 @@ from pyrado.algorithms.episodic.nes import NES
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.policies.rnn import GRUPolicy
+from pyrado.policies.recurrent.rnn import GRUPolicy
 from pyrado.utils.argparser import get_argparser
 
 

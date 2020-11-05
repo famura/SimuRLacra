@@ -30,7 +30,6 @@ import torch as to
 import torch.nn as nn
 import torch.nn.init as init
 from math import sqrt, ceil
-from warnings import warn
 
 import pyrado
 from pyrado.utils.nn_layers import ScaleLayer, PositiveScaleLayer, IndiNonlinLayer, MirrConv1d

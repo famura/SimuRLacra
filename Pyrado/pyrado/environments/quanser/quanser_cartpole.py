@@ -34,7 +34,7 @@ from init_args_serializer import Serializable
 import pyrado
 from pyrado.environments.quanser import max_act_qcp
 from pyrado.environments.quanser.base import QuanserReal
-from pyrado.policies.environment_specific import QCartPoleGoToLimCtrl
+from pyrado.policies.special.environment_specific import QCartPoleGoToLimCtrl
 from pyrado.spaces.box import BoxSpace
 from pyrado.spaces.compound import CompoundSpace
 from pyrado.tasks.base import Task

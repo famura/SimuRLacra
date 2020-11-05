@@ -37,7 +37,7 @@ from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.downsampling import DownsamplingWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.sampling.rollout import rollout
-from pyrado.policies.environment_specific import QBallBalancerPDCtrl, QQubeSwingUpAndBalanceCtrl
+from pyrado.policies.special.environment_specific import QBallBalancerPDCtrl, QQubeSwingUpAndBalanceCtrl
 from pyrado.utils.data_types import RenderMode
 
 

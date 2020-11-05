@@ -35,7 +35,7 @@ import pyrado
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import EnvSpec
 from pyrado.policies.base import Policy
-from pyrado.policies.base_recurrent import RecurrentPolicy
+from pyrado.policies.recurrent.base_recurrent import RecurrentPolicy
 from pyrado.policies.initialization import init_param
 
 

@@ -39,13 +39,13 @@ from pyrado.algorithms.meta.simopt import SimOpt
 from pyrado.algorithms.episodic.sysid_via_episodic_rl import SysIdViaEpisodicRL
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.quanser.quanser_qube import QQubeReal
-from pyrado.policies.domain_distribution import DomainDistrParamPolicy
+from pyrado.policies.special.domain_distribution import DomainDistrParamPolicy
 from pyrado.domain_randomization.domain_parameter import NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper, DomainRandWrapperLive
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.fnn import FNNPolicy
+from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec

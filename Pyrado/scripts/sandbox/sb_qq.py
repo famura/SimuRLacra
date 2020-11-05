@@ -29,11 +29,10 @@
 """
 Test predefined energy-based controller to make the Quanser Qube swing up.
 """
-import torch as to
 
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.domain_randomization.utils import print_domain_params
-from pyrado.policies.environment_specific import QQubeSwingUpAndBalanceCtrl
+from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.sampling.rollout import rollout, after_rollout_query
 from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt

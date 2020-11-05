@@ -34,7 +34,7 @@ import pandas as pd
 import torch as to
 import torch.nn as nn
 import torch.optim as optim
-from pyrado.policies.adn import ADNPolicy, pd_linear, pd_capacity_32_abs
+from pyrado.policies.recurrent.adn import ADNPolicy, pd_linear
 from torch.optim import lr_scheduler
 
 import pyrado

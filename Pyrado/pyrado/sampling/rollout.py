@@ -43,9 +43,8 @@ from pyrado.plotting.curve import plot_dts
 from pyrado.plotting.policy_parameters import render_policy_params
 from pyrado.plotting.rollout_based import plot_observations_actions_rewards, plot_actions, plot_observations, \
     plot_rewards, plot_potentials, plot_features
-from pyrado.policies.base import Policy
-from pyrado.policies.potential_based import PotentialBasedPolicy
-from pyrado.policies.two_headed import TwoHeadedPolicy
+from pyrado.policies.base import Policy, TwoHeadedPolicy
+from pyrado.policies.recurrent.potential_based import PotentialBasedPolicy
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt, color_validity

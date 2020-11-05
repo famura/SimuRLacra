@@ -38,7 +38,7 @@ import torch.optim as optim
 import pyrado
 from pyrado.algorithms.timeseries_prediction import TSPred
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.rnn import LSTMPolicy
+from pyrado.policies.recurrent.rnn import LSTMPolicy
 from pyrado.spaces import BoxSpace
 from pyrado.spaces.box import InfBoxSpace
 from pyrado.utils.argparser import get_argparser

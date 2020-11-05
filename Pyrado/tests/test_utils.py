@@ -42,7 +42,7 @@ from pyrado.utils.functions import noisy_nonlin_fcn, skyline
 from pyrado.utils.input_output import completion_context, print_cbt_once
 from pyrado.utils.math import cosine_similarity, cov, rmse, logmeanexp
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
-from pyrado.policies.dummy import DummyPolicy
+from pyrado.policies.special.dummy import DummyPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.optimizers import GSS
