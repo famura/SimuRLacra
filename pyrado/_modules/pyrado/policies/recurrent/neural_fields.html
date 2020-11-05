@@ -354,7 +354,7 @@
         <span class="c1"># ----------------</span>
 
         <span class="c1"># Combine the current inputs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_external</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_layer</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_external</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_layer</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
 
         <span class="c1"># Reshape and convolve</span>
         <span class="n">b</span> <span class="o">=</span> <span class="n">batch_size</span> <span class="k">if</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">1</span>

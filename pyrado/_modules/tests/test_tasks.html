@@ -206,7 +206,6 @@
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pytest</span>
-<span class="kn">from</span> <span class="nn">pytest_lazyfixture</span> <span class="kn">import</span> <span class="n">lazy_fixture</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.condition_only</span> <span class="kn">import</span> <span class="n">ConditionOnlyTask</span>
@@ -233,7 +232,8 @@
         <span class="p">([</span><span class="n">CosOfOneEleRewFcn</span><span class="p">(</span><span class="mi">0</span><span class="p">)],</span> <span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="p">[</span><span class="kc">None</span><span class="p">]),</span>
         <span class="p">([</span><span class="n">QuadrErrRewFcn</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">1</span><span class="p">))],</span> <span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="p">[</span><span class="kc">None</span><span class="p">]),</span>
         <span class="p">([</span><span class="n">MinusOnePerStepRewFcn</span><span class="p">(),</span> <span class="n">QuadrErrRewFcn</span><span class="p">(</span><span class="n">Q</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">R</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">1</span><span class="p">))],</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]),</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;wo_args-wo_kwargs&#39;</span><span class="p">,</span> <span class="s1">&#39;w_args-wo_kwargs&#39;</span><span class="p">,</span> <span class="s1">&#39;w_args2-wo_kwargs&#39;</span><span class="p">,</span> <span class="s1">&#39;wo_args-w_kwargs&#39;</span><span class="p">])</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;wo_args-wo_kwargs&#39;</span><span class="p">,</span> <span class="s1">&#39;w_args-wo_kwargs&#39;</span><span class="p">,</span> <span class="s1">&#39;w_args2-wo_kwargs&#39;</span><span class="p">,</span> <span class="s1">&#39;wo_args-w_kwargs&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">test_combined_reward_function_step</span><span class="p">(</span><span class="n">fcn_list</span><span class="p">,</span> <span class="n">reset_args</span><span class="p">,</span> <span class="n">reset_kwargs</span><span class="p">):</span>
     <span class="c1"># Create combined reward function</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">CompoundRewFcn</span><span class="p">(</span><span class="n">fcn_list</span><span class="p">)</span>
@@ -269,7 +269,8 @@
 <div class="viewcode-block" id="test_rew_fcn_constructor"><a class="viewcode-back" href="../../tests.html#tests.test_tasks.test_rew_fcn_constructor">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;state_space, act_space&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="p">(</span><span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">7</span><span class="p">,)),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">7</span><span class="p">,))),</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,)),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,)))),</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;box&#39;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;box&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_rew_fcn_constructor</span><span class="p">(</span><span class="n">state_space</span><span class="p">,</span> <span class="n">act_space</span><span class="p">):</span>
     <span class="n">r_m1</span> <span class="o">=</span> <span class="n">MinusOnePerStepRewFcn</span><span class="p">()</span>
@@ -284,7 +285,8 @@
     <span class="s1">&#39;task_type&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="s1">&#39;ParallelTasks&#39;</span><span class="p">,</span>
         <span class="s1">&#39;SequentialTasks&#39;</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;parallel&#39;</span><span class="p">,</span> <span class="s1">&#39;sequential&#39;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;parallel&#39;</span><span class="p">,</span> <span class="s1">&#39;sequential&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_composite_task_structure</span><span class="p">(</span><span class="n">envspec_432</span><span class="p">,</span> <span class="n">task_type</span><span class="p">):</span>
     <span class="n">state_des1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
@@ -326,7 +328,8 @@
     <span class="s1">&#39;hold_rew_when_done&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="kc">True</span><span class="p">,</span>
         <span class="kc">False</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;hold_rews&#39;</span><span class="p">,</span> <span class="s1">&#39;dont_hold_rews&#39;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;hold_rews&#39;</span><span class="p">,</span> <span class="s1">&#39;dont_hold_rews&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_parallel_task_function</span><span class="p">(</span><span class="n">envspec_432</span><span class="p">,</span> <span class="n">hold_rew_when_done</span><span class="p">):</span>
     <span class="c1"># Create env spec and sub-tasks (state_space is necessary for the has_failed function)</span>
@@ -397,7 +400,8 @@
     <span class="s1">&#39;hold_rew_when_done&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="kc">True</span><span class="p">,</span>
         <span class="kc">False</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;hold_rews&#39;</span><span class="p">,</span> <span class="s1">&#39;dont_hold_rews&#39;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;hold_rews&#39;</span><span class="p">,</span> <span class="s1">&#39;dont_hold_rews&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_sequential_task_function</span><span class="p">(</span><span class="n">envspec_432</span><span class="p">,</span> <span class="n">hold_rew_when_done</span><span class="p">):</span>
     <span class="c1"># Create env spec and sub-tasks (state_space is necessary for the has_failed function)</span>
@@ -468,10 +472,12 @@
     <span class="s1">&#39;rew_fcn&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="n">PlusOnePerStepRewFcn</span><span class="p">(),</span>
         <span class="n">QuadrErrRewFcn</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;PlusOnePerStepRewFcn&#39;</span><span class="p">,</span> <span class="s1">&#39;QuadrErrRewFcn&#39;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;PlusOnePerStepRewFcn&#39;</span><span class="p">,</span> <span class="s1">&#39;QuadrErrRewFcn&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;factor&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">42.</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;factor_1&#39;</span><span class="p">,</span> <span class="s1">&#39;factor_42&#39;</span><span class="p">]</span>
+    <span class="s1">&#39;factor&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">42.</span><span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;factor_1&#39;</span><span class="p">,</span> <span class="s1">&#39;factor_42&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_best_state_final_rew_task</span><span class="p">(</span><span class="n">envspec_432</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
     <span class="c1"># Create env spec and sub-tasks (state_space is necessary for the has_failed function)</span>
@@ -498,7 +504,8 @@
 <div class="viewcode-block" id="test_tracking_task"><a class="viewcode-back" href="../../tests.html#tests.test_tasks.test_tracking_task">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;rew_fcn&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="n">QuadrErrRewFcn</span><span class="p">(</span><span class="mf">0.1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;QuadrErrRewFcn&#39;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;QuadrErrRewFcn&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_tracking_task</span><span class="p">(</span><span class="n">envspec_432</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">):</span>
     <span class="c1"># Create env spec and sub-tasks (state_space is necessary for the has_failed function)</span>
@@ -532,7 +539,8 @@
                 <span class="n">EnvSpec</span><span class="p">(</span><span class="n">obs_space</span><span class="o">=</span><span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">act_space</span><span class="o">=</span><span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">state_space</span><span class="o">=</span><span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
                 <span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span> <span class="n">MinusOnePerStepRewFcn</span><span class="p">())</span>
         <span class="p">]</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;des_state_and_des_space&#39;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;des_state_and_des_space&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_set_goals_fo_composite_tasks</span><span class="p">(</span><span class="n">sub_tasks</span><span class="p">):</span>
     <span class="c1"># Check ParallelTasks</span>
@@ -555,7 +563,8 @@
     <span class="s1">&#39;condition_fcn&#39;</span><span class="p">,</span> <span class="p">[</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]))</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;is_success_condition&#39;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;isc_true&#39;</span><span class="p">,</span> <span class="s1">&#39;isc_false&#39;</span><span class="p">]</span>
+    <span class="s1">&#39;is_success_condition&#39;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;isc_true&#39;</span><span class="p">,</span> <span class="s1">&#39;isc_false&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_condition_only_task</span><span class="p">(</span><span class="n">envspec_432</span><span class="p">,</span> <span class="n">condition_fcn</span><span class="p">,</span> <span class="n">is_success_condition</span><span class="p">):</span>
     <span class="n">cot</span> <span class="o">=</span> <span class="n">ConditionOnlyTask</span><span class="p">(</span><span class="n">envspec_432</span><span class="p">,</span> <span class="n">condition_fcn</span><span class="p">,</span> <span class="n">is_success_condition</span><span class="p">)</span>

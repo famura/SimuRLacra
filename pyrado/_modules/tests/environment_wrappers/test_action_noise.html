@@ -205,25 +205,25 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pytest</span>
-<span class="kn">from</span> <span class="nn">pytest_lazyfixture</span> <span class="kn">import</span> <span class="n">lazy_fixture</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_noise</span> <span class="kn">import</span> <span class="n">GaussianActNoiseWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_normalization</span> <span class="kn">import</span> <span class="n">ActNormWrapper</span>
-<span class="kn">from</span> <span class="nn">pyrado.environments.pysim.ball_on_beam</span> <span class="kn">import</span> <span class="n">BallOnBeamSim</span>
 <span class="kn">from</span> <span class="nn">tests.conftest</span> <span class="kn">import</span> <span class="n">m_needs_bullet</span><span class="p">,</span> <span class="n">m_needs_vortex</span>
 
 
 <div class="viewcode-block" id="test_act_noise_simple"><a class="viewcode-back" href="../../../tests.environment_wrappers.html#tests.environment_wrappers.test_action_noise.test_act_noise_simple">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">wrapper</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_bob&#39;</span><span class="p">),</span>
-        <span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_qbb&#39;</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_bop2d_bt&#39;</span><span class="p">),</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_bop2d_vx&#39;</span><span class="p">),</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_bop5d_bt&#39;</span><span class="p">),</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">lazy_fixture</span><span class="p">(</span><span class="s1">&#39;default_bop5d_vx&#39;</span><span class="p">),</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop2d_b&#39;</span><span class="p">,</span> <span class="s1">&#39;bop2d_v&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5d_b&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5d_v&#39;</span><span class="p">]</span>
+        <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;default_qbb&#39;</span><span class="p">,</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_bop2d_bt&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_bop2d_vx&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_bop5d_bt&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_bop5d_vx&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop2d_b&#39;</span><span class="p">,</span> <span class="s1">&#39;bop2d_v&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5d_b&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5d_v&#39;</span><span class="p">],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_act_noise_simple</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
     <span class="c1"># Typical case with zero mean and non-zero std</span>
@@ -265,8 +265,11 @@
 <div class="viewcode-block" id="test_order_act_noise_act_norm"><a class="viewcode-back" href="../../../tests.environment_wrappers.html#tests.environment_wrappers.test_action_noise.test_order_act_noise_act_norm">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">wrapper</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="n">BallOnBeamSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">]</span>
+        <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;default_qbb&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_order_act_noise_act_norm</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
     <span class="c1"># First noise wrapper then normalization wrapper</span>

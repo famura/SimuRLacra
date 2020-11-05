@@ -397,7 +397,8 @@
         <span class="s1">&#39;default_qbb&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_qqsu&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_qcpst&#39;</span><span class="p">,</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bobd&#39;</span><span class="p">,</span> <span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;omo&#39;</span><span class="p">,</span> <span class="s1">&#39;pend&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;qq-su&#39;</span><span class="p">,</span> <span class="s1">&#39;qcp-st&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bobd&#39;</span><span class="p">,</span> <span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;omo&#39;</span><span class="p">,</span> <span class="s1">&#39;pend&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;qq-su&#39;</span><span class="p">,</span> <span class="s1">&#39;qcp-st&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_vpython_animations</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
@@ -458,7 +459,8 @@
         <span class="s1">&#39;default_cth&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_hop&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_wambic&#39;</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;cth&#39;</span><span class="p">,</span> <span class="s1">&#39;hop&#39;</span><span class="p">,</span> <span class="s1">&#39;wam-bic&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;cth&#39;</span><span class="p">,</span> <span class="s1">&#39;hop&#39;</span><span class="p">,</span> <span class="s1">&#39;wam-bic&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_mujoco_animations</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
@@ -476,7 +478,8 @@
 <div class="viewcode-block" id="test_qbb_kin"><a class="viewcode-back" href="../../tests.html#tests.test_environments.test_qbb_kin">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;servo_ang&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.1</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.1</span><span class="p">)]</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;range&#39;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;range&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_qbb_kin</span><span class="p">(</span><span class="n">servo_ang</span><span class="p">):</span>
     <span class="n">env</span> <span class="o">=</span> <span class="n">QBallBalancerSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
@@ -494,7 +497,8 @@
         <span class="s1">&#39;default_qcpst_real&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_qcpsu_real&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_qq_real&#39;</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;qqbb_real&#39;</span><span class="p">,</span> <span class="s1">&#39;qcpst_real&#39;</span><span class="p">,</span> <span class="s1">&#39;qcpsu_real&#39;</span><span class="p">,</span> <span class="s1">&#39;qq_real&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;qqbb_real&#39;</span><span class="p">,</span> <span class="s1">&#39;qcpst_real&#39;</span><span class="p">,</span> <span class="s1">&#39;qcpsu_real&#39;</span><span class="p">,</span> <span class="s1">&#39;qq_real&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_quanser_real_wo_connecting</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">RealEnv</span><span class="p">):</span>
@@ -511,7 +515,8 @@
         <span class="s1">&#39;MountainCarContinuous-v0&#39;</span><span class="p">,</span>
         <span class="s1">&#39;Pendulum-v0&#39;</span><span class="p">,</span>
         <span class="s1">&#39;LunarLander-v2&#39;</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;MountainCar-v0&#39;</span><span class="p">,</span> <span class="s1">&#39;CartPole-v1&#39;</span><span class="p">,</span> <span class="s1">&#39;Acrobot-v1&#39;</span><span class="p">,</span> <span class="s1">&#39;MountainCarContinuous-v0&#39;</span><span class="p">,</span> <span class="s1">&#39;Pendulum-v0&#39;</span><span class="p">,</span> <span class="s1">&#39;LunarLander-v2&#39;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;MountainCar-v0&#39;</span><span class="p">,</span> <span class="s1">&#39;CartPole-v1&#39;</span><span class="p">,</span> <span class="s1">&#39;Acrobot-v1&#39;</span><span class="p">,</span> <span class="s1">&#39;MountainCarContinuous-v0&#39;</span><span class="p">,</span> <span class="s1">&#39;Pendulum-v0&#39;</span><span class="p">,</span> <span class="s1">&#39;LunarLander-v2&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_gym_env</span><span class="p">(</span><span class="n">env_name</span><span class="p">):</span>
     <span class="c1"># Checking the classic control problems</span>

@@ -14,10 +14,10 @@ adn
    :show-inheritance:
 
 
-base\_recurrent
----------------
+base
+----
 
-.. automodule:: pyrado.policies.recurrent.base_recurrent
+.. automodule:: pyrado.policies.recurrent.base
    :members:
    :undoc-members:
    :show-inheritance:

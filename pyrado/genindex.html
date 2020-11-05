@@ -763,7 +763,7 @@
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_p3l_ta_vx">default_p3l_ta_vx() (DefaultEnvs static method)</a>
 </li>
-      <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.default_pack_hidden">default_pack_hidden() (in module pyrado.policies.recurrent.rnn)</a>
+      <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.default_pack_hidden">default_pack_hidden() (in module pyrado.policies.recurrent.base)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_pend">default_pend() (DefaultEnvs static method)</a>
 </li>
@@ -801,7 +801,7 @@
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_rosen">default_rosen() (DefaultEnvs static method)</a>
 </li>
-      <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.default_unpack_hidden">default_unpack_hidden() (in module pyrado.policies.recurrent.rnn)</a>
+      <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.default_unpack_hidden">default_unpack_hidden() (in module pyrado.policies.recurrent.base)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -1012,7 +1012,7 @@
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.dummy.RecurrentDummyPolicy.evaluate">(RecurrentDummyPolicy method)</a>
 </li>
-        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base_recurrent.RecurrentPolicy.evaluate">(RecurrentPolicy method)</a>
+        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.RecurrentPolicy.evaluate">(RecurrentPolicy method)</a>
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.RNNPolicyBase.evaluate">(RNNPolicyBase method)</a>
 </li>
@@ -1022,7 +1022,7 @@
 </li>
         <li><a href="algorithms.html#pyrado.algorithms.timeseries_prediction.TSPred.evaluate">(TSPred static method)</a>
 </li>
-        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy.evaluate">(TwoHeadedGRUPolicy method)</a>
+        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.evaluate">(TwoHeadedRNNPolicyBase method)</a>
 </li>
       </ul></li>
       <li><a href="tests.html#tests.test_algorithms.ex_dir">ex_dir() (in module tests.test_algorithms)</a>
@@ -1160,7 +1160,7 @@
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.dummy.RecurrentDummyPolicy.forward">(RecurrentDummyPolicy method)</a>
 </li>
-        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base_recurrent.RecurrentPolicy.forward">(RecurrentPolicy method)</a>
+        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.RecurrentPolicy.forward">(RecurrentPolicy method)</a>
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.RNNPolicyBase.forward">(RNNPolicyBase method)</a>
 </li>
@@ -1168,7 +1168,7 @@
 </li>
         <li><a href="utils.html#pyrado.utils.nn_layers.ScaleLayer.forward">(ScaleLayer method)</a>
 </li>
-        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base_recurrent.StatefulRecurrentNetwork.forward">(StatefulRecurrentNetwork method)</a>
+        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.StatefulRecurrentNetwork.forward">(StatefulRecurrentNetwork method)</a>
 </li>
         <li><a href="exploration.html#pyrado.exploration.stochastic_action.StochasticActionExplStrat.forward">(StochasticActionExplStrat method)</a>
 </li>
@@ -1182,9 +1182,9 @@
 </li>
         <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.two_headed_fnn.TwoHeadedFNNPolicy.forward">(TwoHeadedFNNPolicy method)</a>
 </li>
-        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy.forward">(TwoHeadedGRUPolicy method)</a>
-</li>
         <li><a href="policies.html#pyrado.policies.base.TwoHeadedPolicy.forward">(TwoHeadedPolicy method)</a>
+</li>
+        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.forward">(TwoHeadedRNNPolicyBase method)</a>
 </li>
         <li><a href="exploration.html#pyrado.exploration.uniform_noise.UniformNoise.forward">(UniformNoise method)</a>
 </li>
@@ -1424,11 +1424,13 @@
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.dummy.RecurrentDummyPolicy.hidden_size">(RecurrentDummyPolicy property)</a>
 </li>
-        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base_recurrent.RecurrentPolicy.hidden_size">(RecurrentPolicy property)</a>
+        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.RecurrentPolicy.hidden_size">(RecurrentPolicy property)</a>
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.RNNPolicyBase.hidden_size">(RNNPolicyBase property)</a>
 </li>
-        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy.hidden_size">(TwoHeadedGRUPolicy property)</a>
+        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedLSTMPolicy.hidden_size">(TwoHeadedLSTMPolicy property)</a>
+</li>
+        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.hidden_size">(TwoHeadedRNNPolicyBase property)</a>
 </li>
       </ul></li>
       <li><a href="exploration.html#pyrado.exploration.stochastic_params.HyperSphereParamNoise">HyperSphereParamNoise (class in pyrado.exploration.stochastic_params)</a>
@@ -1456,7 +1458,7 @@
       <ul>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.init_hidden">(PotentialBasedPolicy method)</a>
 </li>
-        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base_recurrent.RecurrentPolicy.init_hidden">(RecurrentPolicy method)</a>
+        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.RecurrentPolicy.init_hidden">(RecurrentPolicy method)</a>
 </li>
         <li><a href="exploration.html#pyrado.exploration.stochastic_action.StochasticActionExplStrat.init_hidden">(StochasticActionExplStrat method)</a>
 </li>
@@ -1518,9 +1520,9 @@
 </li>
         <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.two_headed_fnn.TwoHeadedFNNPolicy.init_param">(TwoHeadedFNNPolicy method)</a>
 </li>
-        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy.init_param">(TwoHeadedGRUPolicy method)</a>
-</li>
         <li><a href="policies.html#pyrado.policies.base.TwoHeadedPolicy.init_param">(TwoHeadedPolicy method)</a>
+</li>
+        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.init_param">(TwoHeadedRNNPolicyBase method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -1547,7 +1549,7 @@
 </li>
       <li><a href="utils.html#pyrado.utils.data_types.TimeSeriesDataPair.inp_seq">inp_seq() (TimeSeriesDataPair property)</a>
 </li>
-      <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base_recurrent.StatefulRecurrentNetwork.input_size">input_size (StatefulRecurrentNetwork attribute)</a>
+      <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.StatefulRecurrentNetwork.input_size">input_size (StatefulRecurrentNetwork attribute)</a>
 
       <ul>
         <li><a href="policies.special.html#pyrado.policies.special.time.TraceableTimePolicy.input_size">(TraceableTimePolicy attribute)</a>
@@ -1586,7 +1588,7 @@
       <li><a href="policies.html#pyrado.policies.base.Policy.is_recurrent">is_recurrent() (Policy property)</a>
 
       <ul>
-        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base_recurrent.RecurrentPolicy.is_recurrent">(RecurrentPolicy property)</a>
+        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.RecurrentPolicy.is_recurrent">(RecurrentPolicy property)</a>
 </li>
         <li><a href="exploration.html#pyrado.exploration.stochastic_action.StochasticActionExplStrat.is_recurrent">(StochasticActionExplStrat property)</a>
 </li>
@@ -1985,7 +1987,7 @@
 </li>
         <li><a href="policies.recurrent.html#module-pyrado.policies.recurrent.adn">pyrado.policies.recurrent.adn</a>
 </li>
-        <li><a href="policies.recurrent.html#module-pyrado.policies.recurrent.base_recurrent">pyrado.policies.recurrent.base_recurrent</a>
+        <li><a href="policies.recurrent.html#module-pyrado.policies.recurrent.base">pyrado.policies.recurrent.base</a>
 </li>
         <li><a href="policies.recurrent.html#module-pyrado.policies.recurrent.neural_fields">pyrado.policies.recurrent.neural_fields</a>
 </li>
@@ -2355,6 +2357,10 @@
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy.name">(TwoHeadedGRUPolicy attribute)</a>
 </li>
+        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedLSTMPolicy.name">(TwoHeadedLSTMPolicy attribute)</a>
+</li>
+        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicy.name">(TwoHeadedRNNPolicy attribute)</a>
+</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.udr.UDR.name">(UDR attribute)</a>
 </li>
       </ul></li>
@@ -2492,7 +2498,7 @@
 </li>
       <li><a href="tasks.html#pyrado.tasks.goalless.OptimProxyTask">OptimProxyTask (class in pyrado.tasks.goalless)</a>
 </li>
-      <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base_recurrent.StatefulRecurrentNetwork.output_size">output_size (StatefulRecurrentNetwork attribute)</a>
+      <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.StatefulRecurrentNetwork.output_size">output_size (StatefulRecurrentNetwork attribute)</a>
 
       <ul>
         <li><a href="policies.special.html#pyrado.policies.special.time.TraceableTimePolicy.output_size">(TraceableTimePolicy attribute)</a>
@@ -3483,10 +3489,10 @@
 </li>
       </ul></li>
       <li>
-    pyrado.policies.recurrent.base_recurrent
+    pyrado.policies.recurrent.base
 
       <ul>
-        <li><a href="policies.recurrent.html#module-pyrado.policies.recurrent.base_recurrent">module</a>
+        <li><a href="policies.recurrent.html#module-pyrado.policies.recurrent.base">module</a>
 </li>
       </ul></li>
       <li>
@@ -4048,10 +4054,18 @@
 </li>
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.RNNPolicyBase.recurrent_network_type">(RNNPolicyBase attribute)</a>
 </li>
+        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy.recurrent_network_type">(TwoHeadedGRUPolicy attribute)</a>
+</li>
+        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedLSTMPolicy.recurrent_network_type">(TwoHeadedLSTMPolicy attribute)</a>
+</li>
+        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicy.recurrent_network_type">(TwoHeadedRNNPolicy attribute)</a>
+</li>
+        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.recurrent_network_type">(TwoHeadedRNNPolicyBase attribute)</a>
+</li>
       </ul></li>
       <li><a href="policies.special.html#pyrado.policies.special.dummy.RecurrentDummyPolicy">RecurrentDummyPolicy (class in pyrado.policies.special.dummy)</a>
 </li>
-      <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base_recurrent.RecurrentPolicy">RecurrentPolicy (class in pyrado.policies.recurrent.base_recurrent)</a>
+      <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.RecurrentPolicy">RecurrentPolicy (class in pyrado.policies.recurrent.base)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.step.LoggerAware.register_as_logger_parent">register_as_logger_parent() (LoggerAware method)</a>
 </li>
@@ -4232,7 +4246,7 @@
 </li>
         <li><a href="environment_wrappers.html#pyrado.environment_wrappers.state_augmentation.StateAugmentationWrapper.reset">(StateAugmentationWrapper method)</a>
 </li>
-        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base_recurrent.StatefulRecurrentNetwork.reset">(StatefulRecurrentNetwork method)</a>
+        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.StatefulRecurrentNetwork.reset">(StatefulRecurrentNetwork method)</a>
 </li>
         <li><a href="exploration.html#pyrado.exploration.stochastic_action.StochasticActionExplStrat.reset">(StochasticActionExplStrat method)</a>
 </li>
@@ -4498,7 +4512,7 @@
       <li><a href="policies.html#pyrado.policies.base.Policy.script">script() (Policy method)</a>
 
       <ul>
-        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base_recurrent.RecurrentPolicy.script">(RecurrentPolicy method)</a>
+        <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.RecurrentPolicy.script">(RecurrentPolicy method)</a>
 </li>
         <li><a href="policies.special.html#pyrado.policies.special.time.TimePolicy.script">(TimePolicy method)</a>
 </li>
@@ -4693,7 +4707,7 @@
 </li>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.StateBasedRewFcn">StateBasedRewFcn (class in pyrado.tasks.reward_functions)</a>
 </li>
-      <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base_recurrent.StatefulRecurrentNetwork">StatefulRecurrentNetwork (class in pyrado.policies.recurrent.base_recurrent)</a>
+      <li><a href="policies.recurrent.html#pyrado.policies.recurrent.base.StatefulRecurrentNetwork">StatefulRecurrentNetwork (class in pyrado.policies.recurrent.base)</a>
 </li>
       <li><a href="exploration.html#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat.std">std (NormalActNoiseExplStrat attribute)</a>
 
@@ -5165,14 +5179,14 @@
 </li>
       <li><a href="tests.html#tests.test_environments.test_rollout">test_rollout() (in module tests.test_environments)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.test_sampling.test_rollout_wo_exploration">test_rollout_wo_exploration() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_sampling.test_rollout_wo_policy">test_rollout_wo_policy() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_utils.test_running_expdecay_average">test_running_expdecay_average() (in module tests.test_utils)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.test_utils.test_running_mem_average">test_running_mem_average() (in module tests.test_utils)</a>
 </li>
       <li><a href="tests.html#tests.test_utils.test_running_normalizer">test_running_normalizer() (in module tests.test_utils)</a>
@@ -5472,6 +5486,10 @@
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.thgru_policy">thgru_policy() (DefaultPolicies static method)</a>
 </li>
+      <li><a href="tests.html#tests.conftest.DefaultPolicies.thlstm_policy">thlstm_policy() (DefaultPolicies static method)</a>
+</li>
+      <li><a href="tests.html#tests.conftest.DefaultPolicies.thrnn_policy">thrnn_policy() (DefaultPolicies static method)</a>
+</li>
       <li><a href="tasks.html#pyrado.tasks.final_reward.FinalRewMode.time_dependent">time_dependent() (FinalRewMode property)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.time_policy">time_policy() (DefaultPolicies static method)</a>
@@ -5528,7 +5546,13 @@
 </li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy">TwoHeadedGRUPolicy (class in pyrado.policies.recurrent.two_headed_rnn)</a>
 </li>
+      <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedLSTMPolicy">TwoHeadedLSTMPolicy (class in pyrado.policies.recurrent.two_headed_rnn)</a>
+</li>
       <li><a href="policies.html#pyrado.policies.base.TwoHeadedPolicy">TwoHeadedPolicy (class in pyrado.policies.base)</a>
+</li>
+      <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicy">TwoHeadedRNNPolicy (class in pyrado.policies.recurrent.two_headed_rnn)</a>
+</li>
+      <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase">TwoHeadedRNNPolicyBase (class in pyrado.policies.recurrent.two_headed_rnn)</a>
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.utils.typed_env">typed_env() (in module pyrado.environment_wrappers.utils)</a>
 </li>

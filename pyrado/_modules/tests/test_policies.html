@@ -212,10 +212,10 @@
 <span class="kn">from</span> <span class="nn">pyrado.spaces.box</span> <span class="kn">import</span> <span class="n">InfBoxSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.special.dual_rfb</span> <span class="kn">import</span> <span class="n">DualRBFLinearPolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.rnn</span> <span class="kn">import</span> <span class="n">default_unpack_hidden</span><span class="p">,</span> <span class="n">default_pack_hidden</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.base</span> <span class="kn">import</span> <span class="n">default_unpack_hidden</span><span class="p">,</span> <span class="n">default_pack_hidden</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.features</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.two_headed_rnn</span> <span class="kn">import</span> <span class="n">TwoHeadedGRUPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.two_headed_rnn</span> <span class="kn">import</span> <span class="n">TwoHeadedRNNPolicyBase</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_sets</span> <span class="kn">import</span> <span class="n">TimeSeriesDataSet</span>
@@ -249,7 +249,8 @@
         <span class="p">[</span><span class="n">identity_feat</span><span class="p">],</span>
         <span class="p">[</span><span class="n">const_feat</span><span class="p">,</span> <span class="n">identity_feat</span><span class="p">,</span> <span class="n">abs_feat</span><span class="p">,</span> <span class="n">sign_feat</span><span class="p">,</span> <span class="n">squared_feat</span><span class="p">,</span> <span class="n">sin_feat</span><span class="p">,</span> <span class="n">cos_feat</span><span class="p">,</span> <span class="n">sinsin_feat</span><span class="p">,</span> <span class="n">sincos_feat</span><span class="p">,</span>
          <span class="n">sig_feat</span><span class="p">,</span> <span class="n">bell_feat</span><span class="p">],</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;const_only&#39;</span><span class="p">,</span> <span class="s1">&#39;ident_only&#39;</span><span class="p">,</span> <span class="s1">&#39;all_simple_feats&#39;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;const_only&#39;</span><span class="p">,</span> <span class="s1">&#39;ident_only&#39;</span><span class="p">,</span> <span class="s1">&#39;all_simple_feats&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_simple_feature_stack</span><span class="p">(</span><span class="n">feat_list</span><span class="p">):</span>
     <span class="n">fs</span> <span class="o">=</span> <span class="n">FeatureStack</span><span class="p">(</span><span class="n">feat_list</span><span class="p">)</span>
@@ -264,7 +265,8 @@
         <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
         <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
         <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;2_2&#39;</span><span class="p">,</span> <span class="s1">&#39;3_2&#39;</span><span class="p">,</span> <span class="s1">&#39;10_4&#39;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;2_2&#39;</span><span class="p">,</span> <span class="s1">&#39;3_2&#39;</span><span class="p">,</span> <span class="s1">&#39;10_4&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_mul_feat</span><span class="p">(</span><span class="n">obs_dim</span><span class="p">,</span> <span class="n">idcs</span><span class="p">):</span>
     <span class="n">mf</span> <span class="o">=</span> <span class="n">MultFeat</span><span class="p">(</span><span class="n">idcs</span><span class="o">=</span><span class="n">idcs</span><span class="p">)</span>
@@ -278,7 +280,8 @@
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;obs_dim, num_feat_per_dim&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1_1&#39;</span><span class="p">,</span> <span class="s1">&#39;2_1&#39;</span><span class="p">,</span> <span class="s1">&#39;1_4&#39;</span><span class="p">,</span> <span class="s1">&#39;2_4&#39;</span><span class="p">,</span> <span class="s1">&#39;10_100&#39;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1_1&#39;</span><span class="p">,</span> <span class="s1">&#39;2_1&#39;</span><span class="p">,</span> <span class="s1">&#39;1_4&#39;</span><span class="p">,</span> <span class="s1">&#39;2_4&#39;</span><span class="p">,</span> <span class="s1">&#39;10_100&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_rff_feat_serial</span><span class="p">(</span><span class="n">obs_dim</span><span class="p">,</span> <span class="n">num_feat_per_dim</span><span class="p">):</span>
     <span class="n">rff</span> <span class="o">=</span> <span class="n">RandFourierFeat</span><span class="p">(</span><span class="n">inp_dim</span><span class="o">=</span><span class="n">obs_dim</span><span class="p">,</span> <span class="n">num_feat_per_dim</span><span class="o">=</span><span class="n">num_feat_per_dim</span><span class="p">,</span> <span class="n">bandwidth</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">obs_dim</span><span class="p">,</span> <span class="p">))</span>
@@ -290,11 +293,13 @@
 
 
 <div class="viewcode-block" id="test_rff_feat_batched"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_rff_feat_batched">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">features</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;batch_size&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;100&#39;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;batch_size&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+                         <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;100&#39;</span><span class="p">])</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;obs_dim, num_feat_per_dim&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1_1&#39;</span><span class="p">,</span> <span class="s1">&#39;2_1&#39;</span><span class="p">,</span> <span class="s1">&#39;1_4&#39;</span><span class="p">,</span> <span class="s1">&#39;2_4&#39;</span><span class="p">,</span> <span class="s1">&#39;10_100&#39;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1_1&#39;</span><span class="p">,</span> <span class="s1">&#39;2_1&#39;</span><span class="p">,</span> <span class="s1">&#39;1_4&#39;</span><span class="p">,</span> <span class="s1">&#39;2_4&#39;</span><span class="p">,</span> <span class="s1">&#39;10_100&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_rff_feat_batched</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">obs_dim</span><span class="p">,</span> <span class="n">num_feat_per_dim</span><span class="p">):</span>
     <span class="n">rff</span> <span class="o">=</span> <span class="n">RandFourierFeat</span><span class="p">(</span><span class="n">inp_dim</span><span class="o">=</span><span class="n">obs_dim</span><span class="p">,</span> <span class="n">num_feat_per_dim</span><span class="o">=</span><span class="n">num_feat_per_dim</span><span class="p">,</span> <span class="n">bandwidth</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">obs_dim</span><span class="p">,</span> <span class="p">))</span>
@@ -312,7 +317,8 @@
         <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">3.</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">3.</span><span class="p">]))),</span>
         <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">3.</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">]))),</span>
         <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">3.</span><span class="p">]</span><span class="o">*</span><span class="mi">10</span><span class="p">),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">3.</span><span class="p">]</span><span class="o">*</span><span class="mi">10</span><span class="p">)))</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1_4_to&#39;</span><span class="p">,</span> <span class="s1">&#39;1_4_np&#39;</span><span class="p">,</span> <span class="s1">&#39;2_4&#39;</span><span class="p">,</span> <span class="s1">&#39;10_100&#39;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1_4_to&#39;</span><span class="p">,</span> <span class="s1">&#39;1_4_np&#39;</span><span class="p">,</span> <span class="s1">&#39;2_4&#39;</span><span class="p">,</span> <span class="s1">&#39;10_100&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_rbf_serial</span><span class="p">(</span><span class="n">obs_dim</span><span class="p">,</span> <span class="n">num_feat_per_dim</span><span class="p">,</span> <span class="n">bounds</span><span class="p">):</span>
     <span class="n">rbf</span> <span class="o">=</span> <span class="n">RBFFeat</span><span class="p">(</span><span class="n">num_feat_per_dim</span><span class="o">=</span><span class="n">num_feat_per_dim</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">)</span>
@@ -324,14 +330,16 @@
 
 
 <div class="viewcode-block" id="test_rbf_feat_batched"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_rbf_feat_batched">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">features</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;batch_size&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;100&#39;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;batch_size&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+                         <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;100&#39;</span><span class="p">])</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;obs_dim, num_feat_per_dim, bounds&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">3.</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">3.</span><span class="p">]))),</span>
         <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">3.</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">3.</span><span class="p">]))),</span>
         <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">3.</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">]))),</span>
         <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">-</span><span class="mf">3.</span><span class="p">]</span><span class="o">*</span><span class="mi">10</span><span class="p">),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">3.</span><span class="p">]</span><span class="o">*</span><span class="mi">10</span><span class="p">)))</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1_4_to&#39;</span><span class="p">,</span> <span class="s1">&#39;1_4_np&#39;</span><span class="p">,</span> <span class="s1">&#39;2_4&#39;</span><span class="p">,</span> <span class="s1">&#39;10_100&#39;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1_4_to&#39;</span><span class="p">,</span> <span class="s1">&#39;1_4_np&#39;</span><span class="p">,</span> <span class="s1">&#39;2_4&#39;</span><span class="p">,</span> <span class="s1">&#39;10_100&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_rbf_feat_batched</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">obs_dim</span><span class="p">,</span> <span class="n">num_feat_per_dim</span><span class="p">,</span> <span class="n">bounds</span><span class="p">):</span>
     <span class="n">rbf</span> <span class="o">=</span> <span class="n">RBFFeat</span><span class="p">(</span><span class="n">num_feat_per_dim</span><span class="o">=</span><span class="n">num_feat_per_dim</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">)</span>
@@ -349,11 +357,13 @@
         <span class="s1">&#39;default_qqsu&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_qbb&#39;</span><span class="p">,</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_bop5d_bt&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qq-st&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qq-st&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;num_feat_per_dim&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;100&#39;</span><span class="p">]</span>
+    <span class="s1">&#39;num_feat_per_dim&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;100&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_rff_policy_serial</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">num_feat_per_dim</span><span class="p">):</span>
     <span class="n">rff</span> <span class="o">=</span> <span class="n">RandFourierFeat</span><span class="p">(</span><span class="n">inp_dim</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">,</span> <span class="n">num_feat_per_dim</span><span class="o">=</span><span class="n">num_feat_per_dim</span><span class="p">,</span>
@@ -372,13 +382,15 @@
         <span class="s1">&#39;default_qqsu&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_qbb&#39;</span><span class="p">,</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_bop5d_bt&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qq-su&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qq-su&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;batch_size, num_feat_per_dim&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1_4&#39;</span><span class="p">,</span> <span class="s1">&#39;20_4&#39;</span><span class="p">,</span> <span class="s1">&#39;1_100&#39;</span><span class="p">,</span> <span class="s1">&#39;20_100&#39;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1_4&#39;</span><span class="p">,</span> <span class="s1">&#39;20_4&#39;</span><span class="p">,</span> <span class="s1">&#39;1_100&#39;</span><span class="p">,</span> <span class="s1">&#39;20_100&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_rff_policy_batch</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">num_feat_per_dim</span><span class="p">):</span>
     <span class="n">rff</span> <span class="o">=</span> <span class="n">RandFourierFeat</span><span class="p">(</span><span class="n">inp_dim</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">,</span> <span class="n">num_feat_per_dim</span><span class="o">=</span><span class="n">num_feat_per_dim</span><span class="p">,</span>
@@ -398,11 +410,13 @@
         <span class="s1">&#39;default_qqsu&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_qbb&#39;</span><span class="p">,</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_bop5d_bt&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qq-su&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qq-su&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;num_feat_per_dim&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;100&#39;</span><span class="p">]</span>
+    <span class="s1">&#39;num_feat_per_dim&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;4&#39;</span><span class="p">,</span> <span class="s1">&#39;100&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_rfb_policy_serial</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">num_feat_per_dim</span><span class="p">):</span>
     <span class="n">rbf</span> <span class="o">=</span> <span class="n">RBFFeat</span><span class="p">(</span><span class="n">num_feat_per_dim</span><span class="o">=</span><span class="n">num_feat_per_dim</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">bounds</span><span class="p">)</span>
@@ -421,13 +435,15 @@
         <span class="s1">&#39;default_qqsu&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_qbb&#39;</span><span class="p">,</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_bop5d_bt&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qq-su&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qq-su&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;batch_size, num_feat_per_dim&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1_4&#39;</span><span class="p">,</span> <span class="s1">&#39;20_4&#39;</span><span class="p">,</span> <span class="s1">&#39;1_100&#39;</span><span class="p">,</span> <span class="s1">&#39;20_100&#39;</span><span class="p">]</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1_4&#39;</span><span class="p">,</span> <span class="s1">&#39;20_4&#39;</span><span class="p">,</span> <span class="s1">&#39;1_100&#39;</span><span class="p">,</span> <span class="s1">&#39;20_100&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_rfb_policy_batch</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">num_feat_per_dim</span><span class="p">):</span>
     <span class="n">rbf</span> <span class="o">=</span> <span class="n">RBFFeat</span><span class="p">(</span><span class="n">num_feat_per_dim</span><span class="o">=</span><span class="n">num_feat_per_dim</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">bounds</span><span class="p">)</span>
@@ -444,10 +460,12 @@
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_wambic&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_mujoco</span><span class="p">),</span>  <span class="c1"># so far, the only use case</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;wambic&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;wambic&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;dim_mask&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;dim_mask&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+                         <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">test_dualrbf_policy</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">dim_mask</span><span class="p">):</span>
     <span class="c1"># Hyper-parameters for the RBF features are not important here</span>
     <span class="n">rbf_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">num_feat_per_dim</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">])),</span> <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -462,7 +480,8 @@
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_qbb&#39;</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -490,7 +509,8 @@
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_qbb&#39;</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -499,7 +519,8 @@
         <span class="s1">&#39;dummy_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;linear_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;fnn_policy&#39;</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;idle&#39;</span><span class="p">,</span> <span class="s1">&#39;dummy&#39;</span><span class="p">,</span> <span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;idle&#39;</span><span class="p">,</span> <span class="s1">&#39;dummy&#39;</span><span class="p">,</span> <span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_feedforward_policy_one_step</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()</span>
@@ -512,7 +533,8 @@
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_qbb&#39;</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -536,7 +558,8 @@
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_qbb&#39;</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -555,7 +578,7 @@
     <span class="n">hid</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">init_hidden</span><span class="p">()</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">TwoHeadedGRUPolicy</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">TwoHeadedRNNPolicyBase</span><span class="p">):</span>
         <span class="n">act</span><span class="p">,</span> <span class="n">out2</span><span class="p">,</span> <span class="n">hid</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">hid</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out2</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -568,7 +591,8 @@
         <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_qbb&#39;</span><span class="p">,</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_bop5d_bt&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -576,7 +600,8 @@
         <span class="c1"># dummy_policy and idle_policy are not supported</span>
         <span class="s1">&#39;linear_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;fnn_policy&#39;</span><span class="p">,</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;batch_size&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">test_feedforward_policy_batching</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">policy</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)])</span>  <span class="c1"># shape = (batch_size, 4)</span>
@@ -591,7 +616,8 @@
         <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_qbb&#39;</span><span class="p">,</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_bop5d_bt&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -600,10 +626,15 @@
         <span class="s1">&#39;lstm_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;gru_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;adn_policy&#39;</span><span class="p">,</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;nf_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;thrnn_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;thgru_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;thlstm_policy&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;nf&#39;</span><span class="p">,</span> <span class="s1">&#39;thgrnn&#39;</span><span class="p">,</span> <span class="s1">&#39;thgru&#39;</span><span class="p">,</span> <span class="s1">&#39;thlstm&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;batch_size&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;batch_size&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">256</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">test_recurrent_policy_batching</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
     <span class="k">assert</span> <span class="n">policy</span><span class="o">.</span><span class="n">is_recurrent</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">policy</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)])</span>  <span class="c1"># shape = (batch_size, 4)</span>
@@ -618,14 +649,19 @@
     <span class="n">hidden</span><span class="o">.</span><span class="n">random_</span><span class="p">()</span>
     <span class="k">assert</span> <span class="n">hidden</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">policy</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">)</span>
 
-    <span class="n">act</span><span class="p">,</span> <span class="n">hid_new</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">TwoHeadedRNNPolicyBase</span><span class="p">):</span>
+        <span class="n">act</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">hid_new</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">act</span><span class="p">,</span> <span class="n">hid_new</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">hid_new</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">policy</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">batch_size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="c1"># Try to use a subset of the batch</span>
         <span class="n">subset</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">batch_size</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">act_sub</span><span class="p">,</span> <span class="n">hid_sub</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="n">subset</span><span class="p">,</span> <span class="p">:],</span> <span class="n">hidden</span><span class="p">[</span><span class="n">subset</span><span class="p">,</span> <span class="p">:])</span>
-
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">TwoHeadedRNNPolicyBase</span><span class="p">):</span>
+            <span class="n">act_sub</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">hid_sub</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="n">subset</span><span class="p">,</span> <span class="p">:],</span> <span class="n">hidden</span><span class="p">[</span><span class="n">subset</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">act_sub</span><span class="p">,</span> <span class="n">hid_sub</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="n">subset</span><span class="p">,</span> <span class="p">:],</span> <span class="n">hidden</span><span class="p">[</span><span class="n">subset</span><span class="p">,</span> <span class="p">:])</span>
         <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">act_sub</span><span class="p">,</span> <span class="n">act</span><span class="p">[</span><span class="n">subset</span><span class="p">,</span> <span class="p">:])</span>
         <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">hid_sub</span><span class="p">,</span> <span class="n">hid_new</span><span class="p">[</span><span class="n">subset</span><span class="p">,</span> <span class="p">:])</span></div>
 
@@ -635,15 +671,24 @@
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_qbb&#39;</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="s1">&#39;rnn_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;lstm_policy&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;gru_policy&#39;</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="s1">&#39;gru_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;adn_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;nf_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;thrnn_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;thgru_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;thlstm_policy&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;nf&#39;</span><span class="p">,</span> <span class="s1">&#39;thgrnn&#39;</span><span class="p">,</span> <span class="s1">&#39;thgru&#39;</span><span class="p">,</span> <span class="s1">&#39;thlstm&#39;</span><span class="p">],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_pytorch_recurrent_policy_rollout</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
     <span class="n">ro</span> <span class="o">=</span> <span class="n">rollout</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="n">RenderMode</span><span class="p">())</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">StepSequence</span><span class="p">)</span></div>
@@ -654,7 +699,8 @@
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_qbb&#39;</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -664,8 +710,13 @@
         <span class="s1">&#39;gru_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;adn_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;nf_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;thrnn_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;thgru_policy&#39;</span><span class="p">,</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;nf&#39;</span><span class="p">,</span> <span class="s1">&#39;thgru&#39;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="s1">&#39;thlstm_policy&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;nf&#39;</span><span class="p">,</span> <span class="s1">&#39;thgrnn&#39;</span><span class="p">,</span> <span class="s1">&#39;thgru&#39;</span><span class="p">,</span> <span class="s1">&#39;thlstm&#39;</span><span class="p">],</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_recurrent_policy_one_step</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
     <span class="k">assert</span> <span class="n">policy</span><span class="o">.</span><span class="n">is_recurrent</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()</span>
@@ -681,7 +732,7 @@
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">hidden</span><span class="p">)</span> <span class="o">==</span> <span class="n">policy</span><span class="o">.</span><span class="n">hidden_size</span>
 
     <span class="c1"># Test general conformity</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">TwoHeadedGRUPolicy</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">TwoHeadedRNNPolicyBase</span><span class="p">):</span>
         <span class="n">act</span><span class="p">,</span> <span class="n">otherhead</span><span class="p">,</span> <span class="n">hid_new</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">hid_new</span><span class="p">)</span> <span class="o">==</span> <span class="n">policy</span><span class="o">.</span><span class="n">hidden_size</span>
     <span class="k">else</span><span class="p">:</span>
@@ -689,7 +740,7 @@
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">hid_new</span><span class="p">)</span> <span class="o">==</span> <span class="n">policy</span><span class="o">.</span><span class="n">hidden_size</span>
 
     <span class="c1"># Test reproducibility</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">TwoHeadedGRUPolicy</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">TwoHeadedRNNPolicyBase</span><span class="p">):</span>
         <span class="n">act2</span><span class="p">,</span> <span class="n">otherhead2</span><span class="p">,</span> <span class="n">hid_new2</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
         <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">act</span><span class="p">,</span> <span class="n">act2</span><span class="p">)</span>
         <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">otherhead</span><span class="p">,</span> <span class="n">otherhead2</span><span class="p">)</span>
@@ -705,7 +756,8 @@
     <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_bop5d_bt&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -715,7 +767,11 @@
         <span class="s1">&#39;gru_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;adn_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;nf_policy&#39;</span><span class="p">,</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;nf&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;thrnn_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;thgru_policy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;thlstm_policy&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;nf&#39;</span><span class="p">,</span> <span class="s1">&#39;thgrnn&#39;</span><span class="p">,</span> <span class="s1">&#39;thgru&#39;</span><span class="p">,</span> <span class="s1">&#39;thlstm&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_recurrent_policy_evaluate</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
@@ -726,12 +782,19 @@
     <span class="c1"># Evaluate first and second action manually</span>
     <span class="n">o1</span> <span class="o">=</span> <span class="n">ro</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">observation</span>
     <span class="n">h1</span> <span class="o">=</span> <span class="n">ro</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">hidden_state</span>
-    <span class="n">a1</span><span class="p">,</span> <span class="n">h2</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">o1</span><span class="p">,</span> <span class="n">h1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">TwoHeadedRNNPolicyBase</span><span class="p">):</span>
+        <span class="n">a1</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">h2</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">o1</span><span class="p">,</span> <span class="n">h1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">a1</span><span class="p">,</span> <span class="n">h2</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">o1</span><span class="p">,</span> <span class="n">h1</span><span class="p">)</span>
     <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">a1</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="n">ro</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">action</span><span class="p">)</span>
     <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">h2</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="n">ro</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">next_hidden_state</span><span class="p">)</span>
 
     <span class="c1"># Run evaluate</span>
-    <span class="n">eval_act</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">TwoHeadedRNNPolicyBase</span><span class="p">):</span>
+        <span class="n">eval_act</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">eval_act</span> <span class="o">=</span> <span class="n">policy</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">ro</span><span class="p">)</span>
 
     <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">eval_act</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="n">ro</span><span class="o">.</span><span class="n">actions</span><span class="p">)</span></div>
 
@@ -782,7 +845,8 @@
         <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_qbb&#39;</span><span class="p">,</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_bop5d_bt&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -790,7 +854,8 @@
         <span class="c1"># TimePolicy and Two-headed policies are not supported</span>
         <span class="s1">&#39;linear_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;fnn_policy&#39;</span><span class="p">,</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_script_feedforward</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
@@ -811,17 +876,20 @@
         <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_qbb&#39;</span><span class="p">,</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_bop5d_bt&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="c1"># Two-headed policies are not supported</span>
         <span class="s1">&#39;rnn_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;lstm_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;gru_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;adn_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;nf_policy&#39;</span><span class="p">,</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;nf&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;nf&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_script_recurrent</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
@@ -859,7 +927,8 @@
         <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_qbb&#39;</span><span class="p">,</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_bop5d_bt&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -872,11 +941,13 @@
         <span class="s1">&#39;gru_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;adn_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;nf_policy&#39;</span><span class="p">,</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;nf&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;nf&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;file_type&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;.pt&#39;</span><span class="p">,</span> <span class="s1">&#39;.zip&#39;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="s1">&#39;zip&#39;</span><span class="p">]</span>
+    <span class="s1">&#39;file_type&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;.pt&#39;</span><span class="p">,</span> <span class="s1">&#39;.zip&#39;</span><span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="s1">&#39;zip&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_export_cpp</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">tmpdir</span><span class="p">,</span> <span class="n">file_type</span><span class="p">):</span>
     <span class="c1"># Generate scripted version (in double mode for CPP compatibility)</span>
@@ -916,7 +987,8 @@
         <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
         <span class="s1">&#39;default_qbb&#39;</span><span class="p">,</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_bop5d_bt&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5D&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -929,7 +1001,8 @@
         <span class="s1">&#39;gru_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;adn_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;nf_policy&#39;</span><span class="p">,</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;nf&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;nf&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_export_rcspysim</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">tmpdir</span><span class="p">):</span>
@@ -963,10 +1036,14 @@
         <span class="k">assert</span> <span class="n">act_cpp</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">act_script</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="test_indi_nonlin_layer"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_indi_nonlin_layer">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;in_features&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1dim&#39;</span><span class="p">,</span> <span class="s1">&#39;3dim&#39;</span><span class="p">])</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;same_nonlin&#39;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;same_nonlin&#39;</span><span class="p">,</span> <span class="s1">&#39;different_nonlin&#39;</span><span class="p">])</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;bias&#39;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bias&#39;</span><span class="p">,</span> <span class="s1">&#39;no_bias&#39;</span><span class="p">])</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;weight&#39;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">,</span> <span class="s1">&#39;no_weight&#39;</span><span class="p">])</span>
+<div class="viewcode-block" id="test_indi_nonlin_layer"><a class="viewcode-back" href="../../tests.html#tests.test_policies.test_indi_nonlin_layer">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;in_features&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+                         <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1dim&#39;</span><span class="p">,</span> <span class="s1">&#39;3dim&#39;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;same_nonlin&#39;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+                         <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;same_nonlin&#39;</span><span class="p">,</span> <span class="s1">&#39;different_nonlin&#39;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;bias&#39;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+                         <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bias&#39;</span><span class="p">,</span> <span class="s1">&#39;no_bias&#39;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;weight&#39;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+                         <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">,</span> <span class="s1">&#39;no_weight&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">test_indi_nonlin_layer</span><span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="n">same_nonlin</span><span class="p">,</span> <span class="n">bias</span><span class="p">,</span> <span class="n">weight</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">same_nonlin</span> <span class="ow">and</span> <span class="n">in_features</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">nonlin</span> <span class="o">=</span> <span class="n">in_features</span><span class="o">*</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">]</span>
@@ -986,16 +1063,20 @@
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="c1"># Two-headed policies are not supported</span>
         <span class="s1">&#39;rnn_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;lstm_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;gru_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;adn_policy&#39;</span><span class="p">,</span>
         <span class="s1">&#39;nf_policy&#39;</span><span class="p">,</span>
-    <span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;nf&#39;</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">,</span> <span class="s1">&#39;gru&#39;</span><span class="p">,</span> <span class="s1">&#39;adn&#39;</span><span class="p">,</span> <span class="s1">&#39;nf&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;windowed&#39;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;windowed&#39;</span><span class="p">,</span> <span class="s1">&#39;not_windowed&#39;</span><span class="p">])</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;cascaded&#39;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;cascaded&#39;</span><span class="p">,</span> <span class="s1">&#39;not_cascaded&#39;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;windowed&#39;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+                         <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;windowed&#39;</span><span class="p">,</span> <span class="s1">&#39;not_windowed&#39;</span><span class="p">])</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;cascaded&#39;</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+                         <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;cascaded&#39;</span><span class="p">,</span> <span class="s1">&#39;not_cascaded&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">test_tspred</span><span class="p">(</span><span class="n">tsdataset</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">windowed</span><span class="p">,</span> <span class="n">cascaded</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">windowed</span><span class="p">:</span>
         <span class="n">inp_seq</span> <span class="o">=</span> <span class="n">tsdataset</span><span class="o">.</span><span class="n">data_trn_inp</span>

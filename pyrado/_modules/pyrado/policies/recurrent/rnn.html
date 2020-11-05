@@ -212,56 +212,8 @@
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.base_recurrent</span> <span class="kn">import</span> <span class="n">RecurrentPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.base</span> <span class="kn">import</span> <span class="n">RecurrentPolicy</span><span class="p">,</span> <span class="n">default_unpack_hidden</span><span class="p">,</span> <span class="n">default_pack_hidden</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.initialization</span> <span class="kn">import</span> <span class="n">init_param</span>
-
-
-<div class="viewcode-block" id="default_unpack_hidden"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.rnn.default_unpack_hidden">[docs]</a><span class="k">def</span> <span class="nf">default_unpack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Unpack the flat hidden state vector into the form expected by torch.nn.RNNBase subclasses.</span>
-
-<span class="sd">    :param hidden: packed hidden state</span>
-<span class="sd">    :param num_recurrent_layers: number of recurrent layers</span>
-<span class="sd">    :param hidden_size: size of the hidden layers (all equal)</span>
-<span class="sd">    :param batch_size: if not none, hidden is 2d, and the first dimension represents parts of a data batch</span>
-<span class="sd">    :return: unpacked hidden state, a tensor of num_recurrent_layers x batch_size x hidden_size.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">num_recurrent_layers</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">,</span> \
-            <span class="s2">&quot;Passed hidden variable&#39;s size doesn&#39;t match the one required by the network.&quot;</span>
-        <span class="c1"># we could handle that case, but for now it&#39;s not necessary.</span>
-        <span class="k">assert</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;Cannot use batched observations with unbatched hidden state&#39;</span>
-        <span class="k">return</span> <span class="n">hidden</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">num_recurrent_layers</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">)</span>
-
-    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">num_recurrent_layers</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">,</span> \
-            <span class="s2">&quot;Passed hidden variable&#39;s size doesn&#39;t match the one required by the network.&quot;</span>
-        <span class="k">assert</span> <span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">batch_size</span><span class="p">,</span> \
-            <span class="sa">f</span><span class="s1">&#39;Batch size of hidden state (</span><span class="si">{</span><span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">) must match batch size of observations (</span><span class="si">{</span><span class="n">batch_size</span><span class="si">}</span><span class="s1">)&#39;</span>
-        <span class="k">return</span> <span class="n">hidden</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">)</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Improper shape of &#39;hidden&#39;. Policy received </span><span class="si">{</span><span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, &quot;</span>
-                           <span class="sa">f</span><span class="s2">&quot;but shape should be 1- or 2-dim&quot;</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="default_pack_hidden"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.rnn.default_pack_hidden">[docs]</a><span class="k">def</span> <span class="nf">default_pack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Pack the hidden state returned by torch.nn.RNNBase subclasses into an 1d state vector.</span>
-<span class="sd">    This is the reverse operation of default_unpack_hidden.</span>
-
-<span class="sd">    :param hidden: unpacked hidden state, a tensor of num_recurrent_layers x batch_size x hidden_size</span>
-<span class="sd">    :param num_recurrent_layers: number of recurrent layers</span>
-<span class="sd">    :param hidden_size: size of the hidden layers (all equal)</span>
-<span class="sd">    :param batch_size: if not none, the result should be 2d, and the first dimension represents parts of a data batch</span>
-<span class="sd">    :return: packed hidden state.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># Simply flatten the hidden state</span>
-        <span class="k">return</span> <span class="n">hidden</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">num_recurrent_layers</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># Need to make sure that the batch dimension is the first element</span>
-        <span class="k">return</span> <span class="n">hidden</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RNNPolicyBase"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.rnn.RNNPolicyBase">[docs]</a><span class="k">class</span> <span class="nc">RNNPolicyBase</span><span class="p">(</span><span class="n">RecurrentPolicy</span><span class="p">):</span>
@@ -274,8 +226,8 @@
                  <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
                  <span class="n">hidden_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                  <span class="n">num_recurrent_layers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                 <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span>
                  <span class="n">output_nonlin</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span>
                  <span class="n">init_param_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="o">**</span><span class="n">recurrent_net_kwargs</span><span class="p">):</span>
@@ -285,8 +237,8 @@
 <span class="sd">        :param spec: environment specification</span>
 <span class="sd">        :param hidden_size: size of the hidden layers (all equal)</span>
 <span class="sd">        :param num_recurrent_layers: number of equally sized hidden layers</span>
-<span class="sd">        :param dropout: dropout probability, default = 0 deactivates dropout</span>
 <span class="sd">        :param output_nonlin: nonlinearity for output layer</span>
+<span class="sd">        :param dropout: dropout probability, default = 0 deactivates dropout</span>
 <span class="sd">        :param init_param_kwargs: additional keyword arguments for the policy parameter initialization</span>
 <span class="sd">        :param recurrent_net_kwargs: any extra kwargs are passed to the recurrent net&#39;s constructor</span>
 <span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
@@ -442,8 +394,8 @@
                  <span class="n">hidden_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                  <span class="n">num_recurrent_layers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                  <span class="n">hidden_nonlin</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;tanh&#39;</span><span class="p">,</span>
-                 <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span>
                  <span class="n">output_nonlin</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span>
                  <span class="n">init_param_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -452,9 +404,9 @@
 <span class="sd">        :param spec: environment specification</span>
 <span class="sd">        :param hidden_size: size of the hidden layers (all equal)</span>
 <span class="sd">        :param num_recurrent_layers: number of equally sized hidden layers</span>
-<span class="sd">        :param hidden_nonlin: nonlinearity for hidden rnn layers, either tanh or relu</span>
-<span class="sd">        :param dropout: dropout probability, default = 0 deactivates dropout</span>
+<span class="sd">        :param hidden_nonlin: nonlinearity for the hidden rnn layers, either &#39;tanh&#39; or &#39;relu&#39;</span>
 <span class="sd">        :param output_nonlin: nonlinearity for output layer</span>
+<span class="sd">        :param dropout: dropout probability, default = 0 deactivates dropout</span>
 <span class="sd">        :param init_param_kwargs: additional keyword arguments for the policy parameter initialization</span>
 <span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -462,12 +414,11 @@
             <span class="n">spec</span><span class="p">,</span>
             <span class="n">hidden_size</span><span class="p">,</span>
             <span class="n">num_recurrent_layers</span><span class="p">,</span>
-            <span class="n">dropout</span><span class="p">,</span>
             <span class="n">output_nonlin</span><span class="p">,</span>
+            <span class="n">dropout</span><span class="p">,</span>
             <span class="n">init_param_kwargs</span><span class="p">,</span>
             <span class="n">use_cuda</span><span class="p">,</span>
-            <span class="c1"># Pass as extra arg to RNN constructor</span>
-            <span class="n">nonlinearity</span><span class="o">=</span><span class="n">hidden_nonlin</span><span class="p">,</span>
+            <span class="n">nonlinearity</span><span class="o">=</span><span class="n">hidden_nonlin</span><span class="p">,</span>  <span class="c1"># pass as extra arg to RNN constructor, must be kwarg</span>
         <span class="p">)</span></div>
 
 

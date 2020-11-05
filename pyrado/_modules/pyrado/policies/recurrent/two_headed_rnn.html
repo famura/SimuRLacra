@@ -206,22 +206,25 @@
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.rnn</span> <span class="kn">import</span> <span class="n">default_unpack_hidden</span><span class="p">,</span> <span class="n">default_pack_hidden</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span> <span class="k">as</span> <span class="n">nn</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.base_recurrent</span> <span class="kn">import</span> <span class="n">RecurrentPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.base</span> <span class="kn">import</span> <span class="n">RecurrentPolicy</span><span class="p">,</span> <span class="n">default_unpack_hidden</span><span class="p">,</span> <span class="n">default_pack_hidden</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.initialization</span> <span class="kn">import</span> <span class="n">init_param</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">TwoHeadedPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
 
 
-<div class="viewcode-block" id="TwoHeadedGRUPolicy"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy">[docs]</a><span class="k">class</span> <span class="nc">TwoHeadedGRUPolicy</span><span class="p">(</span><span class="n">TwoHeadedPolicy</span><span class="p">,</span> <span class="n">RecurrentPolicy</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Policy architecture which has a common body and two heads that have a separate last layer &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TwoHeadedRNNPolicyBase"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase">[docs]</a><span class="k">class</span> <span class="nc">TwoHeadedRNNPolicyBase</span><span class="p">(</span><span class="n">TwoHeadedPolicy</span><span class="p">,</span> <span class="n">RecurrentPolicy</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for recurrent policies, which are wrapping torch.nn.RNNBase, and have a common body and two heads that</span>
+<span class="sd">    have a separate last layer</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;thgru&#39;</span>
+    <span class="c1"># Type of recurrent network. Is None in base class to force inheritance.</span>
+    <span class="n">recurrent_network_type</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
@@ -233,7 +236,8 @@
                  <span class="n">head_2_output_nonlin</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">shared_dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span>
                  <span class="n">init_param_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+                 <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">recurrent_net_kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
@@ -253,8 +257,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span> <span class="o">=</span> <span class="n">shared_hidden_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_recurrent_layers</span> <span class="o">=</span> <span class="n">shared_num_recurrent_layers</span>
 
-        <span class="c1"># Create the feed-forward neural network</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">shared</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">GRU</span><span class="p">(</span>
+        <span class="c1"># Create RNN layers</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">recurrent_network_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;Can not instantiate RNNPolicyBase!&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shared</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recurrent_network_type</span><span class="p">(</span>
             <span class="n">input_size</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">,</span>
             <span class="n">hidden_size</span><span class="o">=</span><span class="n">shared_hidden_size</span><span class="p">,</span>
             <span class="n">num_layers</span><span class="o">=</span><span class="n">shared_num_recurrent_layers</span><span class="p">,</span>
@@ -262,6 +267,7 @@
             <span class="n">batch_first</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">dropout</span><span class="o">=</span><span class="n">shared_dropout</span><span class="p">,</span>
             <span class="n">bidirectional</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">recurrent_net_kwargs</span>
         <span class="p">)</span>
 
         <span class="c1"># Create output layer</span>
@@ -275,10 +281,12 @@
         <span class="c1"># Call custom initialization function after PyTorch network parameter initialization</span>
         <span class="n">init_param_kwargs</span> <span class="o">=</span> <span class="n">init_param_kwargs</span> <span class="k">if</span> <span class="n">init_param_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_param</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">init_param_kwargs</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TwoHeadedGRUPolicy.init_param"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy.init_param">[docs]</a>    <span class="k">def</span> <span class="nf">init_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_values</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="TwoHeadedRNNPolicyBase.init_param"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.init_param">[docs]</a>    <span class="k">def</span> <span class="nf">init_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_values</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">init_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Initialize the layers using default initialization</span>
             <span class="n">init_param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shared</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">init_param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">head_1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">init_param</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">head_2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -290,7 +298,7 @@
         <span class="c1"># The total number of hidden parameters is the hidden layer size times the hidden layer count</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">num_recurrent_layers</span>
 
-<div class="viewcode-block" id="TwoHeadedGRUPolicy.forward"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+<div class="viewcode-block" id="TwoHeadedRNNPolicyBase.forward"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
         <span class="n">obs</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 
         <span class="c1"># Adjust the input&#39;s shape to be compatible with PyTorch&#39;s RNN implementation</span>
@@ -335,7 +343,7 @@
 
         <span class="k">return</span> <span class="n">output_1</span><span class="p">,</span> <span class="n">output_2</span><span class="p">,</span> <span class="n">new_hidden</span></div>
 
-<div class="viewcode-block" id="TwoHeadedGRUPolicy.evaluate"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">hidden_states_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;hidden_states&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+<div class="viewcode-block" id="TwoHeadedRNNPolicyBase.evaluate"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">hidden_states_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;hidden_states&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">StepSequence</span><span class="p">):</span>
             <span class="n">act_list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -380,6 +388,117 @@
 <span class="sd">        :return: packed hidden state</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">default_pack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_recurrent_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TwoHeadedRNNPolicy"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicy">[docs]</a><span class="k">class</span> <span class="nc">TwoHeadedRNNPolicy</span><span class="p">(</span><span class="n">TwoHeadedRNNPolicyBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Two-headed policy backed by a multi-layer RNN &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;thrnn&#39;</span>
+
+    <span class="n">recurrent_network_type</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">RNN</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
+                 <span class="n">shared_hidden_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">shared_num_recurrent_layers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">shared_hidden_nonlin</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;tanh&#39;</span><span class="p">,</span>
+                 <span class="n">head_1_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">head_2_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">head_1_output_nonlin</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">head_2_output_nonlin</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">shared_dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span>
+                 <span class="n">init_param_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param spec: environment specification</span>
+<span class="sd">        :param shared_hidden_size: size of the hidden layers (all equal)</span>
+<span class="sd">        :param shared_num_recurrent_layers: number of recurrent layers</span>
+<span class="sd">        :param shared_hidden_nonlin: nonlinearity for the shared hidden rnn layers, either &#39;tanh&#39; or &#39;relu&#39;</span>
+<span class="sd">        :param head_1_size: size of the fully connected layer for head 1, if `None` this is set to the action space dim</span>
+<span class="sd">        :param head_2_size: size of the fully connected layer for head 2, if `None` this is set to the action space dim</span>
+<span class="sd">        :param head_1_output_nonlin: nonlinearity for output layer of the first head</span>
+<span class="sd">        :param head_2_output_nonlin: nonlinearity for output layer of the second head</span>
+<span class="sd">        :param shared_dropout: dropout probability, default = 0 deactivates dropout</span>
+<span class="sd">        :param init_param_kwargs: additional keyword arguments for the policy parameter initialization</span>
+<span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">spec</span><span class="p">,</span>
+            <span class="n">shared_hidden_size</span><span class="p">,</span>
+            <span class="n">shared_num_recurrent_layers</span><span class="p">,</span>
+            <span class="n">head_1_size</span><span class="p">,</span>
+            <span class="n">head_2_size</span><span class="p">,</span>
+            <span class="n">head_1_output_nonlin</span><span class="p">,</span>
+            <span class="n">head_2_output_nonlin</span><span class="p">,</span>
+            <span class="n">shared_dropout</span><span class="p">,</span>
+            <span class="n">init_param_kwargs</span><span class="p">,</span>
+            <span class="n">use_cuda</span><span class="p">,</span>
+            <span class="n">nonlinearity</span><span class="o">=</span><span class="n">shared_hidden_nonlin</span><span class="p">,</span>  <span class="c1"># pass as extra arg to RNN constructor, must be kwarg</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TwoHeadedGRUPolicy"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedGRUPolicy">[docs]</a><span class="k">class</span> <span class="nc">TwoHeadedGRUPolicy</span><span class="p">(</span><span class="n">TwoHeadedRNNPolicyBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Two-headed policy backed by a multi-layer GRU &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;thgru&#39;</span>
+
+    <span class="n">recurrent_network_type</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">GRU</span></div>
+
+
+<div class="viewcode-block" id="TwoHeadedLSTMPolicy"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedLSTMPolicy">[docs]</a><span class="k">class</span> <span class="nc">TwoHeadedLSTMPolicy</span><span class="p">(</span><span class="n">TwoHeadedRNNPolicyBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Two-headed policy backed by a multi-layer LSTM &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;thlstm&#39;</span>
+
+    <span class="n">recurrent_network_type</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LSTM</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">hidden_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="c1"># LSTM has two hidden variables per layer</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_recurrent_layers</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="o">*</span><span class="mi">2</span>
+
+    <span class="k">def</span> <span class="nf">_unpack_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Special case - need to split into hidden and cell term memory</span>
+        <span class="c1"># Assume it&#39;s a flattened view of hid/cell x nrl x batch x hs</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">,</span> \
+                <span class="s2">&quot;Passed hidden variable&#39;s size doesn&#39;t match the one required by the network.&quot;</span>
+            <span class="c1"># We could handle this case, but for now it&#39;s not necessary</span>
+            <span class="k">assert</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> \
+                <span class="s1">&#39;Cannot use batched observations with unbatched hidden state&#39;</span>
+
+            <span class="c1"># Reshape to hid/cell x nrl x batch x hs</span>
+            <span class="n">hd</span> <span class="o">=</span> <span class="n">hidden</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_recurrent_layers</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">)</span>
+            <span class="c1"># Split hidden and cell state</span>
+            <span class="k">return</span> <span class="n">hd</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">hd</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">,</span> \
+                <span class="s2">&quot;Passed hidden variable&#39;s size doesn&#39;t match the one required by the network.&quot;</span>
+            <span class="k">assert</span> <span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">batch_size</span><span class="p">,</span> \
+                <span class="sa">f</span><span class="s1">&#39;Batch size of hidden state (</span><span class="si">{</span><span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">) must match batch size of observations (</span><span class="si">{</span><span class="n">batch_size</span><span class="si">}</span><span class="s1">)&#39;</span>
+
+            <span class="c1"># Reshape to hid/cell x nrl x batch x hs</span>
+            <span class="n">hd</span> <span class="o">=</span> <span class="n">hidden</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_recurrent_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">)</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="c1"># Split hidden and cell state</span>
+            <span class="k">return</span> <span class="n">hd</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">hd</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Improper shape of &#39;hidden&#39;. Policy received </span><span class="si">{</span><span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">,&quot;</span>
+                                      <span class="sa">f</span><span class="s2">&quot;but shape should be 1- or 2-dim&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_pack_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Hidden is a tuple, need to turn it to stacked state</span>
+        <span class="n">stacked</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">hidden</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Simply flatten</span>
+            <span class="k">return</span> <span class="n">stacked</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># We bring batch dimension to front</span>
+            <span class="k">return</span> <span class="n">stacked</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
