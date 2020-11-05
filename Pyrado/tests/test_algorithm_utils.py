@@ -136,8 +136,10 @@ def test_adr_reward_generator(env):
     assert losses[len(losses) - 1] < losses[0]
 
 
-@pytest.mark.parametrize('thold', [0.5], ids=['0.5'])
-@pytest.mark.parametrize('max_iter', [None, 2], ids=['relentless', 'twice'])
+@pytest.mark.parametrize('thold', [0.5],
+                         ids=['0.5'])
+@pytest.mark.parametrize('max_iter', [None, 2],
+                         ids=['relentless', 'twice'])
 def test_until_thold_exceeded(thold, max_iter):
     @until_thold_exceeded(thold, max_iter)
     def _trn_eval_fcn():

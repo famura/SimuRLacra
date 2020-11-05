@@ -27,22 +27,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import torch as to
-from pyrado.policies.recurrent.rnn import default_unpack_hidden, default_pack_hidden
 from torch import nn as nn
 from typing import Callable, Tuple
 
 import pyrado
-from pyrado.policies.recurrent.base_recurrent import RecurrentPolicy
+from pyrado.policies.recurrent.base import RecurrentPolicy, default_unpack_hidden, default_pack_hidden
 from pyrado.policies.initialization import init_param
 from pyrado.policies.base import TwoHeadedPolicy
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import EnvSpec
 
 
-class TwoHeadedGRUPolicy(TwoHeadedPolicy, RecurrentPolicy):
-    """ Policy architecture which has a common body and two heads that have a separate last layer """
+class TwoHeadedRNNPolicyBase(TwoHeadedPolicy, RecurrentPolicy):
+    """
+    Base class for recurrent policies, which are wrapping torch.nn.RNNBase, and have a common body and two heads that
+    have a separate last layer
+    """
 
-    name: str = 'thgru'
+    # Type of recurrent network. Is None in base class to force inheritance.
+    recurrent_network_type = None
 
     def __init__(self,
                  spec: EnvSpec,
@@ -54,7 +57,8 @@ class TwoHeadedGRUPolicy(TwoHeadedPolicy, RecurrentPolicy):
                  head_2_output_nonlin: Callable = None,
                  shared_dropout: float = 0.,
                  init_param_kwargs: dict = None,
-                 use_cuda: bool = False):
+                 use_cuda: bool = False,
+                 **recurrent_net_kwargs):
         """
         Constructor
 
@@ -74,8 +78,9 @@ class TwoHeadedGRUPolicy(TwoHeadedPolicy, RecurrentPolicy):
         self._hidden_size = shared_hidden_size
         self.num_recurrent_layers = shared_num_recurrent_layers
 
-        # Create the feed-forward neural network
-        self.shared = nn.GRU(
+        # Create RNN layers
+        assert self.recurrent_network_type is not None, 'Can not instantiate RNNPolicyBase!'
+        self.shared = self.recurrent_network_type(
             input_size=spec.obs_space.flat_dim,
             hidden_size=shared_hidden_size,
             num_layers=shared_num_recurrent_layers,
@@ -83,6 +88,7 @@ class TwoHeadedGRUPolicy(TwoHeadedPolicy, RecurrentPolicy):
             batch_first=False,
             dropout=shared_dropout,
             bidirectional=False,
+            **recurrent_net_kwargs
         )
 
         # Create output layer
@@ -96,10 +102,12 @@ class TwoHeadedGRUPolicy(TwoHeadedPolicy, RecurrentPolicy):
         # Call custom initialization function after PyTorch network parameter initialization
         init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()
         self.init_param(None, **init_param_kwargs)
+
         self.to(self.device)
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         if init_values is None:
+            # Initialize the layers using default initialization
             init_param(self.shared, **kwargs)
             init_param(self.head_1, **kwargs)
             init_param(self.head_2, **kwargs)
@@ -201,3 +209,114 @@ class TwoHeadedGRUPolicy(TwoHeadedPolicy, RecurrentPolicy):
         :return: packed hidden state
         """
         return default_pack_hidden(hidden, self.num_recurrent_layers, self._hidden_size, batch_size)
+
+
+class TwoHeadedRNNPolicy(TwoHeadedRNNPolicyBase):
+    """ Two-headed policy backed by a multi-layer RNN """
+
+    name: str = 'thrnn'
+
+    recurrent_network_type = nn.RNN
+
+    def __init__(self,
+                 spec: EnvSpec,
+                 shared_hidden_size: int,
+                 shared_num_recurrent_layers: int,
+                 shared_hidden_nonlin: str = 'tanh',
+                 head_1_size: int = None,
+                 head_2_size: int = None,
+                 head_1_output_nonlin: Callable = None,
+                 head_2_output_nonlin: Callable = None,
+                 shared_dropout: float = 0.,
+                 init_param_kwargs: dict = None,
+                 use_cuda: bool = False):
+        """
+        Constructor
+
+        :param spec: environment specification
+        :param shared_hidden_size: size of the hidden layers (all equal)
+        :param shared_num_recurrent_layers: number of recurrent layers
+        :param shared_hidden_nonlin: nonlinearity for the shared hidden rnn layers, either 'tanh' or 'relu'
+        :param head_1_size: size of the fully connected layer for head 1, if `None` this is set to the action space dim
+        :param head_2_size: size of the fully connected layer for head 2, if `None` this is set to the action space dim
+        :param head_1_output_nonlin: nonlinearity for output layer of the first head
+        :param head_2_output_nonlin: nonlinearity for output layer of the second head
+        :param shared_dropout: dropout probability, default = 0 deactivates dropout
+        :param init_param_kwargs: additional keyword arguments for the policy parameter initialization
+        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
+        """
+        super().__init__(
+            spec,
+            shared_hidden_size,
+            shared_num_recurrent_layers,
+            head_1_size,
+            head_2_size,
+            head_1_output_nonlin,
+            head_2_output_nonlin,
+            shared_dropout,
+            init_param_kwargs,
+            use_cuda,
+            nonlinearity=shared_hidden_nonlin,  # pass as extra arg to RNN constructor, must be kwarg
+        )
+
+
+class TwoHeadedGRUPolicy(TwoHeadedRNNPolicyBase):
+    """ Two-headed policy backed by a multi-layer GRU """
+
+    name: str = 'thgru'
+
+    recurrent_network_type = nn.GRU
+
+
+class TwoHeadedLSTMPolicy(TwoHeadedRNNPolicyBase):
+    """ Two-headed policy backed by a multi-layer LSTM """
+
+    name: str = 'thlstm'
+
+    recurrent_network_type = nn.LSTM
+
+    @property
+    def hidden_size(self) -> int:
+        # LSTM has two hidden variables per layer
+        return self.num_recurrent_layers*self._hidden_size*2
+
+    def _unpack_hidden(self, hidden: to.Tensor, batch_size: int = None):
+        # Special case - need to split into hidden and cell term memory
+        # Assume it's a flattened view of hid/cell x nrl x batch x hs
+        if len(hidden.shape) == 1:
+            assert hidden.shape[0] == self.hidden_size, \
+                "Passed hidden variable's size doesn't match the one required by the network."
+            # We could handle this case, but for now it's not necessary
+            assert batch_size is None, \
+                'Cannot use batched observations with unbatched hidden state'
+
+            # Reshape to hid/cell x nrl x batch x hs
+            hd = hidden.view(2, self.num_recurrent_layers, 1, self._hidden_size)
+            # Split hidden and cell state
+            return hd[0, ...], hd[1, ...]
+
+        elif len(hidden.shape) == 2:
+            assert hidden.shape[1] == self.hidden_size, \
+                "Passed hidden variable's size doesn't match the one required by the network."
+            assert hidden.shape[0] == batch_size, \
+                f'Batch size of hidden state ({hidden.shape[0]}) must match batch size of observations ({batch_size})'
+
+            # Reshape to hid/cell x nrl x batch x hs
+            hd = hidden.view(batch_size, 2, self.num_recurrent_layers, self._hidden_size).permute(1, 2, 0, 3)
+            # Split hidden and cell state
+            return hd[0, ...], hd[1, ...]
+
+        else:
+            raise pyrado.ShapeErr(msg=f"Improper shape of 'hidden'. Policy received {hidden.shape},"
+                                      f"but shape should be 1- or 2-dim")
+
+    def _pack_hidden(self, hidden: to.Tensor, batch_size: int = None):
+        # Hidden is a tuple, need to turn it to stacked state
+        stacked = to.stack(hidden)
+
+        if batch_size is None:
+            # Simply flatten
+            return stacked.view(self.hidden_size)
+        else:
+            # We bring batch dimension to front
+            return stacked.permute(2, 0, 1, 3).reshape(batch_size, self.hidden_size)

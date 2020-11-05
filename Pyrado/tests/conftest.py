@@ -57,7 +57,7 @@ from pyrado.policies.recurrent.neural_fields import NFPolicy
 from pyrado.policies.recurrent.rnn import RNNPolicy, GRUPolicy, LSTMPolicy
 from pyrado.policies.special.time import TimePolicy, TraceableTimePolicy
 from pyrado.policies.feed_forward.two_headed_fnn import TwoHeadedFNNPolicy
-from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedGRUPolicy
+from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedGRUPolicy, TwoHeadedRNNPolicy, TwoHeadedLSTMPolicy
 
 
 # set spawn method to spawn for parallel test runs
@@ -710,8 +710,17 @@ class DefaultPolicies:
         return TwoHeadedFNNPolicy(env.spec, shared_hidden_sizes=[16, 16], shared_hidden_nonlin=to.relu)
 
     @staticmethod
+    def thrnn_policy(env):
+        return TwoHeadedRNNPolicy(env.spec, shared_hidden_size=8, shared_num_recurrent_layers=1,
+                                  shared_hidden_nonlin='tanh')
+
+    @staticmethod
     def thgru_policy(env):
         return TwoHeadedGRUPolicy(env.spec, shared_hidden_size=8, shared_num_recurrent_layers=1)
+
+    @staticmethod
+    def thlstm_policy(env):
+        return TwoHeadedLSTMPolicy(env.spec, shared_hidden_size=8, shared_num_recurrent_layers=1)
 
 
 @pytest.fixture(scope='function')

@@ -44,7 +44,8 @@ from tests.conftest import m_needs_bullet, m_needs_mujoco
         MultivariateNormalDomainParam(name='', mean=10*to.ones((2,)), cov=2*to.eye(2), clip_up=11),
         BernoulliDomainParam(name='', val_0=2, val_1=5, prob_1=0.8),
         BernoulliDomainParam(name='', val_0=-3, val_1=5, prob_1=0.8, clip_up=4),
-    ], ids=['1dim', '2dim_v1', '2dim_v2', 'bern_v1', 'bern_v2']
+    ],
+    ids=['1dim', '2dim_v1', '2dim_v2', 'bern_v1', 'bern_v2']
 )
 def test_domain_param(dp):
     for num_samples in [1, 5, 25]:

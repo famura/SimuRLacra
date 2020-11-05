@@ -30,7 +30,7 @@ import torch as to
 from torch.distributions.uniform import Uniform
 
 from pyrado.policies.base import Policy
-from pyrado.policies.recurrent.base_recurrent import RecurrentPolicy
+from pyrado.policies.recurrent.base import RecurrentPolicy
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.data_types import EnvSpec
 

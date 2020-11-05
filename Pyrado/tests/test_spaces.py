@@ -95,7 +95,8 @@ def test_flat_dim_box_space(bs):
     'idcs', [
         [0, 1, 2],
         [0, 2],
-    ], ids=['3_wo_gap', '2_w_gap']
+    ],
+    ids=['3_wo_gap', '2_w_gap']
 )
 def test_subspace_box_space(bs, idcs):
     subbox = bs.subspace(idcs)
@@ -115,7 +116,8 @@ def test_subspace_box_space(bs, idcs):
     'bs_list', [
         [BoxSpace([-1, -2, -3], [1, 2, 3]), BoxSpace([-11, -22, -33], [11, 22, 33])],
         [BoxSpace([-1], [1]), BoxSpace([-22, 33], [22, 33])],
-    ], ids=['identical_sizes', 'different_sizes']
+    ],
+    ids=['identical_sizes', 'different_sizes']
 )
 def test_cat_box_space(bs_list):
     bs_cat = BoxSpace.cat(bs_list)
@@ -127,7 +129,8 @@ def test_cat_box_space(bs_list):
     'ds_list', [
         [DiscreteSpace([-1, -2, -3]), DiscreteSpace([11, 22, 33])],
         [DiscreteSpace([-1]), DiscreteSpace([22, 33])],
-    ], ids=['identical_sizes', 'different_sizes']
+    ],
+    ids=['identical_sizes', 'different_sizes']
 )
 def test_cat_discrete_space(ds_list):
     ds_cat = DiscreteSpace.cat(ds_list)

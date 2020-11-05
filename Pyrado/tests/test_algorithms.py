@@ -216,22 +216,28 @@ def test_param_expl(ex_dir, env, policy, algo_class, algo_hparam):
 
 
 @pytest.mark.parametrize(
-    'env', ['default_bob'], ids=['bob'], indirect=True
+    'env', ['default_bob'],
+    ids=['bob'], indirect=True
 )
 @pytest.mark.parametrize(
-    'policy', ['linear_policy'], ids=['lin'], indirect=True
+    'policy', ['linear_policy'],
+    ids=['lin'], indirect=True
 )
 @pytest.mark.parametrize(
-    'actor_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)], ids=['casual']
+    'actor_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)],
+    ids=['casual']
 )
 @pytest.mark.parametrize(
-    'value_fcn_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)], ids=['casual']
+    'value_fcn_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)],
+    ids=['casual']
 )
 @pytest.mark.parametrize(
-    'critic_hparam', [dict(gamma=0.995, lamda=1., num_epoch=1, lr=1e-4, standardize_adv=False)], ids=['casual']
+    'critic_hparam', [dict(gamma=0.995, lamda=1., num_epoch=1, lr=1e-4, standardize_adv=False)],
+    ids=['casual']
 )
 @pytest.mark.parametrize(
-    'algo_hparam', [dict(max_iter=2, num_particles=3, temperature=10, lr=1e-3, horizon=50)], ids=['casual']
+    'algo_hparam', [dict(max_iter=2, num_particles=3, temperature=10, lr=1e-3, horizon=50)],
+    ids=['casual']
 )
 def test_svpg(ex_dir, env, policy, actor_hparam, value_fcn_hparam, critic_hparam, algo_hparam):
     # Create algorithm and train
@@ -245,24 +251,30 @@ def test_svpg(ex_dir, env, policy, actor_hparam, value_fcn_hparam, critic_hparam
 @pytest.mark.parametrize(
     'env', [
         'default_qqsu'
-    ], ids=['qq-su'],
+    ],
+    ids=['qq-su'],
     indirect=True
 )
 @pytest.mark.parametrize(
-    'subrtn_hparam', [dict(max_iter=2, min_rollouts=5, num_workers=1, num_epoch=4)], ids=['casual']
+    'subrtn_hparam', [dict(max_iter=2, min_rollouts=5, num_workers=1, num_epoch=4)],
+    ids=['casual']
 )
 @pytest.mark.parametrize(
-    'actor_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)], ids=['casual']
+    'actor_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)],
+    ids=['casual']
 )
 @pytest.mark.parametrize(
-    'value_fcn_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)], ids=['casual']
+    'value_fcn_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)],
+    ids=['casual']
 )
 @pytest.mark.parametrize(
-    'critic_hparam', [dict(gamma=0.995, lamda=1., num_epoch=1, lr=1e-4, standardize_adv=False)], ids=['casual']
+    'critic_hparam', [dict(gamma=0.995, lamda=1., num_epoch=1, lr=1e-4, standardize_adv=False)],
+    ids=['casual']
 )
 @pytest.mark.parametrize(
     'adr_hparam', [dict(max_iter=2, num_svpg_particles=3, num_discriminator_epoch=3, batch_size=100,
-                        num_workers=1, randomized_params=[])], ids=['casual']
+                        num_workers=1, randomized_params=[])],
+    ids=['casual']
 )
 def test_adr(ex_dir, env, subrtn_hparam, actor_hparam, value_fcn_hparam, critic_hparam, adr_hparam):
     # Create the subroutine for the meta-algorithm
@@ -283,7 +295,8 @@ def test_adr(ex_dir, env, subrtn_hparam, actor_hparam, value_fcn_hparam, critic_
 @pytest.mark.parametrize(
     'env', [
         'default_qbb'
-    ], ids=['qbb'],
+    ],
+    ids=['qbb'],
     indirect=True
 )
 @pytest.mark.parametrize(
@@ -291,7 +304,8 @@ def test_adr(ex_dir, env, subrtn_hparam, actor_hparam, value_fcn_hparam, critic_
         dict(max_iter=2, alpha=0.05, beta=0.01, nG=2, nJ=10, ntau=5, nc_init=1, nr_init=1,
              sequence_cand=sequence_add_init, sequence_refs=sequence_const, warmstart_cand=False,
              warmstart_refs=False, num_bs_reps=1000, studentized_ci=False),
-    ], ids=['casual_hparam']
+    ],
+    ids=['casual_hparam']
 )
 def test_spota_ppo(ex_dir, env, spota_hparam):
     # Environment and domain randomization
@@ -323,13 +337,15 @@ def test_spota_ppo(ex_dir, env, spota_hparam):
     'env', [
         'default_bob',
         'default_qbb'
-    ], ids=['bob', 'qbb'],
+    ],
+    ids=['bob', 'qbb'],
     indirect=True
 )
 @pytest.mark.parametrize(
     'policy', [
         'linear_policy'
-    ], ids=['lin'],
+    ],
+    ids=['lin'],
     indirect=True
 )
 @pytest.mark.parametrize(
@@ -349,7 +365,8 @@ def test_spota_ppo(ex_dir, env, spota_hparam):
     ],
     ids=['vf_fnn_plain', 'vf_fnn', 'vf_rnn']
 )
-@pytest.mark.parametrize('use_cuda', [False, True], ids=['cpu', 'cuda'])
+@pytest.mark.parametrize('use_cuda', [False, True],
+                         ids=['cpu', 'cuda'])
 def test_actor_critic(ex_dir, env, policy, algo, algo_hparam, value_fcn_type, use_cuda):
     # Create value function
     if value_fcn_type == 'fnn-plain':
@@ -402,7 +419,8 @@ def test_actor_critic(ex_dir, env, policy, algo, algo_hparam, value_fcn_type, us
 @pytest.mark.parametrize(
     'env', [
         'default_omo'
-    ], ids=['omo'],
+    ],
+    ids=['omo'],
     indirect=True
 )
 @pytest.mark.parametrize(
@@ -442,7 +460,8 @@ def test_training_parameter_exploring(ex_dir, env, algo, algo_hparam):
 @pytest.mark.parametrize(
     'env', [
         'default_omo'
-    ], ids=['omo'],
+    ],
+    ids=['omo'],
     indirect=True
 )
 @pytest.mark.parametrize(
@@ -474,7 +493,8 @@ def test_soft_update(env, policy):
 @pytest.mark.parametrize(
     'env', [
         'default_omo'
-    ], ids=['omo'],
+    ],
+    ids=['omo'],
     indirect=True
 )
 def test_arpl(ex_dir, env):
@@ -528,7 +548,8 @@ def test_arpl(ex_dir, env):
 @pytest.mark.parametrize(
     'env, num_eval_rollouts', [
         ('default_bob', 5)
-    ], ids=['bob'],
+    ],
+    ids=['bob'],
     indirect=['env']
 )
 def test_sysidasrl(ex_dir, env, num_eval_rollouts):

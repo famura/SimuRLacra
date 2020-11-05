@@ -28,25 +28,25 @@
 
 import numpy as np
 import pytest
-from pytest_lazyfixture import lazy_fixture
 
 import pyrado
 from pyrado.environment_wrappers.action_noise import GaussianActNoiseWrapper
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from tests.conftest import m_needs_bullet, m_needs_vortex
 
 
 @pytest.mark.wrapper
 @pytest.mark.parametrize(
     'env', [
-        lazy_fixture('default_bob'),
-        lazy_fixture('default_qbb'),
-        pytest.param(lazy_fixture('default_bop2d_bt'), marks=m_needs_bullet),
-        pytest.param(lazy_fixture('default_bop2d_vx'), marks=m_needs_vortex),
-        pytest.param(lazy_fixture('default_bop5d_bt'), marks=m_needs_bullet),
-        pytest.param(lazy_fixture('default_bop5d_vx'), marks=m_needs_vortex),
-    ], ids=['bob', 'qbb', 'bop2d_b', 'bop2d_v', 'bop5d_b', 'bop5d_v']
+        'default_bob',
+        'default_qbb',
+        pytest.param('default_bop2d_bt', marks=m_needs_bullet),
+        pytest.param('default_bop2d_vx', marks=m_needs_vortex),
+        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+        pytest.param('default_bop5d_vx', marks=m_needs_vortex),
+    ],
+    ids=['bob', 'qbb', 'bop2d_b', 'bop2d_v', 'bop5d_b', 'bop5d_v'],
+    indirect=True
 )
 def test_act_noise_simple(env):
     # Typical case with zero mean and non-zero std
@@ -88,8 +88,11 @@ def test_act_noise_simple(env):
 @pytest.mark.wrapper
 @pytest.mark.parametrize(
     'env', [
-        BallOnBeamSim(dt=0.05, max_steps=1),
-    ], ids=['bob']
+        'default_bob',
+        'default_qbb',
+    ],
+    ids=['bob', 'qbb'],
+    indirect=True
 )
 def test_order_act_noise_act_norm(env):
     # First noise wrapper then normalization wrapper

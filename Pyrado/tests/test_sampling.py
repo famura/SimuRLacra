@@ -196,8 +196,9 @@ def test_sample_from_unit_sphere_surface(num_dim, method):
         ('default_bob', 'nf_policy'),
         ('default_bob', 'thfnn_policy'),
         ('default_bob', 'thgru_policy'),
-    ], ids=['bob_idle', 'bob_dummy', 'bob_time', 'bob_lin', 'bob_fnn', 'bob_rnn', 'bob_lstm', 'bob_gru', 'bob_adn',
-            'bob_nf', 'bob_thfnn', 'bob_thgru'],
+    ],
+    ids=['bob_idle', 'bob_dummy', 'bob_time', 'bob_lin', 'bob_fnn', 'bob_rnn', 'bob_lstm', 'bob_gru', 'bob_adn',
+         'bob_nf', 'bob_thfnn', 'bob_thgru'],
     indirect=True)
 def test_rollout_wo_exploration(env, policy):
     ro = rollout(env, policy, render_mode=RenderMode())
@@ -205,7 +206,8 @@ def test_rollout_wo_exploration(env, policy):
     assert len(ro) <= env.max_steps
 
 
-@pytest.mark.parametrize('env', ['default_bob', 'default_qbb'], ids=['bob', 'qbb'], indirect=True)
+@pytest.mark.parametrize('env', ['default_bob', 'default_qbb'],
+                         ids=['bob', 'qbb'], indirect=True)
 def test_rollout_wo_policy(env):
     def policy(obs):
         # Callable must receive and return tensors
@@ -219,7 +221,8 @@ def test_rollout_wo_policy(env):
 @pytest.mark.parametrize(
     'mean, cov', [
         (to.tensor([5., 7.]), to.tensor([[2., 0.], [0., 2.]])),
-    ], ids=['2dim']
+    ],
+    ids=['2dim']
 )
 def test_reparametrization_trick(mean, cov):
     for seed in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
@@ -324,7 +327,8 @@ def test_bootsrapping():
 @pytest.mark.parametrize(
     ['env', 'policy'], [
         ('default_bob', 'fnn_policy'),
-    ], ids=['bob_fnnpol'], indirect=True)
+    ],
+    ids=['bob_fnnpol'], indirect=True)
 def test_param_expl_sampler(env, policy):
     # Add randomizer
     pert = create_default_randomizer(env)

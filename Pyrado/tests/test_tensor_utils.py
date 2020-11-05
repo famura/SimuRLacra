@@ -43,7 +43,8 @@ from pyrado.utils.tensor import stack_tensor_list, stack_tensor_dict_list, inser
         to.rand(2, 1),
         to.rand(2, 3),
         to.rand(2, 3, 4)
-    ], ids=['sclar', 'scalar_1D', 'vec_1D', 'vec_2D', 'vec_2D_T', 'arr_2D', 'arr_3D'])
+    ],
+    ids=['sclar', 'scalar_1D', 'vec_1D', 'vec_2D', 'vec_2D_T', 'arr_2D', 'arr_3D'])
 def test_atleast_2D(x):
     x_al2d = atleast_2D(x)
     assert x_al2d.ndim >= 2
@@ -62,7 +63,8 @@ def test_atleast_2D(x):
         to.rand(2, 1),
         to.rand(2, 3),
         to.rand(2, 3, 4)
-    ], ids=['sclar', 'scalar_1D', 'vec_1D', 'vec_2D', 'vec_2D_T', 'arr_2D', 'arr_3D'])
+    ],
+    ids=['sclar', 'scalar_1D', 'vec_1D', 'vec_2D', 'vec_2D_T', 'arr_2D', 'arr_3D'])
 def test_atleast_3D(x):
     x_al3d = atleast_3D(x)
     assert x_al3d.ndim >= 3
@@ -109,7 +111,8 @@ def test_stack_tensor_dicts():
     'orig, col', [
         (to.rand((1, 1)), to.zeros(1, 1)),
         (to.rand((3, 3)), to.zeros(3, 1)),
-    ], ids=['1_dim', '3_dim']
+    ],
+    ids=['1_dim', '3_dim']
 )
 def test_insert_tensor_col(orig, col):
     for col_idx in range(orig.shape[1] + 1):  # also check appending case

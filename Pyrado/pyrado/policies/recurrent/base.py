@@ -156,3 +156,51 @@ class StatefulRecurrentNetwork(nn.Module):
         self.hidden.data.copy_(hid.data)
 
         return out
+
+
+def default_unpack_hidden(hidden: to.Tensor, num_recurrent_layers: int, hidden_size: int, batch_size: int = None):
+    """
+    Unpack the flat hidden state vector into the form expected by torch.nn.RNNBase subclasses.
+
+    :param hidden: packed hidden state
+    :param num_recurrent_layers: number of recurrent layers
+    :param hidden_size: size of the hidden layers (all equal)
+    :param batch_size: if not none, hidden is 2d, and the first dimension represents parts of a data batch
+    :return: unpacked hidden state, a tensor of num_recurrent_layers x batch_size x hidden_size.
+    """
+    if len(hidden.shape) == 1:
+        assert hidden.shape[0] == num_recurrent_layers*hidden_size, \
+            "Passed hidden variable's size doesn't match the one required by the network."
+        # we could handle that case, but for now it's not necessary.
+        assert batch_size is None, 'Cannot use batched observations with unbatched hidden state'
+        return hidden.view(num_recurrent_layers, 1, hidden_size)
+
+    elif len(hidden.shape) == 2:
+        assert hidden.shape[1] == num_recurrent_layers*hidden_size, \
+            "Passed hidden variable's size doesn't match the one required by the network."
+        assert hidden.shape[0] == batch_size, \
+            f'Batch size of hidden state ({hidden.shape[0]}) must match batch size of observations ({batch_size})'
+        return hidden.view(batch_size, num_recurrent_layers, hidden_size).permute(1, 0, 2)
+
+    else:
+        raise RuntimeError(f"Improper shape of 'hidden'. Policy received {hidden.shape}, "
+                           f"but shape should be 1- or 2-dim")
+
+
+def default_pack_hidden(hidden: to.Tensor, num_recurrent_layers, hidden_size: int, batch_size: int = None):
+    """
+    Pack the hidden state returned by torch.nn.RNNBase subclasses into an 1d state vector.
+    This is the reverse operation of default_unpack_hidden.
+
+    :param hidden: unpacked hidden state, a tensor of num_recurrent_layers x batch_size x hidden_size
+    :param num_recurrent_layers: number of recurrent layers
+    :param hidden_size: size of the hidden layers (all equal)
+    :param batch_size: if not none, the result should be 2d, and the first dimension represents parts of a data batch
+    :return: packed hidden state.
+    """
+    if batch_size is None:
+        # Simply flatten the hidden state
+        return hidden.view(num_recurrent_layers*hidden_size)
+    else:
+        # Need to make sure that the batch dimension is the first element
+        return hidden.permute(1, 0, 2).reshape(batch_size, num_recurrent_layers*hidden_size)

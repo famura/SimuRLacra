@@ -39,7 +39,8 @@ from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
     'env', [
         BallOnBeamSim(dt=0.02, max_steps=1),
         QBallBalancerSim(dt=0.02, max_steps=1),
-    ], ids=['bob', 'qbb']
+    ],
+    ids=['bob', 'qbb']
 )
 @pytest.mark.parametrize(
     'policy',
@@ -76,7 +77,8 @@ def test_noise_on_act(env, policy):
     'env', [
         BallOnBeamSim(dt=0.02, max_steps=1),
         QBallBalancerSim(dt=0.02, max_steps=1),
-    ], ids=['bob', 'qbb']
+    ],
+    ids=['bob', 'qbb']
 )
 @pytest.mark.parametrize(
     'policy',

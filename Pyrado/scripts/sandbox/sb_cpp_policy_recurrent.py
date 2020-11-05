@@ -37,7 +37,7 @@ from pyrado.policies.recurrent.adn import ADNPolicy, pd_capacity_21
 from pyrado.policies.recurrent.rnn import RNNPolicy
 from pyrado.spaces.box import BoxSpace
 from pyrado.utils.data_types import EnvSpec
-from pyrado.policies.recurrent.base_recurrent import StatefulRecurrentNetwork
+from pyrado.policies.recurrent.base import StatefulRecurrentNetwork
 from rcsenv import ControlPolicy
 
 

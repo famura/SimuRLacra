@@ -58,8 +58,8 @@ class LinearPolicy(Policy):
         super().__init__(spec, use_cuda)
 
         self._feats = feats
-        self.num_active_feat = feats.get_num_feat(self.spec.obs_space.flat_dim)
-        self.net = nn.Linear(self.num_active_feat, self.spec.act_space.flat_dim, bias=False)
+        self.num_active_feat = feats.get_num_feat(spec.obs_space.flat_dim)
+        self.net = nn.Linear(self.num_active_feat, spec.act_space.flat_dim, bias=False)
 
         # Call custom initialization function after PyTorch network parameter initialization
         init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()

@@ -175,7 +175,7 @@ class NFPolicy(PotentialBasedPolicy):
         # ----------------
 
         # Combine the current inputs
-        self._stimuli_external = self.obs_layer(obs)
+        self._stimuli_external = self.obs_layer(obs).squeeze()
 
         # Reshape and convolve
         b = batch_size if batch_size is not None else 1

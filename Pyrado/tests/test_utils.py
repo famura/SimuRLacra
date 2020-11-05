@@ -56,7 +56,8 @@ from tests.conftest import m_needs_bullet
     'x, data_along_rows', [
         (np.random.rand(100, 4), True),
         (np.random.rand(4, 100), False)
-    ], ids=['100_4', '4_100']
+    ],
+    ids=['100_4', '4_100']
 )
 def test_cov(x, data_along_rows):
     rowvar = not data_along_rows
@@ -77,7 +78,8 @@ def test_cov(x, data_along_rows):
     'env, expl_strat', [
         (BallOnBeamSim(dt=0.02, max_steps=100),
          DummyPolicy(BallOnBeamSim(dt=0.02, max_steps=100).spec)),
-    ], ids=['bob_dummy']
+    ],
+    ids=['bob_dummy']
 )
 def test_concat_rollouts(env, expl_strat):
     ro1 = rollout(env, expl_strat)
@@ -94,7 +96,8 @@ def test_concat_rollouts(env, expl_strat):
         (to.tensor([0., 0., 0.]), to.tensor([1., 2, 3.])),
         (to.tensor([1., 2., 3.]), to.tensor([2., 4., 6.])),
         (to.tensor([1., 2., 3.]), to.tensor([-1., -2., -3.])),
-    ], ids=['same', 'similarity_1', 'similarity_0', 'colinear_scaled', 'colinear_opposite']
+    ],
+    ids=['same', 'similarity_1', 'similarity_0', 'colinear_scaled', 'colinear_opposite']
 )
 def test_cosine_similarity(x, y):
     # Only tested for vector inputs
@@ -105,10 +108,12 @@ def test_cosine_similarity(x, y):
 
 
 @pytest.mark.parametrize(
-    'type', ['numpy', 'torch'], ids=['numpy', 'torch']
+    'type', ['numpy', 'torch'],
+    ids=['numpy', 'torch']
 )
 @pytest.mark.parametrize(
-    'dim', [0, 1], ids=['dim0', 'dim1']
+    'dim', [0, 1],
+    ids=['dim0', 'dim1']
 )
 def test_rmse(type, dim):
     shape = (42, 21)
@@ -129,7 +134,8 @@ def test_rmse(type, dim):
     'x, y', [
         ({'a': 1, 'b': 2}, {'c': 1, 'd': 4}),
         ({'a': 1, 'b': 2}, {'b': 3, 'd': 4}),
-    ], ids=['disjoint', 'overlapping']
+    ],
+    ids=['disjoint', 'overlapping']
 )
 def test_merge_lod_var_dtype(x, y):
     z = merge_lod_var_dtype([x, y])
@@ -149,10 +155,12 @@ def test_merge_lod_var_dtype(x, y):
         (3, 29),
         (3, 28),
         (2, 2)
-    ], ids=['division_mod0', 'division_mod1', 'division_mod2', 'edge_case']
+    ],
+    ids=['division_mod0', 'division_mod1', 'division_mod2', 'edge_case']
 )
 @pytest.mark.parametrize(
-    'sorted', [True, False], ids=['sorted', 'unsorted']
+    'sorted', [True, False],
+    ids=['sorted', 'unsorted']
 )
 def test_gen_batch_idcs(batch_size, data_size, sorted):
     generator = gen_batch_idcs(batch_size, data_size)
@@ -172,7 +180,8 @@ def test_gen_batch_idcs(batch_size, data_size, sorted):
     'data, batch_size', [
         (list(range(9)), 3),
         (list(range(10)), 3),
-    ], ids=['division_mod0', 'division_mod1']
+    ],
+    ids=['division_mod0', 'division_mod1']
 )
 def test_gen_ordered_batches(data, batch_size):
     n = ceil(len(data)/batch_size)
@@ -207,7 +216,8 @@ def test_normalize(dtype, axis):
         (-1, 1),
         (-2.5, 0),
         (-np.ones((3, 2)), np.ones((3, 2)))
-    ], ids=['lb0_ub1', 'lb-1_ub1', 'lb-2.5_ub0', 'np_ones']
+    ],
+    ids=['lb0_ub1', 'lb-1_ub1', 'lb-2.5_ub0', 'np_ones']
 )
 def test_scale_min_max(dtype, lb, ub):
     for _ in range(10):
@@ -240,7 +250,8 @@ def test_scale_min_max(dtype, lb, ub):
         (-1, 1),
         (-2.5, 0),
         (-np.ones((3, 2)), np.ones((3, 2)))
-    ], ids=['lb0_ub1', 'lb-1_ub1', 'lb-2.5_ub0', 'np_ones']
+    ],
+    ids=['lb0_ub1', 'lb-1_ub1', 'lb-2.5_ub0', 'np_ones']
 )
 def test_minmaxscaler(dtype, lb, ub):
     for _ in range(10):
@@ -258,7 +269,8 @@ def test_minmaxscaler(dtype, lb, ub):
 
 
 @pytest.mark.parametrize(
-    'dtype', ['torch', 'numpy'], ids=['to', 'np']
+    'dtype', ['torch', 'numpy'],
+    ids=['to', 'np']
 )
 @pytest.mark.parametrize(
     'lb, ub', [
@@ -266,7 +278,8 @@ def test_minmaxscaler(dtype, lb, ub):
         (-1, 1),
         (-2.5, 0),
         (-np.ones((3, 2)), np.ones((3, 2)))
-    ], ids=['lb0_ub1', 'lb-1_ub1', 'lb-2.5_ub0', 'np_ones']
+    ],
+    ids=['lb0_ub1', 'lb-1_ub1', 'lb-2.5_ub0', 'np_ones']
 )
 def test_minmaxscaler(dtype, lb, ub):
     for _ in range(10):
@@ -284,7 +297,8 @@ def test_minmaxscaler(dtype, lb, ub):
 
 
 @pytest.mark.parametrize(
-    'dtype', ['torch', 'numpy'], ids=['to', 'np']
+    'dtype', ['torch', 'numpy'],
+    ids=['to', 'np']
 )
 @pytest.mark.parametrize(
     'lb, ub', [
@@ -292,7 +306,8 @@ def test_minmaxscaler(dtype, lb, ub):
         (-1, 1),
         (-2.5, 0),
         (-np.ones((3, 2)), np.ones((3, 2)))
-    ], ids=['lb0_ub1', 'lb-1_ub1', 'lb-2.5_ub0', 'np_ones']
+    ],
+    ids=['lb0_ub1', 'lb-1_ub1', 'lb-2.5_ub0', 'np_ones']
 )
 def test_minmaxscaler(dtype, lb, ub):
     for _ in range(10):
@@ -331,8 +346,9 @@ def test_minmaxscaler(dtype, lb, ub):
             [to.tensor([1., 1, 2, 2]), to.tensor([1., 6, 3]), to.tensor([1., 6, 3]),
              to.tensor([10., 10, -20, 20])],
             -1),
-    ], ids=['np_same_length_0', 'np_same_length_None', 'np_mixed_length_0', 'np_mixed_length_None',
-            'to_same_length_0', 'to_same_length_-1', 'to_mixed_length_0', 'to_mixed_length_-1']
+    ],
+    ids=['np_same_length_0', 'np_same_length_None', 'np_mixed_length_0', 'np_mixed_length_None',
+         'to_same_length_0', 'to_same_length_-1', 'to_mixed_length_0', 'to_mixed_length_-1']
 )
 def test_running_standardizer(data_seq, axis):
     rs = RunningStandardizer()
@@ -353,7 +369,8 @@ def test_running_standardizer(data_seq, axis):
             [to.tensor([1., 1., 2]), to.tensor([1., 6., 3.]), to.tensor([1., 6., 3.]), to.tensor([10., -20., 20.])],
             0.1
         ),
-    ], ids=['np', 'to']
+    ],
+    ids=['np', 'to']
 )
 def test_running_expdecay_average(data_seq, alpha):
     reda = RunningExpDecayingAverage(alpha)
@@ -368,7 +385,8 @@ def test_running_expdecay_average(data_seq, alpha):
     'data_seq, capacity', [
         ([np.array([1., 1, 2]), np.array([1., 1, 2]), np.array([1., 1, 2]), np.array([-2., -2, -4])], 3),
         ([to.tensor([1., 1, 2]), to.tensor([1., 1, 2]), to.tensor([1., 1, 2]), to.tensor([-2., -2, -4])], 3),
-    ], ids=['np', 'to']
+    ],
+    ids=['np', 'to']
 )
 def test_running_mem_average(data_seq, capacity):
     rma = RunningMemoryAverage(capacity)
@@ -386,7 +404,8 @@ def test_running_mem_average(data_seq, capacity):
     'data_seq', [
         [5*np.random.rand(25, 3), 0.1*np.random.rand(5, 3), 20*np.random.rand(70, 3)],
         [5*to.rand(25, 3), 0.1*to.rand(5, 3), 20*to.rand(70, 3)]
-    ], ids=['np', 'to']
+    ],
+    ids=['np', 'to']
 )
 def test_running_normalizer(data_seq):
     rn = RunningNormalizer()
@@ -404,7 +423,8 @@ def test_running_normalizer(data_seq):
         np.random.rand(1, 1000),
         np.random.rand(1000, 1),
         np.random.rand(1000, 1000)
-    ], ids=['to_1x1000', 'to_1000x1', 'to_1000x1000', 'np_1x1000', 'np_1000x1', 'np_1000x1000']
+    ],
+    ids=['to_1x1000', 'to_1000x1', 'to_1000x1000', 'np_1x1000', 'np_1000x1', 'np_1000x1000']
 )
 def test_stateful_standardizer(x):
     ss = Standardizer()
@@ -434,7 +454,8 @@ def test_stateful_standardizer(x):
     'g, ed', [
         (1., 2.),
         (np.array([-1., 2.]), np.eye(2))
-    ], ids=['scalar', 'array']
+    ],
+    ids=['scalar', 'array']
 )
 def test_ds_spec(g, ed):
     # Base class
@@ -473,7 +494,8 @@ def test_ds_spec(g, ed):
 @pytest.mark.parametrize(
     'identical_bounds', [
         True, False
-    ], ids=['identical', 'separate']
+    ],
+    ids=['identical', 'separate']
 )
 def test_gss_optimizer_identical_bounds(identical_bounds):
     class Dummy:
@@ -561,8 +583,10 @@ def test_gss_optimizer_nlin_fcn():
         BoxSpace(0.1, 0.11, shape=1),
         BoxSpace(0.123, 0.456, shape=1),
         BoxSpace(10., 20., shape=1),
-    ], ids=['small_time_intvl', 'real_time_intvl', 'large_time_intvl'])
-@pytest.mark.parametrize('val_space', [BoxSpace(-5., 3., shape=1)], ids=['-5_to_3'])
+    ],
+    ids=['small_time_intvl', 'real_time_intvl', 'large_time_intvl'])
+@pytest.mark.parametrize('val_space', [BoxSpace(-5., 3., shape=1)],
+                         ids=['-5_to_3'])
 def test_skyline(dt: Union[int, float], t_end: Union[int, float], t_intvl_space: BoxSpace, val_space: BoxSpace):
     # Create the skyline function
     t, vals = skyline(dt, t_end, t_intvl_space, val_space)
@@ -602,23 +626,29 @@ def test_logmeanexp(x, dim):
         assert np.allclose(lme, np.log(np.mean(np.exp(x), axis=dim)))
 
 
-@pytest.mark.parametrize('obj, file_ext', [
-    (to.rand((5, 3)), 'pt'),
-    (np.random.rand(5, 3), 'npy'),
-    (DummyPolicy(BallOnBeamSim(dt=0.01, max_steps=500).spec), 'pt'),
-    (BallOnBeamSim(dt=0.01, max_steps=500), 'pkl'),
-    (pytest.param(BallOnPlate5DSim(physicsEngine='Bullet', dt=0.01, max_steps=3000, marks=m_needs_bullet), 'pkl', )),
-], ids=['tensor', 'ndarray', 'dummypol', 'pyenv', 'rcssimenv'])
-@pytest.mark.parametrize('meta_info', [
-    None,
-    dict(prefix='pre', suffix='suf'),
-    dict(prefix='pre'),
-    dict(suffix='suf'),
-    dict(foo='baz'),
-], ids=['None', 'pre_suf', 'pre', 'suf', 'neither'])
-@pytest.mark.parametrize('use_state_dict', [
-    True, False
-], ids=['use_state_dict', 'not-use_state_dict'])
+@pytest.mark.parametrize(
+    'obj, file_ext', [
+        (to.rand((5, 3)), 'pt'),
+        (np.random.rand(5, 3), 'npy'),
+        (DummyPolicy(BallOnBeamSim(dt=0.01, max_steps=500).spec), 'pt'),
+        (BallOnBeamSim(dt=0.01, max_steps=500), 'pkl'),
+        (pytest.param(BallOnPlate5DSim(physicsEngine='Bullet', dt=0.01, max_steps=3000, marks=m_needs_bullet), 'pkl')),
+    ],
+    ids=['tensor', 'ndarray', 'dummypol', 'pyenv', 'rcssimenv'])
+@pytest.mark.parametrize(
+    'meta_info', [
+        None,
+        dict(prefix='pre', suffix='suf'),
+        dict(prefix='pre'),
+        dict(suffix='suf'),
+        dict(foo='baz'),
+    ],
+    ids=['None', 'pre_suf', 'pre', 'suf', 'neither'])
+@pytest.mark.parametrize(
+    'use_state_dict', [
+        True, False
+    ],
+    ids=['use_state_dict', 'not-use_state_dict'])
 def test_save_load_prefix_suffix(obj, file_ext, tmpdir, meta_info, use_state_dict):
     # Save
     save_prefix_suffix(obj, 'tmpname', file_ext, tmpdir, meta_info, use_state_dict)

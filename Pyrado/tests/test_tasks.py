@@ -29,7 +29,6 @@
 import functools
 import numpy as np
 import pytest
-from pytest_lazyfixture import lazy_fixture
 
 import pyrado
 from pyrado.tasks.condition_only import ConditionOnlyTask
@@ -56,7 +55,8 @@ def envspec_432():
         ([CosOfOneEleRewFcn(0)], [None], [None]),
         ([QuadrErrRewFcn(np.eye(2), np.eye(1))], [None], [None]),
         ([MinusOnePerStepRewFcn(), QuadrErrRewFcn(Q=np.eye(2), R=np.eye(1))], [None, None], [None, None]),
-    ], ids=['wo_args-wo_kwargs', 'w_args-wo_kwargs', 'w_args2-wo_kwargs', 'wo_args-w_kwargs'])
+    ],
+    ids=['wo_args-wo_kwargs', 'w_args-wo_kwargs', 'w_args2-wo_kwargs', 'wo_args-w_kwargs'])
 def test_combined_reward_function_step(fcn_list, reset_args, reset_kwargs):
     # Create combined reward function
     c = CompoundRewFcn(fcn_list)
@@ -92,7 +92,8 @@ def test_modulated_rew_fcn():
 @pytest.mark.parametrize(
     'state_space, act_space', [
         (BoxSpace(-np.ones((7,)), np.ones((7,))), BoxSpace(-np.ones((3,)), np.ones((3,)))),
-    ], ids=['box']
+    ],
+    ids=['box']
 )
 def test_rew_fcn_constructor(state_space, act_space):
     r_m1 = MinusOnePerStepRewFcn()
@@ -107,7 +108,8 @@ def test_rew_fcn_constructor(state_space, act_space):
     'task_type', [
         'ParallelTasks',
         'SequentialTasks'
-    ], ids=['parallel', 'sequential']
+    ],
+    ids=['parallel', 'sequential']
 )
 def test_composite_task_structure(envspec_432, task_type):
     state_des1 = np.zeros(3)
@@ -149,7 +151,8 @@ def test_composite_task_structure(envspec_432, task_type):
     'hold_rew_when_done', [
         True,
         False
-    ], ids=['hold_rews', 'dont_hold_rews']
+    ],
+    ids=['hold_rews', 'dont_hold_rews']
 )
 def test_parallel_task_function(envspec_432, hold_rew_when_done):
     # Create env spec and sub-tasks (state_space is necessary for the has_failed function)
@@ -220,7 +223,8 @@ def test_parallel_task_function(envspec_432, hold_rew_when_done):
     'hold_rew_when_done', [
         True,
         False
-    ], ids=['hold_rews', 'dont_hold_rews']
+    ],
+    ids=['hold_rews', 'dont_hold_rews']
 )
 def test_sequential_task_function(envspec_432, hold_rew_when_done):
     # Create env spec and sub-tasks (state_space is necessary for the has_failed function)
@@ -291,10 +295,12 @@ def test_sequential_task_function(envspec_432, hold_rew_when_done):
     'rew_fcn', [
         PlusOnePerStepRewFcn(),
         QuadrErrRewFcn(np.eye(3), np.eye(2))
-    ], ids=['PlusOnePerStepRewFcn', 'QuadrErrRewFcn']
+    ],
+    ids=['PlusOnePerStepRewFcn', 'QuadrErrRewFcn']
 )
 @pytest.mark.parametrize(
-    'factor', [1., 42.], ids=['factor_1', 'factor_42']
+    'factor', [1., 42.],
+    ids=['factor_1', 'factor_42']
 )
 def test_best_state_final_rew_task(envspec_432, rew_fcn, factor):
     # Create env spec and sub-tasks (state_space is necessary for the has_failed function)
@@ -321,7 +327,8 @@ def test_best_state_final_rew_task(envspec_432, rew_fcn, factor):
 @pytest.mark.parametrize(
     'rew_fcn', [
         QuadrErrRewFcn(0.1*np.eye(3), np.eye(2))
-    ], ids=['QuadrErrRewFcn']
+    ],
+    ids=['QuadrErrRewFcn']
 )
 def test_tracking_task(envspec_432, rew_fcn):
     # Create env spec and sub-tasks (state_space is necessary for the has_failed function)
@@ -355,7 +362,8 @@ def test_tracking_task(envspec_432, rew_fcn):
                 EnvSpec(obs_space=BoxSpace(-1, 1, 4), act_space=BoxSpace(-1, 1, 2), state_space=BoxSpace(-1, 1, 3)),
                 BoxSpace(-1., 1., shape=3), MinusOnePerStepRewFcn())
         ]
-    ], ids=['des_state_and_des_space']
+    ],
+    ids=['des_state_and_des_space']
 )
 def test_set_goals_fo_composite_tasks(sub_tasks):
     # Check ParallelTasks
@@ -378,7 +386,8 @@ def test_set_goals_fo_composite_tasks(sub_tasks):
     'condition_fcn', [lambda x: np.linalg.norm(x - np.array([0.5, 0.5, 0.5])) < 0.01]
 )
 @pytest.mark.parametrize(
-    'is_success_condition', [True, False], ids=['isc_true', 'isc_false']
+    'is_success_condition', [True, False],
+    ids=['isc_true', 'isc_false']
 )
 def test_condition_only_task(envspec_432, condition_fcn, is_success_condition):
     cot = ConditionOnlyTask(envspec_432, condition_fcn, is_success_condition)

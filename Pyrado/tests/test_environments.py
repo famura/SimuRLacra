@@ -220,7 +220,8 @@ def test_reset(env):
         'default_qbb',
         'default_qqsu',
         'default_qcpst',
-    ], ids=['bobd', 'bob', 'omo', 'pend', 'qbb', 'qq-su', 'qcp-st'],
+    ],
+    ids=['bobd', 'bob', 'omo', 'pend', 'qbb', 'qq-su', 'qcp-st'],
     indirect=True
 )
 def test_vpython_animations(env):
@@ -281,7 +282,8 @@ def test_rcspysim_animations(env):
         'default_cth',
         'default_hop',
         'default_wambic'
-    ], ids=['cth', 'hop', 'wam-bic'],
+    ],
+    ids=['cth', 'hop', 'wam-bic'],
     indirect=True
 )
 def test_mujoco_animations(env):
@@ -299,7 +301,8 @@ def test_mujoco_animations(env):
 @pytest.mark.parametrize(
     'servo_ang', [
         np.r_[np.linspace(-np.pi/2.1, np.pi/2.1), np.linspace(np.pi/2.1, -np.pi/2.1)]
-    ], ids=['range']
+    ],
+    ids=['range']
 )
 def test_qbb_kin(servo_ang):
     env = QBallBalancerSim(dt=0.02, max_steps=100)
@@ -317,7 +320,8 @@ def test_qbb_kin(servo_ang):
         'default_qcpst_real',
         'default_qcpsu_real',
         'default_qq_real'
-    ], ids=['qqbb_real', 'qcpst_real', 'qcpsu_real', 'qq_real'],
+    ],
+    ids=['qqbb_real', 'qcpst_real', 'qcpsu_real', 'qq_real'],
     indirect=True
 )
 def test_quanser_real_wo_connecting(env: RealEnv):
@@ -334,7 +338,8 @@ def test_quanser_real_wo_connecting(env: RealEnv):
         'MountainCarContinuous-v0',
         'Pendulum-v0',
         'LunarLander-v2'
-    ], ids=['MountainCar-v0', 'CartPole-v1', 'Acrobot-v1', 'MountainCarContinuous-v0', 'Pendulum-v0', 'LunarLander-v2']
+    ],
+    ids=['MountainCar-v0', 'CartPole-v1', 'Acrobot-v1', 'MountainCarContinuous-v0', 'Pendulum-v0', 'LunarLander-v2']
 )
 def test_gym_env(env_name):
     # Checking the classic control problems

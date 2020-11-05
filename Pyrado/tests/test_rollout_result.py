@@ -97,7 +97,8 @@ def test_create_rew_only():
 
 
 @pytest.mark.parametrize(
-    'data_format, tensor_type', [('numpy', np.ndarray), ('torch', to.Tensor)], ids=['numpy', 'torch']
+    'data_format, tensor_type', [('numpy', np.ndarray), ('torch', to.Tensor)],
+    ids=['numpy', 'torch']
 )
 def test_create(data_format, tensor_type):
     # With actions, observations and dicts
@@ -292,7 +293,8 @@ def test_pickle(data_format):
 
 @pytest.mark.parametrize(['env', 'policy'], [
     ('default_bob', 'linear_policy'),
-], ids=['bob_linpol'], indirect=True
+],
+                         ids=['bob_linpol'], indirect=True
                          )
 def test_advantage_calculation(env, policy):
     ro = rollout(env, policy)
@@ -322,7 +324,8 @@ def test_advantage_calculation(env, policy):
 @pytest.mark.parametrize(
     'capacity', [
         1, 2, 8,
-    ], ids=['1', '2', '8']
+    ],
+    ids=['1', '2', '8']
 )
 def test_replay_memory(capacity):
     rm = ReplayMemory(capacity)
@@ -375,20 +378,24 @@ def test_namedtuple(data_format):
     'env', [
         'default_pend',
         'default_bob',
-    ], ids=['pend', 'bob'],
+    ],
+    ids=['pend', 'bob'],
     indirect=True
 )
 @pytest.mark.parametrize(
-    'num_real_ros', [1, 3], ids=['1realro', '3realro']
+    'num_real_ros', [1, 3],
+    ids=['1realro', '3realro']
 )
 @pytest.mark.parametrize(
-    'num_sim_ros', [1, 3], ids=['1simro', '3simro']
+    'num_sim_ros', [1, 3],
+    ids=['1simro', '3simro']
 )
 @pytest.mark.parametrize(
     'max_real_steps, max_sim_steps',
     [
         (4, 4,), (4, 7), (7, 4), (10000, 10000)
-    ], ids=['real=sim', 'real<sim', 'real>sim', 'inf']
+    ],
+    ids=['real=sim', 'real<sim', 'real>sim', 'inf']
 )
 def test_truncate_rollouts(env, num_real_ros, num_sim_ros, max_real_steps, max_sim_steps):
     policy = DummyPolicy(env.spec)
