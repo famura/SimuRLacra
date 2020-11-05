@@ -396,6 +396,18 @@
 
 <div class="viewcode-block" id="TracedPolicyWrapper.forward"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base.TracedPolicyWrapper.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="TwoHeadedPolicy"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base.TwoHeadedPolicy">[docs]</a><span class="k">class</span> <span class="nc">TwoHeadedPolicy</span><span class="p">(</span><span class="n">Policy</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Base class for policies with a shared body and two separate heads. &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TwoHeadedPolicy.init_param"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base.TwoHeadedPolicy.init_param">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">init_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_values</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="TwoHeadedPolicy.forward"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base.TwoHeadedPolicy.forward">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)]:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
 </pre></div>
 
            </div>

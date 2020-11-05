@@ -213,8 +213,8 @@
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.utils</span> <span class="kn">import</span> <span class="n">compute_action_statistics</span><span class="p">,</span> <span class="n">until_thold_exceeded</span><span class="p">,</span> <span class="n">get_grad_via_torch</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="n">create_default_randomizer_omo</span>
 <span class="kn">from</span> <span class="nn">pyrado.exploration.stochastic_action</span> <span class="kn">import</span> <span class="n">NormalActNoiseExplStrat</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.two_headed</span> <span class="kn">import</span> <span class="n">TwoHeadedPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">TwoHeadedPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_rollout_sampler</span> <span class="kn">import</span> <span class="n">ParallelRolloutSampler</span>

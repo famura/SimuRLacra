@@ -1,0 +1,41 @@
+
+
+feed\_forward
+=============
+
+
+
+fnn
+---
+
+.. automodule:: pyrado.policies.feed_forward.fnn
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+linear
+------
+
+.. automodule:: pyrado.policies.feed_forward.linear
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+two\_headed\_fnn
+----------------
+
+.. automodule:: pyrado.policies.feed_forward.two_headed_fnn
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyrado.policies.feed_forward
+   :members:
+   :undoc-members:
+   :show-inheritance:

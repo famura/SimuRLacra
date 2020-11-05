@@ -206,12 +206,11 @@
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="nn">torch.distributions.multivariate_normal</span> <span class="kn">import</span> <span class="n">MultivariateNormal</span>
 
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="n">create_default_randomizer</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="n">DomainRandWrapperLive</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.data_format</span> <span class="kn">import</span> <span class="n">to_format</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.hyper_sphere</span> <span class="kn">import</span> <span class="n">sample_from_hyper_sphere_surface</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.parallel_rollout_sampler</span> <span class="kn">import</span> <span class="n">ParallelRolloutSampler</span>
