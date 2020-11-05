@@ -44,7 +44,6 @@ from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 
 
 @to.no_grad()
-@pytest.mark.sampling
 @pytest.mark.parametrize(
     'env', [
         'default_pend',

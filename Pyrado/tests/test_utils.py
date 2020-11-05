@@ -366,14 +366,8 @@ def test_running_expdecay_average(data_seq, alpha):
 
 @pytest.mark.parametrize(
     'data_seq, capacity', [
-        (
-            [np.array([1., 1, 2]), np.array([1., 1, 2]), np.array([1., 1, 2]), np.array([-2., -2, -4])],
-            3
-        ),
-        (
-            [to.tensor([1., 1, 2]), to.tensor([1., 1, 2]), to.tensor([1., 1, 2]), to.tensor([-2., -2, -4])],
-            3
-        ),
+        ([np.array([1., 1, 2]), np.array([1., 1, 2]), np.array([1., 1, 2]), np.array([-2., -2, -4])], 3),
+        ([to.tensor([1., 1, 2]), to.tensor([1., 1, 2]), to.tensor([1., 1, 2]), to.tensor([-2., -2, -4])], 3),
     ], ids=['np', 'to']
 )
 def test_running_mem_average(data_seq, capacity):
@@ -476,7 +470,6 @@ def test_ds_spec(g, ed):
     assert msds['mass'] == 4.
 
 
-@pytest.mark.visualization
 @pytest.mark.parametrize(
     'identical_bounds', [
         True, False
@@ -497,7 +490,6 @@ def test_gss_optimizer_identical_bounds(identical_bounds):
             else:
                 x_min_override = to.tensor([-6.])
                 self.optim = GSS([{'params': self.x, 'param_min': x_min_override}, {'params': self.y}], x_min, x_max)
-            print(self.optim)
 
     dummy = Dummy()
 
@@ -562,7 +554,6 @@ def test_gss_optimizer_nlin_fcn():
     assert noisy_nonlin_fcn(x, f=f, noise_std=noise_std) < noisy_nonlin_fcn(x_init, f=f, noise_std=noise_std)
 
 
-@pytest.mark.visualization
 @pytest.mark.parametrize('dt', [0.1], ids=['0.1'])
 @pytest.mark.parametrize('t_end', [6.], ids=['1.'])
 @pytest.mark.parametrize(
@@ -573,25 +564,15 @@ def test_gss_optimizer_nlin_fcn():
     ], ids=['small_time_intvl', 'real_time_intvl', 'large_time_intvl'])
 @pytest.mark.parametrize('val_space', [BoxSpace(-5., 3., shape=1)], ids=['-5_to_3'])
 def test_skyline(dt: Union[int, float], t_end: Union[int, float], t_intvl_space: BoxSpace, val_space: BoxSpace):
-    from matplotlib import pyplot as plt
     # Create the skyline function
     t, vals = skyline(dt, t_end, t_intvl_space, val_space)
     assert isinstance(t, np.ndarray) and isinstance(vals, np.ndarray)
     assert len(t) == len(vals)
 
-    plt.figure()
-    plt.step(t, vals, label=f't_intvl_space: ({t_intvl_space.bound_lo.item()}, {t_intvl_space.bound_up.item()})')
-    plt.xlabel('$x$')
-    plt.ylabel('$f(x)$')
-    plt.legend()
-    plt.show()
 
-
-@pytest.mark.visualization
 def test_check_prompt():
     with completion_context('Works fine', color='g'):
         a = 3
-
     with pytest.raises(ZeroDivisionError):
         with completion_context('Works fine', color='r', bright=True):
             a = 3/0

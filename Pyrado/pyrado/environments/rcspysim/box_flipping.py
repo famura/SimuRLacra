@@ -140,7 +140,6 @@ class BoxFlippingSim(RcsSim, Serializable):
             hudColor='BLACK_RUBBER',
             refFrame=ref_frame,
             positionTasks=kwargs.pop('positionTasks', True),
-            taskCombinationMethod='sum',
             tasksLeft=mps_left,
             tasksRight=mps_right,
             **kwargs

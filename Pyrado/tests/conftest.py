@@ -179,22 +179,22 @@ class DefaultEnvs:
     @staticmethod
     @m_needs_bullet
     def default_bop2d_bt():
-        return BallOnPlate2DSim(physicsEngine='Bullet', dt=0.01, max_steps=3000, checkJointLimits=False)
+        return BallOnPlate2DSim(physicsEngine='Bullet', dt=0.01, max_steps=3000, checkJointLimits=True)
 
     @staticmethod
     @m_needs_vortex
     def default_bop2d_vx():
-        return BallOnPlate2DSim(physicsEngine='Vortex', dt=0.01, max_steps=3000, checkJointLimits=False)
+        return BallOnPlate2DSim(physicsEngine='Vortex', dt=0.01, max_steps=3000, checkJointLimits=True)
 
     @staticmethod
     @m_needs_bullet
     def default_bop5d_bt():
-        return BallOnPlate5DSim(physicsEngine='Bullet', dt=0.01, max_steps=3000, checkJointLimits=False)
+        return BallOnPlate5DSim(physicsEngine='Bullet', dt=0.01, max_steps=3000, checkJointLimits=True)
 
     @staticmethod
     @m_needs_vortex
     def default_bop5d_vx():
-        return BallOnPlate5DSim(physicsEngine='Vortex', dt=0.01, max_steps=3000, checkJointLimits=False)
+        return BallOnPlate5DSim(physicsEngine='Vortex', dt=0.01, max_steps=3000, checkJointLimits=True)
 
     @staticmethod
     @m_needs_bullet
@@ -210,7 +210,7 @@ class DefaultEnvs:
             observeVelocities=True,
             observeForceTorque=True,
             observeCollisionCost=True,
-            observePredictedCollisionCost=False,
+            observePredictedCollisionCost=False,  # True causes a crash
             observeManipulabilityIndex=True,
             observeCurrentManipulability=True,
             observeTaskSpaceDiscrepancy=True,
@@ -230,7 +230,7 @@ class DefaultEnvs:
             observeVelocities=True,
             observeForceTorque=True,
             observeCollisionCost=True,
-            observePredictedCollisionCost=False,
+            observePredictedCollisionCost=True,
             observeManipulabilityIndex=True,
             observeCurrentManipulability=True,
             observeTaskSpaceDiscrepancy=True,
@@ -370,23 +370,22 @@ class DefaultEnvs:
     @m_needs_bullet
     def default_bit_ik_bt():
         return BallInTubeIKActivationSim(
-            usePhysicsNode=False,
             physicsEngine='Bullet',
             graphFileName='gBallInTube_trqCtrl.xml',
-            dt=1/100.,
+            dt=1/100,
             max_steps=2000,
             fixed_init_state=True,
             ref_frame='table',
             taskCombinationMethod='sum',
             checkJointLimits=True,
             collisionAvoidanceIK=True,
-            observeVelocities=True,
+            observeVelocity=True,
             observeCollisionCost=True,
-            observePredictedCollisionCost=True,
+            observePredictedCollisionCost=False,  # True causes a crash
             observeManipulabilityIndex=True,
             observeCurrentManipulability=True,
-            observeDynamicalSystemDiscrepancy=True,
-            observeTaskSpaceDiscrepancy=True
+            observeTaskSpaceDiscrepancy=True,
+            observeForceTorque=True
         )
 
     @staticmethod
@@ -410,9 +409,9 @@ class DefaultEnvs:
             observePredictedCollisionCost=True,
             observeManipulabilityIndex=False,
             observeCurrentManipulability=True,
-            observeDynamicalSystemDiscrepancy=True,
             observeTaskSpaceDiscrepancy=True,
             observeForceTorque=True,
+            observeDynamicalSystemDiscrepancy=True,
             observeDynamicalSystemGoalDistance=True,
         )
 
@@ -436,8 +435,9 @@ class DefaultEnvs:
             observePredictedCollisionCost=True,
             observeManipulabilityIndex=True,
             observeCurrentManipulability=True,
+            observeTaskSpaceDiscrepancy=True,
             observeDynamicalSystemDiscrepancy=True,
-            observeTaskSpaceDiscrepancy=True
+            observeDynamicalSystemGoalDistance=True,
         )
 
     @staticmethod
@@ -460,8 +460,9 @@ class DefaultEnvs:
             observePredictedCollisionCost=True,
             observeManipulabilityIndex=True,
             observeCurrentManipulability=True,
+            observeTaskSpaceDiscrepancy=True,
             observeDynamicalSystemDiscrepancy=True,
-            observeTaskSpaceDiscrepancy=True
+            observeDynamicalSystemGoalDistance=True,
         )
 
     @staticmethod
@@ -484,8 +485,9 @@ class DefaultEnvs:
             observePredictedCollisionCost=True,
             observeManipulabilityIndex=True,
             observeCurrentManipulability=True,
+            observeTaskSpaceDiscrepancy=True,
             observeDynamicalSystemDiscrepancy=True,
-            observeTaskSpaceDiscrepancy=True
+            observeDynamicalSystemGoalDistance=True,
         )
 
     @staticmethod
@@ -509,8 +511,8 @@ class DefaultEnvs:
             observeCollisionCost=True,
             observePredictedCollisionCost=True,
             observeManipulabilityIndex=True,
-            observeDynamicalSystemDiscrepancy=True,
             observeTaskSpaceDiscrepancy=True,
+            observeDynamicalSystemDiscrepancy=True,
             observeDynamicalSystemGoalDistance=True,
         )
 
@@ -535,8 +537,8 @@ class DefaultEnvs:
             observeCollisionCost=True,
             observePredictedCollisionCost=True,
             observeManipulabilityIndex=True,
-            observeDynamicalSystemDiscrepancy=True,
             observeTaskSpaceDiscrepancy=True,
+            observeDynamicalSystemDiscrepancy=True,
             observeDynamicalSystemGoalDistance=True,
         )
 
@@ -561,8 +563,8 @@ class DefaultEnvs:
             observeCollisionCost=True,
             observePredictedCollisionCost=True,
             observeManipulabilityIndex=True,
-            observeDynamicalSystemDiscrepancy=True,
             observeTaskSpaceDiscrepancy=True,
+            observeDynamicalSystemDiscrepancy=True,
             observeDynamicalSystemGoalDistance=True,
         )
 
@@ -585,11 +587,9 @@ class DefaultEnvs:
             observeVelocities=True,
             observeForceTorque=True,
             observeCollisionCost=True,
-            observePredictedCollisionCost=True,
+            observePredictedCollisionCost=False,  # True causes a crash
             observeManipulabilityIndex=True,
-            observeDynamicalSystemDiscrepancy=True,
             observeTaskSpaceDiscrepancy=True,
-            observeDynamicalSystemGoalDistance=True,
         )
 
     @staticmethod

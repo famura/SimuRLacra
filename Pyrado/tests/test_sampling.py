@@ -75,7 +75,6 @@ def _cb_test_collecthandler(G):
     return nsample, nsample
 
 
-@pytest.mark.sampling
 @pytest.mark.parametrize(
     'num_threads', [1, 2, 4]
 )
@@ -93,7 +92,6 @@ def test_sampler_collect(num_threads, min_samples):
     assert min_samples <= sum(cr)
 
 
-@pytest.mark.sampling
 @pytest.mark.parametrize(
     'num_threads', [1, 2, 4]
 )
@@ -116,13 +114,12 @@ def test_sampler_collect_minrun(num_threads, min_samples, min_runs):
     assert min_runs <= len(cr)
 
 
-@pytest.mark.sampling
 @pytest.mark.parametrize(
     'data_type', [
         (None, None), (to.int32, np.int32),
     ]
 )
-def test_to_format(data_type):
+def test_to_format(data_type: tuple):
     # Create some tensors to convert
     ndarray = np.random.rand(3, 2).astype(dtype=np.float64)
     tensor = to.rand(3, 2).type(dtype=to.float64)
@@ -140,7 +137,6 @@ def test_to_format(data_type):
     assert converted_tensor.dtype == new_type
 
 
-@pytest.mark.sampling
 @pytest.mark.parametrize(
     'epsilon', [
         1, 0.5, 0.1,
@@ -174,7 +170,6 @@ def test_select_cvar(epsilon, num_ro):
     assert cv == cv_expected
 
 
-@pytest.mark.sampling
 @pytest.mark.parametrize(
     'num_dim, method', [
         (1, 'uniform'), (1, 'uniform'),
@@ -247,8 +242,7 @@ def test_reparametrization_trick(mean, cov):
         to.testing.assert_allclose(smpl_distr_reparam, smpl_reparam)
 
 
-@pytest.mark.sampling
-@pytest.mark.visualization
+# @pytest.mark.visualization
 @pytest.mark.parametrize(
     'sequence, x_init', [
         # (sequence_const, np.array([2])),
@@ -268,12 +262,13 @@ def test_reparametrization_trick(mean, cov):
 def test_sequences(sequence, x_init):
     # Get the full sequence
     _, x_full = sequence(x_init, 5, float)
+    assert x_full is not None
 
     # Plot the sequences
-    for i in range(x_full.shape[1]):
-        plt.stem(x_full[:, i], label=str(x_init[i]))
-    plt.legend()
-    plt.show()
+    # for i in range(x_full.shape[1]):
+    #     plt.stem(x_full[:, i], label=str(x_init[i]))
+    # plt.legend()
+    # plt.show()
 
 
 def test_bootsrapping():

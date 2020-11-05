@@ -37,7 +37,6 @@ from pyrado.domain_randomization.utils import param_grid
 from tests.conftest import m_needs_bullet, m_needs_mujoco
 
 
-@pytest.mark.sampling
 @pytest.mark.parametrize(
     'dp', [
         NormalDomainParam(name='', mean=10, std=1., clip_lo=9, clip_up=11),
@@ -53,7 +52,6 @@ def test_domain_param(dp):
         assert len(s) == num_samples
 
 
-@pytest.mark.sampling
 def test_randomizer_dummy(default_dummy_randomizer):
     default_dummy_randomizer.randomize(10)
     samples = default_dummy_randomizer.get_params()
@@ -62,7 +60,6 @@ def test_randomizer_dummy(default_dummy_randomizer):
         assert samples[i] == samples[0]  # only works if none of the values is an array
 
 
-@pytest.mark.sampling
 def test_randomizer(default_pert):
     print(default_pert)
     # Generate 7 samples
