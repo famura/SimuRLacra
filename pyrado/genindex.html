@@ -847,7 +847,7 @@
 </li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.discounted_values">discounted_values() (in module pyrado.sampling.step_sequence)</a>
 </li>
-      <li><a href="policies.html#pyrado.policies.fnn.DiscrActQValFNNPolicy">DiscrActQValFNNPolicy (class in pyrado.policies.fnn)</a>
+      <li><a href="policies.html#pyrado.policies.fnn.DiscreteActQValPolicy">DiscreteActQValPolicy (class in pyrado.policies.fnn)</a>
 </li>
       <li><a href="spaces.html#pyrado.spaces.discrete.DiscreteSpace">DiscreteSpace (class in pyrado.spaces.discrete)</a>
 </li>
@@ -1116,7 +1116,7 @@
       <ul>
         <li><a href="exploration.html#pyrado.exploration.normal_noise.DiagNormalNoise.forward">(DiagNormalNoise method)</a>
 </li>
-        <li><a href="policies.html#pyrado.policies.fnn.DiscrActQValFNNPolicy.forward">(DiscrActQValFNNPolicy method)</a>
+        <li><a href="policies.html#pyrado.policies.fnn.DiscreteActQValPolicy.forward">(DiscreteActQValPolicy method)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.domain_distribution.DomainDistrParamPolicy.forward">(DomainDistrParamPolicy method)</a>
 </li>
@@ -1281,10 +1281,10 @@
 </li>
       <li><a href="utils.html#pyrado.utils.order.get_immediate_subdirs">get_immediate_subdirs() (in module pyrado.utils.order)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="policies.html#pyrado.policies.environment_specific.get_lin_ctrl">get_lin_ctrl() (in module pyrado.policies.environment_specific)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="logger.html#pyrado.logger.get_log_prefix_dir">get_log_prefix_dir() (in module pyrado.logger)</a>
 </li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.BallInTubeSim.get_nominal_domain_param">get_nominal_domain_param() (BallInTubeSim class method)</a>
@@ -1336,6 +1336,10 @@
       <li><a href="policies.html#pyrado.policies.features.FeatureStack.get_num_feat">get_num_feat() (FeatureStack method)</a>
 </li>
       <li><a href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.get_params">get_params() (DomainRandomizer method)</a>
+</li>
+      <li><a href="policies.html#pyrado.policies.fnn.DiscreteActQValPolicy.get_q_fcn_input_size">get_q_fcn_input_size() (DiscreteActQValPolicy static method)</a>
+</li>
+      <li><a href="policies.html#pyrado.policies.fnn.DiscreteActQValPolicy.get_q_fcn_output_size">get_q_fcn_output_size() (DiscreteActQValPolicy static method)</a>
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.RewardGenerator.get_reward">get_reward() (RewardGenerator method)</a>
 </li>
@@ -1474,7 +1478,7 @@
       <li><a href="policies.html#pyrado.policies.adn.ADNPolicy.init_param">init_param() (ADNPolicy method)</a>
 
       <ul>
-        <li><a href="policies.html#pyrado.policies.fnn.DiscrActQValFNNPolicy.init_param">(DiscrActQValFNNPolicy method)</a>
+        <li><a href="policies.html#pyrado.policies.fnn.DiscreteActQValPolicy.init_param">(DiscreteActQValPolicy method)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.domain_distribution.DomainDistrParamPolicy.init_param">(DomainDistrParamPolicy method)</a>
 </li>
@@ -2227,7 +2231,7 @@
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.cem.CEM.name">(CEM attribute)</a>
 </li>
-        <li><a href="policies.html#pyrado.policies.fnn.DiscrActQValFNNPolicy.name">(DiscrActQValFNNPolicy attribute)</a>
+        <li><a href="policies.html#pyrado.policies.fnn.DiscreteActQValPolicy.name">(DiscreteActQValPolicy attribute)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.domain_distribution.DomainDistrParamPolicy.name">(DomainDistrParamPolicy attribute)</a>
 </li>
@@ -3885,9 +3889,7 @@
 <h2 id="Q">Q</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="policies.html#pyrado.policies.fnn.DiscrActQValFNNPolicy.q_values">q_values() (DiscrActQValFNNPolicy method)</a>
-</li>
-      <li><a href="policies.html#pyrado.policies.fnn.DiscrActQValFNNPolicy.q_values_chosen">q_values_chosen() (DiscrActQValFNNPolicy method)</a>
+      <li><a href="policies.html#pyrado.policies.fnn.DiscreteActQValPolicy.q_values_argmax">q_values_argmax() (DiscreteActQValPolicy method)</a>
 </li>
       <li><a href="environments.pysim.html#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerKin">QBallBalancerKin (class in pyrado.environments.pysim.quanser_ball_balancer)</a>
 </li>
@@ -3911,10 +3913,10 @@
 </li>
       <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_cartpole.QCartPoleSwingUpReal">QCartPoleSwingUpReal (class in pyrado.environments.quanser.quanser_cartpole)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="environments.pysim.html#pyrado.environments.pysim.quanser_cartpole.QCartPoleSwingUpSim">QCartPoleSwingUpSim (class in pyrado.environments.pysim.quanser_cartpole)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="policies.html#pyrado.policies.environment_specific.QQubeEnergyCtrl">QQubeEnergyCtrl (class in pyrado.policies.environment_specific)</a>
 </li>
       <li><a href="policies.html#pyrado.policies.environment_specific.QQubeGoToLimCtrl">QQubeGoToLimCtrl (class in pyrado.policies.environment_specific)</a>

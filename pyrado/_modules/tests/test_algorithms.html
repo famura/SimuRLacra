@@ -236,7 +236,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.logger</span> <span class="kn">import</span> <span class="n">set_log_prefix_dir</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.features</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span><span class="p">,</span> <span class="n">FNN</span><span class="p">,</span> <span class="n">DiscrActQValFNNPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span><span class="p">,</span> <span class="n">FNN</span><span class="p">,</span> <span class="n">DiscreteActQValPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.rnn</span> <span class="kn">import</span> <span class="n">RNNPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.two_headed</span> <span class="kn">import</span> <span class="n">TwoHeadedGRUPolicy</span>
@@ -309,7 +309,12 @@
         <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">algo_class</span><span class="p">,</span> <span class="n">DQL</span><span class="p">):</span>
             <span class="c1"># Override the setting</span>
             <span class="n">env</span> <span class="o">=</span> <span class="n">BallOnBeamDiscSim</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span><span class="p">)</span>
-            <span class="n">policy</span> <span class="o">=</span> <span class="n">DiscrActQValFNNPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="o">**</span><span class="n">fnn_hparam</span><span class="p">)</span>
+            <span class="n">net</span> <span class="o">=</span> <span class="n">FNN</span><span class="p">(</span>
+                <span class="n">input_size</span><span class="o">=</span><span class="n">DiscreteActQValPolicy</span><span class="o">.</span><span class="n">get_q_fcn_input_size</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">),</span>
+                <span class="n">output_size</span><span class="o">=</span><span class="n">DiscreteActQValPolicy</span><span class="o">.</span><span class="n">get_q_fcn_output_size</span><span class="p">(),</span>
+                <span class="o">**</span><span class="n">fnn_hparam</span>
+            <span class="p">)</span>
+            <span class="n">policy</span> <span class="o">=</span> <span class="n">DiscreteActQValPolicy</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">net</span><span class="o">=</span><span class="n">net</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Override the setting</span>
             <span class="n">env</span> <span class="o">=</span> <span class="n">ActNormWrapper</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>

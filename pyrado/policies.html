@@ -1415,13 +1415,13 @@ of the ball in the state vector, i.e. state is 14-dim instead of 16-dim</p></li>
 <div class="section" id="module-pyrado.policies.fnn">
 <span id="fnn"></span><h2>fnn<a class="headerlink" href="#module-pyrado.policies.fnn" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="pyrado.policies.fnn.DiscrActQValFNNPolicy">
-<em class="property">class </em><code class="sig-name descname">DiscrActQValFNNPolicy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">hidden_sizes</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>int<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">hidden_nonlin</span><span class="p">:</span> <span class="n"><span class="p">[</span>typing.Callable<span class="p">, </span>typing.Sequence<span class="p">[</span>typing.Callable<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">dropout</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">output_nonlin</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">init_param_kwargs</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/fnn.html#DiscrActQValFNNPolicy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.fnn.DiscrActQValFNNPolicy" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.policies.fnn.DiscreteActQValPolicy">
+<em class="property">class </em><code class="sig-name descname">DiscreteActQValPolicy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">net</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em>, <em class="sig-param"><span class="n">init_param_kwargs</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/fnn.html#DiscreteActQValPolicy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.fnn.DiscreteActQValPolicy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a></p>
 <p>State-action value (Q-value) feed-forward neural network policy for discrete actions</p>
 <dl class="py method">
-<dt id="pyrado.policies.fnn.DiscrActQValFNNPolicy.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/fnn.html#DiscrActQValFNNPolicy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.fnn.DiscrActQValFNNPolicy.forward" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.policies.fnn.DiscreteActQValPolicy.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/fnn.html#DiscreteActQValPolicy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.fnn.DiscreteActQValPolicy.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the action according to the policy and the observations (forward pass).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1434,8 +1434,20 @@ of the ball in the state vector, i.e. state is 14-dim instead of 16-dim</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyrado.policies.fnn.DiscrActQValFNNPolicy.init_param">
-<code class="sig-name descname">init_param</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">init_values</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/fnn.html#DiscrActQValFNNPolicy.init_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.fnn.DiscrActQValFNNPolicy.init_param" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.policies.fnn.DiscreteActQValPolicy.get_q_fcn_input_size">
+<em class="property">static </em><code class="sig-name descname">get_q_fcn_input_size</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/pyrado/policies/fnn.html#DiscreteActQValPolicy.get_q_fcn_input_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.fnn.DiscreteActQValPolicy.get_q_fcn_input_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the flat input size.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.policies.fnn.DiscreteActQValPolicy.get_q_fcn_output_size">
+<em class="property">static </em><code class="sig-name descname">get_q_fcn_output_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/pyrado/policies/fnn.html#DiscreteActQValPolicy.get_q_fcn_output_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.fnn.DiscreteActQValPolicy.get_q_fcn_output_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the flat output size.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.policies.fnn.DiscreteActQValPolicy.init_param">
+<code class="sig-name descname">init_param</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">init_values</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/fnn.html#DiscreteActQValPolicy.init_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.fnn.DiscreteActQValPolicy.init_param" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1448,43 +1460,21 @@ of the ball in the state vector, i.e. state is 14-dim instead of 16-dim</p></li>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="pyrado.policies.fnn.DiscrActQValFNNPolicy.name">
-<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'd_fnn'</em><a class="headerlink" href="#pyrado.policies.fnn.DiscrActQValFNNPolicy.name" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.policies.fnn.DiscreteActQValPolicy.name">
+<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'discrqval'</em><a class="headerlink" href="#pyrado.policies.fnn.DiscreteActQValPolicy.name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="pyrado.policies.fnn.DiscrActQValFNNPolicy.q_values">
-<code class="sig-name descname">q_values</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/fnn.html#DiscrActQValFNNPolicy.q_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.fnn.DiscrActQValFNNPolicy.q_values" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the state-action values for the given observations and all possible actions.
-Since we operate on a discrete ation space, we can construct a table
-o1 a1
-o1 a2</p>
-<blockquote>
-<div><p>…</p>
-</div></blockquote>
-<p>oN a1
-oN a2</p>
+<dt id="pyrado.policies.fnn.DiscreteActQValPolicy.q_values_argmax">
+<code class="sig-name descname">q_values_argmax</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/fnn.html#DiscreteActQValPolicy.q_values_argmax"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.fnn.DiscreteActQValPolicy.q_values_argmax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the state-action values for the given observations and the actions that maximize the estimated Q-Values.
+Since we operate on a discrete action space, we can construct a table.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>obs</strong> – current observations</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Q-values for all state-action combinations, dim = batch_size x act_space_flat_sim</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.policies.fnn.DiscrActQValFNNPolicy.q_values_chosen">
-<code class="sig-name descname">q_values_chosen</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/fnn.html#DiscrActQValFNNPolicy.q_values_chosen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.fnn.DiscrActQValFNNPolicy.q_values_chosen" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the state-action values for the given observations and all possible actions.
-Since we operate on a discrete ation space, we can construct a table.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>obs</strong> – current observations</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Q-values for all state-action combinations, dimension equals flat action space dimension</p>
+<dd class="field-even"><p>Q-values for state-action combinations where the argmax actions, dimension equals flat action space dimension</p>
 </dd>
 </dl>
 </dd></dl>

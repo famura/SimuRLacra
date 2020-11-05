@@ -342,6 +342,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">q_targ_2</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_fcn_2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q_targ_1</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q_targ_2</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span> <span class="o">=</span> <span class="n">ReplayMemory</span><span class="p">(</span><span class="n">memory_size</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">tau</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">learn_ent_coeff</span> <span class="o">=</span> <span class="n">learn_ent_coeff</span>
@@ -355,8 +356,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">num_init_memory_steps</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">num_init_memory_steps</span><span class="p">,</span> <span class="n">memory_size</span><span class="p">)</span>
 
-        <span class="c1"># Replay memory initialization (sample uniformly random from the action space)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span> <span class="o">=</span> <span class="n">ReplayMemory</span><span class="p">(</span><span class="n">memory_size</span><span class="p">)</span>
+        <span class="c1"># Create sampler for initial filling of the replay memory, exploration during training, and evaluation</span>
         <span class="k">if</span> <span class="n">policy</span><span class="o">.</span><span class="n">is_recurrent</span><span class="p">:</span>
             <span class="n">init_expl_policy</span> <span class="o">=</span> <span class="n">RecurrentDummyPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">policy</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -366,18 +366,17 @@
             <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
             <span class="n">min_steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_init_memory_steps</span><span class="p">,</span>
         <span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span> <span class="o">=</span> <span class="n">SACExplStrat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler_trn</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="p">,</span>
-            <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span> <span class="k">if</span> <span class="n">min_steps</span> <span class="o">!=</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">min_steps</span><span class="o">=</span><span class="n">min_steps</span><span class="p">,</span>  <span class="c1"># in [2] this would be 1</span>
             <span class="n">min_rollouts</span><span class="o">=</span><span class="n">min_rollouts</span><span class="p">,</span>  <span class="c1"># in [2] this would be None</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler_eval</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span>
             <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
-            <span class="n">min_steps</span><span class="o">=</span><span class="mi">100</span><span class="o">*</span><span class="n">env</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span>
+            <span class="n">min_steps</span><span class="o">=</span><span class="mi">10</span><span class="o">*</span><span class="n">env</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span>
             <span class="n">min_rollouts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">show_progress_bar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
