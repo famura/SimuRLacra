@@ -163,6 +163,7 @@ class SAC(Algorithm):
         self.q_targ_2 = deepcopy(self.q_fcn_2)
         self.q_targ_1.eval()
         self.q_targ_2.eval()
+        self._memory = ReplayMemory(memory_size)
         self.gamma = gamma
         self.tau = tau
         self.learn_ent_coeff = learn_ent_coeff
@@ -176,8 +177,7 @@ class SAC(Algorithm):
         else:
             self.num_init_memory_steps = min(num_init_memory_steps, memory_size)
 
-        # Replay memory initialization (sample uniformly random from the action space)
-        self._memory = ReplayMemory(memory_size)
+        # Create sampler for initial filling of the replay memory, exploration during training, and evaluation
         if policy.is_recurrent:
             init_expl_policy = RecurrentDummyPolicy(env.spec, policy.hidden_size)
         else:
@@ -187,18 +187,17 @@ class SAC(Algorithm):
             num_workers=num_workers,
             min_steps=self.num_init_memory_steps,
         )
-
         self._expl_strat = SACExplStrat(self._policy)
         self.sampler_trn = ParallelRolloutSampler(
             self._env, self._expl_strat,
-            num_workers=1,
+            num_workers=num_workers if min_steps != 1 else 1,
             min_steps=min_steps,  # in [2] this would be 1
             min_rollouts=min_rollouts,  # in [2] this would be None
         )
         self.sampler_eval = ParallelRolloutSampler(
             self._env, self._policy,
             num_workers=num_workers,
-            min_steps=100*env.max_steps,
+            min_steps=10*env.max_steps,
             min_rollouts=None,
             show_progress_bar=False,
         )

@@ -100,20 +100,20 @@ class StepLogger:
             # Make sure the key was used during first step
             raise pyrado.KeyErr(msg='New value keys may only be added before the first step is finished')
 
-        # Pre-process PyTorch tensors and numpy arrays
+        # Pre-process PyTorch tensors and numpy arrays (the same way)
         if isinstance(value, to.Tensor):
-            # Process PyTorch tensors and numpy arrays the same way
             value = value.detach().cpu().numpy()
         if isinstance(value, np.ndarray):
             if round_digits is not None:
                 value = np.round(value, round_digits)
-            value = value.flatten()
             if value.ndim == 0:  # scalar
                 value = value.item()
-            elif value.ndim == 1:  # vector
-                value = value.tolist()
             else:
-                raise pyrado.ShapeErr(msg='Logging 2-dim arrays or tensors is not supported.')
+                value = value.flatten()
+                if value.ndim == 1:  # vector
+                    value = value.tolist()
+                else:
+                    raise pyrado.ShapeErr(msg='Logging 2-dim arrays or tensors is not supported.')
         # Pre-process floats
         elif isinstance(value, float):
             if round_digits is not None:

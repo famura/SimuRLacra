@@ -195,11 +195,11 @@ class FNNPolicy(Policy):
 
         # Call custom initialization function after PyTorch network parameter initialization
         init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()
-        self.net.init_param(None, **init_param_kwargs)
+        self.init_param(None, **init_param_kwargs)
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         if init_values is None:
-            # Forward to FNN's initialization function
+            # Forward to the nets's custom initialization function (handles dropout)
             self.net.init_param(init_values, **kwargs)
         else:
             self.param_values = init_values
@@ -209,103 +209,117 @@ class FNNPolicy(Policy):
         return self.net(obs)
 
 
-class DiscrActQValFNNPolicy(Policy):
+class DiscreteActQValPolicy(Policy):
     """ State-action value (Q-value) feed-forward neural network policy for discrete actions """
 
-    name: str = 'd_fnn'
+    name: str = 'discrqval'
 
     def __init__(self,
                  spec: EnvSpec,
-                 hidden_sizes: Sequence[int],
-                 hidden_nonlin: [Callable, Sequence[Callable]],
-                 dropout: float = 0.,
-                 output_nonlin: Callable = None,
-                 init_param_kwargs: dict = None):
+                 net: nn.Module,
+                 init_param_kwargs: dict = None,
+                 use_cuda: bool = False):
         """
         Constructor
 
         :param spec: environment specification
-        :param hidden_sizes: sizes of hidden layer outputs. Every entry creates one hidden layer.
-        :param hidden_nonlin: nonlinearity for hidden layers
-        :param dropout: dropout probability, default = 0 deactivates dropout
-        :param output_nonlin: nonlinearity for output layer
+        :param net: module that approximates the Q-values given the observations and possible (discrete) actions.
+                    Make sure to create this object with the correct input and output sizes by using
+                    `DiscreteActQValPolicy.get_q_fcn_input_size()` and `DiscreteActQValPolicy.get_q_fcn_output_size()`.
         :param init_param_kwargs: additional keyword arguments for the policy parameter initialization
+        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
         if not isinstance(spec.act_space, DiscreteSpace):
             raise pyrado.TypeErr(given=spec.act_space, expected_type=DiscreteSpace)
-        super().__init__(spec, use_cuda=to.cuda.is_available())
+        if not isinstance(net, nn.Module):
+            raise pyrado.TypeErr(given=net, expected_type=nn.Module)
 
-        # Create the feed-forward neural network
-        self.net = FNN(
-            input_size=spec.obs_space.flat_dim + spec.act_space.ele_dim,
-            output_size=1,
-            hidden_sizes=hidden_sizes,
-            hidden_nonlin=hidden_nonlin,
-            dropout=dropout,
-            output_nonlin=output_nonlin)
+        # Call Policy's constructor
+        super().__init__(spec, use_cuda)
+
+        # Make sure the net runs on the correct device
+        self.net = net.to(self.device)
 
         # Call custom initialization function after PyTorch network parameter initialization
         init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()
-        self.net.init_param(None, **init_param_kwargs)
+        self.init_param(None, **init_param_kwargs)
+
+    @staticmethod
+    def get_q_fcn_input_size(spec: EnvSpec) -> int:
+        """ Get the flat input size. """
+        return spec.obs_space.flat_dim + spec.act_space.ele_dim
+
+    @staticmethod
+    def get_q_fcn_output_size() -> int:
+        """ Get the flat output size. """
+        return 1
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         if init_values is None:
-            # Forward to FNN's initialization function
-            self.net.init_param(init_values, **kwargs)
+            if isinstance(self.net, FNN):
+                # Forward to the nets's custom initialization function (handles dropout)
+                self.net.init_param(init_values, **kwargs)
+            else:
+                # Initialize the using default initialization
+                init_param(self.net, **kwargs)
         else:
             self.param_values = init_values
 
-    def q_values(self, obs: to.Tensor) -> to.Tensor:
+    def _build_q_table(self, obs: to.Tensor) -> (to.Tensor, to.Tensor, int):
         """
         Compute the state-action values for the given observations and all possible actions.
-        Since we operate on a discrete ation space, we can construct a table
-        o1 a1
-        o1 a2
-         ...
-        oN a1
-        oN a2
+        Since we operate on a discrete action space, we can construct a table (here for 3 actions)
+        o_1 a_1
+        o_1 a_2
+        o_1 a_3
+          ...
+        o_N a_1
+        o_N a_2
+        o_N a_3
 
         :param obs: current observations
-        :return: Q-values for all state-action combinations, dim = batch_size x act_space_flat_sim
+        :return: Q-values for all state-action combinations of dimension batch_size x act_space_flat_sim,
+                 indices, batch size
         """
         # Create batched state-action table
-        obs = atleast_2D(obs)  # btach dim is along first axis
+        obs = atleast_2D(obs)  # batch dim is along first axis
         columns_obs = obs.repeat_interleave(repeats=self.env_spec.act_space.flat_dim, dim=0)
         columns_act = to.tensor(self.env_spec.act_space.eles).repeat(obs.shape[0], 1)
 
-        # Batch process via Pytorch Module class
+        # Batch process via PyTorch Module class
         q_vals = self.net(to.cat([columns_obs, columns_act], dim=1))
 
-        # Return reshaped tensor (different actions are over columns)
-        return q_vals.view(-1, self.env_spec.act_space.flat_dim)
+        # Reshaped (different actions are over columns)
+        q_vals = q_vals.reshape(-1, self.env_spec.act_space.flat_dim)
 
-    def q_values_chosen(self, obs: to.Tensor) -> to.Tensor:
+        # Select the action that maximizes the Q-value
+        argmax_act_idcs = to.argmax(q_vals, dim=1)
+
+        return q_vals, argmax_act_idcs, obs.shape[0]
+
+    def q_values_argmax(self, obs: to.Tensor) -> to.Tensor:
         """
-        Compute the state-action values for the given observations and all possible actions.
-        Since we operate on a discrete ation space, we can construct a table.
+        Compute the state-action values for the given observations and the actions that maximize the estimated Q-Values.
+        Since we operate on a discrete action space, we can construct a table.
 
         :param obs: current observations
-        :return: Q-values for all state-action combinations, dimension equals flat action space dimension
+        :return: Q-values for state-action combinations where the argmax actions, dimension equals flat action space dimension
         """
-        # Get the Q-values from the owned FNN
-        obs = atleast_2D(obs)
-        q_vals = self.q_values(obs)
+        # Get the Q-values from the owned net
+        q_vals, argmax_act_idcs, batch_size = self._build_q_table(obs)
 
         # Select the Q-values from the that the policy would have selected
-        act_idcs = to.argmax(q_vals, dim=1)
-        return q_vals.gather(dim=1, index=act_idcs.view(-1, 1)).squeeze(1)  # select columns
+        q_vals_argamx = q_vals.gather(dim=1, index=argmax_act_idcs.view(-1, 1)).squeeze(1)  # select columns-wise
+
+        return q_vals_argamx.squeeze(1) if batch_size == 1 else q_vals_argamx
 
     def forward(self, obs: to.Tensor) -> to.Tensor:
-        # Get the Q-values from the owned FNN
-        obs = atleast_2D(obs)
-        batch_dim = obs.shape[0]
-        q_vals = self.q_values(obs)
+        # Get the Q-values from the owned net
+        q_vals, argmax_act_idcs, batch_size = self._build_q_table(obs)
 
         # Select the actions with the highest Q-value
-        act_idcs = to.argmax(q_vals, dim=1)
-        all_acts = to.tensor(self.env_spec.act_space.eles).view(1, -1)  # get all possible (discrete) actions
-        acts = all_acts.repeat(batch_dim, 1)
-        if batch_dim == 1:
-            return acts.gather(dim=1, index=act_idcs.view(-1, 1)).squeeze(0)  # select column
-        if batch_dim > 1:
-            return acts.gather(dim=1, index=act_idcs.view(-1, 1))  # select columns
+        possible_acts = to.tensor(self.env_spec.act_space.eles).view(1, -1)  # could be affected by domain randomization
+        acts = possible_acts.repeat(batch_size, 1)
+        act = acts.gather(dim=1, index=argmax_act_idcs.view(-1, 1))  # select column-wise
+
+        return act.squeeze(0) if batch_size == 1 else act

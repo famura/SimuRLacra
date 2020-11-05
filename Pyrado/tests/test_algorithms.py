@@ -59,7 +59,7 @@ from pyrado.environments.pysim.ball_on_beam import BallOnBeamDiscSim
 from pyrado.logger import set_log_prefix_dir
 from pyrado.policies.base import Policy
 from pyrado.policies.features import *
-from pyrado.policies.fnn import FNNPolicy, FNN, DiscrActQValFNNPolicy
+from pyrado.policies.fnn import FNNPolicy, FNN, DiscreteActQValPolicy
 from pyrado.policies.rnn import RNNPolicy
 from pyrado.policies.linear import LinearPolicy
 from pyrado.policies.two_headed import TwoHeadedGRUPolicy
@@ -132,7 +132,12 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
         if issubclass(algo_class, DQL):
             # Override the setting
             env = BallOnBeamDiscSim(env.dt, env.max_steps)
-            policy = DiscrActQValFNNPolicy(spec=env.spec, **fnn_hparam)
+            net = FNN(
+                input_size=DiscreteActQValPolicy.get_q_fcn_input_size(env.spec),
+                output_size=DiscreteActQValPolicy.get_q_fcn_output_size(),
+                **fnn_hparam
+            )
+            policy = DiscreteActQValPolicy(spec=env.spec, net=net)
         else:
             # Override the setting
             env = ActNormWrapper(env)

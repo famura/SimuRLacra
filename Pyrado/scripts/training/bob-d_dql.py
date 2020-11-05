@@ -38,7 +38,7 @@ import pyrado
 from pyrado.algorithms.step_based.dql import DQL
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamDiscSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.fnn import DiscrActQValFNNPolicy
+from pyrado.policies.fnn import DiscreteActQValPolicy, FNN
 from pyrado.utils.argparser import get_argparser
 
 
@@ -47,7 +47,7 @@ if __name__ == '__main__':
     args = get_argparser().parse_args()
 
     # Experiment
-    ex_dir = setup_experiment(BallOnBeamDiscSim.name, f'{DQL.name}_{DiscrActQValFNNPolicy.name}')
+    ex_dir = setup_experiment(BallOnBeamDiscSim.name, f'{DQL.name}_{DiscreteActQValPolicy.name}')
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
@@ -57,23 +57,31 @@ if __name__ == '__main__':
     env = BallOnBeamDiscSim(**env_hparams)
 
     # Policy
-    policy_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)
-    policy = DiscrActQValFNNPolicy(spec=env.spec, **policy_hparam)
+    policy_hparam = dict(
+        hidden_sizes=[32, 32],
+        hidden_nonlin=to.tanh
+    )
+    net = FNN(
+        input_size=DiscreteActQValPolicy.get_q_fcn_input_size(env.spec),
+        output_size=DiscreteActQValPolicy.get_q_fcn_output_size(),
+        **policy_hparam
+    )
+    policy = DiscreteActQValPolicy(spec=env.spec, net=net)
 
     # Algorithm
     algo_hparam = dict(
         max_iter=5000,
-        memory_size=100*env.max_steps,
+        memory_size=10*env.max_steps,
         eps_init=0.1286,
         eps_schedule_gamma=0.9955,
-        gamma=0.995,
+        gamma=0.998,
         target_update_intvl=5,
-        num_batch_updates=10,
+        num_batch_updates=20,
         max_grad_norm=0.5,
-        min_steps=1,
+        min_steps=10,
         batch_size=256,
-        num_workers=1,
-        lr=7.461e-4,
+        num_workers=4,
+        lr=7e-4,
     )
     algo = DQL(ex_dir, env, policy, **algo_hparam)
 

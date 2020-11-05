@@ -37,11 +37,12 @@ from tqdm import tqdm
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.utils import ReplayMemory
+from pyrado.policies.dummy import RecurrentDummyPolicy, DummyPolicy
 from pyrado.utils.saving_loading import save_prefix_suffix, load_prefix_suffix
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_action import EpsGreedyExplStrat
 from pyrado.logger.step import StepLogger, ConsolePrinter, CSVPrinter, TensorBoardPrinter
-from pyrado.policies.fnn import DiscrActQValFNNPolicy
+from pyrado.policies.fnn import DiscreteActQValPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.input_output import print_cbt, print_cbt_once
 
@@ -59,7 +60,7 @@ class DQL(Algorithm):
     def __init__(self,
                  save_dir: str,
                  env: Env,
-                 policy: DiscrActQValFNNPolicy,
+                 policy: DiscreteActQValPolicy,
                  memory_size: int,
                  eps_init: float,
                  eps_schedule_gamma: float,
@@ -67,6 +68,7 @@ class DQL(Algorithm):
                  max_iter: int,
                  num_batch_updates: int,
                  target_update_intvl: int = 5,
+                 num_init_memory_steps: int = None,
                  min_rollouts: int = None,
                  min_steps: int = None,
                  batch_size: int = 256,
@@ -89,6 +91,8 @@ class DQL(Algorithm):
         :param max_iter: number of iterations (policy updates)
         :param num_batch_updates: number of batch updates per algorithm steps
         :param target_update_intvl: number of iterations that pass before updating the q_targ network
+        :param num_init_memory_steps: number of samples used to initially fill the replay buffer with, pass `None` to
+                                      fill the buffer completely
         :param min_rollouts: minimum number of rollouts sampled per policy update batch
         :param min_steps: minimum number of state transitions sampled per policy update batch
         :param batch_size: number of samples per policy update batch
@@ -102,8 +106,8 @@ class DQL(Algorithm):
         """
         if not isinstance(env, Env):
             raise pyrado.TypeErr(given=env, expected_type=Env)
-        if not isinstance(policy, DiscrActQValFNNPolicy):
-            raise pyrado.TypeErr(given=policy, expected_type=DiscrActQValFNNPolicy)
+        if not isinstance(policy, DiscreteActQValPolicy):
+            raise pyrado.TypeErr(given=policy, expected_type=DiscreteActQValPolicy)
 
         if logger is None:
             # Create logger that only logs every 100 steps of the algorithm
@@ -118,26 +122,39 @@ class DQL(Algorithm):
         self._env = env
         self.q_targ = deepcopy(self._policy)
         self.q_targ.eval()  # will not be trained using the optimizer
-        self._memory_size = memory_size
+        self._memory = ReplayMemory(memory_size)
         self.eps = eps_init
         self.gamma = gamma
         self.target_update_intvl = target_update_intvl
         self.num_batch_updates = num_batch_updates
         self.batch_size = batch_size
         self.max_grad_norm = max_grad_norm
+        if num_init_memory_steps is None:
+            self.num_init_memory_steps = memory_size
+        else:
+            self.num_init_memory_steps = min(num_init_memory_steps, memory_size)
 
+        # Create sampler for initial filling of the replay memory, exploration during training, and evaluation
+        if policy.is_recurrent:
+            init_expl_policy = RecurrentDummyPolicy(env.spec, policy.hidden_size)
+        else:
+            init_expl_policy = DummyPolicy(env.spec)
+        self.sampler_init = ParallelRolloutSampler(
+            self._env, init_expl_policy,
+            num_workers=num_workers,
+            min_steps=self.num_init_memory_steps,
+        )
         self._expl_strat = EpsGreedyExplStrat(self._policy, eps_init, eps_schedule_gamma)
-        self._memory = ReplayMemory(memory_size)
-        self.sampler = ParallelRolloutSampler(
+        self.sampler_trn = ParallelRolloutSampler(
             self._env, self._expl_strat,
-            num_workers=1,
+            num_workers=num_workers if min_steps != 1 else 1,
             min_steps=min_steps,
             min_rollouts=min_rollouts
         )
         self.sampler_eval = ParallelRolloutSampler(
             self._env, self._policy,
             num_workers=num_workers,
-            min_steps=100*env.max_steps,
+            min_steps=10*env.max_steps,
             min_rollouts=None
         )
 
@@ -157,18 +174,17 @@ class DQL(Algorithm):
         return self._memory
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
-        # Sample steps and store them in the replay memory
-        ros = self.sampler.sample()
-        self._memory.push(ros)
-        self._cnt_samples += sum([ro.length for ro in ros])  # don't count the evaluation samples
-
-        while len(self._memory) < self.memory.capacity:
+        if self._memory.isempty:
             # Warm-up phase
-            print_cbt_once('Collecting samples until replay memory contains if full.', 'w')
+            print_cbt_once('Collecting samples until replay memory if full.', 'w')
             # Sample steps and store them in the replay memory
-            ros = self.sampler.sample()
+            ros = self.sampler_init.sample()
             self._memory.push(ros)
-            self._cnt_samples += sum([ro.length for ro in ros])  # don't count the evaluation samples
+        else:
+            # Sample steps and store them in the replay memory
+            ros = self.sampler_trn.sample()
+            self._memory.push(ros)
+        self._cnt_samples += sum([ro.length for ro in ros])  # don't count the evaluation samples
 
         # Log return-based metrics
         if self._curr_iter%self.logger.print_intvl == 0:
@@ -223,11 +239,12 @@ class DQL(Algorithm):
             not_done = to.tensor(1. - steps.done, dtype=to.get_default_dtype())
 
             # Compute the state-action values Q(s,a) using the current DQN policy
-            q_vals = self.expl_strat.policy.q_values_chosen(steps.observations)
+            q_vals = self.expl_strat.policy.q_values_argmax(steps.observations)
 
             # Compute the second term of TD-error
-            next_v_vals = self.q_targ.q_values_chosen(next_steps.observations).detach()
-            expected_q_val = steps.rewards + not_done*self.gamma*next_v_vals
+            with to.no_grad():
+                next_v_vals = self.q_targ.q_values_argmax(next_steps.observations)
+                expected_q_val = steps.rewards + not_done*self.gamma*next_v_vals
 
             # Compute the loss, clip the gradients if desired, and do one optimization step
             loss = self.loss_fcn(q_vals, expected_q_val)
@@ -261,7 +278,7 @@ class DQL(Algorithm):
         super().reset(seed)
 
         # Re-initialize sampler in case env or policy changed
-        self.sampler.reinit(self._env, self._expl_strat)
+        self.sampler_trn.reinit(self._env, self._expl_strat)
 
         # Reset the replay memory
         self._memory.reset()
