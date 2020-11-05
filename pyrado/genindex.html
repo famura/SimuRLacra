@@ -985,10 +985,10 @@
 </li>
       <li><a href="exploration.html#pyrado.exploration.stochastic_action.EpsGreedyExplStrat.eval">eval() (EpsGreedyExplStrat method)</a>
 </li>
-      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.eval_behav_policy">eval_behav_policy() (SimOpt static method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.eval_behav_policy">eval_behav_policy() (SimOpt static method)</a>
+</li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.eval_ddp_policy">eval_ddp_policy() (SimOpt static method)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.parallel_evaluation.eval_domain_params">eval_domain_params() (in module pyrado.sampling.parallel_evaluation)</a>
@@ -1005,12 +1005,10 @@
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter.eval_states">eval_states() (SVPGAdapter method)</a>
 </li>
-      <li><a href="policies.html#pyrado.policies.adn.ADNPolicy.evaluate">evaluate() (ADNPolicy method)</a>
+      <li><a href="policies.html#pyrado.policies.base.Policy.evaluate">evaluate() (Policy method)</a>
 
       <ul>
-        <li><a href="policies.html#pyrado.policies.neural_fields.NFPolicy.evaluate">(NFPolicy method)</a>
-</li>
-        <li><a href="policies.html#pyrado.policies.base.Policy.evaluate">(Policy method)</a>
+        <li><a href="policies.html#pyrado.policies.potential_based.PotentialBasedPolicy.evaluate">(PotentialBasedPolicy method)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.dummy.RecurrentDummyPolicy.evaluate">(RecurrentDummyPolicy method)</a>
 </li>
@@ -1056,9 +1054,9 @@
       <ul>
         <li><a href="utils.html#pyrado.utils.nn_layers.IndiNonlinLayer.extra_repr">(IndiNonlinLayer method)</a>
 </li>
-        <li><a href="policies.html#pyrado.policies.neural_fields.NFPolicy.extra_repr">(NFPolicy method)</a>
-</li>
         <li><a href="utils.html#pyrado.utils.nn_layers.PositiveScaleLayer.extra_repr">(PositiveScaleLayer method)</a>
+</li>
+        <li><a href="policies.html#pyrado.policies.potential_based.PotentialBasedPolicy.extra_repr">(PotentialBasedPolicy method)</a>
 </li>
         <li><a href="utils.html#pyrado.utils.nn_layers.ScaleLayer.extra_repr">(ScaleLayer method)</a>
 </li>
@@ -1147,6 +1145,8 @@
         <li><a href="policies.html#pyrado.policies.base.Policy.forward">(Policy method)</a>
 </li>
         <li><a href="utils.html#pyrado.utils.nn_layers.PositiveScaleLayer.forward">(PositiveScaleLayer method)</a>
+</li>
+        <li><a href="policies.html#pyrado.policies.potential_based.PotentialBasedPolicy.forward">(PotentialBasedPolicy method)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.environment_specific.QBallBalancerPDCtrl.forward">(QBallBalancerPDCtrl method)</a>
 </li>
@@ -1417,12 +1417,10 @@
 </li>
       <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.hc.HCNormal">HCNormal (class in pyrado.algorithms.episodic.hc)</a>
 </li>
-      <li><a href="policies.html#pyrado.policies.adn.ADNPolicy.hidden_size">hidden_size() (ADNPolicy property)</a>
+      <li><a href="policies.html#pyrado.policies.rnn.LSTMPolicy.hidden_size">hidden_size() (LSTMPolicy property)</a>
 
       <ul>
-        <li><a href="policies.html#pyrado.policies.rnn.LSTMPolicy.hidden_size">(LSTMPolicy property)</a>
-</li>
-        <li><a href="policies.html#pyrado.policies.neural_fields.NFPolicy.hidden_size">(NFPolicy property)</a>
+        <li><a href="policies.html#pyrado.policies.potential_based.PotentialBasedPolicy.hidden_size">(PotentialBasedPolicy property)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.dummy.RecurrentDummyPolicy.hidden_size">(RecurrentDummyPolicy property)</a>
 </li>
@@ -1453,12 +1451,10 @@
 </li>
       <li><a href="spaces.html#pyrado.spaces.box.InfBoxSpace">InfBoxSpace (class in pyrado.spaces.box)</a>
 </li>
-      <li><a href="policies.html#pyrado.policies.adn.ADNPolicy.init_hidden">init_hidden() (ADNPolicy method)</a>
+      <li><a href="policies.html#pyrado.policies.base.Policy.init_hidden">init_hidden() (Policy method)</a>
 
       <ul>
-        <li><a href="policies.html#pyrado.policies.neural_fields.NFPolicy.init_hidden">(NFPolicy method)</a>
-</li>
-        <li><a href="policies.html#pyrado.policies.base.Policy.init_hidden">(Policy method)</a>
+        <li><a href="policies.html#pyrado.policies.potential_based.PotentialBasedPolicy.init_hidden">(PotentialBasedPolicy method)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.base_recurrent.RecurrentPolicy.init_hidden">(RecurrentPolicy method)</a>
 </li>
@@ -1497,6 +1493,8 @@
         <li><a href="policies.html#pyrado.policies.neural_fields.NFPolicy.init_param">(NFPolicy method)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.base.Policy.init_param">(Policy method)</a>
+</li>
+        <li><a href="policies.html#pyrado.policies.potential_based.PotentialBasedPolicy.init_param">(PotentialBasedPolicy method)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.environment_specific.QBallBalancerPDCtrl.init_param">(QBallBalancerPDCtrl method)</a>
 </li>
@@ -1619,12 +1617,8 @@
 <h2 id="K">K</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="policies.html#pyrado.policies.adn.ADNPolicy.kappa">kappa() (ADNPolicy property)</a>
-
-      <ul>
-        <li><a href="policies.html#pyrado.policies.neural_fields.NFPolicy.kappa">(NFPolicy property)</a>
+      <li><a href="policies.html#pyrado.policies.potential_based.PotentialBasedPolicy.kappa">kappa() (PotentialBasedPolicy property)</a>
 </li>
-      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.kernel">kernel() (SVPG method)</a>
@@ -1995,6 +1989,8 @@
 </li>
         <li><a href="policies.html#module-pyrado.policies.neural_fields">pyrado.policies.neural_fields</a>
 </li>
+        <li><a href="policies.html#module-pyrado.policies.potential_based">pyrado.policies.potential_based</a>
+</li>
         <li><a href="policies.html#module-pyrado.policies.rnn">pyrado.policies.rnn</a>
 </li>
         <li><a href="policies.html#module-pyrado.policies.time">pyrado.policies.time</a>
@@ -2284,6 +2280,8 @@
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.planar_insert.PlanarInsertTASim.name">(PlanarInsertTASim attribute)</a>
 </li>
         <li><a href="policies.html#pyrado.policies.base.Policy.name">(Policy attribute)</a>
+</li>
+        <li><a href="policies.html#pyrado.policies.potential_based.PotentialBasedPolicy.name">(PotentialBasedPolicy attribute)</a>
 </li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.power.PoWER.name">(PoWER attribute)</a>
 </li>
@@ -2608,10 +2606,14 @@
 </li>
       <li><a href="utils.html#pyrado.utils.nn_layers.PositiveScaleLayer">PositiveScaleLayer (class in pyrado.utils.nn_layers)</a>
 </li>
+      <li><a href="policies.html#pyrado.policies.potential_based.PotentialBasedPolicy">PotentialBasedPolicy (class in pyrado.policies.potential_based)</a>
+</li>
       <li><a href="policies.html#pyrado.policies.adn.ADNPolicy.potentials_dot">potentials_dot() (ADNPolicy method)</a>
 
       <ul>
         <li><a href="policies.html#pyrado.policies.neural_fields.NFPolicy.potentials_dot">(NFPolicy method)</a>
+</li>
+        <li><a href="policies.html#pyrado.policies.potential_based.PotentialBasedPolicy.potentials_dot">(PotentialBasedPolicy method)</a>
 </li>
       </ul></li>
       <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.power.PoWER">PoWER (class in pyrado.algorithms.episodic.power)</a>
@@ -3482,6 +3484,13 @@
 
       <ul>
         <li><a href="policies.html#module-pyrado.policies.neural_fields">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.policies.potential_based
+
+      <ul>
+        <li><a href="policies.html#module-pyrado.policies.potential_based">module</a>
 </li>
       </ul></li>
       <li>
@@ -4759,18 +4768,10 @@
 </li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence">StepSequence (class in pyrado.sampling.step_sequence)</a>
 </li>
-      <li><a href="policies.html#pyrado.policies.adn.ADNPolicy.stimuli_external">stimuli_external() (ADNPolicy property)</a>
-
-      <ul>
-        <li><a href="policies.html#pyrado.policies.neural_fields.NFPolicy.stimuli_external">(NFPolicy property)</a>
+      <li><a href="policies.html#pyrado.policies.potential_based.PotentialBasedPolicy.stimuli_external">stimuli_external() (PotentialBasedPolicy property)</a>
 </li>
-      </ul></li>
-      <li><a href="policies.html#pyrado.policies.adn.ADNPolicy.stimuli_internal">stimuli_internal() (ADNPolicy property)</a>
-
-      <ul>
-        <li><a href="policies.html#pyrado.policies.neural_fields.NFPolicy.stimuli_internal">(NFPolicy property)</a>
+      <li><a href="policies.html#pyrado.policies.potential_based.PotentialBasedPolicy.stimuli_internal">stimuli_internal() (PotentialBasedPolicy property)</a>
 </li>
-      </ul></li>
       <li><a href="exploration.html#pyrado.exploration.stochastic_action.StochasticActionExplStrat">StochasticActionExplStrat (class in pyrado.exploration.stochastic_action)</a>
 </li>
       <li><a href="exploration.html#pyrado.exploration.stochastic_params.StochasticParamExplStrat">StochasticParamExplStrat (class in pyrado.exploration.stochastic_params)</a>
@@ -4871,12 +4872,8 @@
       </ul></li>
       <li><a href="tasks.html#pyrado.tasks.base.TaskWrapper">TaskWrapper (class in pyrado.tasks.base)</a>
 </li>
-      <li><a href="policies.html#pyrado.policies.adn.ADNPolicy.tau">tau() (ADNPolicy property)</a>
-
-      <ul>
-        <li><a href="policies.html#pyrado.policies.neural_fields.NFPolicy.tau">(NFPolicy property)</a>
+      <li><a href="policies.html#pyrado.policies.potential_based.PotentialBasedPolicy.tau">tau() (PotentialBasedPolicy property)</a>
 </li>
-      </ul></li>
       <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.gae.GAE.tdlamda_returns">tdlamda_returns() (GAE method)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.step.TensorBoardPrinter">TensorBoardPrinter (class in pyrado.logger.step)</a>

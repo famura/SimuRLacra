@@ -246,7 +246,6 @@
 <span class="sd">    :param dtype: data type to cast to (either int of float)</span>
 <span class="sd">    :return: element at the given iteration and array of the whole sequence</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">def</span> <span class="nf">iter_function</span><span class="p">(</span><span class="n">x_seq</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">x_init</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">x_init</span>
 
@@ -262,7 +261,6 @@
 <span class="sd">    :param dtype: data type to cast to (either int of float)</span>
 <span class="sd">    :return: element at the given iteration and array of the whole sequence</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">def</span> <span class="nf">iter_function</span><span class="p">(</span><span class="n">x_seq</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">x_init</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">x_seq</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="n">i</span>
 
@@ -278,7 +276,6 @@
 <span class="sd">    :param dtype: data type to cast to (either int of float)</span>
 <span class="sd">    :return: element at the given iteration and array of the whole sequence</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="c1"># non-exponential growth</span>
     <span class="k">def</span> <span class="nf">iter_function</span><span class="p">(</span><span class="n">x_seq</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">x_init</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">x_seq</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
@@ -295,7 +292,6 @@
 <span class="sd">    :param dtype: data type to cast to (either int of float)</span>
 <span class="sd">    :return: element at the given iteration and array of the whole sequence</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="c1"># exponential growth</span>
     <span class="k">def</span> <span class="nf">iter_function</span><span class="p">(</span><span class="n">x_seq</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">x_init</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">x_seq</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="mf">2.</span>
@@ -312,7 +308,6 @@
 <span class="sd">    :param dtype: data type to cast to (either int of float)</span>
 <span class="sd">    :return: element at the given iteration and array of the whole sequence</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="c1"># non-exponential growth</span>
     <span class="k">def</span> <span class="nf">iter_function</span><span class="p">(</span><span class="n">x_seq</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">x_init</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">x_seq</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># i+1 because sqrt(1) = 1</span>
@@ -329,7 +324,6 @@
 <span class="sd">    :param dtype: data type to cast to (either int of float)</span>
 <span class="sd">    :return: element at the given iteration and array of the whole sequence</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="c1"># exponential growth</span>
     <span class="k">def</span> <span class="nf">iter_function</span><span class="p">(</span><span class="n">x_seq</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">x_init</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">x_seq</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># i+1 because sqrt(1) = 1</span>
@@ -346,7 +340,6 @@
 <span class="sd">    :param dtype: data type to cast to (either int of float)</span>
 <span class="sd">    :return: element at the given iteration and array of the whole sequence</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="c1"># non-exponential growth</span>
     <span class="k">def</span> <span class="nf">iter_function</span><span class="p">(</span><span class="n">x_seq</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">x_init</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">x_seq</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">i</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># i+2 because log2(1) = 0 and log2(2) = 1</span>

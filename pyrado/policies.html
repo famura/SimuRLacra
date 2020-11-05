@@ -119,6 +119,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.initialization">initialization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.linear">linear</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.neural_fields">neural_fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.potential_based">potential_based</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.rnn">rnn</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.time">time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.policies.two_headed">two_headed</a></li>
@@ -202,7 +203,7 @@
 <dl class="py class">
 <dt id="pyrado.policies.adn.ADNPolicy">
 <em class="property">class </em><code class="sig-name descname">ADNPolicy</code><span class="sig-paren">(</span><em class="sig-param">spec: pyrado.utils.data_types.EnvSpec, dt: float, activation_nonlin: [typing.Callable, typing.Sequence[typing.Callable]], potentials_dyn_fcn: Callable, obs_layer: [&lt;class 'torch.nn.modules.module.Module'&gt;, &lt;class 'pyrado.policies.base.Policy'&gt;] = None, tau_init: float = 0.1, tau_learnable: bool = True, kappa_init: float = 0.001, kappa_learnable: bool = True, capacity_learnable: bool = True, potential_init_learnable: bool = False, init_param_kwargs: dict = None, use_cuda: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/adn.html#ADNPolicy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.adn.ADNPolicy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pyrado.policies.base_recurrent.RecurrentPolicy" title="pyrado.policies.base_recurrent.RecurrentPolicy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base_recurrent.RecurrentPolicy</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.policies.potential_based.PotentialBasedPolicy" title="pyrado.policies.potential_based.PotentialBasedPolicy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.potential_based.PotentialBasedPolicy</span></code></a></p>
 <p>Activation Dynamic Network (ADN)</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -213,25 +214,6 @@ on Hierarchical Dynamical Systems”, IROS, 2012</p>
 <dt id="pyrado.policies.adn.ADNPolicy.capacity">
 <em class="property">property </em><code class="sig-name descname">capacity</code><a class="headerlink" href="#pyrado.policies.adn.ADNPolicy.capacity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the capacity parameter (exists for capacity-based dynamics functions), else return <cite>None</cite>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.policies.adn.ADNPolicy.evaluate">
-<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollout</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">hidden_states_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'hidden_states'</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/adn.html#ADNPolicy.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.adn.ADNPolicy.evaluate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Re-evaluate the given rollout and return a derivable action tensor.
-This method makes sure that the gradient is propagated through the hidden state.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>rollout</strong> – complete rollout</p></li>
-<li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks.
-Change this string for value functions.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>actions with gradient data</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -246,37 +228,15 @@ strings are acceptable.</p>
 <dl class="py method">
 <dt id="pyrado.policies.adn.ADNPolicy.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">obs: torch.Tensor</em>, <em class="sig-param">hidden: torch.Tensor = None) -&gt; (&lt;class 'torch.Tensor'&gt;</em>, <em class="sig-param">&lt;class 'torch.Tensor'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/adn.html#ADNPolicy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.adn.ADNPolicy.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the goal distance, prediction error, and predicted cost.
-Then pass it to the wrapped RNN.</p>
-<dl class="field-list simple">
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>obs</strong> – observations coming from the environment i.e. noisy</p></li>
-<li><p><strong>hidden</strong> – current hidden states, in this case action and potentials of the last time step</p></li>
+<li><p><strong>obs</strong> – observation from the environment</p></li>
+<li><p><strong>hidden</strong> – the network’s hidden state. If None, use init_hidden()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>current action and new hidden states</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.policies.adn.ADNPolicy.hidden_size">
-<em class="property">property </em><code class="sig-name descname">hidden_size</code><a class="headerlink" href="#pyrado.policies.adn.ADNPolicy.hidden_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the number of hidden state variables.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.policies.adn.ADNPolicy.init_hidden">
-<code class="sig-name descname">init_hidden</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/adn.html#ADNPolicy.init_hidden"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.adn.ADNPolicy.init_hidden" title="Permalink to this definition">¶</a></dt>
-<dd><p>Provide initial values for the hidden parameters. This should usually be a zero tensor.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>batch_size</strong> – number of states to track in parallel</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Tensor of batch_size x hidden_size</p>
+<dd class="field-even"><p>action to be taken and new hidden state</p>
 </dd>
 </dl>
 </dd></dl>
@@ -293,12 +253,6 @@ Then pass it to the wrapped RNN.</p>
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.policies.adn.ADNPolicy.kappa">
-<em class="property">property </em><code class="sig-name descname">kappa</code><a class="headerlink" href="#pyrado.policies.adn.ADNPolicy.kappa" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the cubic decay parameter (exists for cubic decay-based dynamics functions), else return <cite>None</cite>.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -322,26 +276,6 @@ Then pass it to the wrapped RNN.</p>
 <dd class="field-even"><p>time derivative of the potentials</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.policies.adn.ADNPolicy.stimuli_external">
-<em class="property">property </em><code class="sig-name descname">stimuli_external</code><a class="headerlink" href="#pyrado.policies.adn.ADNPolicy.stimuli_external" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the neurons’ external stimuli, resulting from the current observations.
-This is used for recording during a rollout.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.policies.adn.ADNPolicy.stimuli_internal">
-<em class="property">property </em><code class="sig-name descname">stimuli_internal</code><a class="headerlink" href="#pyrado.policies.adn.ADNPolicy.stimuli_internal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the neurons’ internal stimuli, resulting from the previous activations of the neurons.
-This is used for recording during a rollout.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.policies.adn.ADNPolicy.tau">
-<em class="property">property </em><code class="sig-name descname">tau</code><a class="headerlink" href="#pyrado.policies.adn.ADNPolicy.tau" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the time scale parameter (exists for all potential dynamics functions).</p>
 </dd></dl>
 
 </dd></dl>
@@ -1657,8 +1591,8 @@ deep linear neural networks”, 2014</p>
 <span id="neural-fields"></span><h2>neural_fields<a class="headerlink" href="#module-pyrado.policies.neural_fields" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.policies.neural_fields.NFPolicy">
-<em class="property">class </em><code class="sig-name descname">NFPolicy</code><span class="sig-paren">(</span><em class="sig-param">spec: pyrado.utils.data_types.EnvSpec</em>, <em class="sig-param">dt: float</em>, <em class="sig-param">hidden_size: int</em>, <em class="sig-param">obs_layer: [&lt;class 'torch.nn.modules.module.Module'&gt;</em>, <em class="sig-param">&lt;class 'pyrado.policies.base.Policy'&gt;] = None</em>, <em class="sig-param">activation_nonlin: Callable = &lt;built-in method sigmoid of type object&gt;</em>, <em class="sig-param">mirrored_conv_weights: bool = True</em>, <em class="sig-param">conv_out_channels: int = 1</em>, <em class="sig-param">conv_kernel_size: int = None</em>, <em class="sig-param">conv_padding_mode: str = 'circular'</em>, <em class="sig-param">tau_init: float = 1.0</em>, <em class="sig-param">tau_learnable: bool = True</em>, <em class="sig-param">kappa_init: float = None</em>, <em class="sig-param">kappa_learnable: bool = True</em>, <em class="sig-param">potential_init_learnable: bool = False</em>, <em class="sig-param">init_param_kwargs: dict = None</em>, <em class="sig-param">use_cuda: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/neural_fields.html#NFPolicy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.neural_fields.NFPolicy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pyrado.policies.base_recurrent.RecurrentPolicy" title="pyrado.policies.base_recurrent.RecurrentPolicy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base_recurrent.RecurrentPolicy</span></code></a></p>
+<em class="property">class </em><code class="sig-name descname">NFPolicy</code><span class="sig-paren">(</span><em class="sig-param">spec: pyrado.utils.data_types.EnvSpec</em>, <em class="sig-param">dt: float</em>, <em class="sig-param">hidden_size: int</em>, <em class="sig-param">obs_layer: [&lt;class 'torch.nn.modules.module.Module'&gt;</em>, <em class="sig-param">&lt;class 'pyrado.policies.base.Policy'&gt;] = None</em>, <em class="sig-param">activation_nonlin: Callable = &lt;built-in method sigmoid of type object&gt;</em>, <em class="sig-param">mirrored_conv_weights: bool = True</em>, <em class="sig-param">conv_out_channels: int = 1</em>, <em class="sig-param">conv_kernel_size: int = None</em>, <em class="sig-param">conv_padding_mode: str = 'circular'</em>, <em class="sig-param">tau_init: float = 1.0</em>, <em class="sig-param">tau_learnable: bool = True</em>, <em class="sig-param">kappa_init: float = 0.0</em>, <em class="sig-param">kappa_learnable: bool = True</em>, <em class="sig-param">potential_init_learnable: bool = False</em>, <em class="sig-param">init_param_kwargs: dict = None</em>, <em class="sig-param">use_cuda: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/neural_fields.html#NFPolicy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.neural_fields.NFPolicy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.policies.potential_based.PotentialBasedPolicy" title="pyrado.policies.potential_based.PotentialBasedPolicy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.potential_based.PotentialBasedPolicy</span></code></a></p>
 <p>Neural Fields (NF)</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -1666,67 +1600,17 @@ deep linear neural networks”, 2014</p>
 Biological Cybernetics, 1977</p>
 </div>
 <dl class="py method">
-<dt id="pyrado.policies.neural_fields.NFPolicy.evaluate">
-<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollout</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">hidden_states_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'hidden_states'</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/neural_fields.html#NFPolicy.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.neural_fields.NFPolicy.evaluate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Re-evaluate the given rollout and return a derivable action tensor.
-This method makes sure that the gradient is propagated through the hidden state.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>rollout</strong> – complete rollout</p></li>
-<li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks.
-Change this string for value functions.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>actions with gradient data</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.policies.neural_fields.NFPolicy.extra_repr">
-<code class="sig-name descname">extra_repr</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pyrado/policies/neural_fields.html#NFPolicy.extra_repr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.neural_fields.NFPolicy.extra_repr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the extra representation of the module</p>
-<p>To print customized extra information, you should reimplement
-this method in your own modules. Both single-line and multi-line
-strings are acceptable.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt id="pyrado.policies.neural_fields.NFPolicy.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">obs: torch.Tensor</em>, <em class="sig-param">hidden: torch.Tensor = None) -&gt; (&lt;class 'torch.Tensor'&gt;</em>, <em class="sig-param">&lt;class 'torch.Tensor'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/neural_fields.html#NFPolicy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.neural_fields.NFPolicy.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the goal distance, prediction error, and predicted cost.
-Then pass it to the wrapped RNN.</p>
-<dl class="field-list simple">
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>obs</strong> – observations coming from the environment i.e. noisy</p></li>
-<li><p><strong>hidden</strong> – current hidden states, in this case action and potentials of the last time step</p></li>
+<li><p><strong>obs</strong> – observation from the environment</p></li>
+<li><p><strong>hidden</strong> – the network’s hidden state. If None, use init_hidden()</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>current action and new hidden states</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.policies.neural_fields.NFPolicy.hidden_size">
-<em class="property">property </em><code class="sig-name descname">hidden_size</code><a class="headerlink" href="#pyrado.policies.neural_fields.NFPolicy.hidden_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the number of hidden state variables.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.policies.neural_fields.NFPolicy.init_hidden">
-<code class="sig-name descname">init_hidden</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/neural_fields.html#NFPolicy.init_hidden"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.neural_fields.NFPolicy.init_hidden" title="Permalink to this definition">¶</a></dt>
-<dd><p>Provide initial values for the hidden parameters. This should usually be a zero tensor.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>batch_size</strong> – number of states to track in parallel</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Tensor of batch_size x hidden_size</p>
+<dd class="field-even"><p>action to be taken and new hidden state</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1743,12 +1627,6 @@ Then pass it to the wrapped RNN.</p>
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.policies.neural_fields.NFPolicy.kappa">
-<em class="property">property </em><code class="sig-name descname">kappa</code><a class="headerlink" href="#pyrado.policies.neural_fields.NFPolicy.kappa" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the cubic decay parameter if specified in the constructor, else return zero.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1775,24 +1653,140 @@ Then pass it to the wrapped RNN.</p>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.policies.potential_based">
+<span id="potential-based"></span><h2>potential_based<a class="headerlink" href="#module-pyrado.policies.potential_based" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.policies.potential_based.PotentialBasedPolicy">
+<em class="property">class </em><code class="sig-name descname">PotentialBasedPolicy</code><span class="sig-paren">(</span><em class="sig-param">spec: pyrado.utils.data_types.EnvSpec, dt: float, obs_layer: [&lt;class 'torch.nn.modules.module.Module'&gt;, &lt;class 'pyrado.policies.base.Policy'&gt;], activation_nonlin: Callable, tau_init: float, tau_learnable: bool, kappa_init: float, kappa_learnable: bool, potential_init_learnable: bool, use_cuda: bool, hidden_size: Optional[int] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/potential_based.html#PotentialBasedPolicy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.potential_based.PotentialBasedPolicy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.policies.base_recurrent.RecurrentPolicy" title="pyrado.policies.base_recurrent.RecurrentPolicy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base_recurrent.RecurrentPolicy</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Base class for policies that work with potential-based neutral networks</p>
 <dl class="py method">
-<dt id="pyrado.policies.neural_fields.NFPolicy.stimuli_external">
-<em class="property">property </em><code class="sig-name descname">stimuli_external</code><a class="headerlink" href="#pyrado.policies.neural_fields.NFPolicy.stimuli_external" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.policies.potential_based.PotentialBasedPolicy.evaluate">
+<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollout</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">hidden_states_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'hidden_states'</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/potential_based.html#PotentialBasedPolicy.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.potential_based.PotentialBasedPolicy.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-evaluate the given rollout and return a derivable action tensor.
+This method makes sure that the gradient is propagated through the hidden state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rollout</strong> – complete rollout</p></li>
+<li><p><strong>hidden_states_name</strong> – name of hidden states rollout entry, used for recurrent networks.
+Change this string for value functions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>actions with gradient data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.policies.potential_based.PotentialBasedPolicy.extra_repr">
+<code class="sig-name descname">extra_repr</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pyrado/policies/potential_based.html#PotentialBasedPolicy.extra_repr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.potential_based.PotentialBasedPolicy.extra_repr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the extra representation of the module</p>
+<p>To print customized extra information, you should reimplement
+this method in your own modules. Both single-line and multi-line
+strings are acceptable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.policies.potential_based.PotentialBasedPolicy.forward">
+<em class="property">abstract </em><code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">obs: torch.Tensor</em>, <em class="sig-param">hidden: torch.Tensor = None) -&gt; (&lt;class 'torch.Tensor'&gt;</em>, <em class="sig-param">&lt;class 'torch.Tensor'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/potential_based.html#PotentialBasedPolicy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.potential_based.PotentialBasedPolicy.forward" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs</strong> – observation from the environment</p></li>
+<li><p><strong>hidden</strong> – the network’s hidden state. If None, use init_hidden()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>action to be taken and new hidden state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.policies.potential_based.PotentialBasedPolicy.hidden_size">
+<em class="property">property </em><code class="sig-name descname">hidden_size</code><a class="headerlink" href="#pyrado.policies.potential_based.PotentialBasedPolicy.hidden_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of hidden state variables.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.policies.potential_based.PotentialBasedPolicy.init_hidden">
+<code class="sig-name descname">init_hidden</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/potential_based.html#PotentialBasedPolicy.init_hidden"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.potential_based.PotentialBasedPolicy.init_hidden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide initial values for the hidden parameters. This should usually be a zero tensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>batch_size</strong> – number of states to track in parallel</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tensor of batch_size x hidden_size</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.policies.potential_based.PotentialBasedPolicy.init_param">
+<code class="sig-name descname">init_param</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">init_values</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/potential_based.html#PotentialBasedPolicy.init_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.potential_based.PotentialBasedPolicy.init_param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_values</strong> – tensor of fixed initial policy parameter values</p></li>
+<li><p><strong>kwargs</strong> – additional keyword arguments for the policy parameter initialization</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.policies.potential_based.PotentialBasedPolicy.kappa">
+<em class="property">property </em><code class="sig-name descname">kappa</code><a class="headerlink" href="#pyrado.policies.potential_based.PotentialBasedPolicy.kappa" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the cubic decay parameter.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.policies.potential_based.PotentialBasedPolicy.name">
+<code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = None</em><a class="headerlink" href="#pyrado.policies.potential_based.PotentialBasedPolicy.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.policies.potential_based.PotentialBasedPolicy.potentials_dot">
+<em class="property">abstract </em><code class="sig-name descname">potentials_dot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">potentials</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">stimuli</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/potential_based.html#PotentialBasedPolicy.potentials_dot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.potential_based.PotentialBasedPolicy.potentials_dot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the derivative of the neurons’ potentials per time step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>potentials</strong> – current potential values</p></li>
+<li><p><strong>stimuli</strong> – sum of external and internal stimuli at the current point in time</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>time derivative of the potentials</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.policies.potential_based.PotentialBasedPolicy.stimuli_external">
+<em class="property">property </em><code class="sig-name descname">stimuli_external</code><a class="headerlink" href="#pyrado.policies.potential_based.PotentialBasedPolicy.stimuli_external" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the neurons’ external stimuli, resulting from the current observations.
 This is used for recording during a rollout.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyrado.policies.neural_fields.NFPolicy.stimuli_internal">
-<em class="property">property </em><code class="sig-name descname">stimuli_internal</code><a class="headerlink" href="#pyrado.policies.neural_fields.NFPolicy.stimuli_internal" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.policies.potential_based.PotentialBasedPolicy.stimuli_internal">
+<em class="property">property </em><code class="sig-name descname">stimuli_internal</code><a class="headerlink" href="#pyrado.policies.potential_based.PotentialBasedPolicy.stimuli_internal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the neurons’ internal stimuli, resulting from the previous activations of the neurons.
 This is used for recording during a rollout.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyrado.policies.neural_fields.NFPolicy.tau">
-<em class="property">property </em><code class="sig-name descname">tau</code><a class="headerlink" href="#pyrado.policies.neural_fields.NFPolicy.tau" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the time scale parameter (exists for all potential dynamics functions).</p>
+<dt id="pyrado.policies.potential_based.PotentialBasedPolicy.tau">
+<em class="property">property </em><code class="sig-name descname">tau</code><a class="headerlink" href="#pyrado.policies.potential_based.PotentialBasedPolicy.tau" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the time scale parameter.</p>
 </dd></dl>
 
 </dd></dl>

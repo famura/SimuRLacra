@@ -104,6 +104,15 @@ neural\_fields
    :show-inheritance:
 
 
+potential\_based
+----------------
+
+.. automodule:: pyrado.policies.potential_based
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 rnn
 ---
 

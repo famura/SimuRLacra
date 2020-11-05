@@ -212,12 +212,11 @@
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.potential_based</span> <span class="kn">import</span> <span class="n">PotentialBasedPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.saving_loading</span> <span class="kn">import</span> <span class="n">save_prefix_suffix</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_sets</span> <span class="kn">import</span> <span class="n">TimeSeriesDataSet</span>
 <span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.adn</span> <span class="kn">import</span> <span class="n">ADNPolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.neural_fields</span> <span class="kn">import</span> <span class="n">NFPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.rnn</span> <span class="kn">import</span> <span class="n">RNNPolicyBase</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
 
@@ -363,7 +362,7 @@
 <span class="sd">        :return: predicted output and latest hidden state</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Custom RNNs</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="p">(</span><span class="n">ADNPolicy</span><span class="p">,</span> <span class="n">NFPolicy</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">PotentialBasedPolicy</span><span class="p">):</span>
             <span class="n">preds</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">last_pred</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -411,7 +410,7 @@
                 <span class="n">hidden</span> <span class="o">=</span> <span class="n">hidden</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">policy</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="p">[</span><span class="n">ADNPolicy</span><span class="p">,</span> <span class="n">NFPolicy</span><span class="p">,</span> <span class="n">RNNPolicyBase</span><span class="p">])</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">policy</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="p">[</span><span class="n">PotentialBasedPolicy</span><span class="p">,</span> <span class="n">RNNPolicyBase</span><span class="p">])</span>
 
         <span class="c1"># Return the (latest if windowed) prediction and the latest hidden state</span>
         <span class="k">return</span> <span class="n">preds</span><span class="p">,</span> <span class="n">hidden</span></div>

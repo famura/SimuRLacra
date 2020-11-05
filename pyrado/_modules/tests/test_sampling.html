@@ -252,8 +252,7 @@
     <span class="k">return</span> <span class="n">nsample</span><span class="p">,</span> <span class="n">nsample</span>
 
 
-<div class="viewcode-block" id="test_sampler_collect"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_sampler_collect">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">sampling</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+<div class="viewcode-block" id="test_sampler_collect"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_sampler_collect">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;num_threads&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -270,8 +269,7 @@
     <span class="k">assert</span> <span class="n">min_samples</span> <span class="o">&lt;=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="test_sampler_collect_minrun"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_sampler_collect_minrun">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">sampling</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+<div class="viewcode-block" id="test_sampler_collect_minrun"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_sampler_collect_minrun">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;num_threads&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -293,13 +291,12 @@
     <span class="k">assert</span> <span class="n">min_runs</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="test_to_format"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_to_format">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">sampling</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+<div class="viewcode-block" id="test_to_format"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_to_format">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;data_type&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
     <span class="p">]</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_to_format</span><span class="p">(</span><span class="n">data_type</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_to_format</span><span class="p">(</span><span class="n">data_type</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">):</span>
     <span class="c1"># Create some tensors to convert</span>
     <span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="n">tensor</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
@@ -317,8 +314,7 @@
     <span class="k">assert</span> <span class="n">converted_tensor</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">new_type</span></div>
 
 
-<div class="viewcode-block" id="test_select_cvar"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_select_cvar">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">sampling</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+<div class="viewcode-block" id="test_select_cvar"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_select_cvar">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;epsilon&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span>
     <span class="p">]</span>
@@ -351,8 +347,7 @@
     <span class="k">assert</span> <span class="n">cv</span> <span class="o">==</span> <span class="n">cv_expected</span></div>
 
 
-<div class="viewcode-block" id="test_sample_from_unit_sphere_surface"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_sample_from_unit_sphere_surface">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">sampling</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+<div class="viewcode-block" id="test_sample_from_unit_sphere_surface"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_sample_from_unit_sphere_surface">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;num_dim, method&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;uniform&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;uniform&#39;</span><span class="p">),</span>
         <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;uniform&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;normal&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;Marsaglia&#39;</span><span class="p">),</span>
@@ -424,9 +419,8 @@
         <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">smpl_distr_reparam</span><span class="p">,</span> <span class="n">smpl_reparam</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="test_sequences"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_sequences">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">sampling</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">visualization</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+<span class="c1"># @pytest.mark.visualization</span>
+<div class="viewcode-block" id="test_sequences"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_sequences">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;sequence, x_init&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="c1"># (sequence_const, np.array([2])),</span>
         <span class="c1"># (sequence_plus_one, np.array([2])),</span>
@@ -445,12 +439,13 @@
 <span class="k">def</span> <span class="nf">test_sequences</span><span class="p">(</span><span class="n">sequence</span><span class="p">,</span> <span class="n">x_init</span><span class="p">):</span>
     <span class="c1"># Get the full sequence</span>
     <span class="n">_</span><span class="p">,</span> <span class="n">x_full</span> <span class="o">=</span> <span class="n">sequence</span><span class="p">(</span><span class="n">x_init</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">x_full</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 
     <span class="c1"># Plot the sequences</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_full</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">x_full</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">x_init</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+    <span class="c1"># for i in range(x_full.shape[1]):</span>
+    <span class="c1">#     plt.stem(x_full[:, i], label=str(x_init[i]))</span>
+    <span class="c1"># plt.legend()</span>
+    <span class="c1"># plt.show()</span>
 
 
 <div class="viewcode-block" id="test_bootsrapping"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_bootsrapping">[docs]</a><span class="k">def</span> <span class="nf">test_bootsrapping</span><span class="p">():</span>
