@@ -341,7 +341,7 @@ class REPS(ParameterExploring):
         distr_new = MultivariateNormal(self._policy.param_values, self._expl_strat.cov.data)
         kl_e = kl_divergence(distr_new, distr_old)  # mode seeking a.k.a. exclusive KL
         kl_i = kl_divergence(distr_old, distr_new)  # mean seeking a.k.a. inclusive KL
-        self.logger.add_value('min expl strat std', to.min(self._expl_strat), 4)
+        self.logger.add_value('min expl strat std', to.min(self._expl_strat.std), 4)
         self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.std), 4)
         self.logger.add_value('max expl strat std', to.max(self._expl_strat.std), 4)
         self.logger.add_value('expl strat entropy', self._expl_strat.get_entropy(), 4)

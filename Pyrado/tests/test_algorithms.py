@@ -191,10 +191,10 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
         (NES, dict(expl_std_init=0.1, pop_size=None, transform_returns=True)),
         (NES, dict(expl_std_init=0.1, pop_size=None, symm_sampling=True)),
         (PEPG, dict(expl_std_init=0.1, pop_size=None)),
-        (PoWER, dict(expl_std_init=0.1, pop_size=100, num_is_samples=10)),
-        (CEM, dict(expl_std_init=0.1, pop_size=100, num_is_samples=10, full_cov=True)),
-        (CEM, dict(expl_std_init=0.1, pop_size=100, num_is_samples=10, full_cov=False)),
-        (REPS, dict(eps=0.1, pop_size=300, expl_std_init=0.1)),
+        (PoWER, dict(expl_std_init=0.1, pop_size=20, num_is_samples=4)),
+        (CEM, dict(expl_std_init=0.1, pop_size=20, num_is_samples=4, full_cov=True)),
+        (CEM, dict(expl_std_init=0.1, pop_size=20, num_is_samples=4, full_cov=False)),
+        (REPS, dict(eps=0.1, pop_size=100, expl_std_init=0.1)),
     ],
     ids=['hc_normal', 'hc_hyper', 'nes', 'nes_tr', 'nes_symm', 'pepg', 'power', 'cem-fcov', 'cem-dcov', 'reps']
 )
@@ -404,12 +404,12 @@ def test_actor_critic(ex_dir, env, policy, algo, algo_hparam, value_fcn_type, us
     'algo, algo_hparam', [
         (HCNormal, dict(max_iter=5, pop_size=None, num_rollouts=6, expl_std_init=0.5, expl_factor=1.1)),
         (NES, dict(max_iter=50, pop_size=None, num_rollouts=6, expl_std_init=0.5, symm_sampling=True)),
-        (PEPG, dict(max_iter=50, pop_size=100, num_rollouts=6, expl_std_init=0.5, lr=1e-2, normalize_update=False)),
+        (PEPG, dict(max_iter=50, pop_size=500, num_rollouts=6, expl_std_init=0.5, lr=1e-2, normalize_update=False)),
         (PoWER, dict(max_iter=20, pop_size=100, num_rollouts=6, num_is_samples=10, expl_std_init=0.5)),
         (CEM, dict(max_iter=20, pop_size=100, num_rollouts=6, num_is_samples=10, expl_std_init=0.5, full_cov=False)),
-        (REPS, dict(max_iter=50, pop_size=500, num_rollouts=6, eps=0.1, expl_std_init=0.5,
-                    use_map=True, optim_mode='torch')),
-    ], ids=['hc_normal', 'nes', 'pepg', 'power', 'cem', 'reps']
+        (REPS, dict(max_iter=20, pop_size=100, num_rollouts=6, eps=0.5, expl_std_init=0.5, use_map=True)),
+    ],
+    # ids=['hc_normal', 'nes', 'pepg', 'power', 'cem', 'reps']
 )
 def test_training_parameter_exploring(ex_dir, env, algo, algo_hparam):
     # Environment and policy

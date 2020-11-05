@@ -102,20 +102,18 @@ class StepLogger:
 
         # Pre-process PyTorch tensors and numpy arrays
         if isinstance(value, to.Tensor):
-            value = value.detach().cpu()
-            if round_digits is not None:
-                value = to.round(value*10**round_digits)/(10**round_digits)
-            if value.ndimension() <= 1:
-                value = value.item()
-            else:
-                value = value.tolist()
-        elif isinstance(value, np.ndarray):
+            # Process PyTorch tensors and numpy arrays the same way
+            value = value.detach().cpu().numpy()
+        if isinstance(value, np.ndarray):
             if round_digits is not None:
                 value = np.round(value, round_digits)
-            if value.ndim() <= 1:
+            value = value.flatten()
+            if value.ndim == 0:  # scalar
                 value = value.item()
-            else:
+            elif value.ndim == 1:  # vector
                 value = value.tolist()
+            else:
+                raise pyrado.ShapeErr(msg='Logging 2-dim arrays or tensors is not supported.')
         # Pre-process floats
         elif isinstance(value, float):
             if round_digits is not None:
