@@ -225,7 +225,6 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
-                 <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                  <span class="n">obs_layer</span><span class="p">:</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">Policy</span><span class="p">],</span>
                  <span class="n">activation_nonlin</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
                  <span class="n">tau_init</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -239,7 +238,6 @@
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param spec: environment specification</span>
-<span class="sd">        :param dt: time step size</span>
 <span class="sd">        :param obs_layer: specify a custom PyTorch Module, by default (`None`) a linear layer with biases is used</span>
 <span class="sd">        :param activation_nonlin: nonlinearity to compute the activations from the potential levels</span>
 <span class="sd">        :param tau_init: initial value for the shared time constant of the potentials</span>
@@ -251,14 +249,11 @@
 <span class="sd">        :param hidden_size: number of neurons with potential, by default `None` which sets the number of hidden neurons</span>
 <span class="sd">                            to the flat number of actions (in order to be compatible with ADNPolicy)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">dt</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">activation_nonlin</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">activation_nonlin</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Callable</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">dt</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_input_size</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">flat_dim</span>  <span class="c1"># observations include goal distance, prediction error, ect.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span> <span class="k">if</span> <span class="n">hidden_size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">hidden_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_recurrent_layers</span> <span class="o">=</span> <span class="mi">1</span>

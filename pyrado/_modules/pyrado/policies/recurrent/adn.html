@@ -353,11 +353,10 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
-                 <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                  <span class="n">activation_nonlin</span><span class="p">:</span> <span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Callable</span><span class="p">]],</span>
                  <span class="n">potentials_dyn_fcn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
                  <span class="n">obs_layer</span><span class="p">:</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">Policy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">tau_init</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-1</span><span class="p">,</span>
+                 <span class="n">tau_init</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.</span><span class="p">,</span>
                  <span class="n">tau_learnable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                  <span class="n">kappa_init</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
                  <span class="n">kappa_learnable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -369,7 +368,6 @@
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param spec: environment specification</span>
-<span class="sd">        :param dt: time step size</span>
 <span class="sd">        :param activation_nonlin: nonlinearity for output layer, highly suggested functions:</span>
 <span class="sd">                                  `to.sigmoid` for position `to.tasks`, tanh for velocity tasks</span>
 <span class="sd">        :param potentials_dyn_fcn: function to compute the derivative of the neurons&#39; potentials</span>
@@ -384,7 +382,7 @@
 <span class="sd">        :param init_param_kwargs: additional keyword arguments for the policy parameter initialization</span>
 <span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">obs_layer</span><span class="p">,</span> <span class="n">activation_nonlin</span><span class="p">,</span> <span class="n">tau_init</span><span class="p">,</span> <span class="n">tau_learnable</span><span class="p">,</span> <span class="n">kappa_init</span><span class="p">,</span> <span class="n">kappa_learnable</span><span class="p">,</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">obs_layer</span><span class="p">,</span> <span class="n">activation_nonlin</span><span class="p">,</span> <span class="n">tau_init</span><span class="p">,</span> <span class="n">tau_learnable</span><span class="p">,</span> <span class="n">kappa_init</span><span class="p">,</span> <span class="n">kappa_learnable</span><span class="p">,</span>
                          <span class="n">potential_init_learnable</span><span class="p">,</span> <span class="n">use_cuda</span><span class="p">)</span>
 
         <span class="c1"># Create custom ADNPolicy layers</span>
@@ -489,7 +487,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_internal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prev_act_layer</span><span class="p">(</span><span class="n">act_prev</span><span class="p">)</span>
 
         <span class="c1"># Potential dynamics forward integration</span>
-        <span class="n">pot</span> <span class="o">=</span> <span class="n">pot</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">potentials_dot</span><span class="p">(</span><span class="n">pot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_external</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_internal</span><span class="p">)</span>
+        <span class="n">pot</span> <span class="o">=</span> <span class="n">pot</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">potentials_dot</span><span class="p">(</span><span class="n">pot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_external</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stimuli_internal</span><span class="p">)</span>  <span class="c1"># dt = 1</span>
 
         <span class="c1"># Clip the potentials</span>
         <span class="n">pot</span> <span class="o">=</span> <span class="n">pot</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="nb">min</span><span class="o">=-</span><span class="bp">self</span><span class="o">.</span><span class="n">_potentials_max</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_potentials_max</span><span class="p">)</span>
