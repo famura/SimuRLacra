@@ -90,14 +90,13 @@ if __name__ == '__main__':
         conv_padding_mode='circular',
         init_param_kwargs=dict(bell=True),
         activation_nonlin=to.sigmoid,
-        tau_init=1e-1,
+        tau_init=10.,
         tau_learnable=True,
         kappa_init=0,
         kappa_learnable=False,
         potential_init_learnable=True,
     )
-    policy = NFPolicy(spec=env.spec, dt=env.dt, **policy_hparam)
-    print(policy)
+    policy = NFPolicy(spec=env.spec, **policy_hparam)
 
     # Algorithm
     algo_hparam = dict(
@@ -111,7 +110,7 @@ if __name__ == '__main__':
         extra_expl_decay_iter=5,
         full_cov=False,
         symm_sampling=False,
-        num_workers=6,
+        num_workers=8,
     )
     algo = CEM(ex_dir, env, policy, **algo_hparam)
 

@@ -99,7 +99,7 @@ if __name__ == '__main__':
         activation_nonlin=to.tanh,
         potentials_dyn_fcn=pd_linear,
         obs_layer=None,
-        tau_init=0.2 if 'oscillation' in data_set_name else 1.,
+        tau_init=10. if 'oscillation' in data_set_name else 1.,
         tau_learnable=True,
         kappa_init=1e-3,
         kappa_learnable=True,

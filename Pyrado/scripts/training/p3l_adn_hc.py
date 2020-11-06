@@ -89,7 +89,7 @@ if __name__ == '__main__':
 
     # Policy
     policy_hparam = dict(
-        tau_init=1e-1,
+        tau_init=10.,
         tau_learnable=False,
         kappa_init=1e-2,
         kappa_learnable=True,
@@ -97,7 +97,7 @@ if __name__ == '__main__':
         potentials_dyn_fcn=pd_cubic,
         potential_init_learnable=False,
     )
-    policy = ADNPolicy(spec=env.spec, dt=env.dt, **policy_hparam)
+    policy = ADNPolicy(spec=env.spec, **policy_hparam)
 
     # Algorithm
     algo_hparam = dict(

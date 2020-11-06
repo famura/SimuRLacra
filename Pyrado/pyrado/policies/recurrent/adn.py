@@ -174,11 +174,10 @@ class ADNPolicy(PotentialBasedPolicy):
 
     def __init__(self,
                  spec: EnvSpec,
-                 dt: float,
                  activation_nonlin: [Callable, Sequence[Callable]],
                  potentials_dyn_fcn: Callable,
                  obs_layer: [nn.Module, Policy] = None,
-                 tau_init: float = 1e-1,
+                 tau_init: float = 10.,
                  tau_learnable: bool = True,
                  kappa_init: float = 1e-3,
                  kappa_learnable: bool = True,
@@ -190,7 +189,6 @@ class ADNPolicy(PotentialBasedPolicy):
         Constructor
 
         :param spec: environment specification
-        :param dt: time step size
         :param activation_nonlin: nonlinearity for output layer, highly suggested functions:
                                   `to.sigmoid` for position `to.tasks`, tanh for velocity tasks
         :param potentials_dyn_fcn: function to compute the derivative of the neurons' potentials
@@ -205,7 +203,7 @@ class ADNPolicy(PotentialBasedPolicy):
         :param init_param_kwargs: additional keyword arguments for the policy parameter initialization
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
-        super().__init__(spec, dt, obs_layer, activation_nonlin, tau_init, tau_learnable, kappa_init, kappa_learnable,
+        super().__init__(spec, obs_layer, activation_nonlin, tau_init, tau_learnable, kappa_init, kappa_learnable,
                          potential_init_learnable, use_cuda)
 
         # Create custom ADNPolicy layers
@@ -310,7 +308,7 @@ class ADNPolicy(PotentialBasedPolicy):
         self._stimuli_internal = self.prev_act_layer(act_prev)
 
         # Potential dynamics forward integration
-        pot = pot + self._dt*self.potentials_dot(pot, self._stimuli_external + self._stimuli_internal)
+        pot = pot + self.potentials_dot(pot, self._stimuli_external + self._stimuli_internal)  # dt = 1
 
         # Clip the potentials
         pot = pot.clamp(min=-self._potentials_max, max=self._potentials_max)

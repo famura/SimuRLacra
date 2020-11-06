@@ -100,14 +100,14 @@ if __name__ == '__main__':
                       hidden_sizes=[32, 32],
                       hidden_nonlin=to.tanh,
                       dropout=0.),
-        tau_init=5.,
+        tau_init=10.,
         tau_learnable=True,
         kappa_init=0.02,
         kappa_learnable=True,
         activation_nonlin=to.sigmoid,
         potentials_dyn_fcn=pd_cubic,
     )
-    policy = ADNPolicy(spec=env.spec, dt=env.dt, **policy_hparam)
+    policy = ADNPolicy(spec=env.spec, **policy_hparam)
 
     # Algorithm
     algo_hparam = dict(
@@ -119,7 +119,7 @@ if __name__ == '__main__':
         expl_std_init=1.0,
         symm_sampling=False,
         transform_returns=True,
-        num_workers=12,
+        num_workers=8,
     )
     algo = NES(ex_dir, env, policy, **algo_hparam)
 

@@ -88,7 +88,7 @@ if __name__ == '__main__':
 
     # Policy
     policy_hparam = dict(
-        tau_init=5e-1,
+        tau_init=10.,
         tau_learnable=False,
         kappa_init=1e-3,
         kappa_learnable=True,
@@ -96,7 +96,7 @@ if __name__ == '__main__':
         potentials_dyn_fcn=pd_cubic,
         potential_init_learnable=True,
     )
-    policy = ADNPolicy(spec=env.spec, dt=env.dt, **policy_hparam)
+    policy = ADNPolicy(spec=env.spec, **policy_hparam)
 
     # Algorithm
     algo_hparam = dict(
@@ -109,7 +109,7 @@ if __name__ == '__main__':
         optim_mode='torch',
         lr_dual=5e-4,
         use_map=True,
-        num_workers=6,
+        num_workers=8,
     )
     algo = REPS(ex_dir, env, policy, **algo_hparam)
 

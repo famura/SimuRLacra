@@ -697,12 +697,12 @@ class DefaultPolicies:
 
     @staticmethod
     def adn_policy(env):
-        return ADNPolicy(env.spec, dt=env.dt, activation_nonlin=to.sigmoid, potentials_dyn_fcn=pd_cubic,
+        return ADNPolicy(env.spec, activation_nonlin=to.sigmoid, potentials_dyn_fcn=pd_cubic,
                          potential_init_learnable=False)
 
     @staticmethod
     def nf_policy(env):
-        return NFPolicy(env.spec, dt=env.dt, hidden_size=5, mirrored_conv_weights=True, tau_learnable=True,
+        return NFPolicy(env.spec, hidden_size=5, mirrored_conv_weights=True, tau_learnable=True,
                         init_param_kwargs=dict(bell=True), kappa_learnable=True, potential_init_learnable=True)
 
     @staticmethod

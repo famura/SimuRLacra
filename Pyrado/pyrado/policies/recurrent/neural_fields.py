@@ -52,7 +52,6 @@ class NFPolicy(PotentialBasedPolicy):
 
     def __init__(self,
                  spec: EnvSpec,
-                 dt: float,
                  hidden_size: int,
                  obs_layer: [nn.Module, Policy] = None,
                  activation_nonlin: Callable = to.sigmoid,
@@ -60,7 +59,7 @@ class NFPolicy(PotentialBasedPolicy):
                  conv_out_channels: int = 1,
                  conv_kernel_size: int = None,
                  conv_padding_mode: str = 'circular',
-                 tau_init: float = 1.,
+                 tau_init: float = 10.,
                  tau_learnable: bool = True,
                  kappa_init: float = 0.,
                  kappa_learnable: bool = True,
@@ -71,7 +70,6 @@ class NFPolicy(PotentialBasedPolicy):
         Constructor
 
         :param spec: environment specification
-        :param dt: time step size
         :param hidden_size: number of neurons with potential
         :param obs_layer: specify a custom PyTorch Module, by default (`None`) a linear layer with biases is used
         :param activation_nonlin: nonlinearity to compute the activations from the potential levels
@@ -101,7 +99,7 @@ class NFPolicy(PotentialBasedPolicy):
         if not callable(activation_nonlin):
             raise pyrado.TypeErr(given=activation_nonlin, expected_type=Callable)
 
-        super().__init__(spec, dt, obs_layer, activation_nonlin, tau_init, tau_learnable, kappa_init, kappa_learnable,
+        super().__init__(spec, obs_layer, activation_nonlin, tau_init, tau_learnable, kappa_init, kappa_learnable,
                          potential_init_learnable, use_cuda, hidden_size)
 
         # Create custom NFPolicy layers
@@ -192,7 +190,7 @@ class NFPolicy(PotentialBasedPolicy):
             raise pyrado.ShapeErr(given=self._stimuli_internal, expected_match=self._stimuli_external)
 
         # Potential dynamics forward integration
-        pot = pot + self._dt*self.potentials_dot(pot, self._stimuli_external + self._stimuli_internal)
+        pot = pot + self.potentials_dot(pot, self._stimuli_external + self._stimuli_internal)  # dt = 1
 
         # Clip the potentials
         pot = pot.clamp(min=-self._potentials_max, max=self._potentials_max)

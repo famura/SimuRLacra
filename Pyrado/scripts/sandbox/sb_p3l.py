@@ -202,7 +202,7 @@ def create_adn_setup(dt, max_steps, max_dist_force, physics_engine, normalize_ob
 
     # Set up random policy
     policy_hparam = dict(
-        tau_init=0.2,
+        tau_init=10.,
         activation_nonlin=to.sigmoid,
         potentials_dyn_fcn=pd_cubic,
     )

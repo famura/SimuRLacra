@@ -102,7 +102,7 @@ if __name__ == '__main__':
         conv_out_channels=1,
         conv_kernel_size=None,
         conv_padding_mode='circular',
-        tau_init=0.2 if 'oscillation' in data_set_name else 1.,
+        tau_init=10. if 'oscillation' in data_set_name else 1.,
         tau_learnable=True,
         kappa_init=1e-3,
         kappa_learnable=True,

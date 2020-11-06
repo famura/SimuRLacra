@@ -46,7 +46,6 @@ class PotentialBasedPolicy(RecurrentPolicy, ABC):
 
     def __init__(self,
                  spec: EnvSpec,
-                 dt: float,
                  obs_layer: [nn.Module, Policy],
                  activation_nonlin: Callable,
                  tau_init: float,
@@ -60,7 +59,6 @@ class PotentialBasedPolicy(RecurrentPolicy, ABC):
         Constructor
 
         :param spec: environment specification
-        :param dt: time step size
         :param obs_layer: specify a custom PyTorch Module, by default (`None`) a linear layer with biases is used
         :param activation_nonlin: nonlinearity to compute the activations from the potential levels
         :param tau_init: initial value for the shared time constant of the potentials
@@ -72,14 +70,11 @@ class PotentialBasedPolicy(RecurrentPolicy, ABC):
         :param hidden_size: number of neurons with potential, by default `None` which sets the number of hidden neurons
                             to the flat number of actions (in order to be compatible with ADNPolicy)
         """
-        if not isinstance(dt, (float, int)):
-            raise pyrado.TypeErr(given=dt, expected_type=float)
         if not callable(activation_nonlin):
             raise pyrado.TypeErr(given=activation_nonlin, expected_type=Callable)
 
         super().__init__(spec, use_cuda)
 
-        self._dt = to.tensor([dt], dtype=to.get_default_dtype())
         self._input_size = spec.obs_space.flat_dim  # observations include goal distance, prediction error, ect.
         self._hidden_size = spec.act_space.flat_dim if hidden_size is None else hidden_size
         self.num_recurrent_layers = 1

@@ -92,13 +92,13 @@ if __name__ == '__main__':
         conv_padding_mode='circular',
         init_param_kwargs=dict(bell=True),
         activation_nonlin=to.sigmoid,
-        tau_init=5e-1,
+        tau_init=10.,
         tau_learnable=False,
         kappa_init=1e-3,
         kappa_learnable=True,
         potential_init_learnable=True,
     )
-    policy = NFPolicy(spec=env.spec, dt=env.dt, **policy_hparam)
+    policy = NFPolicy(spec=env.spec, **policy_hparam)
 
     # Algorithm
     algo_hparam = dict(
@@ -111,7 +111,7 @@ if __name__ == '__main__':
         optim_mode='torch',
         lr_dual=5e-4,
         use_map=True,
-        num_workers=6,
+        num_workers=8,
     )
     algo = REPS(ex_dir, env, policy, **algo_hparam)
 

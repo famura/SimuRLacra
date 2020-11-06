@@ -90,14 +90,13 @@ if __name__ == '__main__':
         conv_padding_mode='circular',
         init_param_kwargs=dict(bell=True),
         activation_nonlin=to.sigmoid,
-        tau_init=1e-1,
+        tau_init=10.,
         tau_learnable=True,
         kappa_init=1e-3,
         kappa_learnable=True,
         potential_init_learnable=True,
     )
-    policy = NFPolicy(spec=env.spec, dt=env.dt, **policy_hparam)
-    print(policy)
+    policy = NFPolicy(spec=env.spec, **policy_hparam)
 
     algo_hparam = dict(
         max_iter=100,

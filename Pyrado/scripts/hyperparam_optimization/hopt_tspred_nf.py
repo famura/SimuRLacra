@@ -99,7 +99,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
         conv_out_channels=1,
         conv_kernel_size=None,
         conv_padding_mode=trial.suggest_categorical('policy_conv_padding_mode', ['zeros', 'circular']),
-        tau_init=trial.suggest_uniform('policy_tau_init', 1., 10.),
+        tau_init=trial.suggest_loguniform('policy_tau_init', 1e-2, 1e3),
         tau_learnable=True,
         kappa_init=trial.suggest_categorical('policy_kappa_init', [0, 1e-4, 1e-2]),
         kappa_learnable=True,
