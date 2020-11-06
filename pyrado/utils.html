@@ -1409,42 +1409,6 @@ registered hooks while the latter silently ignores them.</p>
 <div class="section" id="module-pyrado.utils.properties">
 <span id="properties"></span><h2>properties<a class="headerlink" href="#module-pyrado.utils.properties" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="pyrado.utils.properties.Delegate">
-<em class="property">class </em><code class="sig-name descname">Delegate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">delegate</span></em>, <em class="sig-param"><span class="n">attr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/properties.html#Delegate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.properties.Delegate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Delegate to a class member object.</p>
-<p>Example:
-class Foo:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>def __init__(self, bar):</dt><dd><p>self.bar = bar</p>
-</dd>
-</dl>
-<p>baz = Delegate(“bar”)</p>
-</div></blockquote>
-<p>foo = Foo()
-foo.baz &lt;=&gt; foo.bar.baz</p>
-</dd></dl>
-
-<dl class="py class">
-<dt id="pyrado.utils.properties.ReadOnlyDelegate">
-<em class="property">class </em><code class="sig-name descname">ReadOnlyDelegate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">delegate</span></em>, <em class="sig-param"><span class="n">attr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/properties.html#ReadOnlyDelegate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.properties.ReadOnlyDelegate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Delegate to a class member object in a read-only way.</p>
-<p>Example:
-class Foo:</p>
-<blockquote>
-<div><dl class="simple">
-<dt>def __init__(self, bar):</dt><dd><p>self.bar = bar</p>
-</dd>
-</dl>
-<p>baz = Delegate(“bar”)</p>
-</div></blockquote>
-<p>foo = Foo()
-foo.baz &lt;=&gt; foo.bar.baz</p>
-</dd></dl>
-
-<dl class="py class">
 <dt id="pyrado.utils.properties.cached_property">
 <em class="property">class </em><code class="sig-name descname">cached_property</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/properties.html#cached_property"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.properties.cached_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>

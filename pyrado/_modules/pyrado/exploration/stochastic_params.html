@@ -212,7 +212,6 @@
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.exploration.normal_noise</span> <span class="kn">import</span> <span class="n">DiagNormalNoise</span><span class="p">,</span> <span class="n">FullNormalNoise</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.properties</span> <span class="kn">import</span> <span class="n">Delegate</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.hyper_sphere</span> <span class="kn">import</span> <span class="n">sample_from_hyper_sphere_surface</span>
 
 
@@ -342,6 +341,15 @@
                 <span class="n">use_cuda</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">noise_dim</span><span class="o">=</span><span class="n">param_dim</span><span class="p">,</span> <span class="n">std_init</span><span class="o">=</span><span class="n">std_init</span><span class="p">,</span> <span class="n">std_min</span><span class="o">=</span><span class="n">std_min</span><span class="p">,</span> <span class="n">train_mean</span><span class="o">=</span><span class="n">train_mean</span>
             <span class="p">)</span>
 
+<div class="viewcode-block" id="NormalParamNoise.reset_expl_params"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_params.NormalParamNoise.reset_expl_params">[docs]</a>    <span class="k">def</span> <span class="nf">reset_expl_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">reset_expl_params</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="NormalParamNoise.adapt"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_params.NormalParamNoise.adapt">[docs]</a>    <span class="k">def</span> <span class="nf">adapt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="NormalParamNoise.get_entropy"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_params.NormalParamNoise.get_entropy">[docs]</a>    <span class="k">def</span> <span class="nf">get_entropy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">get_entropy</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">noise</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">FullNormalNoise</span><span class="p">,</span> <span class="n">DiagNormalNoise</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot; Get the exploation noise. &quot;&quot;&quot;</span>
@@ -361,11 +369,22 @@
         <span class="k">return</span> <span class="n">ps</span></div>
 
     <span class="c1"># Make NormalParamNoise appear as if it would have the following functions / properties</span>
-    <span class="n">reset_expl_params</span> <span class="o">=</span> <span class="n">Delegate</span><span class="p">(</span><span class="s1">&#39;_noise&#39;</span><span class="p">)</span>
-    <span class="n">adapt</span> <span class="o">=</span> <span class="n">Delegate</span><span class="p">(</span><span class="s1">&#39;_noise&#39;</span><span class="p">)</span>
-    <span class="n">std</span> <span class="o">=</span> <span class="n">Delegate</span><span class="p">(</span><span class="s1">&#39;_noise&#39;</span><span class="p">)</span>
-    <span class="n">cov</span> <span class="o">=</span> <span class="n">Delegate</span><span class="p">(</span><span class="s1">&#39;_noise&#39;</span><span class="p">)</span>
-    <span class="n">get_entropy</span> <span class="o">=</span> <span class="n">Delegate</span><span class="p">(</span><span class="s1">&#39;_noise&#39;</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">std</span>
+
+    <span class="nd">@std</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">std</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cov</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">cov</span>
+
+    <span class="nd">@cov</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">cov</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">cov</span> <span class="o">=</span> <span class="n">value</span></div>
 
 
 <div class="viewcode-block" id="HyperSphereParamNoise"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_params.HyperSphereParamNoise">[docs]</a><span class="k">class</span> <span class="nc">HyperSphereParamNoise</span><span class="p">(</span><span class="n">StochasticParamExplStrat</span><span class="p">):</span>
