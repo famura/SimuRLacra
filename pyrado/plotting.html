@@ -107,10 +107,10 @@
 <li class="toctree-l1"><a class="reference internal" href="exploration.html">exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logger.html">logger</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">plotting</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.categorial">categorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.categorical">categorical</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.curve">curve</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.distribution">distribution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.gaussian_process">gaussian_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gaussian-process">gaussian_process</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.heatmap">heatmap</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.live_update">live_update</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.policy_parameters">policy_parameters</a></li>
@@ -193,67 +193,38 @@
             
   <div class="section" id="plotting">
 <h1>plotting<a class="headerlink" href="#plotting" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-pyrado.plotting.categorial">
-<span id="categorial"></span><h2>categorial<a class="headerlink" href="#module-pyrado.plotting.categorial" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyrado.plotting.categorical">
+<span id="categorical"></span><h2>categorical<a class="headerlink" href="#module-pyrado.plotting.categorical" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="pyrado.plotting.categorial.render_boxplot">
-<code class="sig-name descname">render_boxplot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ax</span><span class="p">:</span> <span class="n">matplotlib.axes._axes.Axes</span></em>, <em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n"><span class="p">[</span>typing.Sequence<span class="p">[</span>list<span class="p">]</span><span class="p">, </span>typing.Sequence<span class="p">[</span>numpy.ndarray<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">x_labels</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">y_label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">vline_level</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">vline_label</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'approx. solved'</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">colorize</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">show_fliers</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">show_legend</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">legend_loc</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'best'</span></em>, <em class="sig-param"><span class="n">title</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">use_seaborn</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/pyrado/plotting/categorial.html#render_boxplot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.categorial.render_boxplot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a box plot for a list of data arrays. Every entry results in one column of the box plot.
+<dt id="pyrado.plotting.categorical.draw_categorical">
+<code class="sig-name descname">draw_categorical</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plot_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ax</span><span class="p">:</span> <span class="n">matplotlib.axes._axes.Axes</span></em>, <em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>list<span class="p">, </span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">, </span>pandas.core.frame.DataFrame<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">x_label</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Union<span class="p">[</span>str<span class="p">, </span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">y_label</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">vline_level</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">vline_label</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'approx. solved'</span></em>, <em class="sig-param"><span class="n">palette</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">title</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_legend</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">legend_kwargs</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_kwargs</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/pyrado/plotting/categorical.html#draw_categorical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.categorical.draw_categorical" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a box or violin plot for a list of data arrays or a pandas DataFrame.
 The plot is neither shown nor saved.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If you want to have a tight layout, it is best to pass axes of a figure with <cite>tight_layout=True</cite> or
 <cite>constrained_layout=True</cite>.</p>
+<p>If you want to order the 4th element to the 2nd position in terms of colors use
+.. code-block:: python</p>
+<blockquote>
+<div><p>palette.insert(1, palette.pop(3))</p>
+</div></blockquote>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>plot_type</strong> – tye of categorical plot, pass box or violin</p></li>
 <li><p><strong>ax</strong> – axis of the figure to plot on</p></li>
 <li><p><strong>data</strong> – list of data sets to plot as separate boxes</p></li>
-<li><p><strong>x_labels</strong> – labels for the categories on the x-axis</p></li>
-<li><p><strong>y_label</strong> – label for the y-axis</p></li>
+<li><p><strong>x_label</strong> – labels for the categories on the x-axis, if <cite>data</cite> is not given as a <cite>DataFrame</cite></p></li>
+<li><p><strong>y_label</strong> – label for the y-axis, pass <cite>None</cite> to set no label</p></li>
 <li><p><strong>vline_level</strong> – if not <cite>None</cite> (default) add a vertical line at the given level</p></li>
 <li><p><strong>vline_label</strong> – label for the vertical line</p></li>
-<li><p><strong>alpha</strong> – transparency (alpha-value) for boxes (including the border lines)</p></li>
-<li><p><strong>colorize</strong> – colorize the core of the boxes</p></li>
-<li><p><strong>show_fliers</strong> – show outliers (more the 1.5 of the inter quartial range) as circles</p></li>
-<li><p><strong>show_legend</strong> – flag if the legend entry should be printed, set to True when using multiple subplots</p></li>
-<li><p><strong>legend_loc</strong> – location of the legend, ignored if <cite>show_legend = False</cite></p></li>
+<li><p><strong>palette</strong> – seaborn color palette, pass <cite>None</cite> to use the default palette</p></li>
+<li><p><strong>show_legend</strong> – if <cite>True</cite> the legend is shown, useful when handling multiple subplots</p></li>
 <li><p><strong>title</strong> – title displayed above the figure, set to None to suppress the title</p></li>
-<li><p><strong>use_seaborn</strong> – if <cite>True</cite>, use seaborn instead of plain pyplot</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>handle to the resulting figure</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.plotting.categorial.render_violinplot">
-<code class="sig-name descname">render_violinplot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ax</span><span class="p">:</span> <span class="n">matplotlib.axes._axes.Axes</span></em>, <em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n"><span class="p">[</span>typing.Sequence<span class="p">[</span>list<span class="p">]</span><span class="p">, </span>typing.Sequence<span class="p">[</span>numpy.ndarray<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">x_labels</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">y_label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">vline_level</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">vline_label</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'approx. solved'</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.7</span></em>, <em class="sig-param"><span class="n">show_inner_quartiles</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">show_legend</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">legend_loc</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'best'</span></em>, <em class="sig-param"><span class="n">title</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">use_seaborn</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/pyrado/plotting/categorial.html#render_violinplot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.categorial.render_violinplot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a violin plot for a list of data arrays. Every entry results in one column of the violin plot.
-The plot is neither shown nor saved.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If you want to have a tight layout, it is best to pass axes of a figure with <cite>tight_layout=True</cite> or
-<cite>constrained_layout=True</cite>.</p>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ax</strong> – axis of the figure to plot on</p></li>
-<li><p><strong>data</strong> – list of data sets to plot as separate violins</p></li>
-<li><p><strong>x_labels</strong> – labels for the categories on the x-axis</p></li>
-<li><p><strong>y_label</strong> – label for the y-axis</p></li>
-<li><p><strong>vline_level</strong> – if not <cite>None</cite> (default) add a vertical line at the given level</p></li>
-<li><p><strong>vline_label</strong> – label for the vertical line</p></li>
-<li><p><strong>alpha</strong> – transparency (alpha-value) for violin body (including the border lines)</p></li>
-<li><p><strong>show_inner_quartiles</strong> – display the 1st and 3rd quartile with a thick line, ignored if <cite>use_seaborn</cite> is <cite>True</cite></p></li>
-<li><p><strong>show_legend</strong> – flag if the legend entry should be printed, set to <cite>True</cite> when using multiple subplots</p></li>
-<li><p><strong>legend_loc</strong> – location of the legend, ignored if <cite>show_legend = False</cite></p></li>
-<li><p><strong>title</strong> – title displayed above the figure, set to None to suppress the title</p></li>
-<li><p><strong>use_seaborn</strong> – if <cite>True</cite>, use seaborn instead of plain pyplot</p></li>
+<li><p><strong>legend_kwargs</strong> – keyword arguments forwarded to pyplot’s <cite>legend()</cite> function, e.g. <cite>loc=’best’</cite></p></li>
+<li><p><strong>plot_kwargs</strong> – keyword arguments forwarded to seaborn’s <cite>boxplot()</cite> or <cite>violinplot()</cite> function</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -266,8 +237,50 @@ The plot is neither shown nor saved.</p>
 <div class="section" id="module-pyrado.plotting.curve">
 <span id="curve"></span><h2>curve<a class="headerlink" href="#module-pyrado.plotting.curve" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="pyrado.plotting.curve.plot_dts">
-<code class="sig-name descname">plot_dts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dts_policy</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">dts_step</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">dts_remainder</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/curve.html#plot_dts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.curve.plot_dts" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.plotting.curve.draw_curve">
+<code class="sig-name descname">draw_curve</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plot_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ax</span><span class="p">:</span> <span class="n">matplotlib.axes._axes.Axes</span></em>, <em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>list<span class="p">, </span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">, </span>pandas.core.frame.DataFrame<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">x_grid</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>list<span class="p">, </span>numpy.ndarray<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">ax_calc</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">x_label</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Union<span class="p">[</span>str<span class="p">, </span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">y_label</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">curve_label</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">area_label</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">vline_level</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">vline_label</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'approx. solved'</span></em>, <em class="sig-param"><span class="n">palette</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">title</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_legend</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">legend_kwargs</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_kwargs</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/pyrado/plotting/curve.html#draw_curve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.curve.draw_curve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a box or violin plot for a list of data arrays or a pandas DataFrame.
+The plot is neither shown nor saved.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you want to have a tight layout, it is best to pass axes of a figure with <cite>tight_layout=True</cite> or
+<cite>constrained_layout=True</cite>.</p>
+<p>If you want to order the 4th element to the 2nd position in terms of colors use
+.. code-block:: python</p>
+<blockquote>
+<div><p>palette.insert(1, palette.pop(3))</p>
+</div></blockquote>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plot_type</strong> – tye of categorical plot, pass box or violin</p></li>
+<li><p><strong>ax</strong> – axis of the figure to plot on</p></li>
+<li><p><strong>data</strong> – list of data sets to plot as separate boxes</p></li>
+<li><p><strong>x_grid</strong> – </p></li>
+<li><p><strong>ax_calc</strong> – axis of the data array to calculate the mean, min and max, or std over</p></li>
+<li><p><strong>x_label</strong> – labels for the categories on the x-axis, if <cite>data</cite> is not given as a <cite>DataFrame</cite></p></li>
+<li><p><strong>y_label</strong> – label for the y-axis, pass <cite>None</cite> to set no label</p></li>
+<li><p><strong>curve_label</strong> – label of the (1-dim) curve</p></li>
+<li><p><strong>area_label</strong> – label of the (transparent) area</p></li>
+<li><p><strong>vline_level</strong> – if not <cite>None</cite> (default) add a vertical line at the given level</p></li>
+<li><p><strong>vline_label</strong> – label for the vertical line</p></li>
+<li><p><strong>palette</strong> – seaborn color palette, pass <cite>None</cite> to use the default palette</p></li>
+<li><p><strong>show_legend</strong> – if <cite>True</cite> the legend is shown, useful when handling multiple subplots</p></li>
+<li><p><strong>title</strong> – title displayed above the figure, set to None to suppress the title</p></li>
+<li><p><strong>legend_kwargs</strong> – keyword arguments forwarded to pyplot’s <cite>legend()</cite> function, e.g. <cite>loc=’best’</cite></p></li>
+<li><p><strong>plot_kwargs</strong> – keyword arguments forwarded to seaborn’s <cite>boxplot()</cite> or <cite>violinplot()</cite> function</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>handle to the resulting figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.plotting.curve.draw_dts">
+<code class="sig-name descname">draw_dts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dts_policy</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">dts_step</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">dts_remainder</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/curve.html#draw_dts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.curve.draw_dts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the time intervals (<span class="math notranslate nohighlight">\(\Delta_t\)</span>) of various parts of one time step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -276,102 +289,6 @@ The plot is neither shown nor saved.</p>
 <li><p><strong>dts_step</strong> – time it took to perform the</p></li>
 <li><p><strong>dts_remainder</strong> – time it took to execute all remaining commands (e.g. soring the data)</p></li>
 </ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.plotting.curve.render_data_mean_std">
-<code class="sig-name descname">render_data_mean_std</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ax</span><span class="p">:</span> <span class="n">matplotlib.axes._axes.Axes</span></em>, <em class="sig-param"><span class="n">x_grid</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">x_label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">y_label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">curve_label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ax_calc</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">0</span></em>, <em class="sig-param"><span class="n">num_stds</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.3</span></em>, <em class="sig-param"><span class="n">color</span><span class="p">:</span> <span class="n">chr</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_legend</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">show_legend_std</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">title</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/pyrado/plotting/curve.html#render_data_mean_std"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.curve.render_data_mean_std" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute and plot the mean and the standard deviation of the given data. The plot is neither shown nor saved.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ax</strong> – axis of the figure to plot on</p></li>
-<li><p><strong>x_grid</strong> – data to plot on the x-axis</p></li>
-<li><p><strong>data</strong> – data to process and plot on the y-axis</p></li>
-<li><p><strong>x_label</strong> – label for x-axis</p></li>
-<li><p><strong>y_label</strong> – label for y-axis</p></li>
-<li><p><strong>curve_label</strong> – label for the mean curve</p></li>
-<li><p><strong>ax_calc</strong> – axis of the data array to calculate the mean over</p></li>
-<li><p><strong>num_stds</strong> – number of standard deviations to plot around the mean</p></li>
-<li><p><strong>alpha</strong> – transparency (alpha-value) for the std area</p></li>
-<li><p><strong>color</strong> – color (e.g. ‘k’), None invokes the default behavior</p></li>
-<li><p><strong>show_legend</strong> – flag if the legend entry should be printed, set to True when using multiple subplots</p></li>
-<li><p><strong>show_legend_std</strong> – flag if a legend entry for the std area should be printed</p></li>
-<li><p><strong>title</strong> – title displayed above the figure, set to None to suppress the title</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>handle to the resulting figure</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.plotting.curve.render_lo_up_avg">
-<code class="sig-name descname">render_lo_up_avg</code><span class="sig-paren">(</span><em class="sig-param">ax: matplotlib.axes._axes.Axes</em>, <em class="sig-param">x_grid: numpy.ndarray</em>, <em class="sig-param">lower: numpy.ndarray</em>, <em class="sig-param">upper: numpy.ndarray</em>, <em class="sig-param">average: numpy.ndarray</em>, <em class="sig-param">x_label: str</em>, <em class="sig-param">y_label: str</em>, <em class="sig-param">curve_label: str</em>, <em class="sig-param">alpha: float = 0.3</em>, <em class="sig-param">color: chr = None</em>, <em class="sig-param">show_legend: bool = True</em>, <em class="sig-param">area_label: [&lt;class 'str'&gt;</em>, <em class="sig-param">None] = 'min \\&amp; max'</em>, <em class="sig-param">title: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/curve.html#render_lo_up_avg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.curve.render_lo_up_avg" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot the given average, minimum, and maximum values over given x-axis data. The plot is neither shown nor saved.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If you want to have a tight layout, it is best to pass axes of a figure with <cite>tight_layout=True</cite> or
-<cite>constrained_layout=True</cite>.</p>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ax</strong> – axis of the figure to plot on</p></li>
-<li><p><strong>x_grid</strong> – data to plot on the x-axis</p></li>
-<li><p><strong>lower</strong> – minimum values to plot on the y-axis</p></li>
-<li><p><strong>upper</strong> – maximum values to plot on the y-axis</p></li>
-<li><p><strong>average</strong> – average values to plot on the y-axis</p></li>
-<li><p><strong>x_label</strong> – label for the x-axis</p></li>
-<li><p><strong>y_label</strong> – label for the y-axis</p></li>
-<li><p><strong>curve_label</strong> – label for the average curve</p></li>
-<li><p><strong>alpha</strong> – transparency (alpha-value) for the std area</p></li>
-<li><p><strong>color</strong> – color (e.g. ‘k’), None invokes the default behavior</p></li>
-<li><p><strong>show_legend</strong> – flag if the legend entry should be printed, set to True when using multiple subplots</p></li>
-<li><p><strong>area_label</strong> – label for the shaded area, pass None to omit the label</p></li>
-<li><p><strong>title</strong> – title displayed above the figure, set to None to suppress the title</p></li>
-<li><p><strong>tight_layout</strong> – if True, the x and y axes will have no space to the plotted curves</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>handle to the resulting figure</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyrado.plotting.curve.render_mean_std">
-<code class="sig-name descname">render_mean_std</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ax</span><span class="p">:</span> <span class="n">matplotlib.axes._axes.Axes</span></em>, <em class="sig-param"><span class="n">x_grid</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">mean</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">std</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">x_label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">y_label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">curve_label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">num_stds</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.3</span></em>, <em class="sig-param"><span class="n">color</span><span class="p">:</span> <span class="n">chr</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_legend</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">show_legend_std</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">title</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/pyrado/plotting/curve.html#render_mean_std"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.curve.render_mean_std" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot the given mean and the standard deviation over given x-axis data. The plot is neither shown nor saved.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If you want to have a tight layout, it is best to pass axes of a figure with <cite>tight_layout=True</cite> or
-<cite>constrained_layout=True</cite>.</p>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ax</strong> – axis of the figure to plot on</p></li>
-<li><p><strong>x_grid</strong> – data to plot on the x-axis</p></li>
-<li><p><strong>mean</strong> – mean values to plot on the y-axis</p></li>
-<li><p><strong>std</strong> – standard deviation values to plot on the y-axis</p></li>
-<li><p><strong>x_label</strong> – label for the x-axis</p></li>
-<li><p><strong>y_label</strong> – label for the y-axis</p></li>
-<li><p><strong>curve_label</strong> – label for the mean curve</p></li>
-<li><p><strong>num_stds</strong> – number of standard deviations to plot around the mean</p></li>
-<li><p><strong>alpha</strong> – transparency (alpha-value) for the std area</p></li>
-<li><p><strong>color</strong> – color (e.g. ‘k’), None invokes the default behavior</p></li>
-<li><p><strong>show_legend</strong> – flag if the legend entry should be printed, set to True when using multiple subplots</p></li>
-<li><p><strong>show_legend_std</strong> – flag if a legend entry for the std area should be printed</p></li>
-<li><p><strong>title</strong> – title displayed above the figure, set to None to suppress the title</p></li>
-<li><p><strong>tight_layout</strong> – if True, the x and y axes will have no space to the plotted curves</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>handle to the resulting figure</p>
 </dd>
 </dl>
 </dd></dl>
@@ -411,52 +328,8 @@ The plot is neither shown nor saved.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-pyrado.plotting.gaussian_process">
-<span id="gaussian-process"></span><h2>gaussian_process<a class="headerlink" href="#module-pyrado.plotting.gaussian_process" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="pyrado.plotting.gaussian_process.render_singletask_gp">
-<code class="sig-name descname">render_singletask_gp</code><span class="sig-paren">(</span><em class="sig-param">ax: [&lt;class 'matplotlib.axes._axes.Axes'&gt;, &lt;class 'mpl_toolkits.mplot3d.axes3d.Axes3D'&gt;, typing.Sequence[matplotlib.axes._axes.Axes]], data_x: torch.Tensor, data_y: torch.Tensor, idcs_sel: list, data_x_min: torch.Tensor = None, data_x_max: torch.Tensor = None, x_label: str = '', y_label: str = '', z_label: str = '', min_gp_obsnoise: float = None, resolution: int = 201, num_stds: int = 2, alpha: float = 0.3, color: chr = None, curve_label: str = 'mean', heatmap_cmap: matplotlib.colors.Colormap = None, show_legend_posterior: bool = True, show_legend_std: bool = False, show_legend_data: bool = True, legend_data_cmap: matplotlib.colors.Colormap = None, colorbar_label: str = None, title: str = None, render3D: bool = True</em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/pyrado/plotting/gaussian_process.html#render_singletask_gp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.gaussian_process.render_singletask_gp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit the GP posterior to the input data and plot the mean and std as well as the data points.
-There are 3 options: 1D plot (infered by data dimensions), 2D plot</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If you want to have a tight layout, it is best to pass axes of a figure with <cite>tight_layout=True</cite> or
-<cite>constrained_layout=True</cite>.</p>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ax</strong> – axis of the figure to plot on, only in case of a 2-dim heat map plot provide 2 axis</p></li>
-<li><p><strong>data_x</strong> – data to plot on the x-axis</p></li>
-<li><p><strong>data_y</strong> – data to process and plot on the y-axis</p></li>
-<li><p><strong>idcs_sel</strong> – selected indices of the input data</p></li>
-<li><p><strong>data_x_min</strong> – explicit minimum value for the evaluation grid, by default this value is extracted from <cite>data_x</cite></p></li>
-<li><p><strong>data_x_max</strong> – explicit maximum value for the evaluation grid, by default this value is extracted from <cite>data_x</cite></p></li>
-<li><p><strong>x_label</strong> – label for x-axis</p></li>
-<li><p><strong>y_label</strong> – label for y-axis</p></li>
-<li><p><strong>z_label</strong> – label for z-axis (3D plot only)</p></li>
-<li><p><strong>min_gp_obsnoise</strong> – set a minimal noise value (normalized) for the GP, if <cite>None</cite> the GP has no measurement noise</p></li>
-<li><p><strong>resolution</strong> – number of samples for the input (corresponds to x-axis resolution of the plot)</p></li>
-<li><p><strong>num_stds</strong> – number of standard deviations to plot around the mean</p></li>
-<li><p><strong>alpha</strong> – transparency (alpha-value) for the std area</p></li>
-<li><p><strong>color</strong> – color (e.g. ‘k’ for black), <cite>None</cite> invokes the default behavior</p></li>
-<li><p><strong>curve_label</strong> – label for the mean curve (1D plot only)</p></li>
-<li><p><strong>heatmap_cmap</strong> – color map forwarded to <cite>render_heatmap()</cite> (2D plot only), <cite>None</cite> to use Pyrado’s default</p></li>
-<li><p><strong>show_legend_posterior</strong> – flag if the legend entry for the posterior should be printed (affects mean and std)</p></li>
-<li><p><strong>show_legend_std</strong> – flag if a legend entry for the std area should be printed</p></li>
-<li><p><strong>show_legend_data</strong> – flag if a legend entry for the individual data points should be printed</p></li>
-<li><p><strong>legend_data_cmap</strong> – color map for the sampled points, default is ‘binary’</p></li>
-<li><p><strong>colorbar_label</strong> – label for the color bar (2D plot only)</p></li>
-<li><p><strong>title</strong> – title displayed above the figure, set to <cite>None</cite> to suppress the title</p></li>
-<li><p><strong>render3D</strong> – use 3D rendering if possible</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>handle to the resulting figure</p>
-</dd>
-</dl>
-</dd></dl>
-
+<div class="section" id="gaussian-process">
+<h2>gaussian_process<a class="headerlink" href="#gaussian-process" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-pyrado.plotting.heatmap">
 <span id="heatmap"></span><h2>heatmap<a class="headerlink" href="#module-pyrado.plotting.heatmap" title="Permalink to this headline">¶</a></h2>
@@ -552,8 +425,8 @@ Every marked function will be called when the file changes to visualize the upda
 <span id="policy-parameters"></span><h2>policy_parameters<a class="headerlink" href="#module-pyrado.plotting.policy_parameters" title="Permalink to this headline">¶</a></h2>
 <p>Functions to plot Pyrado policies</p>
 <dl class="py function">
-<dt id="pyrado.plotting.policy_parameters.render_policy_params">
-<code class="sig-name descname">render_policy_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">cmap_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'RdBu'</span></em>, <em class="sig-param"><span class="n">ax_hm</span><span class="p">:</span> <span class="n">matplotlib.axes._axes.Axes</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">annotate</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">annotation_valfmt</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'{x:.2f}'</span></em>, <em class="sig-param"><span class="n">colorbar_label</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">xlabel</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ylabel</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/pyrado/plotting/policy_parameters.html#render_policy_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.policy_parameters.render_policy_params" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.plotting.policy_parameters.draw_policy_params">
+<code class="sig-name descname">draw_policy_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">cmap_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'RdBu'</span></em>, <em class="sig-param"><span class="n">ax_hm</span><span class="p">:</span> <span class="n">matplotlib.axes._axes.Axes</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">annotate</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">annotation_valfmt</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'{x:.2f}'</span></em>, <em class="sig-param"><span class="n">colorbar_label</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">xlabel</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ylabel</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/pyrado/plotting/policy_parameters.html#draw_policy_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.policy_parameters.draw_policy_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the weights and biases as images, and a color bar.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -585,8 +458,8 @@ Every marked function will be called when the file changes to visualize the upda
 <span id="rollout-based"></span><h2>rollout_based<a class="headerlink" href="#module-pyrado.plotting.rollout_based" title="Permalink to this headline">¶</a></h2>
 <p>Collection of plotting functions which take Rollouts as inputs and produce line plots</p>
 <dl class="py function">
-<dt id="pyrado.plotting.rollout_based.plot_actions">
-<code class="sig-name descname">plot_actions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ro</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_actions" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.plotting.rollout_based.draw_actions">
+<code class="sig-name descname">draw_actions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ro</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#draw_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.draw_actions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot all action trajectories of the given rollout.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -599,8 +472,8 @@ Every marked function will be called when the file changes to visualize the upda
 </dd></dl>
 
 <dl class="py function">
-<dt id="pyrado.plotting.rollout_based.plot_features">
-<code class="sig-name descname">plot_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ro</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_features" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.plotting.rollout_based.draw_features">
+<code class="sig-name descname">draw_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ro</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#draw_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.draw_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot all features given the policy and the observation trajectories.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -613,8 +486,8 @@ Every marked function will be called when the file changes to visualize the upda
 </dd></dl>
 
 <dl class="py function">
-<dt id="pyrado.plotting.rollout_based.plot_observations">
-<code class="sig-name descname">plot_observations</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ro</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">idcs_sel</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_observations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_observations" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.plotting.rollout_based.draw_observations">
+<code class="sig-name descname">draw_observations</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ro</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">idcs_sel</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#draw_observations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.draw_observations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot all observation trajectories of the given rollout.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -627,8 +500,8 @@ Every marked function will be called when the file changes to visualize the upda
 </dd></dl>
 
 <dl class="py function">
-<dt id="pyrado.plotting.rollout_based.plot_observations_actions_rewards">
-<code class="sig-name descname">plot_observations_actions_rewards</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ro</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_observations_actions_rewards"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_observations_actions_rewards" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.plotting.rollout_based.draw_observations_actions_rewards">
+<code class="sig-name descname">draw_observations_actions_rewards</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ro</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#draw_observations_actions_rewards"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.draw_observations_actions_rewards" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot all observation, action, and reward trajectories of the given rollout.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -638,8 +511,8 @@ Every marked function will be called when the file changes to visualize the upda
 </dd></dl>
 
 <dl class="py function">
-<dt id="pyrado.plotting.rollout_based.plot_potentials">
-<code class="sig-name descname">plot_potentials</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ro</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">layout</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'joint'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_potentials"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_potentials" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.plotting.rollout_based.draw_potentials">
+<code class="sig-name descname">draw_potentials</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ro</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em>, <em class="sig-param"><span class="n">layout</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'joint'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#draw_potentials"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.draw_potentials" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the trajectories specific to an Activation Dynamic Network (ADN) or a Neural Field (NF) policy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -652,8 +525,8 @@ Every marked function will be called when the file changes to visualize the upda
 </dd></dl>
 
 <dl class="py function">
-<dt id="pyrado.plotting.rollout_based.plot_rewards">
-<code class="sig-name descname">plot_rewards</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ro</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_rewards"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_rewards" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.plotting.rollout_based.draw_rewards">
+<code class="sig-name descname">draw_rewards</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ro</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#draw_rewards"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.draw_rewards" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the reward trajectories of the given rollout.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -663,8 +536,8 @@ Every marked function will be called when the file changes to visualize the upda
 </dd></dl>
 
 <dl class="py function">
-<dt id="pyrado.plotting.rollout_based.plot_statistic_across_rollouts">
-<code class="sig-name descname">plot_statistic_across_rollouts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollouts</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">stat_fcn</span><span class="p">:</span> <span class="n">callable</span></em>, <em class="sig-param"><span class="n">stat_fcn_kwargs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">obs_idcs</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">act_idcs</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#plot_statistic_across_rollouts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.plot_statistic_across_rollouts" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.plotting.rollout_based.draw_statistic_across_rollouts">
+<code class="sig-name descname">draw_statistic_across_rollouts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rollouts</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">stat_fcn</span><span class="p">:</span> <span class="n">callable</span></em>, <em class="sig-param"><span class="n">stat_fcn_kwargs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">obs_idcs</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">act_idcs</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/plotting/rollout_based.html#draw_statistic_across_rollouts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.rollout_based.draw_statistic_across_rollouts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot one statistic of interest (e.g. mean) across a list of rollouts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -684,8 +557,8 @@ Every marked function will be called when the file changes to visualize the upda
 <span id="surface"></span><h2>surface<a class="headerlink" href="#module-pyrado.plotting.surface" title="Permalink to this headline">¶</a></h2>
 <p>Collection of plotting functions which take ndarrays as inputs and produce surface plots</p>
 <dl class="py function">
-<dt id="pyrado.plotting.surface.render_surface">
-<code class="sig-name descname">render_surface</code><span class="sig-paren">(</span><em class="sig-param">x: numpy.ndarray, y: numpy.ndarray, z_fcn: [typing.Callable[[numpy.ndarray], numpy.ndarray], &lt;class 'torch.nn.modules.module.Module'&gt;], x_label: str, y_label: str, z_label: str, data_format='numpy', fig: matplotlib.figure.Figure = None, cmap: matplotlib.cm.ScalarMappable = None, title: str = None</em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/pyrado/plotting/surface.html#render_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.surface.render_surface" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.plotting.surface.draw_surface">
+<code class="sig-name descname">draw_surface</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">y</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">z_fcn</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Callable<span class="p">[</span><span class="p">[</span>numpy.ndarray<span class="p">]</span><span class="p">, </span>numpy.ndarray<span class="p">]</span><span class="p">, </span>torch.nn.modules.module.Module<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">x_label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">y_label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">z_label</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">data_format</span><span class="o">=</span><span class="default_value">'numpy'</span></em>, <em class="sig-param"><span class="n">fig</span><span class="p">:</span> <span class="n">matplotlib.figure.Figure</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">title</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_kwargs</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/pyrado/plotting/surface.html#draw_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.surface.draw_surface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Render a 3-dim surface plot by providing a 1-dim array of x and y points and a function to calculate the z values.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -703,8 +576,8 @@ Every marked function will be called when the file changes to visualize the upda
 <li><p><strong>z_label</strong> – label for the z-axis</p></li>
 <li><p><strong>data_format</strong> – data format, ‘numpy’ or ‘torch’</p></li>
 <li><p><strong>fig</strong> – handle to figure, pass None to create a new figure</p></li>
-<li><p><strong>cmap</strong> – color map passed to plot_surface</p></li>
 <li><p><strong>title</strong> – title displayed above the figure, set to None to suppress the title</p></li>
+<li><p><strong>plot_kwargs</strong> – keyword arguments forwarded to pyplot’s <cite>plot_surface()</cite> function</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

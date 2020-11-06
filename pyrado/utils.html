@@ -304,11 +304,11 @@
 
 <dl class="py function">
 <dt id="pyrado.utils.checks.is_iterable">
-<code class="sig-name descname">is_iterable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/checks.html#is_iterable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.checks.is_iterable" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">is_iterable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/checks.html#is_iterable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.checks.is_iterable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if the input is iterable by trying to create an iterator from the input.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>inp</strong> – any object</p>
+<dd class="field-odd"><p><strong>obj</strong> – any object</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><cite>True</cite> if input is iterable, else <cite>False</cite></p>
@@ -318,14 +318,33 @@
 
 <dl class="py function">
 <dt id="pyrado.utils.checks.is_iterator">
-<code class="sig-name descname">is_iterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/checks.html#is_iterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.checks.is_iterator" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">is_iterator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/checks.html#is_iterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.checks.is_iterator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if the input is an iterator by trying to call <cite>next()</cite> on it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>inp</strong> – any object</p>
+<dd class="field-odd"><p><strong>obj</strong> – any object</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><cite>True</cite> if input is an iterator, else <cite>False</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.checks.is_sequence">
+<code class="sig-name descname">is_sequence</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/pyrado/utils/checks.html#is_sequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.checks.is_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the input is a sequence.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Checking if <cite>obj</cite> is an instance of <cite>collections.Sequence</cite> will return the wrong result for objects that
+implement the sequence protocol but do not inherit from <cite>collections.Sequence</cite></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>obj</strong> – any object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><cite>True</cite> if input is iterable, else <cite>False</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -689,21 +708,36 @@ This function is useful when the metrics (e.g., calculated with numpy) should be
 </dd></dl>
 
 <dl class="py function">
-<dt id="pyrado.utils.data_types.merge_lod_same_dtype">
-<code class="sig-name descname">merge_lod_same_dtype</code><span class="sig-paren">(</span><em class="sig-param">lod: Sequence[dict], dtpye=&lt;class 'set'&gt;</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pyrado/utils/data_types.html#merge_lod_same_dtype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.merge_lod_same_dtype" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.utils.data_types.merge_dicts">
+<code class="sig-name descname">merge_dicts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dicts</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>dict<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pyrado/utils/data_types.html#merge_dicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.merge_dicts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Marge a list of dicts in to one dict.
-The resulting dict has only one value type for all entries, but the dicts do not override each other.
-:param lod: list of dicts
-:return: merged dict</p>
+The resulting dict can have different value types, but the dicts later in the list override earlier ones.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dicts</strong> – input dicts</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>merged dict</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pyrado.utils.data_types.merge_lod_var_dtype">
-<code class="sig-name descname">merge_lod_var_dtype</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lod</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>dict<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pyrado/utils/data_types.html#merge_lod_var_dtype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.merge_lod_var_dtype" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.utils.data_types.merge_dicts_same_dtype">
+<code class="sig-name descname">merge_dicts_same_dtype</code><span class="sig-paren">(</span><em class="sig-param">dicts: Sequence[dict], dtype=&lt;class 'set'&gt;</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/pyrado/utils/data_types.html#merge_dicts_same_dtype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_types.merge_dicts_same_dtype" title="Permalink to this definition">¶</a></dt>
 <dd><p>Marge a list of dicts in to one dict.
-The resulting dict can have different value types, but the dicts later in the list override earlier ones.
-:param lod: list of dicts
-:return: merged dict</p>
+The resulting dict has only one value type for all entries, but the dicts do not override each other.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dicts</strong> – input dicts</p></li>
+<li><p><strong>dtype</strong> – data type for constructing the default dict</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>merged dict</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1408,6 +1442,42 @@ registered hooks while the latter silently ignores them.</p>
 </div>
 <div class="section" id="module-pyrado.utils.properties">
 <span id="properties"></span><h2>properties<a class="headerlink" href="#module-pyrado.utils.properties" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.utils.properties.Delegate">
+<em class="property">class </em><code class="sig-name descname">Delegate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">delegate</span></em>, <em class="sig-param"><span class="n">attr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/properties.html#Delegate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.properties.Delegate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Delegate to a class member object.</p>
+<p>Example:
+class Foo:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>def __init__(self, bar):</dt><dd><p>self.bar = bar</p>
+</dd>
+</dl>
+<p>baz = Delegate(“bar”)</p>
+</div></blockquote>
+<p>foo = Foo()
+foo.baz &lt;=&gt; foo.bar.baz</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="pyrado.utils.properties.ReadOnlyDelegate">
+<em class="property">class </em><code class="sig-name descname">ReadOnlyDelegate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">delegate</span></em>, <em class="sig-param"><span class="n">attr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/properties.html#ReadOnlyDelegate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.properties.ReadOnlyDelegate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Delegate to a class member object in a read-only way.</p>
+<p>Example:
+class Foo:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>def __init__(self, bar):</dt><dd><p>self.bar = bar</p>
+</dd>
+</dl>
+<p>baz = Delegate(“bar”)</p>
+</div></blockquote>
+<p>foo = Foo()
+foo.baz &lt;=&gt; foo.bar.baz</p>
+</dd></dl>
+
 <dl class="py class">
 <dt id="pyrado.utils.properties.cached_property">
 <em class="property">class </em><code class="sig-name descname">cached_property</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/properties.html#cached_property"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.properties.cached_property" title="Permalink to this definition">¶</a></dt>

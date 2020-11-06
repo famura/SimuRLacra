@@ -5,10 +5,10 @@ plotting
 
 
 
-categorial
-----------
+categorical
+-----------
 
-.. automodule:: pyrado.plotting.categorial
+.. automodule:: pyrado.plotting.categorical
    :members:
    :undoc-members:
    :show-inheritance:
