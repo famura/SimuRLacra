@@ -37,7 +37,7 @@ from tabulate import tabulate
 
 import pyrado
 from matplotlib import pyplot as plt
-from pyrado.plotting.categorial import render_boxplot, render_violinplot
+from pyrado.plotting.categorical import draw_categorical
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.input_output import print_cbt
 from pyrado.utils.order import get_immediate_subdirs, natural_sort
@@ -189,16 +189,8 @@ if __name__ == '__main__':
     means_str = [f'{k}: {np.mean(v)}' for k, v in zip(algo_names, data)]
     fig.canvas.set_window_title(f'Mean returns on real {env_name.upper()}: ' + ', '.join(means_str))
 
-    if args.mode == 'box':
-        render_boxplot(ax, data, x_labels=algo_names, y_label='return',
-                       vline_level=375,
-                       show_legend=False, show_fliers=False, use_seaborn=True)
-    elif args.mode == 'violin':
-        render_violinplot(ax, data, x_labels=algo_names, y_label='return',
-                          vline_level=375, vline_label='approx.\nsolved', show_legend=False, legend_loc='lower left',
-                          show_inner_quartiles=False, use_seaborn=True)
-    else:
-        raise pyrado.ValueErr(given=args.mode, eq_constraint='The mode must be either box or violin!')
+    draw_categorical(ax, data, args.mode, x_label=algo_names, y_label='return', show_legend=False,
+                     vline_level=375, vline_label='approx.\nsolved', plot_kwargs=None)
 
     # Save and show
     if args.save_figures:

@@ -35,22 +35,23 @@ import torch as to
 import torch.nn as nn
 from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-from typing import Callable
+from typing import Callable, Union
 
 import pyrado
+from pyrado.utils.data_types import merge_dicts
 
 
-def render_surface(
+def draw_surface(
     x: np.ndarray,
     y: np.ndarray,
-    z_fcn: [Callable[[np.ndarray], np.ndarray], nn.Module],
+    z_fcn: Union[Callable[[np.ndarray], np.ndarray], nn.Module],
     x_label: str,
     y_label: str,
     z_label: str,
     data_format='numpy',
     fig: plt.Figure = None,
-    cmap: mpl.cm.ScalarMappable = None,
     title: str = None,
+    plot_kwargs: dict = None
 ) -> plt.Figure:
     """
     Render a 3-dim surface plot by providing a 1-dim array of x and y points and a function to calculate the z values.
@@ -67,12 +68,11 @@ def render_surface(
     :param z_label: label for the z-axis
     :param data_format: data format, 'numpy' or 'torch'
     :param fig: handle to figure, pass None to create a new figure
-    :param cmap: color map passed to plot_surface
     :param title: title displayed above the figure, set to None to suppress the title
+    :param plot_kwargs: keyword arguments forwarded to pyplot's `plot_surface()` function
     :return: handle to figure
     """
-    if cmap is None:
-        cmap = mpl.rcParams['image.cmap']
+    plot_kwargs = merge_dicts([dict(cmap=mpl.rcParams['image.cmap']), plot_kwargs])
 
     if fig is None:
         fig = plt.figure()
@@ -110,7 +110,7 @@ def render_surface(
         raise pyrado.ValueErr(given=data_format, eq_constraint="'numpy' or 'torch'")
 
     # Generate the plot
-    ax.plot_surface(xx, yy, zz, cmap=cmap)
+    ax.plot_surface(xx, yy, zz, **plot_kwargs)
 
     # Add labels
     ax.set_xlabel(x_label)

@@ -165,7 +165,7 @@ class RosenSim(SimEnv, Serializable):
         # Render using pyplot
         if mode.video:
             from matplotlib import pyplot as plt
-            from pyrado.plotting.surface import render_surface
+            from pyrado.plotting.surface import draw_surface
 
             plt.ion()
 
@@ -173,7 +173,7 @@ class RosenSim(SimEnv, Serializable):
                 # Plot Rosenbrock function once if not already plotted
                 x = np.linspace(-2, 2, 20, True)
                 y = np.linspace(-1, 3, 20, True)
-                self._anim['fig'] = render_surface(x, y, rosenbrock, 'x', 'y', 'z')
+                self._anim['fig'] = draw_surface(x, y, rosenbrock, 'x', 'y', 'z')
 
             self._anim['trace_x'].append(self.state[0])
             self._anim['trace_y'].append(self.state[1])

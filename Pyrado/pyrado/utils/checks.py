@@ -28,32 +28,46 @@
 import numpy as np
 
 
-def is_iterable(inp) -> bool:
+def is_iterable(obj) -> bool:
     """
     Check if the input is iterable by trying to create an iterator from the input.
 
-    :param inp: any object
+    :param obj: any object
     :return: `True` if input is iterable, else `False`
     """
     try:
-        _ = iter(inp)
+        _ = iter(obj)
         return True
     except TypeError:
         return False
 
 
-def is_iterator(inp) -> bool:
+def is_iterator(obj) -> bool:
     """
     Check if the input is an iterator by trying to call `next()` on it.
 
-    :param inp: any object
+    :param obj: any object
     :return: `True` if input is an iterator, else `False`
     """
     try:
-        next(inp, None)
+        next(obj, None)
         return True
     except TypeError:
         return False
+
+
+def is_sequence(obj) -> bool:
+    """
+    Check if the input is a sequence.
+
+    .. note::
+        Checking if `obj` is an instance of `collections.Sequence` will return the wrong result for objects that
+        implement the sequence protocol but do not inherit from `collections.Sequence`
+
+    :param obj: any object
+    :return: `True` if input is iterable, else `False`
+    """
+    return hasattr(type(obj), '__len__') and hasattr(type(obj), '__getitem__')
 
 
 def check_all_types_equal(iterable) -> bool:

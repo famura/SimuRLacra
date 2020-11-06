@@ -33,6 +33,7 @@ from warnings import warn
 
 import pyrado
 from pyrado.exploration.normal_noise import DiagNormalNoise, FullNormalNoise
+from pyrado.utils.properties import Delegate
 from pyrado.sampling.hyper_sphere import sample_from_hyper_sphere_surface
 
 
@@ -162,15 +163,6 @@ class NormalParamNoise(StochasticParamExplStrat):
                 use_cuda=False, noise_dim=param_dim, std_init=std_init, std_min=std_min, train_mean=train_mean
             )
 
-    def reset_expl_params(self, *args, **kwargs):
-        return self._noise.reset_expl_params(*args, **kwargs)
-
-    def adapt(self, *args, **kwargs):
-        return self._noise.adapt(*args, **kwargs)
-
-    def get_entropy(self, *args, **kwargs):
-        return self._noise.get_entropy(*args, **kwargs)
-
     @property
     def noise(self) -> [FullNormalNoise, DiagNormalNoise]:
         """ Get the exploation noise. """
@@ -190,22 +182,11 @@ class NormalParamNoise(StochasticParamExplStrat):
         return ps
 
     # Make NormalParamNoise appear as if it would have the following functions / properties
-
-    @property
-    def std(self):
-        return self._noise.std
-
-    @std.setter
-    def std(self, value):
-        self._noise.std = value
-
-    @property
-    def cov(self):
-        return self._noise.cov
-
-    @cov.setter
-    def cov(self, value):
-        self._noise.cov = value
+    reset_expl_params = Delegate('_noise')
+    adapt = Delegate('_noise')
+    std = Delegate('_noise')
+    cov = Delegate('_noise')
+    get_entropy = Delegate('_noise')
 
 
 class HyperSphereParamNoise(StochasticParamExplStrat):

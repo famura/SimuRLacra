@@ -66,7 +66,7 @@ def _get_act_label(rollout: StepSequence, idx: int):
     return label
 
 
-def plot_observations_actions_rewards(ro: StepSequence):
+def draw_observations_actions_rewards(ro: StepSequence):
     """
     Plot all observation, action, and reward trajectories of the given rollout.
 
@@ -98,10 +98,9 @@ def plot_observations_actions_rewards(ro: StepSequence):
         axs[-1].plot(t, ro.rewards, label='reward', c='k')
         axs[-1].legend()
         plt.subplots_adjust(hspace=.5)
-        plt.show()
 
 
-def plot_observations(ro: StepSequence, idcs_sel: Sequence[int] = None):
+def draw_observations(ro: StepSequence, idcs_sel: Sequence[int] = None):
     """
     Plot all observation trajectories of the given rollout.
 
@@ -143,10 +142,9 @@ def plot_observations(ro: StepSequence, idcs_sel: Sequence[int] = None):
                         # We might create more subplots than there are observations
                         pass
         plt.subplots_adjust(hspace=.2)
-        plt.show()
 
 
-def plot_features(ro: StepSequence, policy: Policy):
+def draw_features(ro: StepSequence, policy: Policy):
     """
     Plot all features given the policy and the observation trajectories.
 
@@ -192,10 +190,9 @@ def plot_features(ro: StepSequence, policy: Policy):
                     else:
                         # We might create more subplots than there are observations
                         pass
-        plt.show()
 
 
-def plot_actions(ro: StepSequence, env: Env):
+def draw_actions(ro: StepSequence, env: Env):
     """
     Plot all action trajectories of the given rollout.
 
@@ -233,11 +230,15 @@ def plot_actions(ro: StepSequence, env: Env):
                 axs[i].plot(t, act_clipped[:, i], label=_get_act_label(ro, i) + ' (clipped)', c='k', ls='--')
                 axs[i].legend(bbox_to_anchor=(0, 1.0, 1, -0.1), loc='lower left', mode='expand', ncol=2)
 
-        plt.subplots_adjust(hspace=1.2)
-        plt.show()
+        # Put legends to the right of the plot
+        if dim_act < 8:  # otherwise it gets too cluttered
+            for a in fig.get_axes():
+                a.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
+        plt.subplots_adjust(hspace=.2)
 
 
-def plot_rewards(ro: StepSequence):
+def draw_rewards(ro: StepSequence):
     """
     Plot the reward trajectories of the given rollout.
 
@@ -250,10 +251,9 @@ def plot_rewards(ro: StepSequence):
         fig, ax = plt.subplots(1)
         fig.suptitle('Reward over Time')
         ax.plot(t, ro.rewards, c='k')
-        plt.show()
 
 
-def plot_potentials(ro: StepSequence, layout: str = 'joint'):
+def draw_potentials(ro: StepSequence, layout: str = 'joint'):
     """
     Plot the trajectories specific to an Activation Dynamic Network (ADN) or a Neural Field (NF) policy.
 
@@ -264,15 +264,15 @@ def plot_potentials(ro: StepSequence, layout: str = 'joint'):
         hasattr(ro, 'stimuli_external') and hasattr(ro, 'stimuli_internal')):
         # Use recorded time stamps if possible
         t = ro.env_infos.get('t', np.arange(0, ro.length)) if hasattr(ro, 'env_infos') else np.arange(0, ro.length)
-        num_pot = ro.potentials.shape[1]  # number of neurons with potential
+        dim_pot = ro.potentials.shape[1]  # number of neurons with potential
         num_act = ro.actions.shape[1]
-        colors_pot = plt.get_cmap('tab20')(np.linspace(0, 1, num_pot))
+        colors_pot = plt.get_cmap('tab20')(np.linspace(0, 1, dim_pot))
         colors_act = plt.get_cmap('tab20')(np.linspace(0, 1, num_act))
 
         if layout == 'separate':
             fig = plt.figure(figsize=(16, 10))
-            gs = fig.add_gridspec(nrows=num_pot, ncols=4)
-            for i in range(num_pot):
+            gs = fig.add_gridspec(nrows=dim_pot, ncols=4)
+            for i in range(dim_pot):
                 ax0 = fig.add_subplot(gs[i, 0])
                 ax0.plot(t, ro.stimuli_external[:, i], label=rf'$s_{{ext,{i}}}$', c=colors_pot[i])
                 ax1 = fig.add_subplot(gs[i, 1])
@@ -295,7 +295,7 @@ def plot_potentials(ro: StepSequence, layout: str = 'joint'):
         elif layout == 'joint':
             fig, axs = plt.subplots(nrows=4, ncols=1, figsize=(12, 10), sharex='all')
 
-            for i in range(num_pot):
+            for i in range(dim_pot):
                 axs[0].plot(t, ro.stimuli_external[:, i], label=rf'$s_{{ext,{i}}}$', c=colors_pot[i])
                 axs[1].plot(t, ro.stimuli_internal[:, i], label=rf'$s_{{int,{i}}}$', c=colors_pot[i])
                 axs[2].plot(t, ro.potentials[:, i], label=rf'$p_{{{i}}}$', c=colors_pot[i])
@@ -314,13 +314,13 @@ def plot_potentials(ro: StepSequence, layout: str = 'joint'):
         else:
             raise pyrado.ValueErr(given=layout, eq_constraint='joint or separate')
 
-        if num_pot < 8:  # otherwise it gets too cluttered
+        # Put legends to the right of the plot
+        if dim_pot < 8:  # otherwise it gets too cluttered
             for a in fig.get_axes():
                 a.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-        plt.show()
 
 
-def plot_statistic_across_rollouts(
+def draw_statistic_across_rollouts(
     rollouts: Sequence[StepSequence],
     stat_fcn: callable,
     stat_fcn_kwargs=None,
@@ -368,5 +368,3 @@ def plot_statistic_across_rollouts(
         for i, act_idx in enumerate(act_idcs):
             axs[1].plot(act_stats[:, i], label=_get_act_label(rollouts[0], i), c=f'C{i%10}')
         axs[1].legend()
-
-    plt.show()

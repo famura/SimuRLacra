@@ -37,7 +37,7 @@ from warnings import warn
 
 import pyrado
 from pyrado.logger.experiment import ask_for_experiment
-from pyrado.plotting.surface import render_surface
+from pyrado.plotting.surface import draw_surface
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment
 from pyrado.utils.input_output import ensure_math_mode
@@ -115,10 +115,10 @@ if __name__ == '__main__':
     # Wrap the function to be able to only provide the mesh gird values as inputs
     w_value_fcn = wrap_value_fcn(value_fcn, fixed_state, args.idcs)
 
-    fig = render_surface(to.from_numpy(x), to.from_numpy(y), w_value_fcn,
-                         f'{ensure_math_mode(state_labels[0])}', f'{ensure_math_mode(state_labels[1])}',
-                         f'$V(${ensure_math_mode(state_labels[0])},{ensure_math_mode(state_labels[1])}$)$',
-                         data_format='torch')
+    fig = draw_surface(to.from_numpy(x), to.from_numpy(y), w_value_fcn,
+                       f'{ensure_math_mode(state_labels[0])}', f'{ensure_math_mode(state_labels[1])}',
+                       f'$V(${ensure_math_mode(state_labels[0])},{ensure_math_mode(state_labels[1])}$)$',
+                       data_format='torch')
 
     if args.save_figures:
         for fmt in ['pdf', 'pgf']:

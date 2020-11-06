@@ -35,6 +35,7 @@ from typing import Sequence, NamedTuple, Union
 import pyrado
 from pyrado.spaces.base import Space
 from pyrado.spaces.empty import EmptySpace
+from pyrado.utils.checks import is_sequence
 
 
 class EnvSpec(NamedTuple):
@@ -129,30 +130,45 @@ class LinDSSpec(DSSpec):
         super().__init__(function=function, goal=goal, errorDynamics=errorDynamics)
 
 
-def merge_lod_var_dtype(lod: Sequence[dict]) -> dict:
+def merge_dicts(dicts: Sequence[dict]) -> dict:
     """
     Marge a list of dicts in to one dict.
     The resulting dict can have different value types, but the dicts later in the list override earlier ones.
-    :param lod: list of dicts
+
+    :param dicts: input dicts
     :return: merged dict
     """
+    if not is_sequence(dicts):
+        raise pyrado.TypeErr(given=dicts, expected_type=Sequence)
+
     merged = {}
-    for d in lod:
-        merged.update(d)
+    for d in dicts:
+        if d is not None:  # skip None entries to use this with kwargs
+            if not isinstance(d, dict):
+                raise pyrado.TypeErr(given=d, expected_type=dict)
+            merged.update(d)
     return merged
 
 
-def merge_lod_same_dtype(lod: Sequence[dict], dtpye=set) -> dict:
+def merge_dicts_same_dtype(dicts: Sequence[dict], dtype=set) -> dict:
     """
     Marge a list of dicts in to one dict.
     The resulting dict has only one value type for all entries, but the dicts do not override each other.
-    :param lod: list of dicts
+
+    :param dicts: input dicts
+    :param dtype: data type for constructing the default dict
     :return: merged dict
     """
-    merged = collections.defaultdict(dtpye)
-    for d in lod:
-        for k, v in d.items():
-            merged[k].add(v)
+    if not is_sequence(dicts):
+        raise pyrado.TypeErr(given=dicts, expected_type=Sequence)
+
+    merged = collections.defaultdict(dtype)
+    for d in dicts:
+        if d is not None:  # skip None entries to use this with kwargs
+            if not isinstance(d, dict):
+                raise pyrado.TypeErr(given=d, expected_type=dict)
+            for k, v in d.items():
+                merged[k].add(v)
     return merged
 
 

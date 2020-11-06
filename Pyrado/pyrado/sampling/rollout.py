@@ -30,6 +30,7 @@ import numpy as np
 import time
 import torch as to
 import torch.nn as nn
+from matplotlib import pyplot as plt
 from typing import Callable
 from tabulate import tabulate
 
@@ -39,10 +40,10 @@ from pyrado.environments.base import Env
 from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.environment_wrappers.utils import inner_env, typed_env
-from pyrado.plotting.curve import plot_dts
-from pyrado.plotting.policy_parameters import render_policy_params
-from pyrado.plotting.rollout_based import plot_observations_actions_rewards, plot_actions, plot_observations, \
-    plot_rewards, plot_potentials, plot_features
+from pyrado.plotting.curve import draw_dts
+from pyrado.plotting.policy_parameters import draw_policy_params
+from pyrado.plotting.rollout_based import draw_observations_actions_rewards, draw_actions, draw_observations, \
+    draw_rewards, draw_potentials, draw_features
 from pyrado.policies.base import Policy, TwoHeadedPolicy
 from pyrado.policies.recurrent.potential_based import PotentialBasedPolicy
 from pyrado.sampling.step_sequence import StepSequence
@@ -374,42 +375,49 @@ def after_rollout_query(env: Env, policy: Policy, rollout: StepSequence) -> tupl
         return after_rollout_query(env, policy, rollout)
 
     elif ans == 'p':
-        plot_observations_actions_rewards(rollout)
+        draw_observations_actions_rewards(rollout)
+        plt.plot()
         return after_rollout_query(env, policy, rollout)
 
     elif ans == 'pa':
-        plot_actions(rollout, env)
+        draw_actions(rollout, env)
+        plt.show()
         return after_rollout_query(env, policy, rollout)
 
     elif ans == 'po':
-        plot_observations(rollout)
+        draw_observations(rollout)
+        plt.show()
         return after_rollout_query(env, policy, rollout)
 
     elif 'po' in ans and any(char.isdigit() for char in ans):
         idcs = [int(s) for s in ans.split() if s.isdigit()]
-        plot_observations(rollout, idcs_sel=idcs)
+        draw_observations(rollout, idcs_sel=idcs)
+        plt.show()
         return after_rollout_query(env, policy, rollout)
 
     elif ans == 'pf':
-        plot_features(rollout, policy)
+        draw_features(rollout, policy)
+        plt.show()
         return after_rollout_query(env, policy, rollout)
 
     elif ans == 'pp':
-        from matplotlib import pyplot as plt
-        render_policy_params(policy, env.spec, annotate=False)
+        draw_policy_params(policy, env.spec, annotate=False)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 
     elif ans == 'pr':
-        plot_rewards(rollout)
+        draw_rewards(rollout)
+        plt.show()
         return after_rollout_query(env, policy, rollout)
 
     elif ans == 'pdt':
-        plot_dts(rollout.dts_policy, rollout.dts_step, rollout.dts_remainder)
+        draw_dts(rollout.dts_policy, rollout.dts_step, rollout.dts_remainder)
+        plt.show()
         return after_rollout_query(env, policy, rollout),
 
     elif ans == 'ppot':
-        plot_potentials(rollout)
+        draw_potentials(rollout)
+        plt.show()
         return after_rollout_query(env, policy, rollout)
 
     elif ans == 's':

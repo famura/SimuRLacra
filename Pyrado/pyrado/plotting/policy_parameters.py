@@ -93,16 +93,16 @@ def _annotate_img(img,
             texts.append(text)
 
 
-def render_policy_params(policy: Policy,
-                         env_spec: EnvSpec,
-                         cmap_name: str = 'RdBu',
-                         ax_hm: plt.Axes = None,
-                         annotate: bool = True,
-                         annotation_valfmt: str = '{x:.2f}',
-                         colorbar_label: str = '',
-                         xlabel: str = None,
-                         ylabel: str = None,
-                         ) -> plt.Figure:
+def draw_policy_params(policy: Policy,
+                       env_spec: EnvSpec,
+                       cmap_name: str = 'RdBu',
+                       ax_hm: plt.Axes = None,
+                       annotate: bool = True,
+                       annotation_valfmt: str = '{x:.2f}',
+                       colorbar_label: str = '',
+                       xlabel: str = None,
+                       ylabel: str = None,
+                       ) -> plt.Figure:
     """
     Plot the weights and biases as images, and a color bar.
 

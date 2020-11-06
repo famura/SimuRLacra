@@ -33,7 +33,7 @@ import math
 
 import rcsenv
 from pyrado.environments.rcspysim.planar_insert import PlanarInsertIKActivationSim, PlanarInsertTASim
-from pyrado.plotting.rollout_based import plot_potentials
+from pyrado.plotting.rollout_based import draw_potentials
 from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.data_types import RenderMode
@@ -120,4 +120,4 @@ if __name__ == '__main__':
         ro = ik_activation_variant(**common_hparam)
     elif setup_type == 'ds_activation':
         ro = ds_activation_variant(**common_hparam)
-        plot_potentials(ro)
+        draw_potentials(ro)

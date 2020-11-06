@@ -33,7 +33,7 @@ import os.path as osp
 from matplotlib import pyplot as plt
 
 from pyrado.logger.experiment import ask_for_experiment
-from pyrado.plotting.policy_parameters import render_policy_params
+from pyrado.plotting.policy_parameters import draw_policy_params
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment
 
@@ -54,7 +54,7 @@ if __name__ == '__main__':
         print(f'{name}\n{param.detach().cpu().numpy()}')
 
     # Visualize the parameters
-    fig = render_policy_params(policy, policy.env_spec, annotate=args.verbose)
+    fig = draw_policy_params(policy, policy.env_spec, annotate=args.verbose)
 
     if args.save_figures:
         for fmt in ['pdf', 'pgf', 'png']:

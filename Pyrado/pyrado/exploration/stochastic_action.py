@@ -38,6 +38,7 @@ from pyrado.exploration.normal_noise import DiagNormalNoise
 from pyrado.exploration.uniform_noise import UniformNoise
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.utils.math import clamp
+from pyrado.utils.properties import Delegate
 from pyrado.utils.tensor import atleast_2D
 
 
@@ -149,28 +150,6 @@ class NormalActNoiseExplStrat(StochasticActionExplStrat):
             learnable=learnable
         )
 
-    def reset_expl_params(self, *args, **kwargs):
-        return self._noise.reset_expl_params(*args, **kwargs)
-
-    def get_entropy(self, *args, **kwargs):
-        return self._noise.get_entropy(*args, **kwargs)
-
-    @property
-    def std(self):
-        return self._noise.std
-
-    @std.setter
-    def std(self, value):
-        self._noise.std = value
-
-    @property
-    def mean(self):
-        return self._noise.mean
-
-    @mean.setter
-    def mean(self, value):
-        self._noise.mean = value
-
     @property
     def noise(self) -> DiagNormalNoise:
         """ Get the exploration noise. """
@@ -178,6 +157,12 @@ class NormalActNoiseExplStrat(StochasticActionExplStrat):
 
     def action_dist_at(self, policy_output: to.Tensor) -> Distribution:
         return self._noise(policy_output)
+
+    # Make NormalActNoiseExplStrat appear as if it would have the following functions / properties
+    reset_expl_params = Delegate('_noise')
+    std = Delegate('_noise')
+    mean = Delegate('_noise')
+    get_entropy = Delegate('_noise')
 
 
 class UniformActNoiseExplStrat(StochasticActionExplStrat):
@@ -218,20 +203,9 @@ class UniformActNoiseExplStrat(StochasticActionExplStrat):
         return self._noise(policy_output)
 
     # Make NormalActNoiseExplStrat appear as if it would have the following functions / properties
-
-    def reset_expl_params(self, *args, **kwargs):
-        return self._noise.reset_expl_params(*args, **kwargs)
-
-    def get_entropy(self, *args, **kwargs):
-        return self._noise.get_entropy(*args, **kwargs)
-
-    @property
-    def halfspan(self):
-        return self._noise.halfspan
-
-    @halfspan.setter
-    def halfspan(self, val):
-        self._noise.halfspan = val
+    reset_expl_params = Delegate('_noise')
+    halfspan = Delegate('_noise')
+    get_entropy = Delegate('_noise')
 
 
 class SACExplStrat(StochasticActionExplStrat):
@@ -288,27 +262,10 @@ class SACExplStrat(StochasticActionExplStrat):
         return self._noise(policy_out_1)
 
     # Make NormalActNoiseExplStrat appear as if it would have the following functions / properties
-    def reset_expl_params(self, *args, **kwargs):
-        return self._noise.reset_expl_params(*args, **kwargs)
-
-    def get_entropy(self, *args, **kwargs):
-        return self._noise.get_entropy(*args, **kwargs)
-
-    @property
-    def std(self):
-        return self._noise.std
-
-    @std.setter
-    def std(self, value):
-        self._noise.std = value
-
-    @property
-    def mean(self):
-        return self._noise.mean
-
-    @mean.setter
-    def mean(self, value):
-        self._noise.mean = value
+    reset_expl_params = Delegate('_noise')
+    std = Delegate('_noise')
+    mean = Delegate('_noise')
+    get_entropy = Delegate('_noise')
 
     def forward(self, obs: to.Tensor, *extra) -> [(to.Tensor, to.Tensor), (to.Tensor, to.Tensor, to.Tensor)]:
         # Get actions from policy (which for this class always have a two-headed architecture)
@@ -408,7 +365,7 @@ class EpsGreedyExplStrat(StochasticActionExplStrat):
         self.distr_eps = Bernoulli(probs=self.eps.data)
 
     def schedule_eps(self, steps: int):
-        self.eps.data = self._eps_final + (self._eps_init - self._eps_final)*self.eps_gamma ** steps
+        self.eps.data = self._eps_final + (self._eps_init - self._eps_final)*self.eps_gamma**steps
         self.distr_eps = Bernoulli(probs=self.eps.data)
 
     def forward(self, obs: to.Tensor, *extra) -> (to.Tensor, tuple):

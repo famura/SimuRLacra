@@ -138,7 +138,7 @@ def test_rmse(type, dim):
     ids=['disjoint', 'overlapping']
 )
 def test_merge_lod_var_dtype(x, y):
-    z = merge_lod_var_dtype([x, y])
+    z = merge_dicts([x, y])
     assert z['a'] == 1
     if z['b'] == 2:  # disjoint
         assert z['c'] == 1
