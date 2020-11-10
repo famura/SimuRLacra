@@ -8,7 +8,7 @@ Lets first create the basic simulator without any wrappers
     import numpy as np
     from prettyprinter import pprint
 
-    from pyrado.domain_randomization.default_randomizers import get_default_randomizer
+    from pyrado.domain_randomization.default_randomizers import create_default_randomizer
     from pyrado.environment_wrappers.action_delay import ActDelayWrapper
     from pyrado.environment_wrappers.action_noise import GaussianActNoiseWrapper
     from pyrado.environment_wrappers.action_normalization import ActNormWrapper
@@ -17,7 +17,7 @@ Lets first create the basic simulator without any wrappers
     from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
     from pyrado.environment_wrappers.utils import inner_env, remove_env, typed_env
     from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
-    from pyrado.policies.dummy import DummyPolicy
+    from pyrado.policies.special.dummy import DummyPolicy
     from pyrado.sampling.rollout import rollout
     from pyrado.utils.data_types import RenderMode
 
@@ -37,7 +37,7 @@ adapts the randomizer, i.e. changes the distribution according to which the doma
 
 .. code-block:: python
 
-    randomizer = get_default_randomizer(env)
+    randomizer = create_default_randomizer(env)
     print(randomizer)
     env_r = DomainRandWrapperBuffer(env, randomizer)
     env_r.fill_buffer(num_domains=3)

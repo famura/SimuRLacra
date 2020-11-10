@@ -94,23 +94,39 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">How to wrap an environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="3_algorithm.html">How to create an algorithm</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Package Overview:</span></p>
+<p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../algorithms.html">algorithms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../domain_randomization.html">domain_randomization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.episodic.html">episodic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.step_based.html">step_based</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.meta.html">meta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exploration.html">exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sampling.html">sampling</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Environments:</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../environments.html">environments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../environments.pysim.html">pysim</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../environments.mujoco.html">mujoco</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../environments.rcspysim.html">rcspysim</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../environments.quanser.html">quanser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../environments.barrett_wam.html">barrett_wam</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../environment_wrappers.html">environment_wrappers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../exploration.html">exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../logger.html">logger</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../plotting.html">plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../policies.html">policies</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../sampling.html">sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../domain_randomization.html">domain_randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../spaces.html">spaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tasks.html">tasks</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Policies:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../policies.html">policies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../policies.feed_forward.html">feed_forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../policies.recurrent.html">recurrent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../policies.special.html">special</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Utilities:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../logger.html">logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plotting.html">plotting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../utils.html">utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tests.html">tests</a></li>
 </ul>
@@ -184,7 +200,7 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">prettyprinter</span> <span class="kn">import</span> <span class="n">pprint</span>
 
-<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="n">get_default_randomizer</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="n">create_default_randomizer</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_delay</span> <span class="kn">import</span> <span class="n">ActDelayWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_noise</span> <span class="kn">import</span> <span class="n">GaussianActNoiseWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_normalization</span> <span class="kn">import</span> <span class="n">ActNormWrapper</span>
@@ -193,7 +209,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.observation_partial</span> <span class="kn">import</span> <span class="n">ObsPartialWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">inner_env</span><span class="p">,</span> <span class="n">remove_env</span><span class="p">,</span> <span class="n">typed_env</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_cartpole</span> <span class="kn">import</span> <span class="n">QCartPoleSwingUpSim</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.dummy</span> <span class="kn">import</span> <span class="n">DummyPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.special.dummy</span> <span class="kn">import</span> <span class="n">DummyPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.rollout</span> <span class="kn">import</span> <span class="n">rollout</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">RenderMode</span>
 
@@ -210,7 +226,7 @@ There are different types of randomizers. The <cite>DomainRandWrapperLive</cite>
 reset of the environment. The <cite>DomainRandWrapperBuffer</cite> maintains a buffer of domain parameter set which we have to
 fill explicitly. This way, it cycles through a set of domains. There is also the <cite>MetaDomainRandWrapper</cite> which
 adapts the randomizer, i.e. changes the distribution according to which the domain parameters are randomized.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">randomizer</span> <span class="o">=</span> <span class="n">get_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">randomizer</span> <span class="o">=</span> <span class="n">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">randomizer</span><span class="p">)</span>
 <span class="n">env_r</span> <span class="o">=</span> <span class="n">DomainRandWrapperBuffer</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">randomizer</span><span class="p">)</span>
 <span class="n">env_r</span><span class="o">.</span><span class="n">fill_buffer</span><span class="p">(</span><span class="n">num_domains</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>

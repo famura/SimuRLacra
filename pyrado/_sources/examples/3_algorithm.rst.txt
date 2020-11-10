@@ -6,8 +6,6 @@ We differentiate between step-based and episodic algorithms.
 In general, the first type inherits from `Algorithm` and randomizes the actions, whereas the second type randomizes the
 policy parameters and inherits from `ParameterExploring` (which also inherits from `Algorithm`).
 
-**Please see `algorithms/ppo.py` (i.e. also `algorithms/actor_critic.py`) or `algorithms/sac.py` examples if you want to implement a step-based RL algorithm, or `algorithms/pepg.py` and `algorithms/nes.py` if you want to implement an episodic RL algorithm.**
-
 Start by creating a new class which inherits from `Algorithm` or `ParameterExploring`.
 
 .. code-block:: python
