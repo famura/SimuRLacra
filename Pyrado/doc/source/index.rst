@@ -22,25 +22,51 @@ Check out the provided examples or run some of the existing scripts in `Pyrado/s
 
 
 .. toctree::
-   :caption: Package Overview:
+   :caption: Algorithms:
    :maxdepth: 1
 
    algorithms
-   domain_randomization
+   algorithms.episodic
+   algorithms.step_based
+   algorithms.meta
+   exploration
+   sampling
+
+
+.. toctree::
+   :caption: Environments:
+   :maxdepth: 1
+
    environments
    environments.pysim
    environments.mujoco
    environments.rcspysim
    environments.quanser
+   environments.barrett_wam
    environment_wrappers
-   exploration
-   logger
-   plotting
-   policies
-   sampling
+   domain_randomization
    spaces
    tasks
+
+
+.. toctree::
+   :caption: Policies:
+   :maxdepth: 1
+
+   policies
+   policies.feed_forward
+   policies.recurrent
+   policies.special
+
+
+.. toctree::
+   :caption: Utilities:
+   :maxdepth: 1
+
+   logger
+   plotting
    utils
+
 
    examples
 
