@@ -271,7 +271,7 @@ class DQL(Algorithm):
         self.logger.add_value('expl strat eps', self.expl_strat.eps, 4)
         self.logger.add_value('avg policy grad norm', to.mean(policy_grad_norm), 4)
         if self._lr_scheduler is not None:
-            self.logger.add_value('learning rate', self._lr_scheduler.get_lr(), 6)
+            self.logger.add_value('avg learning rate', np.mean(self._lr_scheduler.get_lr()), 6)
 
     def reset(self, seed: int = None):
         # Reset the exploration strategy, internal variables and the random seeds

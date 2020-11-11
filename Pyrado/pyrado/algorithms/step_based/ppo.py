@@ -221,7 +221,7 @@ class PPO(ActorCritic):
         self.logger.add_value('expl strat entropy', self._expl_strat.noise.get_entropy(), 4)
         self.logger.add_value('avg policy grad norm', np.mean(policy_grad_norm), 4)
         if self._lr_scheduler is not None:
-            self.logger.add_value('learning rate', self._lr_scheduler.get_lr(), 6)
+            self.logger.add_value('avg learning rate', np.mean(self._lr_scheduler.get_lr()), 6)
 
 
 class PPO2(ActorCritic):
@@ -460,4 +460,4 @@ class PPO2(ActorCritic):
         self.logger.add_value('avg policy grad norm', np.mean(policy_grad_norm), 4)
         self.logger.add_value('avg V-fcn grad norm', np.mean(value_fcn_grad_norm), 4)
         if self._lr_scheduler is not None:
-            self.logger.add_value('learning rate', self._lr_scheduler.get_lr(), 6)
+            self.logger.add_value('avg learning rate', np.mean(self._lr_scheduler.get_lr()), 6)

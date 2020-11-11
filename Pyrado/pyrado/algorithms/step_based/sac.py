@@ -400,7 +400,8 @@ class SAC(Algorithm):
         self.logger.add_value('avg expl strat std', to.mean(expl_strat_stds))
         self.logger.add_value('ent_coeff', self.ent_coeff)
         if self._lr_scheduler_policy is not None:
-            self.logger.add_value('learning rate', self._lr_scheduler_policy.get_lr(), 6)
+            self.logger.add_value('avg learning rate policy', to.mean(self._lr_scheduler_policy.get_lr()), 6)
+            self.logger.add_value('avg learning rate Q-fcns', to.mean(self._lr_scheduler_q_fcns.get_lr()), 6)
 
     def reset(self, seed: int = None):
         # Reset the exploration strategy, internal variables and the random seeds

@@ -220,4 +220,4 @@ class A2C(ActorCritic):
         self.logger.add_value('expl strat entropy', to.mean(ent), 4)
         self.logger.add_value('avg policy grad norm', np.mean(policy_grad_norm), 4)
         if self._lr_scheduler is not None:
-            self.logger.add_value('learning rate', self._lr_scheduler.get_lr(), 6)
+            self.logger.add_value('avg learning rate', np.mean(self._lr_scheduler.get_lr()), 6)

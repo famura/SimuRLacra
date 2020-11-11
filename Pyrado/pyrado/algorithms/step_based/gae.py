@@ -270,7 +270,7 @@ class GAE(LoggerAware, nn.Module):
         self.logger.add_value('V-fcn loss impr', value_fcn_loss_impr, 4)
         self.logger.add_value('avg V-fcn grad norm', np.mean(value_fcn_grad_norm), 4)
         if self._lr_scheduler is not None:
-            self.logger.add_value('V-fcn learning rate', self._lr_scheduler.get_lr(), 6)
+            self.logger.add_value('learning rate V-fcn', self._lr_scheduler.get_lr(), 6)
 
         return adv
 
