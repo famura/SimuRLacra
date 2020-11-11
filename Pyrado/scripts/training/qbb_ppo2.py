@@ -68,35 +68,35 @@ if __name__ == '__main__':
     policy = FNNPolicy(spec=env.spec, **policy_hparam)
 
     # Critic
-    value_fcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)
+    value_fcn_hparam = dict(hidden_sizes=[64], hidden_nonlin=to.tanh)
     value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
     critic_hparam = dict(
-        gamma=0.999,
-        lamda=0.98,
-        num_epoch=3,
-        batch_size=100,
-        lr=5e-4,
+        gamma=0.9852477569514027,
+        lamda=0.9729014682749334,
+        num_epoch=5,
+        batch_size=500,
+        lr=2.7189235593899743e-3,
         max_grad_norm=5.,
-        lr_scheduler=lr_scheduler.StepLR,
-        lr_scheduler_hparam=dict(step_size=10, gamma=0.9)
+        lr_scheduler=lr_scheduler.ExponentialLR,
+        lr_scheduler_hparam=dict(gamma=0.999)
     )
     critic = GAE(value_fcn, **critic_hparam)
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=1000,
+        max_iter=250,
         min_steps=30*env.max_steps,
-        num_workers=4,
-        num_epoch=3,
-        value_fcn_coeff=0.7,
-        entropy_coeff=1e-4,
-        eps_clip=0.1,
-        batch_size=100,
-        std_init=0.8,
-        lr=2e-4,
-        max_grad_norm=5.,
-        lr_scheduler=lr_scheduler.StepLR,
-        lr_scheduler_hparam=dict(step_size=10, gamma=0.9)
+        num_epoch=5,
+        value_fcn_coeff=1.190454086194093,
+        entropy_coeff=4.944111681414721e-05,
+        eps_clip=0.09657039413812532,
+        batch_size=500,
+        std_init=0.9123418449327286,
+        lr=8.775532791215318e-4,
+        max_grad_norm=None,
+        lr_scheduler=lr_scheduler.ExponentialLR,
+        lr_scheduler_hparam=dict(gamma=0.999),
+        num_workers=8,
     )
     algo = PPO2(ex_dir, env, policy, critic, **algo_hparam)
 
