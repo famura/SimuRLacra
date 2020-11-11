@@ -260,7 +260,6 @@ class ADR(Algorithm):
         ret_avg = np.mean(rets)
         ret_med = np.median(rets)
         ret_std = np.std(rets)
-        self.logger.add_value('num rollouts', len(rand_trajs))
         self.logger.add_value('avg rollout len', np.mean([ro.length for ro in rand_trajs]))
         self.logger.add_value('avg return', ret_avg)
         self.logger.add_value('median return', ret_med)

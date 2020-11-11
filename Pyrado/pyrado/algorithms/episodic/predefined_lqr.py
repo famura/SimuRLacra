@@ -167,6 +167,7 @@ class LQR(Algorithm):
         self.logger.add_value('avg return', np.mean(rets), 4)
         self.logger.add_value('std return', np.std(rets), 4)
         self.logger.add_value('avg rollout len', np.mean([ro.length for ro in ros]), 4)
+        self.logger.add_value('num total samples', self._cnt_samples)
         self.logger.add_value('min mag policy param',
                               self._policy.param_values[to.argmin(abs(self._policy.param_values))])
         self.logger.add_value('max mag policy param',

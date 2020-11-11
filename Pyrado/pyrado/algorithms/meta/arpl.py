@@ -134,11 +134,11 @@ class ARPL(Algorithm):
         ret_avg = np.mean(rets)
         ret_med = np.median(rets)
         ret_std = np.std(rets)
-        self.logger.add_value('num rollouts', len(rollouts))
-        self.logger.add_value('avg rollout len', np.mean([ro.length for ro in rollouts]))
         self.logger.add_value('avg return', ret_avg)
         self.logger.add_value('median return', ret_med)
         self.logger.add_value('std return', ret_std)
+        self.logger.add_value('num total samples', self._cnt_samples)
+        self.logger.add_value('avg rollout len', np.mean([ro.length for ro in rollouts]))
 
         # Sub-routine
         self._subrtn.update(rollouts)

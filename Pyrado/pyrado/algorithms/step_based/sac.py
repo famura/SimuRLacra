@@ -269,9 +269,8 @@ class SAC(Algorithm):
         self.logger.add_value('avg return', ret_avg, 4)
         self.logger.add_value('min return', ret_min, 4)
         self.logger.add_value('std return', ret_std, 4)
-        self.logger.add_value('avg rollout length', np.mean([ro.length for ro in ros]), 4)
-        self.logger.add_value('num rollouts', len(ros))
         self.logger.add_value('avg memory reward', self._memory.avg_reward(), 4)
+        self.logger.add_value('avg rollout length', np.mean([ro.length for ro in ros]), 4)
 
         # Use data in the memory to update the policy and the Q-functions
         self.update()

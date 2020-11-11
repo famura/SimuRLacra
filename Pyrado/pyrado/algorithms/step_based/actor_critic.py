@@ -109,8 +109,8 @@ class ActorCritic(Algorithm, ABC):
         self.logger.add_value('avg return', np.mean(rets), 4)
         self.logger.add_value('min return', np.min(rets), 4)
         self.logger.add_value('std return', np.std(rets), 4)
-        self.logger.add_value('num rollouts', len(ros))
         self.logger.add_value('avg rollout len', np.mean(all_lengths), 4)
+        self.logger.add_value('num total samples', self._cnt_samples)
 
         # Update the advantage estimator and the policy
         self.update(ros)

@@ -112,7 +112,6 @@ class CVaRSampler(SamplerBase, LoggerAware):
         ret_avg = np.mean(rets)
         ret_med = np.median(rets)
         ret_std = np.std(rets)
-        self.logger.add_value('full num rollouts', len(fullset))
         self.logger.add_value('full avg rollout len', np.mean([ro.length for ro in fullset]))
         self.logger.add_value('full avg return', ret_avg)
         self.logger.add_value('full median return', ret_med)

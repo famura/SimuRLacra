@@ -202,9 +202,9 @@ class DQL(Algorithm):
         self.logger.add_value('avg return', np.round(ret_avg, 4))
         self.logger.add_value('min return', np.round(ret_min, 4))
         self.logger.add_value('std return', np.round(ret_std, 4))
-        self.logger.add_value('avg rollout length', np.round(np.mean([ro.length for ro in ros]), 2))
-        self.logger.add_value('num rollouts', len(ros))
         self.logger.add_value('avg memory reward', np.round(self._memory.avg_reward(), 4))
+        self.logger.add_value('avg rollout length', np.round(np.mean([ro.length for ro in ros]), 2))
+        self.logger.add_value('num total samples', self._cnt_samples)
 
         # Use data in the memory to update the policy and the q_targ Q-function
         self.update()
