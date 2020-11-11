@@ -33,7 +33,6 @@ import functools
 import optuna
 import os.path as osp
 import torch as to
-from optuna.pruners import MedianPruner
 
 import pyrado
 from pyrado.algorithms.step_based.gae import GAE
@@ -50,13 +49,14 @@ from pyrado.logger.step import create_csv_step_logger
 from pyrado.policies.special.domain_distribution import DomainDistrParamPolicy
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.policies.feed_forward.fnn import FNNPolicy
-from pyrado.sampling.parallel_sampler import ParallelSampler
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
+from pyrado.utils.input_output import print_cbt
 
 
-def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
+def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     """
     Objective function for the Optuna `Study` to maximize.
     
@@ -64,7 +64,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
         Optuna expects only the `trial` argument, thus we use `functools.partial` to sneak in custom arguments.
 
     :param trial: Optuna Trial object for hyper-parameter optimization
-    :param ex_dir: experiment's directory, i.e. the parent directory for all trials in this study
+    :param study_dir: the parent directory for all trials in this study
     :param seed: seed value for the random number generators, pass `None` for no seeding
     :return: objective function value
     """
@@ -124,7 +124,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
         max_grad_norm=1.,
         num_workers=1,
     )
-    subrtn_policy = PPO(ex_dir, env_sim, behav_policy, critic, **subrtn_policy_hparam)
+    subrtn_policy = PPO(study_dir, env_sim, behav_policy, critic, **subrtn_policy_hparam)
 
     # Subroutine for system identification
     prior_std_denom = trial.suggest_uniform('prior_std_denom', 5, 20)
@@ -151,8 +151,8 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
         extra_expl_decay_iter=trial.suggest_int('extra_expl_decay_iter', 0, 10),
         num_workers=1,
     )
-    csv_logger = create_csv_step_logger(osp.join(ex_dir, f'trial_{trial.number}'))
-    subsubrtn_distr = CEM(ex_dir, env_sim, ddp_policy, **subsubrtn_distr_hparam, logger=csv_logger)
+    csv_logger = create_csv_step_logger(osp.join(study_dir, f'trial_{trial.number}'))
+    subsubrtn_distr = CEM(study_dir, env_sim, ddp_policy, **subsubrtn_distr_hparam, logger=csv_logger)
     obs_vel_weight = trial.suggest_loguniform('obs_vel_weight', 1, 100)
     subrtn_distr_hparam = dict(
         metric=None,
@@ -170,15 +170,15 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
         thold_succ_subrtn=trial.suggest_categorical('algo_thold_succ_subrtn', [50]),
         subrtn_snapshot_mode='latest',
     )
-    algo = SimOpt(ex_dir, env_sim, env_real, subrtn_policy, subrtn_distr, **algo_hparam, logger=csv_logger)
+    algo = SimOpt(study_dir, env_sim, env_real, subrtn_policy, subrtn_distr, **algo_hparam, logger=csv_logger)
 
     # Jeeeha
     algo.train(seed=args.seed)
 
     # Evaluate
     min_rollouts = 1000
-    sampler = ParallelSampler(env_real, algo.policy, num_workers=1,
-                              min_rollouts=min_rollouts)  # parallelize via optuna n_jobs
+    sampler = ParallelRolloutSampler(env_real, algo.policy, num_workers=1,
+                                     min_rollouts=min_rollouts)  # parallelize via optuna n_jobs
     ros = sampler.sample()
     mean_ret = sum([r.undiscounted_return() for r in ros])/min_rollouts
 
@@ -189,20 +189,27 @@ if __name__ == '__main__':
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    # Set up experiment
-    ex_dir = setup_experiment('hyperparams', QQubeSwingUpSim.name,
-                              f'{SimOpt.name}_{QQubeSwingUpAndBalanceCtrl.name}_100Hz')
+    if args.ex_dir is None:
+        ex_dir = setup_experiment('hyperparams', QQubeSwingUpSim.name,
+                                  f'{SimOpt.name}-{CEM.name}_{QQubeSwingUpAndBalanceCtrl.name}_100Hz')
+        study_dir = osp.join(pyrado.TEMP_DIR, ex_dir)
+        print_cbt(f'Starting a new Optuna study.', 'c', bright=True)
+    else:
+        study_dir = args.ex_dir
+        if not osp.isdir(study_dir):
+            raise pyrado.PathErr(given=study_dir)
+        print_cbt(f'Continuing an existing Optuna study.', 'c', bright=True)
 
-    # Run hyper-parameter optimization
-    name = f'{ex_dir.algo_name}_{ex_dir.extra_info}'  # e.g. qq-su_simopt_qq_sub_100Hz
+    name = f'{QQubeSwingUpSim.name}_{SimOpt.name}-{CEM.name}_{QQubeSwingUpAndBalanceCtrl.name}_100Hz'
     study = optuna.create_study(
         study_name=name,
-        storage=f"sqlite:////{osp.join(pyrado.TEMP_DIR, ex_dir, f'{name}.db')}",
+        storage=f"sqlite:////{osp.join(study_dir, f'{name}.db')}",
         direction='maximize',
-        pruner=MedianPruner(),
         load_if_exists=True
     )
-    study.optimize(functools.partial(train_and_eval, ex_dir=ex_dir, seed=args.seed), n_trials=150, n_jobs=1)
+
+    # Start optimizing
+    study.optimize(functools.partial(train_and_eval, study_dir=study_dir, seed=args.seed), n_trials=100, n_jobs=16)
 
     # Save the best hyper-parameters
-    save_list_of_dicts_to_yaml([study.best_params, dict(seed=args.seed)], ex_dir, 'best_hyperparams')
+    save_list_of_dicts_to_yaml([study.best_params, dict(seed=args.seed)], study_dir, 'best_hyperparams')

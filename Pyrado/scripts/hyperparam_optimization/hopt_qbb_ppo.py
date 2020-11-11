@@ -32,7 +32,6 @@ Optimize the hyper-parameters of Proximal Policy Optimization for the Quanser Ba
 import functools
 import optuna
 import os.path as osp
-from optuna.pruners import MedianPruner
 from torch.optim import lr_scheduler
 
 import pyrado
@@ -45,9 +44,10 @@ from pyrado.policies.feed_forward.fnn import FNNPolicy, FNN
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import fcn_from_str
+from pyrado.utils.input_output import print_cbt
 
 
-def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
+def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     """
     Objective function for the Optuna `Study` to maximize.
 
@@ -55,7 +55,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
         Optuna expects only the `trial` argument, thus we use `functools.partial` to sneak in custom arguments.
 
     :param trial: Optuna Trial object for hyper-parameter optimization
-    :param ex_dir: experiment's directory, i.e. the parent directory for all trials in this study
+    :param study_dir: the parent directory for all trials in this study
     :param seed: seed value for the random number generators, pass `None` for no seeding
     :return: objective function value
     """
@@ -115,7 +115,7 @@ def train_and_eval(trial: optuna.Trial, ex_dir: str, seed: int):
         lr_scheduler=lr_sched,
         lr_scheduler_hparam=lr_sched_hparam
     )
-    algo = PPO(osp.join(ex_dir, f'trial_{trial.number}'), env, policy, critic, **algo_hparam)
+    algo = PPO(osp.join(study_dir, f'trial_{trial.number}'), env, policy, critic, **algo_hparam)
 
     # Train without saving the results
     algo.train(snapshot_mode='latest', seed=seed)
@@ -133,18 +133,26 @@ if __name__ == '__main__':
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    ex_dir = setup_experiment('hyperparams', QBallBalancerSim.name, f'{PPO.name}_{FNNPolicy.name}_250Hz_actnorm')
+    if args.ex_dir is None:
+        ex_dir = setup_experiment('hyperparams', QBallBalancerSim.name, f'{PPO.name}_{FNNPolicy.name}_250Hz_actnorm')
+        study_dir = osp.join(pyrado.TEMP_DIR, ex_dir)
+        print_cbt(f'Starting a new Optuna study.', 'c', bright=True)
+    else:
+        study_dir = args.ex_dir
+        if not osp.isdir(study_dir):
+            raise pyrado.PathErr(given=study_dir)
+        print_cbt(f'Continuing an existing Optuna study.', 'c', bright=True)
 
-    # Run hyper-parameter optimization
-    name = f'{ex_dir.algo_name}_{ex_dir.extra_info}'  # e.g. qbb_ppo_fnn_250Hz_actnorm
+    name = f'{QBallBalancerSim.name}_{PPO.name}_{FNNPolicy.name}_250Hz_actnorm'
     study = optuna.create_study(
         study_name=name,
-        storage=f"sqlite:////{osp.join(pyrado.TEMP_DIR, ex_dir, f'{name}.db')}",
+        storage=f"sqlite:////{osp.join(study_dir, f'{name}.db')}",
         direction='maximize',
-        pruner=MedianPruner(),
         load_if_exists=True
     )
-    study.optimize(functools.partial(train_and_eval, ex_dir=ex_dir, seed=args.seed), n_trials=100, n_jobs=6)
+
+    # Start optimizing
+    study.optimize(functools.partial(train_and_eval, study_dir=study_dir, seed=args.seed), n_trials=100, n_jobs=16)
 
     # Save the best hyper-parameters
-    save_list_of_dicts_to_yaml([study.best_params, dict(seed=args.seed)], ex_dir, 'best_hyperparams')
+    save_list_of_dicts_to_yaml([study.best_params, dict(seed=args.seed)], study_dir, 'best_hyperparams')

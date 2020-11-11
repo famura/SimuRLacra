@@ -61,7 +61,7 @@ if __name__ == '__main__':
             break  # assuming there is only one database
 
     if study is None:
-        pyrado.PathErr(msg='No Optuna study found!')
+        pyrado.PathErr(msg=f'No Optuna study found in {ex_dir}!')
 
     # Extract the values of all trials (Optuna was set to solve a minimization problem)
     trials = [t for t in study.trials if t.value is not None]  # broken trials return None
