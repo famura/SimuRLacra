@@ -29,7 +29,7 @@
 """
 Train an agent to solve the Qube swing-up task using Bayesian Domain Randomization.
 """
-import torch as to
+import numpy as np
 
 import pyrado
 from pyrado.algorithms.episodic.power import PoWER
@@ -39,6 +39,7 @@ from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLi
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
+from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import wrap_like_other_env
 
@@ -81,7 +82,7 @@ if __name__ == '__main__':
         expl_std_init=2.0,
         expl_std_min=0.02,
         symm_sampling=False,
-        num_workers=1,
+        num_workers=4,
     )
     subrtn = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
 
@@ -133,11 +134,10 @@ if __name__ == '__main__':
 
     # Set the boundaries for the GP
     dp_nom = QQubeSwingUpSim.get_nominal_domain_param()
-    bounds = to.tensor(
-        [[0.8*dp_nom['Mp'], 1e-12,
-          0.8*dp_nom['Mr'], 1e-12],
-         [1.2*dp_nom['Mp'], 1e-11,
-          1.2*dp_nom['Mr'], 1e-11]])
+    ddp_space = BoxSpace(
+        bound_lo=np.array([0.8*dp_nom['Mp'], 1e-12, 0.8*dp_nom['Mr'], 1e-12]),
+        bound_up=np.array([1.2*dp_nom['Mp'], 1e-11, 1.2*dp_nom['Mr'], 1e-11])
+    )
 
     # Algorithm
     bayrn_hparam = dict(
@@ -161,7 +161,7 @@ if __name__ == '__main__':
         ex_dir
     )
 
-    algo = BayRn(ex_dir, env_sim, env_real, subrtn, bounds, **bayrn_hparam)
+    algo = BayRn(ex_dir, env_sim, env_real, subrtn, ddp_space, **bayrn_hparam)
 
     # Jeeeha
     algo.train(snapshot_mode='latest', seed=args.seed)

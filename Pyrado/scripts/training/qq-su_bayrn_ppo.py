@@ -29,11 +29,12 @@
 """
 Train an agent to solve the Qube swing-up task using Bayesian Domain Randomization.
 """
+import numpy as np
 import torch as to
 
 import pyrado
 from pyrado.algorithms.step_based.gae import GAE
-from pyrado.spaces import ValueFunctionSpace
+from pyrado.spaces import ValueFunctionSpace, BoxSpace
 from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.domain_randomization.default_randomizers import create_zero_var_randomizer, get_default_domain_param_map_qq
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
@@ -105,14 +106,12 @@ if __name__ == '__main__':
 
     # Set the boundaries for the GP
     dp_nom = QQubeSwingUpSim.get_nominal_domain_param()
-    # bounds = to.tensor(
-    #     [[0.8*dp_nom['Mp'], dp_nom['Mp']/1000],
-    #      [1.2*dp_nom['Mp'], dp_nom['Mp']/10]])
-    bounds = to.tensor(
-        [[0.8*dp_nom['Mp'], dp_nom['Mp']/5000, 0.8*dp_nom['Mr'], dp_nom['Mr']/5000,
-          0.8*dp_nom['Lp'], dp_nom['Lp']/5000, 0.8*dp_nom['Lr'], dp_nom['Lr']/5000],
-         [1.2*dp_nom['Mp'], dp_nom['Mp']/20, 1.2*dp_nom['Mr'], dp_nom['Mr']/20,
-          1.2*dp_nom['Lp'], dp_nom['Lp']/20, 1.2*dp_nom['Lr'], dp_nom['Lr']/20]])
+    ddp_space = BoxSpace(
+        bound_lo=np.array([0.8*dp_nom['Mp'], dp_nom['Mp']/5000, 0.8*dp_nom['Mr'], dp_nom['Mr']/5000,
+                           0.8*dp_nom['Lp'], dp_nom['Lp']/5000, 0.8*dp_nom['Lr'], dp_nom['Lr']/5000]),
+        bound_up=np.array([1.2*dp_nom['Mp'], dp_nom['Mp']/20, 1.2*dp_nom['Mr'], dp_nom['Mr']/20,
+                           1.2*dp_nom['Lp'], dp_nom['Lp']/20, 1.2*dp_nom['Lr'], dp_nom['Lr']/20])
+    )
 
     # policy_init = to.load(osp.join(pyrado.EXP_DIR, QQubeSwingUpSim.name, PPO.name, 'EXP_NAME', 'policy.pt'))
     # valuefcn_init = to.load(osp.join(pyrado.EXP_DIR, QQubeSwingUpSim.name, PPO.name, 'EXP_NAME', 'valuefcn.pt'))
@@ -141,7 +140,7 @@ if __name__ == '__main__':
         ex_dir
     )
 
-    algo = BayRn(ex_dir, env_sim, env_real, subrtn=ppo, bounds=bounds, **bayrn_hparam)
+    algo = BayRn(ex_dir, env_sim, env_real, subrtn=ppo, ddp_space=ddp_space, **bayrn_hparam)
 
     # Jeeeha
     algo.train(

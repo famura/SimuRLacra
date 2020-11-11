@@ -30,12 +30,9 @@
 Script to get the maximizer of a GP's posterior given saved data from a BayRn experiment
 """
 import pyrado
-from pyrado.algorithms.step_based.gae import GAE
+from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.meta.bayrn import BayRn
-from pyrado.algorithms.episodic.cem import CEM
-from pyrado.algorithms.episodic.nes import NES
-from pyrado.algorithms.episodic.power import PoWER
-from pyrado.algorithms.step_based.ppo import PPO, PPO2
+from pyrado.algorithms.step_based.actor_critic import ActorCritic
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment
@@ -51,29 +48,18 @@ if __name__ == '__main__':
     # Load the environment and the policy
     env_sim, policy, kwout = load_experiment(ex_dir, args)
 
-    # Decide on which algorithm to use via the mode argument
-    if args.mode == PPO.name:
-        critic = GAE(kwout['value_fcn'], **kwout['hparams']['critic'])
-        subroutine = PPO(ex_dir, env_sim, policy, critic, **kwout['hparams']['subrtn'])
-    elif args.mode == PPO2.name:
-        critic = GAE(kwout['value_fcn'], **kwout['hparams']['critic'])
-        subroutine = PPO2(ex_dir, env_sim, policy, critic, **kwout['hparams']['subrtn'])
-    elif args.mode == CEM.name:
-        subroutine = CEM(ex_dir, env_sim, policy, **kwout['hparams']['subrtn'])
-    elif args.mode == NES.name:
-        subroutine = NES(ex_dir, env_sim, policy, **kwout['hparams']['subrtn'])
-    elif args.mode == PoWER.name:
-        subroutine = PoWER(ex_dir, env_sim, policy, **kwout['hparams']['subrtn'])
-    else:
-        raise NotImplementedError('Only PPO, PPO2, CEM, NES, and PoWER are implemented so far.')
+    subrtn = Algorithm.load_snapshot(load_dir=ex_dir, load_name='subrtn')
 
     # Start from previous results policy if desired
     ppi = policy.param_values.data if args.warmstart is not None else None
-    vpi = kwout['value_fcn'].param_values.data if args.warmstart is not None else None
+    if isinstance(subrtn, ActorCritic):
+        vpi = kwout['value_fcn'].param_values.data if args.warmstart is not None else None
+    else:
+        vpi = None
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Train the policy on the most lucrative domain
-    BayRn.train_argmax_policy(ex_dir, env_sim, subroutine, num_restarts=500, num_samples=1000,
+    BayRn.train_argmax_policy(ex_dir, env_sim, subrtn, num_restarts=500, num_samples=1000,
                               policy_param_init=ppi, valuefcn_param_init=vpi)

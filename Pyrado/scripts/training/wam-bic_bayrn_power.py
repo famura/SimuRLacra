@@ -41,6 +41,7 @@ from pyrado.environments.mujoco.wam import WAMBallInCupSim
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.special.dual_rfb import DualRBFLinearPolicy
+from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
 
 
@@ -81,19 +82,17 @@ if __name__ == '__main__':
 
     # Set the boundaries for the GP (must be consistent with dp_map)
     dp_nom = WAMBallInCupSim.get_nominal_domain_param()
-    bounds = to.tensor(
-        [[0.95*dp_nom['rope_length'], dp_nom['rope_length']/1000,
-          0.*dp_nom['rope_damping'], dp_nom['rope_damping']/100,
-          0.85*dp_nom['ball_mass'], dp_nom['ball_mass']/1000,
-          0.*dp_nom['joint_stiction'], dp_nom['joint_stiction']/100,
-          0.*dp_nom['joint_damping'], dp_nom['joint_damping']/100,
-          ],
-         [1.05*dp_nom['rope_length'], dp_nom['rope_length']/20,
-          2*dp_nom['rope_damping'], dp_nom['rope_damping']/2,
-          1.15*dp_nom['ball_mass'], dp_nom['ball_mass']/10,
-          2*dp_nom['joint_stiction'], dp_nom['joint_stiction']/2,
-          2*dp_nom['joint_damping'], dp_nom['joint_damping']/2,
-          ]]
+    ddp_space = BoxSpace(
+        bound_lo=np.array([0.95*dp_nom['rope_length'], dp_nom['rope_length']/1000,
+                           0.*dp_nom['rope_damping'], dp_nom['rope_damping']/100,
+                           0.85*dp_nom['ball_mass'], dp_nom['ball_mass']/1000,
+                           0.*dp_nom['joint_stiction'], dp_nom['joint_stiction']/100,
+                           0.*dp_nom['joint_damping'], dp_nom['joint_damping']/100]),
+        bound_up=np.array([1.05*dp_nom['rope_length'], dp_nom['rope_length']/20,
+                           2*dp_nom['rope_damping'], dp_nom['rope_damping']/2,
+                           1.15*dp_nom['ball_mass'], dp_nom['ball_mass']/10,
+                           2*dp_nom['joint_stiction'], dp_nom['joint_stiction']/2,
+                           2*dp_nom['joint_damping'], dp_nom['joint_damping']/2])
     )
 
     # Setting the ip address to None ensures that robcom does not try to connect to the server pc
@@ -144,7 +143,7 @@ if __name__ == '__main__':
         ex_dir
     )
 
-    algo = BayRn(ex_dir, env_sim, env_real, subrtn=subrtn, bounds=bounds, **bayrn_hparam)
+    algo = BayRn(ex_dir, env_sim, env_real, subrtn=subrtn, ddp_space=ddp_space, **bayrn_hparam)
 
     # Jeeeha
     algo.train(snapshot_mode='latest', seed=args.seed)

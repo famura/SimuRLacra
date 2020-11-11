@@ -44,6 +44,7 @@ import pyrado
 from pyrado.algorithms.base import Algorithm, InterruptableAlgorithm
 from pyrado.algorithms.utils import until_thold_exceeded
 from pyrado.logger.step import StepLogger
+from pyrado.spaces import BoxSpace
 from pyrado.utils.saving_loading import save_prefix_suffix, load_prefix_suffix
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
@@ -81,7 +82,7 @@ class BayRn(InterruptableAlgorithm):
                  env_sim: MetaDomainRandWrapper,
                  env_real: [RealEnv, EnvWrapper],
                  subrtn: Algorithm,
-                 bounds: to.Tensor,
+                 ddp_space: BoxSpace,
                  max_iter: int,
                  acq_fc: str,
                  acq_restarts: int,
@@ -109,7 +110,7 @@ class BayRn(InterruptableAlgorithm):
         :param env_sim: randomized simulation environment a.k.a. source domain
         :param env_real: real-world environment a.k.a. target domain
         :param subrtn: algorithm which performs the policy / value-function optimization
-        :param bounds: boundaries for inputs of randomization function, format: [lower, upper]
+        :param ddp_space: space holding the boundaries for the domain distribution parameters
         :param max_iter: maximum number of iterations
         :param acq_fc: Acquisition Function
                        'UCB': Upper Confidence Bound (default $\beta = 0.1$)
@@ -137,8 +138,8 @@ class BayRn(InterruptableAlgorithm):
             raise pyrado.TypeErr(given=env_sim, expected_type=MetaDomainRandWrapper)
         if not isinstance(subrtn, Algorithm):
             raise pyrado.TypeErr(given=subrtn, expected_type=Algorithm)
-        assert bounds.shape[0] == 2
-        assert all(bounds[1] > bounds[0])
+        if not isinstance(ddp_space, BoxSpace):
+            raise pyrado.TypeErr(given=ddp_space, expected_type=BoxSpace)
         if num_init_cand < 1:
             raise pyrado.ValueErr(given=num_init_cand, ge_constraint='1')
 
@@ -150,8 +151,9 @@ class BayRn(InterruptableAlgorithm):
         self._env_real = env_real
         self._subrtn = subrtn
         self._subrtn.save_name = 'subrtn'
-        self.bounds = bounds
-        self.cand_dim = bounds.shape[1]
+        self.ddp_space = ddp_space
+        self.ddp_projector = UnitCubeProjector(to.from_numpy(self.ddp_space.bound_lo),
+                                               to.from_numpy(self.ddp_space.bound_up))
         self.cands = None  # called x in the context of GPs
         self.cands_values = None  # called y in the context of GPs
         self.argmax_cand = to.Tensor()
@@ -171,7 +173,6 @@ class BayRn(InterruptableAlgorithm):
         self.thold_succ_subrtn = to.tensor([thold_succ_subrtn])
         self.max_subrtn_rep = 3  # number of tries to exceed thold_succ_subrtn during training in simulation
         self.curr_cand_value = -pyrado.inf  # for the stopping criterion
-        self.uc_normalizer = UnitCubeProjector(bounds[0, :], bounds[1, :])
 
         if self.policy_param_init is not None:
             if to.is_tensor(self.policy_param_init):
@@ -179,9 +180,9 @@ class BayRn(InterruptableAlgorithm):
             else:
                 self.policy_param_init = to.tensor(self.policy_param_init)
 
-        # Save initial environments and bounds
+        # Save initial environments and the domain distribution parameter space
         self.save_snapshot(meta_info=None)
-        to.save(self.bounds, osp.join(self.save_dir, 'bounds.pt'))
+        save_prefix_suffix(self.ddp_space, 'ddp_space', 'pkl', self.save_dir)
 
     @property
     def subroutine(self) -> Algorithm:
@@ -232,12 +233,12 @@ class BayRn(InterruptableAlgorithm):
         Initialize the algorithm with a number of random distribution parameter sets a.k.a. candidates specified by
         the user. Train a policy for every candidate. Finally, store the policies and candidates.
         """
-        cands = to.empty(self.num_init_cand, self.cand_dim)
+        cands = to.empty(self.num_init_cand, self.ddp_space.shape[0])
         for i in range(self.num_init_cand):
             print_cbt(f'Generating initial domain instance and policy {i + 1} of {self.num_init_cand} ...',
                       'g', bright=True)
-            # Generate random samples within bounds
-            cands[i, :] = (self.bounds[1, :] - self.bounds[0, :])*to.rand(self.bounds.shape[1]) + self.bounds[0, :]
+            # Sample random domain distribution parameters
+            cands[i, :] = to.from_numpy(self.ddp_space.sample_uniform())
 
             # Train a policy for each candidate, repeat if the resulting policy did not exceed the success threshold
             print_cbt(f'Randomly sampled the next candidate: {cands[i].numpy()}', 'g')
@@ -360,7 +361,7 @@ class BayRn(InterruptableAlgorithm):
 
         if self.curr_checkpoint == 0:
             # Normalize the input data and standardize the output data
-            cands_norm = self.uc_normalizer.project_to(self.cands)
+            cands_norm = self.ddp_projector.project_to(self.cands)
             cands_values_stdized = standardize(self.cands_values).unsqueeze(1)
 
             # Create and fit the GP model
@@ -383,12 +384,12 @@ class BayRn(InterruptableAlgorithm):
             # Optimize acquisition function and get new candidate point
             cand_norm, acq_value = optimize_acqf(
                 acq_function=acq_fcn,
-                bounds=to.stack([to.zeros(self.cand_dim), to.ones(self.cand_dim)]),
+                bounds=to.stack([to.zeros(self.ddp_space.flat_dim), to.ones(self.ddp_space.flat_dim)]),
                 q=1,
                 num_restarts=self.acq_restarts,
                 raw_samples=self.acq_samples
             )
-            next_cand = self.uc_normalizer.project_back(cand_norm)
+            next_cand = self.ddp_projector.project_back(cand_norm)
             print_cbt(f'Found the next candidate: {next_cand.numpy()}', 'g')
             self.cands = to.cat([self.cands, next_cand], dim=0)
             save_prefix_suffix(self.cands, 'candidates', 'pt', self.save_dir, meta_info)
@@ -415,7 +416,7 @@ class BayRn(InterruptableAlgorithm):
 
             # Store the argmax after training and evaluating
             curr_argmax_cand = BayRn.argmax_posterior_mean(
-                self.cands, self.cands_values.unsqueeze(1), self.uc_normalizer, self.acq_restarts, self.acq_samples
+                self.cands, self.cands_values.unsqueeze(1), self.ddp_space, self.acq_restarts, self.acq_samples
             )
             self.argmax_cand = to.cat([self.argmax_cand, curr_argmax_cand], dim=0)
             save_prefix_suffix(self.argmax_cand, 'candidates_argmax', 'pt', self.save_dir, meta_info)
@@ -424,18 +425,19 @@ class BayRn(InterruptableAlgorithm):
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
-        # Policies (and value functions) of every iteration are saved by the subroutine in train_policy_sim()
+        # Policies of every iteration are saved by the subroutine in train_policy_sim()
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
             joblib.dump(self._env_sim, osp.join(self.save_dir, 'env_sim.pkl'))
             joblib.dump(self._env_real, osp.join(self.save_dir, 'env_real.pkl'))
+            save_prefix_suffix(self.policy, 'policy', 'pt', self.save_dir, None)
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
 
     @staticmethod
     def argmax_posterior_mean(cands: to.Tensor,
                               cands_values: to.Tensor,
-                              uc_normalizer: UnitCubeProjector,
+                              ddp_space: BoxSpace,
                               num_restarts: int,
                               num_samples: int) -> to.Tensor:
         """
@@ -443,14 +445,27 @@ class BayRn(InterruptableAlgorithm):
 
         :param cands: candidates a.k.a. x
         :param cands_values: observed values a.k.a. y
-        :param uc_normalizer: unit cube normalizer used during the experiments (can be recovered form the bounds)
+        :param ddp_space: space of the domain distribution parameters, indicates the lower and upper bound
         :param num_restarts: number of restarts for the optimization of the acquisition function
         :param num_samples: number of samples for the optimization of the acquisition function
         :return: un-normalized candidate with maximum posterior value a.k.a. x
         """
+        if not isinstance(cands, to.Tensor):
+            raise pyrado.TypeErr(given=cands, expected_type=to.Tensor)
+        if not isinstance(cands_values, to.Tensor):
+            raise pyrado.TypeErr(given=cands_values, expected_type=to.Tensor)
+        if not isinstance(ddp_space, BoxSpace):
+            raise pyrado.TypeErr(given=ddp_space, expected_type=BoxSpace)
+
         # Normalize the input data and standardize the output data
-        cands_norm = uc_normalizer.project_to(cands)
+        uc_projector = UnitCubeProjector(to.from_numpy(ddp_space.bound_lo), to.from_numpy(ddp_space.bound_up))
+        cands_norm = uc_projector.project_to(cands)
         cands_values_stdized = standardize(cands_values)
+
+        if cands_norm.shape[0] > cands_values.shape[0]:
+            print_cbt(f'There are {cands.shape[0]} candidates but only {cands_values.shape[0]} evaluations. Ignoring '
+                      f'the candidates without evaluation for computing the argmax.', 'y')
+            cands_norm = cands_norm[:cands_values.shape[0], :]
 
         # Create and fit the GP model
         gp = SingleTaskGP(cands_norm, cands_values_stdized)
@@ -461,13 +476,13 @@ class BayRn(InterruptableAlgorithm):
         # Find position with maximal posterior mean
         cand_norm, acq_value = optimize_acqf(
             acq_function=PosteriorMean(gp),
-            bounds=to.stack([to.zeros_like(uc_normalizer.bound_lo), to.ones_like(uc_normalizer.bound_up)]),
+            bounds=to.stack([to.zeros(ddp_space.flat_dim), to.ones(ddp_space.flat_dim)]),
             q=1,
             num_restarts=num_restarts,
             raw_samples=num_samples
         )
 
-        cand = uc_normalizer.project_back(cand_norm.detach())
+        cand = uc_projector.project_back(cand_norm.detach())
         print_cbt(f'Converged to argmax of the posterior mean: {cand.numpy()}', 'g', bright=True)
         return cand
 
@@ -494,10 +509,9 @@ class BayRn(InterruptableAlgorithm):
         :return: the final BayRn policy
         """
         # Load the required data
-        cands = to.load(osp.join(load_dir, 'candidates.pt'))
-        cands_values = to.load(osp.join(load_dir, 'candidates_values.pt')).unsqueeze(1)
-        bounds = to.load(osp.join(load_dir, 'bounds.pt'))
-        uc_normalizer = UnitCubeProjector(bounds[0, :], bounds[1, :])
+        cands = load_prefix_suffix(None, 'candidates', 'pt', load_dir)
+        cands_values = load_prefix_suffix(None, 'candidates_values', 'pt', load_dir).unsqueeze(1)
+        ddp_space = load_prefix_suffix(None, 'ddp_space', 'pkl', load_dir)
 
         if cands.shape[0] > cands_values.shape[0]:
             print_cbt(
@@ -506,7 +520,7 @@ class BayRn(InterruptableAlgorithm):
             cands = cands[:cands_values.shape[0], :]
 
         # Find the maximizer
-        argmax_cand = BayRn.argmax_posterior_mean(cands, cands_values, uc_normalizer, num_restarts, num_samples)
+        argmax_cand = BayRn.argmax_posterior_mean(cands, cands_values, ddp_space, num_restarts, num_samples)
 
         # Set the domain randomizer
         env_sim.adapt_randomizer(argmax_cand.numpy())
