@@ -77,8 +77,8 @@ if __name__ == '__main__':
     policy = FNNPolicy(spec=env_sim.spec, **policy_hparam)
 
     # Critic
-    value_fcn_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
-    value_fcn = FNNPolicy(spec=EnvSpec(env_sim.obs_space, ValueFunctionSpace), **value_fcn_hparam)
+    vfcn_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
+    vfcn = FNNPolicy(spec=EnvSpec(env_sim.obs_space, ValueFunctionSpace), **vfcn_hparam)
     critic_hparam = dict(
         gamma=0.9885,
         lamda=0.9648,
@@ -88,7 +88,7 @@ if __name__ == '__main__':
         lr=5.792e-4,
         max_grad_norm=1.,
     )
-    critic = GAE(value_fcn, **critic_hparam)
+    critic = GAE(vfcn, **critic_hparam)
 
     # Subroutine
     subrtn_hparam = dict(
@@ -134,7 +134,7 @@ if __name__ == '__main__':
     save_list_of_dicts_to_yaml([
         dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=args.seed),
         dict(policy=policy_hparam),
-        dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
+        dict(critic=critic_hparam, vfcn=vfcn_hparam),
         dict(subrtn=subrtn_hparam, subrtn_name=PPO.name),
         dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map)],
         ex_dir
@@ -152,5 +152,5 @@ if __name__ == '__main__':
     BayRn.train_argmax_policy(
         ex_dir, env_sim, ppo, num_restarts=500, num_samples=1000,
         # policy_param_init=policy.param_values.data,
-        # valuefcn_param_init=critic.value_fcn.param_values.data
+        # valuefcn_param_init=critic.vfcn.param_values.data
     )

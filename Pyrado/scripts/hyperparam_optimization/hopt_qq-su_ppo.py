@@ -91,16 +91,16 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     # policy = GRUPolicy(spec=env.spec, **policy_hparam)
 
     # Critic
-    value_fcn_hparam = dict(
+    vfcn_hparam = dict(
         hidden_sizes=trial.suggest_categorical('hidden_sizes_critic', [(16, 16), (32, 32), (64, 64)]),
         hidden_nonlin=fcn_from_str(trial.suggest_categorical('hidden_nonlin_critic', ['to_tanh', 'to_relu'])),
     )
-    # value_fcn_hparam = dict(
+    # vfcn_hparam = dict(
     #     hidden_size=trial.suggest_categorical('hidden_size_critic', [16, 32, 64]),
     #     num_recurrent_layers=trial.suggest_categorical('num_recurrent_layers_critic', [1, 2]),
     # )  # LSTM & GRU
-    value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
-    # value_fcn = GRUPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
+    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
+    # vfcn = GRUPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
     critic_hparam = dict(
         batch_size=500,
         gamma=trial.suggest_uniform('gamma_critic', 0.98, 1.),
@@ -112,7 +112,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
         lr_scheduler=lr_sched,
         lr_scheduler_hparam=lr_sched_hparam
     )
-    critic = GAE(value_fcn, **critic_hparam)
+    critic = GAE(vfcn, **critic_hparam)
 
     # Algorithm
     algo_hparam = dict(

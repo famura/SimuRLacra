@@ -101,8 +101,8 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     # Subroutine for policy improvement
     behav_policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
     behav_policy = FNNPolicy(spec=env_sim.spec, **behav_policy_hparam)
-    value_fcn_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
-    value_fcn = FNNPolicy(spec=EnvSpec(env_sim.obs_space, ValueFunctionSpace), **value_fcn_hparam)
+    vfcn_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
+    vfcn = FNNPolicy(spec=EnvSpec(env_sim.obs_space, ValueFunctionSpace), **vfcn_hparam)
     critic_hparam = dict(
         gamma=0.9885,
         lamda=0.9648,
@@ -112,7 +112,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
         lr=5.792e-4,
         max_grad_norm=1.,
     )
-    critic = GAE(value_fcn, **critic_hparam)
+    critic = GAE(vfcn, **critic_hparam)
     subrtn_policy_hparam = dict(
         max_iter=200,
         min_steps=3*23*env_sim.max_steps,

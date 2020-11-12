@@ -32,7 +32,6 @@ Script to get the maximizer of a GP's posterior mean given saved data from a Bay
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.saving_loading import load_prefix_suffix
 
 
 if __name__ == '__main__':
@@ -43,9 +42,9 @@ if __name__ == '__main__':
     ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
 
     # Load the required data
-    cands = load_prefix_suffix(None, 'candidates', 'pt', ex_dir)
-    cands_values = load_prefix_suffix(None, 'candidates_values', 'pt', ex_dir).unsqueeze(1)
-    ddp_space = load_prefix_suffix(None, 'ddp_space', 'pkl', ex_dir)
+    cands = pyrado.load(None, 'candidates', 'pt', ex_dir)
+    cands_values = pyrado.load(None, 'candidates_values', 'pt', ex_dir).unsqueeze(1)
+    ddp_space = pyrado.load(None, 'ddp_space', 'pkl', ex_dir)
 
     # Compute and print the argmax
     BayRn.argmax_posterior_mean(cands, cands_values, ddp_space, num_restarts=500, num_samples=1000)

@@ -56,7 +56,7 @@ class GAE(LoggerAware, nn.Module):
     """
 
     def __init__(self,
-                 value_fcn: [nn.Module, Policy],
+                 vfcn: [nn.Module, Policy],
                  gamma: float = 0.99,
                  lamda: float = 0.95,
                  num_epoch: int = 10,
@@ -70,7 +70,7 @@ class GAE(LoggerAware, nn.Module):
         r"""
         Constructor
 
-        :param value_fcn: value function, which can be a `FNN` or a `Policy`
+        :param vfcn: value function, which can be a `FNN` or a `Policy`
         :param gamma: temporal discount factor
         :param lamda: regulates the trade-off between bias (max for 0) and variance (max for 1), see [1]
         :param num_epoch: number of iterations over all gathered samples during one estimator update
@@ -84,11 +84,11 @@ class GAE(LoggerAware, nn.Module):
         :param lr_scheduler: learning rate scheduler that does one step per epoch (pass through the whole data set)
         :param lr_scheduler_hparam: hyper-parameters for the learning rate scheduler
         """
-        if not isinstance(value_fcn, (nn.Module, Policy)):
-            raise pyrado.TypeErr(given=value_fcn, expected_type=[nn.Module, Policy])
-        if isinstance(value_fcn, Policy):
-            if not value_fcn.env_spec.act_space == ValueFunctionSpace:
-                raise pyrado.ShapeErr(msg='The given act_space held by the value_fcn should be a ValueFunctionSpace.')
+        if not isinstance(vfcn, (nn.Module, Policy)):
+            raise pyrado.TypeErr(given=vfcn, expected_type=[nn.Module, Policy])
+        if isinstance(vfcn, Policy):
+            if not vfcn.env_spec.act_space == ValueFunctionSpace:
+                raise pyrado.ShapeErr(msg='The given act_space held by the vfcn should be a ValueFunctionSpace.')
         if not 0 <= gamma <= 1:
             raise pyrado.ValueErr(given=gamma, ge_constraint='0', le_constraint='1')
         if not 0 <= lamda <= 1:
@@ -98,7 +98,7 @@ class GAE(LoggerAware, nn.Module):
         super().__init__()
 
         # Store the inputs
-        self._value_fcn = value_fcn
+        self._vfcn = vfcn
         self.gamma = gamma
         self.lamda = lamda
         self.num_epoch = num_epoch
@@ -109,23 +109,23 @@ class GAE(LoggerAware, nn.Module):
 
         # Initialize
         self.loss_fcn = nn.MSELoss()
-        self.optim = to.optim.Adam(self._value_fcn.parameters(), lr=lr, eps=1e-5)
+        self.optim = to.optim.Adam(self._vfcn.parameters(), lr=lr, eps=1e-5)
         self._lr_scheduler = lr_scheduler
         self._lr_scheduler_hparam = lr_scheduler_hparam
         if lr_scheduler is not None:
             self._lr_scheduler = lr_scheduler(self.optim, **lr_scheduler_hparam)
 
     @property
-    def value_fcn(self) -> [nn.Module, Policy]:
+    def vfcn(self) -> [nn.Module, Policy]:
         """ Get the value function approximator. """
-        return self._value_fcn
+        return self._vfcn
 
-    @value_fcn.setter
-    def value_fcn(self, value_fcn: Union[nn.Module, Policy]):
+    @vfcn.setter
+    def vfcn(self, vfcn: Union[nn.Module, Policy]):
         """ Set the value function approximator. """
-        if not isinstance(value_fcn, (nn.Module, Policy)):
-            raise pyrado.TypeErr(given=value_fcn, expected_type=[nn.Module, Policy])
-        self._value_fcn = value_fcn
+        if not isinstance(vfcn, (nn.Module, Policy)):
+            raise pyrado.TypeErr(given=vfcn, expected_type=[nn.Module, Policy])
+        self._vfcn = vfcn
 
         # Reset the learning rate scheduler
         if self._lr_scheduler is not None:
@@ -196,11 +196,11 @@ class GAE(LoggerAware, nn.Module):
         :param concat_ros: concatenated rollouts
         :return: states' values
         """
-        if isinstance(self._value_fcn, Policy):
+        if isinstance(self._vfcn, Policy):
             # Use the Policy's forward method and the hidden states if they have been saved during the rollout
-            v_pred = self._value_fcn.evaluate(concat_ros, hidden_states_name='vf_hidden_states')
+            v_pred = self._vfcn.evaluate(concat_ros, hidden_states_name='vf_hidden_states')
         else:
-            v_pred = self._value_fcn(concat_ros.observations)  # not a recurrent network
+            v_pred = self._vfcn(concat_ros.observations)  # not a recurrent network
         return v_pred
 
     def update(self, rollouts: Sequence[StepSequence], use_empirical_returns: bool = False):
@@ -227,13 +227,13 @@ class GAE(LoggerAware, nn.Module):
         with to.no_grad():
             v_pred_old = self.values(concat_ros)
             loss_old = self.loss_fcn(v_pred_old, v_targ)
-        value_fcn_grad_norm = []
+        vfcn_grad_norm = []
 
         # Iterate over all gathered samples num_epoch times
         for e in range(self.num_epoch):
 
             for batch in tqdm(concat_ros.split_shuffled_batches(
-                self.batch_size, complete_rollouts=isinstance(self.value_fcn, RecurrentPolicy)),
+                self.batch_size, complete_rollouts=isinstance(self.vfcn, RecurrentPolicy)),
                 total=num_iter_from_rollouts(None, concat_ros, self.batch_size),
                 desc=f'Epoch {e}', unit='batches', file=sys.stdout, leave=False):
                 # Reset the gradients
@@ -243,11 +243,11 @@ class GAE(LoggerAware, nn.Module):
                 v_pred = self.values(batch)
 
                 # Compute estimator loss for this mini-batch and backpropagate
-                value_fcn_loss = self.loss_fcn(v_pred, batch.v_targ)
-                value_fcn_loss.backward()
+                vfcn_loss = self.loss_fcn(v_pred, batch.v_targ)
+                vfcn_loss.backward()
 
                 # Clip the gradients if desired
-                value_fcn_grad_norm.append(Algorithm.clip_grad(self.value_fcn, self.max_grad_norm))
+                vfcn_grad_norm.append(Algorithm.clip_grad(self.vfcn, self.max_grad_norm))
 
                 # Call optimizer
                 self.optim.step()
@@ -262,13 +262,13 @@ class GAE(LoggerAware, nn.Module):
         with to.no_grad():
             v_pred_new = self.values(concat_ros)
             loss_new = self.loss_fcn(v_pred_new, v_targ)
-            value_fcn_loss_impr = loss_old - loss_new  # positive values are desired
+            vfcn_loss_impr = loss_old - loss_new  # positive values are desired
             explvar = explained_var(v_pred_new, v_targ)  # values close to 1 are desired
 
         # Log metrics computed from the old value function (before the update)
         self.logger.add_value('explained var', explvar, 4)
-        self.logger.add_value('V-fcn loss impr', value_fcn_loss_impr, 4)
-        self.logger.add_value('avg V-fcn grad norm', np.mean(value_fcn_grad_norm), 4)
+        self.logger.add_value('V-fcn loss impr', vfcn_loss_impr, 4)
+        self.logger.add_value('avg V-fcn grad norm', np.mean(vfcn_grad_norm), 4)
         if self._lr_scheduler is not None:
             self.logger.add_value('learning rate V-fcn', self._lr_scheduler.get_lr(), 6)
 

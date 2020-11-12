@@ -106,9 +106,9 @@ def get_argparser() -> argparse.ArgumentParser:
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', default=False,
                         help="display additional information (default: False)")
 
-    parser.add_argument('--valuefcn_name', type=str, nargs='?', default='valuefcn',
-                        help="(partial) name of the value function to load, e.g. 'argmax_valuefcn', or "
-                             "'iter_0_valuefcn' (default: valuefcn)")
+    parser.add_argument('--vfcn_name', type=str, nargs='?', default='vfcn',
+                        help="(partial) name of the value function to load, e.g. 'argmax_vfcn', or "
+                             "'iter_0_vfcn' (default: vfcn)")
 
     parser.add_argument('--warmstart', dest='warmstart', action='store_true',
                         help="start a procedure with initialized parameters (e.g. for the policy")

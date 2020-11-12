@@ -61,7 +61,7 @@ class UDR(Algorithm):
         super().__init__(subrtn.save_dir, subrtn.max_iter, subrtn.policy, subrtn.logger)
 
         self._subrtn = subrtn
-        self._subrtn.save_name = 'subtrn'
+        self._subrtn.save_name = 'subrtn'
 
         # Save initial randomizer
         joblib.dump(env.randomizer, osp.join(self.save_dir, 'randomizer.pkl'))

@@ -69,8 +69,8 @@ if __name__ == '__main__':
     policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
     policy = FNNPolicy(spec=env.spec, **policy_hparam)
     # Critic
-    value_fcn_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
-    value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
+    vfcn_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
+    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
     critic_hparam = dict(
         gamma=0.995,
         lamda=0.95,
@@ -80,7 +80,7 @@ if __name__ == '__main__':
         standardizer=None,
         lr=3e-4,
     )
-    critic = GAE(value_fcn, **critic_hparam)
+    critic = GAE(vfcn, **critic_hparam)
 
     # Algorithm
     algo_hparam = dict(
@@ -98,7 +98,7 @@ if __name__ == '__main__':
     save_list_of_dicts_to_yaml([
         # dict(env=env_hparams, seed=args.seed),
         dict(policy=policy_hparam),
-        dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
+        dict(critic=critic_hparam, vfcn=vfcn_hparam),
         dict(algo=algo_hparam, algo_name=algo.name)],
         ex_dir
     )

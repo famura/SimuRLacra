@@ -80,10 +80,10 @@ if __name__ == '__main__':
     # policy = GRUPolicy(spec=env.spec, **policy_hparam)
 
     # Critic
-    value_fcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)  # FNN
-    # value_fcn_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
-    value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
-    # value_fcn = GRUPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
+    vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)  # FNN
+    # vfcn_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
+    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
+    # vfcn = GRUPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
     critic_hparam = dict(
         gamma=0.9995,
         lamda=0.98,
@@ -93,7 +93,7 @@ if __name__ == '__main__':
         standardize_adv=False,
         # max_grad_norm=1.,
     )
-    critic = GAE(value_fcn, **critic_hparam)
+    critic = GAE(vfcn, **critic_hparam)
 
     # Subroutine
     subrtn_hparam = dict(
@@ -117,7 +117,7 @@ if __name__ == '__main__':
     save_list_of_dicts_to_yaml([
         dict(env=env_hparams, seed=args.seed),
         dict(policy=policy_hparam),
-        dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
+        dict(critic=critic_hparam, vfcn=vfcn_hparam),
         dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
         dict(algo=algo_hparam, algo_name=algo.name)],
         ex_dir

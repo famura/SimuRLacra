@@ -82,7 +82,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     )
 
     # Critic
-    value_fcn = FNN(
+    vfcn = FNN(
         input_size=env.obs_space.flat_dim,
         output_size=1,
         hidden_sizes=trial.suggest_categorical('hidden_sizes_critic', [(16, 16), (32, 32), (64, 64)]),
@@ -99,7 +99,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
         lr_scheduler=lr_sched,
         lr_scheduler_hparam=lr_sched_hparam
     )
-    critic = GAE(value_fcn, **critic_hparam)
+    critic = GAE(vfcn, **critic_hparam)
 
     # Algorithm
     algo_hparam = dict(

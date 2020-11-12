@@ -36,7 +36,6 @@ from typing import Sequence, Optional
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.step_based.svpg import SVPG
-from pyrado.utils.saving_loading import save_prefix_suffix
 from pyrado.domain_randomization.domain_parameter import DomainParam
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.utils import inner_env
@@ -64,7 +63,7 @@ class ADR(Algorithm):
     def __init__(self,
                  save_dir: str,
                  env: Env,
-                 subtrn: Algorithm,
+                 subrtn: Algorithm,
                  max_iter: int,
                  svpg_particle_hparam: dict,
                  num_svpg_particles: int,
@@ -87,7 +86,7 @@ class ADR(Algorithm):
 
         :param save_dir: directory to save the snapshots i.e. the results in
         :param env: the environment to train in
-        :param subtrn: algorithm which performs the policy / value-function optimization
+        :param subrtn: algorithm which performs the policy / value-function optimization
         :param max_iter: maximum number of iterations
         :param svpg_particle_hparam: SVPG particle hyperparameters
         :param num_svpg_particles: number of SVPG particles
@@ -108,19 +107,19 @@ class ADR(Algorithm):
         """
         if not isinstance(env, Env):
             raise pyrado.TypeErr(given=env, expected_type=Env)
-        if not isinstance(subtrn, Algorithm):
-            raise pyrado.TypeErr(given=subtrn, expected_type=Algorithm)
-        if not isinstance(subtrn.policy, Policy):
-            raise pyrado.TypeErr(given=subtrn.policy, expected_type=Policy)
+        if not isinstance(subrtn, Algorithm):
+            raise pyrado.TypeErr(given=subrtn, expected_type=Algorithm)
+        if not isinstance(subrtn.policy, Policy):
+            raise pyrado.TypeErr(given=subrtn.policy, expected_type=Policy)
 
         # Call Algorithm's constructor
-        super().__init__(save_dir, max_iter, subtrn.policy, logger)
+        super().__init__(save_dir, max_iter, subrtn.policy, logger)
         self.log_loss = True
 
         # Store the inputs
         self.env = env
-        self._subtrn = subtrn
-        self._subtrn.save_name = 'subrtn'
+        self._subrtn = subrtn
+        self._subrtn.save_name = 'subrtn'
         self.num_particles = num_svpg_particles
         self.num_discriminator_epoch = num_discriminator_epoch
         self.batch_size = batch_size
@@ -160,7 +159,7 @@ class ADR(Algorithm):
         self.svpg_wrapper = SVPGAdapter(
             env,
             self.params,
-            subtrn.expl_strat,
+            subrtn.expl_strat,
             self.reward_generator,
             horizon=self.svpg_horizon,
             num_rollouts_per_config=self.num_trajs_per_config,
@@ -179,7 +178,7 @@ class ADR(Algorithm):
             num_workers=num_workers,
             logger=logger
         )
-        self.svpg.save_name = 'subtrn_svpg'
+        self.svpg.save_name = 'subrtn_svpg'
 
     @property
     def sample_count(self) -> int:
@@ -253,7 +252,7 @@ class ADR(Algorithm):
                 rt.torch(data_type=to.double)
                 rt.observations = rt.observations.double().detach()
                 rt.actions = rt.actions.double().detach()
-            self._subtrn.update(rand_trajs_now)
+            self._subrtn.update(rand_trajs_now)
 
         # Logging
         rets = [ro.undiscounted_return() for ro in rand_trajs]
@@ -271,8 +270,8 @@ class ADR(Algorithm):
         flattened_reference = StepSequence.concat(ref_trajs)
         flattened_reference.torch(data_type=to.double)
         self.reward_generator.train(flattened_reference, flattened_randomized, self.num_discriminator_epoch)
-        save_prefix_suffix(self.reward_generator.discriminator, 'discriminator', 'pt', self.save_dir,
-                           meta_info=dict(prefix='adr'))
+        pyrado.save(self.reward_generator.discriminator, 'discriminator', 'pt', self.save_dir,
+                    meta_info=dict(prefix='adr'))
 
         if self.curr_time_step > self.warm_up_time:
             # Update the particles
@@ -284,18 +283,18 @@ class ADR(Algorithm):
 
         # np.save(f'{self.save_dir}actions{self.curr_iter}', flattened_randomized.actions)
         self.make_snapshot(snapshot_mode, float(ret_avg), meta_info)
-        self._subtrn.make_snapshot(snapshot_mode='best', curr_avg_ret=float(ret_avg))
+        self._subrtn.make_snapshot(snapshot_mode='best', curr_avg_ret=float(ret_avg))
         self.curr_time_step += 1
 
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
         if meta_info is None:
-            # This algorithm instance is not a subtrn of another algorithm
-            save_prefix_suffix(self.env, 'env', 'pkl', self.save_dir, meta_info)
+            # This algorithm instance is not a subrtn of another algorithm
+            pyrado.save(self.env, 'env', 'pkl', self.save_dir, meta_info)
             self.svpg.save_snapshot(meta_info)
         else:
-            raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subtrn!')
+            raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subrtn!')
 
 
 class SVPGAdapter(EnvWrapper, Serializable):
@@ -315,7 +314,7 @@ class SVPGAdapter(EnvWrapper, Serializable):
 
         :param wrapped_env: the environment to wrap
         :param parameters: which physics parameters should be randomized
-        :param inner_policy: the policy to train the subtrn on
+        :param inner_policy: the policy to train the subrtn on
         :param discriminator: the discriminator to distinguish reference environments from randomized ones
         :param step_length: the step size
         :param horizon: an svpg horizon
@@ -377,7 +376,7 @@ class SVPGAdapter(EnvWrapper, Serializable):
         self.horizon_count += 1
         if self.horizon_count >= self.horizon:
             self.horizon_count = 0
-            self.svpg_state = np.random.random_sample(self.parameters.length)
+            self.svpg_state = np.random.random_sample(len(self.parameters))
 
         return self.svpg_state, reward, done, info
 
@@ -472,6 +471,7 @@ class RewardGenerator:
         reference_batch = reference_trajectory.split_shuffled_batches(self.batch_size)
         random_batch = randomized_trajectory.split_shuffled_batches(self.batch_size)
 
+        loss = None
         for _ in tqdm(range(num_epoch), 'Discriminator Epoch', num_epoch):
             try:
                 reference_batch_now = convert_step_sequence(next(reference_batch))

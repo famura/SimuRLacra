@@ -86,11 +86,11 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     policy = FNNPolicy(spec=env.spec, **policy_hparam)
 
     # Critic
-    value_fcn_hparam = dict(
+    vfcn_hparam = dict(
         hidden_sizes=trial.suggest_categorical('hidden_sizes_critic', [(32,), (64,), (32, 32), (64, 64)]),
         hidden_nonlin=fcn_from_str(trial.suggest_categorical('hidden_nonlin_critic', ['to_tanh', 'to_relu'])),
     )
-    value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
+    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
     critic_hparam = dict(
         batch_size=500,
         gamma=trial.suggest_loguniform('gamma_critic', 0.98, 1.),
@@ -101,7 +101,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
         lr_scheduler=lr_sched,
         lr_scheduler_hparam=lr_sched_hparam
     )
-    critic = GAE(value_fcn, **critic_hparam)
+    critic = GAE(vfcn, **critic_hparam)
 
     # Algorithm
     algo_hparam = dict(
@@ -110,7 +110,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
         batch_size=500,
         min_steps=trial.suggest_int('num_rollouts_algo', 5, 40)*env.max_steps,
         num_epoch=trial.suggest_int('num_epoch_algo', 1, 10),
-        value_fcn_coeff=trial.suggest_uniform('value_fcn_coeff_algo', 0.2, 2.),
+        vfcn_coeff=trial.suggest_uniform('vfcn_coeff_algo', 0.2, 2.),
         entropy_coeff=trial.suggest_loguniform('entropy_coeff_algo', 1e-6, 1e-2),
         eps_clip=trial.suggest_uniform('eps_clip_algo', 0.05, 0.2),
         std_init=trial.suggest_uniform('std_init_algo', 0.5, 1.0),

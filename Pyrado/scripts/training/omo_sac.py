@@ -70,13 +70,13 @@ if __name__ == '__main__':
     policy = TwoHeadedFNNPolicy(spec=env.spec, **policy_hparam)
 
     # Critic
-    q_fcn_hparam = dict(
+    qfcn_hparam = dict(
         hidden_sizes=[32, 32],
         hidden_nonlin=to.relu
     )
     obsact_space = BoxSpace.cat([env.obs_space, env.act_space])
-    q_fcn_1 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **q_fcn_hparam)
-    q_fcn_2 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **q_fcn_hparam)
+    qfcn_1 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **qfcn_hparam)
+    qfcn_2 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **qfcn_hparam)
 
     # Algorithm
     algo_hparam = dict(
@@ -94,13 +94,13 @@ if __name__ == '__main__':
         num_workers=4,
         lr=3e-4,
     )
-    algo = SAC(ex_dir, env, policy, q_fcn_1, q_fcn_2, **algo_hparam)
+    algo = SAC(ex_dir, env, policy, qfcn_1, qfcn_2, **algo_hparam)
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml([
         dict(env=env_hparams, seed=args.seed),
         dict(policy=policy_hparam),
-        dict(q_fcn=q_fcn_hparam),
+        dict(qfcn=qfcn_hparam),
         dict(algo=algo_hparam, algo_name=algo.name)],
         ex_dir
     )

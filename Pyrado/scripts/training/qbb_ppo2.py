@@ -68,8 +68,8 @@ if __name__ == '__main__':
     policy = FNNPolicy(spec=env.spec, **policy_hparam)
 
     # Critic
-    value_fcn_hparam = dict(hidden_sizes=[64], hidden_nonlin=to.tanh)
-    value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
+    vfcn_hparam = dict(hidden_sizes=[64], hidden_nonlin=to.tanh)
+    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
     critic_hparam = dict(
         gamma=0.9852477569514027,
         lamda=0.9729014682749334,
@@ -80,14 +80,14 @@ if __name__ == '__main__':
         lr_scheduler=lr_scheduler.ExponentialLR,
         lr_scheduler_hparam=dict(gamma=0.999)
     )
-    critic = GAE(value_fcn, **critic_hparam)
+    critic = GAE(vfcn, **critic_hparam)
 
     # Algorithm
     algo_hparam = dict(
         max_iter=250,
         min_steps=30*env.max_steps,
         num_epoch=5,
-        value_fcn_coeff=1.190454086194093,
+        vfcn_coeff=1.190454086194093,
         entropy_coeff=4.944111681414721e-05,
         eps_clip=0.09657039413812532,
         batch_size=500,
@@ -104,7 +104,7 @@ if __name__ == '__main__':
     save_list_of_dicts_to_yaml([
         dict(env=env_hparams, seed=args.seed),
         dict(policy=policy_hparam),
-        dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
+        dict(critic=critic_hparam, vfcn=vfcn_hparam),
         dict(algo=algo_hparam, algo_name=algo.name)],
         ex_dir
     )

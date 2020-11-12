@@ -43,7 +43,7 @@ from pyrado.utils.experiments import load_experiment
 from pyrado.utils.input_output import ensure_math_mode
 
 
-class wrap_value_fcn:
+class wrap_vfcn:
     """ Wrap the values function to be able to only pass a subset of the state. """
 
     def __init__(self, fcn: nn.Module, fixed_state: to.Tensor, idcs: list):
@@ -83,7 +83,7 @@ if __name__ == '__main__':
 
     # Load the environment and the value function
     env, _, kwout = load_experiment(ex_dir, args)
-    value_fcn = kwout['value_fcn']
+    vfcn = kwout['vfcn']
 
     if not len(args.idcs) == 2:
         pyrado.ShapeErr(msg='Please provide exactly two indices to slice the value function input space (obs_space)!')
@@ -113,9 +113,9 @@ if __name__ == '__main__':
     fixed_state = to.zeros(env.obs_space.shape)
 
     # Wrap the function to be able to only provide the mesh gird values as inputs
-    w_value_fcn = wrap_value_fcn(value_fcn, fixed_state, args.idcs)
+    w_vfcn = wrap_vfcn(vfcn, fixed_state, args.idcs)
 
-    fig = draw_surface(to.from_numpy(x), to.from_numpy(y), w_value_fcn,
+    fig = draw_surface(to.from_numpy(x), to.from_numpy(y), w_vfcn,
                        f'{ensure_math_mode(state_labels[0])}', f'{ensure_math_mode(state_labels[1])}',
                        f'$V(${ensure_math_mode(state_labels[0])},{ensure_math_mode(state_labels[1])}$)$',
                        data_format='torch')

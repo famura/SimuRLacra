@@ -225,7 +225,7 @@ class DiscreteActQValPolicy(Policy):
         :param spec: environment specification
         :param net: module that approximates the Q-values given the observations and possible (discrete) actions.
                     Make sure to create this object with the correct input and output sizes by using
-                    `DiscreteActQValPolicy.get_q_fcn_input_size()` and `DiscreteActQValPolicy.get_q_fcn_output_size()`.
+                    `DiscreteActQValPolicy.get_qfcn_input_size()` and `DiscreteActQValPolicy.get_qfcn_output_size()`.
         :param init_param_kwargs: additional keyword arguments for the policy parameter initialization
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
@@ -245,12 +245,12 @@ class DiscreteActQValPolicy(Policy):
         self.init_param(None, **init_param_kwargs)
 
     @staticmethod
-    def get_q_fcn_input_size(spec: EnvSpec) -> int:
+    def get_qfcn_input_size(spec: EnvSpec) -> int:
         """ Get the flat input size. """
         return spec.obs_space.flat_dim + spec.act_space.ele_dim
 
     @staticmethod
-    def get_q_fcn_output_size() -> int:
+    def get_qfcn_output_size() -> int:
         """ Get the flat output size. """
         return 1
 

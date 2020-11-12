@@ -34,7 +34,6 @@ from math import ceil
 from tqdm import tqdm
 
 from pyrado.spaces import BoxSpace
-from pyrado.utils.saving_loading import save_prefix_suffix, load_prefix_suffix
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate5DSim
 from pyrado.sampling.utils import gen_batch_idcs, gen_ordered_batch_idcs, gen_ordered_batches
 from pyrado.utils.data_types import *
@@ -634,7 +633,8 @@ def test_logmeanexp(x, dim):
         (BallOnBeamSim(dt=0.01, max_steps=500), 'pkl'),
         (pytest.param(BallOnPlate5DSim(physicsEngine='Bullet', dt=0.01, max_steps=3000, marks=m_needs_bullet), 'pkl')),
     ],
-    ids=['tensor', 'ndarray', 'dummypol', 'pyenv', 'rcssimenv'])
+    ids=['tensor', 'ndarray', 'dummypol', 'pyenv', 'rcssimenv']
+)
 @pytest.mark.parametrize(
     'meta_info', [
         None,
@@ -643,15 +643,17 @@ def test_logmeanexp(x, dim):
         dict(suffix='suf'),
         dict(foo='baz'),
     ],
-    ids=['None', 'pre_suf', 'pre', 'suf', 'neither'])
+    ids=['None', 'pre_suf', 'pre', 'suf', 'neither']
+)
 @pytest.mark.parametrize(
     'use_state_dict', [
         True, False
     ],
-    ids=['use_state_dict', 'not-use_state_dict'])
-def test_save_load_prefix_suffix(obj, file_ext, tmpdir, meta_info, use_state_dict):
+    ids=['use_state_dict', 'not-use_state_dict']
+)
+def test_save_load(obj, file_ext, tmpdir, meta_info, use_state_dict):
     # Save
-    save_prefix_suffix(obj, 'tmpname', file_ext, tmpdir, meta_info, use_state_dict)
+    pyrado.save(obj, 'tmpname', file_ext, tmpdir, meta_info, use_state_dict)
 
     # Check if sth has been saved with the correct pre- and suffix
     if meta_info is None:
@@ -664,5 +666,5 @@ def test_save_load_prefix_suffix(obj, file_ext, tmpdir, meta_info, use_state_dic
         assert osp.exists(osp.join(tmpdir, f"tmpname_{meta_info['suffix']}.{file_ext}"))
 
     # Check if sth has been loaded with the correct pre- and suffix
-    res = load_prefix_suffix(obj, 'tmpname', file_ext, tmpdir, meta_info)
+    res = pyrado.load(obj, 'tmpname', file_ext, tmpdir, meta_info)
     assert res is not None

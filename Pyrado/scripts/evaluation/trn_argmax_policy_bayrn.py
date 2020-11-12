@@ -53,7 +53,7 @@ if __name__ == '__main__':
     # Start from previous results policy if desired
     ppi = policy.param_values.data if args.warmstart is not None else None
     if isinstance(subrtn, ActorCritic):
-        vpi = kwout['value_fcn'].param_values.data if args.warmstart is not None else None
+        vpi = kwout['vfcn'].param_values.data if args.warmstart is not None else None
     else:
         vpi = None
 

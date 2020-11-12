@@ -86,8 +86,8 @@ if __name__ == '__main__':
     # Subroutine for policy improvement
     behav_policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
     behav_policy = FNNPolicy(spec=env_sim.spec, **behav_policy_hparam)
-    value_fcn_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
-    value_fcn = FNNPolicy(spec=EnvSpec(env_sim.obs_space, ValueFunctionSpace), **value_fcn_hparam)
+    vfcn_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
+    vfcn = FNNPolicy(spec=EnvSpec(env_sim.obs_space, ValueFunctionSpace), **vfcn_hparam)
     critic_hparam = dict(
         gamma=0.9885,
         lamda=0.9648,
@@ -97,7 +97,7 @@ if __name__ == '__main__':
         lr=5.792e-4,
         max_grad_norm=1.,
     )
-    critic = GAE(value_fcn, **critic_hparam)
+    critic = GAE(vfcn, **critic_hparam)
     subrtn_policy_hparam = dict(
         max_iter=300,
         min_steps=30*env_sim.max_steps,
@@ -173,7 +173,7 @@ if __name__ == '__main__':
     save_list_of_dicts_to_yaml([
         dict(env=env_hparams, seed=args.seed),
         dict(behav_policy=behav_policy_hparam),
-        # dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
+        # dict(critic=critic_hparam, vfcn=vfcn_hparam),
         dict(ddp_policy=ddp_policy_hparam, subrtn_distr_name=ddp_policy.name),
         dict(subrtn_distr=subrtn_distr_hparam, subrtn_distr_name=subrtn_distr.name),
         dict(subsubrtn_distr=subsubrtn_distr_hparam, subsubrtn_distr_name=subsubrtn_distr.name),

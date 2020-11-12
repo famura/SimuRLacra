@@ -107,8 +107,8 @@ if __name__ == '__main__':
     # PPO + FNN setup
     # policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
     # policy = FNNPolicy(spec=env_sim.spec, **policy_hparam)
-    # value_fcn_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
-    # value_fcn = FNNPolicy(spec=EnvSpec(env_sim.obs_space, ValueFunctionSpace), **value_fcn_hparam)
+    # vfcn_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
+    # vfcn = FNNPolicy(spec=EnvSpec(env_sim.obs_space, ValueFunctionSpace), **vfcn_hparam)
     # critic_hparam = dict(
     #     gamma=0.9885,
     #     lamda=0.9648,
@@ -118,7 +118,7 @@ if __name__ == '__main__':
     #     lr=5.792e-4,
     #     max_grad_norm=1.,
     # )
-    # critic = GAE(value_fcn, **critic_hparam)
+    # critic = GAE(vfcn, **critic_hparam)
     # subrtn_hparam = dict(
     #     max_iter=300,
     #     min_steps=23*env_sim.max_steps,

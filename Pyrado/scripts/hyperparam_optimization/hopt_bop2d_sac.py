@@ -83,14 +83,14 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     policy = TwoHeadedFNNPolicy(spec=env.spec, **policy_hparam)
 
     # Critic
-    q_fcn_hparam = dict(
+    qfcn_hparam = dict(
         hidden_sizes=trial.suggest_categorical('hidden_sizes_critic',
                                                [(16, 16), (32, 32), (64, 64), (16, 16, 16), (32, 32, 32)]),
         hidden_nonlin=fcn_from_str(trial.suggest_categorical('hidden_nonlin_critic', ['to_tanh', 'to_relu'])),
     )
     obsact_space = BoxSpace.cat([env.obs_space, env.act_space])
-    q_fcn_1 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **q_fcn_hparam)
-    q_fcn_2 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **q_fcn_hparam)
+    qfcn_1 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **qfcn_hparam)
+    qfcn_2 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **qfcn_hparam)
 
     # Algorithm
     algo_hparam = dict(
@@ -109,7 +109,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
         lr=trial.suggest_loguniform('lr_algo', 1e-5, 1e-3),
     )
     csv_logger = create_csv_step_logger(osp.join(study_dir, f'trial_{trial.number}'))
-    algo = SAC(study_dir, env, policy, q_fcn_1, q_fcn_2, **algo_hparam, logger=csv_logger)
+    algo = SAC(study_dir, env, policy, qfcn_1, qfcn_2, **algo_hparam, logger=csv_logger)
 
     # Train without saving the results
     algo.train(snapshot_mode='latest', seed=seed)

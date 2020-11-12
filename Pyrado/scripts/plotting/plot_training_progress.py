@@ -170,10 +170,10 @@ if __name__ == '__main__':
 
     @lfm.figure('Policy and Value Function Gradient L-2 Norm')
     def avg_grad_norm(fig, df, args):
-        if not _keys_in_columns(df, 'avg_policy_grad_norm', 'avg_V_fcn_grad_norm', verbose=args.verbose):
+        if not _keys_in_columns(df, 'avg_policy_grad_norm', 'avg_vfcn_grad_norm', verbose=args.verbose):
             return False
         plt.plot(np.arange(len(df.avg_policy_grad_norm)), df.avg_policy_grad_norm, label='policy')
-        plt.plot(np.arange(len(df.avg_V_fcn_grad_norm)), df.avg_V_fcn_grad_norm, label='V-fcn')
+        plt.plot(np.arange(len(df.avg_vfcn_grad_norm)), df.avg_vfcn_grad_norm, label='V-fcn')
         plt.xlabel('iteration')
         plt.ylabel('gradient norm')
         plt.legend(loc='best')

@@ -33,7 +33,6 @@ from typing import Sequence
 import pyrado
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.base import Algorithm
-from pyrado.utils.saving_loading import save_prefix_suffix, load_prefix_suffix
 from pyrado.environments.base import Env
 from pyrado.logger.step import StepLogger
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
@@ -150,16 +149,16 @@ class ActorCritic(Algorithm, ABC):
 
         if warmstart and ppi is not None and vpi is not None:
             self._policy.init_param(ppi)
-            self._critic.value_fcn.init_param(vpi)
+            self._critic.vfcn.init_param(vpi)
             print_cbt('Learning given an fixed parameter initialization.', 'w')
 
         elif warmstart and ppi is None and self._curr_iter > 0:
-            self._policy = load_prefix_suffix(
+            self._policy = pyrado.load(
                 self._policy, 'policy', 'pt', self.save_dir,
                 meta_info=dict(prefix=prefix, suffix=suffix)
             )
-            self._critic.value_fcn = load_prefix_suffix(
-                self._critic.value_fcn, 'valuefcn', 'pt', self.save_dir,
+            self._critic.vfcn = pyrado.load(
+                self._critic.vfcn, 'vfcn', 'pt', self.save_dir,
                 meta_info=dict(prefix=prefix, suffix=suffix)
             )
             print_cbt(f'Learning given the results from iteration {self._curr_iter - 1}', 'w')
@@ -167,15 +166,15 @@ class ActorCritic(Algorithm, ABC):
         else:
             # Reset the policy
             self._policy.init_param()
-            self._critic.value_fcn.init_param()
+            self._critic.vfcn.init_param()
             print_cbt('Learning from scratch.', 'w')
 
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
-        save_prefix_suffix(self._expl_strat.policy, 'policy', 'pt', self.save_dir, meta_info)
-        save_prefix_suffix(self._critic.value_fcn, 'valuefcn', 'pt', self.save_dir, meta_info)
+        pyrado.save(self._expl_strat.policy, 'policy', 'pt', self.save_dir, meta_info)
+        pyrado.save(self._critic.vfcn, 'vfcn', 'pt', self.save_dir, meta_info)
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            save_prefix_suffix(self._env, 'env', 'pkl', self.save_dir, meta_info)
+            pyrado.save(self._env, 'env', 'pkl', self.save_dir, meta_info)

@@ -31,7 +31,6 @@ import torch as to
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.utils.saving_loading import save_prefix_suffix
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate5DSim
 from pyrado.environment_wrappers.utils import inner_env
@@ -185,4 +184,4 @@ class LQR(Algorithm):
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            save_prefix_suffix(self._env, 'env', 'pkl', self.save_dir, meta_info)
+            pyrado.save(self._env, 'env', 'pkl', self.save_dir, meta_info)

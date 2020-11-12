@@ -121,9 +121,9 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
 
     if issubclass(algo_class, ActorCritic):
         common_hparam.update(min_rollouts=3,
-                             critic=GAE(value_fcn=FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace),
-                                                            hidden_sizes=[16, 16],
-                                                            hidden_nonlin=to.tanh)))
+                             critic=GAE(vfcn=FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace),
+                                                       hidden_sizes=[16, 16],
+                                                       hidden_nonlin=to.tanh)))
     elif issubclass(algo_class, ParameterExploring):
         common_hparam.update(num_rollouts=1)
     elif issubclass(algo_class, (DQL, SAC)):
@@ -133,8 +133,8 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
             # Override the setting
             env = BallOnBeamDiscSim(env.dt, env.max_steps)
             net = FNN(
-                input_size=DiscreteActQValPolicy.get_q_fcn_input_size(env.spec),
-                output_size=DiscreteActQValPolicy.get_q_fcn_output_size(),
+                input_size=DiscreteActQValPolicy.get_qfcn_input_size(env.spec),
+                output_size=DiscreteActQValPolicy.get_qfcn_output_size(),
                 **fnn_hparam
             )
             policy = DiscreteActQValPolicy(spec=env.spec, net=net)
@@ -143,8 +143,8 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
             env = ActNormWrapper(env)
             policy = TwoHeadedGRUPolicy(env.spec, shared_hidden_size=8, shared_num_recurrent_layers=1)
             obsact_space = BoxSpace.cat([env.obs_space, env.act_space])
-            common_hparam.update(q_fcn_1=FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **fnn_hparam))
-            common_hparam.update(q_fcn_2=FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **fnn_hparam))
+            common_hparam.update(qfcn_1=FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **fnn_hparam))
+            common_hparam.update(qfcn_2=FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **fnn_hparam))
     else:
         raise NotImplementedError
 
@@ -152,7 +152,7 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
     algo = algo_class(ex_dir, env, policy, **common_hparam)
     algo.policy.param_values += to.tensor([42.])
     if isinstance(algo, ActorCritic):
-        algo.critic.value_fcn.param_values += to.tensor([42.])
+        algo.critic.vfcn.param_values += to.tensor([42.])
 
     # Save and load
     algo.save_snapshot(meta_info=None)
@@ -165,7 +165,7 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
     # Check
     assert all(algo.policy.param_values == policy_loaded.param_values)
     if isinstance(algo, ActorCritic):
-        assert all(algo.critic.value_fcn.param_values == critic_loaded.value_fcn.param_values)
+        assert all(algo.critic.vfcn.param_values == critic_loaded.vfcn.param_values)
 
     # Load the experiment. Since we did not save any hyper-parameters, we ignore the errors when loading.
     env, policy, extra = load_experiment(ex_dir)
@@ -228,7 +228,7 @@ def test_param_expl(ex_dir, env, policy, algo_class, algo_hparam):
     ids=['casual']
 )
 @pytest.mark.parametrize(
-    'value_fcn_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)],
+    'vfcn_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)],
     ids=['casual']
 )
 @pytest.mark.parametrize(
@@ -239,9 +239,9 @@ def test_param_expl(ex_dir, env, policy, algo_class, algo_hparam):
     'algo_hparam', [dict(max_iter=2, num_particles=3, temperature=10, lr=1e-3, horizon=50)],
     ids=['casual']
 )
-def test_svpg(ex_dir, env, policy, actor_hparam, value_fcn_hparam, critic_hparam, algo_hparam):
+def test_svpg(ex_dir, env, policy, actor_hparam, vfcn_hparam, critic_hparam, algo_hparam):
     # Create algorithm and train
-    particle_hparam = dict(actor=actor_hparam, value_fcn=value_fcn_hparam, critic=critic_hparam)
+    particle_hparam = dict(actor=actor_hparam, vfcn=vfcn_hparam, critic=critic_hparam)
     algo = SVPG(ex_dir, env, particle_hparam, **algo_hparam)
     algo.train()
     assert algo.curr_iter == algo.max_iter
@@ -264,7 +264,7 @@ def test_svpg(ex_dir, env, policy, actor_hparam, value_fcn_hparam, critic_hparam
     ids=['casual']
 )
 @pytest.mark.parametrize(
-    'value_fcn_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)],
+    'vfcn_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)],
     ids=['casual']
 )
 @pytest.mark.parametrize(
@@ -276,15 +276,15 @@ def test_svpg(ex_dir, env, policy, actor_hparam, value_fcn_hparam, critic_hparam
                         num_workers=1, randomized_params=[])],
     ids=['casual']
 )
-def test_adr(ex_dir, env, subrtn_hparam, actor_hparam, value_fcn_hparam, critic_hparam, adr_hparam):
+def test_adr(ex_dir, env, subrtn_hparam, actor_hparam, vfcn_hparam, critic_hparam, adr_hparam):
     # Create the subroutine for the meta-algorithm
     actor = FNNPolicy(spec=env.spec, **actor_hparam)
-    value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
-    critic = GAE(value_fcn, **critic_hparam)
+    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
+    critic = GAE(vfcn, **critic_hparam)
     subroutine = PPO(ex_dir, env, actor, critic, **subrtn_hparam)
 
     # Create algorithm and train
-    particle_hparam = dict(actor=actor_hparam, value_fcn=value_fcn_hparam, critic=critic_hparam)
+    particle_hparam = dict(actor=actor_hparam, vfcn=vfcn_hparam, critic=critic_hparam)
     algo = ADR(ex_dir, env, subroutine, svpg_particle_hparam=particle_hparam, **adr_hparam)
     algo.train()
     assert algo.curr_iter == algo.max_iter
@@ -314,10 +314,10 @@ def test_spota_ppo(ex_dir, env, spota_hparam):
 
     # Policy and subroutines
     policy = FNNPolicy(env.spec, [16, 16], hidden_nonlin=to.tanh)
-    value_fcn = FNN(input_size=env.obs_space.flat_dim, output_size=1, hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
+    vfcn = FNN(input_size=env.obs_space.flat_dim, output_size=1, hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
     critic_hparam = dict(gamma=0.998, lamda=0.95, num_epoch=3, batch_size=64, lr=1e-3)
-    critic_cand = GAE(value_fcn, **critic_hparam)
-    critic_refs = GAE(deepcopy(value_fcn), **critic_hparam)
+    critic_cand = GAE(vfcn, **critic_hparam)
+    critic_refs = GAE(deepcopy(vfcn), **critic_hparam)
 
     subrtn_hparam_cand = dict(
         # min_rollouts=0,  # will be overwritten by SPOTA
@@ -357,7 +357,7 @@ def test_spota_ppo(ex_dir, env, spota_hparam):
     ],
     ids=['a2c', 'ppo', 'ppo2'])
 @pytest.mark.parametrize(
-    'value_fcn_type',
+    'vfcn_type',
     [
         'fnn-plain',
         'fnn',
@@ -367,10 +367,10 @@ def test_spota_ppo(ex_dir, env, spota_hparam):
 )
 @pytest.mark.parametrize('use_cuda', [False, True],
                          ids=['cpu', 'cuda'])
-def test_actor_critic(ex_dir, env, policy, algo, algo_hparam, value_fcn_type, use_cuda):
+def test_actor_critic(ex_dir, env, policy, algo, algo_hparam, vfcn_type, use_cuda):
     # Create value function
-    if value_fcn_type == 'fnn-plain':
-        value_fcn = FNN(
+    if vfcn_type == 'fnn-plain':
+        vfcn = FNN(
             input_size=env.obs_space.flat_dim,
             output_size=1,
             hidden_sizes=[16, 16],
@@ -379,15 +379,15 @@ def test_actor_critic(ex_dir, env, policy, algo, algo_hparam, value_fcn_type, us
         )
     else:
         vf_spec = EnvSpec(env.obs_space, ValueFunctionSpace)
-        if value_fcn_type == 'fnn':
-            value_fcn = FNNPolicy(
+        if vfcn_type == 'fnn':
+            vfcn = FNNPolicy(
                 vf_spec,
                 hidden_sizes=[16, 16],
                 hidden_nonlin=to.tanh,
                 use_cuda=use_cuda
             )
         else:
-            value_fcn = RNNPolicy(
+            vfcn = RNNPolicy(
                 vf_spec,
                 hidden_size=16,
                 num_recurrent_layers=1,
@@ -402,7 +402,7 @@ def test_actor_critic(ex_dir, env, policy, algo, algo_hparam, value_fcn_type, us
         lr=1e-3,
         standardize_adv=False,
     )
-    critic = GAE(value_fcn, **critic_hparam)
+    critic = GAE(vfcn, **critic_hparam)
 
     # Common hyper-parameters
     common_hparam = dict(max_iter=2, min_rollouts=3, num_workers=1)
@@ -503,8 +503,8 @@ def test_arpl(ex_dir, env):
 
     policy = FNNPolicy(env.spec, hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
 
-    value_fcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)
-    value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
+    vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)
+    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
     critic_hparam = dict(
         gamma=0.9844534412010116,
         lamda=0.9710614403461155,
@@ -513,7 +513,7 @@ def test_arpl(ex_dir, env):
         standardize_adv=False,
         lr=0.00016985313083236645,
     )
-    critic = GAE(value_fcn, **critic_hparam)
+    critic = GAE(vfcn, **critic_hparam)
 
     algo_hparam = dict(
         max_iter=0,

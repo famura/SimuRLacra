@@ -67,8 +67,8 @@ if __name__ == '__main__':
     policy = LinearPolicy(spec=env.spec, **policy_hparam)
 
     # Critic
-    value_fcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)
-    value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **value_fcn_hparam)
+    vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)
+    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
     critic_hparam = dict(
         gamma=0.99,
         lamda=0.95,
@@ -77,14 +77,14 @@ if __name__ == '__main__':
         lr_scheduler=lr_scheduler.ExponentialLR,
         lr_scheduler_hparam=dict(gamma=0.99)
     )
-    critic = GAE(value_fcn, **critic_hparam)
+    critic = GAE(vfcn, **critic_hparam)
 
     # Algorithm
     algo_hparam = dict(
         max_iter=500,
         min_steps=10000,
         num_workers=4,
-        value_fcn_coeff=0.7,
+        vfcn_coeff=0.7,
         entropy_coeff=4e-5,
         batch_size=100,
         std_init=0.8,
@@ -98,7 +98,7 @@ if __name__ == '__main__':
     save_list_of_dicts_to_yaml([
         dict(env=env_hparams, seed=args.seed),
         dict(policy=policy_hparam),
-        dict(critic=critic_hparam, value_fcn=value_fcn_hparam),
+        dict(critic=critic_hparam, vfcn=vfcn_hparam),
         dict(algo=algo_hparam, algo_name=algo.name)],
         ex_dir
     )

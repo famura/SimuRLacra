@@ -37,7 +37,6 @@ import pyrado
 from pyrado.algorithms.base import Algorithm, InterruptableAlgorithm
 from pyrado.algorithms.episodic.sysid_via_episodic_rl import SysIdViaEpisodicRL
 from pyrado.algorithms.utils import until_thold_exceeded
-from pyrado.utils.saving_loading import save_prefix_suffix, load_prefix_suffix
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
 from pyrado.environment_wrappers.utils import inner_env
@@ -162,7 +161,7 @@ class SimOpt(InterruptableAlgorithm):
         :return: estimated return of the trained policy in the target domain
         """
         # Save the current candidate
-        save_prefix_suffix(cand.view(-1), 'candidate', 'pt', self.save_dir, meta_info=dict(prefix=prefix))
+        pyrado.save(cand.view(-1), 'candidate', 'pt', self.save_dir, meta_info=dict(prefix=prefix))
 
         # Set the domain randomizer
         self._env_sim.adapt_randomizer(cand.detach().cpu().numpy())
@@ -290,9 +289,9 @@ class SimOpt(InterruptableAlgorithm):
 
         if save_dir is not None:
             # Save the evaluation results
-            save_prefix_suffix(ros_real, 'rollouts_real', 'pkl', save_dir, meta_info=dict(prefix=prefix))
+            pyrado.save(ros_real, 'rollouts_real', 'pkl', save_dir, meta_info=dict(prefix=prefix))
             rets_real = to.tensor([r.undiscounted_return() for r in ros_real])
-            save_prefix_suffix(rets_real, 'returns_real', 'pt', save_dir, meta_info=dict(prefix=prefix))
+            pyrado.save(rets_real, 'returns_real', 'pt', save_dir, meta_info=dict(prefix=prefix))
 
             print_cbt('Target domain performance', bright=True)
             print(tabulate([['mean return', to.mean(rets_real).item()],
@@ -329,7 +328,7 @@ class SimOpt(InterruptableAlgorithm):
 
         if self.curr_checkpoint == 1:
             # Evaluate the current policy in the target domain
-            policy = load_prefix_suffix(
+            policy = pyrado.load(
                 self.policy, 'policy', 'pt', self.save_dir, meta_info=dict(prefix=f'iter_{self._curr_iter}')
             )
             self.eval_behav_policy(
@@ -345,7 +344,7 @@ class SimOpt(InterruptableAlgorithm):
 
         if self.curr_checkpoint == 2:
             # Train and evaluate the policy that represents domain parameter distribution
-            rollouts_real = load_prefix_suffix(
+            rollouts_real = pyrado.load(
                 None, 'rollouts_real', 'pkl', self.save_dir, meta_info=dict(prefix=f'iter_{self._curr_iter}')
             )
             curr_cand_value = self.train_ddp_policy(rollouts_real, prefix=f'iter_{self._curr_iter}')
@@ -353,12 +352,12 @@ class SimOpt(InterruptableAlgorithm):
                 self.cands_values = to.tensor(curr_cand_value).unsqueeze(0)
             else:
                 self.cands_values = to.cat([self.cands_values, to.tensor(curr_cand_value).unsqueeze(0)], dim=0)
-            save_prefix_suffix(self.cands_values, 'candidates_values', 'pt', self.save_dir, meta_info)
+            pyrado.save(self.cands_values, 'candidates_values', 'pt', self.save_dir, meta_info)
 
             # The next candidate is the current search distribution and not the best policy parameter set (is saved)
             next_cand = self._subrtn_distr.policy.transform_to_ddp_space(self._subrtn_distr.policy.param_values)
             self.cands = to.cat([self.cands, next_cand.unsqueeze(0)], dim=0)
-            save_prefix_suffix(self.cands, 'candidates', 'pt', self.save_dir, meta_info)
+            pyrado.save(self.cands, 'candidates', 'pt', self.save_dir, meta_info)
 
             # Save the latest domain distribution parameter policy
             self._subrtn_distr.save_snapshot(meta_info=dict(prefix='ddp', rollouts_real=rollouts_real))

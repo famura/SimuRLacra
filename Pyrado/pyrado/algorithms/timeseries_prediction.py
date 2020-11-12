@@ -35,7 +35,6 @@ from typing import Optional
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.policies.recurrent.potential_based import PotentialBasedPolicy
-from pyrado.utils.saving_loading import save_prefix_suffix
 from pyrado.utils.data_sets import TimeSeriesDataSet
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
@@ -241,8 +240,8 @@ class TSPred(Algorithm):
         super().save_snapshot()
 
         # Does not matter if this algorithm instance is a subroutine of another algorithm
-        save_prefix_suffix(self._policy, 'policy', 'pt', self.save_dir, meta_info)
-        save_prefix_suffix(self.dataset, 'dataset', 'pt', self.save_dir, meta_info)
+        pyrado.save(self._policy, 'policy', 'pt', self.save_dir, meta_info)
+        pyrado.save(self.dataset, 'dataset', 'pt', self.save_dir, meta_info)
 
     @staticmethod
     def evaluate(policy: Policy,

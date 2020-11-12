@@ -47,7 +47,6 @@ from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sequences import *
 from pyrado.sampling.bootstrapping import bootstrap_ci
 from pyrado.utils.input_output import print_cbt
-from pyrado.utils.saving_loading import save_prefix_suffix, load_prefix_suffix
 
 
 class SPOTA(InterruptableAlgorithm):
@@ -256,8 +255,8 @@ class SPOTA(InterruptableAlgorithm):
         pol_param_before = self._subrtn_cand.policy.param_values.clone()
         if isinstance(self._subrtn_cand, ActorCritic):
             # Set dropout and batch normalization layers to training mode
-            self._subrtn_cand.critic.value_fcn.train()
-            critic_param_before = self._subrtn_cand.critic.value_fcn.param_values.clone()
+            self._subrtn_cand.critic.vfcn.train()
+            critic_param_before = self._subrtn_cand.critic.vfcn.param_values.clone()
 
         # Solve the (approx) stochastic program SP_nc for the sampled physics parameter sets
         print_cbt(f'\nIteration {self._curr_iter} | Candidate solution\n', 'c', bright=True)
@@ -268,7 +267,7 @@ class SPOTA(InterruptableAlgorithm):
         if (self._subrtn_cand.policy.param_values == pol_param_before).all():
             warn("The candidate's policy parameters did not change during training!", UserWarning)
         if isinstance(self._subrtn_refs, ActorCritic):
-            if (self._subrtn_cand.critic.value_fcn.param_values == critic_param_before).all():
+            if (self._subrtn_cand.critic.vfcn.param_values == critic_param_before).all():
                 warn("The candidate's critic parameters did not change during training!", UserWarning)
 
         print_cbt('Learned an approx solution for SP_nc.\n', 'y')
@@ -306,8 +305,8 @@ class SPOTA(InterruptableAlgorithm):
             pol_param_before = self._subrtn_refs.policy.param_values.clone()
             if isinstance(self._subrtn_refs, ActorCritic):
                 # Set dropout and batch normalization layers to training mode
-                self._subrtn_refs.critic.value_fcn.train()
-                critic_param_before = self._subrtn_refs.critic.value_fcn.param_values.clone()
+                self._subrtn_refs.critic.vfcn.train()
+                critic_param_before = self._subrtn_refs.critic.vfcn.param_values.clone()
 
             # Solve the (approx) stochastic program SP_n for the samples physics parameter sets
             self._subrtn_refs.train(
@@ -317,7 +316,7 @@ class SPOTA(InterruptableAlgorithm):
             if (self._subrtn_refs.policy.param_values == pol_param_before).all():
                 warn("The reference's policy parameters did not change during training!", UserWarning)
             if isinstance(self._subrtn_refs, ActorCritic):
-                if (self._subrtn_refs.critic.value_fcn.param_values == critic_param_before).all():
+                if (self._subrtn_refs.critic.vfcn.param_values == critic_param_before).all():
                     warn("The reference's critic parameters did not change during training!", UserWarning)
 
             print_cbt('Learned an approx solution for SP_n\n', 'y')
@@ -367,11 +366,11 @@ class SPOTA(InterruptableAlgorithm):
             self.env_dr.buffer = env_params_ref
 
             # Load the policies (makes a difference for snapshot_mode = best)
-            self._subrtn_cand._policy = load_prefix_suffix(
+            self._subrtn_cand._policy = pyrado.load(
                 self._subrtn_cand._policy, 'policy', 'pt', self.save_dir,
                 dict(prefix=f'iter_{self._curr_iter}', suffix='cand')
             )
-            self._subrtn_refs._policy = load_prefix_suffix(
+            self._subrtn_refs._policy = pyrado.load(
                 self._subrtn_refs._policy, 'policy', 'pt', self.save_dir,
                 dict(prefix=f'iter_{self._curr_iter}', suffix=f'ref_{k}')
             )
@@ -444,7 +443,7 @@ class SPOTA(InterruptableAlgorithm):
                     continue
                 else:
                     # Load a reference solution different from the the k-th
-                    other_ref = load_prefix_suffix(
+                    other_ref = pyrado.load(
                         self._subrtn_refs._policy, 'policy', 'pt', self.save_dir,
                         dict(prefix=f'iter_{self._curr_iter}', suffix=f'ref_{other_k}')
                     )
@@ -481,7 +480,7 @@ class SPOTA(InterruptableAlgorithm):
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            save_prefix_suffix(self.env_dr, 'env', 'pkl', self.save_dir, meta_info)
-            save_prefix_suffix(self.env_dr.randomizer, 'randomizer', 'pkl', self.save_dir, meta_info)
+            pyrado.save(self.env_dr, 'env', 'pkl', self.save_dir, meta_info)
+            pyrado.save(self.env_dr.randomizer, 'randomizer', 'pkl', self.save_dir, meta_info)
         else:
             raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')

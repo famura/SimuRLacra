@@ -77,7 +77,7 @@ class EPOpt(Algorithm):
         super().__init__(subrtn.save_dir, subrtn.max_iter, subrtn.policy, subrtn.logger)
 
         self._subrtn = subrtn
-        self._subrtn.save_name = 'subtrn'
+        self._subrtn.save_name = 'subrtn'
         self.epsilon = epsilon
         self.gamma = gamma
         self.skip_iter = skip_iter

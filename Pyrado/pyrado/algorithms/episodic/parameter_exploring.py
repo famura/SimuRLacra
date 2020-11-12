@@ -38,7 +38,6 @@ from pyrado.exploration.stochastic_params import StochasticParamExplStrat
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.sampling.parameter_exploration_sampler import ParameterExplorationSampler, ParameterSamplingResult
-from pyrado.utils.saving_loading import save_prefix_suffix
 from pyrado.utils.input_output import print_cbt
 
 
@@ -192,8 +191,8 @@ class ParameterExploring(Algorithm):
         # Save the best element of the current population
         best_policy = deepcopy(self._policy)
         best_policy.param_values = self.best_policy_param
-        save_prefix_suffix(best_policy, 'policy', 'pt', self.save_dir, meta_info)
+        pyrado.save(best_policy, 'policy', 'pt', self.save_dir, meta_info)
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            save_prefix_suffix(self._env, 'env', 'pkl', self.save_dir, meta_info)
+            pyrado.save(self._env, 'env', 'pkl', self.save_dir, meta_info)

@@ -32,7 +32,6 @@ Script for the paper plot the GP's posterior after a Bayesian Domain Randomizati
 import joblib
 import os
 import os.path as osp
-import torch as to
 import seaborn as sns
 from matplotlib import pyplot as plt
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
@@ -45,7 +44,6 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.gaussian_process import render_singletask_gp
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.saving_loading import load_prefix_suffix
 
 
 if __name__ == '__main__':
@@ -79,9 +77,9 @@ if __name__ == '__main__':
         except Exception:
             gt_val_y = None
 
-    cands = load_prefix_suffix(None, 'candidates', 'pt', ex_dir)
-    cands_values = load_prefix_suffix(None, 'candidates_values', 'pt', ex_dir).unsqueeze(1)
-    ddp_space = load_prefix_suffix(None, 'ddp_space', 'pkl', ex_dir)
+    cands = pyrado.load(None, 'candidates', 'pt', ex_dir)
+    cands_values = pyrado.load(None, 'candidates_values', 'pt', ex_dir).unsqueeze(1)
+    ddp_space = pyrado.load(None, 'ddp_space', 'pkl', ex_dir)
 
     dim_cand = cands.shape[1]  # number of domain distribution parameters
     if dim_cand%2 != 0:

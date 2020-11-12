@@ -37,7 +37,6 @@ import pyrado
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.utils import compute_action_statistics
-from pyrado.utils.saving_loading import save_prefix_suffix
 from pyrado.environments.base import Env
 from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.algorithms.step_based.gae import ValueFunctionSpace
@@ -79,7 +78,7 @@ class SVPGParticle(Policy):
         :param init_values: the initial values for the actor and critic networks
         """
         self.actor.init_param(init_values, **kwargs)
-        self.critic.value_fcn.init_param(init_values, **kwargs)
+        self.critic.vfcn.init_param(init_values, **kwargs)
 
     def value(self, obs: to.Tensor) -> to.Tensor:
         """
@@ -147,7 +146,7 @@ class SVPG(Algorithm):
             raise pyrado.TypeErr(given=env, expected_type=Env)
         if not isinstance(particle_hparam, dict):
             raise pyrado.TypeErr(given=particle_hparam, expected_type=dict)
-        if not all([key in particle_hparam for key in ['actor', 'value_fcn', 'critic']]):
+        if not all([key in particle_hparam for key in ['actor', 'vfcn', 'critic']]):
             raise AttributeError
 
         # Call Algorithm's constructor
@@ -174,8 +173,8 @@ class SVPG(Algorithm):
 
         # Particle factory
         actor = FNNPolicy(spec=env.spec, **particle_hparam['actor'])
-        value_fcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **particle_hparam['value_fcn'])
-        critic = GAE(value_fcn, **particle_hparam['critic'])
+        vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **particle_hparam['vfcn'])
+        critic = GAE(vfcn, **particle_hparam['critic'])
         self.register_as_logger_parent(critic)
         particle = SVPGParticle(env.spec, actor, critic)
 
@@ -315,8 +314,8 @@ class SVPG(Algorithm):
         super().save_snapshot(meta_info)
 
         for idx, p in enumerate(self.particles):
-            save_prefix_suffix(p, f'particle_{idx}', 'pt', self.save_dir, meta_info)
+            pyrado.save(p, f'particle_{idx}', 'pt', self.save_dir, meta_info)
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            save_prefix_suffix(self._env, 'env', 'pkl', self.save_dir, meta_info)
+            pyrado.save(self._env, 'env', 'pkl', self.save_dir, meta_info)

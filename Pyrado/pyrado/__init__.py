@@ -101,14 +101,17 @@ np.set_printoptions(precision=4, sign=' ', linewidth=200)  # suppress=True
 sym_success = '\u2714'
 sym_failure = '\u2716'
 
-# Include all error classes
+# Include error classes
 from pyrado.utils.exceptions import BaseErr, KeyErr, PathErr, ShapeErr, TypeErr, ValueErr
+
+# Include saving and loading functions
+from pyrado.utils.saving_loading import save, load
 
 
 # Set the public API
-__all__ = ['VERSION', 'DATA_DIR', 'TEMP_DIR', 'PERMA_DIR', 'EVAL_DIR', 'EXP_DIR', 'HPARAM_DIR',
+__all__ = ['VERSION', 'TEMP_DIR', 'PERMA_DIR', 'EVAL_DIR', 'EXP_DIR', 'HPARAM_DIR',
            'rcsenv_available', 'mujoco_available', 'use_pgf', 'inf', 'nan',
-           'sym_success', 'sym_failure', 'set_seed']
+           'sym_success', 'sym_failure', 'set_seed',]
 
 
 def close_vpython():

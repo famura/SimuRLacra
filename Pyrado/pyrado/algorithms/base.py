@@ -34,7 +34,6 @@ from typing import Any, Optional, Union
 
 import pyrado
 from pyrado.logger.experiment import split_path_custom_common
-from pyrado.utils.saving_loading import load_prefix_suffix
 from pyrado.exploration.stochastic_action import StochasticActionExplStrat
 from pyrado.exploration.stochastic_params import StochasticParamExplStrat
 from pyrado.logger.step import StepLogger, LoggerAware
@@ -99,7 +98,7 @@ class Algorithm(ABC, LoggerAware):
 
     @save_name.setter
     def save_name(self, name: str):
-        """ Set the name for saving this algorithm instance, e.g. 'subtrn' if saved to 'subrtn.pkl'. """
+        """ Set the name for saving this algorithm instance, e.g. 'subrtn' if saved to 'subrtn.pkl'. """
         if not isinstance(name, str):
             raise pyrado.TypeErr(given=name, expected_type=str)
         self._save_name = name
@@ -188,10 +187,8 @@ class Algorithm(ABC, LoggerAware):
             print_cbt('Learning given an fixed parameter initialization.', 'w')
 
         elif warmstart and ppi is None and self._curr_iter > 0:
-            self._policy = load_prefix_suffix(
-                self._policy, 'policy', 'pt', self.save_dir,
-                meta_info=dict(prefix=prefix, suffix=suffix)
-            )
+            self._policy = pyrado.load(self._policy, 'policy', 'pt', self.save_dir,
+                                       meta_info=dict(prefix=prefix, suffix=suffix))
             print_cbt(f'Learning given the results from iteration {self._curr_iter - 1}', 'w')
 
         else:

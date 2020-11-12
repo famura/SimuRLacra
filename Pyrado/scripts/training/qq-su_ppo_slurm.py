@@ -95,9 +95,9 @@ if __name__ == '__main__':
     policy.init_param()
 
     # Critic
-    value_fcn = to.load(osp.join(ref_ex_dir, 'valuefcn.pt'))
-    value_fcn.init_param()
-    critic = GAE(value_fcn, **hparams['critic'])
+    vfcn = to.load(osp.join(ref_ex_dir, 'valuefcn.pt'))
+    vfcn.init_param()
+    critic = GAE(vfcn, **hparams['critic'])
 
     # Algorithm
     algo_hparam = hparams['subrtn']

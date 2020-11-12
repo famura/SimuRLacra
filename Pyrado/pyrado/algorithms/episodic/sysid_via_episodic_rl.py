@@ -37,7 +37,6 @@ from typing import Callable, Sequence, Tuple, Union
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
-from pyrado.utils.saving_loading import save_prefix_suffix
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from pyrado.policies.base import Policy
@@ -347,4 +346,4 @@ class SysIdViaEpisodicRL(Algorithm):
 
         if 'rollouts_real' not in meta_info:
             raise pyrado.KeyErr(key='rollouts_real', container=meta_info)
-        save_prefix_suffix(meta_info['rollouts_real'], 'rollouts_real', 'pkl', self.save_dir, meta_info)
+        pyrado.save(meta_info['rollouts_real'], 'rollouts_real', 'pkl', self.save_dir, meta_info)

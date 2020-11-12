@@ -59,7 +59,7 @@ if __name__ == '__main__':
         hidden_sizes=[64],
         hidden_nonlin=to.relu,
     )
-    value_fcn_hparam = dict(
+    vfcn_hparam = dict(
         hidden_sizes=[32],
         hidden_nonlin=to.tanh,
     )
@@ -71,7 +71,7 @@ if __name__ == '__main__':
         standardize_adv=False,
         max_grad_norm=5.,
     )
-    particle_hparam = dict(actor=actor_hparam, value_fcn=value_fcn_hparam, critic=critic_hparam)
+    particle_hparam = dict(actor=actor_hparam, vfcn=vfcn_hparam, critic=critic_hparam)
 
     # Algorithm
     algo_hparam = dict(

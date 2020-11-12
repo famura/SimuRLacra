@@ -59,7 +59,7 @@ class A2C(ActorCritic):
                  max_iter: int,
                  min_rollouts: int = None,
                  min_steps: int = None,
-                 value_fcn_coeff: float = 0.5,
+                 vfcn_coeff: float = 0.5,
                  entropy_coeff: float = 1e-3,
                  batch_size: int = 32,
                  std_init: float = 1.0,
@@ -79,7 +79,7 @@ class A2C(ActorCritic):
         :param max_iter: number of iterations (policy updates)
         :param min_rollouts: minimum number of rollouts sampled per policy update batch
         :param min_steps: minimum number of state transitions sampled per policy update batch
-        :param value_fcn_coeff: weighting factor of the value function term in the combined loss, specific to PPO2
+        :param vfcn_coeff: weighting factor of the value function term in the combined loss, specific to PPO2
         :param entropy_coeff: weighting factor of the entropy term in the combined loss, specific to PPO2
         :param batch_size: number of samples per policy update batch
         :param std_init: initial standard deviation on the actions for the exploration noise
@@ -97,7 +97,7 @@ class A2C(ActorCritic):
         # Store the inputs
         self.min_rollouts = min_rollouts
         self.min_steps = min_steps
-        self.value_fcn_coeff = value_fcn_coeff
+        self.vfcn_coeff = vfcn_coeff
         self.entropy_coeff = entropy_coeff
         self.batch_size = batch_size
         self.max_grad_norm = max_grad_norm
@@ -113,7 +113,7 @@ class A2C(ActorCritic):
         self.optim = to.optim.RMSprop(
             [{'params': self._policy.parameters()},
              {'params': self.expl_strat.noise.parameters()},
-             {'params': self._critic.value_fcn.parameters()}],
+             {'params': self._critic.vfcn.parameters()}],
             lr=lr, eps=1e-5
         )
         self._lr_scheduler = lr_scheduler
@@ -133,11 +133,11 @@ class A2C(ActorCritic):
         """
         # Policy, value function, and entropy losses
         policy_loss = -to.mean(adv.to(self.policy.device)*log_probs)
-        value_fcn_loss = 0.5*to.mean(to.pow(v_targ.to(self.policy.device) - v_pred.to(self.policy.device), 2))  # former v_targ.cpu() - v_pred.cpu()
+        vfcn_loss = 0.5*to.mean(to.pow(v_targ.to(self.policy.device) - v_pred.to(self.policy.device), 2))  # former v_targ.cpu() - v_pred.cpu()
         entropy_mean = to.mean(self.expl_strat.noise.get_entropy())
 
         # Return the combined loss
-        return policy_loss + self.value_fcn_coeff*value_fcn_loss - self.entropy_coeff*entropy_mean
+        return policy_loss + self.vfcn_coeff*vfcn_loss - self.entropy_coeff*entropy_mean
 
     def update(self, rollouts: Sequence[StepSequence]):
         # Turn the batch of rollouts into a list of steps
@@ -167,7 +167,7 @@ class A2C(ActorCritic):
 
         for batch in tqdm(concat_ros.split_shuffled_batches(
             self.batch_size,
-            complete_rollouts=self._policy.is_recurrent or isinstance(self._critic.value_fcn, RecurrentPolicy)),
+            complete_rollouts=self._policy.is_recurrent or isinstance(self._critic.vfcn, RecurrentPolicy)),
             total=num_iter_from_rollouts(None, concat_ros, self.batch_size),
             desc='Updating', unit='batches', file=sys.stdout, leave=False):
             # Reset the gradients

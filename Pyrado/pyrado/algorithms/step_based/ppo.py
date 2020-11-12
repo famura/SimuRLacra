@@ -253,7 +253,7 @@ class PPO2(ActorCritic):
                  min_steps: int = None,
                  num_epoch: int = 3,
                  eps_clip: float = 0.1,
-                 value_fcn_coeff: float = 0.5,
+                 vfcn_coeff: float = 0.5,
                  entropy_coeff: float = 1e-3,
                  batch_size: int = 32,
                  std_init: float = 1.0,
@@ -275,7 +275,7 @@ class PPO2(ActorCritic):
         :param min_steps: minimum number of state transitions sampled per policy update batch
         :param num_epoch: number of iterations over all gathered samples during one policy update
         :param eps_clip: max/min probability ratio, see [1]
-        :param value_fcn_coeff: weighting factor of the value function term in the combined loss, specific to PPO2
+        :param vfcn_coeff: weighting factor of the value function term in the combined loss, specific to PPO2
         :param entropy_coeff: weighting factor of the entropy term in the combined loss, specific to PPO2
         :param batch_size: number of samples per policy update batch
         :param std_init: initial standard deviation on the actions for the exploration noise
@@ -301,7 +301,7 @@ class PPO2(ActorCritic):
         # Store the inputs
         self.num_epoch = num_epoch
         self.eps_clip = eps_clip
-        self.value_fcn_coeff = value_fcn_coeff
+        self.vfcn_coeff = vfcn_coeff
         self.entropy_coeff = entropy_coeff
         self.batch_size = batch_size
         self.max_grad_norm = max_grad_norm
@@ -318,7 +318,7 @@ class PPO2(ActorCritic):
         self.optim = to.optim.Adam(
             [{'params': self._expl_strat.policy.parameters()},
              {'params': self._expl_strat.noise.parameters()},
-             {'params': self._critic.value_fcn.parameters()}],
+             {'params': self._critic.vfcn.parameters()}],
             lr=lr, eps=1e-5
         )
         self._lr_scheduler = lr_scheduler
@@ -359,13 +359,13 @@ class PPO2(ActorCritic):
         v_pred_clip = v_pred_old + v_pred_diffs.clamp(-self.eps_clip, self.eps_clip)
         v_loss1 = to.pow(v_targ - v_pred, 2)
         v_loss2 = to.pow(v_targ - v_pred_clip, 2)
-        value_fcn_loss = 0.5*to.mean(to.max(v_loss1, v_loss2))
+        vfcn_loss = 0.5*to.mean(to.max(v_loss1, v_loss2))
 
         # Current entropy of the exploration strategy (was constant over the rollout)
         entropy = self._expl_strat.noise.get_entropy()
 
         # Return the combined loss
-        return policy_loss + self.value_fcn_coeff*value_fcn_loss - self.entropy_coeff*entropy
+        return policy_loss + self.vfcn_coeff*vfcn_loss - self.entropy_coeff*entropy
 
     def update(self, rollouts: Sequence[StepSequence]):
         # Turn the batch of rollouts into a list of steps
@@ -387,7 +387,7 @@ class PPO2(ActorCritic):
 
         # For logging the gradient norms
         policy_grad_norm = []
-        value_fcn_grad_norm = []
+        vfcn_grad_norm = []
 
         # Compute the value targets (empirical discounted returns) for all samples before fitting the V-fcn parameters
         adv = self._critic.gae(concat_ros)  # done with to.no_grad()
@@ -400,7 +400,7 @@ class PPO2(ActorCritic):
 
             for batch in tqdm(concat_ros.split_shuffled_batches(
                 self.batch_size,
-                complete_rollouts=self._policy.is_recurrent or isinstance(self._critic.value_fcn, RecurrentPolicy)),
+                complete_rollouts=self._policy.is_recurrent or isinstance(self._critic.vfcn, RecurrentPolicy)),
                 total=num_iter_from_rollouts(None, concat_ros, self.batch_size),
                 desc=f'Epoch {e}', unit='batches', file=sys.stdout, leave=False):
                 # Reset the gradients
@@ -418,7 +418,7 @@ class PPO2(ActorCritic):
 
                 # Clip the gradients if desired
                 policy_grad_norm.append(self.clip_grad(self._expl_strat.policy, self.max_grad_norm))
-                value_fcn_grad_norm.append(self.clip_grad(self._critic.value_fcn, self.max_grad_norm))
+                vfcn_grad_norm.append(self.clip_grad(self._critic.vfcn, self.max_grad_norm))
 
                 # Call optimizer
                 self.optim.step()
@@ -439,7 +439,7 @@ class PPO2(ActorCritic):
                 v_loss_old = self._critic.loss_fcn(v_pred_old.to(self.policy.device), v_targ.to(self.policy.device)).to(
                     self.policy.device)
                 v_loss_new = self._critic.loss_fcn(v_pred, v_targ).to(self.policy.device)
-                value_fcn_loss_impr = v_loss_old - v_loss_new  # positive values are desired
+                vfcn_loss_impr = v_loss_old - v_loss_new  # positive values are desired
 
                 # Compute the action probabilities using the new (after the updates) policy
                 act_stats = compute_action_statistics(concat_ros, self._expl_strat)
@@ -450,7 +450,7 @@ class PPO2(ActorCritic):
 
                 # Compute explained variance (after the updates)
                 self.logger.add_value('explained var', explained_var(v_pred, v_targ), 4)
-                self.logger.add_value('V-fcn loss improvement', value_fcn_loss_impr, 4)
+                self.logger.add_value('V-fcn loss improvement', vfcn_loss_impr, 4)
                 self.logger.add_value('loss after', loss_after, 4)
                 self.logger.add_value('KL(old_new)', kl_avg, 4)
 
@@ -458,6 +458,6 @@ class PPO2(ActorCritic):
         self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.noise.std), 4)
         self.logger.add_value('expl strat entropy', self._expl_strat.noise.get_entropy(), 4)
         self.logger.add_value('avg policy grad norm', np.mean(policy_grad_norm), 4)
-        self.logger.add_value('avg V-fcn grad norm', np.mean(value_fcn_grad_norm), 4)
+        self.logger.add_value('avg V-fcn grad norm', np.mean(vfcn_grad_norm), 4)
         if self._lr_scheduler is not None:
             self.logger.add_value('avg learning rate', np.mean(self._lr_scheduler.get_lr()), 6)

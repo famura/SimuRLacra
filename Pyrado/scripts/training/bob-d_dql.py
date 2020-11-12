@@ -62,8 +62,8 @@ if __name__ == '__main__':
         hidden_nonlin=to.tanh
     )
     net = FNN(
-        input_size=DiscreteActQValPolicy.get_q_fcn_input_size(env.spec),
-        output_size=DiscreteActQValPolicy.get_q_fcn_output_size(),
+        input_size=DiscreteActQValPolicy.get_qfcn_input_size(env.spec),
+        output_size=DiscreteActQValPolicy.get_qfcn_output_size(),
         **policy_hparam
     )
     policy = DiscreteActQValPolicy(spec=env.spec, net=net)
