@@ -112,7 +112,6 @@ def test_render_curve(data, x_grid):
         x_label=r'$\mu$', y_label='', vline_level=None, palette=None, title='Title', show_legend=True, area_label='a',
         plot_kwargs=dict(alpha=0.1, color='r')
     )
-    plt.show()
 
 
 @pytest.mark.parametrize(

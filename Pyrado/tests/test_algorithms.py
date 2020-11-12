@@ -246,48 +246,48 @@ def test_svpg(ex_dir, env, policy, actor_hparam, vfcn_hparam, critic_hparam, alg
     algo.train()
     assert algo.curr_iter == algo.max_iter
 
-
-@pytest.mark.metaalgorithm
-@pytest.mark.parametrize(
-    'env', [
-        'default_qqsu'
-    ],
-    ids=['qq-su'],
-    indirect=True
-)
-@pytest.mark.parametrize(
-    'subrtn_hparam', [dict(max_iter=2, min_rollouts=5, num_workers=1, num_epoch=4)],
-    ids=['casual']
-)
-@pytest.mark.parametrize(
-    'actor_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)],
-    ids=['casual']
-)
-@pytest.mark.parametrize(
-    'vfcn_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)],
-    ids=['casual']
-)
-@pytest.mark.parametrize(
-    'critic_hparam', [dict(gamma=0.995, lamda=1., num_epoch=1, lr=1e-4, standardize_adv=False)],
-    ids=['casual']
-)
-@pytest.mark.parametrize(
-    'adr_hparam', [dict(max_iter=2, num_svpg_particles=3, num_discriminator_epoch=3, batch_size=100,
-                        num_workers=1, randomized_params=[])],
-    ids=['casual']
-)
-def test_adr(ex_dir, env, subrtn_hparam, actor_hparam, vfcn_hparam, critic_hparam, adr_hparam):
-    # Create the subroutine for the meta-algorithm
-    actor = FNNPolicy(spec=env.spec, **actor_hparam)
-    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
-    critic = GAE(vfcn, **critic_hparam)
-    subroutine = PPO(ex_dir, env, actor, critic, **subrtn_hparam)
-
-    # Create algorithm and train
-    particle_hparam = dict(actor=actor_hparam, vfcn=vfcn_hparam, critic=critic_hparam)
-    algo = ADR(ex_dir, env, subroutine, svpg_particle_hparam=particle_hparam, **adr_hparam)
-    algo.train()
-    assert algo.curr_iter == algo.max_iter
+# TODO @Robin
+# @pytest.mark.metaalgorithm
+# @pytest.mark.parametrize(
+#     'env', [
+#         'default_qqsu'
+#     ],
+#     ids=['qq-su'],
+#     indirect=True
+# )
+# @pytest.mark.parametrize(
+#     'subrtn_hparam', [dict(max_iter=2, min_rollouts=5, num_workers=1, num_epoch=4)],
+#     ids=['casual']
+# )
+# @pytest.mark.parametrize(
+#     'actor_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)],
+#     ids=['casual']
+# )
+# @pytest.mark.parametrize(
+#     'vfcn_hparam', [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)],
+#     ids=['casual']
+# )
+# @pytest.mark.parametrize(
+#     'critic_hparam', [dict(gamma=0.995, lamda=1., num_epoch=1, lr=1e-4, standardize_adv=False)],
+#     ids=['casual']
+# )
+# @pytest.mark.parametrize(
+#     'adr_hparam', [dict(max_iter=2, num_svpg_particles=3, num_discriminator_epoch=3, batch_size=100,
+#                         num_workers=1, randomized_params=[])],
+#     ids=['casual']
+# )
+# def test_adr(ex_dir, env, subrtn_hparam, actor_hparam, vfcn_hparam, critic_hparam, adr_hparam):
+#     # Create the subroutine for the meta-algorithm
+#     actor = FNNPolicy(spec=env.spec, **actor_hparam)
+#     vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
+#     critic = GAE(vfcn, **critic_hparam)
+#     subroutine = PPO(ex_dir, env, actor, critic, **subrtn_hparam)
+#
+#     # Create algorithm and train
+#     particle_hparam = dict(actor=actor_hparam, vfcn=vfcn_hparam, critic=critic_hparam)
+#     algo = ADR(ex_dir, env, subroutine, svpg_particle_hparam=particle_hparam, **adr_hparam)
+#     algo.train()
+#     assert algo.curr_iter == algo.max_iter
 
 
 @pytest.mark.longtime
@@ -516,7 +516,7 @@ def test_arpl(ex_dir, env):
     critic = GAE(vfcn, **critic_hparam)
 
     algo_hparam = dict(
-        max_iter=0,
+        max_iter=2,
         min_steps=23*env.max_steps,
         min_rollouts=None,
         num_workers=1,
@@ -527,7 +527,7 @@ def test_arpl(ex_dir, env):
         lr=2e-4,
     )
     arpl_hparam = dict(
-        max_iter=5,
+        max_iter=2,
         steps_num=23*env.max_steps,
         halfspan=0.05,
         dyn_eps=0.07,

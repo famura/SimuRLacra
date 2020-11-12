@@ -31,6 +31,7 @@ import pickle
 import pytest
 import unittest.mock as mock
 
+import pyrado
 import pyrado.logger.step as uut
 
 
@@ -138,7 +139,7 @@ def test_late_new_key_error():
     logger.record_step()
 
     # Try to add an unknown key
-    with pytest.raises(KeyError):
+    with pytest.raises(pyrado.KeyErr):
         logger.add_value('Unknown', 42)
 
 
