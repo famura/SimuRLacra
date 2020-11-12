@@ -36,11 +36,10 @@ from matplotlib import pyplot as plt
 
 import pyrado
 from pyrado.logger.experiment import ask_for_experiment
-from pyrado.plotting.curve import render_mean_std, render_lo_up_avg
 from pyrado.utils.argparser import get_argparser
 
 
-REORDER = True
+REORDER = False
 
 
 def q_5(x):
@@ -55,6 +54,7 @@ def q_95(x):
 
 def _reorder_for_qbb_experiment(df: pd.DataFrame) -> pd.DataFrame:
     """ By default the entries are ordered alphabetically. We want SPOTA, EPOpt, PPO"""
+    print('Changed the order')
     return df.iloc[[2, 0, 1]]
 
 
@@ -81,10 +81,13 @@ def _plot_and_save(
         fig, ax = plt.subplots(1, figsize=pyrado.figsize_IEEE_1col_18to10)  # 18/10 ratio
         for index, row in df_pivot.iterrows():
             # Generate the plot
-            render_mean_std(ax, df[domain_param].drop_duplicates().values,
-                            mean=row['mean'], std=row['std'],
-                            x_label=domain_param_label, y_label='return',
-                            curve_label=index.replace('_', '\_'), show_legend=show_legend)
+            ax.plot(df[domain_param].drop_duplicates().values, row['mean'], label=index.replace('_', r'\_'))
+            ax.fill_between(df[domain_param].drop_duplicates().values, row['mean']-2*row['std'],
+                            row['mean']+2*row['std'], alpha=0.3)
+            if show_legend:
+                plt.legend()
+            ax.set_xlabel(domain_param_label)
+            ax.set_ylabel('return')
             if y_lim is not None:
                 ax.set_ylim(y_lim)
 
@@ -98,11 +101,12 @@ def _plot_and_save(
 
         fig, ax = plt.subplots(1, figsize=pyrado.figsize_IEEE_1col_18to10)
         for index, row in df_pivot.iterrows():
-            # Generate the plot
-            render_lo_up_avg(ax, df[domain_param].drop_duplicates().values,
-                             lower=row['q_5'], upper=row['q_95'], average=row['mean'],
-                             x_label=domain_param_label, y_label='return',
-                             curve_label=index.replace('_', '\_'), area_label=None, show_legend=show_legend)
+            ax.plot(df[domain_param].drop_duplicates().values, row['mean'], label=index.replace('_', r'\_'))
+            ax.fill_between(df[domain_param].drop_duplicates().values, row['q_5'], row['q_95'], alpha=0.3)
+            if show_legend:
+                plt.legend()
+            ax.set_xlabel(domain_param_label)
+            ax.set_ylabel('return')
             if y_lim is not None:
                 ax.set_ylim(y_lim)
 

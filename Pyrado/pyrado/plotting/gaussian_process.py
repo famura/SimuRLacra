@@ -41,7 +41,6 @@ from typing import Sequence
 
 import pyrado
 from matplotlib import pyplot as plt
-from pyrado.plotting.curve import render_mean_std
 from pyrado.plotting.heatmap import render_heatmap
 from pyrado.utils.input_output import print_cbt
 
@@ -163,9 +162,10 @@ def render_singletask_gp(
         mean = mean*data_y_std + data_y_mean
         std *= data_y_std  # double-checked with posterior.mvn.confidence_region()
 
-        render_mean_std(ax, x_grid.numpy(), mean.numpy(), std.numpy(), x_label, y_label, curve_label,
-                        num_stds=num_stds, alpha=alpha, color=color, show_legend_std=show_legend_std, title=title,
-                        show_legend=False)  # keep disabled and do it in this function
+        # Plot the curve
+        plt.fill_between(x_grid.numpy(), mean.numpy() - num_stds*std.numpy(), mean.numpy() + num_stds*std.numpy(),
+                         alpha=alpha, color=color)
+        ax.plot(x_grid.numpy(), mean.numpy(), color=color)
 
         # Plot the queried data points
         scat_plot = ax.scatter(data_x.numpy().flatten(), data_y.numpy().flatten(),

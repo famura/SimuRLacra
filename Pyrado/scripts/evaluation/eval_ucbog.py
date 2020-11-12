@@ -36,7 +36,6 @@ import pandas as pd
 import pyrado
 from matplotlib import pyplot as plt
 from pyrado.logger.experiment import load_dict_from_yaml
-from pyrado.plotting.curve import render_mean_std
 from pyrado.sampling.sequences import *
 from pyrado.utils.order import filter_los_by_lok
 
@@ -87,13 +86,18 @@ if __name__ == '__main__':
 
     # Plots
     fig1, axs = plt.subplots(3, constrained_layout=True)
-    render_mean_std(axs[0], UCBOG_mean.index, UCBOG_mean, UCBOG_std, '', '', 'UCBOG')
-    render_mean_std(axs[1], Gn_mean.index, Gn_mean, Gn_std, '', '', '$\\hat{G}_n$')
-    render_mean_std(axs[2], rnd_mean.index, rnd_mean, rnd_std, '', '', 'rnd')
+    axs[0].plot(UCBOG_mean.index, UCBOG_mean, label='UCBOG')
+    axs[0].fill_between(UCBOG_mean.index, UCBOG_mean-2*UCBOG_std, UCBOG_mean+2*UCBOG_std, alpha=0.3)
+    axs[1].plot(Gn_mean.index, Gn_mean, label=r'$\hat{G}_n$')
+    axs[1].fill_between(Gn_mean.index, Gn_mean-2*Gn_std, Gn_mean+2*Gn_std, alpha=0.3)
+    axs[2].plot(rnd_mean.index, rnd_mean, label='rnd')
+    axs[2].fill_between(rnd_mean.index, rnd_mean-2*rnd_std, rnd_mean+2*rnd_std, alpha=0.3)
 
     fig2, ax1 = plt.subplots(1, figsize=pyrado.figsize_IEEE_1col_18to10)
     fig2.canvas.set_window_title(f'Final UCBOG value: {UCBOG_mean.values[-1]}')
-    render_mean_std(ax1, UCBOG_mean.index, UCBOG_mean, UCBOG_std, 'iteration', 'UCBOG', '', show_legend=False)
+    ax1.plot(UCBOG_mean.index, UCBOG_mean, label='UCBOG')
+    ax1.fill_between(UCBOG_mean.index, UCBOG_mean-2*UCBOG_std, UCBOG_mean+2*UCBOG_std, alpha=0.3)
+    ax1.set_xlabel('iteration')
     ax1.set_ylabel('UCBOG', color='C0')
     ax2 = ax1.twinx()  # second y axis
     ax2.plot(nc_means, color='C1')

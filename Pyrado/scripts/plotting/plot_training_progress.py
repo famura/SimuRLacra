@@ -36,7 +36,6 @@ from pandas import DataFrame
 
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.live_update import LiveFigureManager
-from pyrado.plotting.curve import render_mean_std, render_lo_up_avg
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import read_csv_w_replace
 from pyrado.utils.input_output import print_cbt
@@ -86,16 +85,21 @@ if __name__ == '__main__':
     def return_min_max_avg(fig, df, args):
         if not _keys_in_columns(df, 'avg_return', 'min_return', 'max_return', verbose=args.verbose):
             return False
-        render_lo_up_avg(fig.gca(), np.arange(len(df.min_return)), df.min_return, df.max_return, df.avg_return,
-                         x_label='iteration', y_label='return', curve_label='average')
+        plt.fill_between(np.arange(len(df.avg_return)), df.min_return, df.max_return,
+                         label=r'max & min', alpha=0.3)
+        plt.plot(np.arange(len(df.avg_return)), df.avg_return, label='average')
+        plt.xlabel('iteration')
+        plt.ylabel('return')
 
 
     @lfm.figure('Return -- Average & Standard Deviation & Median (& Current)')
     def return_avg_median(fig, df, args):
         if not _keys_in_columns(df, 'avg_return', 'std_return', 'median_return', verbose=args.verbose):
             return False
-        render_mean_std(fig.gca(), np.arange(len(df.avg_return)), df.avg_return, df.std_return,
-                        x_label='iteration', y_label='return', curve_label='average')
+        plt.fill_between(np.arange(len(df.avg_return)),
+                         df.avg_return - 2*df.std_return, df.avg_return + 2*df.std_return,
+                         label=rf'$\pm 2$ std', alpha=0.3)
+        plt.plot(np.arange(len(df.avg_return)), df.avg_return, label='average')
         plt.plot(np.arange(len(df.median_return)), df.median_return, label='median')
         plt.xlabel('iteration')
         plt.ylabel('return')
@@ -125,7 +129,6 @@ if __name__ == '__main__':
             plt.plot(np.arange(len(df.max_expl_strat_std)), df.max_expl_strat_std, label='largest')
         plt.xlabel('iteration')
         plt.ylabel('exploration std')
-        plt.legend(loc='best')
 
 
     @lfm.figure("Exploration Strategy's Entropy")
@@ -154,7 +157,6 @@ if __name__ == '__main__':
         plt.plot(np.arange(len(df.max_mag_policy_param)), df.max_mag_policy_param, label='largest')
         plt.xlabel('iteration')
         plt.ylabel('parameter value')
-        plt.legend(loc='best')
 
 
     @lfm.figure('Loss Before and After Update Step')
@@ -165,7 +167,6 @@ if __name__ == '__main__':
         plt.plot(np.arange(len(df.loss_after)), df.loss_after, label='after')
         plt.xlabel('iteration')
         plt.ylabel('loss value')
-        plt.legend(loc='best')
 
 
     @lfm.figure('Policy and Value Function Gradient L-2 Norm')
@@ -176,7 +177,6 @@ if __name__ == '__main__':
         plt.plot(np.arange(len(df.avg_vfcn_grad_norm)), df.avg_vfcn_grad_norm, label='V-fcn')
         plt.xlabel('iteration')
         plt.ylabel('gradient norm')
-        plt.legend(loc='best')
 
 
     """ CVaR sampler specific """
@@ -195,19 +195,27 @@ if __name__ == '__main__':
     def full_return_min_max_avg(fig, df, args):
         if not _keys_in_columns(df, 'full_avg_return', 'full_min_return', 'full_max_return', verbose=args.verbose):
             return False
-        render_lo_up_avg(fig.gca(), np.arange(len(df.full_min_return)),
-                         df.full_min_return, df.full_max_return, df.full_avg_return,
-                         x_label='iteration', y_label='return', curve_label='average')
-        plt.legend(loc='lower right')
+        plt.fill_between(np.arange(len(df.full_avg_return)), df.full_min_return, df.full_max_return,
+                         label=r'max & min', alpha=0.3)
+        plt.plot(np.arange(len(df.full_avg_return)), df.full_avg_return, label='average')
+        plt.xlabel('iteration')
+        plt.ylabel('full return')
+        
 
-
-    @lfm.figure('Full Return -- Average & Median & Standard Deviation')
-    def return_avg_median_std(fig, df, args):
-        if not _keys_in_columns(df, 'full_avg_return', 'full_median_return', 'full_std_return', verbose=args.verbose):
+    @lfm.figure('Full Return -- Average & Standard Deviation & Median (& Current)')
+    def full_return_avg_median_std(fig, df, args):
+        if not _keys_in_columns(df, 'full_avg_return', 'full_std_return', 'full_median_return', verbose=args.verbose):
             return False
-        render_mean_std(fig.gca(), np.arange(len(df.full_avg_return)), df.full_avg_return, df.full_std_return,
-                        x_label='iteration', y_label='full return', curve_label='average')
+        plt.fill_between(np.arange(len(df.full_avg_return)),
+                         df.full_avg_return - 2*df.full_std_return, df.full_avg_return + 2*df.full_std_return,
+                         label=rf'$\pm 2$ std', alpha=0.3)
+        plt.plot(np.arange(len(df.full_avg_return)), df.full_avg_return, label='average')
         plt.plot(np.arange(len(df.full_median_return)), df.full_median_return, label='median')
+        plt.xlabel('iteration')
+        plt.ylabel('full return')
+        if _keys_in_columns(df, 'full_curr_policy_return', verbose=args.verbose):
+            # If the algorithm is a subclass of ParameterExploring
+            plt.plot(np.arange(len(df.full_curr_policy_return)), df.full_curr_policy_return, label='current')
         plt.legend(loc='lower right')
 
 
@@ -231,7 +239,6 @@ if __name__ == '__main__':
         plt.plot(np.arange(len(df.dual_loss_after)), df.dual_loss_after, label='after')
         plt.xlabel('iteration')
         plt.ylabel('loss value')
-        plt.legend(loc='best')
 
 
     """ SAC specific """
@@ -254,7 +261,6 @@ if __name__ == '__main__':
         plt.plot(np.arange(len(df.Q2_loss)), df.Q2_loss, label='$Q_2$')
         plt.xlabel('iteration')
         plt.ylabel('loss value')
-        plt.legend(loc='best')
 
 
     @lfm.figure('Policy Loss')
@@ -288,7 +294,6 @@ if __name__ == '__main__':
         plt.plot(np.arange(len(df.max_return)), df.max_return, label='max')
         plt.xlabel('iteration')
         plt.ylabel('return')
-        plt.legend(loc='best')
 
 
     """ TSPred specific """
@@ -303,7 +308,6 @@ if __name__ == '__main__':
         plt.yscale('log')
         plt.xlabel('iteration')
         plt.ylabel('loss')
-        plt.legend(loc='best')
 
 
     # Start update loop
