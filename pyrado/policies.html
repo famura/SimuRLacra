@@ -328,7 +328,7 @@ The default implementation does nothing.</p>
 
 <dl class="py method">
 <dt id="pyrado.policies.base.Policy.script">
-<code class="sig-name descname">script</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.jit.ScriptModule<a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.Policy.script" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">script</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.jit._script.ScriptModule<a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.Policy.script" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a ScriptModule from this policy.
 The returned module will always have the signature <cite>action = tm(observation)</cite>.
 For recurrent networks, it returns a stateful module that keeps the hidden states internally.

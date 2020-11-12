@@ -1269,7 +1269,7 @@ separately. The scaling and the bias are learnable parameters.</p>
 <dt id="pyrado.utils.nn_layers.IndiNonlinLayer.extra_repr">
 <code class="sig-name descname">extra_repr</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pyrado/utils/nn_layers.html#IndiNonlinLayer.extra_repr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.nn_layers.IndiNonlinLayer.extra_repr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the extra representation of the module</p>
-<p>To print customized extra information, you should reimplement
+<p>To print customized extra information, you should re-implement
 this method in your own modules. Both single-line and multi-line
 strings are acceptable.</p>
 </dd></dl>
@@ -1288,6 +1288,11 @@ registered hooks while the latter silently ignores them.</p>
 </div>
 </dd></dl>
 
+<dl class="py attribute">
+<dt id="pyrado.utils.nn_layers.IndiNonlinLayer.training">
+<code class="sig-name descname">training</code><em class="property">: bool</em><a class="headerlink" href="#pyrado.utils.nn_layers.IndiNonlinLayer.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -1298,6 +1303,16 @@ registered hooks while the latter silently ignores them.</p>
 the first half of the kernel (along the columns). This way we can save (close to) half of the parameters, under
 the assumption that we have a kernel that obeys this kind of symmetry.
 The biases are left unchanged.</p>
+<dl class="py attribute">
+<dt id="pyrado.utils.nn_layers.MirrConv1d.bias">
+<code class="sig-name descname">bias</code><em class="property">: Optional<span class="p">[</span>torch.Tensor<span class="p">]</span></em><a class="headerlink" href="#pyrado.utils.nn_layers.MirrConv1d.bias" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.utils.nn_layers.MirrConv1d.dilation">
+<code class="sig-name descname">dilation</code><em class="property">: Tuple<span class="p">[</span>int<span class="p">, </span><span class="p">…</span><span class="p">]</span></em><a class="headerlink" href="#pyrado.utils.nn_layers.MirrConv1d.dilation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt id="pyrado.utils.nn_layers.MirrConv1d.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inp</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/utils/nn_layers.html#MirrConv1d.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.nn_layers.MirrConv1d.forward" title="Permalink to this definition">¶</a></dt>
@@ -1312,6 +1327,51 @@ registered hooks while the latter silently ignores them.</p>
 </div>
 </dd></dl>
 
+<dl class="py attribute">
+<dt id="pyrado.utils.nn_layers.MirrConv1d.groups">
+<code class="sig-name descname">groups</code><em class="property">: int</em><a class="headerlink" href="#pyrado.utils.nn_layers.MirrConv1d.groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.utils.nn_layers.MirrConv1d.kernel_size">
+<code class="sig-name descname">kernel_size</code><em class="property">: Tuple<span class="p">[</span>int<span class="p">, </span><span class="p">…</span><span class="p">]</span></em><a class="headerlink" href="#pyrado.utils.nn_layers.MirrConv1d.kernel_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.utils.nn_layers.MirrConv1d.out_channels">
+<code class="sig-name descname">out_channels</code><em class="property">: int</em><a class="headerlink" href="#pyrado.utils.nn_layers.MirrConv1d.out_channels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.utils.nn_layers.MirrConv1d.output_padding">
+<code class="sig-name descname">output_padding</code><em class="property">: Tuple<span class="p">[</span>int<span class="p">, </span><span class="p">…</span><span class="p">]</span></em><a class="headerlink" href="#pyrado.utils.nn_layers.MirrConv1d.output_padding" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.utils.nn_layers.MirrConv1d.padding">
+<code class="sig-name descname">padding</code><em class="property">: Tuple<span class="p">[</span>int<span class="p">, </span><span class="p">…</span><span class="p">]</span></em><a class="headerlink" href="#pyrado.utils.nn_layers.MirrConv1d.padding" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.utils.nn_layers.MirrConv1d.padding_mode">
+<code class="sig-name descname">padding_mode</code><em class="property">: str</em><a class="headerlink" href="#pyrado.utils.nn_layers.MirrConv1d.padding_mode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.utils.nn_layers.MirrConv1d.stride">
+<code class="sig-name descname">stride</code><em class="property">: Tuple<span class="p">[</span>int<span class="p">, </span><span class="p">…</span><span class="p">]</span></em><a class="headerlink" href="#pyrado.utils.nn_layers.MirrConv1d.stride" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.utils.nn_layers.MirrConv1d.transposed">
+<code class="sig-name descname">transposed</code><em class="property">: bool</em><a class="headerlink" href="#pyrado.utils.nn_layers.MirrConv1d.transposed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.utils.nn_layers.MirrConv1d.weight">
+<code class="sig-name descname">weight</code><em class="property">: torch.Tensor</em><a class="headerlink" href="#pyrado.utils.nn_layers.MirrConv1d.weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -1323,7 +1383,7 @@ registered hooks while the latter silently ignores them.</p>
 <dt id="pyrado.utils.nn_layers.PositiveScaleLayer.extra_repr">
 <code class="sig-name descname">extra_repr</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pyrado/utils/nn_layers.html#PositiveScaleLayer.extra_repr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.nn_layers.PositiveScaleLayer.extra_repr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the extra representation of the module</p>
-<p>To print customized extra information, you should reimplement
+<p>To print customized extra information, you should re-implement
 this method in your own modules. Both single-line and multi-line
 strings are acceptable.</p>
 </dd></dl>
@@ -1342,6 +1402,11 @@ registered hooks while the latter silently ignores them.</p>
 </div>
 </dd></dl>
 
+<dl class="py attribute">
+<dt id="pyrado.utils.nn_layers.PositiveScaleLayer.training">
+<code class="sig-name descname">training</code><em class="property">: bool</em><a class="headerlink" href="#pyrado.utils.nn_layers.PositiveScaleLayer.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -1353,7 +1418,7 @@ registered hooks while the latter silently ignores them.</p>
 <dt id="pyrado.utils.nn_layers.ScaleLayer.extra_repr">
 <code class="sig-name descname">extra_repr</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pyrado/utils/nn_layers.html#ScaleLayer.extra_repr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.nn_layers.ScaleLayer.extra_repr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the extra representation of the module</p>
-<p>To print customized extra information, you should reimplement
+<p>To print customized extra information, you should re-implement
 this method in your own modules. Both single-line and multi-line
 strings are acceptable.</p>
 </dd></dl>
@@ -1371,6 +1436,11 @@ instead of this since the former takes care of running the
 registered hooks while the latter silently ignores them.</p>
 </div>
 </dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.utils.nn_layers.ScaleLayer.training">
+<code class="sig-name descname">training</code><em class="property">: bool</em><a class="headerlink" href="#pyrado.utils.nn_layers.ScaleLayer.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

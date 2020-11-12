@@ -227,7 +227,7 @@ on Hierarchical Dynamical Systems”, IROS, 2012</p>
 <dt id="pyrado.policies.recurrent.adn.ADNPolicy.extra_repr">
 <code class="sig-name descname">extra_repr</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pyrado/policies/recurrent/adn.html#ADNPolicy.extra_repr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.recurrent.adn.ADNPolicy.extra_repr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the extra representation of the module</p>
-<p>To print customized extra information, you should reimplement
+<p>To print customized extra information, you should re-implement
 this method in your own modules. Both single-line and multi-line
 strings are acceptable.</p>
 </dd></dl>
@@ -489,7 +489,7 @@ Change this string for value functions.</p></li>
 
 <dl class="py method">
 <dt id="pyrado.policies.recurrent.base.RecurrentPolicy.script">
-<code class="sig-name descname">script</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.jit.ScriptModule<a class="reference internal" href="_modules/pyrado/policies/recurrent/base.html#RecurrentPolicy.script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.recurrent.base.RecurrentPolicy.script" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">script</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.jit._script.ScriptModule<a class="reference internal" href="_modules/pyrado/policies/recurrent/base.html#RecurrentPolicy.script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.recurrent.base.RecurrentPolicy.script" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a ScriptModule from this policy.
 The returned module will always have the signature <cite>action = tm(observation, hidden)</cite>.
 For recurrent networks, it returns a stateful module that keeps the hidden states internally.
@@ -678,7 +678,7 @@ Change this string for value functions.</p></li>
 <dt id="pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.extra_repr">
 <code class="sig-name descname">extra_repr</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pyrado/policies/recurrent/potential_based.html#PotentialBasedPolicy.extra_repr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.recurrent.potential_based.PotentialBasedPolicy.extra_repr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the extra representation of the module</p>
-<p>To print customized extra information, you should reimplement
+<p>To print customized extra information, you should re-implement
 this method in your own modules. Both single-line and multi-line
 strings are acceptable.</p>
 </dd></dl>

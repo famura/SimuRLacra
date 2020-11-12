@@ -651,7 +651,7 @@ Flag done is set when <span class="math notranslate nohighlight">\(|x_des - x| &
 </div>
 <dl class="py method">
 <dt id="pyrado.policies.special.environment_specific.QQubeSwingUpAndBalanceCtrl.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span><span class="p">:</span> <span class="n">None._VariableFunctions.tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QQubeSwingUpAndBalanceCtrl.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QQubeSwingUpAndBalanceCtrl.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span><span class="p">:</span> <span class="n">None._VariableFunctionsClass.tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QQubeSwingUpAndBalanceCtrl.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QQubeSwingUpAndBalanceCtrl.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the action according to the policy and the observations (forward pass).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -770,7 +770,7 @@ The default implementation does nothing.</p>
 
 <dl class="py method">
 <dt id="pyrado.policies.special.time.TimePolicy.script">
-<code class="sig-name descname">script</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.jit.ScriptModule<a class="reference internal" href="_modules/pyrado/policies/special/time.html#TimePolicy.script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.time.TimePolicy.script" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">script</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.jit._script.ScriptModule<a class="reference internal" href="_modules/pyrado/policies/special/time.html#TimePolicy.script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.time.TimePolicy.script" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a ScriptModule from this policy.
 The returned module will always have the signature <cite>action = tm(observation)</cite>.
 For recurrent networks, it returns a stateful module that keeps the hidden states internally.
