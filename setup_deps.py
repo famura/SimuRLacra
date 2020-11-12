@@ -175,7 +175,7 @@ wam_url = f"https://github.com/psclklnk/self-paced-rl/archive/{wam_repo_version}
 
 # PyTorch
 # NOTE: Assumes that the current environment does NOT already contain PyTorch!
-pytorch_version = "1.4.0"
+pytorch_version = "1.7.0"
 pytorch_git_repo = "https://github.com/pytorch/pytorch.git"
 pytorch_src_dir = osp.join(dependency_dir, "pytorch")
 
@@ -445,22 +445,24 @@ def setup_mujoco_py():
 
 def setup_pytorch_based():  # tested with pip install torch==1.7.0+cpu torchvision==0.8.1+cpu torchaudio==0.7.0 -f https://download.pytorch.org/whl/torch_stable.html
     # Set up GPyTorch without touching the PyTorch installation (requires scikit-learn which requires threadpoolctl)
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "threadpoolctl==2.1.0"])
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "scikit-learn==0.23.2"])
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "gpytorch==1.2.1"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "threadpoolctl"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "scikit-learn"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "gpytorch"])
     # Set up BoTorch without touching the PyTorch installation (requires gpytorch)
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "botorch==0.3.2"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "botorch"])
     # Set up Pyro without touching the PyTorch installation (requires opt-einsum)
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "opt-einsum==3.3.0"])
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "pyro-api==0.1.2"])
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "pyro-ppl==1.5.0"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "opt-einsum"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "pyro-api"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "pyro-ppl"])
     # Set up SBI without touching the PyTorch installation (requires Pyro and pyknos which requires nflows)
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "nflows==0.13"])
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "pyknos==0.13.1"])
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "sbi==0.13.2"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "nflows"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "pyknos"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "sbi"])
+    # Downgrade to avoid the incompatibility with cliff (whatever cliff is)
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "prettytable==0.7.2"])
     # Check the installations
     print("Checking dependencies of the packages installed via pip:")
-    sp.check_call([sys.executable, "-m", "pip", "check", "--use-feature=2020-resolver"])
+    sp.check_call([sys.executable, "-m", "pip", "check"])
 
 
 def setup_cppsctp():
@@ -547,6 +549,7 @@ def setup_robcom():
 
 
 def setup_wo_rcs_wo_pytorch():
+    print("\nStarting Option Red Velvet Setup\n")
     # Rcs will still be downloaded since it is a submodule
     setup_wam()  # ignoring the meshes used in RcsPySim
     setup_mujoco_py()
@@ -556,6 +559,7 @@ def setup_wo_rcs_wo_pytorch():
 
 
 def setup_wo_rcs_w_pytorch():
+    print("\nStarting Option Malakoff Setup\n")
     # Rcs will still be downloaded since it is a submodule
     setup_pytorch()
     setup_wam()  # ignoring the meshes used in RcsPySim
@@ -566,20 +570,22 @@ def setup_wo_rcs_w_pytorch():
 
 
 def setup_w_rcs_wo_pytorch():
+    print("\nStarting Option Sacher Setup\n")
     # We could do setup_dep_libraries() here, but it requires sudo rights
     if not IN_HRI:
         setup_wm5()
     setup_rcs()
-    rcspysim_cmake_vars.update({"USE_LIBTORCH": "OFF"})  # don't use the local PyTorch but the one from anaconda/pip
+    rcspysim_cmake_vars["USE_LIBTORCH"] = "OFF"  # don't use the local PyTorch but the one from anaconda/pip
     setup_rcspysim()
     setup_meshes()
-    setup_mujoco_py()
+    #setup_mujoco_py()
     setup_pyrado()
     setup_pytorch_based()
     print("\nWM5, Rcs, RcsPySim, iiwa & Schunk & WAM meshes, mujoco-py, and Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n")
 
 
 def setup_w_rcs_w_pytorch():
+    print("\nStarting Option Black Forest Setup\n")
     # We could do setup_dep_libraries() here, but it requires sudo rights
     if not IN_HRI:
         setup_wm5()

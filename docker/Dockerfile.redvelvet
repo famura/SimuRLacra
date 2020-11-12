@@ -65,7 +65,8 @@ RUN echo "conda activate pyrado" >> ~/.bashrc
 
 COPY --chown=user:user . .
 
-RUN pip install torch==1.4.0
+# Specific to option Red Velvet
+RUN pip install torch==1.7.0
 RUN python setup_deps.py wo_rcs_wo_pytorch -j8
 
 ENV PATH /opt/conda/envs/pyrado/bin:$PATH

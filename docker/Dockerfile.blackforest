@@ -65,9 +65,8 @@ RUN echo "conda activate pyrado" >> ~/.bashrc
 
 COPY --chown=user:user . .
 
-# Option Sacher (pip compiles PyTorch with CUDA support; we are not using torchvision)
+# Specific to option Black Forest
 RUN python setup_deps.py dep_libraries -j8
-
 RUN python setup_deps.py w_rcs_w_pytorch -j8
 
 ENV PATH /opt/conda/envs/pyrado/bin:$PATH

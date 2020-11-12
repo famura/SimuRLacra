@@ -65,6 +65,7 @@ RUN echo "conda activate pyrado" >> ~/.bashrc
 
 COPY --chown=user:user . .
 
+# Specific to option Malakoff
 RUN python setup_deps.py wo_rcs_w_pytorch -j8
 
 ENV PATH /opt/conda/envs/pyrado/bin:$PATH

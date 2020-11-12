@@ -7,11 +7,8 @@ on:
     branches: [ master, cicd ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - name: Build the Docker image
@@ -21,7 +18,7 @@ jobs:
           CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
         run: |
           export COVPATH=$(realpath .)
-          docker run --rm -i -v $COVPATH:/cov simurlacra:sacher conda run -n pyrado bash -c "pytest Pyrado/tests --cov=./Pyrado --cov-report=xml -n 4 --verbose -m 'not visualization'; sudo cp ./coverage.xml /cov"
+          docker run --rm -i -v $COVPATH:/cov simurlacra:sacher conda run -n pyrado bash -c "pytest Pyrado/tests --cov=./Pyrado --cov-report=xml -n 6 --verbose -m 'not visualization'; sudo cp ./coverage.xml /cov"
           sudo mkdir /home/user/
           sudo mkdir /home/user/SimuRLacra
           sudo ln -s $COVPATH /home/user/SimuRLacra
