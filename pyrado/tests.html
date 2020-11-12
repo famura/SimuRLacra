@@ -586,12 +586,12 @@
 
 <dl class="py function">
 <dt id="tests.test_algorithms.test_actor_critic">
-<code class="sig-name descname">test_actor_critic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em>, <em class="sig-param"><span class="n">algo</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em>, <em class="sig-param"><span class="n">value_fcn_type</span></em>, <em class="sig-param"><span class="n">use_cuda</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_actor_critic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_actor_critic" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">test_actor_critic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em>, <em class="sig-param"><span class="n">algo</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em>, <em class="sig-param"><span class="n">vfcn_type</span></em>, <em class="sig-param"><span class="n">use_cuda</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_actor_critic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_actor_critic" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="tests.test_algorithms.test_adr">
-<code class="sig-name descname">test_adr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">subrtn_hparam</span></em>, <em class="sig-param"><span class="n">actor_hparam</span></em>, <em class="sig-param"><span class="n">value_fcn_hparam</span></em>, <em class="sig-param"><span class="n">critic_hparam</span></em>, <em class="sig-param"><span class="n">adr_hparam</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_adr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_adr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">test_adr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">subrtn_hparam</span></em>, <em class="sig-param"><span class="n">actor_hparam</span></em>, <em class="sig-param"><span class="n">vfcn_hparam</span></em>, <em class="sig-param"><span class="n">critic_hparam</span></em>, <em class="sig-param"><span class="n">adr_hparam</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_adr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_adr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -621,7 +621,7 @@
 
 <dl class="py function">
 <dt id="tests.test_algorithms.test_svpg">
-<code class="sig-name descname">test_svpg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em>, <em class="sig-param"><span class="n">actor_hparam</span></em>, <em class="sig-param"><span class="n">value_fcn_hparam</span></em>, <em class="sig-param"><span class="n">critic_hparam</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_svpg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_svpg" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">test_svpg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em>, <em class="sig-param"><span class="n">actor_hparam</span></em>, <em class="sig-param"><span class="n">vfcn_hparam</span></em>, <em class="sig-param"><span class="n">critic_hparam</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_svpg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_svpg" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -1373,8 +1373,8 @@
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="tests.test_utils.test_save_load_prefix_suffix">
-<code class="sig-name descname">test_save_load_prefix_suffix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em>, <em class="sig-param"><span class="n">file_ext</span></em>, <em class="sig-param"><span class="n">tmpdir</span></em>, <em class="sig-param"><span class="n">meta_info</span></em>, <em class="sig-param"><span class="n">use_state_dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_utils.html#test_save_load_prefix_suffix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_utils.test_save_load_prefix_suffix" title="Permalink to this definition">¶</a></dt>
+<dt id="tests.test_utils.test_save_load">
+<code class="sig-name descname">test_save_load</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em>, <em class="sig-param"><span class="n">file_ext</span></em>, <em class="sig-param"><span class="n">tmpdir</span></em>, <em class="sig-param"><span class="n">meta_info</span></em>, <em class="sig-param"><span class="n">use_state_dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_utils.html#test_save_load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_utils.test_save_load" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">

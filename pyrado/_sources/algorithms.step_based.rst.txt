@@ -68,6 +68,15 @@ svpg
    :show-inheritance:
 
 
+value\_based
+------------
+
+.. automodule:: pyrado.algorithms.step_based.value_based
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 Module contents
 ---------------
 

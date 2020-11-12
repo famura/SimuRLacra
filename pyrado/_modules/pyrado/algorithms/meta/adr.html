@@ -231,7 +231,6 @@
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.step_based.svpg</span> <span class="kn">import</span> <span class="n">SVPG</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.saving_loading</span> <span class="kn">import</span> <span class="n">save_prefix_suffix</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="n">DomainParam</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.base</span> <span class="kn">import</span> <span class="n">EnvWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">inner_env</span>
@@ -259,7 +258,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                  <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">,</span>
-                 <span class="n">subtrn</span><span class="p">:</span> <span class="n">Algorithm</span><span class="p">,</span>
+                 <span class="n">subrtn</span><span class="p">:</span> <span class="n">Algorithm</span><span class="p">,</span>
                  <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                  <span class="n">svpg_particle_hparam</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
                  <span class="n">num_svpg_particles</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -282,7 +281,7 @@
 
 <span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
 <span class="sd">        :param env: the environment to train in</span>
-<span class="sd">        :param subtrn: algorithm which performs the policy / value-function optimization</span>
+<span class="sd">        :param subrtn: algorithm which performs the policy / value-function optimization</span>
 <span class="sd">        :param max_iter: maximum number of iterations</span>
 <span class="sd">        :param svpg_particle_hparam: SVPG particle hyperparameters</span>
 <span class="sd">        :param num_svpg_particles: number of SVPG particles</span>
@@ -303,19 +302,19 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">Env</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Env</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subtrn</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">subtrn</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Algorithm</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subtrn</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">Policy</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">subtrn</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Policy</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subrtn</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">subrtn</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Algorithm</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subrtn</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">Policy</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">subrtn</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Policy</span><span class="p">)</span>
 
         <span class="c1"># Call Algorithm&#39;s constructor</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">,</span> <span class="n">subtrn</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">,</span> <span class="n">subrtn</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_loss</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="c1"># Store the inputs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_subtrn</span> <span class="o">=</span> <span class="n">subtrn</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_subtrn</span><span class="o">.</span><span class="n">save_name</span> <span class="o">=</span> <span class="s1">&#39;subrtn&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span> <span class="o">=</span> <span class="n">subrtn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">save_name</span> <span class="o">=</span> <span class="s1">&#39;subrtn&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span> <span class="o">=</span> <span class="n">num_svpg_particles</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_discriminator_epoch</span> <span class="o">=</span> <span class="n">num_discriminator_epoch</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
@@ -355,7 +354,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">svpg_wrapper</span> <span class="o">=</span> <span class="n">SVPGAdapter</span><span class="p">(</span>
             <span class="n">env</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
-            <span class="n">subtrn</span><span class="o">.</span><span class="n">expl_strat</span><span class="p">,</span>
+            <span class="n">subrtn</span><span class="o">.</span><span class="n">expl_strat</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reward_generator</span><span class="p">,</span>
             <span class="n">horizon</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">svpg_horizon</span><span class="p">,</span>
             <span class="n">num_rollouts_per_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_trajs_per_config</span><span class="p">,</span>
@@ -374,7 +373,7 @@
             <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
             <span class="n">logger</span><span class="o">=</span><span class="n">logger</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">svpg</span><span class="o">.</span><span class="n">save_name</span> <span class="o">=</span> <span class="s1">&#39;subtrn_svpg&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">svpg</span><span class="o">.</span><span class="n">save_name</span> <span class="o">=</span> <span class="s1">&#39;subrtn_svpg&#39;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">sample_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -448,7 +447,7 @@
                 <span class="n">rt</span><span class="o">.</span><span class="n">torch</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
                 <span class="n">rt</span><span class="o">.</span><span class="n">observations</span> <span class="o">=</span> <span class="n">rt</span><span class="o">.</span><span class="n">observations</span><span class="o">.</span><span class="n">double</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
                 <span class="n">rt</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="n">rt</span><span class="o">.</span><span class="n">actions</span><span class="o">.</span><span class="n">double</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_subtrn</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">rand_trajs_now</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">rand_trajs_now</span><span class="p">)</span>
 
         <span class="c1"># Logging</span>
         <span class="n">rets</span> <span class="o">=</span> <span class="p">[</span><span class="n">ro</span><span class="o">.</span><span class="n">undiscounted_return</span><span class="p">()</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rand_trajs</span><span class="p">]</span>
@@ -466,8 +465,8 @@
         <span class="n">flattened_reference</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">ref_trajs</span><span class="p">)</span>
         <span class="n">flattened_reference</span><span class="o">.</span><span class="n">torch</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reward_generator</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">flattened_reference</span><span class="p">,</span> <span class="n">flattened_randomized</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_discriminator_epoch</span><span class="p">)</span>
-        <span class="n">save_prefix_suffix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reward_generator</span><span class="o">.</span><span class="n">discriminator</span><span class="p">,</span> <span class="s1">&#39;discriminator&#39;</span><span class="p">,</span> <span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
-                           <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;adr&#39;</span><span class="p">))</span>
+        <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reward_generator</span><span class="o">.</span><span class="n">discriminator</span><span class="p">,</span> <span class="s1">&#39;discriminator&#39;</span><span class="p">,</span> <span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
+                    <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;adr&#39;</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_time_step</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">warm_up_time</span><span class="p">:</span>
             <span class="c1"># Update the particles</span>
@@ -479,18 +478,18 @@
 
         <span class="c1"># np.save(f&#39;{self.save_dir}actions{self.curr_iter}&#39;, flattened_randomized.actions)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">make_snapshot</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">ret_avg</span><span class="p">),</span> <span class="n">meta_info</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_subtrn</span><span class="o">.</span><span class="n">make_snapshot</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">,</span> <span class="n">curr_avg_ret</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">ret_avg</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">make_snapshot</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">,</span> <span class="n">curr_avg_ret</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">ret_avg</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">curr_time_step</span> <span class="o">+=</span> <span class="mi">1</span></div>
 
 <div class="viewcode-block" id="ADR.save_snapshot"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.adr.ADR.save_snapshot">[docs]</a>    <span class="k">def</span> <span class="nf">save_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># This algorithm instance is not a subtrn of another algorithm</span>
-            <span class="n">save_prefix_suffix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="s1">&#39;pkl&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span>
+            <span class="c1"># This algorithm instance is not a subrtn of another algorithm</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="s1">&#39;pkl&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">svpg</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> is not supposed be run as a subtrn!&#39;</span><span class="p">)</span></div></div>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> is not supposed be run as a subrtn!&#39;</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="SVPGAdapter"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.adr.SVPGAdapter">[docs]</a><span class="k">class</span> <span class="nc">SVPGAdapter</span><span class="p">(</span><span class="n">EnvWrapper</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
@@ -510,7 +509,7 @@
 
 <span class="sd">        :param wrapped_env: the environment to wrap</span>
 <span class="sd">        :param parameters: which physics parameters should be randomized</span>
-<span class="sd">        :param inner_policy: the policy to train the subtrn on</span>
+<span class="sd">        :param inner_policy: the policy to train the subrtn on</span>
 <span class="sd">        :param discriminator: the discriminator to distinguish reference environments from randomized ones</span>
 <span class="sd">        :param step_length: the step size</span>
 <span class="sd">        :param horizon: an svpg horizon</span>
@@ -572,7 +571,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">horizon_count</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">horizon_count</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">horizon</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">horizon_count</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">svpg_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random_sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">svpg_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random_sample</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">svpg_state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span></div>
 
@@ -667,6 +666,7 @@
         <span class="n">reference_batch</span> <span class="o">=</span> <span class="n">reference_trajectory</span><span class="o">.</span><span class="n">split_shuffled_batches</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
         <span class="n">random_batch</span> <span class="o">=</span> <span class="n">randomized_trajectory</span><span class="o">.</span><span class="n">split_shuffled_batches</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
 
+        <span class="n">loss</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_epoch</span><span class="p">),</span> <span class="s1">&#39;Discriminator Epoch&#39;</span><span class="p">,</span> <span class="n">num_epoch</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">reference_batch_now</span> <span class="o">=</span> <span class="n">convert_step_sequence</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">reference_batch</span><span class="p">))</span>

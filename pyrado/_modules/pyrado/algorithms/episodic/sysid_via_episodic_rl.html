@@ -232,7 +232,6 @@
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.parameter_exploring</span> <span class="kn">import</span> <span class="n">ParameterExploring</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.saving_loading</span> <span class="kn">import</span> <span class="n">save_prefix_suffix</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="n">MetaDomainRandWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.observation_normalization</span> <span class="kn">import</span> <span class="n">ObsNormWrapper</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
@@ -542,7 +541,7 @@
 
         <span class="k">if</span> <span class="s1">&#39;rollouts_real&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">meta_info</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">KeyErr</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;rollouts_real&#39;</span><span class="p">,</span> <span class="n">container</span><span class="o">=</span><span class="n">meta_info</span><span class="p">)</span>
-        <span class="n">save_prefix_suffix</span><span class="p">(</span><span class="n">meta_info</span><span class="p">[</span><span class="s1">&#39;rollouts_real&#39;</span><span class="p">],</span> <span class="s1">&#39;rollouts_real&#39;</span><span class="p">,</span> <span class="s1">&#39;pkl&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span></div></div>
+        <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">meta_info</span><span class="p">[</span><span class="s1">&#39;rollouts_real&#39;</span><span class="p">],</span> <span class="s1">&#39;rollouts_real&#39;</span><span class="p">,</span> <span class="s1">&#39;pkl&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

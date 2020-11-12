@@ -294,14 +294,17 @@
 <span class="n">sym_success</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\u2714</span><span class="s1">&#39;</span>
 <span class="n">sym_failure</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\u2716</span><span class="s1">&#39;</span>
 
-<span class="c1"># Include all error classes</span>
+<span class="c1"># Include error classes</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.exceptions</span> <span class="kn">import</span> <span class="n">BaseErr</span><span class="p">,</span> <span class="n">KeyErr</span><span class="p">,</span> <span class="n">PathErr</span><span class="p">,</span> <span class="n">ShapeErr</span><span class="p">,</span> <span class="n">TypeErr</span><span class="p">,</span> <span class="n">ValueErr</span>
+
+<span class="c1"># Include saving and loading functions</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.saving_loading</span> <span class="kn">import</span> <span class="n">save</span><span class="p">,</span> <span class="n">load</span>
 
 
 <span class="c1"># Set the public API</span>
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;VERSION&#39;</span><span class="p">,</span> <span class="s1">&#39;DATA_DIR&#39;</span><span class="p">,</span> <span class="s1">&#39;TEMP_DIR&#39;</span><span class="p">,</span> <span class="s1">&#39;PERMA_DIR&#39;</span><span class="p">,</span> <span class="s1">&#39;EVAL_DIR&#39;</span><span class="p">,</span> <span class="s1">&#39;EXP_DIR&#39;</span><span class="p">,</span> <span class="s1">&#39;HPARAM_DIR&#39;</span><span class="p">,</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;VERSION&#39;</span><span class="p">,</span> <span class="s1">&#39;TEMP_DIR&#39;</span><span class="p">,</span> <span class="s1">&#39;PERMA_DIR&#39;</span><span class="p">,</span> <span class="s1">&#39;EVAL_DIR&#39;</span><span class="p">,</span> <span class="s1">&#39;EXP_DIR&#39;</span><span class="p">,</span> <span class="s1">&#39;HPARAM_DIR&#39;</span><span class="p">,</span>
            <span class="s1">&#39;rcsenv_available&#39;</span><span class="p">,</span> <span class="s1">&#39;mujoco_available&#39;</span><span class="p">,</span> <span class="s1">&#39;use_pgf&#39;</span><span class="p">,</span> <span class="s1">&#39;inf&#39;</span><span class="p">,</span> <span class="s1">&#39;nan&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;sym_success&#39;</span><span class="p">,</span> <span class="s1">&#39;sym_failure&#39;</span><span class="p">,</span> <span class="s1">&#39;set_seed&#39;</span><span class="p">]</span>
+           <span class="s1">&#39;sym_success&#39;</span><span class="p">,</span> <span class="s1">&#39;sym_failure&#39;</span><span class="p">,</span> <span class="s1">&#39;set_seed&#39;</span><span class="p">,]</span>
 
 
 <span class="k">def</span> <span class="nf">close_vpython</span><span class="p">():</span>

@@ -227,7 +227,6 @@
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.saving_loading</span> <span class="kn">import</span> <span class="n">save_prefix_suffix</span><span class="p">,</span> <span class="n">load_prefix_suffix</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.ball_on_plate</span> <span class="kn">import</span> <span class="n">BallOnPlate5DSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.utils</span> <span class="kn">import</span> <span class="n">gen_batch_idcs</span><span class="p">,</span> <span class="n">gen_ordered_batch_idcs</span><span class="p">,</span> <span class="n">gen_ordered_batches</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="o">*</span>
@@ -819,7 +818,7 @@
         <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">lme</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="n">dim</span><span class="p">)))</span></div>
 
 
-<div class="viewcode-block" id="test_save_load_prefix_suffix"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_save_load_prefix_suffix">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+<div class="viewcode-block" id="test_save_load"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_save_load">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;obj, file_ext&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span> <span class="s1">&#39;pt&#39;</span><span class="p">),</span>
         <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s1">&#39;npy&#39;</span><span class="p">),</span>
@@ -827,7 +826,8 @@
         <span class="p">(</span><span class="n">BallOnBeamSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span> <span class="s1">&#39;pkl&#39;</span><span class="p">),</span>
         <span class="p">(</span><span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">BallOnPlate5DSim</span><span class="p">(</span><span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Bullet&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span> <span class="s1">&#39;pkl&#39;</span><span class="p">)),</span>
     <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;tensor&#39;</span><span class="p">,</span> <span class="s1">&#39;ndarray&#39;</span><span class="p">,</span> <span class="s1">&#39;dummypol&#39;</span><span class="p">,</span> <span class="s1">&#39;pyenv&#39;</span><span class="p">,</span> <span class="s1">&#39;rcssimenv&#39;</span><span class="p">])</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;tensor&#39;</span><span class="p">,</span> <span class="s1">&#39;ndarray&#39;</span><span class="p">,</span> <span class="s1">&#39;dummypol&#39;</span><span class="p">,</span> <span class="s1">&#39;pyenv&#39;</span><span class="p">,</span> <span class="s1">&#39;rcssimenv&#39;</span><span class="p">]</span>
+<span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;meta_info&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="kc">None</span><span class="p">,</span>
@@ -836,15 +836,17 @@
         <span class="nb">dict</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;suf&#39;</span><span class="p">),</span>
         <span class="nb">dict</span><span class="p">(</span><span class="n">foo</span><span class="o">=</span><span class="s1">&#39;baz&#39;</span><span class="p">),</span>
     <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="s1">&#39;pre_suf&#39;</span><span class="p">,</span> <span class="s1">&#39;pre&#39;</span><span class="p">,</span> <span class="s1">&#39;suf&#39;</span><span class="p">,</span> <span class="s1">&#39;neither&#39;</span><span class="p">])</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="s1">&#39;pre_suf&#39;</span><span class="p">,</span> <span class="s1">&#39;pre&#39;</span><span class="p">,</span> <span class="s1">&#39;suf&#39;</span><span class="p">,</span> <span class="s1">&#39;neither&#39;</span><span class="p">]</span>
+<span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;use_state_dict&#39;</span><span class="p">,</span> <span class="p">[</span>
         <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span>
     <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;use_state_dict&#39;</span><span class="p">,</span> <span class="s1">&#39;not-use_state_dict&#39;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_save_load_prefix_suffix</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="n">tmpdir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">,</span> <span class="n">use_state_dict</span><span class="p">):</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;use_state_dict&#39;</span><span class="p">,</span> <span class="s1">&#39;not-use_state_dict&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_save_load</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="n">tmpdir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">,</span> <span class="n">use_state_dict</span><span class="p">):</span>
     <span class="c1"># Save</span>
-    <span class="n">save_prefix_suffix</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;tmpname&#39;</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="n">tmpdir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">,</span> <span class="n">use_state_dict</span><span class="p">)</span>
+    <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;tmpname&#39;</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="n">tmpdir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">,</span> <span class="n">use_state_dict</span><span class="p">)</span>
 
     <span class="c1"># Check if sth has been saved with the correct pre- and suffix</span>
     <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -857,7 +859,7 @@
         <span class="k">assert</span> <span class="n">osp</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;tmpname_</span><span class="si">{</span><span class="n">meta_info</span><span class="p">[</span><span class="s1">&#39;suffix&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">file_ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
 
     <span class="c1"># Check if sth has been loaded with the correct pre- and suffix</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">load_prefix_suffix</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;tmpname&#39;</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="n">tmpdir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;tmpname&#39;</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">,</span> <span class="n">tmpdir</span><span class="p">,</span> <span class="n">meta_info</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">res</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 </pre></div>
 

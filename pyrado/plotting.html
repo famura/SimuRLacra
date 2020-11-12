@@ -130,7 +130,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.categorical">categorical</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.curve">curve</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.distribution">distribution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#gaussian-process">gaussian_process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.gaussian_process">gaussian_process</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.heatmap">heatmap</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.live_update">live_update</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.plotting.policy_parameters">policy_parameters</a></li>
@@ -344,8 +344,52 @@ The plot is neither shown nor saved.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="gaussian-process">
-<h2>gaussian_process<a class="headerlink" href="#gaussian-process" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyrado.plotting.gaussian_process">
+<span id="gaussian-process"></span><h2>gaussian_process<a class="headerlink" href="#module-pyrado.plotting.gaussian_process" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pyrado.plotting.gaussian_process.render_singletask_gp">
+<code class="sig-name descname">render_singletask_gp</code><span class="sig-paren">(</span><em class="sig-param">ax: [&lt;class 'matplotlib.axes._axes.Axes'&gt;, &lt;class 'mpl_toolkits.mplot3d.axes3d.Axes3D'&gt;, typing.Sequence[matplotlib.axes._axes.Axes]], data_x: torch.Tensor, data_y: torch.Tensor, idcs_sel: list, data_x_min: torch.Tensor = None, data_x_max: torch.Tensor = None, x_label: str = '', y_label: str = '', z_label: str = '', min_gp_obsnoise: float = None, resolution: int = 201, num_stds: int = 2, alpha: float = 0.3, color: chr = None, curve_label: str = 'mean', heatmap_cmap: matplotlib.colors.Colormap = None, show_legend_posterior: bool = True, show_legend_std: bool = False, show_legend_data: bool = True, legend_data_cmap: matplotlib.colors.Colormap = None, colorbar_label: str = None, title: str = None, render3D: bool = True</em><span class="sig-paren">)</span> &#x2192; matplotlib.figure.Figure<a class="reference internal" href="_modules/pyrado/plotting/gaussian_process.html#render_singletask_gp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.plotting.gaussian_process.render_singletask_gp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the GP posterior to the input data and plot the mean and std as well as the data points.
+There are 3 options: 1D plot (infered by data dimensions), 2D plot</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you want to have a tight layout, it is best to pass axes of a figure with <cite>tight_layout=True</cite> or
+<cite>constrained_layout=True</cite>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> – axis of the figure to plot on, only in case of a 2-dim heat map plot provide 2 axis</p></li>
+<li><p><strong>data_x</strong> – data to plot on the x-axis</p></li>
+<li><p><strong>data_y</strong> – data to process and plot on the y-axis</p></li>
+<li><p><strong>idcs_sel</strong> – selected indices of the input data</p></li>
+<li><p><strong>data_x_min</strong> – explicit minimum value for the evaluation grid, by default this value is extracted from <cite>data_x</cite></p></li>
+<li><p><strong>data_x_max</strong> – explicit maximum value for the evaluation grid, by default this value is extracted from <cite>data_x</cite></p></li>
+<li><p><strong>x_label</strong> – label for x-axis</p></li>
+<li><p><strong>y_label</strong> – label for y-axis</p></li>
+<li><p><strong>z_label</strong> – label for z-axis (3D plot only)</p></li>
+<li><p><strong>min_gp_obsnoise</strong> – set a minimal noise value (normalized) for the GP, if <cite>None</cite> the GP has no measurement noise</p></li>
+<li><p><strong>resolution</strong> – number of samples for the input (corresponds to x-axis resolution of the plot)</p></li>
+<li><p><strong>num_stds</strong> – number of standard deviations to plot around the mean</p></li>
+<li><p><strong>alpha</strong> – transparency (alpha-value) for the std area</p></li>
+<li><p><strong>color</strong> – color (e.g. ‘k’ for black), <cite>None</cite> invokes the default behavior</p></li>
+<li><p><strong>curve_label</strong> – label for the mean curve (1D plot only)</p></li>
+<li><p><strong>heatmap_cmap</strong> – color map forwarded to <cite>render_heatmap()</cite> (2D plot only), <cite>None</cite> to use Pyrado’s default</p></li>
+<li><p><strong>show_legend_posterior</strong> – flag if the legend entry for the posterior should be printed (affects mean and std)</p></li>
+<li><p><strong>show_legend_std</strong> – flag if a legend entry for the std area should be printed</p></li>
+<li><p><strong>show_legend_data</strong> – flag if a legend entry for the individual data points should be printed</p></li>
+<li><p><strong>legend_data_cmap</strong> – color map for the sampled points, default is ‘binary’</p></li>
+<li><p><strong>colorbar_label</strong> – label for the color bar (2D plot only)</p></li>
+<li><p><strong>title</strong> – title displayed above the figure, set to <cite>None</cite> to suppress the title</p></li>
+<li><p><strong>render3D</strong> – use 3D rendering if possible</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>handle to the resulting figure</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyrado.plotting.heatmap">
 <span id="heatmap"></span><h2>heatmap<a class="headerlink" href="#module-pyrado.plotting.heatmap" title="Permalink to this headline">¶</a></h2>

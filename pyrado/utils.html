@@ -1577,8 +1577,8 @@ When the property is first accessed, the function is called to compute the value
 <div class="section" id="module-pyrado.utils.saving_loading">
 <span id="saving-loading"></span><h2>saving_loading<a class="headerlink" href="#module-pyrado.utils.saving_loading" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="pyrado.utils.saving_loading.load_prefix_suffix">
-<code class="sig-name descname">load_prefix_suffix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">file_ext</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">load_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/saving_loading.html#load_prefix_suffix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.saving_loading.load_prefix_suffix" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.utils.saving_loading.load">
+<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">file_ext</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">load_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/saving_loading.html#load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.saving_loading.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load an object object using a prefix or suffix, depending on the meta information.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1586,7 +1586,7 @@ When the property is first accessed, the function is called to compute the value
 <li><p><strong>obj</strong> – PyTorch modeule to load into, this can be <cite>None</cite> except for the case if you want to load and save the
 module’s <cite>state_dict</cite></p></li>
 <li><p><strong>name</strong> – name of the object for loading</p></li>
-<li><p><strong>file_ext</strong> – file extension, e.g. ‘pt’ for PyTorch modules like the Pyrado policies</p></li>
+<li><p><strong>file_ext</strong> – file extension, extension.g. ‘pt’ for PyTorch modules like the Pyrado policies</p></li>
 <li><p><strong>load_dir</strong> – directory to load from</p></li>
 <li><p><strong>meta_info</strong> – meta information that can contain a pre- and/or suffix for altering the name</p></li>
 </ul>
@@ -1599,15 +1599,15 @@ module’s <cite>state_dict</cite></p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pyrado.utils.saving_loading.save_prefix_suffix">
-<code class="sig-name descname">save_prefix_suffix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">file_ext</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">save_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">use_state_dict</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/saving_loading.html#save_prefix_suffix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.saving_loading.save_prefix_suffix" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.utils.saving_loading.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">file_ext</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">save_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">use_state_dict</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/saving_loading.html#save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.saving_loading.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save an object object using a prefix or suffix, depending on the meta information.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>obj</strong> – PyTorch or pickled object to save</p></li>
 <li><p><strong>name</strong> – name of the object for saving</p></li>
-<li><p><strong>file_ext</strong> – file extension, e.g. ‘pt’ for PyTorch modules like the Pyrado policies</p></li>
+<li><p><strong>file_ext</strong> – file extension, extension.g. ‘pt’ for PyTorch modules like the Pyrado policies</p></li>
 <li><p><strong>save_dir</strong> – directory to save in</p></li>
 <li><p><strong>meta_info</strong> – meta information that can contain a pre- and/or suffix for altering the name</p></li>
 <li><p><strong>use_state_dict</strong> – if <cite>True</cite> save the <cite>state_dict</cite>, else save the entire module. This only has an effect if

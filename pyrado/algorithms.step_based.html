@@ -106,6 +106,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.step_based.ppo">ppo</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.step_based.sac">sac</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.step_based.svpg">svpg</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.step_based.value_based">value_based</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyrado.algorithms.step_based">Module contents</a></li>
 </ul>
 </li>
@@ -210,7 +211,7 @@
 <span id="a2c"></span><h2>a2c<a class="headerlink" href="#module-pyrado.algorithms.step_based.a2c" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.algorithms.step_based.a2c.A2C">
-<em class="property">class </em><code class="sig-name descname">A2C</code><span class="sig-paren">(</span><em class="sig-param">save_dir: str</em>, <em class="sig-param">env: pyrado.environments.base.Env</em>, <em class="sig-param">policy: pyrado.policies.base.Policy</em>, <em class="sig-param">critic: pyrado.algorithms.step_based.gae.GAE</em>, <em class="sig-param">max_iter: int</em>, <em class="sig-param">min_rollouts: int = None</em>, <em class="sig-param">min_steps: int = None</em>, <em class="sig-param">value_fcn_coeff: float = 0.5</em>, <em class="sig-param">entropy_coeff: float = 0.001</em>, <em class="sig-param">batch_size: int = 32</em>, <em class="sig-param">std_init: float = 1.0</em>, <em class="sig-param">max_grad_norm: float = None</em>, <em class="sig-param">num_workers: int = 4</em>, <em class="sig-param">lr: float = 0.0005</em>, <em class="sig-param">lr_scheduler=None</em>, <em class="sig-param">lr_scheduler_hparam: [&lt;class 'dict'&gt;</em>, <em class="sig-param">None] = None</em>, <em class="sig-param">logger: pyrado.logger.step.StepLogger = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/a2c.html#A2C"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.a2c.A2C" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">A2C</code><span class="sig-paren">(</span><em class="sig-param">save_dir: str</em>, <em class="sig-param">env: pyrado.environments.base.Env</em>, <em class="sig-param">policy: pyrado.policies.base.Policy</em>, <em class="sig-param">critic: pyrado.algorithms.step_based.gae.GAE</em>, <em class="sig-param">max_iter: int</em>, <em class="sig-param">min_rollouts: int = None</em>, <em class="sig-param">min_steps: int = None</em>, <em class="sig-param">vfcn_coeff: float = 0.5</em>, <em class="sig-param">entropy_coeff: float = 0.001</em>, <em class="sig-param">batch_size: int = 32</em>, <em class="sig-param">std_init: float = 1.0</em>, <em class="sig-param">max_grad_norm: float = None</em>, <em class="sig-param">num_workers: int = 4</em>, <em class="sig-param">lr: float = 0.0005</em>, <em class="sig-param">lr_scheduler=None</em>, <em class="sig-param">lr_scheduler_hparam: [&lt;class 'dict'&gt;</em>, <em class="sig-param">None] = None</em>, <em class="sig-param">logger: pyrado.logger.step.StepLogger = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/a2c.html#A2C"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.a2c.A2C" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.step_based.actor_critic.ActorCritic" title="pyrado.algorithms.step_based.actor_critic.ActorCritic"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.step_based.actor_critic.ActorCritic</span></code></a></p>
 <p>Advantage Actor Critic (A2C)</p>
 <dl class="py method">
@@ -349,18 +350,12 @@ contains a dict of information about the current iteration of the meta-algorithm
 <dl class="py class">
 <dt id="pyrado.algorithms.step_based.dql.DQL">
 <em class="property">class </em><code class="sig-name descname">DQL</code><span class="sig-paren">(</span><em class="sig-param">save_dir: str</em>, <em class="sig-param">env: pyrado.environments.base.Env</em>, <em class="sig-param">policy: pyrado.policies.feed_forward.fnn.DiscreteActQValPolicy</em>, <em class="sig-param">memory_size: int</em>, <em class="sig-param">eps_init: float</em>, <em class="sig-param">eps_schedule_gamma: float</em>, <em class="sig-param">gamma: float</em>, <em class="sig-param">max_iter: int</em>, <em class="sig-param">num_batch_updates: int</em>, <em class="sig-param">target_update_intvl: int = 5</em>, <em class="sig-param">num_init_memory_steps: int = None</em>, <em class="sig-param">min_rollouts: int = None</em>, <em class="sig-param">min_steps: int = None</em>, <em class="sig-param">batch_size: int = 256</em>, <em class="sig-param">num_workers: int = 4</em>, <em class="sig-param">max_grad_norm: float = 0.5</em>, <em class="sig-param">lr: float = 0.0005</em>, <em class="sig-param">lr_scheduler=None</em>, <em class="sig-param">lr_scheduler_hparam: [&lt;class 'dict'&gt;</em>, <em class="sig-param">None] = None</em>, <em class="sig-param">logger: pyrado.logger.step.StepLogger = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/dql.html#DQL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.dql.DQL" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.step_based.value_based.ValueBased" title="pyrado.algorithms.step_based.value_based.ValueBased"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.step_based.value_based.ValueBased</span></code></a></p>
 <p>Deep Q-Learning (without bells and whistles)</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p>[1] V. Mnih et.al., “Human-level control through deep reinforcement learning”, Nature, 2015</p>
 </div>
-<dl class="py method">
-<dt id="pyrado.algorithms.step_based.dql.DQL.expl_strat">
-<em class="property">property </em><code class="sig-name descname">expl_strat</code><a class="headerlink" href="#pyrado.algorithms.step_based.dql.DQL.expl_strat" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the algorithm’s exploration strategy.</p>
-</dd></dl>
-
 <dl class="py method">
 <dt id="pyrado.algorithms.step_based.dql.DQL.init_modules">
 <code class="sig-name descname">init_modules</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">warmstart</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">suffix</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/dql.html#DQL.init_modules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.dql.DQL.init_modules" title="Permalink to this definition">¶</a></dt>
@@ -381,7 +376,7 @@ fixed parameter vector, or the results of the previous iteration</p></li>
 
 <dl class="py method">
 <dt id="pyrado.algorithms.step_based.dql.DQL.loss_fcn">
-<code class="sig-name descname">loss_fcn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">q_vals</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">expected_q_vals</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/algorithms/step_based/dql.html#DQL.loss_fcn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.dql.DQL.loss_fcn" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">loss_fcn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">q_vals</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">expected_q_vals</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/algorithms/step_based/dql.html#DQL.loss_fcn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.dql.DQL.loss_fcn" title="Permalink to this definition">¶</a></dt>
 <dd><p>The Huber loss function on the one-step TD error <span class="math notranslate nohighlight">\(\delta = Q(s,a) - (r + \gamma \max_a Q(s^\prime, a))\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -394,12 +389,6 @@ fixed parameter vector, or the results of the previous iteration</p></li>
 <dd class="field-even"><p>loss value</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.algorithms.step_based.dql.DQL.memory">
-<em class="property">property </em><code class="sig-name descname">memory</code><a class="headerlink" href="#pyrado.algorithms.step_based.dql.DQL.memory" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the replay memory.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -434,25 +423,9 @@ contains a <cite>dict</cite> of information about the current iteration of the m
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyrado.algorithms.step_based.dql.DQL.step">
-<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snapshot_mode</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/dql.html#DQL.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.dql.DQL.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
-adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
-<li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
-contains a dict of information about the current iteration of the meta-algorithm</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="pyrado.algorithms.step_based.dql.DQL.update">
 <code class="sig-name descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/dql.html#DQL.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.dql.DQL.update" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the policy’s and q_targ Q-function’s parameters on transitions sampled from the replay memory.</p>
+<dd><p>Update the policy’s and qfcn_targ Q-function’s parameters on transitions sampled from the replay memory.</p>
 </dd></dl>
 
 </dd></dl>
@@ -462,7 +435,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 <span id="gae"></span><h2>gae<a class="headerlink" href="#module-pyrado.algorithms.step_based.gae" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.algorithms.step_based.gae.GAE">
-<em class="property">class </em><code class="sig-name descname">GAE</code><span class="sig-paren">(</span><em class="sig-param">value_fcn: [&lt;class 'torch.nn.modules.module.Module'&gt;, &lt;class 'pyrado.policies.base.Policy'&gt;], gamma: float = 0.99, lamda: float = 0.95, num_epoch: int = 10, batch_size: int = 64, standardize_adv: bool = True, standardizer: [None, &lt;class 'pyrado.utils.data_processing.RunningStandardizer'&gt;] = None, max_grad_norm: float = None, lr: float = 0.0005, lr_scheduler=None, lr_scheduler_hparam: [&lt;class 'dict'&gt;, None] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/gae.html#GAE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.gae.GAE" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">GAE</code><span class="sig-paren">(</span><em class="sig-param">vfcn: [&lt;class 'torch.nn.modules.module.Module'&gt;, &lt;class 'pyrado.policies.base.Policy'&gt;], gamma: float = 0.99, lamda: float = 0.95, num_epoch: int = 10, batch_size: int = 64, standardize_adv: bool = True, standardizer: [None, &lt;class 'pyrado.utils.data_processing.RunningStandardizer'&gt;] = None, max_grad_norm: float = None, lr: float = 0.0005, lr_scheduler=None, lr_scheduler_hparam: [&lt;class 'dict'&gt;, None] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/gae.html#GAE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.gae.GAE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="logger.html#pyrado.logger.step.LoggerAware" title="pyrado.logger.step.LoggerAware"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.logger.step.LoggerAware</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p>General Advantage Estimation (GAE)</p>
 <div class="admonition seealso">
@@ -531,12 +504,6 @@ The default implementation resets the learning rate scheduler if there is one.</
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyrado.algorithms.step_based.gae.GAE.value_fcn">
-<em class="property">property </em><code class="sig-name descname">value_fcn</code><a class="headerlink" href="#pyrado.algorithms.step_based.gae.GAE.value_fcn" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the value function approximator.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt id="pyrado.algorithms.step_based.gae.GAE.values">
 <code class="sig-name descname">values</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">concat_ros</span><span class="p">:</span> <span class="n"><a class="reference internal" href="sampling.html#pyrado.sampling.step_sequence.StepSequence" title="pyrado.sampling.step_sequence.StepSequence">pyrado.sampling.step_sequence.StepSequence</a></span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/algorithms/step_based/gae.html#GAE.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.gae.GAE.values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the states’ values for all observations.</p>
@@ -548,6 +515,12 @@ The default implementation resets the learning rate scheduler if there is one.</
 <dd class="field-even"><p>states’ values</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.step_based.gae.GAE.vfcn">
+<em class="property">property </em><code class="sig-name descname">vfcn</code><a class="headerlink" href="#pyrado.algorithms.step_based.gae.GAE.vfcn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value function approximator.</p>
 </dd></dl>
 
 </dd></dl>
@@ -610,7 +583,7 @@ arXiv, 2017</p>
 
 <dl class="py class">
 <dt id="pyrado.algorithms.step_based.ppo.PPO2">
-<em class="property">class </em><code class="sig-name descname">PPO2</code><span class="sig-paren">(</span><em class="sig-param">save_dir: str</em>, <em class="sig-param">env: pyrado.environments.base.Env</em>, <em class="sig-param">policy: pyrado.policies.base.Policy</em>, <em class="sig-param">critic: pyrado.algorithms.step_based.gae.GAE</em>, <em class="sig-param">max_iter: int</em>, <em class="sig-param">min_rollouts: int = None</em>, <em class="sig-param">min_steps: int = None</em>, <em class="sig-param">num_epoch: int = 3</em>, <em class="sig-param">eps_clip: float = 0.1</em>, <em class="sig-param">value_fcn_coeff: float = 0.5</em>, <em class="sig-param">entropy_coeff: float = 0.001</em>, <em class="sig-param">batch_size: int = 32</em>, <em class="sig-param">std_init: float = 1.0</em>, <em class="sig-param">num_workers: int = 4</em>, <em class="sig-param">max_grad_norm: float = None</em>, <em class="sig-param">lr: float = 0.0005</em>, <em class="sig-param">lr_scheduler=None</em>, <em class="sig-param">lr_scheduler_hparam: [&lt;class 'dict'&gt;</em>, <em class="sig-param">None] = None</em>, <em class="sig-param">logger: pyrado.logger.step.StepLogger = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/ppo.html#PPO2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.ppo.PPO2" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">PPO2</code><span class="sig-paren">(</span><em class="sig-param">save_dir: str</em>, <em class="sig-param">env: pyrado.environments.base.Env</em>, <em class="sig-param">policy: pyrado.policies.base.Policy</em>, <em class="sig-param">critic: pyrado.algorithms.step_based.gae.GAE</em>, <em class="sig-param">max_iter: int</em>, <em class="sig-param">min_rollouts: int = None</em>, <em class="sig-param">min_steps: int = None</em>, <em class="sig-param">num_epoch: int = 3</em>, <em class="sig-param">eps_clip: float = 0.1</em>, <em class="sig-param">vfcn_coeff: float = 0.5</em>, <em class="sig-param">entropy_coeff: float = 0.001</em>, <em class="sig-param">batch_size: int = 32</em>, <em class="sig-param">std_init: float = 1.0</em>, <em class="sig-param">num_workers: int = 4</em>, <em class="sig-param">max_grad_norm: float = None</em>, <em class="sig-param">lr: float = 0.0005</em>, <em class="sig-param">lr_scheduler=None</em>, <em class="sig-param">lr_scheduler_hparam: [&lt;class 'dict'&gt;</em>, <em class="sig-param">None] = None</em>, <em class="sig-param">logger: pyrado.logger.step.StepLogger = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/ppo.html#PPO2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.ppo.PPO2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.step_based.actor_critic.ActorCritic" title="pyrado.algorithms.step_based.actor_critic.ActorCritic"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.step_based.actor_critic.ActorCritic</span></code></a></p>
 <p>Variant of Proximal Policy Optimization (PPO)
 PPO2 differs from PPO by also clipping the value function and standardizing the advantages.</p>
@@ -675,8 +648,8 @@ arXiv, 2017</p>
 <span id="sac"></span><h2>sac<a class="headerlink" href="#module-pyrado.algorithms.step_based.sac" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.algorithms.step_based.sac.SAC">
-<em class="property">class </em><code class="sig-name descname">SAC</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.TwoHeadedPolicy" title="pyrado.policies.base.TwoHeadedPolicy">pyrado.policies.base.TwoHeadedPolicy</a></span></em>, <em class="sig-param"><span class="n">q_fcn_1</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">q_fcn_2</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">memory_size</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">gamma</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">max_iter</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num_batch_updates</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.995</span></em>, <em class="sig-param"><span class="n">ent_coeff_init</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.2</span></em>, <em class="sig-param"><span class="n">learn_ent_coeff</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">target_update_intvl</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">num_init_memory_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">standardize_rew</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">rew_scale</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">256</span></em>, <em class="sig-param"><span class="n">min_rollouts</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_workers</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">4</span></em>, <em class="sig-param"><span class="n">max_grad_norm</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">5.0</span></em>, <em class="sig-param"><span class="n">lr</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.0003</span></em>, <em class="sig-param"><span class="n">lr_scheduler</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lr_scheduler_hparam</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logger</span><span class="p">:</span> <span class="n"><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger">pyrado.logger.step.StepLogger</a></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/sac.html#SAC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.sac.SAC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a></p>
+<em class="property">class </em><code class="sig-name descname">SAC</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.TwoHeadedPolicy" title="pyrado.policies.base.TwoHeadedPolicy">pyrado.policies.base.TwoHeadedPolicy</a></span></em>, <em class="sig-param"><span class="n">qfcn_1</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">qfcn_2</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">memory_size</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">gamma</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">max_iter</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num_batch_updates</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tau</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.995</span></em>, <em class="sig-param"><span class="n">ent_coeff_init</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.2</span></em>, <em class="sig-param"><span class="n">learn_ent_coeff</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">target_update_intvl</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">num_init_memory_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">standardize_rew</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">rew_scale</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">min_rollouts</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">256</span></em>, <em class="sig-param"><span class="n">num_workers</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">4</span></em>, <em class="sig-param"><span class="n">max_grad_norm</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">5.0</span></em>, <em class="sig-param"><span class="n">lr</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.0003</span></em>, <em class="sig-param"><span class="n">lr_scheduler</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lr_scheduler_hparam</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logger</span><span class="p">:</span> <span class="n"><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger">pyrado.logger.step.StepLogger</a></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/sac.html#SAC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.sac.SAC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.step_based.value_based.ValueBased" title="pyrado.algorithms.step_based.value_based.ValueBased"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.step_based.value_based.ValueBased</span></code></a></p>
 <p>Soft Actor-Critic (SAC) variant with stochastic policy and two Q-functions and two Q-targets (no V-function)</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -704,12 +677,6 @@ implementation out there. Here we follow the one from [3].</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyrado.algorithms.step_based.sac.SAC.expl_strat">
-<em class="property">property </em><code class="sig-name descname">expl_strat</code><a class="headerlink" href="#pyrado.algorithms.step_based.sac.SAC.expl_strat" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the algorithm’s exploration strategy.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt id="pyrado.algorithms.step_based.sac.SAC.init_modules">
 <code class="sig-name descname">init_modules</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">warmstart</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">suffix</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/sac.html#SAC.init_modules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.sac.SAC.init_modules" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the algorithm’s learnable modules, e.g. a policy or value function.
@@ -725,12 +692,6 @@ fixed parameter vector, or the results of the previous iteration</p></li>
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.algorithms.step_based.sac.SAC.memory">
-<em class="property">property </em><code class="sig-name descname">memory</code><a class="headerlink" href="#pyrado.algorithms.step_based.sac.SAC.memory" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the replay memory.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -775,22 +736,6 @@ Modifies the input argument <cite>target</cite>.</p>
 <li><p><strong>target</strong> – PyTroch module with parameters to be updated</p></li>
 <li><p><strong>source</strong> – PyTroch module with parameters to update to</p></li>
 <li><p><strong>tau</strong> – interpolation factor for averaging, between 0 and 1</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pyrado.algorithms.step_based.sac.SAC.step">
-<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snapshot_mode</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/sac.html#SAC.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.sac.SAC.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
-adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
-<li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
-contains a dict of information about the current iteration of the meta-algorithm</p></li>
 </ul>
 </dd>
 </dl>
@@ -920,6 +865,76 @@ Particles’ parameters are considered to be part of the parameter distribution 
 <dd class="field-even"><p>the predicted value</p>
 </dd>
 </dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyrado.algorithms.step_based.value_based">
+<span id="value-based"></span><h2>value_based<a class="headerlink" href="#module-pyrado.algorithms.step_based.value_based" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pyrado.algorithms.step_based.value_based.ValueBased">
+<em class="property">class </em><code class="sig-name descname">ValueBased</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n">Union<span class="p">[</span><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a><span class="p">, </span><a class="reference internal" href="policies.html#pyrado.policies.base.TwoHeadedPolicy" title="pyrado.policies.base.TwoHeadedPolicy">pyrado.policies.base.TwoHeadedPolicy</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">memory_size</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">gamma</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">max_iter</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num_batch_updates</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">target_update_intvl</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num_init_memory_steps</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">min_rollouts</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">min_steps</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num_workers</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">max_grad_norm</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">logger</span><span class="p">:</span> <span class="n"><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger">pyrado.logger.step.StepLogger</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/value_based.html#ValueBased"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.value_based.ValueBased" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Base class of all value-based algorithms</p>
+<dl class="py method">
+<dt id="pyrado.algorithms.step_based.value_based.ValueBased.expl_strat">
+<em class="property">property </em><code class="sig-name descname">expl_strat</code><a class="headerlink" href="#pyrado.algorithms.step_based.value_based.ValueBased.expl_strat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the algorithm’s exploration strategy.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.step_based.value_based.ValueBased.memory">
+<em class="property">property </em><code class="sig-name descname">memory</code><a class="headerlink" href="#pyrado.algorithms.step_based.value_based.ValueBased.memory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the replay memory.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.step_based.value_based.ValueBased.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/value_based.html#ValueBased.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.value_based.ValueBased.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the algorithm to it’s initial state. This should NOT reset learned policy parameters.
+By default, this resets the iteration count and the exploration strategy.
+Be sure to call this function if you override it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.step_based.value_based.ValueBased.save_snapshot">
+<code class="sig-name descname">save_snapshot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/value_based.html#ValueBased.save_snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.value_based.ValueBased.save_snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the algorithm information (e.g., environment, policy, ect.).
+Subclasses should call the base method to save the policy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a <cite>dict</cite> of information about the current iteration of the meta-algorithm</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.step_based.value_based.ValueBased.step">
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snapshot_mode</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/value_based.html#ValueBased.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.value_based.ValueBased.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
+adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>snapshot_mode</strong> – determines when the snapshots are stored (e.g. on every iteration or on new highscore)</p></li>
+<li><p><strong>meta_info</strong> – is not <cite>None</cite> if this algorithm is run as a subroutine of a meta-algorithm,
+contains a dict of information about the current iteration of the meta-algorithm</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.step_based.value_based.ValueBased.update">
+<em class="property">abstract </em><code class="sig-name descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/step_based/value_based.html#ValueBased.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.step_based.value_based.ValueBased.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the policy’s (and value functions’) parameters based on the collected rollout data.</p>
 </dd></dl>
 
 </dd></dl>

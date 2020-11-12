@@ -1078,15 +1078,13 @@
       <ul>
         <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.expl_strat">(Algorithm property)</a>
 </li>
-        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.dql.DQL.expl_strat">(DQL property)</a>
-</li>
         <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring.expl_strat">(ParameterExploring property)</a>
 </li>
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.ppo.PPO.expl_strat">(PPO property)</a>
 </li>
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.ppo.PPO2.expl_strat">(PPO2 property)</a>
 </li>
-        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.sac.SAC.expl_strat">(SAC property)</a>
+        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.value_based.ValueBased.expl_strat">(ValueBased property)</a>
 </li>
       </ul></li>
       <li><a href="utils.html#pyrado.utils.math.explained_var">explained_var() (in module pyrado.utils.math)</a>
@@ -1381,9 +1379,9 @@
 </li>
       <li><a href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.get_params">get_params() (DomainRandomizer method)</a>
 </li>
-      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.DiscreteActQValPolicy.get_q_fcn_input_size">get_q_fcn_input_size() (DiscreteActQValPolicy static method)</a>
+      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.DiscreteActQValPolicy.get_qfcn_input_size">get_qfcn_input_size() (DiscreteActQValPolicy static method)</a>
 </li>
-      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.DiscreteActQValPolicy.get_q_fcn_output_size">get_q_fcn_output_size() (DiscreteActQValPolicy static method)</a>
+      <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.DiscreteActQValPolicy.get_qfcn_output_size">get_qfcn_output_size() (DiscreteActQValPolicy static method)</a>
 </li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.RewardGenerator.get_reward">get_reward() (RewardGenerator method)</a>
 </li>
@@ -1707,13 +1705,13 @@
 </li>
       <li><a href="plotting.html#pyrado.plotting.live_update.LiveFigureManager">LiveFigureManager (class in pyrado.plotting.live_update)</a>
 </li>
-      <li><a href="logger.html#pyrado.logger.experiment.load_dict_from_yaml">load_dict_from_yaml() (in module pyrado.logger.experiment)</a>
+      <li><a href="utils.html#pyrado.utils.saving_loading.load">load() (in module pyrado.utils.saving_loading)</a>
 </li>
-      <li><a href="utils.html#pyrado.utils.experiments.load_experiment">load_experiment() (in module pyrado.utils.experiments)</a>
+      <li><a href="logger.html#pyrado.logger.experiment.load_dict_from_yaml">load_dict_from_yaml() (in module pyrado.logger.experiment)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="utils.html#pyrado.utils.saving_loading.load_prefix_suffix">load_prefix_suffix() (in module pyrado.utils.saving_loading)</a>
+      <li><a href="utils.html#pyrado.utils.experiments.load_experiment">load_experiment() (in module pyrado.utils.experiments)</a>
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.load_snapshot">load_snapshot() (Algorithm static method)</a>
 </li>
@@ -1728,7 +1726,7 @@
       <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.a2c.A2C.loss_fcn">loss_fcn() (A2C method)</a>
 
       <ul>
-        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.dql.DQL.loss_fcn">(DQL method)</a>
+        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.dql.DQL.loss_fcn">(DQL static method)</a>
 </li>
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.ppo.PPO.loss_fcn">(PPO method)</a>
 </li>
@@ -1777,14 +1775,12 @@
 </li>
       <li><a href="environments.pysim.html#pyrado.environments.pysim.quanser_ball_balancer.QBallBalancerSim.measured_tholds">measured_tholds (QBallBalancerSim attribute)</a>
 </li>
-      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.dql.DQL.memory">memory() (DQL property)</a>
+      <li><a href="algorithms.html#pyrado.algorithms.utils.ReplayMemory.memory">memory() (ReplayMemory property)</a>
 
       <ul>
-        <li><a href="algorithms.html#pyrado.algorithms.utils.ReplayMemory.memory">(ReplayMemory property)</a>
-</li>
         <li><a href="utils.html#pyrado.utils.averaging.RunningMemoryAverage.memory">(RunningMemoryAverage property)</a>
 </li>
-        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.sac.SAC.memory">(SAC property)</a>
+        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.value_based.ValueBased.memory">(ValueBased property)</a>
 </li>
       </ul></li>
       <li><a href="utils.html#pyrado.utils.data_types.merge_dicts">merge_dicts() (in module pyrado.utils.data_types)</a>
@@ -1866,6 +1862,8 @@
         <li><a href="algorithms.step_based.html#module-pyrado.algorithms.step_based.sac">pyrado.algorithms.step_based.sac</a>
 </li>
         <li><a href="algorithms.step_based.html#module-pyrado.algorithms.step_based.svpg">pyrado.algorithms.step_based.svpg</a>
+</li>
+        <li><a href="algorithms.step_based.html#module-pyrado.algorithms.step_based.value_based">pyrado.algorithms.step_based.value_based</a>
 </li>
         <li><a href="algorithms.html#module-pyrado.algorithms.timeseries_prediction">pyrado.algorithms.timeseries_prediction</a>
 </li>
@@ -2002,6 +2000,8 @@
         <li><a href="plotting.html#module-pyrado.plotting.curve">pyrado.plotting.curve</a>
 </li>
         <li><a href="plotting.html#module-pyrado.plotting.distribution">pyrado.plotting.distribution</a>
+</li>
+        <li><a href="plotting.html#module-pyrado.plotting.gaussian_process">pyrado.plotting.gaussian_process</a>
 </li>
         <li><a href="plotting.html#module-pyrado.plotting.heatmap">pyrado.plotting.heatmap</a>
 </li>
@@ -2932,6 +2932,13 @@
 </li>
       </ul></li>
       <li>
+    pyrado.algorithms.step_based.value_based
+
+      <ul>
+        <li><a href="algorithms.step_based.html#module-pyrado.algorithms.step_based.value_based">module</a>
+</li>
+      </ul></li>
+      <li>
     pyrado.algorithms.timeseries_prediction
 
       <ul>
@@ -3407,6 +3414,13 @@
 
       <ul>
         <li><a href="plotting.html#module-pyrado.plotting.distribution">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.plotting.gaussian_process
+
+      <ul>
+        <li><a href="plotting.html#module-pyrado.plotting.gaussian_process">module</a>
 </li>
       </ul></li>
       <li>
@@ -4142,6 +4156,8 @@
 </li>
       <li><a href="plotting.html#pyrado.plotting.heatmap.render_heatmap">render_heatmap() (in module pyrado.plotting.heatmap)</a>
 </li>
+      <li><a href="plotting.html#pyrado.plotting.gaussian_process.render_singletask_gp">render_singletask_gp() (in module pyrado.plotting.gaussian_process)</a>
+</li>
       <li><a href="utils.html#pyrado.utils.data_types.RenderMode">RenderMode (class in pyrado.utils.data_types)</a>
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.utils.ReplayMemory">ReplayMemory (class in pyrado.algorithms.utils)</a>
@@ -4280,6 +4296,8 @@
         <li><a href="policies.special.html#pyrado.policies.special.time.TraceableTimePolicy.reset">(TraceableTimePolicy method)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.udr.UDR.reset">(UDR method)</a>
+</li>
+        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.value_based.ValueBased.reset">(ValueBased method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -4470,6 +4488,8 @@
 </li>
       <li><a href="sampling.html#pyrado.sampling.sampler_pool.SamplerPool">SamplerPool (class in pyrado.sampling.sampler_pool)</a>
 </li>
+      <li><a href="utils.html#pyrado.utils.saving_loading.save">save() (in module pyrado.utils.saving_loading)</a>
+</li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.base.RcsSim.save_config_xml">save_config_xml() (RcsSim method)</a>
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.save_dir">save_dir() (Algorithm property)</a>
@@ -4477,8 +4497,6 @@
       <li><a href="logger.html#pyrado.logger.experiment.save_list_of_dicts_to_yaml">save_list_of_dicts_to_yaml() (in module pyrado.logger.experiment)</a>
 </li>
       <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.save_name">save_name() (Algorithm property)</a>
-</li>
-      <li><a href="utils.html#pyrado.utils.saving_loading.save_prefix_suffix">save_prefix_suffix() (in module pyrado.utils.saving_loading)</a>
 </li>
       <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.actor_critic.ActorCritic.save_snapshot">save_snapshot() (ActorCritic method)</a>
 
@@ -4512,6 +4530,8 @@
         <li><a href="algorithms.html#pyrado.algorithms.timeseries_prediction.TSPred.save_snapshot">(TSPred method)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.udr.UDR.save_snapshot">(UDR method)</a>
+</li>
+        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.value_based.ValueBased.save_snapshot">(ValueBased method)</a>
 </li>
       </ul></li>
       <li><a href="utils.html#pyrado.utils.data_processing.MinMaxScaler.scale_back">scale_back() (MinMaxScaler method)</a>
@@ -4761,8 +4781,6 @@
 </li>
         <li><a href="environments.one_step.html#pyrado.environments.one_step.catapult.CatapultSim.step">(CatapultSim method)</a>
 </li>
-        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.dql.DQL.step">(DQL method)</a>
-</li>
         <li><a href="environments.html#pyrado.environments.base.Env.step">(Env method)</a>
 </li>
         <li><a href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper.step">(EnvWrapper method)</a>
@@ -4789,8 +4807,6 @@
 </li>
         <li><a href="environments.one_step.html#pyrado.environments.one_step.rosenbrock.RosenSim.step">(RosenSim method)</a>
 </li>
-        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.sac.SAC.step">(SAC method)</a>
-</li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.simopt.SimOpt.step">(SimOpt method)</a>
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.base.SimPyEnv.step">(SimPyEnv method)</a>
@@ -4808,6 +4824,8 @@
         <li><a href="algorithms.html#pyrado.algorithms.timeseries_prediction.TSPred.step">(TSPred method)</a>
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.udr.UDR.step">(UDR method)</a>
+</li>
+        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.value_based.ValueBased.step">(ValueBased method)</a>
 </li>
       </ul></li>
       <li><a href="tasks.html#pyrado.tasks.final_reward.BestStateFinalRewTask.step_rew">step_rew() (BestStateFinalRewTask method)</a>
@@ -5232,7 +5250,7 @@
 </li>
       <li><a href="tests.html#tests.test_logger.test_save_and_laod_yaml">test_save_and_laod_yaml() (in module tests.test_logger)</a>
 </li>
-      <li><a href="tests.html#tests.test_utils.test_save_load_prefix_suffix">test_save_load_prefix_suffix() (in module tests.test_utils)</a>
+      <li><a href="tests.html#tests.test_utils.test_save_load">test_save_load() (in module tests.test_utils)</a>
 </li>
       <li><a href="tests.html#tests.test_utils.test_scale_min_max">test_scale_min_max() (in module tests.test_utils)</a>
 </li>
@@ -5662,6 +5680,8 @@
 </li>
         <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPG.update">(SVPG method)</a>
 </li>
+        <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.value_based.ValueBased.update">(ValueBased method)</a>
+</li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -5683,7 +5703,7 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.svpg.SVPGParticle.value">value() (SVPGParticle method)</a>
 </li>
-      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.gae.GAE.value_fcn">value_fcn() (GAE property)</a>
+      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.value_based.ValueBased">ValueBased (class in pyrado.algorithms.step_based.value_based)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.exceptions.ValueErr">ValueErr</a>
 </li>
@@ -5692,6 +5712,8 @@
       <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.gae.GAE.values">values() (GAE method)</a>
 </li>
       <li><a href="environments.quanser.html#pyrado.environments.quanser.quanser_common.VelocityFilter">VelocityFilter (class in pyrado.environments.quanser.quanser_common)</a>
+</li>
+      <li><a href="algorithms.step_based.html#pyrado.algorithms.step_based.gae.GAE.vfcn">vfcn() (GAE property)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.data_types.RenderMode.video">video() (RenderMode property)</a>
 </li>
