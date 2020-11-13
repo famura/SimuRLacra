@@ -359,27 +359,34 @@
 
         <span class="k">return</span> <span class="n">output_1</span><span class="p">,</span> <span class="n">output_2</span><span class="p">,</span> <span class="n">new_hidden</span></div>
 
-<div class="viewcode-block" id="TwoHeadedRNNPolicyBase.evaluate"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">hidden_states_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;hidden_states&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">StepSequence</span><span class="p">):</span>
-            <span class="n">act_list</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">head2_list</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iterate_rollouts</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">hidden_states_name</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">data_names</span><span class="p">:</span>
-                    <span class="c1"># Get initial hidden state from first step</span>
-                    <span class="n">hidden</span> <span class="o">=</span> <span class="n">ro</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">hidden_states_name</span><span class="p">]</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># Let the network pick the default hidden state</span>
-                    <span class="n">hidden</span> <span class="o">=</span> <span class="kc">None</span>
-                <span class="c1"># Run steps consecutively reusing the hidden state</span>
-                <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">ro</span><span class="p">:</span>
-                    <span class="n">act</span><span class="p">,</span> <span class="n">head2</span><span class="p">,</span> <span class="n">hidden</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">observation</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
-                    <span class="n">act_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
-                    <span class="n">head2_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">head2</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">act_list</span><span class="p">),</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">head2_list</span><span class="p">)</span>
+<div class="viewcode-block" id="TwoHeadedRNNPolicyBase.evaluate"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rollout</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">hidden_states_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;hidden_states&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rollout</span><span class="o">.</span><span class="n">data_format</span> <span class="o">==</span> <span class="s1">&#39;torch&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;The rollout rollout passed to evaluate() must be of type torch.Tensor!&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rollout</span><span class="o">.</span><span class="n">continuous</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;The rollout rollout passed to evaluate() from a continuous rollout!&#39;</span><span class="p">)</span>
 
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">StepSequence</span><span class="p">)</span></div>
+        <span class="c1"># Set policy, i.e. PyTorch nn.Module, to evaluation mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+        <span class="n">act_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">head2_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rollout</span><span class="o">.</span><span class="n">iterate_rollouts</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">hidden_states_name</span> <span class="ow">in</span> <span class="n">rollout</span><span class="o">.</span><span class="n">data_names</span><span class="p">:</span>
+                <span class="c1"># Get initial hidden state from first step</span>
+                <span class="n">hidden</span> <span class="o">=</span> <span class="n">ro</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">hidden_states_name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Let the network pick the default hidden state</span>
+                <span class="n">hidden</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="c1"># Run steps consecutively reusing the hidden state</span>
+            <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">ro</span><span class="p">:</span>
+                <span class="n">act</span><span class="p">,</span> <span class="n">head2</span><span class="p">,</span> <span class="n">hidden</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">observation</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span>
+                <span class="n">act_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
+                <span class="n">head2_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">head2</span><span class="p">)</span>
+
+        <span class="c1"># Set policy, i.e. PyTorch nn.Module, back to training mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">act_list</span><span class="p">),</span> <span class="n">to</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">head2_list</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_unpack_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -388,7 +395,7 @@
 <span class="sd">        The default implementation is defined by default_unpack_hidden.</span>
 
 <span class="sd">        :param hidden: flat hidden state</span>
-<span class="sd">        :param batch_size: if not None, hidden is 2-dim and the first dimension represents parts of a data batch</span>
+<span class="sd">        :param batch_size: if not None, hidden is 2-dim and the first dimension represents parts of a rollout batch</span>
 <span class="sd">        :return: unpacked hidden state, ready for the network</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">default_unpack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_recurrent_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
@@ -400,7 +407,7 @@
 <span class="sd">        The default implementation is defined by default_pack_hidden.</span>
 
 <span class="sd">        :param hidden: hidden state as returned by the network</span>
-<span class="sd">        :param batch_size: if not None, the result should be 2-dim and the first dimension represents parts of a data batch</span>
+<span class="sd">        :param batch_size: if not None, the result should be 2-dim and the first dimension represents parts of a rollout batch</span>
 <span class="sd">        :return: packed hidden state</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">default_pack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_recurrent_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span></div>

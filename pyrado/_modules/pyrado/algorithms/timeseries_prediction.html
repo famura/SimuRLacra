@@ -451,7 +451,9 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">inps</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">targs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">inps</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="n">targs</span><span class="p">)</span>
 
+        <span class="c1"># Set policy, i.e. PyTorch nn.Module, back to evaluation mode</span>
         <span class="n">policy</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
         <span class="n">targs</span> <span class="o">=</span> <span class="n">targs</span><span class="p">[</span><span class="n">num_init_samples</span><span class="p">:,</span> <span class="p">:]</span> <span class="k">if</span> <span class="n">num_init_samples</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">targs</span>
         <span class="n">preds</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">targs</span><span class="p">)</span>
 
@@ -478,6 +480,9 @@
             <span class="n">print_cbt</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s1">&#39;The </span><span class="si">{</span><span class="n">policy</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> policy with </span><span class="si">{</span><span class="n">policy</span><span class="o">.</span><span class="n">num_param</span><span class="si">}</span><span class="s1"> parameters predicted </span><span class="si">{</span><span class="n">inps</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1"> data points &#39;</span>
                 <span class="sa">f</span><span class="s1">&#39;with a loss of </span><span class="si">{</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s1">.4e</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Set policy, i.e. PyTorch nn.Module, back to training mode</span>
+        <span class="n">policy</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">preds</span><span class="p">,</span> <span class="n">loss</span></div></div>
 </pre></div>
