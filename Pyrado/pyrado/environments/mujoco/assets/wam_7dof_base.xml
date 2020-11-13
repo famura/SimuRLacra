@@ -61,7 +61,7 @@
 
   <asset>
     <!--    <texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2"  width="2048" height="2048"  mark="cross" markrgb=".8 .8 .8"/>-->
-    <texture name="texplane" type="2d"  file="floor.png"  width="2048" height="2048"/>
+    <texture name="texplane" type="2d" file="floor_IAS.png" width="2048" height="2048"/>
     <texture name="sky" type="skybox" builtin="flat" rgb2="1. 1. 1." height="2048" width="2048"/>
     <material name="matplane" reflectance="0.3" texture="texplane" texrepeat="4 3" texuniform="true"/>
 
