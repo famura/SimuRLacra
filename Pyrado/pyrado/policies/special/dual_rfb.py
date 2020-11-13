@@ -87,7 +87,7 @@ class DualRBFLinearPolicy(LinearPolicy):
             self.num_active_feat = self._feats.num_feat - 2*self.dim_mask*spec.obs_space.flat_dim
         else:
             self.num_active_feat = self._feats.num_feat
-        self.net = nn.Linear(self.num_active_feat, self._num_act//2, bias=False)
+        self.net = nn.Linear(self.num_active_feat, self.env_spec.act_space.flat_dim//2, bias=False)
 
         # Create mask to deactivate first and last feature of every input dimension
         self.feats_mask = to.ones(self._feats.centers.shape, dtype=to.bool)
