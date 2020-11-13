@@ -100,9 +100,9 @@ In all cases you will download Rcs, eigen3, pybind11, catch2, and mujoco-py, int
 Run (the setup script calls `git submodule init` and `git submodule update`)
 ```
 conda activate pyrado
-pip install torch==1.4.0
-# OR if CUDA support not needed
-# pip install torch==1.4.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+pip install torch==1.7.0
+# or if CUDA support not needed
+# pip install torch==1.7.0+cpu torchvision==0.8.1+cpu torchaudio==0.7.0 -f https://download.pytorch.org/whl/torch_stable.html
 python setup_deps.py wo_rcs_wo_pytorch -j8
 ```
 In case this process crashes, please first check the [Troubleshooting](#troubleshooting) section below.
@@ -130,9 +130,9 @@ If you can't install the libraries, you can still use the Python part of this fr
 Run (the setup script calls `git submodule init` and `git submodule update`)
 ```
 conda activate pyrado
-pip install torch==1.4.0
-# OR if CUDA support not needed
-# pip install torch==1.4.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+pip install torch==1.7.0
+# or if CUDA support not needed
+# pip install torch==1.7.0+cpu torchvision==0.8.1+cpu torchaudio==0.7.0 -f https://download.pytorch.org/whl/torch_stable.html
 python setup_deps.py w_rcs_wo_pytorch -j8
 ```
 In case this process crashes, please first check the [Troubleshooting](#troubleshooting) section below.
@@ -390,10 +390,20 @@ Download `mujoco200 linux` from the [official page](https://www.roboti.us/index.
 During executing `setup_deps.py`, mujoco-py is set up as a git submodule and installed via the downloaded `setup.py`.
 If this fails, have a look at the mujoco-py's [canonical dependencies](https://github.com/openai/mujoco-py/blob/master/Dockerfile). Try again. If you get an error mentioning `patchelf`, run ` conda install -c anaconda patchelf`
 
-If you get visualization errors related to `GLEW` (render causes a frozen window and crashes) add `export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libGLEW.so` to your `~/.bashrc` or `~/.zshrc`.
+In case you get visualization errors related to `GLEW` (render causes a frozen window and crashes, or simply a completely black screen) add `export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libGLEW.so` to your shell's rc-file (like `~/.bashrc`).
+If you now create a new terminal, it should work. If not, try `sudo apt-get install libglew-dev`.
 
 ### Shut down the mujoco-py message about the missing MuJoCo installation / license
 If you dont have a MuJoCo license, or MuJoCo is not installed on zour machine, mujoco-py will print an error message. One way to avoid this would be to not install mujoco-py by default. However, this would create even more options above. Thus, we will just fool mujoco-py's checker by creating a fake directory and an empty license file.
 ```
 mkdir /$HOME/.mujoco/mujoco200 -p && touch /$HOME/.mujoco/mjkey.txt
 ```
+
+### libstdc++.so.6: version `GLIBCXX_3.4.22' not found
+This error might come from the scipy.signal.lfilter command (eventually including scipy's fft function). For scipy versions > 1.5.2, this requires GLIBCXX_3.4.22. If your computer is out -of-date and you have no sudo rights, your best option is to set scipy pack to version 1.5.2.
+```
+conda activate pyrado
+conda remove scipy --force
+pip install scipy==1.5.2
+```
+
