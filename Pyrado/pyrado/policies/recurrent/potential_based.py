@@ -229,9 +229,15 @@ class PotentialBasedPolicy(RecurrentPolicy, ABC):
         raise NotImplementedError
 
     def evaluate(self, rollout: StepSequence, hidden_states_name: str = 'hidden_states') -> to.Tensor:
-        self.eval()
-        act_list = []
+        if not rollout.data_format == 'torch':
+            raise pyrado.TypeErr(msg='The rollout data passed to evaluate() must be of type torch.Tensor!')
+        if not rollout.continuous:
+            raise pyrado.ValueErr(msg='The rollout data passed to evaluate() from a continuous rollout!')
 
+        # Set policy, i.e. PyTorch nn.Module, to evaluation mode
+        self.eval()
+
+        act_list = []
         for ro in rollout.iterate_rollouts():
             if hidden_states_name in rollout.data_names:
                 # Get initial hidden state from first step
@@ -244,5 +250,8 @@ class PotentialBasedPolicy(RecurrentPolicy, ABC):
             for step in ro:
                 act, hidden = self(step.observation, hidden)
                 act_list.append(act)
+
+        # Set policy, i.e. PyTorch nn.Module, back to training mode
+        self.train()
 
         return to.stack(act_list)

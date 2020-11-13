@@ -241,8 +241,6 @@ class Algorithm(ABC, LoggerAware):
         if self._policy is not None:
             print_cbt(f'{get_class_name(self)} finished training a {get_class_name(self._policy)} '
                       f'with {self._policy.num_param} parameters. {stopping_reason}', 'g')
-            # Set dropout and batch normalization layers to evaluation mode
-            self._policy.eval()
         else:
             print_cbt(f'{get_class_name(self)} finished training. {stopping_reason}', 'g')
 

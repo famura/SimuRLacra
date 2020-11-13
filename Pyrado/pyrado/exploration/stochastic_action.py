@@ -104,7 +104,6 @@ class StochasticActionExplStrat(Policy, ABC):
         :param hidden_states_name: name of hidden states rollout entry, used for recurrent networks
         :return: actions with gradient data
         """
-        self.policy.eval()
         if isinstance(self.policy, TwoHeadedPolicy):
             acts, _ = self.policy.evaluate(rollout, hidden_states_name)  # ignore the second head's output
         else:
@@ -322,7 +321,6 @@ class SACExplStrat(StochasticActionExplStrat):
         :param hidden_states_name: name of hidden states rollout entry, used for recurrent networks
         :return: actions with gradient data
         """
-        self.policy.eval()
         acts, log_stds = self.policy.evaluate(rollout, hidden_states_name)
         return self.action_dist_at(acts, log_stds)
 

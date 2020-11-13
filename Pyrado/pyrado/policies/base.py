@@ -180,8 +180,15 @@ class Policy(nn.Module, ABC):
                                    Defaults to 'hidden_states'. Change for value functions.
         :return: actions with gradient data
         """
+        # Set policy, i.e. PyTorch nn.Module, to evaluation mode
         self.eval()
-        return self(rollout.get_data_values('observations', truncate_last=True))  # all observations at once
+
+        res = self(rollout.get_data_values('observations', truncate_last=True))  # all observations at once
+
+        # Set policy, i.e. PyTorch nn.Module, back to training mode
+        self.train()
+
+        return res
 
     def script(self) -> ScriptModule:
         """

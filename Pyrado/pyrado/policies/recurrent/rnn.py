@@ -143,11 +143,13 @@ class RNNPolicyBase(RecurrentPolicy):
         return act, new_hidden
 
     def evaluate(self, rollout: StepSequence, hidden_states_name: str = 'hidden_states') -> to.Tensor:
-        self.eval()
         if not rollout.data_format == 'torch':
             raise pyrado.TypeErr(msg='The rollout data passed to evaluate() must be of type torch.Tensor!')
         if not rollout.continuous:
             raise pyrado.ValueErr(msg='The rollout data passed to evaluate() from a continuous rollout!')
+
+        # Set policy, i.e. PyTorch nn.Module, to evaluation mode
+        self.eval()
 
         # The passed sample collection might contain multiple rollouts.
         # Note:
@@ -175,6 +177,9 @@ class RNNPolicyBase(RecurrentPolicy):
 
             # Collect the actions
             act_list.append(act)
+
+        # Set policy, i.e. PyTorch nn.Module, back to training mode
+        self.train()
 
         return to.cat(act_list)
 

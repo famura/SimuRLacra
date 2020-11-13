@@ -256,7 +256,9 @@ class TSPred(Algorithm):
         if not inps.shape[0] == targs.shape[0]:
             raise pyrado.ShapeErr(given=inps, expected_match=targs)
 
+        # Set policy, i.e. PyTorch nn.Module, back to evaluation mode
         policy.eval()
+
         targs = targs[num_init_samples:, :] if num_init_samples > 0 else targs
         preds = to.empty_like(targs)
 
@@ -283,5 +285,8 @@ class TSPred(Algorithm):
             print_cbt(
                 f'The {policy.name} policy with {policy.num_param} parameters predicted {inps.shape[0]} data points '
                 f'with a loss of {loss.item():.4e}.', 'g')
+
+        # Set policy, i.e. PyTorch nn.Module, back to training mode
+        policy.train()
 
         return preds, loss

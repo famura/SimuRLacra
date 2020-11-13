@@ -164,27 +164,34 @@ class TwoHeadedRNNPolicyBase(TwoHeadedPolicy, RecurrentPolicy):
 
         return output_1, output_2, new_hidden
 
-    def evaluate(self, data: StepSequence, hidden_states_name: str = 'hidden_states') -> Tuple[to.Tensor, to.Tensor]:
-        self.eval()
-        if isinstance(data, StepSequence):
-            act_list = []
-            head2_list = []
-            for ro in data.iterate_rollouts():
-                if hidden_states_name in data.data_names:
-                    # Get initial hidden state from first step
-                    hidden = ro[0][hidden_states_name]
-                else:
-                    # Let the network pick the default hidden state
-                    hidden = None
-                # Run steps consecutively reusing the hidden state
-                for step in ro:
-                    act, head2, hidden = self(step.observation, hidden)
-                    act_list.append(act)
-                    head2_list.append(head2)
-            return to.stack(act_list), to.stack(head2_list)
+    def evaluate(self, rollout: StepSequence, hidden_states_name: str = 'hidden_states') -> Tuple[to.Tensor, to.Tensor]:
+        if not rollout.data_format == 'torch':
+            raise pyrado.TypeErr(msg='The rollout rollout passed to evaluate() must be of type torch.Tensor!')
+        if not rollout.continuous:
+            raise pyrado.ValueErr(msg='The rollout rollout passed to evaluate() from a continuous rollout!')
 
-        else:
-            raise pyrado.TypeErr(given=data, expected_type=StepSequence)
+        # Set policy, i.e. PyTorch nn.Module, to evaluation mode
+        self.eval()
+
+        act_list = []
+        head2_list = []
+        for ro in rollout.iterate_rollouts():
+            if hidden_states_name in rollout.data_names:
+                # Get initial hidden state from first step
+                hidden = ro[0][hidden_states_name]
+            else:
+                # Let the network pick the default hidden state
+                hidden = None
+            # Run steps consecutively reusing the hidden state
+            for step in ro:
+                act, head2, hidden = self(step.observation, hidden)
+                act_list.append(act)
+                head2_list.append(head2)
+
+        # Set policy, i.e. PyTorch nn.Module, back to training mode
+        self.train()
+
+        return to.stack(act_list), to.stack(head2_list)
 
     def _unpack_hidden(self, hidden: to.Tensor, batch_size: int = None):
         """
@@ -193,7 +200,7 @@ class TwoHeadedRNNPolicyBase(TwoHeadedPolicy, RecurrentPolicy):
         The default implementation is defined by default_unpack_hidden.
 
         :param hidden: flat hidden state
-        :param batch_size: if not None, hidden is 2-dim and the first dimension represents parts of a data batch
+        :param batch_size: if not None, hidden is 2-dim and the first dimension represents parts of a rollout batch
         :return: unpacked hidden state, ready for the network
         """
         return default_unpack_hidden(hidden, self.num_recurrent_layers, self._hidden_size, batch_size)
@@ -205,7 +212,7 @@ class TwoHeadedRNNPolicyBase(TwoHeadedPolicy, RecurrentPolicy):
         The default implementation is defined by default_pack_hidden.
 
         :param hidden: hidden state as returned by the network
-        :param batch_size: if not None, the result should be 2-dim and the first dimension represents parts of a data batch
+        :param batch_size: if not None, the result should be 2-dim and the first dimension represents parts of a rollout batch
         :return: packed hidden state
         """
         return default_pack_hidden(hidden, self.num_recurrent_layers, self._hidden_size, batch_size)
