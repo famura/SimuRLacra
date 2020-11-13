@@ -34,7 +34,6 @@ from math import ceil
 from tqdm import tqdm
 
 from pyrado.spaces import BoxSpace
-from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate5DSim
 from pyrado.sampling.utils import gen_batch_idcs, gen_ordered_batch_idcs, gen_ordered_batches
 from pyrado.utils.data_types import *
 from pyrado.utils.functions import noisy_nonlin_fcn, skyline
@@ -48,7 +47,6 @@ from pyrado.utils.optimizers import GSS
 from pyrado.utils.averaging import RunningExpDecayingAverage, RunningMemoryAverage
 from pyrado.utils.data_processing import RunningStandardizer, Standardizer, scale_min_max, MinMaxScaler
 from pyrado.utils.data_processing import RunningNormalizer, normalize
-from tests.conftest import m_needs_bullet
 
 
 @pytest.mark.parametrize(
@@ -631,9 +629,8 @@ def test_logmeanexp(x, dim):
         (np.random.rand(5, 3), 'npy'),
         (DummyPolicy(BallOnBeamSim(dt=0.01, max_steps=500).spec), 'pt'),
         (BallOnBeamSim(dt=0.01, max_steps=500), 'pkl'),
-        (pytest.param(BallOnPlate5DSim(physicsEngine='Bullet', dt=0.01, max_steps=3000, marks=m_needs_bullet), 'pkl')),
     ],
-    ids=['tensor', 'ndarray', 'dummypol', 'pyenv', 'rcssimenv']
+    ids=['tensor', 'ndarray', 'dummypol', 'pyenv']
 )
 @pytest.mark.parametrize(
     'meta_info', [

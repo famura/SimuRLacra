@@ -45,8 +45,6 @@ from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim, QQubeStabSim
 from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal
 from pyrado.environments.quanser.quanser_cartpole import QCartPoleStabReal, QCartPoleSwingUpReal
 from pyrado.environments.quanser.quanser_qube import QQubeReal
-from pyrado.environments.rcspysim.ball_in_tube import BallInTubeIKActivationSim, BallInTubeVelDSSim
-from pyrado.environments.rcspysim.box_flipping import BoxFlippingVelDSSim, BoxFlippingIKActivationSim
 from pyrado.policies.recurrent.adn import ADNPolicy, pd_cubic
 from pyrado.policies.special.dummy import DummyPolicy, IdlePolicy
 from pyrado.policies.features import *
@@ -69,7 +67,9 @@ to.set_default_dtype(to.double)
 # Check if RcsPySim, Bullet, and Vortex are available
 try:
     import rcsenv
+    from pyrado.environments.rcspysim.ball_in_tube import BallInTubeIKActivationSim, BallInTubeVelDSSim
     from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate2DSim, BallOnPlate5DSim
+    from pyrado.environments.rcspysim.box_flipping import BoxFlippingVelDSSim, BoxFlippingIKActivationSim
     from pyrado.environments.rcspysim.box_lifting import BoxLiftingPosDSSim, BoxLiftingVelDSSim
     from pyrado.environments.rcspysim.box_shelving import BoxShelvingVelDSSim, BoxShelvingPosDSSim
     from pyrado.environments.rcspysim.mp_blending import MPBlendingSim
@@ -178,26 +178,31 @@ class DefaultEnvs:
         return QQubeSwingUpSim(dt=0.004, max_steps=4000)
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_bullet
     def default_bop2d_bt():
         return BallOnPlate2DSim(physicsEngine='Bullet', dt=0.01, max_steps=3000, checkJointLimits=True)
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_vortex
     def default_bop2d_vx():
         return BallOnPlate2DSim(physicsEngine='Vortex', dt=0.01, max_steps=3000, checkJointLimits=True)
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_bullet
     def default_bop5d_bt():
         return BallOnPlate5DSim(physicsEngine='Bullet', dt=0.01, max_steps=3000, checkJointLimits=True)
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_vortex
     def default_bop5d_vx():
         return BallOnPlate5DSim(physicsEngine='Vortex', dt=0.01, max_steps=3000, checkJointLimits=True)
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_bullet
     def default_p3l_ik_bt():
         return Planar3LinkIKActivationSim(
@@ -218,6 +223,7 @@ class DefaultEnvs:
         )
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_vortex
     def default_p3l_ik_vx():
         return Planar3LinkIKActivationSim(
@@ -238,6 +244,7 @@ class DefaultEnvs:
         )
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_bullet
     def default_p3l_ta_bt():
         return Planar3LinkTASim(
@@ -261,6 +268,7 @@ class DefaultEnvs:
         )
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_vortex
     def default_p3l_ta_vx():
         return Planar3LinkTASim(
@@ -284,6 +292,7 @@ class DefaultEnvs:
         )
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_bullet
     def default_pi_ik_5l_bt():
         return PlanarInsertIKActivationSim(
@@ -305,6 +314,7 @@ class DefaultEnvs:
         )
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_vortex
     def default_pi_ik_6l_vx():
         return PlanarInsertIKActivationSim(
@@ -326,6 +336,7 @@ class DefaultEnvs:
         )
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_bullet
     def default_pi_ta_6l_bt():
         return PlanarInsertTASim(
@@ -347,6 +358,7 @@ class DefaultEnvs:
         )
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_vortex
     def default_pi_ta_5l_vx():
         return PlanarInsertTASim(
@@ -368,6 +380,7 @@ class DefaultEnvs:
         )
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_bullet
     def default_bit_ik_bt():
         return BallInTubeIKActivationSim(
@@ -390,6 +403,7 @@ class DefaultEnvs:
         )
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_bullet
     def default_bit_vel_bt():
         return BallInTubeVelDSSim(
@@ -417,6 +431,7 @@ class DefaultEnvs:
         )
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_bullet
     def default_bl_pos_bt():
         return BoxLiftingPosDSSim(
@@ -442,6 +457,7 @@ class DefaultEnvs:
         )
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_bullet
     def default_bl_vel_bt():
         return BoxLiftingVelDSSim(
@@ -467,6 +483,7 @@ class DefaultEnvs:
         )
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_vortex
     def default_bl_pos_vx():
         return BoxLiftingPosDSSim(
@@ -492,6 +509,7 @@ class DefaultEnvs:
         )
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_bullet
     def default_bs_pos_bt():
         return BoxShelvingPosDSSim(
@@ -518,6 +536,7 @@ class DefaultEnvs:
         )
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_vortex
     def default_bs_pos_vx():
         return BoxShelvingPosDSSim(
@@ -544,6 +563,7 @@ class DefaultEnvs:
         )
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_vortex
     def default_bf_vel_bt():
         return BoxFlippingVelDSSim(
@@ -570,6 +590,7 @@ class DefaultEnvs:
         )
 
     @staticmethod
+    @m_needs_rcs
     @m_needs_vortex
     def default_bf_ik_bt():
         return BoxFlippingIKActivationSim(
