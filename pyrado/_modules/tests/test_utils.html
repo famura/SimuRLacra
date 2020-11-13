@@ -227,7 +227,6 @@
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
-<span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.ball_on_plate</span> <span class="kn">import</span> <span class="n">BallOnPlate5DSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.utils</span> <span class="kn">import</span> <span class="n">gen_batch_idcs</span><span class="p">,</span> <span class="n">gen_ordered_batch_idcs</span><span class="p">,</span> <span class="n">gen_ordered_batches</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.functions</span> <span class="kn">import</span> <span class="n">noisy_nonlin_fcn</span><span class="p">,</span> <span class="n">skyline</span>
@@ -241,7 +240,6 @@
 <span class="kn">from</span> <span class="nn">pyrado.utils.averaging</span> <span class="kn">import</span> <span class="n">RunningExpDecayingAverage</span><span class="p">,</span> <span class="n">RunningMemoryAverage</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_processing</span> <span class="kn">import</span> <span class="n">RunningStandardizer</span><span class="p">,</span> <span class="n">Standardizer</span><span class="p">,</span> <span class="n">scale_min_max</span><span class="p">,</span> <span class="n">MinMaxScaler</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_processing</span> <span class="kn">import</span> <span class="n">RunningNormalizer</span><span class="p">,</span> <span class="n">normalize</span>
-<span class="kn">from</span> <span class="nn">tests.conftest</span> <span class="kn">import</span> <span class="n">m_needs_bullet</span>
 
 
 <div class="viewcode-block" id="test_cov"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_cov">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -824,9 +822,8 @@
         <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s1">&#39;npy&#39;</span><span class="p">),</span>
         <span class="p">(</span><span class="n">DummyPolicy</span><span class="p">(</span><span class="n">BallOnBeamSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span><span class="o">.</span><span class="n">spec</span><span class="p">),</span> <span class="s1">&#39;pt&#39;</span><span class="p">),</span>
         <span class="p">(</span><span class="n">BallOnBeamSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span> <span class="s1">&#39;pkl&#39;</span><span class="p">),</span>
-        <span class="p">(</span><span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">BallOnPlate5DSim</span><span class="p">(</span><span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Bullet&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span> <span class="s1">&#39;pkl&#39;</span><span class="p">)),</span>
     <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;tensor&#39;</span><span class="p">,</span> <span class="s1">&#39;ndarray&#39;</span><span class="p">,</span> <span class="s1">&#39;dummypol&#39;</span><span class="p">,</span> <span class="s1">&#39;pyenv&#39;</span><span class="p">,</span> <span class="s1">&#39;rcssimenv&#39;</span><span class="p">]</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;tensor&#39;</span><span class="p">,</span> <span class="s1">&#39;ndarray&#39;</span><span class="p">,</span> <span class="s1">&#39;dummypol&#39;</span><span class="p">,</span> <span class="s1">&#39;pyenv&#39;</span><span class="p">]</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s1">&#39;meta_info&#39;</span><span class="p">,</span> <span class="p">[</span>

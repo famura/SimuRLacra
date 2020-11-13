@@ -238,8 +238,6 @@
 <span class="kn">from</span> <span class="nn">pyrado.environments.quanser.quanser_ball_balancer</span> <span class="kn">import</span> <span class="n">QBallBalancerReal</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.quanser.quanser_cartpole</span> <span class="kn">import</span> <span class="n">QCartPoleStabReal</span><span class="p">,</span> <span class="n">QCartPoleSwingUpReal</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.quanser.quanser_qube</span> <span class="kn">import</span> <span class="n">QQubeReal</span>
-<span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.ball_in_tube</span> <span class="kn">import</span> <span class="n">BallInTubeIKActivationSim</span><span class="p">,</span> <span class="n">BallInTubeVelDSSim</span>
-<span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.box_flipping</span> <span class="kn">import</span> <span class="n">BoxFlippingVelDSSim</span><span class="p">,</span> <span class="n">BoxFlippingIKActivationSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.adn</span> <span class="kn">import</span> <span class="n">ADNPolicy</span><span class="p">,</span> <span class="n">pd_cubic</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.special.dummy</span> <span class="kn">import</span> <span class="n">DummyPolicy</span><span class="p">,</span> <span class="n">IdlePolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.features</span> <span class="kn">import</span> <span class="o">*</span>
@@ -262,7 +260,9 @@
 <span class="c1"># Check if RcsPySim, Bullet, and Vortex are available</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">rcsenv</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.ball_in_tube</span> <span class="kn">import</span> <span class="n">BallInTubeIKActivationSim</span><span class="p">,</span> <span class="n">BallInTubeVelDSSim</span>
     <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.ball_on_plate</span> <span class="kn">import</span> <span class="n">BallOnPlate2DSim</span><span class="p">,</span> <span class="n">BallOnPlate5DSim</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.box_flipping</span> <span class="kn">import</span> <span class="n">BoxFlippingVelDSSim</span><span class="p">,</span> <span class="n">BoxFlippingIKActivationSim</span>
     <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.box_lifting</span> <span class="kn">import</span> <span class="n">BoxLiftingPosDSSim</span><span class="p">,</span> <span class="n">BoxLiftingVelDSSim</span>
     <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.box_shelving</span> <span class="kn">import</span> <span class="n">BoxShelvingVelDSSim</span><span class="p">,</span> <span class="n">BoxShelvingPosDSSim</span>
     <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.mp_blending</span> <span class="kn">import</span> <span class="n">MPBlendingSim</span>
@@ -371,26 +371,31 @@
         <span class="k">return</span> <span class="n">QQubeSwingUpSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.004</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">4000</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_bop2d_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bop2d_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_bullet</span>
     <span class="k">def</span> <span class="nf">default_bop2d_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BallOnPlate2DSim</span><span class="p">(</span><span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Bullet&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">checkJointLimits</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_bop2d_vx"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bop2d_vx">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_vortex</span>
     <span class="k">def</span> <span class="nf">default_bop2d_vx</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BallOnPlate2DSim</span><span class="p">(</span><span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Vortex&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">checkJointLimits</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_bop5d_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bop5d_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_bullet</span>
     <span class="k">def</span> <span class="nf">default_bop5d_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BallOnPlate5DSim</span><span class="p">(</span><span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Bullet&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">checkJointLimits</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_bop5d_vx"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bop5d_vx">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_vortex</span>
     <span class="k">def</span> <span class="nf">default_bop5d_vx</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BallOnPlate5DSim</span><span class="p">(</span><span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Vortex&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span> <span class="n">checkJointLimits</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_p3l_ik_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_p3l_ik_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_bullet</span>
     <span class="k">def</span> <span class="nf">default_p3l_ik_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">Planar3LinkIKActivationSim</span><span class="p">(</span>
@@ -411,6 +416,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_p3l_ik_vx"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_p3l_ik_vx">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_vortex</span>
     <span class="k">def</span> <span class="nf">default_p3l_ik_vx</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">Planar3LinkIKActivationSim</span><span class="p">(</span>
@@ -431,6 +437,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_p3l_ta_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_p3l_ta_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_bullet</span>
     <span class="k">def</span> <span class="nf">default_p3l_ta_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">Planar3LinkTASim</span><span class="p">(</span>
@@ -454,6 +461,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_p3l_ta_vx"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_p3l_ta_vx">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_vortex</span>
     <span class="k">def</span> <span class="nf">default_p3l_ta_vx</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">Planar3LinkTASim</span><span class="p">(</span>
@@ -477,6 +485,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_pi_ik_5l_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_pi_ik_5l_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_bullet</span>
     <span class="k">def</span> <span class="nf">default_pi_ik_5l_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">PlanarInsertIKActivationSim</span><span class="p">(</span>
@@ -498,6 +507,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_pi_ik_6l_vx"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_pi_ik_6l_vx">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_vortex</span>
     <span class="k">def</span> <span class="nf">default_pi_ik_6l_vx</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">PlanarInsertIKActivationSim</span><span class="p">(</span>
@@ -519,6 +529,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_pi_ta_6l_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_pi_ta_6l_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_bullet</span>
     <span class="k">def</span> <span class="nf">default_pi_ta_6l_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">PlanarInsertTASim</span><span class="p">(</span>
@@ -540,6 +551,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_pi_ta_5l_vx"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_pi_ta_5l_vx">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_vortex</span>
     <span class="k">def</span> <span class="nf">default_pi_ta_5l_vx</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">PlanarInsertTASim</span><span class="p">(</span>
@@ -561,6 +573,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_bit_ik_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bit_ik_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_bullet</span>
     <span class="k">def</span> <span class="nf">default_bit_ik_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BallInTubeIKActivationSim</span><span class="p">(</span>
@@ -583,6 +596,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_bit_vel_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bit_vel_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_bullet</span>
     <span class="k">def</span> <span class="nf">default_bit_vel_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BallInTubeVelDSSim</span><span class="p">(</span>
@@ -610,6 +624,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_bl_pos_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bl_pos_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_bullet</span>
     <span class="k">def</span> <span class="nf">default_bl_pos_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BoxLiftingPosDSSim</span><span class="p">(</span>
@@ -635,6 +650,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_bl_vel_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bl_vel_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_bullet</span>
     <span class="k">def</span> <span class="nf">default_bl_vel_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BoxLiftingVelDSSim</span><span class="p">(</span>
@@ -660,6 +676,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_bl_pos_vx"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bl_pos_vx">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_vortex</span>
     <span class="k">def</span> <span class="nf">default_bl_pos_vx</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BoxLiftingPosDSSim</span><span class="p">(</span>
@@ -685,6 +702,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_bs_pos_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bs_pos_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_bullet</span>
     <span class="k">def</span> <span class="nf">default_bs_pos_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BoxShelvingPosDSSim</span><span class="p">(</span>
@@ -711,6 +729,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_bs_pos_vx"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bs_pos_vx">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_vortex</span>
     <span class="k">def</span> <span class="nf">default_bs_pos_vx</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BoxShelvingPosDSSim</span><span class="p">(</span>
@@ -737,6 +756,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_bf_vel_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bf_vel_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_vortex</span>
     <span class="k">def</span> <span class="nf">default_bf_vel_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BoxFlippingVelDSSim</span><span class="p">(</span>
@@ -763,6 +783,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_bf_ik_bt"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_bf_ik_bt">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="nd">@m_needs_rcs</span>
     <span class="nd">@m_needs_vortex</span>
     <span class="k">def</span> <span class="nf">default_bf_ik_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BoxFlippingIKActivationSim</span><span class="p">(</span>
