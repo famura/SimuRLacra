@@ -286,6 +286,13 @@
         <span class="sd">&quot;&quot;&quot; Get the directory where the data is saved to. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span>
 
+    <span class="nd">@save_dir</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">save_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the directory where the data is saved to. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">save_dir</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">save_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span> <span class="o">=</span> <span class="n">save_dir</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">save_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Get the name for saving this algorithm instance, e.g. &#39;algo&#39; if saved to &#39;algo.pkl&#39;. &quot;&quot;&quot;</span>
