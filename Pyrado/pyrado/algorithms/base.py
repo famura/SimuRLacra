@@ -91,6 +91,13 @@ class Algorithm(ABC, LoggerAware):
         """ Get the directory where the data is saved to. """
         return self._save_dir
 
+    @save_dir.setter
+    def save_dir(self, save_dir: str):
+        """ Set the directory where the data is saved to. """
+        if not osp.isdir(save_dir):
+            raise pyrado.PathErr(given=save_dir)
+        self._save_dir = save_dir
+
     @property
     def save_name(self) -> str:
         """ Get the name for saving this algorithm instance, e.g. 'algo' if saved to 'algo.pkl'. """

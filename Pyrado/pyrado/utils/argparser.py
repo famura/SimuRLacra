@@ -39,11 +39,14 @@ def get_argparser() -> argparse.ArgumentParser:
     parser.add_argument('--no_animation', dest='animation', action='store_false')
     parser.set_defaults(animation=True)
 
-    parser.add_argument('--env_name', type=str, nargs='?',
-                        help="name of the environment to use (e.g. 'qbb' or 'qcp-st')")
-
     parser.add_argument('--dt', type=float,
                         help="environments time step size in seconds (no default)")
+
+    parser.add_argument('-d', '--ex_dir', type=str, nargs='?',
+                        help="path to the experiment directory to load from")
+
+    parser.add_argument('--env_name', type=str, nargs='?',
+                        help="name of the environment to use (e.g. 'qbb' or 'qcp-st')")
 
     parser.add_argument('--idcs', nargs='+', type=int, default=[0, 1],
                         help="list of indices (without commas) casted to integer (default: [0, 1])")
@@ -56,9 +59,6 @@ def get_argparser() -> argparse.ArgumentParser:
 
     parser.add_argument('--load_all', action='store_true', default=False,
                         help="load all quantities e.g. policies (default: False)")
-
-    parser.add_argument('-d', '--ex_dir', type=str, nargs='?',
-                        help="path to the experiment directory to load from")
 
     parser.add_argument('--max_steps', type=int, default=float('inf'),
                         help="maximum number of time steps to execute the environment")
