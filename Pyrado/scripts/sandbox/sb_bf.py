@@ -182,7 +182,7 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
 
 if __name__ == '__main__':
     # Choose setup
-    setup_type = 'ik_activation'  # idle, ik, pos, or vel
+    setup_type = 'idle'  # idle, ik, pos, or vel
     physicsEngine = 'Bullet'  # Bullet or Vortex
     graphFileName = 'gBoxFlipping_posCtrl.xml'  # gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml
     dt = 1/100.

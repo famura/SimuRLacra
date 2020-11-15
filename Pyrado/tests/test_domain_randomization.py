@@ -158,12 +158,11 @@ def test_param_grid():
         'default_qcpsu',
         pytest.param('default_bop2d_bt', marks=m_needs_bullet),
         pytest.param('default_bop5d_bt', marks=m_needs_bullet),
-        pytest.param('default_bl_pos_bt', marks=m_needs_bullet),
         pytest.param('default_cth', marks=m_needs_mujoco),
         pytest.param('default_hop', marks=m_needs_mujoco),
         pytest.param('default_wambic', marks=m_needs_mujoco),
     ]
-    , ids=['bob', 'omo', 'pend', 'qbb', 'qcp-st', 'qcp-su', 'bop2d', 'bop5d', 'bl_pos', 'cth', 'hop', 'wam-bic'],
+    , ids=['bob', 'omo', 'pend', 'qbb', 'qcp-st', 'qcp-su', 'bop2d', 'bop5d', 'cth', 'hop', 'wam-bic'],
     indirect=True
 )
 def test_setting_dp_vals(env):
@@ -176,4 +175,4 @@ def test_setting_dp_vals(env):
                 # Skip the parameters that are only available in Vortex but not in Bullet
                 assert True
             else:
-                assert env.domain_param[dp_key] == pytest.approx(rand_val, abs=1e-4)
+                assert env.domain_param[dp_key] == pytest.approx(rand_val, abs=5e-4)  # rolling friction is imprecise

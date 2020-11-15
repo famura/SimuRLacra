@@ -116,9 +116,9 @@ class BoxFlippingSim(RcsSim, Serializable):
         :param mps_left: left arm's movement primitives holding the dynamical systems and the goal states
         :param mps_right: right arm's movement primitives holding the dynamical systems and the goal states
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
+                       positionTasks: bool,
                        checkJointLimits: bool = False,
                        collisionAvoidanceIK: bool = True,
-                       positionTasks: bool = True,
                        observeVelocities: bool = False,
                        observeCollisionCost: bool = True,
                        observePredictedCollisionCost: bool = False,
@@ -139,7 +139,7 @@ class BoxFlippingSim(RcsSim, Serializable):
             extraConfigDir=osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, 'BoxFlipping'),
             hudColor='BLACK_RUBBER',
             refFrame=ref_frame,
-            positionTasks=kwargs.pop('positionTasks', True),
+            positionTasks=kwargs.pop('positionTasks'),
             tasksLeft=mps_left,
             tasksRight=mps_right,
             **kwargs
@@ -236,7 +236,6 @@ class BoxFlippingPosDSSim(BoxFlippingSim, Serializable):
                        taskCombinationMethod: str = 'sum', # or 'mean', 'softmax', 'product'
                        checkJointLimits: bool = False,
                        collisionAvoidanceIK: bool = True,
-                       positionTasks: bool = True,
                        observeVelocities: bool = False,
                        observeCollisionCost: bool = True,
                        observePredictedCollisionCost: bool = False,
@@ -287,6 +286,7 @@ class BoxFlippingPosDSSim(BoxFlippingSim, Serializable):
             mps_left=mps_left,
             mps_right=mps_right,
             actionModelType='ds_activation',
+            positionTasks=True,
             **kwargs
         )
 
@@ -312,7 +312,6 @@ class BoxFlippingVelDSSim(BoxFlippingSim, Serializable):
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        taskCombinationMethod: str = 'sum', # or 'mean', 'softmax', 'product'
                        checkJointLimits: bool = False,
-                       positionTasks: bool = True,
                        collisionAvoidanceIK: bool = True,
                        observeVelocities: bool = False,
                        observeCollisionCost: bool = True,
@@ -354,5 +353,6 @@ class BoxFlippingVelDSSim(BoxFlippingSim, Serializable):
             mps_left=mps_left,
             mps_right=mps_right,
             actionModelType='ds_activation',
+            positionTasks=False,
             **kwargs
         )

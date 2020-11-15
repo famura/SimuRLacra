@@ -75,7 +75,7 @@ def test_combination():
     ro_rn = rollout(env_rn, DummyPolicy(env_rn.spec), eval=True, seed=0, render_mode=RenderMode())
     assert np.allclose(env_rn._process_obs(ro_r.observations), ro_rn.observations)
 
-    env_rnp = ObsPartialWrapper(env_rn, idcs=['x_dot', r'$\cos(\theta)$'])
+    env_rnp = ObsPartialWrapper(env_rn, idcs=['x_dot', r'cos_theta'])
     ro_rnp = rollout(env_rnp, DummyPolicy(env_rnp.spec), eval=True, seed=0, render_mode=RenderMode())
 
     env_rnpa = GaussianActNoiseWrapper(env_rnp,
