@@ -45,7 +45,7 @@
   </visual>
 
   <asset>
-    <texture name="texplane" type="2d" file="floor_IAS.png" width="2048" height="2048"/>
+    <texture name="texplane" type="2d" file="IAS_floor.png" width="2048" height="2048"/>
     <texture name="sky" type="skybox" builtin="flat" rgb2="1. 1. 1." height="2048" width="2048"/>
     <texture builtin="flat" height="1278" mark="cross" markrgb="1 1 1" name="texgeom" random="0.01" rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4" type="cube" width="127"/>
     <material name="matplane" reflectance="0.3" texture="texplane" texrepeat="4 3" texuniform="true"/>
