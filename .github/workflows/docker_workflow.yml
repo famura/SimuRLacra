@@ -44,7 +44,8 @@ jobs:
           push: true
           tags: |
             simurlacra/simurlacra:${{matrix.flavor}}
-            ghcr.io/famura/simurlacra:${{matrix.flavor}}
+            ghcr.io/${{ github.repository_owner }}/simurlacra:${{matrix.flavor}}
+            ghcr.io/${{ github.repository_owner }}/app:1.0.0
           build-args: |
             OPTION=${{ matrix.flavor }} 
           cache-from: type=local,src=/tmp/.buildx-cache
