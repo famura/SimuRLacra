@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.algorithms.episodic.sysid_via_episodic_rl &mdash; Pyrado 0.4 documentation</title>
+  <title>pyrado.algorithms.episodic.sysid_via_episodic_rl &mdash; Pyrado 0.3 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.4
+                0.3
               </div>
             
           
@@ -525,8 +525,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="p">)</span>
 
         <span class="c1"># ParameterExploring subroutine saves the best policy (in this case a DomainDistrParamPolicy)</span>
-        <span class="k">if</span> <span class="s1">&#39;prefix&#39;</span> <span class="ow">in</span> <span class="n">meta_info</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">meta_info</span><span class="p">[</span><span class="s1">&#39;prefix&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">_ddp&quot;</span><span class="p">))</span>  <span class="c1"># save iter_X_ddp_policy.pt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">meta_info</span><span class="p">[</span><span class="s1">&#39;prefix&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">_ddp&quot;</span><span class="p">))</span>  <span class="c1"># save iter_X_ddp_policy.pt</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;ddp&#39;</span><span class="p">))</span>  <span class="c1"># override ddp_policy.pt</span>
 
         <span class="c1"># Print the current search distribution&#39;s mean</span>

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.policies.recurrent.rnn &mdash; Pyrado 0.4 documentation</title>
+  <title>pyrado.policies.recurrent.rnn &mdash; Pyrado 0.3 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.4
+                0.3
               </div>
             
           
@@ -338,13 +338,11 @@
         <span class="k">return</span> <span class="n">act</span><span class="p">,</span> <span class="n">new_hidden</span></div>
 
 <div class="viewcode-block" id="RNNPolicyBase.evaluate"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.rnn.RNNPolicyBase.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rollout</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">hidden_states_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;hidden_states&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">rollout</span><span class="o">.</span><span class="n">data_format</span> <span class="o">==</span> <span class="s1">&#39;torch&#39;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;The rollout data passed to evaluate() must be of type torch.Tensor!&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">rollout</span><span class="o">.</span><span class="n">continuous</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;The rollout data passed to evaluate() from a continuous rollout!&#39;</span><span class="p">)</span>
-
-        <span class="c1"># Set policy, i.e. PyTorch nn.Module, to evaluation mode</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
 
         <span class="c1"># The passed sample collection might contain multiple rollouts.</span>
         <span class="c1"># Note:</span>
@@ -372,9 +370,6 @@
 
             <span class="c1"># Collect the actions</span>
             <span class="n">act_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
-
-        <span class="c1"># Set policy, i.e. PyTorch nn.Module, back to training mode</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">act_list</span><span class="p">)</span></div>
 

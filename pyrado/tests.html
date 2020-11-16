@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>tests &mdash; Pyrado 0.4 documentation</title>
+  <title>tests &mdash; Pyrado 0.3 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.4
+                0.3
               </div>
             
           
@@ -529,13 +529,18 @@
 </dd></dl>
 
 <dl class="py function">
+<dt id="tests.conftest.bob_pert">
+<code class="sig-name descname">bob_pert</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/conftest.html#bob_pert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.conftest.bob_pert" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt id="tests.conftest.default_dummy_randomizer">
 <code class="sig-name descname">default_dummy_randomizer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/conftest.html#default_dummy_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.conftest.default_dummy_randomizer" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="tests.conftest.default_randomizer">
-<code class="sig-name descname">default_randomizer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/conftest.html#default_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.conftest.default_randomizer" title="Permalink to this definition">¶</a></dt>
+<dt id="tests.conftest.default_pert">
+<code class="sig-name descname">default_pert</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/conftest.html#default_pert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.conftest.default_pert" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -582,6 +587,11 @@
 <dl class="py function">
 <dt id="tests.test_algorithms.test_actor_critic">
 <code class="sig-name descname">test_actor_critic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em>, <em class="sig-param"><span class="n">algo</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em>, <em class="sig-param"><span class="n">vfcn_type</span></em>, <em class="sig-param"><span class="n">use_cuda</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_actor_critic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_actor_critic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="tests.test_algorithms.test_adr">
+<code class="sig-name descname">test_adr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">subrtn_hparam</span></em>, <em class="sig-param"><span class="n">actor_hparam</span></em>, <em class="sig-param"><span class="n">vfcn_hparam</span></em>, <em class="sig-param"><span class="n">critic_hparam</span></em>, <em class="sig-param"><span class="n">adr_hparam</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_adr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_adr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -639,7 +649,7 @@
 
 <dl class="py function">
 <dt id="tests.test_domain_randomization.test_randomizer">
-<code class="sig-name descname">test_randomizer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_randomizer</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_domain_randomization.html#test_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_domain_randomization.test_randomizer" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">test_randomizer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_pert</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_domain_randomization.html#test_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_domain_randomization.test_randomizer" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -649,7 +659,7 @@
 
 <dl class="py function">
 <dt id="tests.test_domain_randomization.test_rescaling">
-<code class="sig-name descname">test_rescaling</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_randomizer</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_domain_randomization.html#test_rescaling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_domain_randomization.test_rescaling" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">test_rescaling</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_pert</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_domain_randomization.html#test_rescaling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_domain_randomization.test_rescaling" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -994,7 +1004,7 @@
 
 <dl class="py function">
 <dt id="tests.test_sampling.test_cuda_sampling_w_dr">
-<code class="sig-name descname">test_cuda_sampling_w_dr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_sampling.html#test_cuda_sampling_w_dr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_sampling.test_cuda_sampling_w_dr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">test_cuda_sampling_w_dr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">default_bob</span></em>, <em class="sig-param"><span class="n">bob_pert</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_sampling.html#test_cuda_sampling_w_dr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_sampling.test_cuda_sampling_w_dr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">

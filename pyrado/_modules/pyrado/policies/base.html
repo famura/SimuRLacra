@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.policies.base &mdash; Pyrado 0.4 documentation</title>
+  <title>pyrado.policies.base &mdash; Pyrado 0.3 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.4
+                0.3
               </div>
             
           
@@ -375,15 +375,8 @@
 <span class="sd">                                   Defaults to &#39;hidden_states&#39;. Change for value functions.</span>
 <span class="sd">        :return: actions with gradient data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Set policy, i.e. PyTorch nn.Module, to evaluation mode</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
-
-        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">rollout</span><span class="o">.</span><span class="n">get_data_values</span><span class="p">(</span><span class="s1">&#39;observations&#39;</span><span class="p">,</span> <span class="n">truncate_last</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>  <span class="c1"># all observations at once</span>
-
-        <span class="c1"># Set policy, i.e. PyTorch nn.Module, back to training mode</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="n">res</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">(</span><span class="n">rollout</span><span class="o">.</span><span class="n">get_data_values</span><span class="p">(</span><span class="s1">&#39;observations&#39;</span><span class="p">,</span> <span class="n">truncate_last</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>  <span class="c1"># all observations at once</span></div>
 
 <div class="viewcode-block" id="Policy.script"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base.Policy.script">[docs]</a>    <span class="k">def</span> <span class="nf">script</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ScriptModule</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>tests.environment_wrappers.test_domain_randomization &mdash; Pyrado 0.4 documentation</title>
+  <title>tests.environment_wrappers.test_domain_randomization &mdash; Pyrado 0.3 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.4
+                0.3
               </div>
             
           
@@ -221,52 +221,35 @@
 
 <span class="kn">import</span> <span class="nn">pytest</span>
 
-<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="n">create_default_randomizer</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="n">DomainRandWrapperLive</span><span class="p">,</span> <span class="n">DomainRandWrapperBuffer</span>
 
 
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">wrapper</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;default_qbb&#39;</span><span class="p">,</span>
-    <span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_dr_wrapper_live_bob</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
-    <span class="n">param_init</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">domain_param</span>
-    <span class="n">randomizer</span> <span class="o">=</span> <span class="n">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-    <span class="n">wrapper</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">randomizer</span><span class="p">)</span>
+<div class="viewcode-block" id="test_dr_wrapper_live_bob"><a class="viewcode-back" href="../../../tests.environment_wrappers.html#tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_live_bob">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">wrapper</span>
+<span class="k">def</span> <span class="nf">test_dr_wrapper_live_bob</span><span class="p">(</span><span class="n">default_bob</span><span class="p">,</span> <span class="n">bob_pert</span><span class="p">):</span>
+    <span class="n">param_init</span> <span class="o">=</span> <span class="n">default_bob</span><span class="o">.</span><span class="n">domain_param</span>
+    <span class="n">wrapper</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">default_bob</span><span class="p">,</span> <span class="n">bob_pert</span><span class="p">)</span>
     <span class="c1"># So far no randomization happened, thus the parameter should be equal</span>
-    <span class="k">assert</span> <span class="n">env</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">==</span> <span class="n">param_init</span>
+    <span class="k">assert</span> <span class="n">default_bob</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">==</span> <span class="n">param_init</span>
 
     <span class="c1"># Randomize 10 times 1 new parameter set</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
         <span class="n">param_old</span> <span class="o">=</span> <span class="n">wrapper</span><span class="o">.</span><span class="n">domain_param</span>
         <span class="n">wrapper</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">param_old</span> <span class="o">!=</span> <span class="n">wrapper</span><span class="o">.</span><span class="n">domain_param</span>
+        <span class="k">assert</span> <span class="n">param_old</span> <span class="o">!=</span> <span class="n">wrapper</span><span class="o">.</span><span class="n">domain_param</span></div>
 
 
-<div class="viewcode-block" id="test_dr_wrapper_live_bob"><a class="viewcode-back" href="../../../tests.environment_wrappers.html#tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_live_bob">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">wrapper</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;default_qbb&#39;</span><span class="p">,</span>
-    <span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_dr_wrapper_live_bob</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
-    <span class="n">param_init</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">domain_param</span>
-    <span class="n">randomizer</span> <span class="o">=</span> <span class="n">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-    <span class="n">wrapper</span> <span class="o">=</span> <span class="n">DomainRandWrapperBuffer</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">randomizer</span><span class="p">)</span>
+<div class="viewcode-block" id="test_dr_wrapper_buffer_bob"><a class="viewcode-back" href="../../../tests.environment_wrappers.html#tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_buffer_bob">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">wrapper</span>
+<span class="k">def</span> <span class="nf">test_dr_wrapper_buffer_bob</span><span class="p">(</span><span class="n">default_bob</span><span class="p">,</span> <span class="n">bob_pert</span><span class="p">):</span>
+    <span class="n">param_init</span> <span class="o">=</span> <span class="n">default_bob</span><span class="o">.</span><span class="n">domain_param</span>
+    <span class="n">wrapper</span> <span class="o">=</span> <span class="n">DomainRandWrapperBuffer</span><span class="p">(</span><span class="n">default_bob</span><span class="p">,</span> <span class="n">bob_pert</span><span class="p">)</span>
     <span class="c1"># So far no randomization happened, thus the parameter should be equal</span>
-    <span class="k">assert</span> <span class="n">env</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">==</span> <span class="n">param_init</span>
+    <span class="k">assert</span> <span class="n">default_bob</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">==</span> <span class="n">param_init</span>
     <span class="k">assert</span> <span class="n">wrapper</span><span class="o">.</span><span class="n">_buffer</span> <span class="ow">is</span> <span class="kc">None</span>
 
-    <span class="c1"># Randomize 5 times 5 new parameter sets</span>
-    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
-        <span class="n">wrapper</span><span class="o">.</span><span class="n">fill_buffer</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="c1"># Randomize 10 times 13 new parameter sets</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="n">wrapper</span><span class="o">.</span><span class="n">fill_buffer</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">13</span><span class="p">):</span>
             <span class="n">param_old</span> <span class="o">=</span> <span class="n">wrapper</span><span class="o">.</span><span class="n">domain_param</span>
             <span class="k">assert</span> <span class="n">wrapper</span><span class="o">.</span><span class="n">_ring_idx</span> <span class="o">==</span> <span class="n">i</span>
             <span class="n">wrapper</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
