@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.algorithms.base &mdash; Pyrado 0.3 documentation</title>
+  <title>pyrado.algorithms.base &mdash; Pyrado 0.4 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.3
+                0.4
               </div>
             
           
@@ -286,6 +286,13 @@
         <span class="sd">&quot;&quot;&quot; Get the directory where the data is saved to. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span>
 
+    <span class="nd">@save_dir</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">save_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the directory where the data is saved to. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">save_dir</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">save_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span> <span class="o">=</span> <span class="n">save_dir</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">save_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Get the name for saving this algorithm instance, e.g. &#39;algo&#39; if saved to &#39;algo.pkl&#39;. &quot;&quot;&quot;</span>
@@ -436,8 +443,6 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s1"> finished training a </span><span class="si">{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">)</span><span class="si">}</span><span class="s1"> &#39;</span>
                       <span class="sa">f</span><span class="s1">&#39;with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">num_param</span><span class="si">}</span><span class="s1"> parameters. </span><span class="si">{</span><span class="n">stopping_reason</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">)</span>
-            <span class="c1"># Set dropout and batch normalization layers to evaluation mode</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s1"> finished training. </span><span class="si">{</span><span class="n">stopping_reason</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">)</span></div>
 

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.environments.rcspysim.planar_3_link &mdash; Pyrado 0.3 documentation</title>
+  <title>pyrado.environments.rcspysim.planar_3_link &mdash; Pyrado 0.4 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.3
+                0.4
               </div>
             
           
@@ -281,6 +281,7 @@
             <span class="n">task_args</span><span class="o">=</span><span class="n">task_args</span><span class="p">,</span>
             <span class="n">envType</span><span class="o">=</span><span class="s1">&#39;Planar3Link&#39;</span><span class="p">,</span>
             <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gPlanar3Link_trqCtrl.xml&#39;</span><span class="p">,</span>
+            <span class="n">positionTasks</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;positionTasks&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>  <span class="c1"># invalid default value, positionTasks can be unnecessary</span>
             <span class="n">collisionConfig</span><span class="o">=</span><span class="n">collision_config</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">)</span>
@@ -371,12 +372,15 @@
 
         <span class="c1"># Additional tasks</span>
         <span class="n">task_check_bounds</span> <span class="o">=</span> <span class="n">create_check_all_boundaries_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">penalty</span><span class="o">=</span><span class="mf">1e3</span><span class="p">)</span>
-        <span class="n">task_ts_discrepancy</span> <span class="o">=</span> <span class="n">create_task_space_discrepancy_task</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">AbsErrRewFcn</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="mf">0.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">r</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-        <span class="p">)</span>
-
-        <span class="c1"># Return the masked task and and additional task that ends the episode if the unmasked state is out of bound</span>
-        <span class="k">return</span> <span class="n">ParallelTasks</span><span class="p">([</span><span class="n">masked_task</span><span class="p">,</span> <span class="n">task_check_bounds</span><span class="p">,</span> <span class="n">task_ts_discrepancy</span><span class="p">],</span> <span class="n">easily_satisfied</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Planar3LinkJointCtrlSim</span><span class="p">):</span>
+            <span class="c1"># Return the masked task and and additional task that ends the episode if the unmasked state is out of bound</span>
+            <span class="k">return</span> <span class="n">ParallelTasks</span><span class="p">([</span><span class="n">masked_task</span><span class="p">,</span> <span class="n">task_check_bounds</span><span class="p">],</span> <span class="n">easily_satisfied</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">task_ts_discrepancy</span> <span class="o">=</span> <span class="n">create_task_space_discrepancy_task</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">AbsErrRewFcn</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="mf">0.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">r</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+            <span class="p">)</span>
+            <span class="c1"># Return the masked task and and additional task that ends the episode if the unmasked state is out of bound</span>
+            <span class="k">return</span> <span class="n">ParallelTasks</span><span class="p">([</span><span class="n">masked_task</span><span class="p">,</span> <span class="n">task_check_bounds</span><span class="p">,</span> <span class="n">task_ts_discrepancy</span><span class="p">],</span> <span class="n">easily_satisfied</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Planar3LinkJointCtrlSim"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.planar_3_link.Planar3LinkJointCtrlSim">[docs]</a><span class="k">class</span> <span class="nc">Planar3LinkJointCtrlSim</span><span class="p">(</span><span class="n">Planar3LinkSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
@@ -433,7 +437,6 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">()</span> <span class="k">if</span> <span class="n">task_args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">task_args</span><span class="p">,</span>
             <span class="n">actionModelType</span><span class="o">=</span><span class="s1">&#39;ik_activation&#39;</span><span class="p">,</span>
-            <span class="n">positionTasks</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;positionTasks&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
             <span class="n">taskSpecIK</span><span class="o">=</span><span class="n">task_spec_ik</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">)</span></div>
@@ -539,7 +542,6 @@
             <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">()</span> <span class="k">if</span> <span class="n">task_args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">task_args</span><span class="p">,</span>
             <span class="n">actionModelType</span><span class="o">=</span><span class="s1">&#39;ds_activation&#39;</span><span class="p">,</span>
             <span class="n">tasks</span><span class="o">=</span><span class="n">mps</span><span class="p">,</span>
-            <span class="n">positionTasks</span><span class="o">=</span><span class="n">position_mps</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">)</span></div>
 
