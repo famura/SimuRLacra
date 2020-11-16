@@ -483,9 +483,8 @@ class RewardGenerator:
             random_results = self.discriminator(random_batch_now)
             reference_results = self.discriminator(reference_batch_now)
             self.optimizer.zero_grad()
-            loss = self.loss_fcn(random_results,
-                                 to.ones(self.batch_size - 1)) + self.loss_fcn(reference_results,
-                                                                               to.zeros(self.batch_size - 1))
+            loss = self.loss_fcn(random_results, to.ones(self.batch_size - 1, 1)) + \
+                   self.loss_fcn(reference_results, to.zeros(self.batch_size - 1, 1))
             loss.backward()
             self.optimizer.step()
 

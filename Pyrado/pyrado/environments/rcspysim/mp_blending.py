@@ -79,7 +79,7 @@ class MPBlendingSim(RcsSim, Serializable):
             graphFileName='gMPBlending.xml',
             actionModelType=action_model_type,
             tasks=mps,
-            positionTasks=kwargs.pop('positionTasks', True),
+            positionTasks=kwargs.pop('positionTasks', None),  # invalid default value, positionTasks can be unnecessary
             taskSpecIK=task_spec_ik,
             **kwargs
         )

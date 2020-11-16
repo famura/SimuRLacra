@@ -330,7 +330,8 @@ class SysIdViaEpisodicRL(Algorithm):
         super().save_snapshot(meta_info)
 
         # ParameterExploring subroutine saves the best policy (in this case a DomainDistrParamPolicy)
-        self._subrtn.save_snapshot(meta_info=dict(prefix=f"{meta_info['prefix']}_ddp"))  # save iter_X_ddp_policy.pt
+        if 'prefix' in meta_info:
+            self._subrtn.save_snapshot(meta_info=dict(prefix=f"{meta_info['prefix']}_ddp"))  # save iter_X_ddp_policy.pt
         self._subrtn.save_snapshot(meta_info=dict(prefix='ddp'))  # override ddp_policy.pt
 
         # Print the current search distribution's mean

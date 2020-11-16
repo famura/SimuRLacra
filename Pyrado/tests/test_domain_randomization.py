@@ -61,56 +61,56 @@ def test_randomizer_dummy(default_dummy_randomizer):
         assert samples[i] == samples[0]  # only works if none of the values is an array
 
 
-def test_randomizer(default_pert):
-    print(default_pert)
+def test_randomizer(default_randomizer):
+    print(default_randomizer)
     # Generate 7 samples
-    default_pert.randomize(7)
+    default_randomizer.randomize(7)
 
     # Test all variations of the getter function's parameters format and dtype
-    pp_3_to_dict = default_pert.get_params(3, format='dict', dtype='torch')
+    pp_3_to_dict = default_randomizer.get_params(3, format='dict', dtype='torch')
     assert isinstance(pp_3_to_dict, dict)
     assert isinstance(pp_3_to_dict['mass'], list)
     assert len(pp_3_to_dict['mass']) == 3
     assert isinstance(pp_3_to_dict['mass'][0], to.Tensor)
     assert isinstance(pp_3_to_dict['multidim'][0], to.Tensor) and pp_3_to_dict['multidim'][0].shape[0] == 2
-    pp_3_to_list = default_pert.get_params(3, format='list', dtype='torch')
+    pp_3_to_list = default_randomizer.get_params(3, format='list', dtype='torch')
     assert isinstance(pp_3_to_list, list)
     assert len(pp_3_to_list) == 3
     assert isinstance(pp_3_to_list[0], dict)
     assert isinstance(pp_3_to_list[0]['mass'], to.Tensor)
     assert isinstance(pp_3_to_list[0]['multidim'], to.Tensor) and pp_3_to_list[0]['multidim'].shape[0] == 2
-    pp_3_np_dict = default_pert.get_params(3, format='dict', dtype='numpy')
+    pp_3_np_dict = default_randomizer.get_params(3, format='dict', dtype='numpy')
     assert isinstance(pp_3_np_dict, dict)
     assert isinstance(pp_3_np_dict['mass'], list)
     assert len(pp_3_np_dict['mass']) == 3
     assert isinstance(pp_3_np_dict['mass'][0], np.ndarray)
     assert isinstance(pp_3_np_dict['multidim'][0], np.ndarray) and pp_3_np_dict['multidim'][0].size == 2
-    pp_3_np_list = default_pert.get_params(3, format='list', dtype='numpy')
+    pp_3_np_list = default_randomizer.get_params(3, format='list', dtype='numpy')
     assert isinstance(pp_3_np_list, list)
     assert len(pp_3_np_list) == 3
     assert isinstance(pp_3_np_list[0], dict)
     assert isinstance(pp_3_np_list[0]['mass'], np.ndarray)
     assert isinstance(pp_3_np_list[0]['multidim'], np.ndarray) and pp_3_np_list[0]['multidim'].size == 2
 
-    pp_all_to_dict = default_pert.get_params(-1, format='dict', dtype='torch')
+    pp_all_to_dict = default_randomizer.get_params(-1, format='dict', dtype='torch')
     assert isinstance(pp_all_to_dict, dict)
     assert isinstance(pp_all_to_dict['mass'], list)
     assert len(pp_all_to_dict['mass']) == 7
     assert isinstance(pp_all_to_dict['mass'][0], to.Tensor)
     assert isinstance(pp_all_to_dict['multidim'][0], to.Tensor) and pp_all_to_dict['multidim'][0].shape[0] == 2
-    pp_all_to_list = default_pert.get_params(-1, format='list', dtype='torch')
+    pp_all_to_list = default_randomizer.get_params(-1, format='list', dtype='torch')
     assert isinstance(pp_all_to_list, list)
     assert len(pp_all_to_list) == 7
     assert isinstance(pp_all_to_list[0], dict)
     assert isinstance(pp_all_to_list[0]['mass'], to.Tensor)
     assert isinstance(pp_all_to_list[0]['multidim'], to.Tensor) and pp_all_to_list[0]['multidim'].shape[0] == 2
-    pp_all_np_dict = default_pert.get_params(-1, format='dict', dtype='numpy')
+    pp_all_np_dict = default_randomizer.get_params(-1, format='dict', dtype='numpy')
     assert isinstance(pp_all_np_dict, dict)
     assert isinstance(pp_all_np_dict['mass'], list)
     assert len(pp_all_np_dict['mass']) == 7
     assert isinstance(pp_all_np_dict['mass'][0], np.ndarray)
     assert isinstance(pp_all_np_dict['multidim'][0], np.ndarray) and pp_all_np_dict['multidim'][0].size == 2
-    pp_all_np_list = default_pert.get_params(-1, format='list', dtype='numpy')
+    pp_all_np_list = default_randomizer.get_params(-1, format='list', dtype='numpy')
     assert isinstance(pp_all_np_list, list)
     assert len(pp_all_to_list) == 7
     assert isinstance(pp_all_np_list[0], dict)
@@ -118,16 +118,16 @@ def test_randomizer(default_pert):
     assert isinstance(pp_all_np_list[0]['multidim'], np.ndarray) and pp_all_np_list[0]['multidim'].size == 2
 
 
-def test_rescaling(default_pert):
-    # This test relies on a fixed structure of the default_pert ('mass' is ele 0, and 'length is ele 2 in the list).
-    randomizer = deepcopy(default_pert)
+def test_rescaling(default_randomizer):
+    # This test relies on a fixed structure of the default_randomizer ('mass' is ele 0, and 'length is ele 2 in the list).
+    randomizer = deepcopy(default_randomizer)
     randomizer.rescale_distr_param('std', 12.5)
     # Check if the right parameter of the distribution changed
-    assert randomizer.domain_params[0].std == 12.5*default_pert.domain_params[0].std
-    assert randomizer.domain_params[2].std == 12.5*default_pert.domain_params[2].std
+    assert randomizer.domain_params[0].std == 12.5*default_randomizer.domain_params[0].std
+    assert randomizer.domain_params[2].std == 12.5*default_randomizer.domain_params[2].std
     # Check if the other parameters were unchanged (lazily just check one attribute)
-    assert randomizer.domain_params[0].mean == default_pert.domain_params[0].mean
-    assert randomizer.domain_params[2].mean == default_pert.domain_params[2].mean
+    assert randomizer.domain_params[0].mean == default_randomizer.domain_params[0].mean
+    assert randomizer.domain_params[2].mean == default_randomizer.domain_params[2].mean
 
 
 def test_param_grid():
@@ -167,9 +167,9 @@ def test_param_grid():
 )
 def test_setting_dp_vals(env):
     # Loop over all possible domain parameters and set them to a random value
-    for _ in range(10):
+    for _ in range(5):
         for dp_key in env.supported_domain_param:
-            rand_val = np.random.rand()  # [0, 1[
+            rand_val = 0.5 + np.random.rand()  # [0.5, 1.5[
             env.reset(domain_param={dp_key: rand_val})
             if any([s in dp_key for s in ['slip', 'compliance', 'linearvelocitydamping', 'angularvelocitydamping']]):
                 # Skip the parameters that are only available in Vortex but not in Bullet

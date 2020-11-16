@@ -28,15 +28,24 @@
 
 import pytest
 
+from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, DomainRandWrapperBuffer
 
 
 @pytest.mark.wrapper
-def test_dr_wrapper_live_bob(default_bob, bob_pert):
-    param_init = default_bob.domain_param
-    wrapper = DomainRandWrapperLive(default_bob, bob_pert)
+@pytest.mark.parametrize(
+    'env', [
+        'default_bob',
+        'default_qbb',
+    ],
+    indirect=True
+)
+def test_dr_wrapper_live_bob(env):
+    param_init = env.domain_param
+    randomizer = create_default_randomizer(env)
+    wrapper = DomainRandWrapperLive(env, randomizer)
     # So far no randomization happened, thus the parameter should be equal
-    assert default_bob.domain_param == param_init
+    assert env.domain_param == param_init
 
     # Randomize 10 times 1 new parameter set
     for _ in range(10):
@@ -46,17 +55,25 @@ def test_dr_wrapper_live_bob(default_bob, bob_pert):
 
 
 @pytest.mark.wrapper
-def test_dr_wrapper_buffer_bob(default_bob, bob_pert):
-    param_init = default_bob.domain_param
-    wrapper = DomainRandWrapperBuffer(default_bob, bob_pert)
+@pytest.mark.parametrize(
+    'env', [
+        'default_bob',
+        'default_qbb',
+    ],
+    indirect=True
+)
+def test_dr_wrapper_live_bob(env):
+    param_init = env.domain_param
+    randomizer = create_default_randomizer(env)
+    wrapper = DomainRandWrapperBuffer(env, randomizer)
     # So far no randomization happened, thus the parameter should be equal
-    assert default_bob.domain_param == param_init
+    assert env.domain_param == param_init
     assert wrapper._buffer is None
 
-    # Randomize 10 times 13 new parameter sets
-    for _ in range(10):
-        wrapper.fill_buffer(13)
-        for i in range(13):
+    # Randomize 5 times 5 new parameter sets
+    for _ in range(5):
+        wrapper.fill_buffer(10)
+        for i in range(10):
             param_old = wrapper.domain_param
             assert wrapper._ring_idx == i
             wrapper.reset()

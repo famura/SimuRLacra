@@ -217,7 +217,7 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
 
 if __name__ == '__main__':
     # Choose setup
-    setup_type = 'ik_activation'  # idle, ik, ik_activation, ds_activation_pos, ds_activation_vel
+    setup_type = 'ds_activation_vel'  # idle, ik, ik_activation, ds_activation_pos, ds_activation_vel
     common_hparam = dict(
         physicsEngine='Bullet',  # Bullet or Vortex
         graphFileName='gBallInTube_trqCtrl.xml',  # gBallInTube_trqCtrl

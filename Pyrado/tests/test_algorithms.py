@@ -621,8 +621,8 @@ def test_sysidasrl(ex_dir, env, num_eval_rollouts):
     algo_hparam = dict(
         metric=None,
         obs_dim_weight=np.ones(env_sim.obs_space.shape),
-        num_rollouts_per_distr=20,
-        num_workers=subrtn_hparam['num_workers']
+        num_rollouts_per_distr=10,
+        num_workers=1
     )
 
     algo = SysIdViaEpisodicRL(subrtn, behavior_policy, **algo_hparam)

@@ -31,7 +31,7 @@
 <mujoco model="wam_7dof">
   <option integrator="Euler" timestep="0.0005"/>
   <compiler coordinate="local" angle="radian" meshdir="[ASSETS_DIR]/meshes/barrett_wam" texturedir="[ASSETS_DIR]/textures"/>
-  <size njmax="500" nconmax="100"/>
+  <size njmax="500" nconmax="500"/>
 
   <visual>
     <rgba fog="1. 1. 1. 1."/>

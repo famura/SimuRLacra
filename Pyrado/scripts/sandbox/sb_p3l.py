@@ -104,9 +104,9 @@ def create_ds_activation_setup(dt, max_steps, max_dist_force, physics_engine):
     env = Planar3LinkTASim(
         physicsEngine=physics_engine,
         dt=dt,
-        position_mps=True,
         max_steps=max_steps,
         max_dist_force=max_dist_force,
+        positionTasks=True,
         checkJointLimits=False,
         collisionAvoidanceIK=True,
         observeCollisionCost=True,
@@ -138,7 +138,9 @@ def create_manual_activation_setup(dt, max_steps, max_dist_force, physics_engine
         physicsEngine=physics_engine,
         dt=dt,
         max_steps=max_steps,
-        max_dist_force=max_dist_force
+        max_dist_force=max_dist_force,
+        positionTasks=True,
+        observeTaskSpaceDiscrepancy=True
     )
     print_domain_params(env.domain_param)
 
@@ -192,8 +194,10 @@ def create_adn_setup(dt, max_steps, max_dist_force, physics_engine, normalize_ob
         dt=dt,
         max_steps=max_steps,
         max_dist_force=max_dist_force,
+        positionTasks=True,
         collisionAvoidanceIK=True,
         taskCombinationMethod='sum',
+        observeTaskSpaceDiscrepancy=True,
         **extra_kwargs
     )
 
@@ -206,7 +210,7 @@ def create_adn_setup(dt, max_steps, max_dist_force, physics_engine, normalize_ob
         activation_nonlin=to.sigmoid,
         potentials_dyn_fcn=pd_cubic,
     )
-    policy = ADNPolicy(spec=env.spec, dt=dt, **policy_hparam)
+    policy = ADNPolicy(spec=env.spec, **policy_hparam)
     print_cbt('Running ADNPolicy with random initialization', 'c', bright=True)
 
     # Simulate and plot potentials
@@ -218,7 +222,7 @@ def create_adn_setup(dt, max_steps, max_dist_force, physics_engine, normalize_ob
 
 if __name__ == '__main__':
     # Choose setup
-    setup_type = 'ik_activation'  # joint, ik_activation, activation, manual, adn
+    setup_type = 'adn'  # joint, ik_activation, activation, manual, adn
     common_hparam = dict(
         dt=0.01,
         max_steps=1800,

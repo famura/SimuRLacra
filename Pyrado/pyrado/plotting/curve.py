@@ -50,7 +50,7 @@ def draw_dts(dts_policy: np.ndarray, dts_step: np.ndarray, dts_remainder: np.nda
     y1 = 1000*dts_policy
     y2 = 1000*dts_step
     y3 = 1000*dts_remainder
-    labels = [r'dt\_policy [ms]', r'dt\_step [ms]', r'dt\_remainder [ms]']
+    labels = [r'$\Delta$t policy [ms]', r'$\Delta$t step [ms]', r'$\Delta$t remainder [ms]']
 
     axs[0].plot(x, y1, label=labels[0])
     axs[0].plot(x, y2, label=labels[1])

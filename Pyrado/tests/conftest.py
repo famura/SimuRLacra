@@ -245,7 +245,7 @@ class DefaultEnvs:
             dt=1/50.,
             max_steps=1000,
             max_dist_force=None,
-            position_mps=True,
+            positionTasks=True,
             taskCombinationMethod='sum',
             checkJointLimits=True,
             collisionAvoidanceIK=True,
@@ -268,7 +268,7 @@ class DefaultEnvs:
             dt=1/50.,
             max_steps=1000,
             max_dist_force=None,
-            position_mps=True,
+            positionTasks=True,
             taskCombinationMethod='sum',
             checkJointLimits=True,
             collisionAvoidanceIK=True,
@@ -724,7 +724,7 @@ class DefaultPolicies:
 
 
 @pytest.fixture(scope='function')
-def default_pert():
+def default_randomizer():
     return DomainRandomizer(
         NormalDomainParam(name='mass', mean=1.2, std=0.1, clip_lo=10, clip_up=100),
         UniformDomainParam(name='special', mean=0, halfspan=42, clip_lo=-7.4, roundint=True),
@@ -741,18 +741,4 @@ def default_dummy_randomizer():
         DomainParam(name='special', mean=0),
         DomainParam(name='length', mean=4),
         DomainParam(name='time_delay', mean=13)
-    )
-
-
-@pytest.fixture(scope='function')
-def bob_pert():
-    return DomainRandomizer(
-        NormalDomainParam(name='g', mean=9.81, std=0.981, clip_lo=1e-3),
-        NormalDomainParam(name='r_ball', mean=0.1, std=0.01, clip_lo=1e-3),
-        NormalDomainParam(name='m_ball', mean=0.5, std=0.05, clip_lo=1e-3),
-        NormalDomainParam(name='m_beam', mean=3.0, std=0.3, clip_lo=1e-3),
-        NormalDomainParam(name='d_beam', mean=0.1, std=0.01, clip_lo=1e-3),
-        NormalDomainParam(name='l_beam', mean=2.0, std=0.2, clip_lo=1e-3),
-        UniformDomainParam(name='c_frict', mean=0.05, halfspan=0.05),
-        UniformDomainParam(name='ang_offset', mean=0, halfspan=5.*np.pi/180)
     )

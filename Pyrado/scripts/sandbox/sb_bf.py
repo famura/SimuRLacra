@@ -182,7 +182,7 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
 
 if __name__ == '__main__':
     # Choose setup
-    setup_type = 'idle'  # idle, ik, pos, or vel
+    setup_type = 'vel'  # idle, ik_activation, pos, or vel
     physicsEngine = 'Bullet'  # Bullet or Vortex
     graphFileName = 'gBoxFlipping_posCtrl.xml'  # gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml
     dt = 1/100.
@@ -193,7 +193,7 @@ if __name__ == '__main__':
 
     if setup_type == 'idle':
         env, policy = create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits)
-    elif setup_type == 'ik_activation':
+    elif setup_type == 'ik':
         env, policy = create_ik_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits)
     elif setup_type == 'pos':
         env, policy = create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame,
@@ -202,7 +202,7 @@ if __name__ == '__main__':
         env, policy = create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame,
                                                 checkJointLimits)
     else:
-        raise pyrado.ValueErr(given=setup_type, eq_constraint="'idle', 'pos', 'vel'")
+        raise pyrado.ValueErr(given=setup_type, eq_constraint="'idle', 'pos', 'vel', or 'ik_activation'")
 
     if randomize:
         dp_nom = env.get_nominal_domain_param()

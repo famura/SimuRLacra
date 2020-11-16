@@ -143,27 +143,27 @@ def train(svi, rollouts, prior, num_epoch=2000, print_iter=100):
 
     axs[0, 1].plot(m_loc_hist)
     axs[0, 1].plot([0, num_epoch], [dp_gt['m'], dp_gt['m']], c='k')
-    axs[0, 1].set_ylabel('m\_loc')
+    axs[0, 1].set_ylabel('m loc')
 
     axs[1, 0].plot(k_loc_hist)
     axs[1, 0].plot([0, num_epoch], [dp_gt['k'], dp_gt['k']], c='k')
-    axs[1, 0].set_ylabel('k\_loc')
+    axs[1, 0].set_ylabel('k loc')
 
     axs[1, 1].plot(d_loc_hist)
     axs[1, 1].plot([0, num_epoch], [dp_gt['d'], dp_gt['d']], c='k')
-    axs[1, 1].set_ylabel('d\_loc')
+    axs[1, 1].set_ylabel('d loc')
 
     axs[2, 0].plot(m_scale_hist)
-    axs[2, 0].set_ylabel('m\_scale')
+    axs[2, 0].set_ylabel('m scale')
 
     axs[2, 1].plot(k_scale_hist)
-    axs[2, 1].set_ylabel('k\_scale')
+    axs[2, 1].set_ylabel('k scale')
 
     axs[3, 0].plot(d_scale_hist)
-    axs[3, 0].set_ylabel('d\_scale')
+    axs[3, 0].set_ylabel('d scale')
 
     axs[3, 1].plot(sigma_hist)
-    axs[3, 1].set_ylabel('obs\_noise\_scale')
+    axs[3, 1].set_ylabel('obs noise scale')
 
     plt.show()
 

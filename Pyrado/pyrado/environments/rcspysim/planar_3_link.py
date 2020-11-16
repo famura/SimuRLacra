@@ -86,6 +86,7 @@ class Planar3LinkSim(RcsSim, Serializable):
             task_args=task_args,
             envType='Planar3Link',
             graphFileName='gPlanar3Link_trqCtrl.xml',
+            positionTasks=kwargs.pop('positionTasks', None),  # invalid default value, positionTasks can be unnecessary
             collisionConfig=collision_config,
             **kwargs
         )
@@ -176,12 +177,15 @@ class Planar3LinkSim(RcsSim, Serializable):
 
         # Additional tasks
         task_check_bounds = create_check_all_boundaries_task(self.spec, penalty=1e3)
-        task_ts_discrepancy = create_task_space_discrepancy_task(
-            self.spec, AbsErrRewFcn(q=0.5*np.ones(2), r=np.zeros(self.act_space.shape))
-        )
-
-        # Return the masked task and and additional task that ends the episode if the unmasked state is out of bound
-        return ParallelTasks([masked_task, task_check_bounds, task_ts_discrepancy], easily_satisfied=True)
+        if isinstance(self, Planar3LinkJointCtrlSim):
+            # Return the masked task and and additional task that ends the episode if the unmasked state is out of bound
+            return ParallelTasks([masked_task, task_check_bounds], easily_satisfied=True)
+        else:
+            task_ts_discrepancy = create_task_space_discrepancy_task(
+                self.spec, AbsErrRewFcn(q=0.5*np.ones(2), r=np.zeros(self.act_space.shape))
+            )
+            # Return the masked task and and additional task that ends the episode if the unmasked state is out of bound
+            return ParallelTasks([masked_task, task_check_bounds, task_ts_discrepancy], easily_satisfied=True)
 
 
 class Planar3LinkJointCtrlSim(Planar3LinkSim, Serializable):
@@ -238,7 +242,6 @@ class Planar3LinkIKActivationSim(Planar3LinkSim, Serializable):
         super().__init__(
             task_args=dict() if task_args is None else task_args,
             actionModelType='ik_activation',
-            positionTasks=kwargs.pop('positionTasks', True),
             taskSpecIK=task_spec_ik,
             **kwargs
         )
@@ -344,7 +347,6 @@ class Planar3LinkTASim(Planar3LinkSim, Serializable):
             task_args=dict() if task_args is None else task_args,
             actionModelType='ds_activation',
             tasks=mps,
-            positionTasks=position_mps,
             **kwargs
         )
 

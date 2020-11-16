@@ -365,15 +365,27 @@ def test_param_expl_sampler(env, policy):
 
 
 @m_needs_cuda
-def test_cuda_sampling_w_dr(default_bob, bob_pert):
-    # Add randomizer
-    env = DomainRandWrapperLive(default_bob, bob_pert)
+@pytest.mark.wrapper
+@pytest.mark.parametrize(
+    'env', [
+        'default_bob',
+        'default_qbb',
+    ],
+    indirect=True
+)
+@pytest.mark.parametrize(
+    'policy', [
+        'fnn_policy',
+        'lstm_policy',
+    ],
+    ids=['fnn', 'lstm'],
+    indirect=True
+)
+def test_cuda_sampling_w_dr(env, policy):
+    randomizer = create_default_randomizer(env)
+    env = DomainRandWrapperLive(env, randomizer)
 
-    # Use a simple policy
-    policy = FNNPolicy(env.spec, hidden_sizes=[8], hidden_nonlin=to.tanh, use_cuda=True)
-
-    # Create the sampler
     sampler = ParallelRolloutSampler(env, policy, num_workers=2, min_rollouts=10)
-
     samples = sampler.sample()
+
     assert samples is not None

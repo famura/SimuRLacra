@@ -139,7 +139,7 @@ class BoxFlippingSim(RcsSim, Serializable):
             extraConfigDir=osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, 'BoxFlipping'),
             hudColor='BLACK_RUBBER',
             refFrame=ref_frame,
-            positionTasks=kwargs.pop('positionTasks'),
+            positionTasks=kwargs.pop('positionTasks', None),  # invalid default value, positionTasks can be unnecessary
             tasksLeft=mps_left,
             tasksRight=mps_right,
             **kwargs

@@ -57,6 +57,7 @@ if __name__ == '__main__':
         max_steps=1200,
         task_args=dict(consider_velocities=True),
         max_dist_force=None,
+        positionTasks=True,
         taskCombinationMethod='sum',
         checkJointLimits=True,
         collisionAvoidanceIK=True,

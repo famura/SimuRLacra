@@ -124,11 +124,11 @@ if __name__ == '__main__':
         if dim_cand//2 == 1:
             fig = render_distr_evo(axs, distributions, x_grid_limits, resolution=301,
                                    x_label=f'$\\xi_{idx_dp}$', y_label=f'$p(\\xi_{idx_dp})$',
-                                   distr_labels=[rf'iter\_{i}' for i in range(num_cand)])
+                                   distr_labels=[rf'iter {i}' for i in range(num_cand)])
         else:
             fig = render_distr_evo(axs[idx_dp], distributions, x_grid_limits, resolution=301,
                                    x_label=f'$\\xi_{idx_dp}$', y_label=f'$p(\\xi_{idx_dp})$',
-                                   distr_labels=[rf'iter\_{i}' for i in range(num_cand)])
+                                   distr_labels=[rf'iter {i}' for i in range(num_cand)])
 
         if args.save_figures:
             for fmt in ['pdf', 'pgf']:
