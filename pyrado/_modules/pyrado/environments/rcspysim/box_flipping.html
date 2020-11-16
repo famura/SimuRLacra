@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.environments.rcspysim.box_flipping &mdash; Pyrado 0.3 documentation</title>
+  <title>pyrado.environments.rcspysim.box_flipping &mdash; Pyrado 0.4 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.3
+                0.4
               </div>
             
           
@@ -311,9 +311,9 @@
 <span class="sd">        :param mps_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
 <span class="sd">        :param mps_right: right arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
+<span class="sd">                       positionTasks: bool,</span>
 <span class="sd">                       checkJointLimits: bool = False,</span>
 <span class="sd">                       collisionAvoidanceIK: bool = True,</span>
-<span class="sd">                       positionTasks: bool = True,</span>
 <span class="sd">                       observeVelocities: bool = False,</span>
 <span class="sd">                       observeCollisionCost: bool = True,</span>
 <span class="sd">                       observePredictedCollisionCost: bool = False,</span>
@@ -334,7 +334,7 @@
             <span class="n">extraConfigDir</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rcsenv</span><span class="o">.</span><span class="n">RCSPYSIM_CONFIG_PATH</span><span class="p">,</span> <span class="s1">&#39;BoxFlipping&#39;</span><span class="p">),</span>
             <span class="n">hudColor</span><span class="o">=</span><span class="s1">&#39;BLACK_RUBBER&#39;</span><span class="p">,</span>
             <span class="n">refFrame</span><span class="o">=</span><span class="n">ref_frame</span><span class="p">,</span>
-            <span class="n">positionTasks</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;positionTasks&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="n">positionTasks</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;positionTasks&#39;</span><span class="p">),</span>
             <span class="n">tasksLeft</span><span class="o">=</span><span class="n">mps_left</span><span class="p">,</span>
             <span class="n">tasksRight</span><span class="o">=</span><span class="n">mps_right</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span>
@@ -431,7 +431,6 @@
 <span class="sd">                       taskCombinationMethod: str = &#39;sum&#39;, # or &#39;mean&#39;, &#39;softmax&#39;, &#39;product&#39;</span>
 <span class="sd">                       checkJointLimits: bool = False,</span>
 <span class="sd">                       collisionAvoidanceIK: bool = True,</span>
-<span class="sd">                       positionTasks: bool = True,</span>
 <span class="sd">                       observeVelocities: bool = False,</span>
 <span class="sd">                       observeCollisionCost: bool = True,</span>
 <span class="sd">                       observePredictedCollisionCost: bool = False,</span>
@@ -482,6 +481,7 @@
             <span class="n">mps_left</span><span class="o">=</span><span class="n">mps_left</span><span class="p">,</span>
             <span class="n">mps_right</span><span class="o">=</span><span class="n">mps_right</span><span class="p">,</span>
             <span class="n">actionModelType</span><span class="o">=</span><span class="s1">&#39;ds_activation&#39;</span><span class="p">,</span>
+            <span class="n">positionTasks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">)</span></div>
 
@@ -507,7 +507,6 @@
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
 <span class="sd">                       taskCombinationMethod: str = &#39;sum&#39;, # or &#39;mean&#39;, &#39;softmax&#39;, &#39;product&#39;</span>
 <span class="sd">                       checkJointLimits: bool = False,</span>
-<span class="sd">                       positionTasks: bool = True,</span>
 <span class="sd">                       collisionAvoidanceIK: bool = True,</span>
 <span class="sd">                       observeVelocities: bool = False,</span>
 <span class="sd">                       observeCollisionCost: bool = True,</span>
@@ -549,6 +548,7 @@
             <span class="n">mps_left</span><span class="o">=</span><span class="n">mps_left</span><span class="p">,</span>
             <span class="n">mps_right</span><span class="o">=</span><span class="n">mps_right</span><span class="p">,</span>
             <span class="n">actionModelType</span><span class="o">=</span><span class="s1">&#39;ds_activation&#39;</span><span class="p">,</span>
+            <span class="n">positionTasks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">)</span></div>
 </pre></div>
