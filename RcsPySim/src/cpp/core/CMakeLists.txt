@@ -125,7 +125,7 @@ ENDIF ()
 
 add_library(RcsEnvCore SHARED ${CORE_SRCS})
 
-# C++11
+# C++14
 target_compile_options(RcsEnvCore PUBLIC ${PYBIND11_CPP_STANDARD})
 
 # Include dir to interface so that dependent users can find the files.

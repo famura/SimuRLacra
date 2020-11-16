@@ -43,7 +43,7 @@ SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
 # Use pybind11 default settings
-set(PYBIND11_CPP_STANDARD -std=c++11)
+set(PYBIND11_CPP_STANDARD -std=c++14)
 add_subdirectory("${CMAKE_SOURCE_DIR}/../thirdParty/pybind11" "${CMAKE_BINARY_DIR}/pybind11")
 
 # Find Qt
@@ -81,7 +81,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../thirdParty/catch2/co
 IF (UNIX)
   
   SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -fPIC -rdynamic -Wno-long-long -Wno-variadic-macros -std=c99 -D_XOPEN_SOURCE=600 -ggdb")
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fPIC -rdynamic -Wno-format -Wno-long-long -Wno-variadic-macros -std=c++11 -ggdb")
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fPIC -rdynamic -Wno-format -Wno-long-long -Wno-variadic-macros -std=c++14 -ggdb")
   
   IF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     # setting march to core2 to enable valgrind debugging (also good for Xeon)
