@@ -36,7 +36,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: famura/simurlacra:${{matrix.flavor}}
+          tags: simurlacra/simurlacra:${{matrix.flavor}}
           file: docker/Dockerfile.${{matrix.flavor}}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
