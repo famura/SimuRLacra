@@ -35,7 +35,7 @@
 
   <visual>
     <rgba fog="1. 1. 1. 1."/>
-    <map fogstart="0.7" fogend="2.7"/>
+    <map fogstart="0.8" fogend="2.8"/>
     <quality shadowsize="4096"/>
   </visual>
 <!--  <statistic extent="4"/>-->
@@ -75,7 +75,7 @@
 <!--    <texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2"  width="2048" height="2048"  mark="cross" markrgb=".8 .8 .8"/>-->
     <texture name="texplane" type="2d" file="IAS_floor.png" width="2048" height="2048"/>
     <texture name="sky" type="skybox" builtin="flat" rgb2="1. 1. 1." height="2048" width="2048"/>
-    <material name="matplane" reflectance="0.3" texture="texplane" texrepeat="4 3" texuniform="true"/>
+    <material name="matplane" reflectance="0.3" texture="texplane" texrepeat="5 5"/>
 
     <mesh name="base_link_fine" file="base_link_fine.stl"/>
     <mesh name="base_link_convex" file="base_link_convex.stl"/>
@@ -130,7 +130,7 @@
     <!--    <light mode="fixed" directional="false" diffuse="0.7 0.7 0.7" specular="0.3 0.3 0.3" pos=" 2 -2 2" dir="-0.5 1 -0.5" castshadow="true"/>-->
     <!--    <light mode="fixed" directional="false" diffuse="0.7 0.7 0.7" specular="0.3 0.3 0.3" pos=" 2  2 2" dir="-0.5 -1 -0.5" castshadow="true"/>-->
 
-    <geom name="floor" pos="0 0 -0.05" size="8 6 .1" type="plane" material="matplane" condim="3" solref="0.001 1."/>
+    <geom name="floor" pos="0 0 -0.05" size="10 10 .1" type="plane" material="matplane" condim="3" solref="0.001 1."/>
     <geom class="x_axis"/>
     <geom class="y_axis"/>
     <geom class="z_axis"/>
