@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>tests.test_domain_randomization &mdash; Pyrado 0.4 documentation</title>
+  <title>tests.test_domain_randomization &mdash; Pyrado 0.3 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.4
+                0.3
               </div>
             
           
@@ -351,11 +351,12 @@
         <span class="s1">&#39;default_qcpsu&#39;</span><span class="p">,</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_bop2d_bt&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_bop5d_bt&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_bl_pos_bt&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_cth&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_mujoco</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_hop&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_mujoco</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;default_wambic&#39;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_mujoco</span><span class="p">),</span>
     <span class="p">]</span>
-    <span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;omo&#39;</span><span class="p">,</span> <span class="s1">&#39;pend&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;qcp-st&#39;</span><span class="p">,</span> <span class="s1">&#39;qcp-su&#39;</span><span class="p">,</span> <span class="s1">&#39;bop2d&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5d&#39;</span><span class="p">,</span> <span class="s1">&#39;cth&#39;</span><span class="p">,</span> <span class="s1">&#39;hop&#39;</span><span class="p">,</span> <span class="s1">&#39;wam-bic&#39;</span><span class="p">],</span>
+    <span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;omo&#39;</span><span class="p">,</span> <span class="s1">&#39;pend&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">,</span> <span class="s1">&#39;qcp-st&#39;</span><span class="p">,</span> <span class="s1">&#39;qcp-su&#39;</span><span class="p">,</span> <span class="s1">&#39;bop2d&#39;</span><span class="p">,</span> <span class="s1">&#39;bop5d&#39;</span><span class="p">,</span> <span class="s1">&#39;bl_pos&#39;</span><span class="p">,</span> <span class="s1">&#39;cth&#39;</span><span class="p">,</span> <span class="s1">&#39;hop&#39;</span><span class="p">,</span> <span class="s1">&#39;wam-bic&#39;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_setting_dp_vals</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
@@ -368,7 +369,7 @@
                 <span class="c1"># Skip the parameters that are only available in Vortex but not in Bullet</span>
                 <span class="k">assert</span> <span class="kc">True</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="n">env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="n">dp_key</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">rand_val</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">5e-4</span><span class="p">)</span>  <span class="c1"># rolling friction is imprecise</span></div>
+                <span class="k">assert</span> <span class="n">env</span><span class="o">.</span><span class="n">domain_param</span><span class="p">[</span><span class="n">dp_key</span><span class="p">]</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">rand_val</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
