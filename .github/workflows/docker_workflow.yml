@@ -12,6 +12,7 @@ jobs:
     strategy:
       matrix:
         flavor: [sacher, blackforest, malakoff, redvelvet]
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v2
       - name: Set up Docker Buildx
