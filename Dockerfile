@@ -26,7 +26,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-FROM ubuntu:18.04
+FROM nvidia/cuda:10.1-base-ubuntu18.04
+
 
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
@@ -38,37 +39,53 @@ RUN apt-get update && apt-get install -y \
     gcc g++ make cmake zlib1g-dev swig libsm6 libxext6 \
     build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
     wget llvm libncurses5-dev xz-utils tk-dev libxrender1\
-    libxml2-dev libxmlsec1-dev libffi-dev libcairo2-dev libjpeg-dev libgif-dev chromium-browser doxygen graphviz
+    libxml2-dev libxmlsec1-dev libffi-dev libcairo2-dev libjpeg-dev libgif-dev firefox doxygen texlive-base graphviz
 
 RUN adduser --disabled-password --gecos '' --shell /bin/bash user && chown -R user:user /home/user
 RUN echo 'user ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/90-pyrado
 USER user
 WORKDIR /home/user
 
+RUN echo "export PATH=/home/user/miniconda3/bin:$PATH" >> ~/.bashrc
+RUN echo "conda activate pyrado" >> ~/.bashrc
+
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
- && bash Miniconda3-latest-Linux-x86_64.sh -b \
- && rm Miniconda3-latest-Linux-x86_64.sh
+    && bash Miniconda3-latest-Linux-x86_64.sh -b \
+    && rm Miniconda3-latest-Linux-x86_64.sh
 
 ENV PATH /home/user/miniconda3/bin:$PATH
 
 RUN conda update conda \
- && conda update --all
-
-COPY --chown=user:user setup_env.sh SimuRLacra/setup_env.sh
+    && conda update --all
 
 WORKDIR /home/user/SimuRLacra
-RUN bash setup_env.sh
-SHELL ["conda", "run", "-n", "pyrado", "/bin/bash", "-c"]
 
-RUN echo "export PATH=/home/user/miniconda3/bin:$PATH" >> ~/.bashrc
-RUN echo "conda activate pyrado" >> ~/.bashrc
+RUN conda create -n pyrado python=3.7 blas cmake colorama coverage cython joblib lapack libgcc-ng mkl matplotlib-base numpy optuna pandas patchelf pip pycairo pytest pytest-cov pytest-xdist pyyaml scipy seaborn setuptools sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tqdm -c conda-forge
+
+
+SHELL ["conda", "run", "-n", "pyrado", "/bin/bash", "-c"]
+RUN pip install git+https://github.com/Xfel/init-args-serializer.git@master argparse box2d glfw gym prettyprinter pytest-lazy-fixture tensorboard vpython
 
 COPY --chown=user:user . .
-
-# Specific to option Malakoff
-RUN python setup_deps.py wo_rcs_w_pytorch -j8
-
 ENV PATH /opt/conda/envs/pyrado/bin:$PATH
 ENV PYTHONPATH /home/user/SimuRLacra/RcsPySim/build/lib:/home/user/SimuRLacra/Pyrado/:$PYTHONPATH
 ENV RCSVIEWER_SIMPLEGRAPHICS 1
-RUN sudo rm -rf /var/lib/apt/lists/*
+
+ARG OPTION=sacher
+
+RUN if [ $OPTION == 'blackforest' ]; then\
+    python setup_deps.py dep_libraries -j8; python setup_deps.py w_rcs_w_pytorch -j8;\
+    fi
+
+RUN if [ $OPTION == 'sacher' ]; then\
+    python setup_deps.py dep_libraries -j8; pip install torch==1.7.0; python setup_deps.py w_rcs_wo_pytorch -j8;\
+    fi
+
+RUN if [ $OPTION == 'redvelvet' ]; then\
+    python setup_deps.py dep_libraries -j8; pip install torch==1.7.0; python setup_deps.py wo_rcs_wo_pytorch -j8;\
+    fi
+
+RUN if [ $OPTION == 'malakoff' ]; then\
+    python setup_deps.py dep_libraries -j8; python setup_deps.py wo_rcs_w_pytorch -j8;\
+    fi
+

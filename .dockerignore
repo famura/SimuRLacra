@@ -2,5 +2,5 @@
 **/.idea
 **/build
 Pyrado/data
-Dockerfile.*
+Dockerfile
 setup_docker.sh

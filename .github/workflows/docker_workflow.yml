@@ -43,6 +43,7 @@ jobs:
           context: .
           push: true
           tags: simurlacra/simurlacra:${{matrix.flavor}}
-          file: docker/Dockerfile.${{matrix.flavor}}
+          build-args: |
+            OPTION=${{ matrix.flavor }} 
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
