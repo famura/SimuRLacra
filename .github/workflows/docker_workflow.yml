@@ -17,6 +17,13 @@ jobs:
       - uses: actions/checkout@v2
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
       -
         name: Build and push
         id: docker_build
@@ -26,3 +33,5 @@ jobs:
           push: true
           tags: famura/simurlacra:${{matrix.flavor}}
           file: docker/Dockerfile.${{matrix.flavor}}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
