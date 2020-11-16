@@ -22,5 +22,5 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: famura/SimuRLacra:${{matrix.flavor}}
+          tags: famura/simurlacra:${{matrix.flavor}}
           file: docker/Dockerfile.${{matrix.flavor}}
