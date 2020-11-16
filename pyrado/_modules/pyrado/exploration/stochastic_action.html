@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyrado.exploration.stochastic_action &mdash; Pyrado 0.4 documentation</title>
+  <title>pyrado.exploration.stochastic_action &mdash; Pyrado 0.3 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.4
+                0.3
               </div>
             
           
@@ -299,6 +299,7 @@
 <span class="sd">        :param hidden_states_name: name of hidden states rollout entry, used for recurrent networks</span>
 <span class="sd">        :return: actions with gradient data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">TwoHeadedPolicy</span><span class="p">):</span>
             <span class="n">acts</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">rollout</span><span class="p">,</span> <span class="n">hidden_states_name</span><span class="p">)</span>  <span class="c1"># ignore the second head&#39;s output</span>
         <span class="k">else</span><span class="p">:</span>
@@ -516,6 +517,7 @@
 <span class="sd">        :param hidden_states_name: name of hidden states rollout entry, used for recurrent networks</span>
 <span class="sd">        :return: actions with gradient data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
         <span class="n">acts</span><span class="p">,</span> <span class="n">log_stds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">rollout</span><span class="p">,</span> <span class="n">hidden_states_name</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_dist_at</span><span class="p">(</span><span class="n">acts</span><span class="p">,</span> <span class="n">log_stds</span><span class="p">)</span></div></div>
 
