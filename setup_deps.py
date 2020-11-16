@@ -443,7 +443,9 @@ def setup_mujoco_py():
     sp.check_call([sys.executable, "setup.py", "install"], cwd=osp.join(project_dir, 'thirdParty', 'mujoco-py'))
 
 
-def setup_pytorch_based():  # tested with pip install torch==1.7.0+cpu torchvision==0.8.1+cpu torchaudio==0.7.0 -f https://download.pytorch.org/whl/torch_stable.html
+def setup_pytorch_based():
+	# Locally build PyTorch==1.7.0 requires dataclasses (does not harm when using pytorch from pip)
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "dataclasses"])
     # Set up GPyTorch without touching the PyTorch installation (requires scikit-learn which requires threadpoolctl)
     sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "threadpoolctl"])
     sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "scikit-learn"])
