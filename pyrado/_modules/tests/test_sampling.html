@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>tests.test_sampling &mdash; Pyrado 0.4 documentation</title>
+  <title>tests.test_sampling &mdash; Pyrado 0.3 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.4
+                0.3
               </div>
             
           
@@ -558,29 +558,17 @@
 
 
 <div class="viewcode-block" id="test_cuda_sampling_w_dr"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_cuda_sampling_w_dr">[docs]</a><span class="nd">@m_needs_cuda</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">wrapper</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;default_qbb&#39;</span><span class="p">,</span>
-    <span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;policy&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s1">&#39;fnn_policy&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;lstm_policy&#39;</span><span class="p">,</span>
-    <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;fnn&#39;</span><span class="p">,</span> <span class="s1">&#39;lstm&#39;</span><span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_cuda_sampling_w_dr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
-    <span class="n">randomizer</span> <span class="o">=</span> <span class="n">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-    <span class="n">env</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">randomizer</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_cuda_sampling_w_dr</span><span class="p">(</span><span class="n">default_bob</span><span class="p">,</span> <span class="n">bob_pert</span><span class="p">):</span>
+    <span class="c1"># Add randomizer</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">default_bob</span><span class="p">,</span> <span class="n">bob_pert</span><span class="p">)</span>
 
+    <span class="c1"># Use a simple policy</span>
+    <span class="n">policy</span> <span class="o">=</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">,</span> <span class="n">use_cuda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Create the sampler</span>
     <span class="n">sampler</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-    <span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
 
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
     <span class="k">assert</span> <span class="n">samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 </pre></div>
 
