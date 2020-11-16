@@ -66,6 +66,10 @@ RUN echo "conda activate pyrado" >> ~/.bashrc
 
 COPY --chown=user:user . .
 
+RUN echo $PATH
+
+RUN ls -la .
+
 # Specific to option Sacher
 RUN python setup_deps.py dep_libraries -j8
 RUN pip install torch==1.7.0
