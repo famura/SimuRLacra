@@ -54,6 +54,8 @@ ENV PATH /home/user/miniconda3/bin:$PATH
 RUN conda update conda \
  && conda update --all
 
+RUN mkdir /home/user/SimuRLacra
+
 COPY --chown=user:user setup_env.sh SimuRLacra
 
 WORKDIR /home/user/SimuRLacra
