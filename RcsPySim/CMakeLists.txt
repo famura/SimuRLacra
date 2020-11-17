@@ -35,6 +35,7 @@ SET(BST_INSTALL_CATEGORY Libraries)
 IF (NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE "Debug")
 ENDIF (NOT CMAKE_BUILD_TYPE)
+
 # Add Rcs's cmake files to module path
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../Rcs/cmake)
 
@@ -54,7 +55,7 @@ find_package(Rcs REQUIRED
     COMPONENTS RcsCore RcsPhysics
     OPTIONAL_COMPONENTS RcsGraphics RcsGui)
 
-# Optionally depend on pytorch
+# Optionally depend on PyTorch
 OPTION(USE_LIBTORCH "Support LibTorch-based control policies")
 IF (USE_LIBTORCH)
   # Locate libtorch in python installation
@@ -84,17 +85,16 @@ IF (UNIX)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fPIC -rdynamic -Wno-format -Wno-long-long -Wno-variadic-macros -std=c++14 -ggdb")
   
   IF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    # setting march to core2 to enable valgrind debugging (also good for Xeon)
+    # Setting march to core2 to enable valgrind debugging (also good for Xeon)
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=core2")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=core2")
     
-    # Low level optimization for debug mode, flag for checking stack 
-    # corruption, flag for debug output
+    # Low level optimization for debug mode, flag for checking stack  corruption, flag for debug output
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -fstack-protector-all")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -fstack-protector-all")
   
   ELSE ()
-    # setting march to native for optimal performance on local machine
+    # Setting march to native for optimal performance on local machine
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=native")
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
     
@@ -119,7 +119,7 @@ IF (UNIX)
   IF (TORCH_FOUND)
     EXECUTE_PROCESS(COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
     IF (${GCC_VERSION} VERSION_EQUAL "4.8")
-      message(STATUS "Removing errorneous definition from torch library")
+      message(STATUS "Removing erroneous definition from torch library")
       set_target_properties(torch PROPERTIES INTERFACE_COMPILE_OPTIONS "")
     ENDIF ()
   ENDIF ()

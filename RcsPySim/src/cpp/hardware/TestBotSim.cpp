@@ -40,13 +40,18 @@
 #include <Rcs_timer.h>
 #include <Rcs_parser.h>
 #include <Rcs_resourcePath.h>
-#include <Rcs_cmdLine.h>
 
 #include <KeyCatcherBase.h>
-#include <HUD.h>
-#include <ViewerComponent.h>
-#include <PhysicsSimulationComponent.h>
 #include <SegFaultHandler.h>
+#include <PhysicsSimulationComponent.h>
+#include <Rcs_cmdLine.h>
+
+#ifdef GRAPHICS_AVAILABLE
+
+#include <ViewerComponent.h>
+#include <HUD.h>
+
+#endif
 
 
 RCS_INSTALL_SEGFAULTHANDLER
@@ -131,6 +136,7 @@ int main(int argc, char** argv)
     bot.setCallbackTriggerComponent(sim); // and it does drive the update loop
     
     // Add viewer component
+#ifdef GRAPHICS_AVAILABLE
     Rcs::ViewerComponent* vc = NULL;
     Rcs::HUD* hud = NULL;
     if (!valgrind) {
@@ -141,7 +147,8 @@ int main(int argc, char** argv)
         bot.getConfig()->initViewer(vc->getViewer());
         bot.addHardwareComponent(vc);
     }
-    
+#endif
+
     // Load control policy
     Rcs::ControlPolicy* controlPolicy = NULL;
     auto policyConfig = bot.getConfig()->properties->getChild("policy");
@@ -171,6 +178,7 @@ int main(int argc, char** argv)
     RMSG("Main loop is running ...");
     while (runLoop) {
         // Check keys
+#ifdef GRAPHICS_AVAILABLE
         if (vc && vc->getKeyCatcher()->getAndResetKey('q')) {
             runLoop = false;
         }
@@ -209,7 +217,8 @@ int main(int argc, char** argv)
                 simImpl->time(), bot.getObservation(), bot.getAction(), simImpl, ppmanager, nullptr);
             hud->setText(hudText);
         }
-        
+#endif
+
         // Wait a bit till next update
         Timer_waitDT(0.01);
     }

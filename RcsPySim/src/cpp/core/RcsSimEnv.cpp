@@ -51,6 +51,7 @@
 #endif
 
 #include <stdexcept>
+#include <sstream>
 
 
 Rcs::RcsSimEnv::RcsSimEnv(PropertySource* propertySource)

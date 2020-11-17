@@ -69,6 +69,11 @@ void ForceDisturber::apply(Rcs::PhysicsBase* sim, double force[3])
     sim->setForce(simBody, force, NULL);
 }
 
+const double* ForceDisturber::getLastForce() const
+{
+    return lastForce;
+}
+
 } /* namespace Rcs */
 
 #ifdef GRAPHICS_AVAILABLE
@@ -84,11 +89,6 @@ void ForceDisturber::addToViewer(GraphNode* graphNode)
     // Obtain graph node (assuming there's only one)
 //    BodyNode* bn = graphNode->getBodyNode(body);
     // TODO add to viewer (required to draw arrows)
-}
-
-const double* ForceDisturber::getLastForce() const
-{
-    return lastForce;
 }
 
 } /* namespace Rcs */

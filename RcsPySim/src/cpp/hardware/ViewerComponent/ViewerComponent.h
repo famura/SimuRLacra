@@ -2,7 +2,7 @@
 #define RCS_VIEWERCOMPONENT_H
 
 
-#include "SensorComponent.h"
+#include <SensorComponent.h>
 
 #include <RcsViewer.h>
 #include <KeyCatcher.h>
