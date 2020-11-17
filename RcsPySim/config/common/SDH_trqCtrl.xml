@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<Graph resourcePath="/home/${USER}/Software/SimuRLacra/RcsPySim/config">
+<Graph resourcePath="${HOME}/Software/SimuRLacra/RcsPySim/config ${SIT}/Data/RobotMeshes/1.0/data">
 
   <Body name="sdh-base" transform="0 0 0.0003 0 0 0" physics="fixed"
         mass="1.054" inertia="0.001757 0 0   0 0.001757 0   0 0 0.001757">

@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<Graph xmlns:xi="http://www.w3.org/2003/XInclude" name="DexterousManipulation" resourcePath="/home/${USER}/Software/SimuRLacra/RcsPySim/config">
+<Graph xmlns:xi="http://www.w3.org/2003/XInclude" name="DexterousManipulation" resourcePath="${HOME}/Software/SimuRLacra/RcsPySim/config ${SIT}/Data/RobotMeshes/1.0/data">
 
   <Body name="Base" mass="80" cogVector="0.13 0 0.9" transform="0 0 0 0 0 180">
     <Shape type="SSL" radius="0.08" length="0.2" distance="true" physics="false" color="BLUE" transform="-0.02 0 0.1 0 0 0"/>

@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<Graph xmlns:xi="http://www.w3.org/2003/XInclude" name="DexterousManipulation" resourcePath="/home/${USER}/Software/SimuRLacra/RcsPySim/config">
+<Graph xmlns:xi="http://www.w3.org/2003/XInclude" name="DexterousManipulation" resourcePath="${HOME}/Software/SimuRLacra/RcsPySim/config ${SIT}/Data/RobotMeshes/1.0/data">
 
   <Body name="Base" mass="80" cogVector="0.13 0 0.9" transform="0 0 0 0 0 180">
     <Shape type="SSL" radius="0.08" length="0.2" distance="true" physics="false" color="BLUE" transform="-0.02 0 0.1 0 0 0"/>
@@ -44,9 +44,9 @@
   </Body>
 
   <Body name="RailBase" prev="Base" mass="240" cogVector="0.15 0 0.8">
-    <Shape type="MESH" meshFile="dexbot_description/RoboFrame.stl" scale="0.001" graphics="true" distance="false"
+    <Shape type="MESH" meshFile="DexBot/RoboFrame.stl" scale="0.001" graphics="true" distance="false"
            transform="0.501 -0.561 0.004 0 0 180"/>
-    <Shape type="MESH" meshFile="dexbot_description/LinearRail.stl" scale="0.001" graphics="true" distance="false"
+    <Shape type="MESH" meshFile="DexBot/LinearRail.stl" scale="0.001" graphics="true" distance="false"
            transform="0.210 0 0.8975 180 0 -90"/>
     <!-- <Shape type="BOX" extents="0.048 0.28 1.2" graphics="true" distance="false" transform="0.403 0 0.8 0 0 0" color="BLUE" /> -->
   </Body>
@@ -64,10 +64,10 @@
   <Body name="RailBot" prev="RailBase" mass="20" transform="0.209 0 0 0 0 0" cogVector="-0.35 0 0">
     <Joint name="DofChestZ" type="TransZ" range="0.55 0.8 1" weightJL="1.0" weightMetric="1.0"
            transform="0 0 0.375  0 0 0" constraint="false" ctrlType="Position"/>
-    <Shape type="MESH" meshFile="dexbot_description/LinearSlide.stl" scale="0.001" graphics="true" distance="false" transform="0 0 0 180 0 -90"/>
-    <Shape type="MESH" meshFile="dexbot_description/Slide-Simple.stl" scale="0.001" graphics="true" distance="false" transform="0.085  0 -0.2 0 0 0"/>
-    <Shape type="MESH" meshFile="dexbot_description/Wing-Simple.stl" scale="0.001" graphics="true" distance="false" transform="0.203  0.101 -0.05 90 180 -15"/> <!-- Right -->
-    <Shape type="MESH" meshFile="dexbot_description/Wing-Simple.stl" scale="0.001" graphics="true" distance="false" transform="0.135 -0.101 0.2 -90 180 15"/> <!-- Left -->
+    <Shape type="MESH" meshFile="DexBot/LinearSlide.stl" scale="0.001" graphics="true" distance="false" transform="0 0 0 180 0 -90"/>
+    <Shape type="MESH" meshFile="DexBot/Slide-Simple.stl" scale="0.001" graphics="true" distance="false" transform="0.085  0 -0.2 0 0 0"/>
+    <Shape type="MESH" meshFile="DexBot/Wing-Simple.stl" scale="0.001" graphics="true" distance="false" transform="0.203  0.101 -0.05 90 180 -15"/> <!-- Right -->
+    <Shape type="MESH" meshFile="DexBot/Wing-Simple.stl" scale="0.001" graphics="true" distance="false" transform="0.135 -0.101 0.2 -90 180 15"/> <!-- Left -->
 
     <Shape type="BOX" extents="0.085 0.158 0.4" transform="-0.0725 0 0 0 0 0" physics="true" graphics="true" distance="false" textureFile="textures/brushed-metal.jpg"/>
     <Shape type="BOX" extents="0.08 0.2 0.2" transform="0.01 0 0.1 0 0 0" physics="true" graphics="true" distance="false" textureFile="textures/aluminium-profile.jpg"/>

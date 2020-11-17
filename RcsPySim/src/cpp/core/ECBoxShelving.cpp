@@ -45,7 +45,6 @@
 #include "observation/OMTaskSpaceDiscrepancy.h"
 #include "physics/PhysicsParameterManager.h"
 #include "physics/PPDMassProperties.h"
-#include "physics/PPDSphereRadius.h"
 #include "physics/PPDMaterialProperties.h"
 #include "physics/ForceDisturber.h"
 #include "util/string_format.h"
@@ -118,7 +117,7 @@ protected:
             innerAM->addTask(new TaskPosition3D(graph, leftGrasp, refBody, refFrame));
             innerAM->addTask(new TaskEuler3D(graph, leftGrasp, refBody, refFrame));
             innerAM->addTask(TaskFactory::createTask(
-                "<Task name=\"Hand L Joints\" effector=\"PowerGrasp_L\" controlVariable=\"Joints\" jnts=\"fing1-knuck1_L tip1-fing1_L fing2-knuck2_L tip2-fing2_L fing3-knuck3_L tip3-fing3_L knuck1-base_L\" tmc=\"0.1\" vmax=\"1000\" active=\"untrue\"/>",
+                R"(<Task name="Hand L Joints" controlVariable="Joints" jnts="fing1-knuck1_L tip1-fing1_L fing2-knuck2_L tip2-fing2_L fing3-knuck3_L tip3-fing3_L knuck1-base_L" tmc="0.1" vmax="1000" active="untrue"/>)",
                 graph)
             );
             
@@ -142,7 +141,7 @@ protected:
             innerAM->addTask(new TaskOmega1D("Ad", graph, leftGrasp, nullptr, nullptr));
             innerAM->addTask(new TaskOmega1D("Bd", graph, leftGrasp, nullptr, nullptr));
             innerAM->addTask(TaskFactory::createTask(
-                "<Task name=\"Hand L Joints\" effector=\"PowerGrasp_L\" controlVariable=\"Joints\" jnts=\"fing1-knuck1_L tip1-fing1_L fing2-knuck2_L tip2-fing2_L fing3-knuck3_L tip3-fing3_L knuck1-base_L\" tmc=\"0.1\" vmax=\"1000\" active=\"untrue\"/>",
+                R"(<Task name="Hand L Joints" controlVariable="Joints" jnts="fing1-knuck1_L tip1-fing1_L fing2-knuck2_L tip2-fing2_L fing3-knuck3_L tip3-fing3_L knuck1-base_L" tmc="0.1" vmax="1000" active="untrue"/>)",
                 graph)
             );
             

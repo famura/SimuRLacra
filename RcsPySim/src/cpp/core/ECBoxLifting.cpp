@@ -120,18 +120,18 @@ protected:
             innerAM->addTask(new TaskPosition3D(graph, leftGrasp, basket, basket));
             innerAM->addTask(new TaskEuler3D(graph, leftGrasp, basket, basket));
             innerAM->addTask(TaskFactory::createTask(
-                "<Task name=\"Hand L Joints\" effector=\"PowerGrasp_L\" controlVariable=\"Joints\" jnts=\"fing1-knuck1_L tip1-fing1_L fing2-knuck2_L tip2-fing2_L fing3-knuck3_L tip3-fing3_L knuck1-base_L\" tmc=\"0.1\" vmax=\"1000\" active=\"untrue\"/>",
+                R"(<Task name="Hand L Joints" controlVariable="Joints" jnts="fing1-knuck1_L tip1-fing1_L fing2-knuck2_L tip2-fing2_L fing3-knuck3_L tip3-fing3_L knuck1-base_L" tmc="0.1" vmax="1000" active="untrue"/>)",
                 graph)
             );
             // Right
             innerAM->addTask(new TaskPosition3D(graph, rightGrasp, basket, basket));
             innerAM->addTask(new TaskEuler3D(graph, rightGrasp, basket, basket));
             innerAM->addTask(TaskFactory::createTask(
-                "<Task name=\"Hand R Joints\" effector=\"PowerGrasp_R\" controlVariable=\"Joints\" jnts=\"fing1-knuck1_R tip1-fing1_R fing2-knuck2_R tip2-fing2_R fing3-knuck3_R tip3-fing3_R knuck1-base_R\" tmc=\"0.1\" vmax=\"1000\" active=\"untrue\"/>",
+                R"(<Task name="Hand R Joints" controlVariable="Joints" jnts="fing1-knuck1_R tip1-fing1_R fing2-knuck2_R tip2-fing2_R fing3-knuck3_R tip3-fing3_R knuck1-base_R" tmc="0.1" vmax="1000" active="untrue"/>)",
                 graph)
             );
             innerAM->addTask(TaskFactory::createTask(
-                "<Task name=\"Distance R\" controlVariable=\"Distance\"  effector=\"tip2_R\" refBdy=\"Box\" gainDX=\"1.\" active=\"true\"/>",
+                R"(<Task name="Distance R" controlVariable="Distance" effector="tip2_R" refBdy="Box" gainDX="1." active="true"/>)",
                 graph)
             );
             
@@ -176,7 +176,7 @@ protected:
             innerAM->addTask(new TaskOmega1D("Bd", graph, leftGrasp, refBody, refFrame));
             innerAM->addTask(new TaskOmega1D("Cd", graph, leftGrasp, refBody, refFrame));
             innerAM->addTask(TaskFactory::createTask(
-                "<Task name=\"Hand L Joints\" effector=\"PowerGrasp_L\" controlVariable=\"Joints\" jnts=\"fing1-knuck1_L tip1-fing1_L fing2-knuck2_L tip2-fing2_L fing3-knuck3_L tip3-fing3_L knuck1-base_L\" tmc=\"0.1\" vmax=\"1000\" active=\"untrue\"/>",
+                R"(<Task name="Hand L Joints" controlVariable="Joints" jnts="fing1-knuck1_L tip1-fing1_L fing2-knuck2_L tip2-fing2_L fing3-knuck3_L tip3-fing3_L knuck1-base_L" tmc="0.1" vmax="1000" active="untrue"/>)",
                 graph)
             );
             // Right
@@ -188,7 +188,7 @@ protected:
             innerAM->addTask(new TaskOmega1D("Cd", graph, rightGrasp, refBody, refFrame));
             //        innerAM->addTask(new TaskJoint(graph, RcsGraph_getJointByName(graph, "fing1-knuck1_R")));
             innerAM->addTask(TaskFactory::createTask(
-                "<Task name=\"Hand R Joints\" effector=\"PowerGrasp_R\" controlVariable=\"Joints\" jnts=\"fing1-knuck1_R tip1-fing1_R fing2-knuck2_R tip2-fing2_R fing3-knuck3_R tip3-fing3_R knuck1-base_R\" tmc=\"0.1\" vmax=\"1000\" active=\"untrue\"/>",
+                R"(<Task name="Hand R Joints" controlVariable="Joints" jnts="fing1-knuck1_R tip1-fing1_R fing2-knuck2_R tip2-fing2_R fing3-knuck3_R tip3-fing3_R knuck1-base_R" tmc="0.1" vmax="1000" active="untrue"/>)",
                 graph)
             );
             

@@ -28,22 +28,17 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<Controller graph="gBoxShelving.xml">
+<Controller graph="gBoxShelving_posCtrl.xml">
 
-  <Task name="Hand XYZ" effector="Hand" controlVariable="XYZ" active="untrue"/>
-  <Task name="Hand ABC" effector="Hand" controlVariable="ABC" active="untrue"/>
+  <Task name="Hand XYZ" effector="PowerGrasp_L" controlVariable="XYZ" active="untrue"/>
+  <Task name="Hand ABC" effector="PowerGrasp_L" controlVariable="ABC" active="untrue"/>
 
-  <Task name="Spread" controlVariable="Joint" jnt="Finger1Joint1" active="untrue"/>
-  <Task name="Finger1" controlVariable="Joint" jnt="Finger1Joint2" active="untrue"/>
-  <Task name="Finger2" controlVariable="Joint" jnt="Finger2Joint2" active="untrue"/>
-  <Task name="Finger3" controlVariable="Joint" jnt="Finger3Joint2" active="untrue"/>
-
-  <Task name="Hand X" effector="Hand" controlVariable="X" active="untrue"/>
-  <Task name="Hand Y" effector="Hand" controlVariable="Y" active="untrue"/>
-  <Task name="Hand Z" effector="Hand" controlVariable="Z" active="untrue"/>
-  <Task name="Hand Force X" effector="Hand" controlVariable="ForceX" active="untrue"/>
-  <Task name="Hand Force Y" effector="Hand" controlVariable="ForceY" active="untrue"/>
-  <Task name="Hand Force Z" effector="Hand" controlVariable="ForceZ" active="untrue"/>
+  <Task name="Hand X" effector="PowerGrasp_L" controlVariable="X" active="untrue"/>
+  <Task name="Hand Y" effector="PowerGrasp_L" controlVariable="Y" active="untrue"/>
+  <Task name="Hand Z" effector="PowerGrasp_L" controlVariable="Z" active="untrue"/>
+  <Task name="Hand Force X" effector="PowerGrasp_L" controlVariable="ForceX" active="untrue"/>
+  <Task name="Hand Force Y" effector="PowerGrasp_L" controlVariable="ForceY" active="untrue"/>
+  <Task name="Hand Force Z" effector="PowerGrasp_L" controlVariable="ForceZ" active="untrue"/>
 
   <Task name="FingerTip3 XYZ" effector="FingerTip3" controlVariable="XYZ" active="untrue"/>
   <Task name="FingerTip3 ABC" effector="FingerTip3" controlVariable="ABC" active="untrue"/>
