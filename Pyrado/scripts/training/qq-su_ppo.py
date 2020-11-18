@@ -30,6 +30,7 @@
 Train an agent to solve the Quanser Qube swing-up task using Proximal Policy Optimization.
 """
 import torch as to
+from torch.optim import lr_scheduler
 
 import pyrado
 from pyrado.algorithms.step_based.gae import GAE
@@ -65,32 +66,36 @@ if __name__ == '__main__':
     # policy = GRUPolicy(spec=env.spec, **policy_hparam)
 
     # Critic
-    vfcn_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)  # FNN
+    vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.relu)  # FNN
     # vfcn_hparam = dict(hidden_size=32, num_recurrent_layers=1)  # LSTM & GRU
     vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
     # vfcn = GRUPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
     critic_hparam = dict(
-        gamma=0.9885,
-        lamda=0.9648,
-        num_epoch=2,
-        batch_size=250,
+        gamma=0.9844224855479998,
+        lamda=0.9700148505302241,
+        num_epoch=5,
+        batch_size=500,
         standardize_adv=False,
-        lr=5.792e-4,
-        max_grad_norm=1.,
+        lr=7.058326426522811e-4,
+        max_grad_norm=6.,
+        lr_scheduler=lr_scheduler.ExponentialLR,
+        lr_scheduler_hparam=dict(gamma=0.999)
     )
     critic = GAE(vfcn, **critic_hparam)
 
     # Subroutine
     algo_hparam = dict(
-        max_iter=300,
-        min_steps=23*env.max_steps,
+        max_iter=200,
+        eps_clip=0.12648736789309026,
+        min_steps=30*env.max_steps,
         num_epoch=7,
-        eps_clip=0.0744,
-        batch_size=250,
-        std_init=0.9074,
-        lr=3.446e-04,
+        batch_size=500,
+        std_init=0.7573286998997557,
+        lr=6.999956625305722e-04,
         max_grad_norm=1.,
         num_workers=8,
+        lr_scheduler=lr_scheduler.ExponentialLR,
+        lr_scheduler_hparam=dict(gamma=0.999)
     )
     algo = PPO(ex_dir, env, policy, critic, **algo_hparam)
 
