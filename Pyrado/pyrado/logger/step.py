@@ -100,6 +100,10 @@ class StepLogger:
             # Make sure the key was used during first step
             raise pyrado.KeyErr(msg='New value keys may only be added before the first step is finished')
 
+        # Pre-process lists
+        if isinstance(value, list):
+            if len(value) == 1:
+                value = value[0]
         # Pre-process PyTorch tensors and numpy arrays (the same way)
         if isinstance(value, to.Tensor):
             value = value.detach().cpu().numpy()

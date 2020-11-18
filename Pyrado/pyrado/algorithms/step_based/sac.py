@@ -299,12 +299,12 @@ class SAC(ValueBased):
         self.logger.add_value('Q1 loss', to.mean(qfcn_1_losses))
         self.logger.add_value('Q2 loss', to.mean(qfcn_2_losses))
         self.logger.add_value('policy loss', to.mean(policy_losses))
-        self.logger.add_value('avg policy grad norm', to.mean(policy_grad_norm))
+        self.logger.add_value('avg grad norm policy', to.mean(policy_grad_norm))
         self.logger.add_value('avg expl strat std', to.mean(expl_strat_stds))
         self.logger.add_value('ent_coeff', self.ent_coeff)
         if self._lr_scheduler_policy is not None:
-            self.logger.add_value('avg learning rate policy', to.mean(self._lr_scheduler_policy.get_lr()), 6)
-            self.logger.add_value('avg learning rate Q-fcns', to.mean(self._lr_scheduler_qfcns.get_lr()), 6)
+            self.logger.add_value('avg lr policy', to.mean(self._lr_scheduler_policy.get_last_lr()), 6)
+            self.logger.add_value('avg lr critic', to.mean(self._lr_scheduler_qfcns.get_last_lr()), 6)
 
     def reset(self, seed: int = None):
         # Reset samplers, replay memory, exploration strategy, internal variables and the random seeds

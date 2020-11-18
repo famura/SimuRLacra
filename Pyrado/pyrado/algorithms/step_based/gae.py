@@ -266,11 +266,11 @@ class GAE(LoggerAware, nn.Module):
             explvar = explained_var(v_pred_new, v_targ)  # values close to 1 are desired
 
         # Log metrics computed from the old value function (before the update)
-        self.logger.add_value('explained var', explvar, 4)
-        self.logger.add_value('V-fcn loss impr', vfcn_loss_impr, 4)
-        self.logger.add_value('avg V-fcn grad norm', np.mean(vfcn_grad_norm), 4)
+        self.logger.add_value('explained var critic', explvar, 4)
+        self.logger.add_value('loss improv critic', vfcn_loss_impr, 4)
+        self.logger.add_value('avg grad norm critic', np.mean(vfcn_grad_norm), 4)
         if self._lr_scheduler is not None:
-            self.logger.add_value('learning rate V-fcn', self._lr_scheduler.get_lr(), 6)
+            self.logger.add_value('lr critic', self._lr_scheduler.get_last_lr(), 6)
 
         return adv
 

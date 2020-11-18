@@ -159,7 +159,7 @@ class TSPred(Algorithm):
         self.logger.add_value('max mag policy param',
                               self._policy.param_values[to.argmax(abs(self._policy.param_values))])
         if self._lr_scheduler is not None:
-            self.logger.add_value('avg learning rate', np.mean(self._lr_scheduler.get_lr()), 6)
+            self.logger.add_value('avg lr', np.mean(self._lr_scheduler.get_last_lr()), 6)
 
         # Save snapshot data
         self.make_snapshot(snapshot_mode, -loss_trn.item(), meta_info)

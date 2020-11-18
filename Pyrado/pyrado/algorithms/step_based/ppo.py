@@ -219,9 +219,9 @@ class PPO(ActorCritic):
         # Logging
         self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.noise.std), 4)
         self.logger.add_value('expl strat entropy', self._expl_strat.noise.get_entropy(), 4)
-        self.logger.add_value('avg policy grad norm', np.mean(policy_grad_norm), 4)
+        self.logger.add_value('avg grad norm policy', np.mean(policy_grad_norm), 4)
         if self._lr_scheduler is not None:
-            self.logger.add_value('avg learning rate', np.mean(self._lr_scheduler.get_lr()), 6)
+            self.logger.add_value('avg lr', np.mean(self._lr_scheduler.get_last_lr()), 6)
 
 
 class PPO2(ActorCritic):
@@ -450,14 +450,14 @@ class PPO2(ActorCritic):
 
                 # Compute explained variance (after the updates)
                 self.logger.add_value('explained var', explained_var(v_pred, v_targ), 4)
-                self.logger.add_value('V-fcn loss improvement', vfcn_loss_impr, 4)
+                self.logger.add_value('loss improvement V-fcnovement', vfcn_loss_impr, 4)
                 self.logger.add_value('loss after', loss_after, 4)
                 self.logger.add_value('KL(old_new)', kl_avg, 4)
 
         # Logging
         self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.noise.std), 4)
         self.logger.add_value('expl strat entropy', self._expl_strat.noise.get_entropy(), 4)
-        self.logger.add_value('avg policy grad norm', np.mean(policy_grad_norm), 4)
-        self.logger.add_value('avg V-fcn grad norm', np.mean(vfcn_grad_norm), 4)
+        self.logger.add_value('avg grad norm policy', np.mean(policy_grad_norm), 4)
+        self.logger.add_value('avg grad norm V-fcn', np.mean(vfcn_grad_norm), 4)
         if self._lr_scheduler is not None:
-            self.logger.add_value('avg learning rate', np.mean(self._lr_scheduler.get_lr()), 6)
+            self.logger.add_value('avg lr', np.mean(self._lr_scheduler.get_last_lr()), 6)

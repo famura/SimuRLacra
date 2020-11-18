@@ -53,23 +53,14 @@ def _keys_in_columns(df: DataFrame, *cands, verbose: bool) -> bool:
 if __name__ == '__main__':
     # Parse command line arguments
     args = get_argparser().parse_args()
-    plt.rc('text', usetex=args.use_tex)
+    plt.rc('text', usetex=True)
 
     # Get the experiment's directory to load from
     ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
     file = osp.join(ex_dir, 'progress.csv')
 
     # Create plot manager that loads the progress data from the CSV into a Pandas data frame called df
-    lfm = LiveFigureManager(file, read_csv_w_replace, args, update_interval=5)
-
-
-    @lfm.figure('Number of Rollouts')
-    def num_rollouts(fig, df, args):
-        if not _keys_in_columns(df, 'num_rollouts', verbose=args.verbose):
-            return False
-        plt.plot(np.arange(len(df.num_rollouts)), df.num_rollouts)
-        plt.xlabel('iteration')
-        plt.ylabel('number of rollouts')
+    lfm = LiveFigureManager(file, read_csv_w_replace, args, update_interval=2)
 
 
     @lfm.figure('Average StepSequence Length')
@@ -86,10 +77,11 @@ if __name__ == '__main__':
         if not _keys_in_columns(df, 'avg_return', 'min_return', 'max_return', verbose=args.verbose):
             return False
         plt.fill_between(np.arange(len(df.avg_return)), df.min_return, df.max_return,
-                         label=r'max & min', alpha=0.3)
+                         label=r'max \& min', alpha=0.3)
         plt.plot(np.arange(len(df.avg_return)), df.avg_return, label='average')
         plt.xlabel('iteration')
         plt.ylabel('return')
+        plt.legend(loc='lower right')
 
 
     @lfm.figure('Return -- Average & Standard Deviation & Median (& Current)')
@@ -98,7 +90,7 @@ if __name__ == '__main__':
             return False
         plt.fill_between(np.arange(len(df.avg_return)),
                          df.avg_return - 2*df.std_return, df.avg_return + 2*df.std_return,
-                         label=rf'$\pm 2$ std', alpha=0.3)
+                         label=r'$\pm 2$ std', alpha=0.3)
         plt.plot(np.arange(len(df.avg_return)), df.avg_return, label='average')
         plt.plot(np.arange(len(df.median_return)), df.median_return, label='median')
         plt.xlabel('iteration')
@@ -109,13 +101,13 @@ if __name__ == '__main__':
         plt.legend(loc='lower right')
 
 
-    @lfm.figure('Explained Variance (R^2)')
+    @lfm.figure('Explained Variance')
     def explained_variance(fig, df, args):
-        if not _keys_in_columns(df, 'explained_var', verbose=args.verbose):
+        if not _keys_in_columns(df, 'explained_var_critic', verbose=args.verbose):
             return False
-        plt.plot(np.arange(len(df.explained_var)), df.explained_var)
+        plt.plot(np.arange(len(df.explained_var_critic)), df.explained_var_critic)
         plt.xlabel('iteration')
-        plt.ylabel('explained variance')
+        plt.ylabel(r'explained variance $R^2$')
         plt.ylim(-1.1, 1.1)
 
 
@@ -129,6 +121,7 @@ if __name__ == '__main__':
             plt.plot(np.arange(len(df.max_expl_strat_std)), df.max_expl_strat_std, label='largest')
         plt.xlabel('iteration')
         plt.ylabel('exploration std')
+        plt.legend(loc='lower right')
 
 
     @lfm.figure("Exploration Strategy's Entropy")
@@ -157,6 +150,7 @@ if __name__ == '__main__':
         plt.plot(np.arange(len(df.max_mag_policy_param)), df.max_mag_policy_param, label='largest')
         plt.xlabel('iteration')
         plt.ylabel('parameter value')
+        plt.legend(loc='lower right')
 
 
     @lfm.figure('Loss Before and After Update Step')
@@ -167,16 +161,40 @@ if __name__ == '__main__':
         plt.plot(np.arange(len(df.loss_after)), df.loss_after, label='after')
         plt.xlabel('iteration')
         plt.ylabel('loss value')
+        plt.legend(loc='lower right')
 
 
     @lfm.figure('Policy and Value Function Gradient L-2 Norm')
     def avg_grad_norm(fig, df, args):
-        if not _keys_in_columns(df, 'avg_policy_grad_norm', 'avg_vfcn_grad_norm', verbose=args.verbose):
+        if not _keys_in_columns(df, 'avg_grad_norm_policy', 'avg_grad_norm_v_fcn', verbose=args.verbose):
             return False
-        plt.plot(np.arange(len(df.avg_policy_grad_norm)), df.avg_policy_grad_norm, label='policy')
-        plt.plot(np.arange(len(df.avg_vfcn_grad_norm)), df.avg_vfcn_grad_norm, label='V-fcn')
+        plt.plot(np.arange(len(df.avg_grad_norm_policy)), df.avg_grad_norm_policy, label='policy')
+        plt.plot(np.arange(len(df.avg_grad_norm_v_fcn)), df.avg_grad_norm_v_fcn, label='V-fcn')
         plt.xlabel('iteration')
         plt.ylabel('gradient norm')
+        plt.legend(loc='lower right')
+
+
+    @lfm.figure('Learning Rates')
+    def avg_lrs(fig, df, args):
+        none_valid = True
+        if _keys_in_columns(df, 'avg_lr', verbose=args.verbose):
+            plt.plot(np.arange(len(df.avg_lr)), df.avg_lr, label='policy')
+            none_valid = False
+        if _keys_in_columns(df, 'lr_critic', verbose=args.verbose):
+            plt.plot(np.arange(len(df.lr_critic)), df.lr_critic, label='critic')
+            none_valid = False
+        if _keys_in_columns(df, 'avg_lr_policy', verbose=args.verbose):
+            plt.plot(np.arange(len(df.avg_lr_policy)), df.avg_lr_policy, label='policy')
+            none_valid = False
+        if _keys_in_columns(df, 'avg_lr_critic', verbose=args.verbose):
+            plt.plot(np.arange(len(df.avg_lr_critic)), df.avg_lr_critic, label='critic')
+            none_valid = False
+        if none_valid:
+            return False
+        plt.xlabel('iteration')
+        plt.ylabel('average learning rate')
+        plt.legend(loc='lower right')
 
 
     """ CVaR sampler specific """
@@ -196,7 +214,7 @@ if __name__ == '__main__':
         if not _keys_in_columns(df, 'full_avg_return', 'full_min_return', 'full_max_return', verbose=args.verbose):
             return False
         plt.fill_between(np.arange(len(df.full_avg_return)), df.full_min_return, df.full_max_return,
-                         label=r'max & min', alpha=0.3)
+                         label=r'max \& min', alpha=0.3)
         plt.plot(np.arange(len(df.full_avg_return)), df.full_avg_return, label='average')
         plt.xlabel('iteration')
         plt.ylabel('full return')
@@ -208,7 +226,7 @@ if __name__ == '__main__':
             return False
         plt.fill_between(np.arange(len(df.full_avg_return)),
                          df.full_avg_return - 2*df.full_std_return, df.full_avg_return + 2*df.full_std_return,
-                         label=rf'$\pm 2$ std', alpha=0.3)
+                         label=r'$\pm 2$ std', alpha=0.3)
         plt.plot(np.arange(len(df.full_avg_return)), df.full_avg_return, label='average')
         plt.plot(np.arange(len(df.full_median_return)), df.full_median_return, label='median')
         plt.xlabel('iteration')
@@ -239,6 +257,7 @@ if __name__ == '__main__':
         plt.plot(np.arange(len(df.dual_loss_after)), df.dual_loss_after, label='after')
         plt.xlabel('iteration')
         plt.ylabel('loss value')
+        plt.legend(loc='lower right')
 
 
     """ SAC specific """
@@ -261,6 +280,7 @@ if __name__ == '__main__':
         plt.plot(np.arange(len(df.Q2_loss)), df.Q2_loss, label='$Q_2$')
         plt.xlabel('iteration')
         plt.ylabel('loss value')
+        plt.legend(loc='lower right')
 
 
     @lfm.figure('Policy Loss')
@@ -294,6 +314,7 @@ if __name__ == '__main__':
         plt.plot(np.arange(len(df.max_return)), df.max_return, label='max')
         plt.xlabel('iteration')
         plt.ylabel('return')
+        plt.legend(loc='lower right')
 
 
     """ TSPred specific """
@@ -308,6 +329,7 @@ if __name__ == '__main__':
         plt.yscale('log')
         plt.xlabel('iteration')
         plt.ylabel('loss')
+        plt.legend(loc='lower right')
 
 
     # Start update loop
