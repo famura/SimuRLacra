@@ -297,6 +297,10 @@
             <span class="c1"># Make sure the key was used during first step</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">KeyErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;New value keys may only be added before the first step is finished&#39;</span><span class="p">)</span>
 
+        <span class="c1"># Pre-process lists</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="c1"># Pre-process PyTorch tensors and numpy arrays (the same way)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
