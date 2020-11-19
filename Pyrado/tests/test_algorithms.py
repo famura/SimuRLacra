@@ -56,6 +56,7 @@ from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBu
 from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
 from pyrado.environments.base import Env
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamDiscSim
+from pyrado.environments.sim_base import SimEnv
 from pyrado.logger import set_log_prefix_dir
 from pyrado.policies.base import Policy
 from pyrado.policies.features import *
@@ -78,7 +79,6 @@ def ex_dir(tmpdir):
     return tmpdir
 
 
-@pytest.mark.longtime
 @pytest.mark.parametrize(
     'env', [
         'default_qbb'  # we just need one env to construct the fixture policies
@@ -115,7 +115,7 @@ def ex_dir(tmpdir):
     ],
     ids=['a2c', 'ppo', 'ppo2', 'hc_normal', 'hc_hyper', 'nes', 'pepg', 'power', 'cem', 'reps', 'dql', 'sac']
 )
-def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
+def test_snapshots_notmeta(ex_dir, env: SimEnv, policy, algo_class, algo_hparam):
     # Collect hyper-parameters, create algorithm, and train
     common_hparam = dict(max_iter=1, num_workers=1)
     common_hparam.update(algo_hparam)
@@ -206,7 +206,7 @@ def test_snapshots_notmeta(ex_dir, env, policy, algo_class, algo_hparam):
 )
 def test_param_expl(ex_dir, env, policy, algo_class, algo_hparam):
     # Hyper-parameters
-    common_hparam = dict(max_iter=2, num_rollouts=4)
+    common_hparam = dict(max_iter=2, num_rollouts=4, num_workers=1)
     common_hparam.update(algo_hparam)
 
     # Create algorithm and train
@@ -237,10 +237,10 @@ def test_param_expl(ex_dir, env, policy, algo_class, algo_hparam):
     ids=['casual']
 )
 @pytest.mark.parametrize(
-    'algo_hparam', [dict(max_iter=2, num_particles=3, temperature=10, lr=1e-3, horizon=50)],
+    'algo_hparam', [dict(max_iter=2, num_particles=3, temperature=10, lr=1e-3, horizon=50, num_workers=1)],
     ids=['casual']
 )
-def test_svpg(ex_dir, env, policy, actor_hparam, vfcn_hparam, critic_hparam, algo_hparam):
+def test_svpg(ex_dir, env: SimEnv, policy, actor_hparam, vfcn_hparam, critic_hparam, algo_hparam):
     # Create algorithm and train
     particle_hparam = dict(actor=actor_hparam, vfcn=vfcn_hparam, critic=critic_hparam)
     algo = SVPG(ex_dir, env, particle_hparam, **algo_hparam)
@@ -309,7 +309,7 @@ def test_svpg(ex_dir, env, policy, actor_hparam, vfcn_hparam, critic_hparam, alg
     ],
     ids=['casual_hparam']
 )
-def test_spota_ppo(ex_dir, env, spota_hparam):
+def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam):
     # Environment and domain randomization
     randomizer = create_default_randomizer(env)
     env = DomainRandWrapperBuffer(env, randomizer)
@@ -374,7 +374,7 @@ def test_spota_ppo(ex_dir, env, spota_hparam):
      ],
     # ids=['cpu', 'cuda']
 )
-def test_actor_critic(ex_dir, env, policy, algo, algo_hparam, vfcn_type, use_cuda):
+def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vfcn_type, use_cuda):
     if use_cuda:
         policy._device = 'cuda'
         policy = policy.to(device='cuda')
@@ -429,23 +429,23 @@ def test_actor_critic(ex_dir, env, policy, algo, algo_hparam, vfcn_type, use_cud
 @pytest.mark.longtime
 @pytest.mark.parametrize(
     'env', [
-        'default_omo'
+        'default_bob'
     ],
-    ids=['omo'],
+    ids=['bob'],
     indirect=True
 )
 @pytest.mark.parametrize(
     'algo, algo_hparam', [
-        (HCNormal, dict(max_iter=5, pop_size=None, num_rollouts=6, expl_std_init=0.5, expl_factor=1.1)),
-        (NES, dict(max_iter=50, pop_size=None, num_rollouts=6, expl_std_init=0.5, symm_sampling=True)),
-        (PEPG, dict(max_iter=50, pop_size=500, num_rollouts=6, expl_std_init=0.5, lr=1e-2, normalize_update=False)),
-        (PoWER, dict(max_iter=20, pop_size=100, num_rollouts=6, num_is_samples=10, expl_std_init=0.5)),
-        (CEM, dict(max_iter=20, pop_size=100, num_rollouts=6, num_is_samples=10, expl_std_init=0.5, full_cov=False)),
-        (REPS, dict(max_iter=20, pop_size=100, num_rollouts=6, eps=0.5, expl_std_init=0.5, use_map=True)),
+        (HCNormal, dict(max_iter=5, pop_size=50, num_rollouts=4, expl_std_init=0.5, expl_factor=1.1)),
+        (PEPG, dict(max_iter=40, pop_size=200, num_rollouts=8, expl_std_init=0.5, lr=1e-2, normalize_update=False)),
+        (NES, dict(max_iter=5, pop_size=50, num_rollouts=4, expl_std_init=0.5, symm_sampling=True, eta_mean=2)),
+        (PoWER, dict(max_iter=5, pop_size=50, num_rollouts=4, num_is_samples=8, expl_std_init=0.5)),
+        (CEM, dict(max_iter=5, pop_size=50, num_rollouts=4, num_is_samples=8, expl_std_init=0.5, full_cov=False)),
+        (REPS, dict(max_iter=5, pop_size=50, num_rollouts=4, eps=1.5, expl_std_init=0.5, use_map=True)),
     ],
-    # ids=['hc_normal', 'nes', 'pepg', 'power', 'cem', 'reps']
+    ids=['hc_normal', 'pepg', 'nes', 'power', 'cem', 'reps']
 )
-def test_training_parameter_exploring(ex_dir, env, algo, algo_hparam):
+def test_training_parameter_exploring(ex_dir, env: SimEnv, algo, algo_hparam):
     # Environment and policy
     env = ActNormWrapper(env)
     policy_hparam = dict(feats=FeatureStack([const_feat, identity_feat]))
@@ -457,8 +457,10 @@ def test_training_parameter_exploring(ex_dir, env, algo, algo_hparam):
         rets_before[i] = rollout(env, policy, eval=True, seed=i).undiscounted_return()
 
     # Create the algorithm and train
+    algo_hparam['num_workers'] = 1
     algo = algo(ex_dir, env, policy, **algo_hparam)
     algo.train()
+    policy.param_values = algo.best_policy_param  # mimic saving and loading
 
     # Compare returns before and after training for max_iter iteration
     rets_after = np.zeros_like(rets_before)
@@ -486,7 +488,7 @@ def test_training_parameter_exploring(ex_dir, env, algo, algo_hparam):
     , ids=['lin', 'fnn', 'rnn', 'lstm', 'gru'],
     indirect=True
 )
-def test_soft_update(env, policy):
+def test_soft_update(env, policy: Policy):
     # Init param values
     target, source = deepcopy(policy), deepcopy(policy)
     target.param_values = to.zeros_like(target.param_values)
@@ -508,7 +510,7 @@ def test_soft_update(env, policy):
     ids=['omo'],
     indirect=True
 )
-def test_arpl(ex_dir, env):
+def test_arpl(ex_dir, env: SimEnv):
     env = ActNormWrapper(env)
     env = StateAugmentationWrapper(env, domain_param=None)
 
@@ -530,12 +532,12 @@ def test_arpl(ex_dir, env):
         max_iter=2,
         min_steps=23*env.max_steps,
         min_rollouts=None,
-        num_workers=1,
         num_epoch=5,
         eps_clip=0.085,
         batch_size=150,
         std_init=0.995,
         lr=2e-4,
+        num_workers=1,
     )
     arpl_hparam = dict(
         max_iter=2,
@@ -563,7 +565,7 @@ def test_arpl(ex_dir, env):
     ids=['bob'],
     indirect=['env']
 )
-def test_sysidasrl(ex_dir, env, num_eval_rollouts):
+def test_sysidasrl(ex_dir, env: SimEnv, num_eval_rollouts):
     def eval_ddp_policy(rollouts_real):
         init_states_real = np.array([ro.rollout_info['init_state'] for ro in rollouts_real])
         rollouts_sim = []

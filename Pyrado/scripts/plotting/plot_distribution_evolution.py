@@ -72,7 +72,7 @@ if __name__ == '__main__':
         try:
             num_init_cand = hparams['algo']['num_init_cand']
         except KeyError:
-            raise KeyError('There was no num_init_cand key in the hyperparameters.yaml file!'
+            raise KeyError('There was no num_init_cand key in the hparams.yaml file!'
                            'Are you sure you loaded a BayRn experiment?')
         if not args.load_all:
             cands = cands[num_init_cand:, :]

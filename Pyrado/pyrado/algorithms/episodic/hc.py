@@ -28,10 +28,12 @@
 
 import numpy as np
 import torch as to
+from typing import Optional
 
 import pyrado
 from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
 from pyrado.environments.base import Env
+from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.utils.input_output import print_cbt
 from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult
@@ -57,9 +59,10 @@ class HC(ParameterExploring):
                  max_iter: int,
                  num_rollouts: int,
                  expl_factor: float,
-                 pop_size: int = None,
-                 num_workers: int = 4):
-        """
+                 pop_size: Optional[int] = None,
+                 num_workers: int = 4,
+                 logger: Optional[StepLogger] = None):
+        r"""
         Constructor
 
         :param save_dir: directory to save the snapshots i.e. the results in
@@ -70,6 +73,7 @@ class HC(ParameterExploring):
         :param expl_factor: scalar value which determines how the exploration strategy adapts its search space
         :param pop_size: number of solutions in the population
         :param num_workers: number of environments for parallel sampling
+        :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         # Call ParameterExploring's constructor
         super().__init__(
@@ -79,7 +83,8 @@ class HC(ParameterExploring):
             max_iter,
             num_rollouts,
             pop_size=pop_size,
-            num_workers=num_workers
+            num_workers=num_workers,
+            logger=logger
         )
 
         # Store the inputs

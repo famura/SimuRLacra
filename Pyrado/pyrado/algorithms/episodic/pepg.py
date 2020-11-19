@@ -28,9 +28,11 @@
 
 import numpy as np
 import torch as to
+from typing import Optional
 
 from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
 from pyrado.environments.base import Env
+from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.utils.math import clamp_symm
 from pyrado.sampling.parameter_exploration_sampler import ParameterSamplingResult
@@ -80,13 +82,14 @@ class PEPG(ParameterExploring):
                  num_rollouts: int,
                  expl_std_init: float,
                  expl_std_min: float = 0.01,
-                 pop_size: int = None,
+                 pop_size: Optional[int] = None,
                  clip_ratio_std: float = 0.05,
                  normalize_update: bool = False,
                  transform_returns: bool = True,
+                 lr: float = 5e-4,
                  num_workers: int = 4,
-                 lr: float = 5e-4):
-        """
+                 logger: Optional[StepLogger] = None):
+        r"""
         Constructor
 
         :param save_dir: directory to save the snapshots i.e. the results in
@@ -99,6 +102,9 @@ class PEPG(ParameterExploring):
         :param expl_std_min: minimal standard deviation for the exploration strategy
         :param clip_ratio_std: maximal ratio for the change of the exploration strategy's standard deviation
         :param transform_returns: use a rank-transformation of the returns to update the policy
+        :param lr: learning rate
+        :param num_workers: number of environments for parallel sampling
+        :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         # Call ParameterExploring's constructor
         super().__init__(
@@ -109,6 +115,7 @@ class PEPG(ParameterExploring):
             num_rollouts,
             pop_size=pop_size,
             num_workers=num_workers,
+            logger=logger
         )
 
         # Store the inputs

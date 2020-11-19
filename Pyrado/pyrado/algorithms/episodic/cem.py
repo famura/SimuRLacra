@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import torch as to
+from typing import Optional
 
 import pyrado
 from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
@@ -59,7 +60,7 @@ class CEM(ParameterExploring):
                  env: Env,
                  policy: Policy,
                  max_iter: int,
-                 pop_size: int,
+                 pop_size: Optional[int],
                  num_rollouts: int,
                  num_is_samples: int,
                  expl_std_init: float,
@@ -69,35 +70,34 @@ class CEM(ParameterExploring):
                  full_cov: bool = False,
                  symm_sampling: bool = False,
                  num_workers: int = 4,
-                 logger: StepLogger = None):
-        """
+                 logger: Optional[StepLogger] = None):
+        r"""
         Constructor
 
         :param save_dir: directory to save the snapshots i.e. the results in
         :param env: the environment which the policy operates
         :param policy: policy to be updated
-        :param pop_size: number of solutions in the population
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
+        :param pop_size: number of solutions in the population
         :param num_rollouts: number of rollouts per policy sample
         :param num_is_samples: number of samples (policy parameter sets & returns) for importance sampling,
                                indirectly specifies the performance quantile $1 - \rho$ [1]
         :param expl_std_init: initial standard deviation for the exploration strategy
         :param expl_std_min: minimal standard deviation for the exploration strategy
-        :param full_cov: pass `True` to compute a full covariance matrix for sampling the next policy parameter values,
-                         else a diagonal covariance is used
         :param extra_expl_std_init: additional standard deviation for the parameter exploration added to the diagonal
                                     entries of the covariance matirx, set to 0 to disable this functionality
         :param extra_expl_decay_iter: limit for the linear decay of the additional standard deviation, i.e. last
                                       iteration in which the additional exploration noise is applied
+        :param full_cov: pass `True` to compute a full covariance matrix for sampling the next policy parameter values,
+                         else a diagonal covariance is used
         :param symm_sampling: use an exploration strategy which samples symmetric populations
+        :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         if not extra_expl_std_init >= 0:
             raise pyrado.ValueErr(given=extra_expl_std_init, ge_constraint='0')
         if not extra_expl_decay_iter > 0:
             raise pyrado.ValueErr(given=extra_expl_decay_iter, g_constraint='0')
-        if not num_is_samples <= pop_size:
-            raise pyrado.ValueErr(given=num_is_samples, le_constraint=pop_size)
 
         # Call ParameterExploring's constructor
         super().__init__(
@@ -111,6 +111,8 @@ class CEM(ParameterExploring):
             logger=logger,
         )
 
+        if not num_is_samples <= pop_size:
+            raise pyrado.ValueErr(given=num_is_samples, le_constraint=pop_size)
         self.num_is_samples = int(num_is_samples)
 
         # Explore using normal noise

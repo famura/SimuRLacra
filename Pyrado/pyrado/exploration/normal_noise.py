@@ -43,7 +43,7 @@ class DiagNormalNoise(nn.Module):
     def __init__(self,
                  use_cuda: bool,
                  noise_dim: [int, tuple],
-                 std_init: [float, to.Tensor],
+                 std_init: [float, int, to.Tensor],
                  std_min: [float, to.Tensor] = 1e-3,
                  train_mean: bool = False,
                  learnable: bool = True):
@@ -57,8 +57,8 @@ class DiagNormalNoise(nn.Module):
         :param train_mean: `True` if the noise should have an adaptive nonzero mean, `False` otherwise
         :param learnable: `True` if the parameters should be tuneable (default), `False` for shallow use (just sampling)
         """
-        if not isinstance(std_init, (float, to.Tensor)):
-            raise pyrado.TypeErr(given=std_init, expected_type=[float, to.Tensor])
+        if not isinstance(std_init, (float, int, to.Tensor)):
+            raise pyrado.TypeErr(given=std_init, expected_type=[float, int, to.Tensor])
         if isinstance(std_init, to.Tensor) and not std_init.size() == noise_dim:
             raise pyrado.ShapeErr(given=std_init, expected_match=to.empty(noise_dim))
         if not (isinstance(std_init, float) and std_init > 0 or isinstance(std_init, to.Tensor) and all(std_init > 0)):
@@ -170,7 +170,7 @@ class FullNormalNoise(nn.Module):
     def __init__(self,
                  use_cuda: bool,
                  noise_dim: [int, tuple],
-                 std_init: [float, to.Tensor],
+                 std_init: [float, int, to.Tensor],
                  std_min: [float, to.Tensor] = 1e-3,
                  train_mean: bool = False,
                  learnable: bool = True):
@@ -184,8 +184,8 @@ class FullNormalNoise(nn.Module):
         :param train_mean: `True` if the noise should have an adaptive nonzero mean, `False` otherwise
         :param learnable: `True` if the parameters should be tuneable (default), `False` for shallow use (just sampling)
         """
-        if not isinstance(std_init, (float, to.Tensor)):
-            raise pyrado.TypeErr(given=std_init, expected_type=[float, to.Tensor])
+        if not isinstance(std_init, (float, int, to.Tensor)):
+            raise pyrado.TypeErr(given=std_init, expected_type=[float, int, to.Tensor])
         if isinstance(std_init, to.Tensor) and not std_init.size() == noise_dim:
             raise pyrado.ShapeErr(given=std_init, expected_match=to.empty(noise_dim))
         if not (isinstance(std_init, float) and std_init > 0 or

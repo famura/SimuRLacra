@@ -28,6 +28,7 @@
 
 import numpy as np
 import torch as to
+from typing import Optional
 
 from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
 from pyrado.environments.base import Env
@@ -65,7 +66,7 @@ class NES(ParameterExploring):
                  symm_sampling: bool = False,
                  transform_returns: bool = True,
                  num_workers: int = 4,
-                 logger: StepLogger = None):
+                 logger: Optional[StepLogger] = None):
         """
         Constructor
 
@@ -81,6 +82,7 @@ class NES(ParameterExploring):
         :param eta_std: step size factor for the standard deviation
         :param symm_sampling: use an exploration strategy which samples symmetric populations
         :param transform_returns: use a rank-transformation of the returns to update the policy
+        :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         # Call ParameterExploring's constructor
@@ -122,7 +124,7 @@ class NES(ParameterExploring):
         self.lr_std = 0.6*(3 + np.log(self.pop_size + 1))/3./np.sqrt(self.pop_size + 1)
 
     @staticmethod
-    def compute_utilities(pop_size: int, eta_mean: float, eta_std: float):
+    def compute_utilities(pop_size: Optional[int], eta_mean: float, eta_std: float):
         """
         Compute the utilities as described in section 3.1 of [1] (a.k.a. Hansen ranking with uniform baseline)
 

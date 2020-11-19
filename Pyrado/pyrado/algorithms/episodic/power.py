@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import torch as to
+from typing import Optional
 
 from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
 from pyrado.environments.base import Env
@@ -58,15 +59,15 @@ class PoWER(ParameterExploring):
                  env: Env,
                  policy: Policy,
                  max_iter: int,
-                 pop_size: int,
+                 pop_size: Optional[int],
                  num_rollouts: int,
                  num_is_samples: int,
                  expl_std_init: float,
                  expl_std_min: float = 0.01,
                  symm_sampling: bool = False,
                  num_workers: int = 4,
-                 logger: StepLogger = None):
-        """
+                 logger: Optional[StepLogger] = None):
+        r"""
         Constructor
 
         :param save_dir: directory to save the snapshots i.e. the results in
@@ -79,6 +80,7 @@ class PoWER(ParameterExploring):
         :param expl_std_init: initial standard deviation for the exploration strategy
         :param expl_std_min: minimal standard deviation for the exploration strategy
         :param symm_sampling: use an exploration strategy which samples symmetric populations
+        :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         if not isinstance(policy, LinearPolicy):

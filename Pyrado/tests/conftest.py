@@ -58,9 +58,6 @@ from pyrado.policies.feed_forward.two_headed_fnn import TwoHeadedFNNPolicy
 from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedGRUPolicy, TwoHeadedRNNPolicy, TwoHeadedLSTMPolicy
 
 
-# set spawn method to spawn for parallel test runs
-mp.set_start_method('spawn', force=True)
-
 # Set default torch dtype globally to avoid inconsistent errors depending on the test run order
 to.set_default_dtype(to.double)
 
@@ -113,6 +110,10 @@ except (ImportError, Exception):
 # Check if CUDA support is available
 m_needs_cuda = pytest.mark.skipif(not to.cuda.is_available(), reason='CUDA is not supported in this setup.')
 
+# Set spawn method to spawn for parallelization
+if to.cuda.is_available():
+    mp.set_start_method('spawn', force=True)
+
 
 # --------------------
 # Environment fixtures
@@ -151,7 +152,7 @@ class DefaultEnvs:
 
     @staticmethod
     def default_omo():
-        return OneMassOscillatorSim(dt=0.02, max_steps=300)
+        return OneMassOscillatorSim(dt=0.02, max_steps=300, task_args=dict(state_des=np.array([0.5, 0])))
 
     @staticmethod
     def default_pend():

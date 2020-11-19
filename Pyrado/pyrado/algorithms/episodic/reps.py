@@ -34,11 +34,12 @@ from scipy import optimize
 from torch.distributions import kl_divergence
 from torch.distributions.multivariate_normal import MultivariateNormal
 from tqdm import tqdm
-from typing import Callable, Union
+from typing import Callable, Union, Optional
 
 import pyrado
 from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
 from pyrado.algorithms.utils import get_grad_via_torch
+from pyrado.logger.step import StepLogger
 from pyrado.policies.special.domain_distribution import DomainDistrParamPolicy
 from pyrado.environments.base import Env
 from pyrado.exploration.stochastic_params import NormalParamNoise, SymmParamExplStrat
@@ -73,17 +74,18 @@ class REPS(ParameterExploring):
                  max_iter: int,
                  eps: float,
                  num_rollouts: int,
-                 pop_size: int,
+                 pop_size: Optional[int],
                  expl_std_init: float,
                  expl_std_min: float = 0.01,
                  symm_sampling: bool = False,
-                 num_workers: int = 4,
                  num_epoch_dual: int = 1000,
                  softmax_transform: bool = False,
                  use_map: bool = True,
                  optim_mode: str = 'scipy',
-                 lr_dual: float = 5e-4):
-        """
+                 lr_dual: float = 5e-4,
+                 num_workers: int = 4,
+                 logger: Optional[StepLogger] = None):
+        r"""
         Constructor
 
         :param save_dir: directory to save the snapshots i.e. the results in
@@ -102,6 +104,8 @@ class REPS(ParameterExploring):
         :param optim_mode: choose the type of optimizer: 'torch' for a SGD-based optimizer or 'scipy' for optimizers
                            from scipy (here SLSQP)
         :param lr_dual: learning rate for the dual's optimizer, ignored for `optim_mode` `'scipy'`
+        :param num_workers: number of environments for parallel sampling
+        :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         if not isinstance(policy, (LinearPolicy, DomainDistrParamPolicy)):
             print_cbt_once('REPS was designed for linear policies.', 'y')
@@ -115,6 +119,7 @@ class REPS(ParameterExploring):
             num_rollouts,
             pop_size=pop_size,
             num_workers=num_workers,
+            logger=logger
         )
 
         # Store the inputs
