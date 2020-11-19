@@ -35,6 +35,7 @@ from matplotlib import pyplot as plt
 from pandas import DataFrame
 
 from pyrado.logger.experiment import ask_for_experiment
+from pyrado.plotting.curve import draw_curve_from_data
 from pyrado.plotting.live_update import LiveFigureManager
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import read_csv_w_replace
@@ -76,29 +77,24 @@ if __name__ == '__main__':
     def return_min_max_avg(fig, df, args):
         if not _keys_in_columns(df, 'avg_return', 'min_return', 'max_return', verbose=args.verbose):
             return False
-        plt.fill_between(np.arange(len(df.avg_return)), df.min_return, df.max_return,
-                         label=r'max \& min', alpha=0.3)
-        plt.plot(np.arange(len(df.avg_return)), df.avg_return, label='average')
-        plt.xlabel('iteration')
-        plt.ylabel('return')
-        plt.legend(loc='lower right')
+        data = DataFrame(dict(mean=df.avg_return, min=df.min_return, max=df.max_return))
+        draw_curve_from_data('min_mean_max', fig.gca(), data, np.arange(len(df.avg_return)), ax_calc=1,
+                             curve_label='average', x_label='iteration', y_label='return',
+                             legend_kwargs=dict(loc='upper left'))
 
 
     @lfm.figure('Return -- Average & Standard Deviation & Median (& Current)')
     def return_avg_median(fig, df, args):
         if not _keys_in_columns(df, 'avg_return', 'std_return', 'median_return', verbose=args.verbose):
             return False
-        plt.fill_between(np.arange(len(df.avg_return)),
-                         df.avg_return - 2*df.std_return, df.avg_return + 2*df.std_return,
-                         label=r'$\pm 2$ std', alpha=0.3)
-        plt.plot(np.arange(len(df.avg_return)), df.avg_return, label='average')
+        data = DataFrame(dict(mean=df.avg_return, std=df.std_return))
+        draw_curve_from_data('mean_std', fig.gca(), data, np.arange(len(df.avg_return)), ax_calc=1,
+                             curve_label='average', x_label='iteration', y_label='return',
+                             legend_kwargs=dict(loc='upper left'))
         plt.plot(np.arange(len(df.median_return)), df.median_return, label='median')
-        plt.xlabel('iteration')
-        plt.ylabel('return')
         if _keys_in_columns(df, 'curr_policy_return', verbose=args.verbose):
             # If the algorithm is a subclass of ParameterExploring
             plt.plot(np.arange(len(df.curr_policy_return)), df.curr_policy_return, label='current')
-        plt.legend(loc='lower right')
 
 
     @lfm.figure('Explained Variance')
@@ -150,7 +146,7 @@ if __name__ == '__main__':
         plt.plot(np.arange(len(df.max_mag_policy_param)), df.max_mag_policy_param, label='largest')
         plt.xlabel('iteration')
         plt.ylabel('parameter value')
-        plt.legend(loc='lower right')
+        plt.legend()
 
 
     @lfm.figure('Loss Before and After Update Step')
@@ -161,7 +157,7 @@ if __name__ == '__main__':
         plt.plot(np.arange(len(df.loss_after)), df.loss_after, label='after')
         plt.xlabel('iteration')
         plt.ylabel('loss value')
-        plt.legend(loc='lower right')
+        plt.legend(loc='upper right')
 
 
     @lfm.figure('Policy and Value Function Gradient L-2 Norm')
@@ -172,7 +168,7 @@ if __name__ == '__main__':
         plt.plot(np.arange(len(df.avg_grad_norm_v_fcn)), df.avg_grad_norm_v_fcn, label='V-fcn')
         plt.xlabel('iteration')
         plt.ylabel('gradient norm')
-        plt.legend(loc='lower right')
+        plt.legend(loc='upper left')
 
 
     @lfm.figure('Learning Rates')
@@ -194,7 +190,7 @@ if __name__ == '__main__':
             return False
         plt.xlabel('iteration')
         plt.ylabel('average learning rate')
-        plt.legend(loc='lower right')
+        plt.legend(loc='upper right')
 
 
     """ CVaR sampler specific """
@@ -213,24 +209,21 @@ if __name__ == '__main__':
     def full_return_min_max_avg(fig, df, args):
         if not _keys_in_columns(df, 'full_avg_return', 'full_min_return', 'full_max_return', verbose=args.verbose):
             return False
-        plt.fill_between(np.arange(len(df.full_avg_return)), df.full_min_return, df.full_max_return,
-                         label=r'max \& min', alpha=0.3)
-        plt.plot(np.arange(len(df.full_avg_return)), df.full_avg_return, label='average')
-        plt.xlabel('iteration')
-        plt.ylabel('full return')
-        
+
+        data = DataFrame(dict(mean=df.full_avg_return, min=df.full_min_return, max=df.full_max_return))
+        draw_curve_from_data('min_mean_max', fig.gca(), data, np.arange(len(df.full_avg_return)), ax_calc=1,
+                             curve_label='average', x_label='iteration', y_label='full return',
+                             legend_kwargs=dict(loc='upper left'))
+
 
     @lfm.figure('Full Return -- Average & Standard Deviation & Median (& Current)')
     def full_return_avg_median_std(fig, df, args):
         if not _keys_in_columns(df, 'full_avg_return', 'full_std_return', 'full_median_return', verbose=args.verbose):
             return False
-        plt.fill_between(np.arange(len(df.full_avg_return)),
-                         df.full_avg_return - 2*df.full_std_return, df.full_avg_return + 2*df.full_std_return,
-                         label=r'$\pm 2$ std', alpha=0.3)
-        plt.plot(np.arange(len(df.full_avg_return)), df.full_avg_return, label='average')
-        plt.plot(np.arange(len(df.full_median_return)), df.full_median_return, label='median')
-        plt.xlabel('iteration')
-        plt.ylabel('full return')
+        data = DataFrame(dict(mean=df.full_avg_return, std=df.full_std_return))
+        draw_curve_from_data('mean_std', fig.gca(), data, np.arange(len(df.full_avg_return)), ax_calc=1,
+                             curve_label='average', x_label='iteration', y_label='full return',
+                             legend_kwargs=dict(loc='upper left'))
         if _keys_in_columns(df, 'full_curr_policy_return', verbose=args.verbose):
             # If the algorithm is a subclass of ParameterExploring
             plt.plot(np.arange(len(df.full_curr_policy_return)), df.full_curr_policy_return, label='current')

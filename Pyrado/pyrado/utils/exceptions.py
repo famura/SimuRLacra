@@ -28,6 +28,7 @@
 
 import inspect
 import os.path as osp
+from typing import Sequence, Union, Optional
 
 
 class BaseErr(Exception):
@@ -87,9 +88,9 @@ class TypeErr(BaseErr):
 
     def __init__(self, *,
                  given=None,
-                 given_name: str = None,
-                 expected_type: [type, list, tuple] = None,
-                 msg: str = None):
+                 given_name: Optional[str] = None,
+                 expected_type: Union[type, list, tuple] = None,
+                 msg: Optional[str] = None):
         """
         Constructor
 
@@ -126,13 +127,13 @@ class ValueErr(BaseErr):
 
     def __init__(self, *,
                  given=None,
-                 given_name: str = None,
+                 given_name: Optional[str] = None,
                  eq_constraint=None,
                  l_constraint=None,
                  le_constraint=None,
                  g_constraint=None,
                  ge_constraint=None,
-                 msg: str = None):
+                 msg: Optional[str] = None):
         """
         Constructor
 
@@ -195,9 +196,9 @@ class ShapeErr(BaseErr):
 
     def __init__(self, *,
                  given=None,
-                 given_name: str = None,
+                 given_name: Optional[str] = None,
                  expected_match=None,
-                 msg: str = None):
+                 msg: Optional[str] = None):
         """
         Constructor
 
@@ -226,7 +227,7 @@ class ShapeErr(BaseErr):
 class PathErr(BaseErr):
     """ Class for exceptions raised by passing wrong paths to folders or files """
 
-    def __init__(self, *, given: str = None, msg: str = None):
+    def __init__(self, *, given: str = None, msg: Optional[str] = None):
         """
         Constructor
 
@@ -253,27 +254,27 @@ class PathErr(BaseErr):
 
 
 class KeyErr(BaseErr):
-    """ Class for exceptions raised asking for a key in an object that does not exist """
+    """ Class for exceptions raised asking for a keys in an object that does not exist """
 
     def __init__(self, *,
-                 key: str = None,
-                 container: dict = None,
-                 msg: str = None):
+                 keys: Union[str, Sequence[str]] = None,
+                 container=None,
+                 msg: Optional[str] = None):
         """
         Constructor
 
-        :param key: key that caused the error
+        :param keys: key(s) that caused the error
         :param container: object that should have the key
         :param msg: offers possibility to override the error message
         """
-        if (key is None or container is None) and msg is None:
-            super().__init__("Either specify an input for the error message using the 'key' and the 'container'"
+        if (keys is None or container is None) and msg is None:
+            super().__init__("Either specify an input for the error message using the 'keys' and the 'container'"
                              "argument, or set a custom message via the 'msg' argument!")
         elif msg is None:
-            self.key = key
+            self.key = keys
             self.container = container
             # Default error message
-            msg = f'{self.container} does not have the key {self.key} but the keys {list(self.container.keys())}!'
+            msg = f'{self.container} does not have the keys(s) {self.key} but the keys {list(self.container.keys())}!'
 
         # Pass to Python Exception
         super().__init__(msg)

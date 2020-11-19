@@ -26,9 +26,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-"""
-Collection of plotting functions which take Rollouts as inputs and produce line plots
-"""
 import functools
 import numpy as np
 import torch as to
@@ -255,7 +252,7 @@ def draw_rewards(ro: StepSequence):
 
 def draw_potentials(ro: StepSequence, layout: str = 'joint'):
     """
-    Plot the trajectories specific to an Activation Dynamic Network (ADN) or a Neural Field (NF) policy.
+    Plot the trajectories specific to a potential-based policy.
 
     :param ro: input rollout
     :param layout: group jointly (default), or create a separate sub-figure for each plot

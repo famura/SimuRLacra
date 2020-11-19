@@ -26,9 +26,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-"""
-Functions to plot Pyrado policies
-"""
 import numpy as np
 import torch.nn as nn
 from matplotlib import ticker, colorbar
@@ -100,8 +97,8 @@ def draw_policy_params(policy: Policy,
                        annotate: bool = True,
                        annotation_valfmt: str = '{x:.2f}',
                        colorbar_label: str = '',
-                       xlabel: str = None,
-                       ylabel: str = None,
+                       x_label: str = None,
+                       y_label: str = None,
                        ) -> plt.Figure:
     """
     Plot the weights and biases as images, and a color bar.
@@ -117,8 +114,8 @@ def draw_policy_params(policy: Policy,
     :param annotate: select if the heat map should be annotated
     :param annotation_valfmt: format of the annotations inside the heat map, irrelevant if annotate = False
     :param colorbar_label: label for the color bar
-    :param xlabel: label for the x axis
-    :param ylabel: label for the y axis
+    :param x_label: label for the x axis
+    :param y_label: label for the y axis
     :return: handles to figures
     """
     if not isinstance(policy, nn.Module):
@@ -210,9 +207,9 @@ def draw_policy_params(policy: Policy,
     plt.subplots_adjust(hspace=.7, wspace=0.1)
 
     # Set the labels
-    if xlabel is not None:
-        ax_hm.set_xlabel(xlabel)
-    if ylabel is not None:
-        ax_hm.set_ylabel(ylabel)
+    if x_label is not None:
+        ax_hm.set_xlabel(x_label)
+    if y_label is not None:
+        ax_hm.set_ylabel(y_label)
 
     return fig

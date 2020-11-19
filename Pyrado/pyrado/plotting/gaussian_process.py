@@ -250,13 +250,13 @@ def render_singletask_gp(
 
             # Plot a 2D image
             df_mean = pd.DataFrame(mean_raw.numpy(), columns=x0_grid_raw.numpy(), index=x1_grid_raw.numpy())
-            render_heatmap(df_mean, ax_hm=ax[0], ax_cb=ax[1], xlabel=x_label, ylabel=y_label, annotate=False,
+            render_heatmap(df_mean, ax_hm=ax[0], ax_cb=ax[1], x_label=x_label, y_label=y_label, annotate=False,
                            fig_canvas_title='Returns', tick_label_prec=2, add_sep_colorbar=True, cmap=heatmap_cmap,
                            colorbar_label=colorbar_label, num_major_ticks_hm=3, num_major_ticks_cb=2,
                            colorbar_orientation='horizontal')
 
             df_std = pd.DataFrame(std_raw.numpy(), columns=x0_grid_raw.numpy(), index=x1_grid_raw.numpy())
-            render_heatmap(df_std, ax_hm=ax[2], ax_cb=ax[3], xlabel=x_label, ylabel=y_label, annotate=False,
+            render_heatmap(df_std, ax_hm=ax[2], ax_cb=ax[3], x_label=x_label, y_label=y_label, annotate=False,
                            fig_canvas_title='Standard Deviations', tick_label_prec=2, add_sep_colorbar=True,
                            cmap=heatmap_cmap, colorbar_label=colorbar_label, num_major_ticks_hm=3, num_major_ticks_cb=2,
                            colorbar_orientation='horizontal',

@@ -32,7 +32,7 @@ import pandas as pd
 
 from matplotlib import pyplot as plt
 from pyrado.plotting.categorical import draw_categorical
-from pyrado.plotting.curve import draw_curve, draw_dts
+from pyrado.plotting.curve import draw_curve_from_data, draw_dts
 from pyrado.plotting.rollout_based import draw_observations_actions_rewards, draw_observations, draw_actions, \
     draw_rewards, draw_potentials, draw_features
 from pyrado.plotting.surface import draw_surface
@@ -93,23 +93,23 @@ def test_render_categorical(data):
 )
 def test_render_curve(data, x_grid):
     fix, axs = plt.subplots(nrows=2, ncols=2)
-    draw_curve(
+    draw_curve_from_data(
         'mean_std', axs[0, 0], data, x_grid, ax_calc=1,
-        x_label='A', y_label='y', vline_level=None, palette=None, title=None, show_legend=True, area_label='a',
+        x_label='A', y_label='y', vline_level=None, title=None, show_legend=True, area_label='a',
         plot_kwargs=dict(alpha=0.1, color='r', ls='--')
     )
-    draw_curve(
+    draw_curve_from_data(
         'min_mean_max', axs[0, 1], data, x_grid, ax_calc=1,
-        x_label=None, y_label=None, vline_level=None, palette=None, title=None, show_legend=True, curve_label='c',
+        x_label=None, y_label=None, vline_level=None, title=None, show_legend=True, curve_label='c',
     )
-    draw_curve(
+    draw_curve_from_data(
         'mean_std', axs[1, 0], data, x_grid, ax_calc=1,
-        x_label='d', y_label=r'$y$', vline_level=None, palette=None, title='Title', show_legend=True, curve_label='c',
+        x_label='d', y_label=r'$y$', vline_level=None, title='Title', show_legend=True, curve_label='c',
         plot_kwargs=dict(alpha=0.1)
     )
-    draw_curve(
+    draw_curve_from_data(
         'min_mean_max', axs[1, 1], data, x_grid, ax_calc=1,
-        x_label=r'$\mu$', y_label='', vline_level=None, palette=None, title='Title', show_legend=True, area_label='a',
+        x_label=r'$\mu$', y_label='', vline_level=None, title='Title', show_legend=True, area_label='a',
         plot_kwargs=dict(alpha=0.1, color='r')
     )
 
@@ -134,4 +134,4 @@ def test_rollout_based(env, policy):
         draw_observations(ro)
         draw_actions(ro, env)
         draw_rewards(ro)
-        draw_dts(ro.dts_policy, ro.dts_step, ro.dts_remainder)
+        draw_dts(ro.dts_policy, ro.dts_step, ro.dts_remainder, y_top_lim=5)

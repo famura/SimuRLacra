@@ -31,13 +31,15 @@ Script for visually comparing policy learning progress over different random see
 """
 import numpy as np
 import os
-from builtins import range
+import os.path as osp
+import pandas as pd
 from matplotlib import pyplot as plt
 
 import pyrado
-from pyrado.logger.experiment import ask_for_experiment
+from pyrado.plotting.curve import draw_curve
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import read_csv_w_replace
+from pyrado.utils.order import get_immediate_subdirs, natural_sort
 
 
 if __name__ == '__main__':
@@ -45,66 +47,37 @@ if __name__ == '__main__':
     args = get_argparser().parse_args()
     plt.rc('text', usetex=args.use_tex)
 
-    # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
-
-    # Get all sub-directories (these should contain the policy files)
-    dirs = [tmp[0] for tmp in os.walk(ex_dir)][1:]
+    # Get the experiments' directories to load from
+    if args.ex_dir is None:
+        parent_dir = input('Please enter the parent directory for the experiments to compare:\n')
+    else:
+        parent_dir = args.ex_dir
+    if not osp.isdir(parent_dir):
+        raise pyrado.PathErr(parent_dir)
+    dirs = get_immediate_subdirs(parent_dir)
+    dirs = natural_sort(dirs)
 
     # Collect average and best returns per iteration
-    avg_returns = []
+    df = pd.DataFrame()
     best_returns = []
 
     # Plot progress of each experiment
-    plt.figure(figsize=pyrado.figsize_IEEE_1col_18to10)
-    for d in dirs:
-        # Load the policy's data
+    fig, axs = plt.subplots(2, figsize=pyrado.figsize_IEEE_1col_18to10)
+    for idx, d in enumerate(dirs):
+        # Load an experiment's data
         file = os.path.join(d, 'progress.csv')
         data = read_csv_w_replace(file)
-        avg_return = data.avg_return.values
-        best_return = [avg_return[0], ]
 
-        for i in range(1, len(avg_return)):
-            if avg_return[i] > best_return[i - 1]:
-                best_return.append(avg_return[i])
-            else:
-                best_return.append(best_return[i - 1])
+        # Append one column per experiment
+        df = pd.concat([df, pd.DataFrame({f'ex_{idx}': data.avg_return})], axis=1)
 
-        avg_returns.append(avg_return)
-        best_returns.append(best_return)
+        axs[0].plot(np.arange(len(data.avg_return)), data.avg_return, ls='--', lw=1, label=f'ex_{idx}')
+        axs[0].legend()
 
-        plt.subplot(121)
-        plt.plot(np.arange(len(avg_return)), avg_return, ls='--', lw=.8)
-        plt.subplot(122)
-        plt.plot(np.arange(len(best_return)), best_return, ls='--', lw=.8)
+    # Plot mean and std across columns
+    draw_curve(
+        'mean_std', axs[1], pd.DataFrame(dict(mean=df.mean(axis=1), std=df.std(axis=1))),
+        np.arange(len(df)), x_label='iteration', y_label='average return'
+    )
 
-    # Plot mean return and the 1-sigma confidence interval
-    plt.subplot(121)
-    plt.plot(np.mean(avg_returns, axis=0), lw=2, label='Mean', color='blue', alpha=.8)
-    plt.fill_between(range(100),
-                     np.mean(avg_returns, axis=0) - np.std(avg_returns, axis=0),
-                     np.mean(avg_returns, axis=0) + np.std(avg_returns, axis=0),
-                     alpha=0.4,
-                     label=r'1$\sigma$ confidence interval')
-
-    plt.ylim(0)
-    plt.xlim(0)
-    plt.xlabel('Iteration')
-    plt.ylabel('Average Reward')
-
-    plt.subplot(122)
-    plt.plot(np.mean(best_returns, axis=0), lw=2, label='Mean', color='blue', alpha=.8)
-    plt.fill_between(range(100),
-                     np.mean(best_returns, axis=0) - np.std(best_returns, axis=0),
-                     np.mean(best_returns, axis=0) + np.std(best_returns, axis=0),
-                     alpha=0.4,
-                     label=r'1$\sigma$ confidence interval')
-
-    plt.legend()
-    plt.ylim(0)
-    plt.xlim(0)
-    plt.xlabel('Iteration')
-    plt.ylabel('Best Average Reward')
-
-    plt.tight_layout()
     plt.show()

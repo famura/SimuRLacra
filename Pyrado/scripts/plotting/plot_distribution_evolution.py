@@ -63,9 +63,9 @@ if __name__ == '__main__':
     # Remove the initial candidates
     hparams = load_dict_from_yaml(osp.join(ex_dir, 'hyperparams.yaml'))
     if 'algo_name' not in hparams:
-        raise pyrado.KeyErr(key='algo_name', container=hparams)
+        raise pyrado.KeyErr(keys='algo_name', container=hparams)
     if 'dp_map' not in hparams:
-        raise pyrado.KeyErr(key='dp_map', container=hparams)
+        raise pyrado.KeyErr(keys='dp_map', container=hparams)
 
     # Process algorithms differently
     if hparams['algo_name'] == BayRn.name:

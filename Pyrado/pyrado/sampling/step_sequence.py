@@ -73,7 +73,7 @@ class DictIndexProxy:
         # Obtain keyed value from obj dict
         value = self._obj.get(key, None)
         if value is None:
-            # Try pluralized key
+            # Try pluralized keys
             value = self._obj.get(key + 's', None)
 
             if value is None:
@@ -88,7 +88,7 @@ class DictIndexProxy:
         elif isinstance(value, tuple):
             # Return tuple of slices
             # Since we can't proxy a tuple, we slice eagerly
-            # Use type(value) to support named tuples. (the key is still index though)
+            # Use type(value) to support named tuples. (the keys is still index though)
             return new_tuple(type(value), (
                 self._index_value(f'{key}[{i}]', v, index, error_type)
                 for i, v in enumerate(value)

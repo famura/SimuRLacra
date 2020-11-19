@@ -26,9 +26,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-"""
-Collection of plotting functions which take ndarrays as inputs and produce surface plots
-"""
 import matplotlib as mpl
 import numpy as np
 import torch as to

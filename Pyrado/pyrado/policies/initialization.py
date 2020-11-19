@@ -74,7 +74,7 @@ def init_param(m, **kwargs):
                     # Default case
                     init.normal_(param.data, std=1./sqrt(param.data.nelement()))
             else:
-                raise pyrado.KeyErr(key='weight or bias', container=param)
+                raise pyrado.KeyErr(keys='weight or bias', container=param)
 
     elif isinstance(m, (nn.LSTM, nn.LSTMCell)):
         for name, param in m.named_parameters():

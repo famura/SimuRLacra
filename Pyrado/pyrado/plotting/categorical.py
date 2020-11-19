@@ -56,14 +56,15 @@ def draw_categorical(
     Create a box or violin plot for a list of data arrays or a pandas DataFrame.
     The plot is neither shown nor saved.
 
+    If you want to order the 4th element to the 2nd position in terms of colors use
+
+    .. code-block:: python
+
+        palette.insert(1, palette.pop(3))
+
     .. note::
         If you want to have a tight layout, it is best to pass axes of a figure with `tight_layout=True` or
         `constrained_layout=True`.
-
-        If you want to order the 4th element to the 2nd position in terms of colors use
-        .. code-block:: python
-
-            palette.insert(1, palette.pop(3))
 
     :param plot_type: tye of categorical plot, pass box or violin
     :param ax: axis of the figure to plot on

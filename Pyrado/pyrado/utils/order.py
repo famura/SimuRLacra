@@ -34,10 +34,10 @@ import pyrado
 
 def filter_los_by_lok(strs: list, keys: list) -> list:
     """
-    Filter a list of strings by a list of key strings.
+    Filter a list of strings by a list of keys strings.
 
     :param strs: list of strings to filter
-    :param keys: key-strings to filter by
+    :param keys: keys-strings to filter by
     :return: list with unique elements of the input list which contain at least one of the keys
     """
     if not isinstance(strs, list):

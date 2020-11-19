@@ -61,7 +61,7 @@ def _plot_and_save(
 
         # Generate the plot
         fig_hm, fig_cb = render_heatmap(df_pivot, add_sep_colorbar=add_sep_colorbar, norm=norm,
-                                        ylabel=index_label, xlabel=column_label)
+                                        y_label=index_label, x_label=column_label)
 
         # Save heat map and color bar if desired
         if save_figure:

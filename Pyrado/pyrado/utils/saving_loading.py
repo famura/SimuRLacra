@@ -114,7 +114,7 @@ def save(obj,
         elif 'prefix' not in meta_info and 'suffix' in meta_info:
             _save_fcn(obj_, osp.join(save_dir, f"{name}_{meta_info['suffix']}.{file_ext}"), file_ext)
 
-        else:  # there is meta_info dict but with different key words
+        else:  # there is meta_info dict but with different keys words
             _save_fcn(obj_, osp.join(save_dir, f"{name}.{file_ext}"), file_ext)
 
 
@@ -156,7 +156,7 @@ def load(obj, name: str, file_ext: str, load_dir: str, meta_info: Optional[dict]
         elif 'prefix' not in meta_info and 'suffix' in meta_info:
             obj_ = _load_fcn(osp.join(load_dir, f"{name}_{meta_info['suffix']}.{file_ext}"), file_ext)
 
-        else:  # there is meta_info dict but with different key words
+        else:  # there is meta_info dict but with different keys words
             obj_ = _load_fcn(osp.join(load_dir, f"{name}.{file_ext}"), file_ext)
 
     assert obj_ is not None

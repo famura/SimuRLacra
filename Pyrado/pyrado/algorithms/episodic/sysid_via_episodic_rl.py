@@ -150,9 +150,9 @@ class SysIdViaEpisodicRL(Algorithm):
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
         if 'rollouts_real' not in meta_info:
-            raise pyrado.KeyErr(key='rollouts_real', container=meta_info)
+            raise pyrado.KeyErr(keys='rollouts_real', container=meta_info)
         if 'init_state' not in meta_info['rollouts_real'][0].rollout_info:  # checking the first element is sufficient
-            raise pyrado.KeyErr(key='init_state', container=meta_info['rollouts_real'][0].rollout_info)
+            raise pyrado.KeyErr(keys='init_state', container=meta_info['rollouts_real'][0].rollout_info)
 
         # Extract the initial states from the real rollouts
         rollouts_real = meta_info['rollouts_real']
@@ -346,5 +346,5 @@ class SysIdViaEpisodicRL(Algorithm):
         print_cbt(f'Best fitted domain parameter distribution\n{self._subrtn.env.randomizer}', 'g')
 
         if 'rollouts_real' not in meta_info:
-            raise pyrado.KeyErr(key='rollouts_real', container=meta_info)
+            raise pyrado.KeyErr(keys='rollouts_real', container=meta_info)
         pyrado.save(meta_info['rollouts_real'], 'rollouts_real', 'pkl', self.save_dir, meta_info)

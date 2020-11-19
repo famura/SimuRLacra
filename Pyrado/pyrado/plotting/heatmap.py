@@ -141,8 +141,8 @@ def render_heatmap(
     colorbar_label: str = None,
     colorbar_orientation: str = 'vertical',
     use_index_labels: bool = False,
-    xlabel: str = None,
-    ylabel: str = None,
+    x_label: str = None,
+    y_label: str = None,
     fig_canvas_title: str = None,
     fig_size: tuple = (8, 6),
     tick_label_prec: int = 3,
@@ -162,22 +162,22 @@ def render_heatmap(
 
     :param data: 2D pandas DataFrame
     :param ax_hm: axis to draw the heat map onto, if `None` a new figure is created
-    :param cmap: colormap passed to imshow
-    :param norm: colormap normalizer passed to imshow
+    :param cmap: colormap passed to `imshow()`
+    :param norm: colormap normalizer passed to `imshow()`
     :param annotate: select if the heat map should be annotated
     :param annotation_valfmt: format of the annotations inside the heat map, irrelevant if annotate = False
     :param add_sep_colorbar: flag if a separate color bar is added automatically
     :param ax_cb: axis to draw the color bar onto, if `None` a new figure is created
     :param colorbar_label: label for the color bar
-    :param colorbar_orientation: oriantation of the color bar
+    :param colorbar_orientation: orientation of the color bar
     :param use_index_labels: flag if index names from the pandas DataFrame are used as labels for the x- and y-axis.
-                             This can can be overridden by xlabel and ylabel
-    :param xlabel: label for the x axis
-    :param ylabel: label for the y axis
+                             This can can be overridden by `x_label` and `y_label`
+    :param x_label: label for the x axis
+    :param y_label: label for the y axis
     :param fig_canvas_title: window title for the heat map plot, no title by default
     :param fig_size: width and height of the figure in inches
     :param tick_label_prec: floating point precision of the x- and y-axis labels
-                            This can be overwritten xtick_label_prec and ytick_label_prec
+                            This can be overwritten `xtick_label_prec` and `ytick_label_prec`
     :param xtick_label_prec: floating point precision of the x-axis labels, set `None` for default behavior
     :param ytick_label_prec: floating point precision of the y-axis labels, set `None` for default behavior
     :param num_major_ticks_hm: number of major axis ticks for the heat map, set `None` for default behavior
@@ -230,10 +230,10 @@ def render_heatmap(
     ax_hm.stale = True  # to cause redraw
 
     # Set the labels
-    if xlabel is not None:
-        ax_hm.set_xlabel(xlabel)
-    if ylabel is not None:
-        ax_hm.set_ylabel(ylabel)
+    if x_label is not None:
+        ax_hm.set_xlabel(x_label)
+    if y_label is not None:
+        ax_hm.set_ylabel(y_label)
 
     # Add color bar if requested
     if add_sep_colorbar:
