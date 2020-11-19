@@ -253,14 +253,15 @@
 <span class="sd">    Create a box or violin plot for a list of data arrays or a pandas DataFrame.</span>
 <span class="sd">    The plot is neither shown nor saved.</span>
 
+<span class="sd">    If you want to order the 4th element to the 2nd position in terms of colors use</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        palette.insert(1, palette.pop(3))</span>
+
 <span class="sd">    .. note::</span>
 <span class="sd">        If you want to have a tight layout, it is best to pass axes of a figure with `tight_layout=True` or</span>
 <span class="sd">        `constrained_layout=True`.</span>
-
-<span class="sd">        If you want to order the 4th element to the 2nd position in terms of colors use</span>
-<span class="sd">        .. code-block:: python</span>
-
-<span class="sd">            palette.insert(1, palette.pop(3))</span>
 
 <span class="sd">    :param plot_type: tye of categorical plot, pass box or violin</span>
 <span class="sd">    :param ax: axis of the figure to plot on</span>

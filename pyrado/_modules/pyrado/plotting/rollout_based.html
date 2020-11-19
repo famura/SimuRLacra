@@ -223,9 +223,6 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Collection of plotting functions which take Rollouts as inputs and produce line plots</span>
-<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
@@ -452,7 +449,7 @@
 
 <div class="viewcode-block" id="draw_potentials"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.rollout_based.draw_potentials">[docs]</a><span class="k">def</span> <span class="nf">draw_potentials</span><span class="p">(</span><span class="n">ro</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">layout</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;joint&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Plot the trajectories specific to an Activation Dynamic Network (ADN) or a Neural Field (NF) policy.</span>
+<span class="sd">    Plot the trajectories specific to a potential-based policy.</span>
 
 <span class="sd">    :param ro: input rollout</span>
 <span class="sd">    :param layout: group jointly (default), or create a separate sub-figure for each plot</span>

@@ -251,9 +251,6 @@
 <span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.two_headed_rnn</span> <span class="kn">import</span> <span class="n">TwoHeadedGRUPolicy</span><span class="p">,</span> <span class="n">TwoHeadedRNNPolicy</span><span class="p">,</span> <span class="n">TwoHeadedLSTMPolicy</span>
 
 
-<span class="c1"># set spawn method to spawn for parallel test runs</span>
-<span class="n">mp</span><span class="o">.</span><span class="n">set_start_method</span><span class="p">(</span><span class="s1">&#39;spawn&#39;</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
 <span class="c1"># Set default torch dtype globally to avoid inconsistent errors depending on the test run order</span>
 <span class="n">to</span><span class="o">.</span><span class="n">set_default_dtype</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
 
@@ -306,6 +303,10 @@
 <span class="c1"># Check if CUDA support is available</span>
 <span class="n">m_needs_cuda</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">(),</span> <span class="n">reason</span><span class="o">=</span><span class="s1">&#39;CUDA is not supported in this setup.&#39;</span><span class="p">)</span>
 
+<span class="c1"># Set spawn method to spawn for parallelization</span>
+<span class="k">if</span> <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+    <span class="n">mp</span><span class="o">.</span><span class="n">set_start_method</span><span class="p">(</span><span class="s1">&#39;spawn&#39;</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
 
 <span class="c1"># --------------------</span>
 <span class="c1"># Environment fixtures</span>
@@ -344,7 +345,7 @@
 
 <div class="viewcode-block" id="DefaultEnvs.default_omo"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_omo">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">default_omo</span><span class="p">():</span>
-        <span class="k">return</span> <span class="n">OneMassOscillatorSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">OneMassOscillatorSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">state_des</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">])))</span></div>
 
 <div class="viewcode-block" id="DefaultEnvs.default_pend"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultEnvs.default_pend">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">default_pend</span><span class="p">():</span>

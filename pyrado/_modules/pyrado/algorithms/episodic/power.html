@@ -222,6 +222,7 @@
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.parameter_exploring</span> <span class="kn">import</span> <span class="n">ParameterExploring</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
@@ -253,15 +254,15 @@
                  <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">,</span>
                  <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
                  <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                 <span class="n">pop_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">pop_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
                  <span class="n">num_rollouts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                  <span class="n">num_is_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                  <span class="n">expl_std_init</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                  <span class="n">expl_std_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
                  <span class="n">symm_sampling</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
-                 <span class="n">logger</span><span class="p">:</span> <span class="n">StepLogger</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+                 <span class="n">logger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StepLogger</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
@@ -274,6 +275,7 @@
 <span class="sd">        :param expl_std_init: initial standard deviation for the exploration strategy</span>
 <span class="sd">        :param expl_std_min: minimal standard deviation for the exploration strategy</span>
 <span class="sd">        :param symm_sampling: use an exploration strategy which samples symmetric populations</span>
+<span class="sd">        :param num_workers: number of environments for parallel sampling</span>
 <span class="sd">        :param logger: logger for every step of the algorithm, if `None` the default logger will be created</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">LinearPolicy</span><span class="p">):</span>

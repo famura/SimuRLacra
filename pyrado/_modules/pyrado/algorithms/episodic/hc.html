@@ -223,10 +223,12 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.episodic.parameter_exploring</span> <span class="kn">import</span> <span class="n">ParameterExploring</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
+<span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">StepLogger</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.parameter_exploration_sampler</span> <span class="kn">import</span> <span class="n">ParameterSamplingResult</span>
@@ -252,9 +254,10 @@
                  <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                  <span class="n">num_rollouts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                  <span class="n">expl_factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-                 <span class="n">pop_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+                 <span class="n">pop_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+                 <span class="n">logger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StepLogger</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in</span>
@@ -265,6 +268,7 @@
 <span class="sd">        :param expl_factor: scalar value which determines how the exploration strategy adapts its search space</span>
 <span class="sd">        :param pop_size: number of solutions in the population</span>
 <span class="sd">        :param num_workers: number of environments for parallel sampling</span>
+<span class="sd">        :param logger: logger for every step of the algorithm, if `None` the default logger will be created</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Call ParameterExploring&#39;s constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -274,7 +278,8 @@
             <span class="n">max_iter</span><span class="p">,</span>
             <span class="n">num_rollouts</span><span class="p">,</span>
             <span class="n">pop_size</span><span class="o">=</span><span class="n">pop_size</span><span class="p">,</span>
-            <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span>
+            <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
+            <span class="n">logger</span><span class="o">=</span><span class="n">logger</span>
         <span class="p">)</span>
 
         <span class="c1"># Store the inputs</span>

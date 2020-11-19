@@ -338,8 +338,8 @@
     <span class="n">colorbar_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">colorbar_orientation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;vertical&#39;</span><span class="p">,</span>
     <span class="n">use_index_labels</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">xlabel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">ylabel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">x_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">y_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">fig_canvas_title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">fig_size</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
     <span class="n">tick_label_prec</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
@@ -359,22 +359,22 @@
 
 <span class="sd">    :param data: 2D pandas DataFrame</span>
 <span class="sd">    :param ax_hm: axis to draw the heat map onto, if `None` a new figure is created</span>
-<span class="sd">    :param cmap: colormap passed to imshow</span>
-<span class="sd">    :param norm: colormap normalizer passed to imshow</span>
+<span class="sd">    :param cmap: colormap passed to `imshow()`</span>
+<span class="sd">    :param norm: colormap normalizer passed to `imshow()`</span>
 <span class="sd">    :param annotate: select if the heat map should be annotated</span>
 <span class="sd">    :param annotation_valfmt: format of the annotations inside the heat map, irrelevant if annotate = False</span>
 <span class="sd">    :param add_sep_colorbar: flag if a separate color bar is added automatically</span>
 <span class="sd">    :param ax_cb: axis to draw the color bar onto, if `None` a new figure is created</span>
 <span class="sd">    :param colorbar_label: label for the color bar</span>
-<span class="sd">    :param colorbar_orientation: oriantation of the color bar</span>
+<span class="sd">    :param colorbar_orientation: orientation of the color bar</span>
 <span class="sd">    :param use_index_labels: flag if index names from the pandas DataFrame are used as labels for the x- and y-axis.</span>
-<span class="sd">                             This can can be overridden by xlabel and ylabel</span>
-<span class="sd">    :param xlabel: label for the x axis</span>
-<span class="sd">    :param ylabel: label for the y axis</span>
+<span class="sd">                             This can can be overridden by `x_label` and `y_label`</span>
+<span class="sd">    :param x_label: label for the x axis</span>
+<span class="sd">    :param y_label: label for the y axis</span>
 <span class="sd">    :param fig_canvas_title: window title for the heat map plot, no title by default</span>
 <span class="sd">    :param fig_size: width and height of the figure in inches</span>
 <span class="sd">    :param tick_label_prec: floating point precision of the x- and y-axis labels</span>
-<span class="sd">                            This can be overwritten xtick_label_prec and ytick_label_prec</span>
+<span class="sd">                            This can be overwritten `xtick_label_prec` and `ytick_label_prec`</span>
 <span class="sd">    :param xtick_label_prec: floating point precision of the x-axis labels, set `None` for default behavior</span>
 <span class="sd">    :param ytick_label_prec: floating point precision of the y-axis labels, set `None` for default behavior</span>
 <span class="sd">    :param num_major_ticks_hm: number of major axis ticks for the heat map, set `None` for default behavior</span>
@@ -427,10 +427,10 @@
     <span class="n">ax_hm</span><span class="o">.</span><span class="n">stale</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># to cause redraw</span>
 
     <span class="c1"># Set the labels</span>
-    <span class="k">if</span> <span class="n">xlabel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">ax_hm</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">ylabel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">ax_hm</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">x_label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax_hm</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">x_label</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">y_label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax_hm</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">y_label</span><span class="p">)</span>
 
     <span class="c1"># Add color bar if requested</span>
     <span class="k">if</span> <span class="n">add_sep_colorbar</span><span class="p">:</span>
