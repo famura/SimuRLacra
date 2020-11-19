@@ -32,7 +32,8 @@ import os.path as osp
 from collections.abc import Iterable
 from functools import partial
 from itertools import product
-from typing import Callable, Sequence, Tuple, Union
+from scipy.ndimage import gaussian_filter1d
+from typing import Callable, Sequence, Tuple, Union, Optional
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
@@ -62,6 +63,7 @@ class SysIdViaEpisodicRL(Algorithm):
                  num_rollouts_per_distr: int,
                  metric: Union[Callable[[np.ndarray], np.ndarray], None],
                  obs_dim_weight: Union[list, np.ndarray],
+                 std_obs_filt: Optional[int] = 5,
                  w_abs: float = 0.5,
                  w_sq: float = 1.,
                  num_workers: int = 4,
@@ -73,9 +75,10 @@ class SysIdViaEpisodicRL(Algorithm):
         :param behavior_policy: lower level policy used to generate the rollouts
         :param num_rollouts_per_distr: number of rollouts per domain distribution parameter set
         :param metric: functional mapping from differences in observations to value
+        :param obs_dim_weight: (diagonal) weight matrix for the different observation dimensions for the default metric
+        :param std_obs_filt: number of standard deviations for the Gaussian filter applied to the observaitons
         :param w_abs: weight for the mean absolute errors for the default metric
         :param w_sq: weight for the mean squared errors for the default metric
-        :param obs_dim_weight: (diagonal) weight matrix for the different observation dimensions for the default metric
         :param num_workers: number of environments for parallel sampling
         :param base_seed: seed to set for the parallel sampler in every iteration
         """
@@ -101,11 +104,11 @@ class SysIdViaEpisodicRL(Algorithm):
         # Call Algorithm's constructor
         super().__init__(subrtn.save_dir, subrtn.max_iter, subrtn.policy, subrtn.logger)
 
-        # Store inputs
         self._subrtn = subrtn
         self._subrtn.save_name = 'subrtn'
         self._behavior_policy = behavior_policy
         self.obs_dim_weight = np.diag(obs_dim_weight)  # weighting factor between the different observations
+        self.std_obs_filt = std_obs_filt
         if metric is None or metric == 'None':
             self.metric = partial(self.default_metric, w_abs=w_abs, w_sq=w_sq, obs_dim_weight=self.obs_dim_weight)
         else:
@@ -270,6 +273,10 @@ class SysIdViaEpisodicRL(Algorithm):
         # Extract the observations
         real_obs = rollout_real.get_data_values('observations', truncate_last=True)
         sim_obs = rollout_sim.get_data_values('observations', truncate_last=True)
+
+        # Filter the observations
+        real_obs = gaussian_filter1d(real_obs, self.std_obs_filt, axis=0)
+        sim_obs = gaussian_filter1d(sim_obs, self.std_obs_filt, axis=0)
 
         # Normalize the signals
         real_obs_norm = self.obs_normalizer.project_to(real_obs)

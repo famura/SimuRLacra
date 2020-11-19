@@ -143,7 +143,7 @@ def create_cem_subrtn(ex_dir: str, env_sim: MetaDomainRandWrapper, ddp_policy: D
         expl_std_min=1e-4,
         # extra_expl_std_init=0.1,
         # extra_expl_decay_iter=5,
-        num_workers=1,
+        num_workers=8,
     )
     return CEM(ex_dir, env_sim, ddp_policy, **subrtn_hparam), subrtn_hparam
 
@@ -161,7 +161,7 @@ def create_reps_subrtn(ex_dir: str, env_sim: MetaDomainRandWrapper, ddp_policy: 
         optim_mode='torch',
         lr_dual=5e-4,
         use_map=True,
-        num_workers=32,
+        num_workers=8,
     )
     return REPS(ex_dir, env_sim, ddp_policy, **subrtn_hparam), subrtn_hparam
 
@@ -174,7 +174,7 @@ def create_nes_subrtn(ex_dir: str, env_sim: MetaDomainRandWrapper, ddp_policy: D
         num_rollouts=1,
         expl_std_init=2e-2,
         expl_std_min=1e-4,
-        num_workers=14,
+        num_workers=8,
     )
     return NES(ex_dir, env_sim, ddp_policy, **subrtn_hparam), subrtn_hparam
 
@@ -197,7 +197,7 @@ if __name__ == '__main__':
         ex_dir = setup_experiment(env_real.name, f'{SysIdViaEpisodicRL.name}-{NES.name}')
         subrtn, subrtn_hparam = create_nes_subrtn(ex_dir, env_sim, ddp_policy)
     else:
-        raise NotImplementedError('Select cem, reps, or nes')
+        raise NotImplementedError('Select mode cem, reps, or nes via the command line argument -m')
 
     # Set the seed
     pyrado.set_seed(1001, verbose=True)
@@ -206,7 +206,8 @@ if __name__ == '__main__':
     num_eval_rollouts = 5
     algo_hparam = dict(
         metric=None,
-        obs_dim_weight=[1, 1, 1, 1, 100, 100.],
+        std_obs_filt=5,
+        obs_dim_weight=[1, 1, 1, 1, 10, 10.],
         num_rollouts_per_distr=len(dp_map)*10,  # former 50
         num_workers=subrtn_hparam['num_workers']
     )
@@ -239,7 +240,7 @@ if __name__ == '__main__':
     else:
         stopping_reason = 'Maximum number of iterations reached!'
 
-    if algo._policy is not None:
+    if algo.policy is not None:
         print_cbt(f'{SysIdViaEpisodicRL.name} finished training a {ddp_policy.name} '
                   f'with {ddp_policy.num_param} parameters. {stopping_reason}', 'g')
     else:

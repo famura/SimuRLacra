@@ -28,6 +28,7 @@
 
 import numpy as np
 from init_args_serializer.serializable import Serializable
+from typing import Optional, Union
 
 from pyrado.environment_wrappers.base import EnvWrapperObs
 from pyrado.environments.sim_base import SimEnv
@@ -36,11 +37,14 @@ from pyrado.environments.sim_base import SimEnv
 class GaussianObsNoiseWrapper(EnvWrapperObs, Serializable):
     """ Environment wrapper which adds normally distributed i.i.d. noise to all observations. """
 
-    def __init__(self, wrapped_env: SimEnv, noise_mean: list = None, noise_std: list = None):
+    def __init__(self,
+                 wrapped_env: SimEnv,
+                 noise_mean: Optional[Union[list, np.ndarray]] = None,
+                 noise_std: Optional[Union[list, np.ndarray]] = None):
         """
         :param wrapped_env: environment to wrap
 
-        :param noise_mean: list or ndarray for the mean of the noise (mostly all zeros)
+        :param noise_mean: list or narray for the mean of the noise (mostly all zeros)
         :param noise_std: list or ndarray for the standard deviation of the noise (no default value!)
         """
         Serializable._init(self, locals())
