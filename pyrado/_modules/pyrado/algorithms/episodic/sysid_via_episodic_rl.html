@@ -227,7 +227,8 @@
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">product</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">scipy.ndimage</span> <span class="kn">import</span> <span class="n">gaussian_filter1d</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span>
@@ -257,6 +258,7 @@
                  <span class="n">num_rollouts_per_distr</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                  <span class="n">metric</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
                  <span class="n">obs_dim_weight</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+                 <span class="n">std_obs_filt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
                  <span class="n">w_abs</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
                  <span class="n">w_sq</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
                  <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
@@ -268,9 +270,10 @@
 <span class="sd">        :param behavior_policy: lower level policy used to generate the rollouts</span>
 <span class="sd">        :param num_rollouts_per_distr: number of rollouts per domain distribution parameter set</span>
 <span class="sd">        :param metric: functional mapping from differences in observations to value</span>
+<span class="sd">        :param obs_dim_weight: (diagonal) weight matrix for the different observation dimensions for the default metric</span>
+<span class="sd">        :param std_obs_filt: number of standard deviations for the Gaussian filter applied to the observaitons</span>
 <span class="sd">        :param w_abs: weight for the mean absolute errors for the default metric</span>
 <span class="sd">        :param w_sq: weight for the mean squared errors for the default metric</span>
-<span class="sd">        :param obs_dim_weight: (diagonal) weight matrix for the different observation dimensions for the default metric</span>
 <span class="sd">        :param num_workers: number of environments for parallel sampling</span>
 <span class="sd">        :param base_seed: seed to set for the parallel sampler in every iteration</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -296,11 +299,11 @@
         <span class="c1"># Call Algorithm&#39;s constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subrtn</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">subrtn</span><span class="o">.</span><span class="n">max_iter</span><span class="p">,</span> <span class="n">subrtn</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">subrtn</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
 
-        <span class="c1"># Store inputs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span> <span class="o">=</span> <span class="n">subrtn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">save_name</span> <span class="o">=</span> <span class="s1">&#39;subrtn&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_behavior_policy</span> <span class="o">=</span> <span class="n">behavior_policy</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">obs_dim_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">obs_dim_weight</span><span class="p">)</span>  <span class="c1"># weighting factor between the different observations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">std_obs_filt</span> <span class="o">=</span> <span class="n">std_obs_filt</span>
         <span class="k">if</span> <span class="n">metric</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">metric</span> <span class="o">==</span> <span class="s1">&#39;None&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_metric</span><span class="p">,</span> <span class="n">w_abs</span><span class="o">=</span><span class="n">w_abs</span><span class="p">,</span> <span class="n">w_sq</span><span class="o">=</span><span class="n">w_sq</span><span class="p">,</span> <span class="n">obs_dim_weight</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_dim_weight</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -465,6 +468,10 @@
         <span class="c1"># Extract the observations</span>
         <span class="n">real_obs</span> <span class="o">=</span> <span class="n">rollout_real</span><span class="o">.</span><span class="n">get_data_values</span><span class="p">(</span><span class="s1">&#39;observations&#39;</span><span class="p">,</span> <span class="n">truncate_last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">sim_obs</span> <span class="o">=</span> <span class="n">rollout_sim</span><span class="o">.</span><span class="n">get_data_values</span><span class="p">(</span><span class="s1">&#39;observations&#39;</span><span class="p">,</span> <span class="n">truncate_last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Filter the observations</span>
+        <span class="n">real_obs</span> <span class="o">=</span> <span class="n">gaussian_filter1d</span><span class="p">(</span><span class="n">real_obs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">std_obs_filt</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">sim_obs</span> <span class="o">=</span> <span class="n">gaussian_filter1d</span><span class="p">(</span><span class="n">sim_obs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">std_obs_filt</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
         <span class="c1"># Normalize the signals</span>
         <span class="n">real_obs_norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_normalizer</span><span class="o">.</span><span class="n">project_to</span><span class="p">(</span><span class="n">real_obs</span><span class="p">)</span>
