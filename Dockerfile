@@ -83,8 +83,6 @@ RUN python setup_deps.py dep_libraries -j8
 
 ARG OPTION=sacher
 
-RUN python setup_deps.py w_rcs_w_pytorch -j8
-
 RUN if [ $OPTION == 'blackforest' ]; then\
     python setup_deps.py w_rcs_w_pytorch -j8;\
     fi
