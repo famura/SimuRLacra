@@ -82,26 +82,28 @@ RUN ls -la
 RUN python setup_deps.py dep_libraries -j8
 
 ARG OPTION=sacher
+ARG J=8
+
+COPY --chown=user:user Pyrado Pyrado
 
 RUN if [ $OPTION == 'blackforest' ]; then\
-    python setup_deps.py w_rcs_w_pytorch -j8;\
+    python setup_deps.py w_rcs_w_pytorch -j$J;\
     fi
 
 RUN if [ $OPTION == 'sacher' ]; then\
     pip install torch==1.7.0\
-    && python setup_deps.py w_rcs_wo_pytorch -j8;\
+    && python setup_deps.py w_rcs_wo_pytorch -j$J;\
     fi
 
 RUN if [ $OPTION == 'redvelvet' ]; then\
     pip install torch==1.7.0 &&\
-    python setup_deps.py wo_rcs_wo_pytorch -j8 &&\
+    python setup_deps.py wo_rcs_wo_pytorch -j$J &&\
     rm -fr Rcs RcsPySim;\
     fi
 
 RUN if [ $OPTION == 'malakoff' ]; then\
-    python setup_deps.py wo_rcs_w_pytorch -j8 &&\
+    python setup_deps.py wo_rcs_w_pytorch -j$J &&\
     rm -fr Rcs RcsPySim;\
     fi
 
 RUN rm -fr .git .gitmodules
-COPY --chown=user:user Pyrado Pyrado
