@@ -72,10 +72,10 @@ cd SimuRLacra
 
 Create an anaconda environment (without PyTorch)
 ```
-conda create -n pyrado python=3.7
+conda create -y -n pyrado python=3.7
 conda activate pyrado
-conda install blas cmake colorama coverage cython joblib lapack libgcc-ng mkl matplotlib-base numpy optuna pandas patchelf pip pycairo pytest pytest-cov pytest-xdist pyyaml scipy seaborn setuptools sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tqdm -c conda-forge
-pip install git+https://github.com/Xfel/init-args-serializer.git@master argparse box2d glfw gym prettyprinter pytest-lazy-fixture tensorboard vpython
+conda install -y blas cmake lapack libgcc-ng mkl patchelf pip setuptools -c conda-forge
+pip install argparse box2d colorama coverage cython glfw gym joblib prettyprinter matplotlib numpy optuna pandas pycairo pytest pytest-cov pytest-xdist pyyaml scipy seaborn sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tensorboard tqdm vpython git+https://github.com/Xfel/init-args-serializer.git@master
 ```
 Any warnings from VPython can be safely ignored.
 
@@ -155,6 +155,13 @@ python setup_deps.py w_rcs_w_pytorch -j8
 ```
 In case this process crashes, please first check the [Troubleshooting](#troubleshooting) section below.
 
+
+### SL & Robcom
+In case you are at IAS and want to use you SL and robcom, you can set them up (requires sudo rights) with
+```
+python setup_deps.py robcom -j8
+```
+After that you still need to install the robot-specific package in SL.
 
 <!--
 ### Docker Container (experimental)
