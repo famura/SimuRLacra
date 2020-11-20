@@ -34,11 +34,11 @@ __Cons__
 * __Hyper-parameters are not fully tuned.__ Sometimes the most important part of reinforcement learning is the time-consuming search for the right hyper-parameters. I only did this for the environment-algorithm combinations reported in my papers. But, for all the other cases there is [Optuna](https://optuna.org/) and some optuna-based example scripts that you can start from.
 * __Unfinished GPU-support.__ At the moment the porting of the policies is implemented but not fully tested. The GPU-enabled re-implementation of the simulation environments in the pysim folder (simple Python simulations) is at question. The environments based on [Rcs](https://github.com/HRI-EU/Rcs) which require the Bullet or Vortex physics engine will only be able to run on CPU.
 
-SimuRLacra was tested on Ubuntu 16.04, 18.04 (recommended), 19.10, and 20.04, with PyTorch 1.4.
-The part without C++ dependencies (Pyrado) also works under Windows 10, but is not supported.
+SimuRLacra was tested on Ubuntu 16.04 (deprecated), 18.04 (recommended), and 20.04, with PyTorch 1.4 (deprecated) and 1.7.
+The part without C++ dependencies, called Pyrado, also works under Windows 10 (not supported).
 
 __Not the right framework for you?__
-* If you are looking for even more modular code or simply want to see how much you can do with Python decorators, check out [vel](https://github.com/MillionIntegrals/vel/tree/master/vel). It is a really beautiful framework.
+* If you are looking for even more modular code or simply want to see how much you can do with Python decorators, check out [vel](https://github.com/MillionIntegrals/vel/tree/master/vel). It is a beautiful framework that includes more than reinforcement learning.
 * If you need code optimized for performance, check out [stable baselines](https://github.com/hill-a/stable-baselines). I know, that was captain obvious.
 * If you are missing value-based algorithms will bells and whistles, check out [MushroomRL](https://github.com/MushroomRL/mushroom-rl). The main contributor is good at every sport. Sorry Carlo, but the world has to know it.
 
@@ -80,14 +80,14 @@ pip install git+https://github.com/Xfel/init-args-serializer.git@master argparse
 Any warnings from VPython can be safely ignored.
 
 ### What do you want to be installed?
-If you just want to have a look at SimuRLacra, or don't care too much about the robotics part, I recommend going for [Red Velvet](#option-red-velvet). However, if you for example want to export your learned controller to a C++ program runnning on a phsical robot, I recommend [Black Forest](#option-black-forest). Here is an overview of the options:
+If you just want to have a look at SimuRLacra, or don't care about the Rcs-based robotics part, I recommend going for [Red Velvet](#option-red-velvet). However, if you for example want to export your learned controller to a C++ program runnning on a phsical robot, I recommend [Black Forest](#option-black-forest). Here is an overview of the options:
 
-Options                              | PyTorch build | Policy export to C++ | CUDA support | Rcs-based environments (RcsPySim) | Pyrado and (subset of) mujoco-py environments
----                                  | ---           | ---                  | ---          |  ---                              |---
-[Red Velvet](#option-red-velvet)     | pip           | no                   | yes          | no                                | yes
-[Malakoff](#option-malakoff)         | local         | yes                  | no           | no                                | yes 
-[Sacher](#option-sacher)             | pip           | no                   | yes          | yes                               | yes 
-[Black Forest](#option-black-forest) | local         | yes                  | no           | yes                               | yes 
+Options                              | PyTorch build | Policy export to C++ | CUDA support       | Rcs-based simulations (RcsPySim)  | Python-based simulations (Pyrado) | (subset of) mujoco-py simulations
+---                                  | ---           | ---                  | ---                |  ---                              | ---                               | ---
+[Red Velvet](#option-red-velvet)     | pip           | :x:                  | :heavy_check_mark: | :x:                               | :heavy_check_mark:                | :heavy_check_mark: 
+[Malakoff](#option-malakoff)         | local         | :heavy_check_mark:   | :x:                | :x:                               | :heavy_check_mark:                | :heavy_check_mark: 
+[Sacher](#option-sacher)             | pip           | :x:                  | :heavy_check_mark: | :heavy_check_mark:                | :heavy_check_mark:                | :heavy_check_mark: 
+[Black Forest](#option-black-forest) | local         | :heavy_check_mark:   | :x:                | :heavy_check_mark:                | :heavy_check_mark:                | :heavy_check_mark: 
 
 > Please note that the Vortex (optionally used in RcsPySim) as well as the MuJoCo (mandatory for mujoco-py) physics engine require a license.
 
