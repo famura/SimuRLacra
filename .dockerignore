@@ -4,3 +4,7 @@
 Pyrado/data
 Dockerfile
 setup_docker.sh
+**/.github
+**cache**
+thirdParty
+*.md

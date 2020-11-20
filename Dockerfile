@@ -39,9 +39,10 @@ RUN apt-get update && apt-get install -y \
     gcc g++ make cmake zlib1g-dev swig libsm6 libxext6 \
     build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
     wget llvm libncurses5-dev xz-utils tk-dev libxrender1\
-    libxml2-dev libxmlsec1-dev libffi-dev libcairo2-dev libjpeg-dev libgif-dev firefox doxygen texlive-base graphviz
+    libxml2-dev libxmlsec1-dev libffi-dev libcairo2-dev libjpeg-dev libgif-dev doxygen texlive-base graphviz
 
 RUN adduser --disabled-password --gecos '' --shell /bin/bash user && chown -R user:user /home/user
+RUN mkdir /home/user/SimuRLacra && chown user:user /home/user/SimuRLacra
 RUN echo 'user ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/90-pyrado
 USER user
 WORKDIR /home/user
@@ -66,26 +67,43 @@ RUN conda create -n pyrado python=3.7 blas cmake colorama coverage cython joblib
 SHELL ["conda", "run", "-n", "pyrado", "/bin/bash", "-c"]
 RUN pip install git+https://github.com/Xfel/init-args-serializer.git@master argparse box2d glfw gym prettyprinter pytest-lazy-fixture tensorboard vpython
 
-COPY --chown=user:user . .
 ENV PATH /opt/conda/envs/pyrado/bin:$PATH
 ENV PYTHONPATH /home/user/SimuRLacra/RcsPySim/build/lib:/home/user/SimuRLacra/Pyrado/:$PYTHONPATH
 ENV RCSVIEWER_SIMPLEGRAPHICS 1
 
+
+COPY --chown=user:user .git .git
+COPY --chown=user:user RcsPySim RcsPySim
+COPY --chown=user:user setup_deps.py .gitmodules ./
+RUN mkdir thirdParty Rcs
+
+RUN ls -la
+
+RUN python setup_deps.py dep_libraries -j8
+
 ARG OPTION=sacher
 
+RUN python setup_deps.py w_rcs_w_pytorch -j8
+
 RUN if [ $OPTION == 'blackforest' ]; then\
-    python setup_deps.py dep_libraries -j8; python setup_deps.py w_rcs_w_pytorch -j8;\
+    python setup_deps.py w_rcs_w_pytorch -j8;\
     fi
 
 RUN if [ $OPTION == 'sacher' ]; then\
-    python setup_deps.py dep_libraries -j8; pip install torch==1.7.0; python setup_deps.py w_rcs_wo_pytorch -j8;\
+    pip install torch==1.7.0\
+    && python setup_deps.py w_rcs_wo_pytorch -j8;\
     fi
 
 RUN if [ $OPTION == 'redvelvet' ]; then\
-    python setup_deps.py dep_libraries -j8; pip install torch==1.7.0; python setup_deps.py wo_rcs_wo_pytorch -j8;\
+    pip install torch==1.7.0 &&\
+    python setup_deps.py wo_rcs_wo_pytorch -j8 &&\
+    rm -fr Rcs RcsPySim;\
     fi
 
 RUN if [ $OPTION == 'malakoff' ]; then\
-    python setup_deps.py dep_libraries -j8; python setup_deps.py wo_rcs_w_pytorch -j8;\
+    python setup_deps.py wo_rcs_w_pytorch -j8 &&\
+    rm -fr Rcs RcsPySim;\
     fi
 
+RUN rm -fr .git .gitmodules
+COPY --chown=user:user Pyrado Pyrado
