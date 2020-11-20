@@ -72,7 +72,7 @@ ENV PYTHONPATH /home/user/SimuRLacra/RcsPySim/build/lib:/home/user/SimuRLacra/Py
 ENV RCSVIEWER_SIMPLEGRAPHICS 1
 
 RUN git init
-COPY Rcs Rcs
+COPY --chown=user:user Rcs Rcs
 COPY --chown=user:user thirdParty thirdParty
 COPY --chown=user:user RcsPySim RcsPySim
 COPY --chown=user:user setup_deps.py .gitmodules ./
