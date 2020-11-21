@@ -49,11 +49,12 @@ project_dir = osp.dirname(osp.abspath(__file__))
 if not CI:
     sp.check_call(["git", "submodule", "update", "--init"], cwd=project_dir)
 
+# Check if we are in CI
+CI = 'CI' in os.environ
+
 # Check if we are in HRI by looking for the SIT envionment variable
 IN_HRI = 'SIT' in os.environ
 
-# Check if we are in CI
-CI = 'CI' in os.environ
 
 # ================== #
 # PARSE ARGS EAGERLY #
