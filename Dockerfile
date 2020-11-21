@@ -31,6 +31,8 @@ FROM nvidia/cuda:10.1-base-ubuntu18.04
 
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
+ARG CI=TRUE
+
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -61,11 +63,11 @@ RUN conda update conda \
 
 WORKDIR /home/user/SimuRLacra
 
-RUN conda create -n pyrado python=3.7 blas cmake colorama coverage cython joblib lapack libgcc-ng mkl matplotlib-base numpy optuna pandas patchelf pip pycairo pytest pytest-cov pytest-xdist pyyaml scipy seaborn setuptools sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tqdm -c conda-forge
-
+RUN conda create -n pyrado python=3.7 blas cmake lapack libgcc-ng mkl patchelf pip setuptools -c conda-forge
 
 SHELL ["conda", "run", "-n", "pyrado", "/bin/bash", "-c"]
-RUN pip install git+https://github.com/Xfel/init-args-serializer.git@master argparse box2d glfw gym prettyprinter pytest-lazy-fixture tensorboard vpython
+
+RUN pip install argparse box2d colorama coverage cython glfw gym joblib prettyprinter matplotlib numpy optuna pandas pycairo pytest pytest-cov pytest-xdist pyyaml scipy seaborn sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tensorboard tqdm vpython git+https://github.com/Xfel/init-args-serializer.git@master
 
 ENV PATH /opt/conda/envs/pyrado/bin:$PATH
 ENV PYTHONPATH /home/user/SimuRLacra/RcsPySim/build/lib:/home/user/SimuRLacra/Pyrado/:$PYTHONPATH
@@ -83,8 +85,6 @@ RUN python setup_deps.py dep_libraries -j8
 
 ARG OPTION=sacher
 ARG J=8
-
-COPY --chown=user:user Pyrado Pyrado
 
 RUN if [ $OPTION == 'blackforest' ]; then\
     python setup_deps.py w_rcs_w_pytorch -j$J;\
@@ -105,5 +105,8 @@ RUN if [ $OPTION == 'malakoff' ]; then\
     python setup_deps.py wo_rcs_w_pytorch -j$J &&\
     rm -fr Rcs RcsPySim;\
     fi
+
+COPY --chown=user:user Pyrado Pyrado
+RUN python setup_deps.py pyrado
 
 RUN rm -fr .git .gitmodules
