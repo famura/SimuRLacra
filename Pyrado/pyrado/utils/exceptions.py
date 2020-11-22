@@ -62,13 +62,13 @@ class BaseErr(Exception):
                 # Use generator to avoid errors
                 # noinspection PyBroadException
                 def list_attrs():
-                    for attr in dir(m_self):
-                        # try to access attribute
-                        try:
+                    try:
+                        for attr in dir(m_self):
+                            # try to access attribute
                             yield attr, getattr(m_self, attr)
-                        except Exception:
-                            # Simply skip errors here, we only do this for error reporting
-                            pass
+                    except Exception:
+                        # Simply skip errors here, we only do this for error reporting
+                        pass
 
                 name = first_match_name(list_attrs())
 
