@@ -273,13 +273,16 @@ def split_path_custom_common(path: Union[str, Experiment]) -> (str, str):
         """
         if isinstance(path, (Experiment, os.PathLike)):
             path = os.fspath(path)  # convert Experiment to PathLike a.k.a. string
-        idx = path.find(keyword + '/')
+        # Convert the PathLike a.k.a. string into a pathlib Path object
+        path = Path(path)
+        # Search for the keyword in the individual parts of the path
+        idx = path.parts.index(keyword) if keyword in path.parts else -1
         if idx == -1:
             # The keyword was not found in the path
             return None, None
         else:
-            idx += len(keyword) + 1  # +1 for the '/'
-        return path[:idx], path[idx:]
+            idx += + 1  # +1 for the actual keyword
+            return osp.join(*path.parts[:idx]), osp.join(*path.parts[idx:])
 
     # First try to split at pyrado.EXP_DIR
     custom, common = _split_path_at(path, keyword='experiments')
