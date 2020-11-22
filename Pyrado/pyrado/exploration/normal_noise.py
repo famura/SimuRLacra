@@ -61,7 +61,7 @@ class DiagNormalNoise(nn.Module):
             raise pyrado.TypeErr(given=std_init, expected_type=[float, int, to.Tensor])
         if isinstance(std_init, to.Tensor) and not std_init.size() == noise_dim:
             raise pyrado.ShapeErr(given=std_init, expected_match=to.empty(noise_dim))
-        if not (isinstance(std_init, float) and std_init > 0 or isinstance(std_init, to.Tensor) and all(std_init > 0)):
+        if not (isinstance(std_init, (float, int)) and std_init > 0 or isinstance(std_init, to.Tensor) and all(std_init > 0)):
             raise pyrado.ValueErr(given=std_init, g_constraint='0')
         if not isinstance(std_min, (float, to.Tensor)):
             raise pyrado.TypeErr(given=std_min, expected_type=[float, to.Tensor])
@@ -87,7 +87,7 @@ class DiagNormalNoise(nn.Module):
 
         # Initialize parameters
         self.log_std_init = to.log(to.tensor(std_init)) if isinstance(std_init, float) else to.log(std_init)
-        self.std_min = to.tensor(std_min) if isinstance(std_min, float) else std_min
+        self.std_min = to.tensor(std_min, dtype=to.get_default_dtype()) if isinstance(std_min, (float, int)) else std_min
         if not isinstance(self.log_std_init, to.Tensor):
             raise pyrado.TypeErr(given=self.log_std_init, expected_type=to.Tensor)
         if not isinstance(self.std_min, to.Tensor):
