@@ -42,7 +42,7 @@ class UniformNoise(nn.Module):
     def __init__(self,
                  use_cuda: bool,
                  noise_dim: [int, tuple],
-                 halfspan_init: [float, to.Tensor],
+                 halfspan_init: [float, int, to.Tensor],
                  halfspan_min: [float, to.Tensor] = 0.01,
                  train_mean: bool = False,
                  learnable: bool = True):
@@ -56,9 +56,9 @@ class UniformNoise(nn.Module):
         :param train_mean: `True` if the noise should have an adaptive nonzero mean, `False` otherwise
         :param learnable: `True` if the parameters should be tuneable (default), `False` for shallow use (just sampling)
         """
-        if not isinstance(halfspan_init, (float, to.Tensor)):
+        if not isinstance(halfspan_init, (float, int, to.Tensor)):
             raise pyrado.TypeErr(given=halfspan_init, expected_type=[float, to.Tensor])
-        if not (isinstance(halfspan_init, float) and halfspan_init > 0 or
+        if not (isinstance(halfspan_init, (int, float)) and halfspan_init > 0 or
                 isinstance(halfspan_init, to.Tensor) and all(halfspan_init > 0)):
             raise pyrado.ValueErr(given=halfspan_init, g_constraint='0')
         if not isinstance(halfspan_min, (float, to.Tensor)):
@@ -87,7 +87,7 @@ class UniformNoise(nn.Module):
             self.mean = None
 
         # Initialize parameters
-        self.log_halfspan_init = to.log(to.tensor(halfspan_init)) if isinstance(halfspan_init, float) else to.log(
+        self.log_halfspan_init = to.log(to.tensor(halfspan_init, dtype=to.get_default_dtype())) if isinstance(halfspan_init, (int, float)) else to.log(
             halfspan_init)
         self.halfspan_min = to.tensor(halfspan_min) if isinstance(halfspan_min, float) else halfspan_min
         if not isinstance(self.log_halfspan_init, to.Tensor):
