@@ -45,12 +45,11 @@ import yaml
 # Get the project's root directory
 project_dir = osp.dirname(osp.abspath(__file__))
 
+# Check if we are in CI
+CI = 'CI' in os.environ
 # Make sure the git submodules are up to date, otherwise this script might break them
 if not CI:
     sp.check_call(["git", "submodule", "update", "--init"], cwd=project_dir)
-
-# Check if we are in CI
-CI = 'CI' in os.environ
 
 # Check if we are in HRI by looking for the SIT envionment variable
 IN_HRI = 'SIT' in os.environ
