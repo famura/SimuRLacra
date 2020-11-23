@@ -470,13 +470,16 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="p">(</span><span class="n">Experiment</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)):</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>  <span class="c1"># convert Experiment to PathLike a.k.a. string</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">keyword</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="c1"># Convert the PathLike a.k.a. string into a pathlib Path object</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="c1"># Search for the keyword in the individual parts of the path</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">keyword</span><span class="p">)</span> <span class="k">if</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="n">path</span><span class="o">.</span><span class="n">parts</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="c1"># The keyword was not found in the path</span>
             <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">idx</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">keyword</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># +1 for the &#39;/&#39;</span>
-        <span class="k">return</span> <span class="n">path</span><span class="p">[:</span><span class="n">idx</span><span class="p">],</span> <span class="n">path</span><span class="p">[</span><span class="n">idx</span><span class="p">:]</span>
+            <span class="n">idx</span> <span class="o">+=</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># +1 for the actual keyword</span>
+            <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="o">.</span><span class="n">parts</span><span class="p">[:</span><span class="n">idx</span><span class="p">]),</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="n">idx</span><span class="p">:])</span>
 
     <span class="c1"># First try to split at pyrado.EXP_DIR</span>
     <span class="n">custom</span><span class="p">,</span> <span class="n">common</span> <span class="o">=</span> <span class="n">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s1">&#39;experiments&#39;</span><span class="p">)</span>

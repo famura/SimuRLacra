@@ -259,13 +259,13 @@
                 <span class="c1"># Use generator to avoid errors</span>
                 <span class="c1"># noinspection PyBroadException</span>
                 <span class="k">def</span> <span class="nf">list_attrs</span><span class="p">():</span>
-                    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">m_self</span><span class="p">):</span>
-                        <span class="c1"># try to access attribute</span>
-                        <span class="k">try</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">m_self</span><span class="p">):</span>
+                            <span class="c1"># try to access attribute</span>
                             <span class="k">yield</span> <span class="n">attr</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">m_self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
-                        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                            <span class="c1"># Simply skip errors here, we only do this for error reporting</span>
-                            <span class="k">pass</span>
+                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                        <span class="c1"># Simply skip errors here, we only do this for error reporting</span>
+                        <span class="k">pass</span>
 
                 <span class="n">name</span> <span class="o">=</span> <span class="n">first_match_name</span><span class="p">(</span><span class="n">list_attrs</span><span class="p">())</span>
 
