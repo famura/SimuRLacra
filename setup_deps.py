@@ -137,6 +137,7 @@ rcs_cmake_vars = {
     #"EIGEN3_INCLUDE_DIR": eigen_include_dir,
     #"USE_EIGEN": "ON",
     "USE_WM5": "ON",  # for advanced collision models
+    "WRITE_PACKAGE_REGISTRY": "ON",
 }
 # Optional headless mode
 if args.headless:
