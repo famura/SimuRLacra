@@ -368,7 +368,7 @@ protected:
 public:
     virtual InitStateSetter* createInitStateSetter()
     {
-        return new ISSBoxLifting(graph);
+        return new ISSBoxLifting(graph, properties->getPropertyBool("fixedInitState", false));
     }
     
     virtual ForceDisturber* createForceDisturber()

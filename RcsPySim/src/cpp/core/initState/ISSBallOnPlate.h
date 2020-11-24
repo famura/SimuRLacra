@@ -61,13 +61,8 @@ public:
     void applyInitialState(const MatNd* initialState) override;
 
 private:
-    // The ball body
     RcsBody* ball;
-    
-    // The plate body
     RcsBody* plate;
-    
-    // The plate's dimensions
     double plateWidth;
     double plateHeight;
 };

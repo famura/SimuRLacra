@@ -48,7 +48,7 @@ public:
      * The passed graph must contain the bodies ImetronPlatform, RailBot.
      * @param graph graph to set the state on
      */
-    ISSBallInTube(RcsGraph* graph);
+    ISSBallInTube(RcsGraph* graph, bool fixedInitState);
     
     virtual ~ISSBallInTube();
     
@@ -61,6 +61,7 @@ public:
     void applyInitialState(const MatNd* initialState) override;
 
 private:
+    bool fixedInitState;
     RcsBody* platform;
     RcsBody* rail;
 };

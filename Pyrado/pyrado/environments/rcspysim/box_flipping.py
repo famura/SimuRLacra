@@ -33,8 +33,6 @@ from typing import Sequence
 
 import rcsenv
 from pyrado.environments.rcspysim.base import RcsSim
-from pyrado.spaces.box import BoxSpace
-from pyrado.spaces.singular import SingularStateSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import DesStateTask
 from pyrado.tasks.endless_flipping import EndlessFlippingTask

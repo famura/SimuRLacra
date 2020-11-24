@@ -115,7 +115,6 @@ class BoxLiftingSim(RcsSim, Serializable):
                  position_mps: bool,
                  mps_left: [Sequence[dict], None],
                  mps_right: [Sequence[dict], None],
-                 fixed_init_state: bool = False,
                  **kwargs):
         """
         Constructor
@@ -128,8 +127,8 @@ class BoxLiftingSim(RcsSim, Serializable):
         :param position_mps: `True` if the MPs are defined on position level, `False` if defined on velocity level
         :param mps_left: left arm's movement primitives holding the dynamical systems and the goal states
         :param mps_right: right arm's movement primitives holding the dynamical systems and the goal states
-        :param fixed_init_state: use an init state space with only one state (e.g. for debugging)
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
+                       fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
                        checkJointLimits: bool = False,
                        collisionAvoidanceIK: bool = True,
@@ -159,27 +158,15 @@ class BoxLiftingSim(RcsSim, Serializable):
             **kwargs
         )
 
-        # Initial state space definition
-        if fixed_init_state:
-            dafault_init_state = np.array(
-                [0.2, 0., 0., 0.85, 65.*np.pi/180, -65.*np.pi/180])  # [m, m, rad, m, rad, rad]
-            self._init_space = SingularStateSpace(dafault_init_state,
-                                                  labels=['x', 'y', 'theta', 'z', 'q_2', 'q_4'])
-        else:
-            min_init_state = np.array([0.05, -0.05, -5*np.pi/180, 0.8, 60*np.pi/180, -70*np.pi/180])
-            max_init_state = np.array([0.25, 0.05, 5*np.pi/180, 0.9, 70*np.pi/180, -60*np.pi/180])
-            self._init_space = BoxSpace(min_init_state, max_init_state,  # [m, m, rad, m, rad, rad]
-                                        labels=['x', 'y', 'theta', 'z', 'q_2', 'q_4'])
-
     def _create_task(self, task_args: dict) -> Task:
         # Create the tasks
         continuous_rew_fcn = task_args.get('continuous_rew_fcn', True)
         task_box = create_box_lift_task(self.spec, continuous_rew_fcn, succ_thold=0.03)
         task_check_bounds = create_check_all_boundaries_task(self.spec, penalty=1e3)
         task_collision = create_collision_task(self.spec, factor=1.)
-        task_ts_discrepancy = create_task_space_discrepancy_task(self.spec,
-                                                                 AbsErrRewFcn(q=0.5*np.ones(6),
-                                                                              r=np.zeros(self.act_space.shape)))
+        task_ts_discrepancy = create_task_space_discrepancy_task(
+            self.spec, AbsErrRewFcn(q=0.5*np.ones(6), r=np.zeros(self.act_space.shape))
+        )
 
         return ParallelTasks([
             task_box,
@@ -208,7 +195,6 @@ class BoxLiftingPosDSSim(BoxLiftingSim, Serializable):
                  mps_left: [Sequence[dict], None],
                  mps_right: [Sequence[dict], None],
                  continuous_rew_fcn: bool = True,
-                 fixed_init_state: bool = False,
                  **kwargs):
         """
         Constructor
@@ -217,8 +203,8 @@ class BoxLiftingPosDSSim(BoxLiftingSim, Serializable):
         :param mps_left: left arm's movement primitives holding the dynamical systems and the goal states
         :param mps_right: right arm's movement primitives holding the dynamical systems and the goal states
         :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used
-        :param fixed_init_state: use an init state space with only one state (e.g. for debugging)
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
+                       fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
                        checkJointLimits: bool = False,
                        collisionAvoidanceIK: bool = True,
@@ -282,7 +268,6 @@ class BoxLiftingPosDSSim(BoxLiftingSim, Serializable):
             position_mps=True,
             mps_left=mps_left,
             mps_right=mps_right,
-            fixed_init_state=fixed_init_state,
             **kwargs
         )
 
@@ -297,7 +282,6 @@ class BoxLiftingVelDSSim(BoxLiftingSim, Serializable):
                  mps_left: [Sequence[dict], None],
                  mps_right: [Sequence[dict], None],
                  continuous_rew_fcn: bool = True,
-                 fixed_init_state: bool = False,
                  **kwargs):
         """
         Constructor
@@ -306,8 +290,8 @@ class BoxLiftingVelDSSim(BoxLiftingSim, Serializable):
         :param mps_left: left arm's movement primitives holding the dynamical systems and the goal states
         :param mps_right: right arm's movement primitives holding the dynamical systems and the goal states
         :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used
-        :param fixed_init_state: use an init state space with only one state (e.g. for debugging)
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
+                       fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
                        checkJointLimits: bool = False,
                        collisionAvoidanceIK: bool = True,
@@ -369,7 +353,6 @@ class BoxLiftingVelDSSim(BoxLiftingSim, Serializable):
             position_mps=False,
             mps_left=mps_left,
             mps_right=mps_right,
-            fixed_init_state=fixed_init_state,
             **kwargs
         )
 
@@ -394,6 +377,7 @@ class BoxLiftingSimpleSim(RcsSim, Serializable):
         :param position_mps: `True` if the MPs are defined on position level, `False` if defined on velocity level
         :param mps_left: left arm's movement primitives holding the dynamical systems and the goal states
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
+                       fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
                        checkJointLimits: bool = False,
                        collisionAvoidanceIK: bool = True,
@@ -474,6 +458,7 @@ class BoxLiftingSimplePosDSSim(BoxLiftingSimpleSim, Serializable):
         :param mps_left: left arm's movement primitives holding the dynamical systems and the goal states
         :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
+                       fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
                        checkJointLimits: bool = False,
                        collisionAvoidanceIK: bool = True,
@@ -530,6 +515,7 @@ class BoxLiftingSimpleVelDSSim(BoxLiftingSimpleSim, Serializable):
         :param mps_left: left arm's movement primitives holding the dynamical systems and the goal states
         :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
+                       fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
                        checkJointLimits: bool = False,
                        collisionAvoidanceIK: bool = True,

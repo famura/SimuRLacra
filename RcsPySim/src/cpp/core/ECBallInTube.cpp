@@ -508,7 +508,7 @@ protected:
 public:
     virtual InitStateSetter* createInitStateSetter()
     {
-        return new ISSBallInTube(graph);
+        return new ISSBallInTube(graph, properties->getPropertyBool("fixedInitState", false));
     }
     
     virtual ForceDisturber* createForceDisturber()

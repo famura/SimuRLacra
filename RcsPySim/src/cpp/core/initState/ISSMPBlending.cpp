@@ -56,10 +56,10 @@ unsigned int ISSMPBlending::getDim() const
 void ISSMPBlending::getMinMax(double* min, double* max) const
 {
     // Cartesian positions [m]
-    min[0] = -1.;
-    max[0] = +1.;
-    min[1] = -1.;
-    max[1] = +1.;
+    min[0] = -0.;
+    max[0] = +0.;
+    min[1] = -0.;
+    max[1] = +0.;
 }
 
 std::vector<std::string> ISSMPBlending::getNames() const

@@ -49,7 +49,7 @@ public:
      * The passed graph must contain the bodies ImetronPlatform, RailBot, lbr_link_2_L, lbr_link_4_L.
      * @param graph graph to set the state on
      */
-    ISSBoxShelving(RcsGraph* graph);
+    ISSBoxShelving(RcsGraph* graph, bool fixedInitState);
     
     virtual ~ISSBoxShelving();
     
@@ -62,6 +62,7 @@ public:
     void applyInitialState(const MatNd* initialState) override;
 
 private:
+    bool fixedInitState;
     RcsBody* platform;
     RcsBody* rail;
     RcsBody* link2L;

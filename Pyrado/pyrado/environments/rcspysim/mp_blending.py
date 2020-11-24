@@ -84,10 +84,6 @@ class MPBlendingSim(RcsSim, Serializable):
             **kwargs
         )
 
-        # Store environment specific vars
-        center_init_state = np.array([0., 0.])  # [m]
-        self._init_space = SingularStateSpace(center_init_state, labels=['x', 'y'])
-
     def _create_task(self, task_args: dict) -> GoallessTask:
         # Dummy task
         return GoallessTask(self.spec, ZeroPerStepRewFcn())

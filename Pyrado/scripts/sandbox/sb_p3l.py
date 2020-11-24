@@ -47,7 +47,7 @@ from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt
 
 
-rcsenv.setLogLevel(0)
+rcsenv.setLogLevel(4)
 
 
 def create_joint_control_setup(dt, max_steps, max_dist_force, physics_engine):
@@ -63,8 +63,8 @@ def create_joint_control_setup(dt, max_steps, max_dist_force, physics_engine):
 
     # Set up policy
     def policy_fcn(t: float):
-        return [0.1, 0.1,  # same as init config
-                0.1 + 45./180.*math.pi*math.sin(2.*math.pi*0.2*t)]  # oscillation in last link
+        return [10/180*math.pi, 10/180*math.pi,  # same as init config
+                10/180*math.pi + 45./180.*math.pi*math.sin(2.*math.pi*0.2*t)]  # oscillation in last link
 
     policy = TimePolicy(env.spec, policy_fcn, dt)
 
@@ -222,7 +222,7 @@ def create_adn_setup(dt, max_steps, max_dist_force, physics_engine, normalize_ob
 
 if __name__ == '__main__':
     # Choose setup
-    setup_type = 'adn'  # joint, ik_activation, activation, manual, adn
+    setup_type = 'joint'  # joint, ik_activation, activation, manual, adn
     common_hparam = dict(
         dt=0.01,
         max_steps=1800,

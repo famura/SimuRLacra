@@ -61,7 +61,6 @@ public:
     void applyInitialState(const MatNd* initialState) override;
 
 private:
-    // The the link bodies
     RcsBody* link1;
     RcsBody* link2;
     RcsBody* link3;

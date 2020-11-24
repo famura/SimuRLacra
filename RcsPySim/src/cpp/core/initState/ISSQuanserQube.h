@@ -45,15 +45,15 @@ public:
     
     unsigned int getDim() const override;
     
+    virtual std::vector<std::string> getNames() const;
+    
     void getMinMax(double* min, double* max) const override;
     
     void applyInitialState(const MatNd* initialState) override;
 
 private:
-    // Body for the actuated pole
-    RcsBody* arm;
-    // Body for the pendulum pole
-    RcsBody* pendulum;
+    RcsBody* arm; // actuated pole
+    RcsBody* pendulum; // swinging pole
 };
 
 } /* namespace Rcs */

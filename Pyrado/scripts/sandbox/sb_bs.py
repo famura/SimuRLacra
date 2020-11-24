@@ -39,7 +39,7 @@ from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt
 
 
-rcsenv.setLogLevel(0)
+rcsenv.setLogLevel(4)
 
 
 def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
@@ -52,6 +52,7 @@ def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, ch
         mps_left=None,  # use defaults
         mps_right=None,  # use defaults
         ref_frame=ref_frame,
+        fixedInitState=False,
         collisionConfig={'file': 'collisionModel.xml'},
         checkJointLimits=checkJointLimits,
     )
@@ -74,10 +75,10 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         graphFileName=graphFileName,
         dt=dt,
         max_steps=max_steps,
-        fixed_init_state=True,
         mps_left=None,  # use defaults
         mps_right=None,  # use defaults
         ref_frame=ref_frame,
+        fixedInitState=True,
         collisionConfig={'file': 'collisionModel.xml'},
         checkJointLimits=checkJointLimits,
         collisionAvoidanceIK=True,
@@ -160,11 +161,11 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         graphFileName=graphFileName,
         dt=dt,
         max_steps=max_steps,
-        fixed_init_state=True,
         mps_left=None,  # use defaults
         mps_right=None,  # use defaults
         ref_frame=ref_frame,
         bidirectional_mps=bidirectional_mps,
+        fixedInitState=True,
         collisionConfig={'file': 'collisionModel.xml'},
         checkJointLimits=checkJointLimits,
         observeVelocities=True,
@@ -186,7 +187,7 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
 
 if __name__ == '__main__':
     # Choose setup
-    setup_type = 'vel'  # idle, pos, or vel
+    setup_type = 'pos'  # idle, pos, or vel
     bidirectional_mps = False  # only for velocity-level MPs
     physicsEngine = 'Bullet'  # Bullet or Vortex
     graphFileName = 'gBoxShelving_posCtrl.xml'  # gBoxShelving_trqCtrl or gBoxShelving_posCtrl

@@ -36,7 +36,6 @@ from pyrado.environments.rcspysim.base import RcsSim
 from pyrado.tasks.base import Task
 from pyrado.tasks.reward_functions import ScaledExpQuadrErrRewFcn
 from pyrado.tasks.desired_state import DesStateTask
-from pyrado.spaces.polar import Polar2DPosSpace
 
 
 rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)
@@ -76,12 +75,8 @@ class BallOnPlateSim(RcsSim, Serializable):
                         physicsConfigFile='pBallOnPlate.xml',
                         **kwargs)
 
-        # Store BallOnPlateSim specific vars
+        # Initial ball velocity
         self._init_ball_vel = init_ball_vel
-        l_plate = 0.5  # [m], see the config XML-file
-        min_init_state = np.array([0.7*l_plate/2, -np.pi])
-        max_init_state = np.array([0.8*l_plate/2, np.pi])
-        self._init_space = Polar2DPosSpace(min_init_state, max_init_state, labels=['r', 'phi'])
 
         # Setup disturbance
         self._max_dist_force = max_dist_force

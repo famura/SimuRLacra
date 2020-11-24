@@ -32,7 +32,6 @@ from init_args_serializer import Serializable
 
 import rcsenv
 from pyrado.environments.rcspysim.base import RcsSim
-from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
 from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn
@@ -78,11 +77,6 @@ class QQubeRcsSim(RcsSim, Serializable):
             actionModelType='joint_acc',
             **kwargs
         )
-
-        # Store QQubeRcsSim specific vars
-        max_init_state = np.array([5., 3., 0.5, 0.5])/180*np.pi  # [rad, rad, rad/s, rad/s]
-        self._init_space = BoxSpace(-max_init_state, max_init_state,
-                                    labels=['theta', 'alpha', 'theta_dot', 'alpha_dot'])
 
         # Setup disturbance
         self._max_dist_force = max_dist_force

@@ -34,7 +34,6 @@ from typing import Sequence, Callable
 
 import rcsenv
 from pyrado.environments.rcspysim.base import RcsSim
-from pyrado.spaces.singular import SingularStateSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.masked import MaskedTask
 from pyrado.tasks.parallel import ParallelTasks
@@ -113,10 +112,6 @@ class PlanarInsertSim(RcsSim, Serializable):
             }
         else:
             collision_config = kwargs.get('collisionConfig')
-
-        # Initial state space definition
-        init_state = np.array([-40, 30, 30, 30, -30])/180*np.pi  # [rad, rad, rad]
-        self._init_space = SingularStateSpace(init_state, labels=['q_1', 'q_2', 'q_3', 'q_4', 'q_5'])
 
         # Setup disturbance
         self._max_dist_force = max_dist_force

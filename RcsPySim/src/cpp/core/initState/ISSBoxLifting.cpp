@@ -36,7 +36,8 @@
 namespace Rcs
 {
 
-ISSBoxLifting::ISSBoxLifting(RcsGraph* graph) : InitStateSetter(graph)
+ISSBoxLifting::ISSBoxLifting(RcsGraph* graph, bool fixedInitState) : InitStateSetter(graph),
+                                                                     fixedInitState(fixedInitState)
 {
     // Grab direct references to the used bodies
     platform = RcsGraph_getBodyByName(graph, "ImetronPlatform");
@@ -61,17 +62,17 @@ unsigned int ISSBoxLifting::getDim() const
 
 void ISSBoxLifting::getMinMax(double* min, double* max) const
 {
-    min[0] = 0.05;  // base_x
+    min[0] = 0.05;  // base_x [m]
     max[0] = 0.25;
-    min[1] = -0.05;  // base_y
+    min[1] = -0.05;  // base_y [m]
     max[1] = 0.05;
-    min[2] = RCS_DEG2RAD(-5.);  // base_theta
+    min[2] = RCS_DEG2RAD(-5.);  // base_theta [rad]
     max[2] = RCS_DEG2RAD(5.);
-    min[3] = 0.8; // rail_z
+    min[3] = 0.8; // rail_z [m]
     max[3] = 0.9;
-    min[4] = RCS_DEG2RAD(60.); // joint_2_L
+    min[4] = RCS_DEG2RAD(60.); // joint_2_L [rad]
     max[4] = RCS_DEG2RAD(70.);
-    min[5] = RCS_DEG2RAD(-70.); // joint_2_R
+    min[5] = RCS_DEG2RAD(-70.); // joint_2_R [rad]
     max[5] = RCS_DEG2RAD(-60.);
 }
 
@@ -82,13 +83,26 @@ std::vector<std::string> ISSBoxLifting::getNames() const
 
 void ISSBoxLifting::applyInitialState(const MatNd* initialState)
 {
+    bool b0, b1, b2, b3, b4, b5;
+    
     // Set the position to the box' rigid body joints directly in global world coordinates
-    bool b0 = RcsGraph_setJoint(graph, "DofBaseX", initialState->ele[0]);
-    bool b1 = RcsGraph_setJoint(graph, "DofBaseY", initialState->ele[1]);
-    bool b2 = RcsGraph_setJoint(graph, "DofBaseThZ", initialState->ele[2]);
-    bool b3 = RcsGraph_setJoint(graph, "DofChestZ", initialState->ele[3]);
-    bool b4 = RcsGraph_setJoint(graph, "lbr_joint_2_L", initialState->ele[4]);
-    bool b5 = RcsGraph_setJoint(graph, "lbr_joint_2_R", initialState->ele[5]);
+    if (fixedInitState) {
+        b0 = RcsGraph_setJoint(graph, "DofBaseX", initialState->ele[0]);
+        b1 = RcsGraph_setJoint(graph, "DofBaseY", initialState->ele[1]);
+        b2 = RcsGraph_setJoint(graph, "DofBaseThZ", initialState->ele[2]);
+        b3 = RcsGraph_setJoint(graph, "DofChestZ", initialState->ele[3]);
+        b4 = RcsGraph_setJoint(graph, "lbr_joint_2_L", initialState->ele[4]);
+        b5 = RcsGraph_setJoint(graph, "lbr_joint_2_R", initialState->ele[5]);
+    }
+    else {
+        b0 = RcsGraph_setJoint(graph, "DofBaseX", 0.2);
+        b1 = RcsGraph_setJoint(graph, "DofBaseY", 0.);
+        b2 = RcsGraph_setJoint(graph, "DofBaseThZ", 0.);
+        b3 = RcsGraph_setJoint(graph, "DofChestZ", 0.85);
+        b4 = RcsGraph_setJoint(graph, "lbr_joint_2_L", RCS_DEG2RAD(65.));
+        b5 = RcsGraph_setJoint(graph, "lbr_joint_2_R", RCS_DEG2RAD(-65.));
+    }
+    
     if (!(b0 && b1 && b2 && b3 && b4 && b5)) {
         throw std::invalid_argument("Setting graph failed for at least one of the joints!");
     }

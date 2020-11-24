@@ -55,23 +55,21 @@ unsigned int ISSQuanserQube::getDim() const
     return 4;
 }
 
+std::vector<std::string> ISSQuanserQube::getNames() const
+{
+    return {"theta", "alpha", "theta_dot", "alpha_dot"};
+}
+
 void ISSQuanserQube::getMinMax(double* min, double* max) const
 {
-    // Arm angle in rad (must be the same as in QQubeRcsSim Python environment)
-    min[0] = -5./180*M_PI;
-    max[0] = +5./180*M_PI;
-    
-    // Pendulum angle in rad (must be the same as in QQubeRcsSim Python environment)
-    min[1] = -3./180*M_PI;
-    max[1] = +3./180*M_PI;
-    
-    // Arm velocity in rad/s (must be the same as in QQubeRcsSim Python environment)
-    min[2] = -0.5/180*M_PI;
-    max[2] = +0.5/180*M_PI;
-    
-    // Pendulum velocity in rad/s (must be the same as in QQubeRcsSim Python environment)
-    min[3] = -0.5/180*M_PI;
-    max[3] = +0.5/180*M_PI;
+    min[0] = -RCS_DEG2RAD(5.);  // arm angle [rad]
+    max[0] = +RCS_DEG2RAD(5.);
+    min[1] = -RCS_DEG2RAD(3.); // pendulum angle [rad]
+    max[1] = +RCS_DEG2RAD(3.);
+    min[2] = -RCS_DEG2RAD(0.5); // arm velocity in [rad/s]
+    max[2] = +RCS_DEG2RAD(0.5);
+    min[3] = -RCS_DEG2RAD(0.5);  // pendulum velocity [rad/s]
+    max[3] = +RCS_DEG2RAD(0.5);
 }
 
 void ISSQuanserQube::applyInitialState(const MatNd* initialState)

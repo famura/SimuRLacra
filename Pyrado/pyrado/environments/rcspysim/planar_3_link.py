@@ -34,7 +34,6 @@ from typing import Sequence
 
 import rcsenv
 from pyrado.environments.rcspysim.base import RcsSim
-from pyrado.spaces.singular import SingularStateSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.masked import MaskedTask
 from pyrado.tasks.predefined import create_check_all_boundaries_task, create_task_space_discrepancy_task
@@ -64,6 +63,7 @@ class Planar3LinkSim(RcsSim, Serializable):
         :param task_args: arguments for the task construction
         :param max_dist_force: maximum disturbance force, pass `None` for no disturbance
         :param kwargs: keyword arguments forwarded to `RcsSim`
+                       fixedInitState: bool = True,
                        collisionConfig: specification of the Rcs CollisionModel
         """
         Serializable._init(self, locals())
@@ -85,15 +85,11 @@ class Planar3LinkSim(RcsSim, Serializable):
             self,
             task_args=task_args,
             envType='Planar3Link',
-            graphFileName='gPlanar3Link_trqCtrl.xml',
+            graphFileName=kwargs.pop('graphFileName', 'gPlanar3Link_trqCtrl.xml'),  # by default torque control
             positionTasks=kwargs.pop('positionTasks', None),  # invalid default value, positionTasks can be unnecessary
             collisionConfig=collision_config,
             **kwargs
         )
-
-        # Initial state space definition
-        upright_init_state = np.array([0.1, 0.1, 0.1])  # [rad, rad, rad]
-        self._init_space = SingularStateSpace(upright_init_state, labels=['q_1', 'q_2', 'q_3'])
 
         # Setup disturbance
         self._max_dist_force = max_dist_force
@@ -108,8 +104,11 @@ class Planar3LinkSim(RcsSim, Serializable):
 
     @classmethod
     def get_nominal_domain_param(cls):
-        # Needs to be implemented by subclasses
-        raise NotImplementedError
+        return dict(
+            link1_mass=2.,
+            link2_mass=2.,
+            link3_mass=2.,
+        )
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the indices for selection. This needs to match the observations' names in RcsPySim.
@@ -205,6 +204,7 @@ class Planar3LinkJointCtrlSim(Planar3LinkSim, Serializable):
         super().__init__(
             task_args=dict() if task_args is None else task_args,
             actionModelType='joint_pos',
+            graphFileName='gPlanar3Link_posCtrl.xml',
             **kwargs
         )
 

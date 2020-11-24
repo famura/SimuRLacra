@@ -34,8 +34,6 @@ from typing import Sequence
 
 import rcsenv
 from pyrado.environments.rcspysim.base import RcsSim
-from pyrado.spaces.box import BoxSpace
-from pyrado.spaces.singular import SingularStateSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import DesStateTask
 from pyrado.tasks.masked import MaskedTask
@@ -84,7 +82,6 @@ class BoxShelvingSim(RcsSim, Serializable):
                  ref_frame: str,
                  position_mps: bool,
                  mps_left: [Sequence[dict], None],
-                 fixed_init_state: bool = False,
                  **kwargs):
         """
         Constructor
@@ -96,8 +93,8 @@ class BoxShelvingSim(RcsSim, Serializable):
         :param ref_frame: reference frame for the MPs, e.g. 'world', 'box', or 'upperGoal'
         :param mps_left: left arm's movement primitives holding the dynamical systems and the goal states
         :param position_mps: `True` if the MPs are defined on position level, `False` if defined on velocity level
-        :param fixed_init_state: use an init state space with only one state (e.g. for debugging)
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
+                       fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
                        checkJointLimits: bool = False,
                        collisionAvoidanceIK: bool = True,
@@ -125,26 +122,15 @@ class BoxShelvingSim(RcsSim, Serializable):
             **kwargs
         )
 
-        # Initial state space definition
-        if fixed_init_state:
-            dafault_init_state = np.array([0., 0., 0., 0.8, 30.*np.pi/180, 90.*np.pi/180])  # [m, m, rad, m, rad, rad]
-            self._init_space = SingularStateSpace(dafault_init_state,
-                                                  labels=['x', 'y', 'theta', 'z', 'q_2', 'q_4'])
-        else:
-            min_init_state = np.array([-0.02, -0.02, -3.*np.pi/180., 0.78, 27.*np.pi/180, 77.*np.pi/180])
-            max_init_state = np.array([0.02, 0.02, 3.*np.pi/180., 0.82, 33.*np.pi/180, 83.*np.pi/180])
-            self._init_space = BoxSpace(min_init_state, max_init_state,  # [m, m, rad, m, rad, rad]
-                                        labels=['x', 'y', 'theta', 'z', 'q_2', 'q_4'])
-
     def _create_task(self, task_args: dict) -> Task:
         # Create the tasks
         continuous_rew_fcn = task_args.get('continuous_rew_fcn', True)
         task_box = create_box_upper_shelve_task(self.spec, continuous_rew_fcn, succ_thold=5e-2)
         task_check_bounds = create_check_all_boundaries_task(self.spec, penalty=1e3)
         task_collision = create_collision_task(self.spec, factor=1.)
-        task_ts_discrepancy = create_task_space_discrepancy_task(self.spec,
-                                                                 AbsErrRewFcn(q=0.5*np.ones(3),
-                                                                              r=np.zeros(self.act_space.shape)))
+        task_ts_discrepancy = create_task_space_discrepancy_task(
+            self.spec, AbsErrRewFcn(q=0.5*np.ones(3), r=np.zeros(self.act_space.shape))
+        )
 
         return ParallelTasks([
             task_box,
@@ -171,7 +157,6 @@ class BoxShelvingPosDSSim(BoxShelvingSim, Serializable):
                  ref_frame: str,
                  mps_left: [Sequence[dict], None] = None,
                  continuous_rew_fcn: bool = True,
-                 fixed_init_state: bool = False,
                  **kwargs):
         """
         Constructor
@@ -179,8 +164,8 @@ class BoxShelvingPosDSSim(BoxShelvingSim, Serializable):
         :param ref_frame: reference frame for the MPs, e.g. 'world', 'box', or 'upperGoal'
         :param mps_left: left arm's movement primitives holding the dynamical systems and the goal states
         :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used
-        :param fixed_init_state: use an init state space with only one state (e.g. for debugging)
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
+                       fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
                        checkJointLimits: bool = False,
                        collisionAvoidanceIK: bool = True,
@@ -252,7 +237,6 @@ class BoxShelvingVelDSSim(BoxShelvingSim, Serializable):
                  bidirectional_mps: bool,
                  mps_left: [Sequence[dict], None] = None,
                  continuous_rew_fcn: bool = True,
-                 fixed_init_state: bool = False,
                  **kwargs):
         """
         Constructor
@@ -263,8 +247,8 @@ class BoxShelvingVelDSSim(BoxShelvingSim, Serializable):
                                   If `false` then the behavior is the same as for position-level MPs.
         :param mps_left: left arm's movement primitives holding the dynamical systems and the goal states
         :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used
-        :param fixed_init_state: use an init state space with only one state (e.g. for debugging)
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
+                       fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
                        checkJointLimits: bool = False,
                        collisionAvoidanceIK: bool = True,

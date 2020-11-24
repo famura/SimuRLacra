@@ -36,6 +36,7 @@
                      joint_lock_stiffness="100000.0"
                      joint_lock_damping="5000000.0"/>
 
+  <bullet_parameters />
 
   <!-- Definition of available materials (in addition to "default") -->
   <!-- ==================================================================== -->

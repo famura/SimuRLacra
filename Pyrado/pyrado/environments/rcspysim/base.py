@@ -133,12 +133,7 @@ class RcsSim(SimEnv, Serializable):
 
     @property
     def init_space(self) -> Space:
-        return self._init_space
-
-    @init_space.setter
-    def init_space(self, space: Space):
-        assert to_pyrado_space(self._sim.initStateSpace).shape == space.shape
-        self._init_space = space
+        return to_pyrado_space(self._sim.initStateSpace)
 
     @property
     def act_space(self) -> Space:

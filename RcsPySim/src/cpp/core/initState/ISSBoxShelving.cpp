@@ -36,7 +36,8 @@
 namespace Rcs
 {
 
-ISSBoxShelving::ISSBoxShelving(RcsGraph* graph) : InitStateSetter(graph)
+ISSBoxShelving::ISSBoxShelving(RcsGraph* graph, bool fixedInitState) : InitStateSetter(graph),
+                                                                       fixedInitState(fixedInitState)
 {
     // Grab direct references to the used bodies
     platform = RcsGraph_getBodyByName(graph, "ImetronPlatform");
@@ -82,18 +83,31 @@ std::vector<std::string> ISSBoxShelving::getNames() const
 
 void ISSBoxShelving::applyInitialState(const MatNd* initialState)
 {
+    bool b0, b1, b2, b3, b4, b5;
+    
     // Set the position to the box' rigid body joints directly in global world coordinates
-    bool b0 = RcsGraph_setJoint(graph, "DofBaseX", initialState->ele[0]);
-    bool b1 = RcsGraph_setJoint(graph, "DofBaseY", initialState->ele[1]);
-    bool b2 = RcsGraph_setJoint(graph, "DofBaseThZ", initialState->ele[2]);
-    bool b3 = RcsGraph_setJoint(graph, "DofChestZ", initialState->ele[3]);
-    bool b4 = RcsGraph_setJoint(graph, "lbr_joint_2_L", initialState->ele[4]);
-    bool b5 = RcsGraph_setJoint(graph, "lbr_joint_4_L", initialState->ele[5]);
+    if (fixedInitState) {
+        b0 = RcsGraph_setJoint(graph, "DofBaseX", 0.);
+        b1 = RcsGraph_setJoint(graph, "DofBaseY", 0.);
+        b2 = RcsGraph_setJoint(graph, "DofBaseThZ", 0.);
+        b3 = RcsGraph_setJoint(graph, "DofChestZ", 0.8);
+        b4 = RcsGraph_setJoint(graph, "lbr_joint_2_L", RCS_DEG2RAD(30));
+        b5 = RcsGraph_setJoint(graph, "lbr_joint_4_L", RCS_DEG2RAD(90));
+    }
+    else {
+        b0 = RcsGraph_setJoint(graph, "DofBaseX", initialState->ele[0]);
+        b1 = RcsGraph_setJoint(graph, "DofBaseY", initialState->ele[1]);
+        b2 = RcsGraph_setJoint(graph, "DofBaseThZ", initialState->ele[2]);
+        b3 = RcsGraph_setJoint(graph, "DofChestZ", initialState->ele[3]);
+        b4 = RcsGraph_setJoint(graph, "lbr_joint_2_L", initialState->ele[4]);
+        b5 = RcsGraph_setJoint(graph, "lbr_joint_4_L", initialState->ele[5]);
+    }
+    
     if (!(b0 && b1 && b2 && b3 && b4 && b5)) {
         throw std::invalid_argument("Setting graph failed for at least one of the joints!");
     }
-    // Update the forward kinematics
     
+    // Update the forward kinematics
     RcsGraph_setState(graph, graph->q, graph->q_dot);
 }
 

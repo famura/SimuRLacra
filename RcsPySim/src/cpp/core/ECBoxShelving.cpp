@@ -314,7 +314,7 @@ protected:
 public:
     virtual InitStateSetter* createInitStateSetter()
     {
-        return new ISSBoxShelving(graph);
+        return new ISSBoxShelving(graph, properties->getPropertyBool("fixedInitState", false));
     }
     
     virtual ForceDisturber* createForceDisturber()

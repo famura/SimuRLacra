@@ -77,10 +77,10 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         graphFileName=graphFileName,
         dt=dt,
         max_steps=max_steps,
-        fixed_init_state=True,
         mps_left=None,  # use defaults
         mps_right=None,  # use defaults
         ref_frame=ref_frame,
+        fixedInitState=True,
         collisionConfig={'file': 'collisionModel.xml'},
         taskCombinationMethod='sum',
         checkJointLimits=checkJointLimits,
@@ -120,10 +120,10 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         graphFileName=graphFileName,
         dt=dt,
         max_steps=max_steps,
-        fixed_init_state=True,
         mps_left=None,  # use defaults
         mps_right=None,  # use defaults
         ref_frame=ref_frame,
+        fixedInitState=True,
         collisionConfig={'file': 'collisionModel.xml'},
         taskCombinationMethod='sum',
         checkJointLimits=checkJointLimits,
@@ -147,7 +147,7 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
 
 if __name__ == '__main__':
     # Choose setup
-    setup_type = 'idle'  # idle, pos, vel
+    setup_type = 'vel'  # idle, pos, vel
     common_hparam = dict(
         physicsEngine='Bullet',  # Bullet or Vortex
         graphFileName='gBoxLifting_posCtrl.xml',  # gBoxLifting_trqCtrl or gBoxLifting_posCtrl

@@ -50,7 +50,7 @@ AMJointControlPosition::AMJointControlPosition(RcsGraph* graph) : AMJointControl
                     // Check if the joints actually use position control inside the simulation
                     if (JNT->ctrlType != RCSJOINT_CTRL_POSITION) {
                         std::cout
-                            << "Using AMJointControlPosition, but at least one joint does not have the control type"
+                            << "Using AMJointControlPosition, but at least one joint does not have the control type "
                                "RCSJOINT_CTRL_POSITION!" << std::endl;
                     }
                 }

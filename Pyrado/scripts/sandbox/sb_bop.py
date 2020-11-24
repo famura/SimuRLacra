@@ -30,6 +30,7 @@
 Script to test the functionality of Rcs & RcsPySim & Pyrado using a robotic ball-on-plate setup
 """
 import math
+import numpy as np
 from matplotlib import pyplot as plt
 
 import rcsenv
@@ -59,11 +60,11 @@ def create_setup(physics_engine, dt, max_steps, max_dist_force):
     # Set up policy
     def policy_fcn(t: float):
         return [
-            0.0,  # x_ddot_plate
-            0.5*math.sin(2.*math.pi*5*t),  # y_ddot_plate
-            5.*math.cos(2.*math.pi/5.*t),  # z_ddot_plate
-            0.0,  # alpha_ddot_plate
-            0.0,  # beta_ddot_plate
+            0.,  # x_ddot_plate
+            10.*math.cos(2.*math.pi*5*t),  # y_ddot_plate
+            0.5*math.cos(2.*math.pi/5.*t),  # z_ddot_plate
+            0.,  # alpha_ddot_plate
+            0.,  # beta_ddot_plate
         ]
 
     policy = TimePolicy(env.spec, policy_fcn, dt)
@@ -83,7 +84,8 @@ if __name__ == '__main__':
             env, policy = create_setup(pe, dt=0.01, max_steps=1000, max_dist_force=0.)
 
             # Simulate
-            ro = rollout(env, policy, render_mode=RenderMode(video=True), seed=0)
+            ro = rollout(env, policy, render_mode=RenderMode(video=True), seed=0,
+                         reset_kwargs=dict(init_state=np.array([0.18, 20/180.*np.pi])))
 
             # Render plots
             axs[0].plot(ro.observations[:, 0], label=pe)

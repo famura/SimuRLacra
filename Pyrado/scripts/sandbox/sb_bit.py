@@ -53,6 +53,7 @@ def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, ch
         mps_left=None,  # use defaults
         mps_right=None,  # use defaults
         ref_frame=ref_frame,
+        fixedInitState=False,
         checkJointLimits=checkJointLimits,
     )
     env.reset(domain_param=env.get_nominal_domain_param())
@@ -79,8 +80,8 @@ def create_ik_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, chec
         graphFileName=graphFileName,
         dt=dt,
         max_steps=max_steps,
-        fixed_init_state=True,
         ref_frame=ref_frame,
+        fixedInitState=True,
         checkJointLimits=checkJointLimits,
         collisionAvoidanceIK=True,
         observeVelocity=False,
@@ -125,8 +126,8 @@ def create_ik_activation_setup(physicsEngine, graphFileName, dt, max_steps, ref_
         graphFileName=graphFileName,
         dt=dt,
         max_steps=max_steps,
-        fixed_init_state=True,
         ref_frame=ref_frame,
+        fixedInitState=True,
         taskCombinationMethod='sum',
         checkJointLimits=checkJointLimits,
         collisionAvoidanceIK=True,
@@ -156,10 +157,10 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         graphFileName=graphFileName,
         dt=dt,
         max_steps=max_steps,
-        fixed_init_state=True,
         mps_left=None,  # use defaults
         mps_right=None,  # use defaults
         ref_frame=ref_frame,
+        fixedInitState=True,
         taskCombinationMethod='sum',
         checkJointLimits=checkJointLimits,
         collisionAvoidanceIK=False,
@@ -191,10 +192,10 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         graphFileName=graphFileName,
         dt=dt,
         max_steps=max_steps,
-        fixed_init_state=True,
         mps_left=None,  # use defaults
         mps_right=None,  # use defaults
         ref_frame=ref_frame,
+        fixedInitState=True,
         taskCombinationMethod='sum',
         checkJointLimits=checkJointLimits,
         collisionAvoidanceIK=False,
@@ -217,7 +218,7 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
 
 if __name__ == '__main__':
     # Choose setup
-    setup_type = 'ds_activation_vel'  # idle, ik, ik_activation, ds_activation_pos, ds_activation_vel
+    setup_type = 'idle'  # idle, ik, ik_activation, ds_activation_pos, ds_activation_vel
     common_hparam = dict(
         physicsEngine='Bullet',  # Bullet or Vortex
         graphFileName='gBallInTube_trqCtrl.xml',  # gBallInTube_trqCtrl

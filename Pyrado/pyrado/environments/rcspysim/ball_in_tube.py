@@ -33,8 +33,6 @@ from typing import Sequence
 
 import rcsenv
 from pyrado.environments.rcspysim.base import RcsSim
-from pyrado.spaces.box import BoxSpace
-from pyrado.spaces.singular import SingularStateSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import DesStateTask
 from pyrado.tasks.masked import MaskedTask
@@ -46,6 +44,7 @@ from pyrado.utils.data_types import EnvSpec
 
 
 rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)
+rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, 'BallInTube'))
 
 
 def create_extract_ball_task(env_spec: EnvSpec, task_args: dict, des_state: np.ndarray):
@@ -96,7 +95,6 @@ class BallInTubeSim(RcsSim, Serializable):
     def __init__(self,
                  task_args: dict,
                  ref_frame: str,
-                 fixed_init_state: bool = True,
                  **kwargs):
         """
         Constructor
@@ -106,8 +104,8 @@ class BallInTubeSim(RcsSim, Serializable):
 
         :param task_args: arguments for the task construction
         :param ref_frame: reference frame for the MPs, e.g. 'world', or 'table'
-        :param fixed_init_state: use an init state space with only one state (e.g. for debugging)
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
+                       fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
                        checkJointLimits: bool = False,
                        collisionAvoidanceIK: bool = True,
@@ -145,17 +143,6 @@ class BallInTubeSim(RcsSim, Serializable):
             **kwargs
         )
 
-        # Initial state space definition
-        if fixed_init_state:
-            dafault_init_state = np.array([-0.2, 0., 0., 0.85])  # [m, m, rad, m]
-            self._init_space = SingularStateSpace(dafault_init_state,
-                                                  labels=['x', 'y', 'theta', 'z'])
-        else:
-            min_init_state = np.array([-0.8, -0.05, -5*np.pi/180, 0.8])
-            max_init_state = np.array([+0.2, +0.05, +5*np.pi/180, 0.9])
-            self._init_space = BoxSpace(min_init_state, max_init_state,  # [m, m, rad, m]
-                                        labels=['x', 'y', 'theta', 'z'])
-
     def _create_task(self, task_args: dict) -> Task:
         # Create the tasks
         des_state1 = self.get_body_position('Goal', '', '')[:2]  # x and y coordinates in world frame
@@ -192,15 +179,14 @@ class BallInTubeIKSim(BallInTubeSim, Serializable):
     def __init__(self,
                  ref_frame: str,
                  continuous_rew_fcn: bool = True,
-                 fixed_init_state: bool = False,
                  **kwargs):
         """
         Constructor
 
         :param ref_frame: reference frame for the MPs, e.g. 'world', or 'table'
         :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used
-        :param fixed_init_state: use an init state space with only one state (e.g. for debugging)
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
+                       fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
                        checkJointLimits: bool = False,
                        collisionAvoidanceIK: bool = True,
@@ -220,7 +206,6 @@ class BallInTubeIKSim(BallInTubeSim, Serializable):
             task_args=dict(continuous_rew_fcn=continuous_rew_fcn),
             ref_frame=ref_frame,
             actionModelType='ik',
-            fixed_init_state=fixed_init_state,
             positionTasks=False,
             **kwargs
         )
@@ -234,15 +219,14 @@ class BallInTubeIKActivationSim(BallInTubeSim, Serializable):
     def __init__(self,
                  ref_frame: str,
                  continuous_rew_fcn: bool = True,
-                 fixed_init_state: bool = False,
                  **kwargs):
         """
         Constructor
 
         :param ref_frame: reference frame for the MPs, e.g. 'world', or 'table'
         :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used
-        :param fixed_init_state: use an init state space with only one state (e.g. for debugging)
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
+                       fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
                        checkJointLimits: bool = False,
                        collisionAvoidanceIK: bool = True,
@@ -273,7 +257,6 @@ class BallInTubeIKActivationSim(BallInTubeSim, Serializable):
             task_args=dict(continuous_rew_fcn=continuous_rew_fcn),
             ref_frame=ref_frame,
             actionModelType='ik_activation',
-            fixed_init_state=fixed_init_state,
             positionTasks=True,
             taskSpecIK=task_spec_ik,
             **kwargs
@@ -290,7 +273,6 @@ class BallInTubePosDSSim(BallInTubeSim, Serializable):
                  mps_left: [Sequence[dict], None],
                  mps_right: [Sequence[dict], None],
                  continuous_rew_fcn: bool = True,
-                 fixed_init_state: bool = False,
                  **kwargs):
         """
         Constructor
@@ -299,8 +281,8 @@ class BallInTubePosDSSim(BallInTubeSim, Serializable):
         :param mps_left: left arm's movement primitives holding the dynamical systems and the goal states
         :param mps_right: right arm's movement primitives holding the dynamical systems and the goal states
         :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used
-        :param fixed_init_state: use an init state space with only one state (e.g. for debugging)
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
+                       fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
                        checkJointLimits: bool = False,
                        collisionAvoidanceIK: bool = True,
@@ -338,7 +320,6 @@ class BallInTubePosDSSim(BallInTubeSim, Serializable):
         # Forward to the BallInTubeSim's constructor
         super().__init__(
             task_args=dict(continuous_rew_fcn=continuous_rew_fcn),
-            fixed_init_state=fixed_init_state,
             ref_frame=ref_frame,
             actionModelType='ds_activation',
             positionTasks=True,
@@ -358,7 +339,6 @@ class BallInTubeVelDSSim(BallInTubeSim, Serializable):
                  mps_left: [Sequence[dict], None],
                  mps_right: [Sequence[dict], None],
                  continuous_rew_fcn: bool = True,
-                 fixed_init_state: bool = False,
                  **kwargs):
         """
         Constructor
@@ -367,8 +347,8 @@ class BallInTubeVelDSSim(BallInTubeSim, Serializable):
         :param mps_left: left arm's movement primitives holding the dynamical systems and the goal states
         :param mps_right: right arm's movement primitives holding the dynamical systems and the goal states
         :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used
-        :param fixed_init_state: use an init state space with only one state (e.g. for debugging)
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
+                       fixedInitState: bool = False,
                        taskCombinationMethod: str = 'sum',  # or 'mean', 'softmax', 'product'
                        checkJointLimits: bool = False,
                        collisionAvoidanceIK: bool = True,
@@ -419,7 +399,6 @@ class BallInTubeVelDSSim(BallInTubeSim, Serializable):
         # Forward to the BallInTubeSim's constructor
         super().__init__(
             task_args=dict(continuous_rew_fcn=continuous_rew_fcn),
-            fixed_init_state=fixed_init_state,
             ref_frame=ref_frame,
             actionModelType='ds_activation',
             positionTasks=False,

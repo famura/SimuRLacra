@@ -60,12 +60,12 @@ unsigned int ISSPlanar3Link::getDim() const
 void ISSPlanar3Link::getMinMax(double* min, double* max) const
 {
     // Joint angles [rad] (velocity stays on default)
-    min[0] = -90./180*M_PI;
-    max[0] = +90./180*M_PI;
-    min[1] = -160./180*M_PI;
-    max[1] = +160./180*M_PI;
-    min[2] = -160./180*M_PI;
-    max[2] = +160./180*M_PI;
+    min[0] = RCS_DEG2RAD(10.);
+    max[0] = RCS_DEG2RAD(10.);
+    min[1] = RCS_DEG2RAD(10.);
+    max[1] = RCS_DEG2RAD(10.);
+    min[2] = RCS_DEG2RAD(10.);
+    max[2] = RCS_DEG2RAD(10.);
 }
 
 std::vector<std::string> ISSPlanar3Link::getNames() const

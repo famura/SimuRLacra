@@ -63,17 +63,17 @@ unsigned int ISSPlanarInsert::getDim() const
 
 void ISSPlanarInsert::getMinMax(double* min, double* max) const
 {
-    // Joint angles in rad (velocity stays on default)
-    min[0] = -60./180*M_PI; // must enclose the init config coming from Pyrado
-    max[0] = +60./180*M_PI; // must enclose the init config coming from Pyrado
-    min[1] = -60./180*M_PI; // must enclose the init config coming from Pyrado
-    max[1] = +60./180*M_PI; // must enclose the init config coming from Pyrado
-    min[2] = -60./180*M_PI; // must enclose the init config coming from Pyrado
-    max[2] = +60./180*M_PI; // must enclose the init config coming from Pyrado
-    min[3] = -60./180*M_PI; // must enclose the init config coming from Pyrado
-    max[3] = +60./180*M_PI; // must enclose the init config coming from Pyrado
-    min[4] = -60./180*M_PI; // must enclose the init config coming from Pyrado
-    max[4] = +60./180*M_PI; // must enclose the init config coming from Pyrado
+    // Joint angles [rad] (velocity stays on default)
+    min[0] = -RCS_DEG2RAD(40.);
+    max[0] = -RCS_DEG2RAD(40.);
+    min[1] = RCS_DEG2RAD(30.);
+    max[1] = RCS_DEG2RAD(30.);
+    min[2] = RCS_DEG2RAD(30.);
+    max[2] = RCS_DEG2RAD(30.);
+    min[3] = RCS_DEG2RAD(30.);
+    max[3] = RCS_DEG2RAD(30.);
+    min[4] = -RCS_DEG2RAD(30.);
+    max[4] = -RCS_DEG2RAD(30.);
 }
 
 std::vector<std::string> ISSPlanarInsert::getNames() const

@@ -33,6 +33,9 @@
 #include <Rcs_macros.h>
 #include <Rcs_typedef.h>
 
+#include <algorithm>    // std::min
+
+
 namespace Rcs
 {
 
@@ -76,27 +79,27 @@ unsigned int ISSBallOnPlate::getDim() const
 void ISSBallOnPlate::getMinMax(double* min, double* max) const
 {
     // Use a safety margin between the edge of the plate and the ball
-    double safetyMarginWidth = 0.1*plateWidth;
-    double safetyMarginHeigth = 0.1*plateHeight;
+    double smallerExtent = std::min(plateWidth/2, plateHeight/2);
+    double minDist = smallerExtent*0.6;
+    double maxDist = smallerExtent*0.8;
     
     // Set minimum and maximum relative to the plate's center
-    min[0] = -plateWidth/2 + safetyMarginWidth;
-    min[1] = -plateHeight/2 + safetyMarginHeigth;
-    
-    max[0] = plateWidth/2 - safetyMarginWidth;
-    max[1] = plateHeight/2 - safetyMarginHeigth;
+    min[0] = minDist;
+    max[0] = maxDist;
+    min[1] = -M_PI;
+    max[1] = +M_PI;
 }
 
 
 std::vector<std::string> ISSBallOnPlate::getNames() const
 {
-    return {"x", "y"};
+    return {"r", "phi"};
 }
 
 void ISSBallOnPlate::applyInitialState(const MatNd* initialState)
 {
-    double ballX = initialState->ele[0];
-    double ballY = initialState->ele[1];
+    double ballX = std::cos(initialState->ele[1]) * initialState->ele[0];
+    double ballY = std::sin(initialState->ele[1]) * initialState->ele[0];
     
     if (ball->parent == NULL) {
         // The initial position is relative to the plate, so shift it if the ball's rbj are absolute.

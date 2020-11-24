@@ -59,11 +59,11 @@ unsigned int ISSBoxLiftingSimple::getDim() const
 
 void ISSBoxLiftingSimple::getMinMax(double* min, double* max) const
 {
-    min[0] = 1.25;
+    min[0] = 1.25; // [m]
     max[0] = 1.25;
-    min[1] = -0.2;
+    min[1] = -0.2; // [m]
     max[1] = -0.2;
-    min[2] = 0.95;
+    min[2] = 0.95; // [m]
     max[2] = 0.95;
 }
 
