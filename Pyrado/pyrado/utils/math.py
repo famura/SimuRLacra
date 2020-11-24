@@ -237,3 +237,44 @@ def clamp_symm(inp: to.Tensor, up_lo: to.Tensor) -> to.Tensor:
     if not (up_lo > 0).all():
         raise pyrado.ValueErr(given=up_lo, g_constraint='0')
     return to.max(to.min(inp.clone(), up_lo), -up_lo)
+
+
+def diff_coeffs(stencils: Union[list, np.ndarray], order: int, step_size: Union[int, float] = 1
+                ) -> Tuple[np.ndarray, int]:
+    r"""
+    Compute the coefficients for discrete time numerical differentiation. These can later be convolved with the signal.
+
+    .. seealso::
+        https://en.wikipedia.org/wiki/Finite_difference_coefficient
+
+    :param stencils: stencil points $s$, negative means in the past, e.g. [-1, 0, 1] for a central difference or
+                     [-3, -1, 0] for a backward difference without equally space stencil points
+    :param order: order of the derivative $d$, must be lower than the number of stencil points
+    :param step_size: step size $h$
+    :return: coefficients for computing the derivative of order `order` and the $O(h^{N-d})$
+    """
+    stencils = np.asarray(stencils).flatten()
+    num_eqs = len(stencils)  # number of equations for the solver N
+    stencils = np.unique(stencils)  # remove double stencils
+    if len(stencils) != num_eqs:
+        raise pyrado.ValueErr(msg='The array of stencil points must ponly contain unique elements!')
+    if not stencils.ndim == 1:
+        pyrado.ShapeErr(msg=f'The array of stencil points must be one-dimensional, but is {stencils}!')
+
+    if not isinstance(order, int):
+        raise pyrado.TypeErr(given=order, expected_type=int)
+    if not 0 < order < num_eqs:
+        raise pyrado.ValueErr(given=order, g_constraint='0', l_constraint=f'{num_eqs}')
+    if not isinstance(step_size, (int, float)):
+        raise pyrado.TypeErr(given=step_size, expected_type=[int, float])
+    if step_size <= 0:
+        raise pyrado.ValueErr(given=step_size, g_constraint='0')
+
+    A = np.zeros((num_eqs, num_eqs))
+    for idx in range(num_eqs):
+        A[idx, :] = np.power(stencils, idx)
+    b = np.zeros(num_eqs)
+    b[order] = np.math.factorial(order)/step_size**order
+
+    coeffs = np.linalg.solve(A, b)
+    return coeffs, num_eqs - order

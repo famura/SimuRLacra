@@ -38,7 +38,7 @@ from pyrado.sampling.utils import gen_batch_idcs, gen_ordered_batch_idcs, gen_or
 from pyrado.utils.data_types import *
 from pyrado.utils.functions import noisy_nonlin_fcn, skyline
 from pyrado.utils.input_output import completion_context, print_cbt_once
-from pyrado.utils.math import cosine_similarity, cov, rmse, logmeanexp
+from pyrado.utils.math import cosine_similarity, cov, rmse, logmeanexp, diff_coeffs
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.policies.special.dummy import DummyPolicy
 from pyrado.sampling.rollout import rollout
@@ -665,3 +665,22 @@ def test_save_load(obj, file_ext, tmpdir, meta_info, use_state_dict):
     # Check if sth has been loaded with the correct pre- and suffix
     res = pyrado.load(obj, 'tmpname', file_ext, tmpdir, meta_info)
     assert res is not None
+
+
+@pytest.mark.parametrize(
+    's', [
+        [-1, 0, 1],
+        np.array([[-1, 0, 1]]),
+        np.array([-4, -2, -1, 0])
+    ],
+)
+@pytest.mark.parametrize(
+    'd', [1, 2],
+)
+@pytest.mark.parametrize(
+    'h', [1, 1e-4],
+)
+def test_diff_coeffs(s, d, h):
+    coeffs, order = diff_coeffs(s, d, h)
+    assert sum(coeffs) == 0
+    assert order > 0
