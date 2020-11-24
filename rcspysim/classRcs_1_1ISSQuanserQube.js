@@ -5,6 +5,7 @@ var classRcs_1_1ISSQuanserQube =
     [ "applyInitialState", "classRcs_1_1ISSQuanserQube.html#aad73b55e2c97f97f5363b7d9bfde1f04", null ],
     [ "getDim", "classRcs_1_1ISSQuanserQube.html#af3947bda748b07ebf9518c2f93a53263", null ],
     [ "getMinMax", "classRcs_1_1ISSQuanserQube.html#abec86403d9219488d01a474245208e9b", null ],
+    [ "getNames", "classRcs_1_1ISSQuanserQube.html#a066953a4765235d64835e73aee7999a9", null ],
     [ "arm", "classRcs_1_1ISSQuanserQube.html#a5ae1a40a3f2555323ed7d083ab412066", null ],
     [ "pendulum", "classRcs_1_1ISSQuanserQube.html#a7ab36d2e5956a633bd8400fc8e58439b", null ]
 ];

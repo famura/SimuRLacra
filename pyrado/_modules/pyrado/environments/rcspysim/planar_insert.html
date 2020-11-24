@@ -229,7 +229,6 @@
 
 <span class="kn">import</span> <span class="nn">rcsenv</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.base</span> <span class="kn">import</span> <span class="n">RcsSim</span>
-<span class="kn">from</span> <span class="nn">pyrado.spaces.singular</span> <span class="kn">import</span> <span class="n">SingularStateSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.base</span> <span class="kn">import</span> <span class="n">Task</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.masked</span> <span class="kn">import</span> <span class="n">MaskedTask</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.parallel</span> <span class="kn">import</span> <span class="n">ParallelTasks</span>
@@ -308,10 +307,6 @@
             <span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">collision_config</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;collisionConfig&#39;</span><span class="p">)</span>
-
-        <span class="c1"># Initial state space definition</span>
-        <span class="n">init_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">40</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="o">-</span><span class="mi">30</span><span class="p">])</span><span class="o">/</span><span class="mi">180</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>  <span class="c1"># [rad, rad, rad]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_init_space</span> <span class="o">=</span> <span class="n">SingularStateSpace</span><span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;q_1&#39;</span><span class="p">,</span> <span class="s1">&#39;q_2&#39;</span><span class="p">,</span> <span class="s1">&#39;q_3&#39;</span><span class="p">,</span> <span class="s1">&#39;q_4&#39;</span><span class="p">,</span> <span class="s1">&#39;q_5&#39;</span><span class="p">])</span>
 
         <span class="c1"># Setup disturbance</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_dist_force</span> <span class="o">=</span> <span class="n">max_dist_force</span>

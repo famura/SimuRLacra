@@ -127,6 +127,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a6e3b08d452c74f77987ed4e21fe4628a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af3947bda748b07ebf9518c2f93a53263"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ISSQuanserQube.html#af3947bda748b07ebf9518c2f93a53263">getDim</a> () const override</td></tr>
 <tr class="separator:af3947bda748b07ebf9518c2f93a53263"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a066953a4765235d64835e73aee7999a9"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ISSQuanserQube.html#a066953a4765235d64835e73aee7999a9">getNames</a> () const</td></tr>
+<tr class="separator:a066953a4765235d64835e73aee7999a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abec86403d9219488d01a474245208e9b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ISSQuanserQube.html#abec86403d9219488d01a474245208e9b">getMinMax</a> (double *min, double *max) const override</td></tr>
 <tr class="separator:abec86403d9219488d01a474245208e9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad73b55e2c97f97f5363b7d9bfde1f04"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ISSQuanserQube.html#aad73b55e2c97f97f5363b7d9bfde1f04">applyInitialState</a> (const MatNd *initialState) override</td></tr>
@@ -151,8 +153,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a899f8f4202ea83ad5b0e84ff6637c517 inherit pub_methods_classRcs_1_1BoxSpaceProvider"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b8a407ef940594c1818be4ddfbd2a9d inherit pub_methods_classRcs_1_1BoxSpaceProvider"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classRcs_1_1BoxSpace.html">BoxSpace</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1BoxSpaceProvider.html#a8b8a407ef940594c1818be4ddfbd2a9d">getSpace</a> () const</td></tr>
 <tr class="separator:a8b8a407ef940594c1818be4ddfbd2a9d inherit pub_methods_classRcs_1_1BoxSpaceProvider"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aab48346bd806a89a198be1bc205cc57c inherit pub_methods_classRcs_1_1BoxSpaceProvider"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1BoxSpaceProvider.html#aab48346bd806a89a198be1bc205cc57c">getNames</a> () const</td></tr>
-<tr class="separator:aab48346bd806a89a198be1bc205cc57c inherit pub_methods_classRcs_1_1BoxSpaceProvider"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -246,7 +246,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classRcs_1_1InitStateSetter.html#ac86d9af7efddefabc04e86db3df6c743">Rcs::InitStateSetter</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ISSQuanserQube_8cpp_source.html#l00077">77</a> of file <a class="el" href="ISSQuanserQube_8cpp_source.html">ISSQuanserQube.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ISSQuanserQube_8cpp_source.html#l00075">75</a> of file <a class="el" href="ISSQuanserQube_8cpp_source.html">ISSQuanserQube.cpp</a>.</p>
 
 </div>
 </div>
@@ -318,6 +318,38 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classRcs_1_1InitStateSetter.html#acd946b211bfc09f081a794cbaf795368">Rcs::InitStateSetter</a>.</p>
 
+<p class="definition">Definition at line <a class="el" href="ISSQuanserQube_8cpp_source.html#l00063">63</a> of file <a class="el" href="ISSQuanserQube_8cpp_source.html">ISSQuanserQube.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a066953a4765235d64835e73aee7999a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a066953a4765235d64835e73aee7999a9">&#9670;&nbsp;</a></span>getNames()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; std::string &gt; Rcs::ISSQuanserQube::getNames </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Provides names for each entry of the space.</p>
+<p>These are intended for use in python, i.e., for pandas dataframe column names.</p>
+<dl class="section return"><dt>Returns</dt><dd>a vector of name strings. Must be of length <a class="el" href="classRcs_1_1ISSQuanserQube.html#af3947bda748b07ebf9518c2f93a53263">getDim()</a> or empty. </dd></dl>
+
+<p>Reimplemented from <a class="el" href="classRcs_1_1BoxSpaceProvider.html#aab48346bd806a89a198be1bc205cc57c">Rcs::BoxSpaceProvider</a>.</p>
+
 <p class="definition">Definition at line <a class="el" href="ISSQuanserQube_8cpp_source.html#l00058">58</a> of file <a class="el" href="ISSQuanserQube_8cpp_source.html">ISSQuanserQube.cpp</a>.</p>
 
 </div>
@@ -343,7 +375,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ISSQuanserQube_8h_source.html#l00054">54</a> of file <a class="el" href="ISSQuanserQube_8h_source.html">ISSQuanserQube.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ISSQuanserQube_8h_source.html#l00055">55</a> of file <a class="el" href="ISSQuanserQube_8h_source.html">ISSQuanserQube.h</a>.</p>
 
 </div>
 </div>
@@ -381,7 +413,7 @@ Additional Inherited Members</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceRcs.html">Rcs</a></li><li class="navelem"><a class="el" href="classRcs_1_1ISSQuanserQube.html">ISSQuanserQube</a></li>
-    <li class="footer">Generated on Tue Nov 24 2020 14:13:44 for RcsPySim by
+    <li class="footer">Generated on Tue Nov 24 2020 16:59:24 for RcsPySim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

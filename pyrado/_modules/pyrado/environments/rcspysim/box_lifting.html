@@ -310,7 +310,6 @@
                  <span class="n">position_mps</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
                  <span class="n">mps_left</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
                  <span class="n">mps_right</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
-                 <span class="n">fixed_init_state</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
@@ -323,8 +322,8 @@
 <span class="sd">        :param position_mps: `True` if the MPs are defined on position level, `False` if defined on velocity level</span>
 <span class="sd">        :param mps_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
 <span class="sd">        :param mps_right: right arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
-<span class="sd">        :param fixed_init_state: use an init state space with only one state (e.g. for debugging)</span>
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
+<span class="sd">                       fixedInitState: bool = False,</span>
 <span class="sd">                       taskCombinationMethod: str = &#39;sum&#39;,  # or &#39;mean&#39;, &#39;softmax&#39;, &#39;product&#39;</span>
 <span class="sd">                       checkJointLimits: bool = False,</span>
 <span class="sd">                       collisionAvoidanceIK: bool = True,</span>
@@ -354,27 +353,15 @@
             <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">)</span>
 
-        <span class="c1"># Initial state space definition</span>
-        <span class="k">if</span> <span class="n">fixed_init_state</span><span class="p">:</span>
-            <span class="n">dafault_init_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-                <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">65.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">,</span> <span class="o">-</span><span class="mf">65.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">])</span>  <span class="c1"># [m, m, rad, m, rad, rad]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_init_space</span> <span class="o">=</span> <span class="n">SingularStateSpace</span><span class="p">(</span><span class="n">dafault_init_state</span><span class="p">,</span>
-                                                  <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;theta&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="s1">&#39;q_2&#39;</span><span class="p">,</span> <span class="s1">&#39;q_4&#39;</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">min_init_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.05</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.05</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">60</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">,</span> <span class="o">-</span><span class="mi">70</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">])</span>
-            <span class="n">max_init_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mi">5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mi">70</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">,</span> <span class="o">-</span><span class="mi">60</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">])</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_init_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="n">min_init_state</span><span class="p">,</span> <span class="n">max_init_state</span><span class="p">,</span>  <span class="c1"># [m, m, rad, m, rad, rad]</span>
-                                        <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;theta&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="s1">&#39;q_2&#39;</span><span class="p">,</span> <span class="s1">&#39;q_4&#39;</span><span class="p">])</span>
-
     <span class="k">def</span> <span class="nf">_create_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Task</span><span class="p">:</span>
         <span class="c1"># Create the tasks</span>
         <span class="n">continuous_rew_fcn</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;continuous_rew_fcn&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="n">task_box</span> <span class="o">=</span> <span class="n">create_box_lift_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">continuous_rew_fcn</span><span class="p">,</span> <span class="n">succ_thold</span><span class="o">=</span><span class="mf">0.03</span><span class="p">)</span>
         <span class="n">task_check_bounds</span> <span class="o">=</span> <span class="n">create_check_all_boundaries_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">penalty</span><span class="o">=</span><span class="mf">1e3</span><span class="p">)</span>
         <span class="n">task_collision</span> <span class="o">=</span> <span class="n">create_collision_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
-        <span class="n">task_ts_discrepancy</span> <span class="o">=</span> <span class="n">create_task_space_discrepancy_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span>
-                                                                 <span class="n">AbsErrRewFcn</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="mf">0.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span>
-                                                                              <span class="n">r</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">shape</span><span class="p">)))</span>
+        <span class="n">task_ts_discrepancy</span> <span class="o">=</span> <span class="n">create_task_space_discrepancy_task</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">AbsErrRewFcn</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="mf">0.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">r</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">ParallelTasks</span><span class="p">([</span>
             <span class="n">task_box</span><span class="p">,</span>
@@ -403,7 +390,6 @@
                  <span class="n">mps_left</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
                  <span class="n">mps_right</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
                  <span class="n">continuous_rew_fcn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-                 <span class="n">fixed_init_state</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
@@ -412,8 +398,8 @@
 <span class="sd">        :param mps_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
 <span class="sd">        :param mps_right: right arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
 <span class="sd">        :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used</span>
-<span class="sd">        :param fixed_init_state: use an init state space with only one state (e.g. for debugging)</span>
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
+<span class="sd">                       fixedInitState: bool = False,</span>
 <span class="sd">                       taskCombinationMethod: str = &#39;sum&#39;,  # or &#39;mean&#39;, &#39;softmax&#39;, &#39;product&#39;</span>
 <span class="sd">                       checkJointLimits: bool = False,</span>
 <span class="sd">                       collisionAvoidanceIK: bool = True,</span>
@@ -477,7 +463,6 @@
             <span class="n">position_mps</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">mps_left</span><span class="o">=</span><span class="n">mps_left</span><span class="p">,</span>
             <span class="n">mps_right</span><span class="o">=</span><span class="n">mps_right</span><span class="p">,</span>
-            <span class="n">fixed_init_state</span><span class="o">=</span><span class="n">fixed_init_state</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">)</span></div>
 
@@ -492,7 +477,6 @@
                  <span class="n">mps_left</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
                  <span class="n">mps_right</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
                  <span class="n">continuous_rew_fcn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-                 <span class="n">fixed_init_state</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
@@ -501,8 +485,8 @@
 <span class="sd">        :param mps_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
 <span class="sd">        :param mps_right: right arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
 <span class="sd">        :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used</span>
-<span class="sd">        :param fixed_init_state: use an init state space with only one state (e.g. for debugging)</span>
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
+<span class="sd">                       fixedInitState: bool = False,</span>
 <span class="sd">                       taskCombinationMethod: str = &#39;sum&#39;,  # or &#39;mean&#39;, &#39;softmax&#39;, &#39;product&#39;</span>
 <span class="sd">                       checkJointLimits: bool = False,</span>
 <span class="sd">                       collisionAvoidanceIK: bool = True,</span>
@@ -564,7 +548,6 @@
             <span class="n">position_mps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">mps_left</span><span class="o">=</span><span class="n">mps_left</span><span class="p">,</span>
             <span class="n">mps_right</span><span class="o">=</span><span class="n">mps_right</span><span class="p">,</span>
-            <span class="n">fixed_init_state</span><span class="o">=</span><span class="n">fixed_init_state</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">)</span></div>
 
@@ -589,6 +572,7 @@
 <span class="sd">        :param position_mps: `True` if the MPs are defined on position level, `False` if defined on velocity level</span>
 <span class="sd">        :param mps_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
+<span class="sd">                       fixedInitState: bool = False,</span>
 <span class="sd">                       taskCombinationMethod: str = &#39;sum&#39;,  # or &#39;mean&#39;, &#39;softmax&#39;, &#39;product&#39;</span>
 <span class="sd">                       checkJointLimits: bool = False,</span>
 <span class="sd">                       collisionAvoidanceIK: bool = True,</span>
@@ -669,6 +653,7 @@
 <span class="sd">        :param mps_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
 <span class="sd">        :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used</span>
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
+<span class="sd">                       fixedInitState: bool = False,</span>
 <span class="sd">                       taskCombinationMethod: str = &#39;sum&#39;,  # or &#39;mean&#39;, &#39;softmax&#39;, &#39;product&#39;</span>
 <span class="sd">                       checkJointLimits: bool = False,</span>
 <span class="sd">                       collisionAvoidanceIK: bool = True,</span>
@@ -725,6 +710,7 @@
 <span class="sd">        :param mps_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
 <span class="sd">        :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used</span>
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
+<span class="sd">                       fixedInitState: bool = False,</span>
 <span class="sd">                       taskCombinationMethod: str = &#39;sum&#39;,  # or &#39;mean&#39;, &#39;softmax&#39;, &#39;product&#39;</span>
 <span class="sd">                       checkJointLimits: bool = False,</span>
 <span class="sd">                       collisionAvoidanceIK: bool = True,</span>

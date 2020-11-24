@@ -44,9 +44,9 @@ var NAVTREEINDEX =
 "OMNormalized_8cpp.html",
 "classRcs_1_1AMNormalized.html#ad66b2094b40a7871fdee96c757f2aa92",
 "classRcs_1_1ECPlanarInsert.html#a07c96789497731519f8fbc246a4c2eb6",
-"classRcs_1_1OMComputedVelocity.html#a40618c31faf625b76616904c237b7828",
-"classRcs_1_1PhysicsParameterManager.html#a47c9fade6d41d2a08dcdcff5cf78041e",
-"classRcs_1_1ViewerComponent.html#ac11d579daaeb9885acdc5ae38adf685a"
+"classRcs_1_1OMComputedVelocity.html",
+"classRcs_1_1PhysicsParameterDescriptor.html#a7b4b832cb74c0398afb6c8bef963e047",
+"classRcs_1_1ViewerComponent.html#a9cd9f4c9a0f0a4953c73f799227c25ca"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

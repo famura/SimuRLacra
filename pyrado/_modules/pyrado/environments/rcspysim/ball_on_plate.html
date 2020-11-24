@@ -231,7 +231,6 @@
 <span class="kn">from</span> <span class="nn">pyrado.tasks.base</span> <span class="kn">import</span> <span class="n">Task</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.reward_functions</span> <span class="kn">import</span> <span class="n">ScaledExpQuadrErrRewFcn</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.desired_state</span> <span class="kn">import</span> <span class="n">DesStateTask</span>
-<span class="kn">from</span> <span class="nn">pyrado.spaces.polar</span> <span class="kn">import</span> <span class="n">Polar2DPosSpace</span>
 
 
 <span class="n">rcsenv</span><span class="o">.</span><span class="n">addResourcePath</span><span class="p">(</span><span class="n">rcsenv</span><span class="o">.</span><span class="n">RCSPYSIM_CONFIG_PATH</span><span class="p">)</span>
@@ -271,12 +270,8 @@
                         <span class="n">physicsConfigFile</span><span class="o">=</span><span class="s1">&#39;pBallOnPlate.xml&#39;</span><span class="p">,</span>
                         <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="c1"># Store BallOnPlateSim specific vars</span>
+        <span class="c1"># Initial ball velocity</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_ball_vel</span> <span class="o">=</span> <span class="n">init_ball_vel</span>
-        <span class="n">l_plate</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># [m], see the config XML-file</span>
-        <span class="n">min_init_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.7</span><span class="o">*</span><span class="n">l_plate</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">])</span>
-        <span class="n">max_init_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.8</span><span class="o">*</span><span class="n">l_plate</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_init_space</span> <span class="o">=</span> <span class="n">Polar2DPosSpace</span><span class="p">(</span><span class="n">min_init_state</span><span class="p">,</span> <span class="n">max_init_state</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;phi&#39;</span><span class="p">])</span>
 
         <span class="c1"># Setup disturbance</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_dist_force</span> <span class="o">=</span> <span class="n">max_dist_force</span>

@@ -121,8 +121,8 @@ Collaboration diagram for Rcs::ISSBoxLifting:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac1ae44bf35e86fb33427e43aeb8c687a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ISSBoxLifting.html#ac1ae44bf35e86fb33427e43aeb8c687a">ISSBoxLifting</a> (RcsGraph *<a class="el" href="classRcs_1_1InitStateSetter.html#a97d84ad3cf2604e2ce062c0f87f3a963">graph</a>)</td></tr>
-<tr class="separator:ac1ae44bf35e86fb33427e43aeb8c687a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a8ff46579a101739479f9dccdf2b5c0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ISSBoxLifting.html#a8a8ff46579a101739479f9dccdf2b5c0">ISSBoxLifting</a> (RcsGraph *<a class="el" href="classRcs_1_1InitStateSetter.html#a97d84ad3cf2604e2ce062c0f87f3a963">graph</a>, bool <a class="el" href="classRcs_1_1ISSBoxLifting.html#ac0307844b0ea1d18d05f903813d5c13c">fixedInitState</a>)</td></tr>
+<tr class="separator:a8a8ff46579a101739479f9dccdf2b5c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0cc79dfb103e3baf3b379dcbd7541120"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ISSBoxLifting.html#a0cc79dfb103e3baf3b379dcbd7541120">~ISSBoxLifting</a> ()</td></tr>
 <tr class="separator:a0cc79dfb103e3baf3b379dcbd7541120"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add2602a6bd601f8457963e7565a7d1c9"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ISSBoxLifting.html#add2602a6bd601f8457963e7565a7d1c9">getDim</a> () const override</td></tr>
@@ -156,6 +156,8 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
+<tr class="memitem:ac0307844b0ea1d18d05f903813d5c13c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ISSBoxLifting.html#ac0307844b0ea1d18d05f903813d5c13c">fixedInitState</a></td></tr>
+<tr class="separator:ac0307844b0ea1d18d05f903813d5c13c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a15a44c84807812f410f6fc3e0820f3b4"><td class="memItemLeft" align="right" valign="top">RcsBody *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ISSBoxLifting.html#a15a44c84807812f410f6fc3e0820f3b4">platform</a></td></tr>
 <tr class="separator:a15a44c84807812f410f6fc3e0820f3b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a69808f7bec2369f151461250f05adfa2"><td class="memItemLeft" align="right" valign="top">RcsBody *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ISSBoxLifting.html#a69808f7bec2369f151461250f05adfa2">rail</a></td></tr>
@@ -176,8 +178,8 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ISSBoxLifting_8h_source.html#l00044">44</a> of file <a class="el" href="ISSBoxLifting_8h_source.html">ISSBoxLifting.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ac1ae44bf35e86fb33427e43aeb8c687a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac1ae44bf35e86fb33427e43aeb8c687a">&#9670;&nbsp;</a></span>ISSBoxLifting()</h2>
+<a id="a8a8ff46579a101739479f9dccdf2b5c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a8ff46579a101739479f9dccdf2b5c0">&#9670;&nbsp;</a></span>ISSBoxLifting()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -186,8 +188,18 @@ Additional Inherited Members</h2></td></tr>
           <td class="memname">Rcs::ISSBoxLifting::ISSBoxLifting </td>
           <td>(</td>
           <td class="paramtype">RcsGraph *&#160;</td>
-          <td class="paramname"><em>graph</em></td><td>)</td>
+          <td class="paramname"><em>graph</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>fixedInitState</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -225,7 +237,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ISSBoxLifting_8cpp_source.html#l00052">52</a> of file <a class="el" href="ISSBoxLifting_8cpp_source.html">ISSBoxLifting.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ISSBoxLifting_8cpp_source.html#l00053">53</a> of file <a class="el" href="ISSBoxLifting_8cpp_source.html">ISSBoxLifting.cpp</a>.</p>
 
 </div>
 </div>
@@ -257,7 +269,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classRcs_1_1InitStateSetter.html#ac86d9af7efddefabc04e86db3df6c743">Rcs::InitStateSetter</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ISSBoxLifting_8cpp_source.html#l00083">83</a> of file <a class="el" href="ISSBoxLifting_8cpp_source.html">ISSBoxLifting.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ISSBoxLifting_8cpp_source.html#l00084">84</a> of file <a class="el" href="ISSBoxLifting_8cpp_source.html">ISSBoxLifting.cpp</a>.</p>
 
 </div>
 </div>
@@ -288,7 +300,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classRcs_1_1BoxSpaceProvider.html#a82d44a47fdc8910877b4ac1dd3949005">Rcs::BoxSpaceProvider</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ISSBoxLifting_8cpp_source.html#l00057">57</a> of file <a class="el" href="ISSBoxLifting_8cpp_source.html">ISSBoxLifting.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ISSBoxLifting_8cpp_source.html#l00058">58</a> of file <a class="el" href="ISSBoxLifting_8cpp_source.html">ISSBoxLifting.cpp</a>.</p>
 
 </div>
 </div>
@@ -329,7 +341,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classRcs_1_1InitStateSetter.html#acd946b211bfc09f081a794cbaf795368">Rcs::InitStateSetter</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ISSBoxLifting_8cpp_source.html#l00062">62</a> of file <a class="el" href="ISSBoxLifting_8cpp_source.html">ISSBoxLifting.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ISSBoxLifting_8cpp_source.html#l00063">63</a> of file <a class="el" href="ISSBoxLifting_8cpp_source.html">ISSBoxLifting.cpp</a>.</p>
 
 </div>
 </div>
@@ -361,11 +373,35 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classRcs_1_1BoxSpaceProvider.html#aab48346bd806a89a198be1bc205cc57c">Rcs::BoxSpaceProvider</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="ISSBoxLifting_8cpp_source.html#l00078">78</a> of file <a class="el" href="ISSBoxLifting_8cpp_source.html">ISSBoxLifting.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ISSBoxLifting_8cpp_source.html#l00079">79</a> of file <a class="el" href="ISSBoxLifting_8cpp_source.html">ISSBoxLifting.cpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="ac0307844b0ea1d18d05f903813d5c13c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac0307844b0ea1d18d05f903813d5c13c">&#9670;&nbsp;</a></span>fixedInitState</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Rcs::ISSBoxLifting::fixedInitState</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ISSBoxLifting_8h_source.html#l00065">65</a> of file <a class="el" href="ISSBoxLifting_8h_source.html">ISSBoxLifting.h</a>.</p>
+
+</div>
+</div>
 <a id="ae468c659c1720dbd9279bbf8aff0446a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae468c659c1720dbd9279bbf8aff0446a">&#9670;&nbsp;</a></span>link2L</h2>
 
@@ -386,7 +422,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ISSBoxLifting_8h_source.html#l00067">67</a> of file <a class="el" href="ISSBoxLifting_8h_source.html">ISSBoxLifting.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ISSBoxLifting_8h_source.html#l00068">68</a> of file <a class="el" href="ISSBoxLifting_8h_source.html">ISSBoxLifting.h</a>.</p>
 
 </div>
 </div>
@@ -410,7 +446,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ISSBoxLifting_8h_source.html#l00068">68</a> of file <a class="el" href="ISSBoxLifting_8h_source.html">ISSBoxLifting.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ISSBoxLifting_8h_source.html#l00069">69</a> of file <a class="el" href="ISSBoxLifting_8h_source.html">ISSBoxLifting.h</a>.</p>
 
 </div>
 </div>
@@ -434,7 +470,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ISSBoxLifting_8h_source.html#l00065">65</a> of file <a class="el" href="ISSBoxLifting_8h_source.html">ISSBoxLifting.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ISSBoxLifting_8h_source.html#l00066">66</a> of file <a class="el" href="ISSBoxLifting_8h_source.html">ISSBoxLifting.h</a>.</p>
 
 </div>
 </div>
@@ -458,7 +494,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ISSBoxLifting_8h_source.html#l00066">66</a> of file <a class="el" href="ISSBoxLifting_8h_source.html">ISSBoxLifting.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ISSBoxLifting_8h_source.html#l00067">67</a> of file <a class="el" href="ISSBoxLifting_8h_source.html">ISSBoxLifting.h</a>.</p>
 
 </div>
 </div>
@@ -472,7 +508,7 @@ Additional Inherited Members</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceRcs.html">Rcs</a></li><li class="navelem"><a class="el" href="classRcs_1_1ISSBoxLifting.html">ISSBoxLifting</a></li>
-    <li class="footer">Generated on Tue Nov 24 2020 14:13:44 for RcsPySim by
+    <li class="footer">Generated on Tue Nov 24 2020 16:59:24 for RcsPySim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

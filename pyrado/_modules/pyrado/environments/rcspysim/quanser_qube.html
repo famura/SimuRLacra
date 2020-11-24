@@ -227,7 +227,6 @@
 
 <span class="kn">import</span> <span class="nn">rcsenv</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.base</span> <span class="kn">import</span> <span class="n">RcsSim</span>
-<span class="kn">from</span> <span class="nn">pyrado.spaces.box</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.base</span> <span class="kn">import</span> <span class="n">Task</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.desired_state</span> <span class="kn">import</span> <span class="n">RadiallySymmDesStateTask</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.reward_functions</span> <span class="kn">import</span> <span class="n">ExpQuadrErrRewFcn</span>
@@ -273,11 +272,6 @@
             <span class="n">actionModelType</span><span class="o">=</span><span class="s1">&#39;joint_acc&#39;</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">)</span>
-
-        <span class="c1"># Store QQubeRcsSim specific vars</span>
-        <span class="n">max_init_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span><span class="o">/</span><span class="mi">180</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>  <span class="c1"># [rad, rad, rad/s, rad/s]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_init_space</span> <span class="o">=</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="o">-</span><span class="n">max_init_state</span><span class="p">,</span> <span class="n">max_init_state</span><span class="p">,</span>
-                                    <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;theta&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;theta_dot&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha_dot&#39;</span><span class="p">])</span>
 
         <span class="c1"># Setup disturbance</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_dist_force</span> <span class="o">=</span> <span class="n">max_dist_force</span>
