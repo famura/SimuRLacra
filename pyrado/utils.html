@@ -1203,6 +1203,29 @@ One use case of this function is if you want to clip the parameter update by a r
 </dd></dl>
 
 <dl class="py function">
+<dt id="pyrado.utils.math.diff_coeffs">
+<code class="sig-name descname">diff_coeffs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stencils</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>list<span class="p">, </span>numpy.ndarray<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">order</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">step_size</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>numpy.ndarray<span class="p">, </span>int<span class="p">]</span><a class="reference internal" href="_modules/pyrado/utils/math.html#diff_coeffs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.math.diff_coeffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the coefficients for discrete time numerical differentiation. These can later be convolved with the signal.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Finite_difference_coefficient">https://en.wikipedia.org/wiki/Finite_difference_coefficient</a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stencils</strong> – stencil points <span class="math notranslate nohighlight">\(s\)</span>, negative means in the past, e.g. [-1, 0, 1] for a central difference or
+[-3, -1, 0] for a backward difference without equally space stencil points</p></li>
+<li><p><strong>order</strong> – order of the derivative <span class="math notranslate nohighlight">\(d\)</span>, must be lower than the number of stencil points</p></li>
+<li><p><strong>step_size</strong> – step size <span class="math notranslate nohighlight">\(h\)</span></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>coefficients for computing the derivative of order <cite>order</cite> and the <span class="math notranslate nohighlight">\(O(h^{N-d})\)</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="pyrado.utils.math.explained_var">
 <code class="sig-name descname">explained_var</code><span class="sig-paren">(</span><em class="sig-param">y_mdl: Union[numpy.ndarray, torch.Tensor], y_obs: Union[numpy.ndarray, torch.Tensor]) -&gt; (&lt;class 'numpy.ndarray'&gt;, &lt;class 'torch.Tensor'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/math.html#explained_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.math.explained_var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate proportion of the variance “explained” by the model (see coefficient of determination R^2)
