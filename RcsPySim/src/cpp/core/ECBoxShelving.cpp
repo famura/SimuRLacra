@@ -198,15 +198,15 @@ protected:
         
         if (properties->getPropertyBool("observeVelocities", true)) {
             auto omLeftLin = new OMBodyStateLinear(graph, "PowerGrasp_L"); // in world coordinates
-            omLeftLin->setMinState({-0.2, -0.3, 0.7});  // [m]
-            omLeftLin->setMaxState({2.1, 0.6, 1.8});  // [m]
+            omLeftLin->setMinState({-0.2, -0.5, 0.7});  // [m]
+            omLeftLin->setMaxState({2.1, 0.8, 2.0});  // [m]
             omLeftLin->setMaxVelocity(3.); // [m/s]
             fullState->addPart(omLeftLin);
         }
         else {
             auto omLeftLin = new OMBodyStateLinearPositions(graph, "PowerGrasp_L"); // in world coordinates
-            omLeftLin->setMinState({-0.2, -0.3, 0.7});  // [m]
-            omLeftLin->setMaxState({2.1, 0.6, 1.8});  // [m]
+            omLeftLin->setMinState({-0.2, -0.5, 0.7});  // [m]
+            omLeftLin->setMaxState({2.1, 0.8, 2.0});  // [m]
             fullState->addPart(omLeftLin);
         }
         
@@ -214,16 +214,16 @@ protected:
         if (properties->getPropertyBool("observeVelocities", true)) {
             auto omBoxLin = new OMBodyStateLinear(graph, "Box", "GoalUpperShelve",
                                                   "GoalUpperShelve");  // in relative coordinates
-            omBoxLin->setMinState({-0.2, -0.4, -0.4});  // [m]
-            omBoxLin->setMaxState({1.8, 0.4, 1.0});  // [m]
+            omBoxLin->setMinState({-0.2, -0.6, -0.5});  // [m]
+            omBoxLin->setMaxState({1.8, 0.6, 1.0});  // [m]
             omBoxLin->setMaxVelocity(5.); // [m/s]
             fullState->addPart(omBoxLin);
         }
         else {
             auto omBoxLin = new OMBodyStateLinearPositions(graph, "Box", "GoalUpperShelve",
                                                            "GoalUpperShelve");  // in relative coordinates
-            omBoxLin->setMinState({-0.2, -0.4, -0.4});  // [m]
-            omBoxLin->setMaxState({1.8, 0.4, 1.0});  // [m]
+            omBoxLin->setMinState({-0.2, -0.6, -0.5});  // [m]
+            omBoxLin->setMaxState({1.8, 0.6, 1.0});  // [m]
             fullState->addPart(omBoxLin);
         }
         

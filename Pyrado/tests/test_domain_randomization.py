@@ -159,20 +159,21 @@ def test_param_grid():
         pytest.param('default_bop2d_bt', marks=m_needs_bullet),
         pytest.param('default_bop5d_bt', marks=m_needs_bullet),
         pytest.param('default_cth', marks=m_needs_mujoco),
-        pytest.param('default_hop', marks=m_needs_mujoco),
+        # pytest.param('default_hop', marks=m_needs_mujoco),
         pytest.param('default_wambic', marks=m_needs_mujoco),
-    ]
-    , ids=['bob', 'omo', 'pend', 'qbb', 'qcp-st', 'qcp-su', 'bop2d', 'bop5d', 'cth', 'hop', 'wam-bic'],
+    ],
+    # ids=['bob', 'omo', 'pend', 'qbb', 'qcp-st', 'qcp-su', 'bop2d', 'bop5d', 'cth', 'hop', 'wam-bic'],
     indirect=True
 )
 def test_setting_dp_vals(env):
     # Loop over all possible domain parameters and set them to a random value
     for _ in range(5):
         for dp_key in env.supported_domain_param:
-            rand_val = 0.5 + np.random.rand()  # [0.5, 1.5[
-            env.reset(domain_param={dp_key: rand_val})
             if any([s in dp_key for s in ['slip', 'compliance', 'linearvelocitydamping', 'angularvelocitydamping']]):
                 # Skip the parameters that are only available in Vortex but not in Bullet
                 assert True
             else:
+                nominal_val = env.domain_param.get(dp_key)
+                rand_val = nominal_val + nominal_val*np.random.rand()/10
+                env.reset(domain_param={dp_key: rand_val})
                 assert env.domain_param[dp_key] == pytest.approx(rand_val, abs=5e-4)  # rolling friction is imprecise

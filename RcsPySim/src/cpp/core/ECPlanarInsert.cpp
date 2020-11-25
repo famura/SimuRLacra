@@ -183,18 +183,18 @@ protected:
     virtual ObservationModel* createObservationModel()
     {
         auto fullState = new OMCombined();
-        
+    
         // Observe effector position
         auto omLin = new OMBodyStateLinear(graph, "Effector", "GroundPlane"); // Base center is above ground level
-        omLin->setMinState(-0.2); // [m] applied to X and Z
-        omLin->setMaxState(1.5); // [m] applied to X and Z
-        omLin->setMaxVelocity(1.); // [m/s]
+        omLin->setMinState(-1.7); // [m]
+        omLin->setMaxState(1.7); // [m]
+        omLin->setMaxVelocity(5.); // [m/s]
         fullState->addPart(OMPartial::fromMask(omLin, {true, false, true}));  // mask out y axis
-        
+    
         auto omAng = new OMBodyStateAngular(graph, "Effector", "GroundPlane"); // Base center is above ground level
         omAng->setMaxVelocity(20.); // [rad/s]
         fullState->addPart(OMPartial::fromMask(omAng, {false, true, false}));  // only y axis
-        
+    
         std::string actionModelType = "unspecified";
         properties->getProperty(actionModelType, "actionModelType");
         if (actionModelType == "ds_activation") {
