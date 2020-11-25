@@ -80,7 +80,7 @@ protected:
         }
 
         else if (actionModelType == "joint_acc") {
-            double maxAction = 120*M_PI/180; // [1/s^2]
+            double maxAction = RCS_DEG2RAD(120); // [1/s^2]
             properties->getProperty(maxAction, "maxAction");
             return new AMIntegrate2ndOrder(new AMJointControlPosition(graph), maxAction);
         }
@@ -90,13 +90,13 @@ protected:
         }
 
         else if (actionModelType == "plate_angvel") {
-            double maxAction = 120*M_PI/180; // [1/s]
+            double maxAction = RCS_DEG2RAD(120); // [1/s]
             properties->getProperty(maxAction, "maxAction");
             return new AMIntegrate1stOrder(new AMPlateAngPos(graph), maxAction);
         }
 
         else if (actionModelType == "plate_angacc") {
-            double maxAction = 120*M_PI/180; // [1/s^2]
+            double maxAction = RCS_DEG2RAD(120); // [1/s^2]
             properties->getProperty(maxAction, "maxAction");
             return new AMIntegrate2ndOrder(new AMPlateAngPos(graph), maxAction);
         }
@@ -106,14 +106,14 @@ protected:
             MatNd_fromStack(maxAction, 5, 1);
             // Use different max action for linear/angular
             double max_lin = 0.5; // [m/s^2]
-            double max_ang = 120*M_PI/180; // [1/s^2]
-            
+            double max_ang = RCS_DEG2RAD(120); // [1/s^2]
+    
             maxAction->ele[0] = max_lin;
             maxAction->ele[1] = max_lin;
             maxAction->ele[2] = max_lin;
             maxAction->ele[3] = max_ang;
             maxAction->ele[4] = max_ang;
-            
+    
             return new AMIntegrate2ndOrder(new AMPlatePos5D(graph), maxAction);
         }
 

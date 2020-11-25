@@ -63,8 +63,8 @@ from tests.conftest import m_needs_bullet, m_needs_mujoco, m_needs_vortex
         pytest.param('default_bop2d_vx', marks=m_needs_vortex),
         pytest.param('default_bop5d_bt', marks=m_needs_bullet),
         pytest.param('default_bop5d_vx', marks=m_needs_vortex),
-        # pytest.param('default_bs_pos_bt', marks=m_needs_bullet),
-        # pytest.param('default_bs_pos_vx', marks=m_needs_vortex),
+        pytest.param('default_bs_pos_bt', marks=m_needs_bullet),
+        pytest.param('default_bs_pos_vx', marks=m_needs_vortex),
         pytest.param('default_bit_ik_bt', marks=m_needs_bullet),
         pytest.param('default_bit_vel_bt', marks=m_needs_bullet),
         pytest.param('default_bf_ik_bt', marks=m_needs_bullet),
@@ -75,9 +75,7 @@ from tests.conftest import m_needs_bullet, m_needs_mujoco, m_needs_vortex
     ],
     ids=['cata', 'rosen', 'bobd', 'bob', 'omo', 'pend', 'qbb', 'qq-st', 'qq-su', 'qcp-st', 'qcp-su',
          'qqsurcs', 'p3l_ik_bt', 'p3l_ta_bt', 'p3l_ta_vx', 'pi_ik_5l_bt', 'pi_ta_6l_bt', 'pi_ik_6l_vx', 'bop2d_bt',
-         'bop2d_vx', 'bop5d_bt', 'bop5d_vx',
-         # 'bspos_bt', 'bspos_vx',
-         'bit_ik_bt', 'bit_vel_bt', 'bf_ik_bt', 'bf_vel_bt',
+         'bop2d_vx', 'bop5d_bt', 'bop5d_vx', 'bspos_bt', 'bspos_vx', 'bit_ik_bt', 'bit_vel_bt', 'bf_ik_bt', 'bf_vel_bt',
          'cth', 'hop', 'wam-bic'],
     indirect=True
 )
@@ -121,8 +119,8 @@ def test_rollout(env):
         pytest.param('default_bop2d_vx', marks=m_needs_vortex),
         pytest.param('default_bop5d_bt', marks=m_needs_bullet),
         pytest.param('default_bop5d_vx', marks=m_needs_vortex),
-        # pytest.param('default_bs_pos_bt', marks=m_needs_bullet),
-        # pytest.param('default_bs_pos_vx', marks=m_needs_vortex),
+        pytest.param('default_bs_pos_bt', marks=m_needs_bullet),
+        pytest.param('default_bs_pos_vx', marks=m_needs_vortex),
         pytest.param('default_bit_ik_bt', marks=m_needs_bullet),
         pytest.param('default_bit_vel_bt', marks=m_needs_bullet),
         pytest.param('default_bf_ik_bt', marks=m_needs_bullet),
@@ -133,9 +131,7 @@ def test_rollout(env):
     ],
     ids=['cata', 'rosen', 'bobd', 'bob', 'omo', 'pend', 'qbb', 'qq-st', 'qq-su', 'qcp-st', 'qcp-su',
          'qqsurcs', 'p3l_ik_bt', 'p3l_ta_bt', 'p3l_ta_vx', 'pi_ik_5l_bt', 'pi_ta_6l_bt', 'pi_ik_6l_vx', 'bop2d_bt',
-         'bop2d_vx', 'bop5d_bt', 'bop5d_vx',
-         # 'bspos_bt', 'bspos_vx',
-         'bit_ik_bt', 'bit_vel_bt', 'bf_ik_bt', 'bf_vel_bt',
+         'bop2d_vx', 'bop5d_bt', 'bop5d_vx', 'bspos_bt', 'bspos_vx', 'bit_ik_bt', 'bit_vel_bt', 'bf_ik_bt', 'bf_vel_bt',
          'cth', 'hop', 'wam-bic'],
     indirect=True
 )
@@ -174,8 +170,8 @@ def test_init_spaces(env):
         pytest.param('default_bop2d_vx', marks=m_needs_vortex),
         pytest.param('default_bop5d_bt', marks=m_needs_bullet),
         pytest.param('default_bop5d_vx', marks=m_needs_vortex),
-        # pytest.param('default_bs_pos_bt', marks=m_needs_bullet),
-        # pytest.param('default_bs_pos_vx', marks=m_needs_vortex),
+        pytest.param('default_bs_pos_bt', marks=m_needs_bullet),
+        pytest.param('default_bs_pos_vx', marks=m_needs_vortex),
         pytest.param('default_bit_ik_bt', marks=m_needs_bullet),
         pytest.param('default_bit_vel_bt', marks=m_needs_bullet),
         pytest.param('default_bf_ik_bt', marks=m_needs_bullet),
@@ -186,15 +182,14 @@ def test_init_spaces(env):
     ],
     ids=['cata', 'rosen', 'bobd', 'bob', 'omo', 'pend', 'qbb', 'qq-st', 'qq-su', 'qcp-st', 'qcp-su',
          'qqsurcs', 'p3l_ik_bt', 'p3l_ta_bt', 'p3l_ta_vx', 'pi_ik_5l_bt', 'pi_ta_6l_bt', 'pi_ik_6l_vx', 'bop2d_bt',
-         'bop2d_vx', 'bop5d_bt', 'bop5d_vx',
-         # 'bspos_bt', 'bspos_vx',
-         'bit_ik_bt', 'bit_vel_bt', 'bf_ik_bt', 'bf_vel_bt',
+         'bop2d_vx', 'bop5d_bt', 'bop5d_vx', 'bspos_bt', 'bspos_vx', 'bit_ik_bt', 'bit_vel_bt', 'bf_ik_bt', 'bf_vel_bt',
          'cth', 'hop', 'wam-bic'],
     indirect=True
 )
 def test_reset(env):
     assert isinstance(env, SimEnv)
-    for _ in range(50):  # do 50 tests
+    # Test using 50 random samples per environment
+    for _ in range(50):
         # Reset the env to a random state
         env.reset()
         env.render(mode=RenderMode(text=True))
@@ -257,17 +252,16 @@ def test_vpython_animations(env):
         pytest.param('default_bop2d_vx', marks=m_needs_vortex),
         pytest.param('default_bop5d_bt', marks=m_needs_bullet),
         pytest.param('default_bop5d_vx', marks=m_needs_vortex),
-        # pytest.param('default_bs_pos_bt', marks=m_needs_bullet),
-        # pytest.param('default_bs_pos_vx', marks=m_needs_vortex),
+        pytest.param('default_bs_pos_bt', marks=m_needs_bullet),
+        pytest.param('default_bs_pos_vx', marks=m_needs_vortex),
         pytest.param('default_bit_ik_bt', marks=m_needs_bullet),
         pytest.param('default_bit_vel_bt', marks=m_needs_bullet),
         pytest.param('default_bf_ik_bt', marks=m_needs_bullet),
         pytest.param('default_bf_vel_bt', marks=m_needs_bullet),
     ],
+
     ids=['qqsurcs_bt', 'p3l_ik_bt', 'p3l_ta_bt', 'p3l_ta_vx', 'pi_ik_5l_bt', 'pi_ta_6l_bt', 'pi_ik_6l_vx', 'bop2d_bt',
-         'bop2d_vx', 'bop5d_bt', 'bop5d_vx',
-         # 'bspos_bt', 'bspos_vx',
-         'bit_ik_bt', 'bit_vel_bt', 'bf_ik_bt',
+         'bop2d_vx', 'bop5d_bt', 'bop5d_vx', 'bspos_bt', 'bspos_vx', 'bit_ik_bt', 'bit_vel_bt', 'bf_ik_bt',
          'bf_vel_bt'],
     indirect=True
 )

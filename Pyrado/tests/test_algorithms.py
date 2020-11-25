@@ -191,16 +191,16 @@ def test_snapshots_notmeta(ex_dir, env: SimEnv, policy, algo_class, algo_hparam)
 )
 @pytest.mark.parametrize(
     'algo_class, algo_hparam', [
-        (HCNormal, dict(expl_std_init=0.1, pop_size=None, expl_factor=1.1)),
-        (HCHyper, dict(expl_r_init=0.05, pop_size=None, expl_factor=1.1)),
-        (NES, dict(expl_std_init=0.1, pop_size=None)),
-        (NES, dict(expl_std_init=0.1, pop_size=None, transform_returns=True)),
-        (NES, dict(expl_std_init=0.1, pop_size=None, symm_sampling=True)),
-        (PEPG, dict(expl_std_init=0.1, pop_size=None)),
-        (PoWER, dict(expl_std_init=0.1, pop_size=20, num_is_samples=4)),
-        (CEM, dict(expl_std_init=0.1, pop_size=20, num_is_samples=4, full_cov=True)),
-        (CEM, dict(expl_std_init=0.1, pop_size=20, num_is_samples=4, full_cov=False)),
-        (REPS, dict(eps=0.1, pop_size=100, expl_std_init=0.1)),
+        (HCNormal, dict(expl_std_init=0.1, pop_size=10, expl_factor=1.1)),
+        (HCHyper, dict(expl_r_init=0.05, pop_size=10, expl_factor=1.1)),
+        (NES, dict(expl_std_init=0.1, pop_size=10)),
+        (NES, dict(expl_std_init=0.1, pop_size=10, transform_returns=True)),
+        (NES, dict(expl_std_init=0.1, pop_size=10, symm_sampling=True)),
+        (PEPG, dict(expl_std_init=0.1, pop_size=50)),
+        (PoWER, dict(expl_std_init=0.1, pop_size=50, num_is_samples=10)),
+        (CEM, dict(expl_std_init=0.1, pop_size=50, num_is_samples=10, full_cov=True)),
+        (CEM, dict(expl_std_init=0.1, pop_size=50, num_is_samples=10, full_cov=False)),
+        (REPS, dict(eps=1.0, pop_size=50, expl_std_init=0.1)),
     ],
     ids=['hc_normal', 'hc_hyper', 'nes', 'nes_tr', 'nes_symm', 'pepg', 'power', 'cem-fcov', 'cem-dcov', 'reps']
 )

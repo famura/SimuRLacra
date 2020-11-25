@@ -103,7 +103,7 @@ protected:
         }
 
         else if (actionModelType == "joint_acc") {
-            double max_action = 120*M_PI/180; // [rad/s^2]
+            double max_action = RCS_DEG2RAD(120); // [rad/s^2]
             return new AMIntegrate2ndOrder(new AMJointControlPosition(graph), max_action);
         }
 
@@ -236,15 +236,15 @@ protected:
         if (properties->getPropertyBool("observeVelocities", true)) {
             // Observe effector position and velocities
             auto omLin = new OMBodyStateLinear(graph, "Effector");  // in world coordinates
-            omLin->setMinState(-1.56); // [m]
-            omLin->setMaxState(1.56); // [m]
-            omLin->setMaxVelocity(10.0); // [m/s]
+            omLin->setMinState(-1.7); // [m]
+            omLin->setMaxState(1.7); // [m]
+            omLin->setMaxVelocity(5.0); // [m/s]
             fullState->addPart(OMPartial::fromMask(omLin, {true, false, true}));  // mask out y axis
         }
         else {
             auto omLin = new OMBodyStateLinearPositions(graph, "Effector"); // in world coordinates
-            omLin->setMinState(-1.56); // [m]
-            omLin->setMaxState(1.56); // [m]
+            omLin->setMinState(-1.7); // [m]
+            omLin->setMaxState(1.7); // [m]
             fullState->addPart(OMPartial::fromMask(omLin, {true, false, true}));
         }
         
