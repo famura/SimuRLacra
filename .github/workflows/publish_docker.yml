@@ -3,9 +3,9 @@ name: Publish Docker Images
 
 on:
   push:
-    branches: [master, cicd]
+    branches: [master]
   pull_request:
-    branches: [master, cicd]
+    branches: [master]
 
 jobs:
   build-images:
