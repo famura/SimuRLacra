@@ -7,3 +7,5 @@ setup_docker.sh
 **/.github
 **cache**
 *.md
+**/.vscode
+.git

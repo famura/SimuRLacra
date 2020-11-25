@@ -73,7 +73,6 @@ ENV PATH /opt/conda/envs/pyrado/bin:$PATH
 ENV PYTHONPATH /home/user/SimuRLacra/RcsPySim/build/lib:/home/user/SimuRLacra/Pyrado/:$PYTHONPATH
 ENV RCSVIEWER_SIMPLEGRAPHICS 1
 
-RUN git init
 COPY --chown=user:user Rcs Rcs
 COPY --chown=user:user thirdParty thirdParty
 COPY --chown=user:user RcsPySim RcsPySim

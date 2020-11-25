@@ -1,5 +1,5 @@
 # Build all options
-name: Docker Workflow
+name: Publish Docker Images
 
 on:
   push:
@@ -40,7 +40,6 @@ jobs:
           tags: |
             simurlacra/simurlacra:${{matrix.flavor}}
             ghcr.io/${{ github.repository_owner }}/simurlacra:${{matrix.flavor}}
-            ghcr.io/${{ github.repository_owner }}/app:1.0.0
           build-args: |
             OPTION=${{ matrix.flavor }}
           cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/simurlacra:${{matrix.flavor}}
