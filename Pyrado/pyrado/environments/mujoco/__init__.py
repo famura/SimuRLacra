@@ -34,16 +34,14 @@ if not pyrado.mujoco_available:
     ld_library_path = os.environ.get('LD_LIBRARY_PATH')
     ld_preload = os.environ.get('LD_PRELOAD')
     raise ImportError(
-        f"""
-You are trying to use are MuJoCo-based environment, but the required mujoco_py module can not be imported.
-Try adding
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/$USER/.mujoco/mujoco200/bin
-export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libGLEW.so
-to your shell's rc-file.
-If you are using PyCharm or CLion, also add the environment variables above to your run configurations. Note that 
-the IDE will not resolve $USER for some reason, so enter the user name directly, or run it from your terminal.
-
-The current values of the environment variables are:
-LD_LIBRARY_PATH={ld_library_path}
-LD_PRELOAD={ld_preload}"""
+        "You are trying to use are MuJoCo-based environment, but the required mujoco_py module can not be imported.\n"
+        "Try adding\n"
+        "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/$USER/.mujoco/mujoco200/bin\n"
+        "export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libGLEW.so\n"
+        "to your shell's rc-file.\n"
+        "If you are using PyCharm or CLion, also add the environment variables above to your run configurations. Note that\n" 
+        "the IDE will not resolve $USER for some reason, so enter the user name directly, or run it from your terminal.\n\n"
+        "The current values of the environment variables are:\n"
+        f"LD_LIBRARY_PATH={ld_library_path}\n"
+        f"LD_PRELOAD={ld_preload}"
     )
