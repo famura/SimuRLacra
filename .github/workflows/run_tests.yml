@@ -1,5 +1,5 @@
 # Build all options
-name: Publish Docker Images
+name: Run Tests
 
 on:
   push:
