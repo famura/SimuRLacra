@@ -33,7 +33,8 @@ from torch.distributions.multivariate_normal import MultivariateNormal
 
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
-from pyrado.policies.feed_forward.fnn import FNNPolicy
+from pyrado.environments.sim_base import SimEnv
+from pyrado.policies.base import Policy
 from pyrado.sampling.data_format import to_format
 from pyrado.sampling.hyper_sphere import sample_from_hyper_sphere_surface
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
@@ -46,7 +47,7 @@ from pyrado.sampling.bootstrapping import bootstrap_ci
 from pyrado.policies.features import *
 from pyrado.sampling.cvar_sampler import select_cvar
 from pyrado.utils.data_types import RenderMode
-from tests.conftest import m_needs_cuda
+from tests.conftest import m_needs_cuda, m_needs_bullet
 
 
 @pytest.mark.parametrize(
@@ -80,7 +81,7 @@ def _cb_test_collecthandler(G):
 @pytest.mark.parametrize(
     'min_samples', [10, 20, 40]
 )
-def test_sampler_collect(num_threads, min_samples):
+def test_sampler_collect(num_threads: int, min_samples: int):
     pool = SamplerPool(num_threads)
 
     # Run the collector
@@ -100,7 +101,7 @@ def test_sampler_collect(num_threads, min_samples):
 @pytest.mark.parametrize(
     'min_runs', [10, 20, 40]
 )
-def test_sampler_collect_minrun(num_threads, min_samples, min_runs):
+def test_sampler_collect_minrun(num_threads: int, min_samples: int, min_runs: int):
     pool = SamplerPool(num_threads)
 
     # Run the collector
@@ -146,7 +147,7 @@ def test_to_format(data_type: tuple):
         10, 20,
     ]
 )
-def test_select_cvar(epsilon, num_ro):
+def test_select_cvar(epsilon: float, num_ro: int):
     # Create rollouts with known discounted rewards
     rollouts = [
         StepSequence(rewards=[i], observations=[i], actions=[i])
@@ -177,7 +178,7 @@ def test_select_cvar(epsilon, num_ro):
         (15, 'uniform'), (15, 'normal')
     ]
 )
-def test_sample_from_unit_sphere_surface(num_dim, method):
+def test_sample_from_unit_sphere_surface(num_dim: int, method: str):
     s = sample_from_hyper_sphere_surface(num_dim, method)
     assert 0.95 <= to.norm(s, p=2) <= 1.05
 
@@ -200,7 +201,7 @@ def test_sample_from_unit_sphere_surface(num_dim, method):
     ids=['bob_idle', 'bob_dummy', 'bob_time', 'bob_lin', 'bob_fnn', 'bob_rnn', 'bob_lstm', 'bob_gru', 'bob_adn',
          'bob_nf', 'bob_thfnn', 'bob_thgru'],
     indirect=True)
-def test_rollout_wo_exploration(env, policy):
+def test_rollout_wo_exploration(env: SimEnv, policy: Policy):
     ro = rollout(env, policy, render_mode=RenderMode())
     assert isinstance(ro, StepSequence)
     assert len(ro) <= env.max_steps
@@ -208,7 +209,7 @@ def test_rollout_wo_exploration(env, policy):
 
 @pytest.mark.parametrize('env', ['default_bob', 'default_qbb'],
                          ids=['bob', 'qbb'], indirect=True)
-def test_rollout_wo_policy(env):
+def test_rollout_wo_policy(env: SimEnv):
     def policy(obs):
         # Callable must receive and return tensors
         return to.from_numpy(env.spec.act_space.sample_uniform())
@@ -247,12 +248,12 @@ def test_reparametrization_trick(mean, cov):
 # @pytest.mark.visualization
 @pytest.mark.parametrize(
     'sequence, x_init', [
-        # (sequence_const, np.array([2])),
-        # (sequence_plus_one, np.array([2])),
-        # (sequence_add_init, np.array([2])),
-        # (sequence_rec_double, np.array([2])),
-        # (sequence_rec_sqrt, np.array([2])),
-        # (sequence_nlog2, np.array([2])),
+        (sequence_const, np.array([2])),
+        (sequence_plus_one, np.array([2])),
+        (sequence_add_init, np.array([2])),
+        (sequence_rec_double, np.array([2])),
+        (sequence_rec_sqrt, np.array([2])),
+        (sequence_nlog2, np.array([2])),
         (sequence_const, np.array([1, 2, 3])),
         (sequence_plus_one, np.array([1, 2, 3])),
         (sequence_add_init, np.array([1, 2, 3])),
@@ -261,7 +262,7 @@ def test_reparametrization_trick(mean, cov):
         (sequence_nlog2, np.array([1, 2, 3])),
     ]
 )
-def test_sequences(sequence, x_init):
+def test_sequences(sequence: Callable, x_init: np.ndarray):
     # Get the full sequence
     _, x_full = sequence(x_init, 5, float)
     assert x_full is not None
@@ -329,7 +330,7 @@ def test_bootsrapping():
         ('default_bob', 'fnn_policy'),
     ],
     ids=['bob_fnnpol'], indirect=True)
-def test_param_expl_sampler(env, policy):
+def test_param_expl_sampler(env: SimEnv, policy: Policy):
     # Add randomizer
     pert = create_default_randomizer(env)
     env = DomainRandWrapperLive(env, pert)
@@ -381,7 +382,7 @@ def test_param_expl_sampler(env, policy):
     ids=['fnn', 'lstm'],
     indirect=True
 )
-def test_cuda_sampling_w_dr(env, policy):
+def test_cuda_sampling_w_dr(env: SimEnv, policy: Policy):
     randomizer = create_default_randomizer(env)
     env = DomainRandWrapperLive(env, randomizer)
 
@@ -389,3 +390,41 @@ def test_cuda_sampling_w_dr(env, policy):
     samples = sampler.sample()
 
     assert samples is not None
+
+
+@pytest.mark.parametrize(
+    'env', [
+        pytest.param('default_qqsurcs_bt', marks=m_needs_bullet),
+        pytest.param('default_bs_pos_bt', marks=m_needs_bullet),
+        pytest.param('default_bit_ik_bt', marks=m_needs_bullet),
+    ],
+    ids=['qqsurcs_bt', 'bs_pos_bt', 'bit_ik_bt'],
+    indirect=True
+)
+@pytest.mark.parametrize(
+    'policy', [
+        'idle_policy'  # ad deterministic policy
+    ],
+    ids=['idle'],
+    indirect=True
+)
+@pytest.mark.parametrize(
+    'num_simulations', [1, 4],  # must be lower than the number of cores on the machine
+    ids=['1sim', '4sims']
+)
+def test_sequential_equals_parallel(env: SimEnv, policy: Policy, num_simulations: int):
+    # Do the rollouts explicitly sequentially without a sampler
+    # Do not set the init state to check if this was sampled correctly
+    ros_sequential = []
+    for i in range(num_simulations):
+        ros_sequential.append(rollout(env, policy, eval=True, seed=i))
+
+    # Do the rollouts in parallel with a sampler. Create one worker for every rollout
+    # Do not set the init state to check if this was sampled correctly
+    sampler = ParallelRolloutSampler(env, policy, num_workers=num_simulations, min_rollouts=num_simulations, seed=0)
+    ros_parallel = sampler.sample()
+    assert len(ros_parallel) == num_simulations
+
+    for ro_s in ros_sequential:
+        # The parallel rollouts are not necessarily in the same order as the sequential ones, thus compare to all
+        assert any([ro_s.observations == pytest.approx(ro_p.observations) for ro_p in ros_parallel])
