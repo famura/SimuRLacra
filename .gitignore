@@ -68,6 +68,9 @@ modules.xml
 # CMake build folders
 cmake-build-*/
 
+### VS Code
+.vscode/
+
 ### Sphinx Documentation
 .DS_Store
 Pyrado/docs/_build/
