@@ -43,7 +43,8 @@ RUN apt-get update && apt-get install -y \
     gcc g++ make cmake zlib1g-dev swig libsm6 libxext6 \
     build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
     wget llvm libncurses5-dev xz-utils tk-dev libxrender1\
-    libxml2-dev libxmlsec1-dev libffi-dev libcairo2-dev libjpeg-dev libgif-dev doxygen texlive-base graphviz
+    libxml2-dev libxmlsec1-dev libffi-dev libcairo2-dev libjpeg-dev libgif-dev\
+    doxygen texlive graphviz ghostscript
 
 # Setup a user without root permission
 RUN adduser --disabled-password --gecos '' --shell /bin/bash user && chown -R user:user /home/user
@@ -113,15 +114,21 @@ RUN if [ $OPTION == 'malakoff' ]; then\
 
 COPY --chown=user:user RcsPySim RcsPySim
 
+RUN mkdir -p Pyrado; touch Pyrado/CMakeLists.txt
+
 # Setup rcspysim if needed or delete related folders from the image
-RUN if [ $OPTION -eq 'blackforest'] || [$OPTION -eq 'sacher']; then\
-    python setup_deps.py rcspysim -j$J;\
-    else\
-    rm -fr Rcs RcsPySim;\
+RUN if [ $OPTION == 'blackforest' ]; then\
+    python setup_deps.py rcspysim  -j$J;\
+    elif [ $OPTION == 'sacher' ]; then\
+    python setup_deps.py rcspysim --no_local_torch -j$J; \
+    else \
+    rm -fr Rcs RcsPySim; \
     fi
 
 # Copy and setup Pyrado
 COPY --chown=user:user Pyrado Pyrado
 RUN python setup_deps.py pyrado
+
+COPY logo.png build_docs.sh ./
 
 RUN rm -fr .git .gitmodules
