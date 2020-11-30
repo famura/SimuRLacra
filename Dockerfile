@@ -115,7 +115,6 @@ COPY --chown=user:user RcsPySim RcsPySim
 
 # Setup rcspysim if needed or delete related folders from the image
 RUN if [ $OPTION -eq 'blackforest'] || [$OPTION -eq 'sacher']; then\
-    pwd;\
     python setup_deps.py rcspysim -j$J;\
     else\
     rm -fr Rcs RcsPySim;\
