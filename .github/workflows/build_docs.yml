@@ -10,7 +10,6 @@ jobs:
     strategy:
       matrix:
         flavor: [sacher]
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v2
         with:
