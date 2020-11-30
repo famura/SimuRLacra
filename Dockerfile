@@ -118,7 +118,7 @@ RUN if [ $OPTION -eq 'blackforest'] || [$OPTION -eq 'sacher']; then\
     pwd;\
     python setup_deps.py rcspysim -j$J;\
     else\
-    rm - fr Rcs RcsPySim;\
+    rm -fr Rcs RcsPySim;\
     fi
 
 # Copy and setup Pyrado
