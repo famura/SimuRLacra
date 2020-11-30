@@ -629,7 +629,8 @@ def setup_w_rcs_wo_pytorch():
     setup_rcs()
     # don't use the local PyTorch but the one from anaconda/pip
     rcspysim_cmake_vars["USE_LIBTORCH"] = "OFF"
-    setup_rcspysim()
+    if not CI:
+        setup_rcspysim()
     setup_meshes()
     # setup_mujoco_py()
     if not CI:
@@ -645,7 +646,8 @@ def setup_w_rcs_w_pytorch():
         setup_wm5()
     setup_rcs()
     setup_pytorch()
-    setup_rcspysim()
+    if not CI:
+        setup_rcspysim()
     setup_meshes()
     setup_mujoco_py()
     if not CI:

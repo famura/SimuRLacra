@@ -26,16 +26,18 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+# Build from base image
 FROM nvidia/cuda:10.1-base-ubuntu18.04
 
-
+# Set the locales
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 ARG CI=TRUE
 
-
+# Prevent expecting user inputs
 ARG DEBIAN_FRONTEND=noninteractive
 
+# Install ubuntu packages
 RUN apt-get update && apt-get install -y \
     curl ca-certificates sudo git bzip2 libx11-6 \
     gcc g++ make cmake zlib1g-dev swig libsm6 libxext6 \
@@ -43,12 +45,14 @@ RUN apt-get update && apt-get install -y \
     wget llvm libncurses5-dev xz-utils tk-dev libxrender1\
     libxml2-dev libxmlsec1-dev libffi-dev libcairo2-dev libjpeg-dev libgif-dev doxygen texlive-base graphviz
 
+# Setup a user without root permission
 RUN adduser --disabled-password --gecos '' --shell /bin/bash user && chown -R user:user /home/user
 RUN mkdir /home/user/SimuRLacra && chown user:user /home/user/SimuRLacra
 RUN echo 'user ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/90-pyrado
 USER user
 WORKDIR /home/user
 
+# Setup conda
 RUN echo "export PATH=/home/user/miniconda3/bin:$PATH" >> ~/.bashrc
 RUN echo "conda activate pyrado" >> ~/.bashrc
 
@@ -63,19 +67,21 @@ RUN conda update conda \
 
 WORKDIR /home/user/SimuRLacra
 
+# Create conda env
 RUN conda create -n pyrado python=3.7 blas cmake lapack libgcc-ng mkl patchelf pip setuptools -c conda-forge
 
 SHELL ["conda", "run", "-n", "pyrado", "/bin/bash", "-c"]
 
 RUN pip install argparse box2d colorama coverage cython glfw gym joblib prettyprinter matplotlib numpy optuna pandas pycairo pytest pytest-cov pytest-xdist pyyaml scipy seaborn sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tensorboard tqdm vpython git+https://github.com/Xfel/init-args-serializer.git@master
 
+# Add env variables
 ENV PATH /opt/conda/envs/pyrado/bin:$PATH
 ENV PYTHONPATH /home/user/SimuRLacra/RcsPySim/build/lib:/home/user/SimuRLacra/Pyrado/:$PYTHONPATH
 ENV RCSVIEWER_SIMPLEGRAPHICS 1
 
+# Copy Rcs and thirdparty to build in further build process
 COPY --chown=user:user Rcs Rcs
 COPY --chown=user:user thirdParty thirdParty
-COPY --chown=user:user RcsPySim RcsPySim
 COPY --chown=user:user setup_deps.py .gitmodules ./
 
 RUN ls -la
@@ -105,6 +111,17 @@ RUN if [ $OPTION == 'malakoff' ]; then\
     rm -fr Rcs RcsPySim;\
     fi
 
+COPY --chown=user:user RcsPySim RcsPySim
+
+# Setup rcspysim if needed or delete related folders from the image
+RUN if [ $OPTION -eq 'blackforest'] || [$OPTION -eq 'sacher']; then\
+    pwd;\
+    python setup_deps.py rcspysim -j$J;\
+    else\
+    rm - fr Rcs RcsPySim;\
+    fi
+
+# Copy and setup Pyrado
 COPY --chown=user:user Pyrado Pyrado
 RUN python setup_deps.py pyrado
 
