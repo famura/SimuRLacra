@@ -87,18 +87,16 @@ class PositiveScaleLayer(nn.Module):
 
 class IndiNonlinLayer(nn.Module):
     """
-    Layer subtracts a bias from the input, multiplies the result with a strictly positive scaling factor, and then
-    applies the provided nonlinearity. If a list of nonlinearities is provided, every dimension will be processed
-    separately. The scaling and the bias are learnable parameters.
+    Layer add a bias to the input, multiplies the result with a scaling factor, and then applies the provided
+    nonlinearity. If a list of nonlinearities is provided, every dimension will be processed separately.
+    The scaling and the bias are learnable parameters.
     """
 
     def __init__(self,
                  in_features: int,
                  nonlin: [Callable, Sequence[Callable]],
                  bias: bool,
-                 weight: bool = True,
-                 init_weight: float = 1.,
-                 init_bias: float = 0.):
+                 weight: bool = True):
         """
         Constructor
 
@@ -106,11 +104,7 @@ class IndiNonlinLayer(nn.Module):
         :param nonlin: nonlinearity
         :param bias: if `True`, a learnable bias is subtracted, else no bias is used
         :param weight: if `True` (default), the input is multiplied with a learnable scaling factor
-        :param init_weight: initial scaling factor
-        :param init_bias: initial bias
         """
-        if not init_weight > 0:
-            raise pyrado.ValueErr(given=init_weight, g_constraint='0')
         if not callable(nonlin):
             if not len(nonlin) == in_features:
                 raise pyrado.ShapeErr(given=nonlin, expected_match=in_features)
@@ -118,28 +112,26 @@ class IndiNonlinLayer(nn.Module):
         super().__init__()
 
         self.nonlin = deepcopy(nonlin) if is_iterable(nonlin) else nonlin
-
         if weight:
-            self.log_weight = nn.Parameter(to.log(init_weight*to.ones(in_features, dtype=to.get_default_dtype())),
-                                           requires_grad=True)
+            self.weight = nn.Parameter(to.randn(in_features, dtype=to.get_default_dtype()), requires_grad=True)
         else:
-            self.log_weight = None
+            self.weight = None
         if bias:
-            self.bias = nn.Parameter(init_bias*to.ones(in_features, dtype=to.get_default_dtype()), requires_grad=True)
+            self.bias = nn.Parameter(to.randn(in_features, dtype=to.get_default_dtype()), requires_grad=True)
         else:
             self.bias = None
 
     def extra_repr(self) -> str:
-        return f'in_features={self.log_weight.numel()}, weight={self.log_weight is not None}, ' \
+        return f'in_features={self.weight.numel()}, weight={self.weight is not None}, ' \
                f'bias={self.bias is not None}'
 
     def forward(self, inp: to.Tensor) -> to.Tensor:
-        # Apply bias if desired
-        tmp = inp - self.bias if self.bias is not None else inp
+        # Add bias if desired
+        tmp = inp + self.bias if self.bias is not None else inp
         # Apply weights if desired
-        tmp = to.exp(self.log_weight)*tmp if self.log_weight is not None else tmp
+        tmp = self.weight*tmp if self.weight is not None else tmp
 
-        # y = f_nlin( w * (x-b) )
+        # y = f_nlin( w * (x + b) )
         if is_iterable(self.nonlin):
             # Every dimension separately
             return to.tensor([n(tmp[i]) for i, n in enumerate(self.nonlin)])
@@ -204,10 +196,6 @@ class MirrConv1d(_ConvNd):
             else:
                 # Even kernel size for convolution, flip all columns
                 mirr_weight[:, i, self.half_kernel_size:] = to.flip(self.weight[:, i, :], (1,))
-
-        # Only for testing
-        # if to.any(to.isinf(mirr_weight)):
-        #     raise RuntimeError
 
         # Run though the same function as the original PyTorch implementation, but with mirrored kernel
         if self.padding_mode == 'circular':

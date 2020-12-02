@@ -139,10 +139,10 @@ def init_param(m, **kwargs):
 
     elif isinstance(m, IndiNonlinLayer):
         # Initialize all weights to 1 and all biases to 0 (if they exist)
-        if m.log_weight is not None:
-            m.log_weight.data.fill_(0.)
+        if m.weight is not None:
+            init.normal_(m.weight, std=1./sqrt(m.weight.nelement()))
         if m.bias is not None:
-            m.bias.data.fill_(0.)
+            init.normal_(m.bias, std=1./sqrt(m.bias.nelement()))
 
     else:
         pass

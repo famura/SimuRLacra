@@ -113,7 +113,7 @@ class NFPolicy(PotentialBasedPolicy):
             stride=1, dilation=1, groups=1  # defaults
         )
         # self.post_conv_layer = nn.Linear(conv_out_channels, spec.act_space.flat_dim, bias=False)
-        self.pot_to_activ = IndiNonlinLayer(self.hidden_size, nonlin=activation_nonlin, bias=False, weight=True)
+        self.pot_to_activ = IndiNonlinLayer(self.hidden_size, nonlin=activation_nonlin, bias=True, weight=True)
         self.act_layer = nn.Linear(self.hidden_size, spec.act_space.flat_dim, bias=False)
 
         # Initialize policy parameters
