@@ -77,6 +77,8 @@ parser.add_argument('--local_torch', dest='uselibtorch', action='store_true', de
                     help='Use the local libtorch from the thirdParty directory for RcsPySim')
 parser.add_argument('--no_local_torch', dest='uselibtorch', action='store_false',
                     help='Do not use the local libtorch from the thirdParty directory for RcsPySim')
+parser.add_argument('--pip_check', action='store_true',
+                    default=False, help='Run ´pip check´ after installing the dependencies')
 parser.add_argument('-j', default=1, type=int, help='Number of make threads')
 
 args = parser.parse_args()
@@ -506,9 +508,11 @@ def setup_pytorch_based():
     # Downgrade to avoid the incompatibility with cliff (whatever cliff is)
     sp.check_call([sys.executable, "-m", "pip", "install",
                    "-U", "--no-deps", "prettytable==0.7.2"])
-    # Check the installations
-    print("Checking dependencies of the packages installed via pip:")
-    sp.check_call([sys.executable, "-m", "pip", "check"])
+    
+    if args.pip_check:
+        # Check the installations
+        print("Checking dependencies of the packages installed via pip:")
+        sp.check_call([sys.executable, "-m", "pip", "check"])
 
 
 def setup_cppsctp():
@@ -594,8 +598,7 @@ def setup_robcom():
     env["BUILD_ROBCIMPYTHON_WRAPPER"] = "ON"
     env["IAS_DIR"] = ias_dir
     env["INSTALL_IN_IAS_DIR"] = "ON"
-    sp.check_call([sys.executable, "setup.py", "install",
-                   "--user"], cwd=robcom_dir, env=env)
+    sp.check_call([sys.executable, "setup.py", "install", "--user"], cwd=robcom_dir, env=env)
 
 
 def setup_wo_rcs_wo_pytorch():
@@ -632,7 +635,7 @@ def setup_w_rcs_wo_pytorch():
     if not CI:
         setup_rcspysim()
     setup_meshes()
-    # setup_mujoco_py()
+    setup_mujoco_py()
     if not CI:
         setup_pyrado()
     setup_pytorch_based()
