@@ -32,8 +32,8 @@ import os.path as osp
 from init_args_serializer import Serializable
 
 import pyrado
-from pyrado.environments.barrett_wam import init_pose_des_4dof, init_pose_des_7dof, act_space_wam_4dof, \
-    act_space_wam_7dof
+from pyrado.environments.barrett_wam import init_qpos_des_4dof, init_qpos_des_7dof, act_space_wam_4dof, \
+    act_space_wam_7dof, wam_pgains, wam_dgains
 from pyrado.environments.mujoco.base import MujocoSimEnv
 from pyrado.spaces.base import Space
 from pyrado.spaces.singular import SingularStateSpace
@@ -161,10 +161,10 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         self.num_dof = num_dof
         if num_dof == 4:
             graph_file_name = 'wam_4dof_bic.xml'
-            self.init_pose_des = init_pose_des_4dof
+            self.qpos_des_init = init_qpos_des_4dof
         elif num_dof == 7:
             graph_file_name = 'wam_7dof_bic.xml'
-            self.init_pose_des = init_pose_des_7dof
+            self.qpos_des_init = init_qpos_des_7dof
         else:
             raise pyrado.ValueErr(given=num_dof, eq_constraint='4 or 7')
 
@@ -172,8 +172,8 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         super().__init__(model_path, frame_skip, max_steps, task_args)
 
         # Controller gains
-        self.p_gains = np.array([200.0, 300.0, 100.0, 100.0, 10.0, 10.0, 2.5])
-        self.d_gains = np.array([7.0, 15.0, 5.0, 2.5, 0.3, 0.3, 0.05])
+        self.p_gains = wam_pgains
+        self.d_gains = wam_dgains
 
         self._collision_bodies = ['wam/base_link', 'wam/shoulder_yaw_link', 'wam/shoulder_pitch_link',
                                   'wam/upper_arm_link', 'wam/forearm_link', 'wrist_palm_link',
@@ -215,7 +215,7 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
     def _create_spaces(self):
         # Initial state space
         # Set the actual stable initial position. This position would be reached after some time using the internal
-        # PD controller to stabilize at self.init_pose_des
+        # PD controller to stabilize at self.qpos_des_init
         if self.num_dof == 7:
             self.init_qpos[:7] = np.array([0., 0.65, 0., 1.41, 0., -0.28, -1.57])
             self.init_qpos[7] = -0.21  # angle of the first rope segment relative to the cup bottom plate
@@ -370,7 +370,7 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
 
     def _mujoco_step(self, act: np.ndarray) -> dict:
         # Get the desired positions and velocities for the selected joints
-        qpos_des = self.init_pose_des.copy()  # the desired trajectory is relative to self.init_pose_des
+        qpos_des = self.qpos_des_init.copy()  # the desired trajectory is relative to self.qpos_des_init
         qvel_des = np.zeros_like(qpos_des)
         if self.num_dof == 4:
             np.add.at(qpos_des, [1, 3], act[:2])

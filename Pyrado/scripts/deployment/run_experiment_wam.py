@@ -27,7 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Run a policy (trained in simulation) on real Barret WAM.
+Evaluate a policy (trained in simulation) multiple times (by default 5 times) on real Barret WAM.
+Save the estimated return in the experiment's directory under evaluation.
 """
 import os
 import os.path as osp
@@ -36,7 +37,7 @@ from datetime import datetime
 import pyrado
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.environment_wrappers.utils import inner_env
-from pyrado.environments.barrett_wam.wam import WAMBallInCupReal
+from pyrado.environments.barrett_wam.wam import WAMBallInCupRealEpisodic, WAMBallInCupRealStepBased
 from pyrado.logger.experiment import ask_for_experiment, timestamp_format
 from pyrado.utils.experiments import wrap_like_other_env, load_experiment
 from pyrado.utils.input_output import print_cbt
@@ -58,8 +59,13 @@ if __name__ == '__main__':
         # If `max_steps` (or `dt`) are not explicitly set using `args`, use the same as in the simulation
         max_steps = args.max_steps if args.max_steps < pyrado.inf else env_sim.max_steps
         dt = args.dt if args.dt is not None else env_sim.dt
-        env_real = WAMBallInCupReal(dt=dt, max_steps=max_steps, num_dof=inner_env(env_sim).num_dof)
-        print_cbt(f'Set up the WAMBallInCupReal environment with dt={env_real.dt} max_steps={env_real.max_steps}.', 'c')
+        mode = ''
+        while mode not in ['ep', 'sb']:
+            mode = input('Pass ep for episodic and sb for step-based control mode: ').lower()
+        if mode == 'sb':
+            env_real = WAMBallInCupRealStepBased(dt=dt, max_steps=max_steps, num_dof=inner_env(env_sim).num_dof)
+        else:
+            env_real = WAMBallInCupRealEpisodic(dt=dt, max_steps=max_steps, num_dof=inner_env(env_sim).num_dof)
     else:
         raise pyrado.ValueErr(given=env_sim.name, eq_constraint='wam-bic')
 
