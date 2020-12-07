@@ -28,7 +28,6 @@
 
 """
 Testing the simulation-based inference (SBI) toolbox
-
 .. seealso::
     https://astroautomata.com/blog/simulation-based-inference/
 """
@@ -36,6 +35,7 @@ import numpy as np
 import sbi.utils as utils
 import seaborn as sns
 import torch as to
+import torch.nn as nn
 from matplotlib import pyplot as plt
 from sbi.inference.base import infer
 from sbi.inference import SNPE, prepare_for_sbi, simulate_for_sbi
@@ -78,48 +78,42 @@ if __name__ == '__main__':
         high=to.tensor([35., 0.15])
     )
 
+    input_space = 402
+    # embedding_net = SummaryNet()
+    embedding_net = nn.Linear(input_space, 10).to(dtype=to.float32)
     # Let’s learn a likelihood from the simulator
-    num_sim = 500
-    num_rounds = 2
+    num_sim = 5
+    num_rounds = 1
     num_samples = 200
     n_observations = 5
     method = 'SNPE'  # SNPE or SNLE or SNRE
 
     true_params = to.tensor([30, 0.1])
     x_o = simulator2(true_params)
-    # print(x_o.shape)
+    print(x_o.shape)
 
     simulator, prior = prepare_for_sbi(simulator2, prior)
-    inference = SNPE(prior)
+    neural_posterior = utils.posterior_nn(model='maf', hidden_features=10,
+                                          num_transforms=2, embedding_net=embedding_net)
+    inference = SNPE(prior, density_estimator=neural_posterior)
+
+    #inference = SNPE(prior)
 
     theta, x = simulate_for_sbi(simulator, prior, num_simulations=num_sim, simulation_batch_size=1)
+    print(theta.shape)
+    print(x.shape)
     _ = inference.append_simulations(theta, x).train()
 
     posterior = inference.build_posterior().set_default_x(x_o)
-    for _ in range(num_rounds):
+
+    for _ in range(num_rounds-1):
         _ = inference.append_simulations(theta, x).train()
         posterior = inference.build_posterior().set_default_x(x_o)
 
     x_o = to.stack([x_o for _ in range(n_observations)])
     print(x_o.shape)
     samples = to.cat([posterior.sample((num_samples,), x=obs) for obs in x_o], dim=0)
-    # posterior = infer(
-    #     simulator,
-    #     prior,
-    #     method=method,  # SNRE newer than SNLE newer than SNPE
-    #     num_workers=-1,
-    #     num_simulations=num_sim)
 
-    # Let’s record our “observations” of the true distribution
-    # noisy_true_params = to.tensor([30, 0.1]) + to.tensor([30, 0.1])*to.randn(n_observations, 2)/10  # no variance over the init state
-    # noisy_true_params = to.tensor([30, 0.1]).repeat((n_observations, 1))  # no variance over the parameters
-    # observation = to.stack([simulator(dp) for dp in noisy_true_params])
-
-    # Inference
-    # samples = posterior.sample((200,), x=observation[0])  # sample the posterior for a single data point
-    # samples = to.cat([posterior.sample((200,), x=obs) for obs in observation], dim=0)
-
-    # Computing the log-probability
     bounds = [20, 40, 0.0, 0.2]
     mu_1, mu_2 = to.tensor(np.mgrid[bounds[0]:bounds[1]:20/50., bounds[2]:bounds[3]:0.2/50.]).float()
     grids = to.cat(
@@ -157,3 +151,4 @@ if __name__ == '__main__':
     plt.xlabel(r'$k$')
     plt.ylabel(r'$d$')
     plt.show()
+
