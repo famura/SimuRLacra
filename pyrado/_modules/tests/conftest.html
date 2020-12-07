@@ -222,34 +222,40 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">This file is found by pytest and contains fixtures (i.e., common defaults) that can be used for all tests.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
 
-<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="n">UniformDomainParam</span><span class="p">,</span> <span class="n">NormalDomainParam</span><span class="p">,</span> \
-    <span class="n">MultivariateNormalDomainParam</span><span class="p">,</span> <span class="n">DomainParam</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DomainParam</span><span class="p">,</span> <span class="n">MultivariateNormalDomainParam</span><span class="p">,</span> <span class="n">NormalDomainParam</span><span class="p">,</span>
+    <span class="n">UniformDomainParam</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_randomizer</span> <span class="kn">import</span> <span class="n">DomainRandomizer</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.one_step.catapult</span> <span class="kn">import</span> <span class="n">CatapultSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.one_step.rosenbrock</span> <span class="kn">import</span> <span class="n">RosenSim</span>
-<span class="kn">from</span> <span class="nn">pyrado.environments.pysim.ball_on_beam</span> <span class="kn">import</span> <span class="n">BallOnBeamSim</span><span class="p">,</span> <span class="n">BallOnBeamDiscSim</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.pysim.ball_on_beam</span> <span class="kn">import</span> <span class="p">(</span><span class="n">BallOnBeamDiscSim</span><span class="p">,</span>
+                                                    <span class="n">BallOnBeamSim</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.one_mass_oscillator</span> <span class="kn">import</span> <span class="n">OneMassOscillatorSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.pendulum</span> <span class="kn">import</span> <span class="n">PendulumSim</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_ball_balancer</span> <span class="kn">import</span> <span class="n">QBallBalancerSim</span>
-<span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_cartpole</span> <span class="kn">import</span> <span class="n">QCartPoleStabSim</span><span class="p">,</span> <span class="n">QCartPoleSwingUpSim</span>
-<span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_qube</span> <span class="kn">import</span> <span class="n">QQubeSwingUpSim</span><span class="p">,</span> <span class="n">QQubeStabSim</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_cartpole</span> <span class="kn">import</span> <span class="p">(</span><span class="n">QCartPoleStabSim</span><span class="p">,</span>
+                                                        <span class="n">QCartPoleSwingUpSim</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.pysim.quanser_qube</span> <span class="kn">import</span> <span class="p">(</span><span class="n">QQubeStabSim</span><span class="p">,</span>
+                                                    <span class="n">QQubeSwingUpSim</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.quanser.quanser_ball_balancer</span> <span class="kn">import</span> <span class="n">QBallBalancerReal</span>
-<span class="kn">from</span> <span class="nn">pyrado.environments.quanser.quanser_cartpole</span> <span class="kn">import</span> <span class="n">QCartPoleStabReal</span><span class="p">,</span> <span class="n">QCartPoleSwingUpReal</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.quanser.quanser_cartpole</span> <span class="kn">import</span> <span class="p">(</span><span class="n">QCartPoleStabReal</span><span class="p">,</span>
+                                                          <span class="n">QCartPoleSwingUpReal</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.quanser.quanser_qube</span> <span class="kn">import</span> <span class="n">QQubeReal</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.adn</span> <span class="kn">import</span> <span class="n">ADNPolicy</span><span class="p">,</span> <span class="n">pd_cubic</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.special.dummy</span> <span class="kn">import</span> <span class="n">DummyPolicy</span><span class="p">,</span> <span class="n">IdlePolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.features</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.fnn</span> <span class="kn">import</span> <span class="n">FNNPolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.linear</span> <span class="kn">import</span> <span class="n">LinearPolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_randomizer</span> <span class="kn">import</span> <span class="n">DomainRandomizer</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.neural_fields</span> <span class="kn">import</span> <span class="n">NFPolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.rnn</span> <span class="kn">import</span> <span class="n">RNNPolicy</span><span class="p">,</span> <span class="n">GRUPolicy</span><span class="p">,</span> <span class="n">LSTMPolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.special.time</span> <span class="kn">import</span> <span class="n">TimePolicy</span><span class="p">,</span> <span class="n">TraceableTimePolicy</span>
 <span class="kn">from</span> <span class="nn">pyrado.policies.feed_forward.two_headed_fnn</span> <span class="kn">import</span> <span class="n">TwoHeadedFNNPolicy</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.two_headed_rnn</span> <span class="kn">import</span> <span class="n">TwoHeadedGRUPolicy</span><span class="p">,</span> <span class="n">TwoHeadedRNNPolicy</span><span class="p">,</span> <span class="n">TwoHeadedLSTMPolicy</span>
-
+<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.adn</span> <span class="kn">import</span> <span class="n">ADNPolicy</span><span class="p">,</span> <span class="n">pd_cubic</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.neural_fields</span> <span class="kn">import</span> <span class="n">NFPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.rnn</span> <span class="kn">import</span> <span class="n">GRUPolicy</span><span class="p">,</span> <span class="n">LSTMPolicy</span><span class="p">,</span> <span class="n">RNNPolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.recurrent.two_headed_rnn</span> <span class="kn">import</span> <span class="p">(</span><span class="n">TwoHeadedGRUPolicy</span><span class="p">,</span>
+                                                      <span class="n">TwoHeadedLSTMPolicy</span><span class="p">,</span>
+                                                      <span class="n">TwoHeadedRNNPolicy</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.special.dummy</span> <span class="kn">import</span> <span class="n">DummyPolicy</span><span class="p">,</span> <span class="n">IdlePolicy</span>
+<span class="kn">from</span> <span class="nn">pyrado.policies.special.time</span> <span class="kn">import</span> <span class="n">TimePolicy</span><span class="p">,</span> <span class="n">TraceableTimePolicy</span>
 
 <span class="c1"># Set default torch dtype globally to avoid inconsistent errors depending on the test run order</span>
 <span class="n">to</span><span class="o">.</span><span class="n">set_default_dtype</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
@@ -257,14 +263,21 @@
 <span class="c1"># Check if RcsPySim, Bullet, and Vortex are available</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">rcsenv</span>
-    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.ball_in_tube</span> <span class="kn">import</span> <span class="n">BallInTubeIKActivationSim</span><span class="p">,</span> <span class="n">BallInTubeVelDSSim</span>
-    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.ball_on_plate</span> <span class="kn">import</span> <span class="n">BallOnPlate2DSim</span><span class="p">,</span> <span class="n">BallOnPlate5DSim</span>
-    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.box_flipping</span> <span class="kn">import</span> <span class="n">BoxFlippingVelDSSim</span><span class="p">,</span> <span class="n">BoxFlippingIKActivationSim</span>
-    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.box_lifting</span> <span class="kn">import</span> <span class="n">BoxLiftingPosDSSim</span><span class="p">,</span> <span class="n">BoxLiftingVelDSSim</span>
-    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.box_shelving</span> <span class="kn">import</span> <span class="n">BoxShelvingVelDSSim</span><span class="p">,</span> <span class="n">BoxShelvingPosDSSim</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.ball_in_tube</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="n">BallInTubeIKActivationSim</span><span class="p">,</span> <span class="n">BallInTubeVelDSSim</span><span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.ball_on_plate</span> <span class="kn">import</span> <span class="p">(</span><span class="n">BallOnPlate2DSim</span><span class="p">,</span>
+                                                            <span class="n">BallOnPlate5DSim</span><span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.box_flipping</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="n">BoxFlippingIKActivationSim</span><span class="p">,</span> <span class="n">BoxFlippingVelDSSim</span><span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.box_lifting</span> <span class="kn">import</span> <span class="p">(</span><span class="n">BoxLiftingPosDSSim</span><span class="p">,</span>
+                                                          <span class="n">BoxLiftingVelDSSim</span><span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.box_shelving</span> <span class="kn">import</span> <span class="p">(</span><span class="n">BoxShelvingPosDSSim</span><span class="p">,</span>
+                                                           <span class="n">BoxShelvingVelDSSim</span><span class="p">)</span>
     <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.mp_blending</span> <span class="kn">import</span> <span class="n">MPBlendingSim</span>
-    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.planar_3_link</span> <span class="kn">import</span> <span class="n">Planar3LinkIKActivationSim</span><span class="p">,</span> <span class="n">Planar3LinkTASim</span>
-    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.planar_insert</span> <span class="kn">import</span> <span class="n">PlanarInsertTASim</span><span class="p">,</span> <span class="n">PlanarInsertIKActivationSim</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.planar_3_link</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="n">Planar3LinkIKActivationSim</span><span class="p">,</span> <span class="n">Planar3LinkTASim</span><span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.planar_insert</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="n">PlanarInsertIKActivationSim</span><span class="p">,</span> <span class="n">PlanarInsertTASim</span><span class="p">)</span>
     <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.quanser_qube</span> <span class="kn">import</span> <span class="n">QQubeRcsSim</span>
     <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.target_tracking</span> <span class="kn">import</span> <span class="n">TargetTrackingSim</span>
 
@@ -295,17 +308,19 @@
     <span class="kn">from</span> <span class="nn">pyrado.environments.mujoco.openai_hopper</span> <span class="kn">import</span> <span class="n">HopperSim</span>
     <span class="kn">from</span> <span class="nn">pyrado.environments.mujoco.wam</span> <span class="kn">import</span> <span class="n">WAMBallInCupSim</span>
 
-    <span class="n">m_needs_mujoco</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s1">&#39;mujoco-py can be imported.&#39;</span><span class="p">)</span>
+    <span class="n">m_needs_mujoco</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span>
+        <span class="kc">False</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s1">&#39;mujoco-py can be imported.&#39;</span><span class="p">)</span>
 
 <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
-    <span class="n">m_needs_mujoco</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="n">reason</span><span class="o">=</span><span class="s1">&#39;mujoco-py is not supported in this setup.&#39;</span><span class="p">)</span>
+    <span class="n">m_needs_mujoco</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span>
+        <span class="n">reason</span><span class="o">=</span><span class="s1">&#39;mujoco-py is not supported in this setup.&#39;</span><span class="p">)</span>
 
 <span class="c1"># Check if CUDA support is available</span>
-<span class="n">m_needs_cuda</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">(),</span> <span class="n">reason</span><span class="o">=</span><span class="s1">&#39;CUDA is not supported in this setup.&#39;</span><span class="p">)</span>
+<span class="n">m_needs_cuda</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span>
+    <span class="ow">not</span> <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">(),</span> <span class="n">reason</span><span class="o">=</span><span class="s1">&#39;CUDA is not supported in this setup.&#39;</span><span class="p">)</span>
 
 <span class="c1"># Set spawn method to spawn for parallelization</span>
-<span class="k">if</span> <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-    <span class="n">mp</span><span class="o">.</span><span class="n">set_start_method</span><span class="p">(</span><span class="s1">&#39;spawn&#39;</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">mp</span><span class="o">.</span><span class="n">set_start_method</span><span class="p">(</span><span class="s1">&#39;spawn&#39;</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
 <span class="c1"># --------------------</span>
@@ -690,7 +705,8 @@
     <span class="k">def</span> <span class="nf">default_bs_pos_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BoxShelvingPosDSSim</span><span class="p">(</span>
             <span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Bullet&#39;</span><span class="p">,</span>
-            <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gBoxShelving_posCtrl.xml&#39;</span><span class="p">,</span>  <span class="c1"># gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml</span>
+            <span class="c1"># gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml</span>
+            <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gBoxShelving_posCtrl.xml&#39;</span><span class="p">,</span>
             <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">100.</span><span class="p">,</span>
             <span class="n">max_steps</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
             <span class="n">fix_init_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -716,7 +732,8 @@
     <span class="k">def</span> <span class="nf">default_bs_pos_vx</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BoxShelvingPosDSSim</span><span class="p">(</span>
             <span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Vortex&#39;</span><span class="p">,</span>
-            <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gBoxShelving_posCtrl.xml&#39;</span><span class="p">,</span>  <span class="c1"># gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml</span>
+            <span class="c1"># gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml</span>
+            <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gBoxShelving_posCtrl.xml&#39;</span><span class="p">,</span>
             <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">100.</span><span class="p">,</span>
             <span class="n">max_steps</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
             <span class="n">fix_init_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -742,7 +759,8 @@
     <span class="k">def</span> <span class="nf">default_bf_vel_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BoxFlippingVelDSSim</span><span class="p">(</span>
             <span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Bullet&#39;</span><span class="p">,</span>
-            <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gBoxFlipping_posCtrl.xml&#39;</span><span class="p">,</span>  <span class="c1"># gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml</span>
+            <span class="c1"># gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml</span>
+            <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gBoxFlipping_posCtrl.xml&#39;</span><span class="p">,</span>
             <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">100.</span><span class="p">,</span>
             <span class="n">max_steps</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
             <span class="n">fix_init_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -768,7 +786,8 @@
     <span class="k">def</span> <span class="nf">default_bf_ik_bt</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">BoxFlippingIKActivationSim</span><span class="p">(</span>
             <span class="n">physicsEngine</span><span class="o">=</span><span class="s1">&#39;Bullet&#39;</span><span class="p">,</span>
-            <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gBoxFlipping_posCtrl.xml&#39;</span><span class="p">,</span>  <span class="c1"># gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml</span>
+            <span class="c1"># gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml</span>
+            <span class="n">graphFileName</span><span class="o">=</span><span class="s1">&#39;gBoxFlipping_posCtrl.xml&#39;</span><span class="p">,</span>
             <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">100.</span><span class="p">,</span>
             <span class="n">max_steps</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
             <span class="n">fix_init_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -920,11 +939,15 @@
 <div class="viewcode-block" id="default_randomizer"><a class="viewcode-back" href="../../tests.html#tests.conftest.default_randomizer">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">default_randomizer</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">DomainRandomizer</span><span class="p">(</span>
-        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">clip_up</span><span class="o">=</span><span class="mi">100</span><span class="p">),</span>
-        <span class="n">UniformDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;special&#39;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">halfspan</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=-</span><span class="mf">7.4</span><span class="p">,</span> <span class="n">roundint</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+                          <span class="n">clip_lo</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">clip_up</span><span class="o">=</span><span class="mi">100</span><span class="p">),</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;special&#39;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                           <span class="n">halfspan</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=-</span><span class="mf">7.4</span><span class="p">,</span> <span class="n">roundint</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
         <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;length&#39;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">clip_up</span><span class="o">=</span><span class="mf">50.1</span><span class="p">),</span>
-        <span class="n">UniformDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;time_delay&#39;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">halfspan</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">clip_up</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">roundint</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-        <span class="n">MultivariateNormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;multidim&#39;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">10</span><span class="o">*</span><span class="n">to</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,)),</span> <span class="n">cov</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">to</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">clip_up</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+        <span class="n">UniformDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;time_delay&#39;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span>
+                           <span class="n">halfspan</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">clip_up</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">roundint</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">MultivariateNormalDomainParam</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;multidim&#39;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">10</span><span class="o">*</span><span class="n">to</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,)),</span> <span class="n">cov</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">to</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">clip_up</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
     <span class="p">)</span></div>
 
 
