@@ -46,7 +46,7 @@ from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.sampling.rollout import rollout
 # test
 
-plt.rcParams.update({"text.usetex": True})
+plt.rcParams.update({"text.usetex": False})
 
 
 def simulator(mu):
@@ -99,14 +99,8 @@ if __name__ == '__main__':
 
     #inference = SNPE(prior)
 
-    theta, x = simulate_for_sbi(simulator, prior, num_simulations=num_sim, simulation_batch_size=1)
-    print(theta.shape)
-    print(x.shape)
-    _ = inference.append_simulations(theta, x).train()
-
-    posterior = inference.build_posterior().set_default_x(x_o)
-
-    for _ in range(num_rounds-1):
+    for _ in range(num_rounds):
+        theta, x = simulate_for_sbi(simulator, prior, num_simulations=num_sim, simulation_batch_size=1)
         _ = inference.append_simulations(theta, x).train()
         posterior = inference.build_posterior().set_default_x(x_o)
 
