@@ -31,10 +31,15 @@ from torch.distributions.uniform import Uniform
 from torch.distributions.normal import Normal
 from torch.distributions.multivariate_normal import MultivariateNormal
 from torch.distributions.bernoulli import Bernoulli
-from typing import Union, List, Optional
+from typing import Sequence, Union, List, Optional
 
 import pyrado
+import torch as to
 from pyrado.utils.input_output import print_cbt
+from torch.distributions.bernoulli import Bernoulli
+from torch.distributions.multivariate_normal import MultivariateNormal
+from torch.distributions.normal import Normal
+from torch.distributions.uniform import Uniform
 
 
 class DomainParam:
@@ -80,7 +85,7 @@ class DomainParam:
         """ Get union of all hyper-parameters of all domain parameter distributions. """
         return ["name", "clip_lo", "clip_up", "roundint"]
 
-    def adapt(self, domain_distr_param: str, domain_distr_param_value: Union[float, int]):
+    def adapt(self, domain_distr_param: str, domain_distr_param_value: Union[float, int, to.Tensor]):
         """
         Update this domain parameter.
 
