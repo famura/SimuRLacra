@@ -26,16 +26,16 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import torch as to
 from abc import ABC
-from torch.distributions.uniform import Uniform
-from torch.distributions.normal import Normal
-from torch.distributions.multivariate_normal import MultivariateNormal
-from torch.distributions.bernoulli import Bernoulli
 from typing import Sequence, Union
 
 import pyrado
+import torch as to
 from pyrado.utils.input_output import print_cbt
+from torch.distributions.bernoulli import Bernoulli
+from torch.distributions.multivariate_normal import MultivariateNormal
+from torch.distributions.normal import Normal
+from torch.distributions.uniform import Uniform
 
 
 class DomainParam(ABC):
@@ -78,7 +78,7 @@ class DomainParam(ABC):
         """ Get union of all hyper-parameters of all domain parameter distributions. """
         raise NotImplementedError
 
-    def adapt(self, domain_distr_param: str, domain_distr_param_value: Union[float, int]):
+    def adapt(self, domain_distr_param: str, domain_distr_param_value: Union[float, int, to.Tensor]):
         """
         Update this domain parameter.
 
@@ -104,7 +104,7 @@ class DomainParam(ABC):
 
         if self.distr is None:
             # Return nominal values multiple times
-            return list(to.ones(num_samples)*self.mean)
+            return list(to.ones(num_samples) * self.mean)
         else:
             # Draw num_samples samples (rsample is not implemented for Bernoulli)
             sample_tensor = self.distr.sample(sample_shape=to.Size([num_samples]))
@@ -270,13 +270,13 @@ class BernoulliDomainParam(DomainParam):
 
         if self.distr is None:
             # Return nominal values multiple times
-            return list(to.ones(num_samples)*self.mean)
+            return list(to.ones(num_samples) * self.mean)
         else:
             # Draw num_samples samples (rsample is not implemented for Bernoulli)
             sample_tensor = self.distr.sample(sample_shape=to.Size([num_samples]))
 
             # Sample_tensor contains either 0 or 1
-            sample_tensor = (to.ones_like(sample_tensor) - sample_tensor)*self.val_0 + sample_tensor*self.val_1
+            sample_tensor = (to.ones_like(sample_tensor) - sample_tensor) * self.val_0 + sample_tensor * self.val_1
 
             # Clip the values
             sample_tensor = to.clamp(sample_tensor, self.clip_lo, self.clip_up)
