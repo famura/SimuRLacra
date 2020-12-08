@@ -15,7 +15,7 @@ import pyrado
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.sampling.rollout import rollout
-
+from plot_trajectories import plot_trajectories
 
 def fancy_simulator(mu):
     # In the end, the output of this could be a distance measure over trajectories instead of just the final state
@@ -71,4 +71,23 @@ if __name__ == '__main__':
         _ = inference.append_simulations(theta, x).train()
         prior = inference.build_posterior().set_default_x(x_o)
     posterior = prior
+
+    # sample from distribution
+    x_o = to.stack([x_o for _ in range(n_observations)])
+
+    samples = to.cat([posterior.sample((num_samples,), x=obs) for obs in x_o], dim=0)
+
+    print("Simulating trajectories ...")
+    x_s = to.empty((samples.shape[0], x_o.shape[1]))
+    cnt = 0
+    for smpl in samples:
+        x_s[cnt, :] = simulator(smpl.unsqueeze(0))
+        if not cnt % 10:
+            print("Simulated {}. trajectory of {}".format(cnt, samples.shape[0]))
+        cnt += 1
+
+    plot_trajectories(x_s, n_parameter=2, n_observations=1, observation_data=x_o)
+    plot_trajectories(x_s, n_parameter=2, n_observations=5, observation_data=x_o)
+
+
 
