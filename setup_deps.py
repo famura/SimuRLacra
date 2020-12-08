@@ -28,27 +28,32 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import argparse
+import errno
 import os
 import os.path as osp
 import shutil
 import subprocess as sp
-from urllib.request import urlretrieve
-import tarfile
-import zipfile
-import tempfile
-import errno
 import sys
-import argparse
+import tarfile
+import tempfile
+import zipfile
+from urllib.request import urlretrieve
+
 import yaml
 
 # Get the project's root directory
 project_dir = osp.dirname(osp.abspath(__file__))
 
+# Check if we are in CI
+CI = 'CI' in os.environ
 # Make sure the git submodules are up to date, otherwise this script might break them
-sp.check_call(["git", "submodule", "update", "--init"], cwd=project_dir)
+if not CI:
+    sp.check_call(["git", "submodule", "update", "--init"], cwd=project_dir)
 
 # Check if we are in HRI by looking for the SIT envionment variable
 IN_HRI = 'SIT' in os.environ
+
 
 # ================== #
 # PARSE ARGS EAGERLY #
@@ -56,14 +61,24 @@ IN_HRI = 'SIT' in os.environ
 # Allows to use them in the configuration
 
 parser = argparse.ArgumentParser(description='Setup RcsPySim dev env')
-parser.add_argument('tasks', metavar='task', type=str, nargs='*', help='Subtasks to execute. Suggested tasks are `all` (includes every feature) or `no_rcs` (excludes Rcs and RcsPysim). To get a list of all availibe tasks, run `python setup_deps.py`.')
-parser.add_argument('--vortex', dest='vortex', action='store_true', default=False, help='Use vortex physics engine')
-parser.add_argument('--no_vortex', dest='vortex', action='store_false', help='Do not use vortex physics engine')
-parser.add_argument('--cuda', dest='usecuda', action='store_true', default=False, help='Use CUDA for PyTorch')
-parser.add_argument('--no_cuda', dest='usecuda', action='store_false', help='Do not use CUDA for PyTorch')
-parser.add_argument('--headless', action='store_true', default=False, help='Build in headless mode')
-parser.add_argument('--local_torch', dest='uselibtorch', action='store_true', default=True, help='Use the local libtorch from the thirdParty directory for RcsPySim')
-parser.add_argument('--no_local_torch', dest='uselibtorch', action='store_false', help='Do not use the local libtorch from the thirdParty directory for RcsPySim')
+parser.add_argument('tasks', metavar='task', type=str, nargs='*',
+                    help='Subtasks to execute. Suggested tasks are `all` (includes every feature) or `no_rcs` (excludes Rcs and RcsPysim). To get a list of all availibe tasks, run `python setup_deps.py`.')
+parser.add_argument('--vortex', dest='vortex', action='store_true',
+                    default=False, help='Use vortex physics engine')
+parser.add_argument('--no_vortex', dest='vortex',
+                    action='store_false', help='Do not use vortex physics engine')
+parser.add_argument('--cuda', dest='usecuda', action='store_true',
+                    default=False, help='Use CUDA for PyTorch')
+parser.add_argument('--no_cuda', dest='usecuda',
+                    action='store_false', help='Do not use CUDA for PyTorch')
+parser.add_argument('--headless', action='store_true',
+                    default=False, help='Build in headless mode')
+parser.add_argument('--local_torch', dest='uselibtorch', action='store_true', default=True,
+                    help='Use the local libtorch from the thirdParty directory for RcsPySim')
+parser.add_argument('--no_local_torch', dest='uselibtorch', action='store_false',
+                    help='Do not use the local libtorch from the thirdParty directory for RcsPySim')
+parser.add_argument('--pip_check', action='store_true',
+                    default=False, help='Run ´pip check´ after installing the dependencies')
 parser.add_argument('-j', default=1, type=int, help='Number of make threads')
 
 args = parser.parse_args()
@@ -87,16 +102,18 @@ cmake_prefix_path = [
 required_packages = [
     # "g++-4.8",  # necessary for Vortex
     "qt5-default",  # conda install -c dsdale24 qt5 _OR_ conda install -c anaconda qt  __OR__ HEADLESS BUILD
-    "libqwt-qt5-dev",  # conda install -c dsdale24 qt5 _OR_ conda install -c anaconda qt  __OR__ HEADLESS BUILD
+    # conda install -c dsdale24 qt5 _OR_ conda install -c anaconda qt  __OR__ HEADLESS BUILD
+    "libqwt-qt5-dev",
     "libbullet-dev",  # conda install -c conda-forge bullet
-    "libfreetype6-dev",  # conda install -c anaconda freetype 
-    "libxml2-dev",  #  conda install -c anaconda libxml2 
-    "libglu1-mesa-dev",  # conda install -c anaconda libglu 
-    "freeglut3-dev",  #  conda install -c anaconda freeglut 
-    "mesa-common-dev",  #  conda install -c conda-forge mesalib
-    "libopenscenegraph-dev",  # conda install -c conda-forge openscenegraph __OR__ HEADLESS BUILD
-    "openscenegraph",  #  conda install -c conda-forge openscenegraph __OR__ HEADLESS BUILD
-    "liblapack-dev",  #  conda install -c conda-forge lapack 
+    "libfreetype6-dev",  # conda install -c anaconda freetype
+    "libxml2-dev",  # conda install -c anaconda libxml2
+    "libglu1-mesa-dev",  # conda install -c anaconda libglu
+    "freeglut3-dev",  # conda install -c anaconda freeglut
+    "mesa-common-dev",  # conda install -c conda-forge mesalib
+    # conda install -c conda-forge openscenegraph __OR__ HEADLESS BUILD
+    "libopenscenegraph-dev",
+    "openscenegraph",  # conda install -c conda-forge openscenegraph __OR__ HEADLESS BUILD
+    "liblapack-dev",  # conda install -c conda-forge lapack
     "doxygen",  # necessary for building the Rcs documentation
     "python3-distutils",  # necessary for installing PyTorch
 ]
@@ -134,8 +151,8 @@ rcs_cmake_vars = {
     "ENABLE_C++11": "ON",
     # Eigen is off for now until the dependency issues are fixed in Rcs.
     # Must specify include dir for Eigen 3.2
-    #"EIGEN3_INCLUDE_DIR": eigen_include_dir,
-    #"USE_EIGEN": "ON",
+    # "EIGEN3_INCLUDE_DIR": eigen_include_dir,
+    # "USE_EIGEN": "ON",
     "USE_WM5": "ON",  # for advanced collision models
     "WRITE_PACKAGE_REGISTRY": "ON",
 }
@@ -146,7 +163,8 @@ if args.headless:
 # Bullet
 if IN_HRI:
     # Use bullet double from SIT
-    rcs_cmake_vars["USE_BULLET"] = "2.83_float"  # double causes errors due to soft bodies
+    # double causes errors due to soft bodies
+    rcs_cmake_vars["USE_BULLET"] = "2.83_float"
 else:
     # Bullet from apt-get package is in float mode
     rcs_cmake_vars["USE_BULLET"] = "2.83_float"
@@ -188,7 +206,7 @@ rcspysim_cmake_vars = {
     "PYBIND11_PYTHON_VERSION": "3.7",
     "SETUP_PYTHON_DEVEL": "ON",
     "Rcs_DIR": rcs_build_dir,
-    "USE_LIBTORCH": uselibtorch,  # use the manually build PyTorch from thirdParty/pytorch 
+    "USE_LIBTORCH": uselibtorch,  # use the manually build PyTorch from thirdParty/pytorch
     # Do NOT set CMAKE_PREFIX_PATH here, it will get overridden later on.
 }
 
@@ -236,7 +254,7 @@ def downloadAndExtract(url, destdir, archiveContentPath=None):
         path_attr = "filename"
     else:
         raise ValueError("Unsupported archive file: {}".format(url))
-    
+
     if osp.exists(destdir) and len(os.listdir(destdir)) != 0:
         # Exists, skip
         return
@@ -328,27 +346,28 @@ def setup_dep_libraries():
     # Update
     sp.check_call(["sudo", "apt-get", "update", "-y"])
     # Install dependencies
-    sp.check_call(["sudo", "apt-get", "install", "-y"] + required_packages + required_packages_mujocopy)
+    sp.check_call(["sudo", "apt-get", "install", "-y"] +
+                  required_packages + required_packages_mujocopy)
 
 
 def setup_wm5():
     # Download the sources
     downloadAndExtract(wm5_download_url, wm5_src_dir, "WildMagic-master")
-    
+
     # Build relevant modules
     for module in wm5_modules:
         sp.check_call([
-            "make", 
-            "-f", 
-            "makefile.wm5", 
-            "build", 
+            "make",
+            "-f",
+            "makefile.wm5",
+            "build",
             "CFG={}".format(wm5_config),
             "-j{}".format(make_parallelity),
         ], cwd=osp.join(wm5_src_dir, module))
 
 
 def setup_rcs():
-    # Build Rcs. We already have it in the submodule    
+    # Build Rcs. We already have it in the submodule
     buildCMakeProject(rcs_src_dir, rcs_build_dir, cmakeVars=rcs_cmake_vars)
 
 
@@ -356,37 +375,45 @@ def setup_pytorch():
     # Get PyTorch from git
     if not osp.exists(pytorch_src_dir):
         mkdir_p(pytorch_src_dir)
-        sp.check_call(["git", "clone", "--recursive", "--branch", "v{}".format(pytorch_version), pytorch_git_repo, pytorch_src_dir])
+        sp.check_call(["git", "clone", "--recursive", "--branch",
+                       "v{}".format(pytorch_version), pytorch_git_repo, pytorch_src_dir])
     # Let it's setup do the magic
     env = os.environ.copy()
     env.update(env_vars)
-    env["USE_CUDA"] = "1" if args.usecuda else "0"  # CUDA is disabled by default
-    env["USE_CUDNN"] = "1" if args.usecuda else "0"  # CUDA is disabled by default
-    env["USE_MKLDNN"] = "0"  # disable MKLDNN; mkl/blas deprecated error https://github.com/pytorch/pytorch/issues/17874
+    # CUDA is disabled by default
+    env["USE_CUDA"] = "1" if args.usecuda else "0"
+    # CUDA is disabled by default
+    env["USE_CUDNN"] = "1" if args.usecuda else "0"
+    # disable MKLDNN; mkl/blas deprecated error https://github.com/pytorch/pytorch/issues/17874
+    env["USE_MKLDNN"] = "0"
     env["_GLIBCXX_USE_CXX11_ABI"] = "1"
-    sp.check_call([sys.executable, "setup.py", "install"], cwd=pytorch_src_dir, env=env)
+    sp.check_call([sys.executable, "setup.py", "install"],
+                  cwd=pytorch_src_dir, env=env)
 
 
 def setup_rcspysim():
     # Take care of RcsPySim
-    buildCMakeProject(rcspysim_src_dir, rcspysim_build_dir, cmakeVars=rcspysim_cmake_vars)
+    buildCMakeProject(rcspysim_src_dir, rcspysim_build_dir,
+                      cmakeVars=rcspysim_cmake_vars)
 
 
 def setup_iiwa():
     # The Kuka iiwa meshes
-    downloadAndExtract(iiwa_url, osp.join(resources_dir, "iiwa_description"), f"iiwa_stack-{iiwa_repo_version}/iiwa_description")
-    
+    downloadAndExtract(iiwa_url, osp.join(resources_dir, "iiwa_description"),
+                       f"iiwa_stack-{iiwa_repo_version}/iiwa_description")
+
     # Copy the relevant mesh files into RcsPySim's config folder
     # We already have the .tri meshes in there, just gives them company.
     src_dir = osp.join(resources_dir, "iiwa_description/meshes/iiwa14")
-    dst_dir = osp.join(rcspysim_src_dir, "config/iiwa_description/meshes/iiwa14")
-    
+    dst_dir = osp.join(
+        rcspysim_src_dir, "config/iiwa_description/meshes/iiwa14")
+
     # Collision and visual for links 0 - 7
     print("Copying the KUKA iiwa meshes to the RcsPySim config dir ...")
     for catdir in ['collision', 'visual']:
         for lnum in range(8):
             fname = osp.join(catdir, f"link_{lnum}.stl")
-            
+
             mkdir_p(osp.dirname(osp.join(dst_dir, fname)))
             shutil.copyfile(osp.join(src_dir, fname), osp.join(dst_dir, fname))
     print("Setting up the KUKA iiwa meshes is done.")
@@ -394,13 +421,15 @@ def setup_iiwa():
 
 def setup_schunk():
     # The Schunk SDH meshes
-    downloadAndExtract(sdh_url, osp.join(resources_dir, "schunk_description"), f"schunk_modular_robotics-{sdh_repo_version}/schunk_description")
-    
+    downloadAndExtract(sdh_url, osp.join(resources_dir, "schunk_description"),
+                       f"schunk_modular_robotics-{sdh_repo_version}/schunk_description")
+
     # Copy the relevant mesh files into RcsPySim's config folder
     # We already have the .tri meshes in there, just gives them company.
     src_dir = osp.join(resources_dir, "schunk_description/meshes/sdh")
-    dst_dir = osp.join(rcspysim_src_dir, "config/schunk_description/meshes/sdh")
-    
+    dst_dir = osp.join(
+        rcspysim_src_dir, "config/schunk_description/meshes/sdh")
+
     # Get all .stl files in the sdh subdir
     print("Copying the Schunk SDH meshes to the RcsPySim config dir ...")
     for fname in os.listdir(src_dir):
@@ -412,11 +441,13 @@ def setup_schunk():
 
 def setup_wam():
     # Barrett WAM meshes (Pyrado)
-    downloadAndExtract(wam_url, osp.join(resources_dir, "wam_description"), f"self-paced-rl-{wam_repo_version}/sprl/envs/xml/")
-    
+    downloadAndExtract(wam_url, osp.join(resources_dir, "wam_description"),
+                       f"self-paced-rl-{wam_repo_version}/sprl/envs/xml/")
+
     # Copy the relevant mesh files into Pyrados's MuJoCo environments folder
     src_dir = osp.join(resources_dir, "wam_description/meshes")
-    dst_dir = osp.join(pyrado_dir, "pyrado/environments/mujoco/assets/meshes/barrett_wam")
+    dst_dir = osp.join(
+        pyrado_dir, "pyrado/environments/mujoco/assets/meshes/barrett_wam")
 
     # Get all .stl files in the wam subdir
     print("Copying the Barrett WAM meshes to the Pyrado assets dir ...")
@@ -436,36 +467,52 @@ def setup_meshes():
 
 def setup_pyrado():
     # Set up Pyrado in development mode
-    sp.check_call([sys.executable, "setup.py", "develop"], cwd=osp.join(project_dir, 'Pyrado'))
+    sp.check_call([sys.executable, "setup.py", "develop"],
+                  cwd=osp.join(project_dir, 'Pyrado'))
 
 
 def setup_mujoco_py():
     # Set up mujoco-py (doing it via pip caused problems on some machines)
-    sp.check_call([sys.executable, "setup.py", "install"], cwd=osp.join(project_dir, 'thirdParty', 'mujoco-py'))
+    sp.check_call([sys.executable, "setup.py", "install"],
+                  cwd=osp.join(project_dir, 'thirdParty', 'mujoco-py'))
 
 
 def setup_pytorch_based():
-	# Locally build PyTorch==1.7.0 requires dataclasses (does not harm when using pytorch from pip)
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "dataclasses"])
+    # Locally build PyTorch==1.7.0 requires dataclasses (does not harm when using pytorch from pip)
+    sp.check_call([sys.executable, "-m", "pip", "install",
+                   "-U", "--no-deps", "dataclasses"])
     # Set up GPyTorch without touching the PyTorch installation (requires scikit-learn which requires threadpoolctl)
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "threadpoolctl"])
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "scikit-learn"])
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "gpytorch"])
+    sp.check_call([sys.executable, "-m", "pip", "install",
+                   "-U", "--no-deps", "threadpoolctl"])
+    sp.check_call([sys.executable, "-m", "pip", "install",
+                   "-U", "--no-deps", "scikit-learn"])
+    sp.check_call([sys.executable, "-m", "pip", "install",
+                   "-U", "--no-deps", "gpytorch"])
     # Set up BoTorch without touching the PyTorch installation (requires gpytorch)
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "botorch"])
+    sp.check_call([sys.executable, "-m", "pip", "install",
+                   "-U", "--no-deps", "botorch"])
     # Set up Pyro without touching the PyTorch installation (requires opt-einsum)
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "opt-einsum"])
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "pyro-api"])
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "pyro-ppl"])
+    sp.check_call([sys.executable, "-m", "pip", "install",
+                   "-U", "--no-deps", "opt-einsum"])
+    sp.check_call([sys.executable, "-m", "pip", "install",
+                   "-U", "--no-deps", "pyro-api"])
+    sp.check_call([sys.executable, "-m", "pip", "install",
+                   "-U", "--no-deps", "pyro-ppl"])
     # Set up SBI without touching the PyTorch installation (requires Pyro and pyknos which requires nflows)
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "nflows"])
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "pyknos"])
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "sbi"])
+    sp.check_call([sys.executable, "-m", "pip",
+                   "install", "-U", "--no-deps", "nflows"])
+    sp.check_call([sys.executable, "-m", "pip",
+                   "install", "-U", "--no-deps", "pyknos"])
+    sp.check_call([sys.executable, "-m", "pip",
+                   "install", "-U", "--no-deps", "sbi"])
     # Downgrade to avoid the incompatibility with cliff (whatever cliff is)
-    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "prettytable==0.7.2"])
-    # Check the installations
-    print("Checking dependencies of the packages installed via pip:")
-    sp.check_call([sys.executable, "-m", "pip", "check"])
+    sp.check_call([sys.executable, "-m", "pip", "install",
+                   "-U", "--no-deps", "prettytable==0.7.2"])
+    
+    if args.pip_check:
+        # Check the installations
+        print("Checking dependencies of the packages installed via pip:")
+        sp.check_call([sys.executable, "-m", "pip", "check"])
 
 
 def setup_cppsctp():
@@ -476,7 +523,8 @@ def setup_cppsctp():
     user_input = input(f"You are about to install SL which depends on the following libraries:"
                        f"\n{required_packages_sctp}\nDo you really want this? [y / n] ")
     if user_input.lower() == "y":
-        sp.check_call(["sudo", "apt-get", "install", "-y"] + required_packages_sctp)
+        sp.check_call(["sudo", "apt-get", "install", "-y"] +
+                      required_packages_sctp)
         print("Dependencies have been installed.")
     else:
         print("Dependencies have NOT been installed.")
@@ -492,7 +540,8 @@ def setup_cppsctp():
         mkdir_p(cppsctp_dir)
 
     # Build it
-    buildCMakeProject(cppsctp_dir, cppsctp_build_dir, cmakeVars=cppsctp_cmake_vars, install_dir=cppsctpinstall_dir)
+    buildCMakeProject(cppsctp_dir, cppsctp_build_dir,
+                      cmakeVars=cppsctp_cmake_vars, install_dir=cppsctpinstall_dir)
 
 
 def setup_sl():
@@ -511,7 +560,8 @@ def setup_sl():
     user_input = input(f"You are about to install SL which depends on the following libraries:"
                        f"\n{required_packages_sl}\nDo you really want this? [y / n] ")
     if user_input.lower() == "y":
-        sp.check_call(["sudo", "apt-get", "install", "-y"] + required_packages_sl)
+        sp.check_call(["sudo", "apt-get", "install", "-y"] +
+                      required_packages_sl)
         print("Dependencies have been installed.")
     else:
         print("Dependencies have NOT been installed.")
@@ -556,7 +606,8 @@ def setup_wo_rcs_wo_pytorch():
     # Rcs will still be downloaded since it is a submodule
     setup_wam()  # ignoring the meshes used in RcsPySim
     setup_mujoco_py()
-    setup_pyrado()
+    if not CI:
+        setup_pyrado()
     setup_pytorch_based()
     print("\nWAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n")
 
@@ -567,7 +618,8 @@ def setup_wo_rcs_w_pytorch():
     setup_pytorch()
     setup_wam()  # ignoring the meshes used in RcsPySim
     setup_mujoco_py()
-    setup_pyrado()
+    if not CI:
+        setup_pyrado()
     setup_pytorch_based()
     print("\nPyTorch, WAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n")
 
@@ -578,11 +630,14 @@ def setup_w_rcs_wo_pytorch():
     if not IN_HRI:
         setup_wm5()
     setup_rcs()
-    rcspysim_cmake_vars["USE_LIBTORCH"] = "OFF"  # don't use the local PyTorch but the one from anaconda/pip
-    setup_rcspysim()
+    # don't use the local PyTorch but the one from anaconda/pip
+    rcspysim_cmake_vars["USE_LIBTORCH"] = "OFF"
+    if not CI:
+        setup_rcspysim()
     setup_meshes()
-    #setup_mujoco_py()
-    setup_pyrado()
+    setup_mujoco_py()
+    if not CI:
+        setup_pyrado()
     setup_pytorch_based()
     print("\nWM5, Rcs, RcsPySim, iiwa & Schunk & WAM meshes, mujoco-py, and Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n")
 
@@ -594,24 +649,26 @@ def setup_w_rcs_w_pytorch():
         setup_wm5()
     setup_rcs()
     setup_pytorch()
-    setup_rcspysim()
+    if not CI:
+        setup_rcspysim()
     setup_meshes()
     setup_mujoco_py()
-    setup_pyrado()
+    if not CI:
+        setup_pyrado()
     setup_pytorch_based()
     print("\nWM5, Rcs, PyTorch, RcsPySim, iiwa & Schunk & WAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n")
-    
+
 
 # All tasks list
 tasks_by_name = {
-    name[6:] : v  # cut the "setup_"
+    name[6:]: v  # cut the "setup_"
     for name, v in globals().items() if name.startswith('setup_')
 }
 
 # ==== #
 # MAIN #
 # ==== #
-    
+
 # Print help if none
 if len(args.tasks) == 0:
     print("Available tasks:")

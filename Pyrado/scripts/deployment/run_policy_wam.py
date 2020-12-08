@@ -34,7 +34,7 @@ import numpy as np
 
 import pyrado
 from pyrado.environment_wrappers.utils import inner_env
-from pyrado.environments.barrett_wam.wam import WAMBallInCupReal
+from pyrado.environments.barrett_wam.wam import WAMBallInCupRealEpisodic, WAMBallInCupRealStepBased
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.sampling.rollout import rollout, after_rollout_query
 from pyrado.utils.experiments import wrap_like_other_env, load_experiment
@@ -57,7 +57,13 @@ if __name__ == '__main__':
         # If `max_steps` (or `dt`) are not explicitly set using `args`, use the same as in the simulation
         max_steps = args.max_steps if args.max_steps < pyrado.inf else env_sim.max_steps
         dt = args.dt if args.dt is not None else env_sim.dt
-        env_real = WAMBallInCupReal(dt=dt, max_steps=max_steps, num_dof=inner_env(env_sim).num_dof)
+        mode = ''
+        while mode not in ['ep', 'sb']:
+            mode = input('Pass ep for episodic and sb for step-based control mode: ').lower()
+        if mode == 'sb':
+            env_real = WAMBallInCupRealStepBased(dt=dt, max_steps=max_steps, num_dof=inner_env(env_sim).num_dof)
+        else:
+            env_real = WAMBallInCupRealEpisodic(dt=dt, max_steps=max_steps, num_dof=inner_env(env_sim).num_dof)
     else:
         raise pyrado.ValueErr(given=env_sim.name, eq_constraint='wam-bic')
 
@@ -70,7 +76,7 @@ if __name__ == '__main__':
     while not done:
         ro = rollout(env_real, policy, eval=True)
         print_cbt(f'Return: {ro.undiscounted_return()}', 'g', bright=True)
-        np.save(osp.join(ex_dir, 'qpos_real.npy'), env_real.qpos)
-        np.save(osp.join(ex_dir, 'qvel_real.npy'), env_real.qvel)
-        print_cbt('Saved trajectory into qpos_real.npy and qvel_real.npy', 'g')
+        np.save(osp.join(ex_dir, f'qpos_real_{mode}.npy'), env_real.qpos_real)
+        np.save(osp.join(ex_dir, f'qvel_real_{mode}.npy'), env_real.qvel_real)
+        print_cbt(f'Saved trajectory into qpos_real_{mode}.npy and qvel_real_{mode}.npy', 'g')
         done, _, _ = after_rollout_query(env_real, policy, ro)

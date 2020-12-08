@@ -27,9 +27,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Simulate (with animation) a policy for the WAM Ball-in-cup task.
+Simulate a policy for the WAM Ball-in-cup task.
 Export the policy in form of desired joint position and velocities.
-The converted policy is saved same directory where the original policy was loaded from.
+In addition, the actual joint position and velocities of the simulation are saved.
 """
 import os.path as osp
 import numpy as np
@@ -64,8 +64,15 @@ if __name__ == '__main__':
     if args.init_state is not None:
         init_state = env.init_space.sample_uniform()
         init_qpos = np.asarray(args.init_state)
-        assert len(init_qpos) == 5
-        np.put(init_state, [1, 3, 5, 6, 7], init_qpos)  # the passed init state only concerns certain joint angles
+        # The passed init state only concerns certain (non-zero) joint angles.
+        # The last element is the angle of the first rope segment relative to the cup bottom plate
+        if len(init_qpos) == 5:
+            np.put(init_state, [1, 3, 5, 6, 7], init_qpos)  # 7 DoF
+        elif len(init_qpos) == 3:
+            np.put(init_state, [1, 3, 4], init_qpos)  # 4 DoF
+        else:
+            raise pyrado.ValueErr(given=args.init_state, given_name='init_state',
+                                  msg='The passed init_state requires length 3 for 4dof and 5 for 7dof.')
     else:
         init_state = None
 
@@ -82,25 +89,8 @@ if __name__ == '__main__':
     t = ro.env_infos['t']
     qpos, qvel = ro.env_infos['qpos'], ro.env_infos['qvel']
     qpos_des, qvel_des = ro.env_infos['qpos_des'], ro.env_infos['qvel_des']
-    np.save(osp.join(ex_dir, 'qpos.npy'), qpos)
-    np.save(osp.join(ex_dir, 'qvel.npy'), qvel)
+
+    np.save(osp.join(ex_dir, 'qpos_sim.npy'), qpos)
+    np.save(osp.join(ex_dir, 'qvel_sim.npy'), qvel)
     np.save(osp.join(ex_dir, 'qpos_des.npy'), qpos_des)
     np.save(osp.join(ex_dir, 'qvel_des.npy'), qvel_des)
-
-    # Plot trajectories of the directly controlled joints and their corresponding desired trajectories
-    fig, ax = plt.subplots(3, 2, sharex='all', constrained_layout=True)
-    fig.suptitle('Desired Trajectory')
-    for i, idx in enumerate([1, 3, 5]):
-        ax[i, 0].plot(t, 180/np.pi*qpos_des[:, idx], label='Desired')
-        ax[i, 0].plot(t, 180/np.pi*qpos[:, idx], label='Actual')
-        ax[i, 1].plot(t, 180/np.pi*qvel_des[:, idx], label='Desired')
-        ax[i, 1].plot(t, 180/np.pi*qvel[:, idx], label='Actual')
-        ax[i, 0].set_ylabel(f'joint {idx}')
-        if i == 0:
-            ax[i, 0].legend()
-            ax[i, 1].legend()
-    ax[2, 0].set_xlabel('time [s]')
-    ax[2, 1].set_xlabel('time [s]')
-    ax[0, 0].set_title('joint pos [deg]')
-    ax[0, 1].set_title('joint vel [deg/s]')
-    plt.show()

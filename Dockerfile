@@ -26,52 +26,109 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+# Build from base image
 FROM nvidia/cuda:10.1-base-ubuntu18.04
 
+# Set the locales
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
+ARG CI=TRUE
 
+# Prevent expecting user inputs
 ARG DEBIAN_FRONTEND=noninteractive
 
+# Install ubuntu packages
 RUN apt-get update && apt-get install -y \
     curl ca-certificates sudo git bzip2 libx11-6 \
     gcc g++ make cmake zlib1g-dev swig libsm6 libxext6 \
     build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
     wget llvm libncurses5-dev xz-utils tk-dev libxrender1\
-    libxml2-dev libxmlsec1-dev libffi-dev libcairo2-dev libjpeg-dev libgif-dev chromium-browser doxygen texlive-base graphviz
+    libxml2-dev libxmlsec1-dev libffi-dev libcairo2-dev libjpeg-dev libgif-dev\
+    doxygen texlive graphviz ghostscript
 
+# Setup a user without root permission
 RUN adduser --disabled-password --gecos '' --shell /bin/bash user && chown -R user:user /home/user
+RUN mkdir /home/user/SimuRLacra && chown user:user /home/user/SimuRLacra
 RUN echo 'user ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/90-pyrado
 USER user
 WORKDIR /home/user
 
+# Setup conda
+RUN echo "export PATH=/home/user/miniconda3/bin:$PATH" >> ~/.bashrc
+RUN echo "conda activate pyrado" >> ~/.bashrc
+
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
- && bash Miniconda3-latest-Linux-x86_64.sh -b \
- && rm Miniconda3-latest-Linux-x86_64.sh
+    && bash Miniconda3-latest-Linux-x86_64.sh -b \
+    && rm Miniconda3-latest-Linux-x86_64.sh
 
 ENV PATH /home/user/miniconda3/bin:$PATH
 
 RUN conda update conda \
- && conda update --all
-
-RUN mkdir SimuRLacra
-COPY --chown=user:user setup_env.sh SimuRLacra
+    && conda update --all
 
 WORKDIR /home/user/SimuRLacra
-RUN bash setup_env.sh
+
+# Create conda env
+RUN conda create -n pyrado python=3.7 blas cmake lapack libgcc-ng mkl patchelf pip setuptools -c conda-forge
+
 SHELL ["conda", "run", "-n", "pyrado", "/bin/bash", "-c"]
 
-RUN echo "export PATH=/home/user/miniconda3/bin:$PATH" >> ~/.bashrc
-RUN echo "conda activate pyrado" >> ~/.bashrc
+RUN pip install argparse box2d colorama coverage cython glfw gym joblib prettyprinter matplotlib numpy optuna pandas pycairo pytest pytest-cov pytest-xdist pyyaml scipy seaborn sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tensorboard tqdm vpython git+https://github.com/Xfel/init-args-serializer.git@master
 
-COPY --chown=user:user . .
-
-# Specific to option Sacher
-RUN python setup_deps.py dep_libraries -j8
-RUN pip install torch==1.7.0
-RUN python setup_deps.py w_rcs_wo_pytorch -j8
-
+# Add env variables
 ENV PATH /opt/conda/envs/pyrado/bin:$PATH
 ENV PYTHONPATH /home/user/SimuRLacra/RcsPySim/build/lib:/home/user/SimuRLacra/Pyrado/:$PYTHONPATH
 ENV RCSVIEWER_SIMPLEGRAPHICS 1
-RUN sudo rm -rf /var/lib/apt/lists/*
+
+# Copy Rcs and thirdparty to build in further build process
+COPY --chown=user:user Rcs Rcs
+COPY --chown=user:user thirdParty thirdParty
+COPY --chown=user:user setup_deps.py .gitmodules ./
+
+RUN ls -la
+
+RUN python setup_deps.py dep_libraries -j8
+
+ARG OPTION=sacher
+ARG J=8
+
+RUN if [ $OPTION == 'blackforest' ]; then\
+    python setup_deps.py w_rcs_w_pytorch -j$J;\
+    fi
+
+RUN if [ $OPTION == 'sacher' ]; then\
+    pip install torch==1.7.0\
+    && python setup_deps.py w_rcs_wo_pytorch -j$J;\
+    fi
+
+RUN if [ $OPTION == 'redvelvet' ]; then\
+    pip install torch==1.7.0 &&\
+    python setup_deps.py wo_rcs_wo_pytorch -j$J &&\
+    rm -fr Rcs RcsPySim;\
+    fi
+
+RUN if [ $OPTION == 'malakoff' ]; then\
+    python setup_deps.py wo_rcs_w_pytorch -j$J &&\
+    rm -fr Rcs RcsPySim;\
+    fi
+
+COPY --chown=user:user RcsPySim RcsPySim
+
+RUN mkdir -p Pyrado; touch Pyrado/CMakeLists.txt
+
+# Setup rcspysim if needed or delete related folders from the image
+RUN if [ $OPTION == 'blackforest' ]; then\
+    python setup_deps.py rcspysim  -j$J;\
+    elif [ $OPTION == 'sacher' ]; then\
+    python setup_deps.py rcspysim --no_local_torch -j$J; \
+    else \
+    rm -fr Rcs RcsPySim; \
+    fi
+
+# Copy and setup Pyrado
+COPY --chown=user:user Pyrado Pyrado
+RUN python setup_deps.py pyrado
+
+COPY logo.png build_docs.sh ./
+
+RUN rm -fr .git .gitmodules

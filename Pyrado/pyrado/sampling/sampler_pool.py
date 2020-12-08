@@ -39,9 +39,7 @@ import pyrado
 
 
 class GlobalNamespace:
-    """
-    Type of the worker's global namespace
-    """
+    """ Type of the worker's global namespace """
     pass
 
 
@@ -189,14 +187,8 @@ class _WorkerInfo:
 
 
 def _run_set_seed(G, seed):
-    import random
-    import numpy
-    import torch
-    random.seed(seed)
-    numpy.random.seed(seed)
-    torch.manual_seed(seed)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(seed)
+    """ Ignore global space, and forward to `pyrado.set_seed()` """
+    pyrado.set_seed(seed)
 
 
 def _run_collect(G, counter, run_counter, lock, n, min_runs, func, args, kwargs):
@@ -445,7 +437,7 @@ class SamplerPool:
 
         :param seed: seed value for the random number generators
         """
-        self.invoke_all_map(_run_set_seed, [seed + 1 + i for i in range(self._n_threads)])
+        self.invoke_all_map(_run_set_seed, [seed + i for i in range(self._n_threads)])
 
     def __reduce__(self):
         # We cannot really pickle this object since it has a lot of hidden state in the worker processes

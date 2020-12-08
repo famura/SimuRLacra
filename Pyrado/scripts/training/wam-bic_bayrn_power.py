@@ -36,7 +36,7 @@ import pyrado
 from pyrado.algorithms.episodic.power import PoWER
 from pyrado.domain_randomization.default_randomizers import create_zero_var_randomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
-from pyrado.environments.barrett_wam.wam import WAMBallInCupReal
+from pyrado.environments.barrett_wam.wam import WAMBallInCupRealEpisodic
 from pyrado.environments.mujoco.wam import WAMBallInCupSim
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
@@ -100,7 +100,7 @@ if __name__ == '__main__':
         num_dof=4,
         max_steps=1750,
     )
-    env_real = WAMBallInCupReal(**env_real_hparams)
+    env_real = WAMBallInCupRealEpisodic(**env_real_hparams)
 
     # Policy
     policy_hparam = dict(

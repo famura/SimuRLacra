@@ -62,14 +62,14 @@ std::vector<std::string> ISSQuanserQube::getNames() const
 
 void ISSQuanserQube::getMinMax(double* min, double* max) const
 {
-    min[0] = -RCS_DEG2RAD(5.);  // arm angle [rad]
-    max[0] = +RCS_DEG2RAD(5.);
-    min[1] = -RCS_DEG2RAD(3.); // pendulum angle [rad]
-    max[1] = +RCS_DEG2RAD(3.);
-    min[2] = -RCS_DEG2RAD(0.5); // arm velocity in [rad/s]
-    max[2] = +RCS_DEG2RAD(0.5);
-    min[3] = -RCS_DEG2RAD(0.5);  // pendulum velocity [rad/s]
-    max[3] = +RCS_DEG2RAD(0.5);
+    min[0] = RCS_DEG2RAD(-180.);  // arm angle [rad]
+    max[0] = RCS_DEG2RAD(180.);
+    min[1] = RCS_DEG2RAD(-180.); // pendulum angle [rad]
+    max[1] = RCS_DEG2RAD(180.);
+    min[2] = RCS_DEG2RAD(-10.); // arm velocity in [rad/s]
+    max[2] = RCS_DEG2RAD(10);
+    min[3] = RCS_DEG2RAD(-10);  // pendulum velocity [rad/s]
+    max[3] = RCS_DEG2RAD(10);
 }
 
 void ISSQuanserQube::applyInitialState(const MatNd* initialState)
