@@ -107,13 +107,13 @@ if __name__ == '__main__':
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    if args.ex_dir is None:
+    if args.dir is None:
         ex_dir = setup_experiment('hyperparams', QQubeSwingUpSim.name,
                                   f'{PoWER.name}_{LinearPolicy.name}_250Hz_actnorm')
         study_dir = osp.join(pyrado.TEMP_DIR, ex_dir)
         print_cbt(f'Starting a new Optuna study.', 'c', bright=True)
     else:
-        study_dir = args.ex_dir
+        study_dir = args.dir
         if not osp.isdir(study_dir):
             raise pyrado.PathErr(given=study_dir)
         print_cbt(f'Continuing an existing Optuna study.', 'c', bright=True)

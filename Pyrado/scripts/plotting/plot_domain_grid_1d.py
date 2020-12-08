@@ -125,7 +125,7 @@ if __name__ == '__main__':
     plt.rc('text', usetex=args.use_tex)
 
     # Get the experiment's directory to load from
-    eval_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
+    eval_dir = ask_for_experiment() if args.dir is None else args.dir
 
     # Load the data
     df = pd.read_pickle(osp.join(eval_dir, 'df_mp_grid_1d.pkl'))

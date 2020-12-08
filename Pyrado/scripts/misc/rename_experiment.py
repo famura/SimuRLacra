@@ -49,8 +49,8 @@ if __name__ == '__main__':
                         help="path to the directory where the experiment should be saved/moved to")
     args = parser.parse_args()
 
-    if not osp.isdir(args.ex_dir):
-        raise pyrado.PathErr(given=args.ex_dir)
+    if not osp.isdir(args.dir):
+        raise pyrado.PathErr(given=args.dir)
     if args.new_ex_dir is None:
         raise pyrado.ValueErr(msg='Provide the path to the new experiment directory using --new_ex_dir')
 
@@ -60,7 +60,7 @@ if __name__ == '__main__':
         raise pyrado.PathErr(given=args.new_ex_dir)
 
     # Load the old algorithm including the loggers
-    algo = Algorithm.load_snapshot(args.ex_dir)
+    algo = Algorithm.load_snapshot(args.dir)
 
     # Update all entries that contain information about where the experiment is stored
     algo.save_dir = args.new_ex_dir
@@ -71,7 +71,7 @@ if __name__ == '__main__':
             printer.dir = args.new_ex_dir
 
     # Copy the complete content
-    copy_tree(args.ex_dir, args.new_ex_dir)
+    copy_tree(args.dir, args.new_ex_dir)
 
     # Save the new algorithm with the updated entries
     algo.save_snapshot()

@@ -48,10 +48,10 @@ if __name__ == '__main__':
     plt.rc('text', usetex=args.use_tex)
 
     # Get the experiments' directories to load from
-    if args.ex_dir is None:
+    if args.dir is None:
         parent_dir = input('Please enter the parent directory for the experiments to compare:\n')
     else:
-        parent_dir = args.ex_dir
+        parent_dir = args.dir
     if not osp.isdir(parent_dir):
         raise pyrado.PathErr(parent_dir)
     dirs = get_immediate_subdirs(parent_dir)

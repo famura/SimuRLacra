@@ -42,8 +42,8 @@ def get_argparser() -> argparse.ArgumentParser:
     parser.add_argument('--dt', type=float,
                         help="environments time step size in seconds (no default)")
 
-    parser.add_argument('-d', '--ex_dir', type=str, nargs='?',
-                        help="path to the experiment directory to load from")
+    parser.add_argument('-d', '--dir', type=str, nargs='?',
+                        help="path to the (experiment) directory to load from")
 
     parser.add_argument('--env_name', type=str, nargs='?',
                         help="name of the environment to use (e.g. 'qbb' or 'qcp-st')")
