@@ -414,3 +414,9 @@ conda remove scipy --force
 pip install scipy==1.5.2
 ```
 
+### ImageMagick error from moviepy
+Check for the ImageMagick policy file. ImageMagick does not have the proper permission set. You can edit the policy file (requires sudo rights)
+```
+sudo vi /etc/ImageMagick-6/policy.xml
+```
+by commenting out the line(s) containing `<policy domain="path" rights="none" pattern="@*" />`. Now try again.
