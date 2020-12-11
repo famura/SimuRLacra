@@ -46,13 +46,13 @@ import yaml
 project_dir = osp.dirname(osp.abspath(__file__))
 
 # Check if we are in CI
-CI = 'CI' in os.environ
+CI = "CI" in os.environ
 # Make sure the git submodules are up to date, otherwise this script might break them
 if not CI:
     sp.check_call(["git", "submodule", "update", "--init"], cwd=project_dir)
 
 # Check if we are in HRI by looking for the SIT envionment variable
-IN_HRI = 'SIT' in os.environ
+IN_HRI = "SIT" in os.environ
 
 
 # ================== #
@@ -60,26 +60,36 @@ IN_HRI = 'SIT' in os.environ
 # ================== #
 # Allows to use them in the configuration
 
-parser = argparse.ArgumentParser(description='Setup RcsPySim dev env')
-parser.add_argument('tasks', metavar='task', type=str, nargs='*',
-                    help='Subtasks to execute. Suggested tasks are `all` (includes every feature) or `no_rcs` (excludes Rcs and RcsPysim). To get a list of all availibe tasks, run `python setup_deps.py`.')
-parser.add_argument('--vortex', dest='vortex', action='store_true',
-                    default=False, help='Use vortex physics engine')
-parser.add_argument('--no_vortex', dest='vortex',
-                    action='store_false', help='Do not use vortex physics engine')
-parser.add_argument('--cuda', dest='usecuda', action='store_true',
-                    default=False, help='Use CUDA for PyTorch')
-parser.add_argument('--no_cuda', dest='usecuda',
-                    action='store_false', help='Do not use CUDA for PyTorch')
-parser.add_argument('--headless', action='store_true',
-                    default=False, help='Build in headless mode')
-parser.add_argument('--local_torch', dest='uselibtorch', action='store_true', default=True,
-                    help='Use the local libtorch from the thirdParty directory for RcsPySim')
-parser.add_argument('--no_local_torch', dest='uselibtorch', action='store_false',
-                    help='Do not use the local libtorch from the thirdParty directory for RcsPySim')
-parser.add_argument('--pip_check', action='store_true',
-                    default=False, help='Run ´pip check´ after installing the dependencies')
-parser.add_argument('-j', default=1, type=int, help='Number of make threads')
+parser = argparse.ArgumentParser(description="Setup RcsPySim dev env")
+parser.add_argument(
+    "tasks",
+    metavar="task",
+    type=str,
+    nargs="*",
+    help="Subtasks to execute. Suggested tasks are `all` (includes every feature) or `no_rcs` (excludes Rcs and RcsPysim). To get a list of all availibe tasks, run `python setup_deps.py`.",
+)
+parser.add_argument("--vortex", dest="vortex", action="store_true", default=False, help="Use vortex physics engine")
+parser.add_argument("--no_vortex", dest="vortex", action="store_false", help="Do not use vortex physics engine")
+parser.add_argument("--cuda", dest="usecuda", action="store_true", default=False, help="Use CUDA for PyTorch")
+parser.add_argument("--no_cuda", dest="usecuda", action="store_false", help="Do not use CUDA for PyTorch")
+parser.add_argument("--headless", action="store_true", default=False, help="Build in headless mode")
+parser.add_argument(
+    "--local_torch",
+    dest="uselibtorch",
+    action="store_true",
+    default=True,
+    help="Use the local libtorch from the thirdParty directory for RcsPySim",
+)
+parser.add_argument(
+    "--no_local_torch",
+    dest="uselibtorch",
+    action="store_false",
+    help="Do not use the local libtorch from the thirdParty directory for RcsPySim",
+)
+parser.add_argument(
+    "--pip_check", action="store_true", default=False, help="Run ´pip check´ after installing the dependencies"
+)
+parser.add_argument("-j", default=1, type=int, help="Number of make threads")
 
 args = parser.parse_args()
 # Check for help print later, when the tasks are defined
@@ -95,7 +105,7 @@ resources_dir = osp.join(dependency_dir, "resources")
 # Global cmake prefix path
 cmake_prefix_path = [
     # Anaconda env root directory
-    os.environ['CONDA_PREFIX']
+    os.environ["CONDA_PREFIX"]
 ]
 
 # Required packages
@@ -134,7 +144,7 @@ make_parallelity = args.j
 
 # WM5
 # wm5_download_url = 'https://www.geometrictools.com/Downloads/WildMagic5p17.zip'  # deprecated
-wm5_download_url = 'https://github.com/zhouxs1023/WildMagic/archive/master.zip'
+wm5_download_url = "https://github.com/zhouxs1023/WildMagic/archive/master.zip"
 wm5_src_dir = osp.join(dependency_dir, "WildMagic5")
 
 wm5_config = "ReleaseDynamic"
@@ -276,7 +286,7 @@ def downloadAndExtract(url, destdir, archiveContentPath=None):
                 l = len(subfolder)
                 for member in ml:
                     # Skip directories in zip
-                    isdir = getattr(member, 'is_dir', None)
+                    isdir = getattr(member, "is_dir", None)
                     if isdir and isdir():
                         continue
 
@@ -286,7 +296,9 @@ def downloadAndExtract(url, destdir, archiveContentPath=None):
                     if not rp.startswith(".."):
                         setattr(member, path_attr, rp)
                         yield member
+
         else:
+
             def members(ml):
                 return ml
 
@@ -337,6 +349,7 @@ def buildCMakeProject(srcDir, buildDir, cmakeVars=None, env=env_vars, install_di
         mkdir_p(install_dir)
         sp.check_call(["make", "install"], cwd=buildDir)
 
+
 # =========== #
 # SETUP TASKS #
 # =========== #
@@ -346,8 +359,7 @@ def setup_dep_libraries():
     # Update
     sp.check_call(["sudo", "apt-get", "update", "-y"])
     # Install dependencies
-    sp.check_call(["sudo", "apt-get", "install", "-y"] +
-                  required_packages + required_packages_mujocopy)
+    sp.check_call(["sudo", "apt-get", "install", "-y"] + required_packages + required_packages_mujocopy)
 
 
 def setup_wm5():
@@ -356,14 +368,17 @@ def setup_wm5():
 
     # Build relevant modules
     for module in wm5_modules:
-        sp.check_call([
-            "make",
-            "-f",
-            "makefile.wm5",
-            "build",
-            "CFG={}".format(wm5_config),
-            "-j{}".format(make_parallelity),
-        ], cwd=osp.join(wm5_src_dir, module))
+        sp.check_call(
+            [
+                "make",
+                "-f",
+                "makefile.wm5",
+                "build",
+                "CFG={}".format(wm5_config),
+                "-j{}".format(make_parallelity),
+            ],
+            cwd=osp.join(wm5_src_dir, module),
+        )
 
 
 def setup_rcs():
@@ -375,8 +390,17 @@ def setup_pytorch():
     # Get PyTorch from git
     if not osp.exists(pytorch_src_dir):
         mkdir_p(pytorch_src_dir)
-        sp.check_call(["git", "clone", "--recursive", "--branch",
-                       "v{}".format(pytorch_version), pytorch_git_repo, pytorch_src_dir])
+        sp.check_call(
+            [
+                "git",
+                "clone",
+                "--recursive",
+                "--branch",
+                "v{}".format(pytorch_version),
+                pytorch_git_repo,
+                pytorch_src_dir,
+            ]
+        )
     # Let it's setup do the magic
     env = os.environ.copy()
     env.update(env_vars)
@@ -387,30 +411,28 @@ def setup_pytorch():
     # disable MKLDNN; mkl/blas deprecated error https://github.com/pytorch/pytorch/issues/17874
     env["USE_MKLDNN"] = "0"
     env["_GLIBCXX_USE_CXX11_ABI"] = "1"
-    sp.check_call([sys.executable, "setup.py", "install"],
-                  cwd=pytorch_src_dir, env=env)
+    sp.check_call([sys.executable, "setup.py", "install"], cwd=pytorch_src_dir, env=env)
 
 
 def setup_rcspysim():
     # Take care of RcsPySim
-    buildCMakeProject(rcspysim_src_dir, rcspysim_build_dir,
-                      cmakeVars=rcspysim_cmake_vars)
+    buildCMakeProject(rcspysim_src_dir, rcspysim_build_dir, cmakeVars=rcspysim_cmake_vars)
 
 
 def setup_iiwa():
     # The Kuka iiwa meshes
-    downloadAndExtract(iiwa_url, osp.join(resources_dir, "iiwa_description"),
-                       f"iiwa_stack-{iiwa_repo_version}/iiwa_description")
+    downloadAndExtract(
+        iiwa_url, osp.join(resources_dir, "iiwa_description"), f"iiwa_stack-{iiwa_repo_version}/iiwa_description"
+    )
 
     # Copy the relevant mesh files into RcsPySim's config folder
     # We already have the .tri meshes in there, just gives them company.
     src_dir = osp.join(resources_dir, "iiwa_description/meshes/iiwa14")
-    dst_dir = osp.join(
-        rcspysim_src_dir, "config/iiwa_description/meshes/iiwa14")
+    dst_dir = osp.join(rcspysim_src_dir, "config/iiwa_description/meshes/iiwa14")
 
     # Collision and visual for links 0 - 7
     print("Copying the KUKA iiwa meshes to the RcsPySim config dir ...")
-    for catdir in ['collision', 'visual']:
+    for catdir in ["collision", "visual"]:
         for lnum in range(8):
             fname = osp.join(catdir, f"link_{lnum}.stl")
 
@@ -421,14 +443,16 @@ def setup_iiwa():
 
 def setup_schunk():
     # The Schunk SDH meshes
-    downloadAndExtract(sdh_url, osp.join(resources_dir, "schunk_description"),
-                       f"schunk_modular_robotics-{sdh_repo_version}/schunk_description")
+    downloadAndExtract(
+        sdh_url,
+        osp.join(resources_dir, "schunk_description"),
+        f"schunk_modular_robotics-{sdh_repo_version}/schunk_description",
+    )
 
     # Copy the relevant mesh files into RcsPySim's config folder
     # We already have the .tri meshes in there, just gives them company.
     src_dir = osp.join(resources_dir, "schunk_description/meshes/sdh")
-    dst_dir = osp.join(
-        rcspysim_src_dir, "config/schunk_description/meshes/sdh")
+    dst_dir = osp.join(rcspysim_src_dir, "config/schunk_description/meshes/sdh")
 
     # Get all .stl files in the sdh subdir
     print("Copying the Schunk SDH meshes to the RcsPySim config dir ...")
@@ -441,13 +465,13 @@ def setup_schunk():
 
 def setup_wam():
     # Barrett WAM meshes (Pyrado)
-    downloadAndExtract(wam_url, osp.join(resources_dir, "wam_description"),
-                       f"self-paced-rl-{wam_repo_version}/sprl/envs/xml/")
+    downloadAndExtract(
+        wam_url, osp.join(resources_dir, "wam_description"), f"self-paced-rl-{wam_repo_version}/sprl/envs/xml/"
+    )
 
     # Copy the relevant mesh files into Pyrados's MuJoCo environments folder
     src_dir = osp.join(resources_dir, "wam_description/meshes")
-    dst_dir = osp.join(
-        pyrado_dir, "pyrado/environments/mujoco/assets/meshes/barrett_wam")
+    dst_dir = osp.join(pyrado_dir, "pyrado/environments/mujoco/assets/meshes/barrett_wam")
 
     # Get all .stl files in the wam subdir
     print("Copying the Barrett WAM meshes to the Pyrado assets dir ...")
@@ -465,50 +489,42 @@ def setup_meshes():
     setup_wam()
 
 
+def setup_pre_commit():
+    # Set up pre-commit used for the Black code formatter
+    sp.check_call([sys.executable, "-m", "pip", "install", "pre-commit"])
+    sp.check_call(["pre-commit", "install"], cwd=osp.join(project_dir, ".github"))
+
+
 def setup_pyrado():
     # Set up Pyrado in development mode
-    sp.check_call([sys.executable, "setup.py", "develop"],
-                  cwd=osp.join(project_dir, 'Pyrado'))
+    sp.check_call([sys.executable, "setup.py", "develop"], cwd=osp.join(project_dir, "Pyrado"))
 
 
 def setup_mujoco_py():
     # Set up mujoco-py (doing it via pip caused problems on some machines)
-    sp.check_call([sys.executable, "setup.py", "install"],
-                  cwd=osp.join(project_dir, 'thirdParty', 'mujoco-py'))
+    sp.check_call([sys.executable, "setup.py", "install"], cwd=osp.join(project_dir, "thirdParty", "mujoco-py"))
 
 
 def setup_pytorch_based():
     # Locally build PyTorch==1.7.0 requires dataclasses (does not harm when using pytorch from pip)
-    sp.check_call([sys.executable, "-m", "pip", "install",
-                   "-U", "--no-deps", "dataclasses"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "dataclasses"])
     # Set up GPyTorch without touching the PyTorch installation (requires scikit-learn which requires threadpoolctl)
-    sp.check_call([sys.executable, "-m", "pip", "install",
-                   "-U", "--no-deps", "threadpoolctl"])
-    sp.check_call([sys.executable, "-m", "pip", "install",
-                   "-U", "--no-deps", "scikit-learn"])
-    sp.check_call([sys.executable, "-m", "pip", "install",
-                   "-U", "--no-deps", "gpytorch"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "threadpoolctl"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "scikit-learn"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "gpytorch"])
     # Set up BoTorch without touching the PyTorch installation (requires gpytorch)
-    sp.check_call([sys.executable, "-m", "pip", "install",
-                   "-U", "--no-deps", "botorch"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "botorch"])
     # Set up Pyro without touching the PyTorch installation (requires opt-einsum)
-    sp.check_call([sys.executable, "-m", "pip", "install",
-                   "-U", "--no-deps", "opt-einsum"])
-    sp.check_call([sys.executable, "-m", "pip", "install",
-                   "-U", "--no-deps", "pyro-api"])
-    sp.check_call([sys.executable, "-m", "pip", "install",
-                   "-U", "--no-deps", "pyro-ppl"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "opt-einsum"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "pyro-api"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "pyro-ppl"])
     # Set up SBI without touching the PyTorch installation (requires Pyro and pyknos which requires nflows)
-    sp.check_call([sys.executable, "-m", "pip",
-                   "install", "-U", "--no-deps", "nflows"])
-    sp.check_call([sys.executable, "-m", "pip",
-                   "install", "-U", "--no-deps", "pyknos"])
-    sp.check_call([sys.executable, "-m", "pip",
-                   "install", "-U", "--no-deps", "sbi"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "nflows"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "pyknos"])
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "sbi"])
     # Downgrade to avoid the incompatibility with cliff (whatever cliff is)
-    sp.check_call([sys.executable, "-m", "pip", "install",
-                   "-U", "--no-deps", "prettytable==0.7.2"])
-    
+    sp.check_call([sys.executable, "-m", "pip", "install", "-U", "--no-deps", "prettytable==0.7.2"])
+
     if args.pip_check:
         # Check the installations
         print("Checking dependencies of the packages installed via pip:")
@@ -520,11 +536,12 @@ def setup_cppsctp():
     required_packages_sctp = [
         "libsctp-dev",
     ]
-    user_input = input(f"You are about to install SL which depends on the following libraries:"
-                       f"\n{required_packages_sctp}\nDo you really want this? [y / n] ")
+    user_input = input(
+        f"You are about to install SL which depends on the following libraries:"
+        f"\n{required_packages_sctp}\nDo you really want this? [y / n] "
+    )
     if user_input.lower() == "y":
-        sp.check_call(["sudo", "apt-get", "install", "-y"] +
-                      required_packages_sctp)
+        sp.check_call(["sudo", "apt-get", "install", "-y"] + required_packages_sctp)
         print("Dependencies have been installed.")
     else:
         print("Dependencies have NOT been installed.")
@@ -540,8 +557,7 @@ def setup_cppsctp():
         mkdir_p(cppsctp_dir)
 
     # Build it
-    buildCMakeProject(cppsctp_dir, cppsctp_build_dir,
-                      cmakeVars=cppsctp_cmake_vars, install_dir=cppsctpinstall_dir)
+    buildCMakeProject(cppsctp_dir, cppsctp_build_dir, cmakeVars=cppsctp_cmake_vars, install_dir=cppsctpinstall_dir)
 
 
 def setup_sl():
@@ -555,13 +571,14 @@ def setup_sl():
         "cmake-curses-gui",
         "libedit-dev",
         "clang",
-        "xterm"
+        "xterm",
     ]
-    user_input = input(f"You are about to install SL which depends on the following libraries:"
-                       f"\n{required_packages_sl}\nDo you really want this? [y / n] ")
+    user_input = input(
+        f"You are about to install SL which depends on the following libraries:"
+        f"\n{required_packages_sl}\nDo you really want this? [y / n] "
+    )
     if user_input.lower() == "y":
-        sp.check_call(["sudo", "apt-get", "install", "-y"] +
-                      required_packages_sl)
+        sp.check_call(["sudo", "apt-get", "install", "-y"] + required_packages_sl)
         print("Dependencies have been installed.")
     else:
         print("Dependencies have NOT been installed.")
@@ -621,7 +638,9 @@ def setup_wo_rcs_w_pytorch():
     if not CI:
         setup_pyrado()
     setup_pytorch_based()
-    print("\nPyTorch, WAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n")
+    print(
+        "\nPyTorch, WAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n"
+    )
 
 
 def setup_w_rcs_wo_pytorch():
@@ -639,7 +658,9 @@ def setup_w_rcs_wo_pytorch():
     if not CI:
         setup_pyrado()
     setup_pytorch_based()
-    print("\nWM5, Rcs, RcsPySim, iiwa & Schunk & WAM meshes, mujoco-py, and Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n")
+    print(
+        "\nWM5, Rcs, RcsPySim, iiwa & Schunk & WAM meshes, mujoco-py, and Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n"
+    )
 
 
 def setup_w_rcs_w_pytorch():
@@ -656,14 +677,13 @@ def setup_w_rcs_w_pytorch():
     if not CI:
         setup_pyrado()
     setup_pytorch_based()
-    print("\nWM5, Rcs, PyTorch, RcsPySim, iiwa & Schunk & WAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n")
+    print(
+        "\nWM5, Rcs, PyTorch, RcsPySim, iiwa & Schunk & WAM meshes, mujoco-py, Pyrado (with GPyTorch, BoTorch, and Pyro using the --no-deps flag) are set up!\n"
+    )
 
 
 # All tasks list
-tasks_by_name = {
-    name[6:]: v  # cut the "setup_"
-    for name, v in globals().items() if name.startswith('setup_')
-}
+tasks_by_name = {name[6:]: v for name, v in globals().items() if name.startswith("setup_")}  # cut the "setup_"
 
 # ==== #
 # MAIN #
