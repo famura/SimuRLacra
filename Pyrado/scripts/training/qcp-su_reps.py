@@ -34,32 +34,51 @@ from pyrado.algorithms.episodic.reps import REPS
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.policies.features import FeatureStack, identity_feat, sign_feat, abs_feat, squared_feat, const_feat, \
-    MultFeat, ATan2Feat, cubic_feat
+from pyrado.policies.features import (
+    FeatureStack,
+    identity_feat,
+    sign_feat,
+    abs_feat,
+    squared_feat,
+    const_feat,
+    MultFeat,
+    ATan2Feat,
+    cubic_feat,
+)
 from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.utils.argparser import get_argparser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QCartPoleSwingUpSim.name, f'{REPS.name}_{LinearPolicy.name}')
+    ex_dir = setup_experiment(QCartPoleSwingUpSim.name, f"{REPS.name}_{LinearPolicy.name}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_hparams = dict(dt=1/250., max_steps=3000, long=False)
+    env_hparams = dict(dt=1 / 250.0, max_steps=3000, long=False)
     env = QCartPoleSwingUpSim(**env_hparams)
     env = ActNormWrapper(env)
 
     # Policy
     policy_hparam = dict(
         # feats=FeatureStack([RandFourierFeat(env.obs_space.flat_dim, num_feat=20, bandwidth=env.obs_space.bound_up)])
-        feats=FeatureStack([const_feat, identity_feat, sign_feat, abs_feat, squared_feat, cubic_feat, ATan2Feat(1, 2),
-                            MultFeat([3, 4])])
+        feats=FeatureStack(
+            [
+                const_feat,
+                identity_feat,
+                sign_feat,
+                abs_feat,
+                squared_feat,
+                cubic_feat,
+                ATan2Feat(1, 2),
+                MultFeat([3, 4]),
+            ]
+        )
     )
     policy = LinearPolicy(spec=env.spec, **policy_hparam)
 
@@ -67,23 +86,25 @@ if __name__ == '__main__':
     algo_hparam = dict(
         max_iter=500,
         eps=1.0,
-        pop_size=20*policy.num_param,
+        pop_size=20 * policy.num_param,
         num_rollouts=4,
         expl_std_init=0.2,
         expl_std_min=0.02,
         use_map=True,
-        optim_mode='scipy',
+        optim_mode="scipy",
         num_workers=12,
     )
     algo = REPS(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha
-    algo.train(snapshot_mode='best', seed=args.seed)
+    algo.train(snapshot_mode="best", seed=args.seed)

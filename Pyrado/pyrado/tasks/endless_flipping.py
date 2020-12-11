@@ -42,12 +42,14 @@ class EndlessFlippingTask(Task):
     old angle plus/minus a given angle delta, the new angle becomes the old one and the flipping continues.
     """
 
-    def __init__(self,
-                 env_spec: EnvSpec,
-                 rew_fcn: RewFcn,
-                 init_angle: float,
-                 des_angle_delta: float = np.pi/2.,
-                 angle_tol: float = 1/180.*np.pi):
+    def __init__(
+        self,
+        env_spec: EnvSpec,
+        rew_fcn: RewFcn,
+        init_angle: float,
+        des_angle_delta: float = np.pi / 2.0,
+        angle_tol: float = 1 / 180.0 * np.pi,
+    ):
         """
         Constructor
 
@@ -68,7 +70,7 @@ class EndlessFlippingTask(Task):
         self._last_angle = init_angle
         self.des_angle_delta = des_angle_delta
         self.angle_tol = angle_tol
-        self._held_rew = 0.
+        self._held_rew = 0.0
 
     @property
     def env_spec(self) -> EnvSpec:
@@ -97,17 +99,18 @@ class EndlessFlippingTask(Task):
 
         # Reset the internal quantities to recognize the flips
         self._last_angle = init_angle if init_angle is not None else self._init_angle
-        self._held_rew = 0.
+        self._held_rew = 0.0
 
         # Some reward functions scale with the state and action bounds
         self._rew_fcn.reset(state_space=env_spec.state_space, act_space=env_spec.act_space, **kwargs)
 
     def step_rew(self, state: np.ndarray, act: np.ndarray, remaining_steps: int = None) -> float:
         # We don't care about the flip direction or the number of revolutions.
-        des_angles_both = np.array([[self._last_angle + self.des_angle_delta],
-                                    [self._last_angle - self.des_angle_delta]])
+        des_angles_both = np.array(
+            [[self._last_angle + self.des_angle_delta], [self._last_angle - self.des_angle_delta]]
+        )
         err_state = des_angles_both - state
-        err_state = np.fmod(err_state, 2*np.pi)  # map to [-2pi, 2pi]
+        err_state = np.fmod(err_state, 2 * np.pi)  # map to [-2pi, 2pi]
 
         # Choose the closer angle for the reward. Operate on state and action errors
         rew = self._held_rew + self._rew_fcn(np.min(err_state, axis=0), -act, remaining_steps)  # act_des = 0

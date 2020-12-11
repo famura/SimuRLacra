@@ -53,24 +53,26 @@ class CEM(ParameterExploring):
         [2] I. Szita, A. Lörnicz, "Learning Tetris Using the NoisyCross-Entropy Method", Neural Computation, 2006
     """
 
-    name: str = 'cem'
+    name: str = "cem"
 
-    def __init__(self,
-                 save_dir: str,
-                 env: Env,
-                 policy: Policy,
-                 max_iter: int,
-                 pop_size: Optional[int],
-                 num_rollouts: int,
-                 num_is_samples: int,
-                 expl_std_init: float,
-                 expl_std_min: float = 0.01,
-                 extra_expl_std_init: float = 0.,
-                 extra_expl_decay_iter: int = 10,
-                 full_cov: bool = False,
-                 symm_sampling: bool = False,
-                 num_workers: int = 4,
-                 logger: Optional[StepLogger] = None):
+    def __init__(
+        self,
+        save_dir: str,
+        env: Env,
+        policy: Policy,
+        max_iter: int,
+        pop_size: Optional[int],
+        num_rollouts: int,
+        num_is_samples: int,
+        expl_std_init: float,
+        expl_std_min: float = 0.01,
+        extra_expl_std_init: float = 0.0,
+        extra_expl_decay_iter: int = 10,
+        full_cov: bool = False,
+        symm_sampling: bool = False,
+        num_workers: int = 4,
+        logger: Optional[StepLogger] = None,
+    ):
         r"""
         Constructor
 
@@ -95,9 +97,9 @@ class CEM(ParameterExploring):
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         if not extra_expl_std_init >= 0:
-            raise pyrado.ValueErr(given=extra_expl_std_init, ge_constraint='0')
+            raise pyrado.ValueErr(given=extra_expl_std_init, ge_constraint="0")
         if not extra_expl_decay_iter > 0:
-            raise pyrado.ValueErr(given=extra_expl_decay_iter, g_constraint='0')
+            raise pyrado.ValueErr(given=extra_expl_decay_iter, g_constraint="0")
 
         # Call ParameterExploring's constructor
         super().__init__(
@@ -124,7 +126,7 @@ class CEM(ParameterExploring):
         )
         if symm_sampling:
             # Exploration strategy based on symmetrical normally distributed noise
-            if self.pop_size%2 != 0:
+            if self.pop_size % 2 != 0:
                 # Symmetric buffer needs to have an even number of samples
                 self.pop_size += 1
             self._expl_strat = SymmParamExplStrat(self._expl_strat)
@@ -132,12 +134,14 @@ class CEM(ParameterExploring):
         # Optionally add additional entropy
         self.extra_expl_decay_iter = extra_expl_decay_iter
         if isinstance(self._expl_strat.noise, DiagNormalNoise):
-            self.extra_expl_std_init = to.ones_like(self._policy.param_values)*extra_expl_std_init
+            self.extra_expl_std_init = to.ones_like(self._policy.param_values) * extra_expl_std_init
         elif isinstance(self._expl_strat.noise, FullNormalNoise):
-            self.extra_expl_std_init = to.eye(self._policy.num_param)*extra_expl_std_init
+            self.extra_expl_std_init = to.eye(self._policy.num_param) * extra_expl_std_init
         else:
-            raise pyrado.TypeErr(msg='Additional exploration entropy is only implemented for Gaussian distributions,'
-                                     'i.e. DiagNormalNoise and FullNormalNoise')
+            raise pyrado.TypeErr(
+                msg="Additional exploration entropy is only implemented for Gaussian distributions,"
+                "i.e. DiagNormalNoise and FullNormalNoise"
+            )
 
     @to.no_grad()
     def update(self, param_results: ParameterSamplingResult, ret_avg_curr: float = None):
@@ -146,7 +150,7 @@ class CEM(ParameterExploring):
 
         # Descending sort according to return values and the importance samples a.k.a. elites (see [1, p.12])
         idcs_dcs = to.argsort(rets_avg_ros, descending=True)
-        idcs_dcs = idcs_dcs[:self.num_is_samples]
+        idcs_dcs = idcs_dcs[: self.num_is_samples]
         rets_avg_is = rets_avg_ros[idcs_dcs]
         params_is = param_results.parameters[idcs_dcs, :]
 
@@ -156,21 +160,21 @@ class CEM(ParameterExploring):
         # Update the exploration covariance from the empirical variance of the importance samples
         if isinstance(self._expl_strat.noise, DiagNormalNoise):
             std_is = to.std(params_is, dim=0)
-            extra_expl_std = self.extra_expl_std_init*max(
-                1. - self._curr_iter/self.extra_expl_decay_iter, 0  # see [2, p.4]
+            extra_expl_std = self.extra_expl_std_init * max(
+                1.0 - self._curr_iter / self.extra_expl_decay_iter, 0  # see [2, p.4]
             )
             self._expl_strat.noise.adapt(std=std_is + extra_expl_std)
         elif isinstance(self._expl_strat.noise, FullNormalNoise):
             cov_is = cov(params_is, data_along_rows=True)
-            extra_expl_cov = to.pow(self.extra_expl_std_init, 2)*max(
-                1. - self._curr_iter/self.extra_expl_decay_iter, 0  # see [2, p.4]
+            extra_expl_cov = to.pow(self.extra_expl_std_init, 2) * max(
+                1.0 - self._curr_iter / self.extra_expl_decay_iter, 0  # see [2, p.4]
             )
             self._expl_strat.noise.adapt(cov=cov_is + extra_expl_cov)
 
         # Logging
-        self.logger.add_value('median imp samp return', to.median(rets_avg_is), 4)
-        self.logger.add_value('min imp samp return', to.min(rets_avg_is), 4)
-        self.logger.add_value('min expl strat std', to.min(self._expl_strat.std), 4)
-        self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.std), 4)
-        self.logger.add_value('max expl strat std', to.max(self._expl_strat.std), 4)
-        self.logger.add_value('expl strat entropy', self._expl_strat.get_entropy(), 4)
+        self.logger.add_value("median imp samp return", to.median(rets_avg_is), 4)
+        self.logger.add_value("min imp samp return", to.min(rets_avg_is), 4)
+        self.logger.add_value("min expl strat std", to.min(self._expl_strat.std), 4)
+        self.logger.add_value("avg expl strat std", to.mean(self._expl_strat.std), 4)
+        self.logger.add_value("max expl strat std", to.max(self._expl_strat.std), 4)
+        self.logger.add_value("expl strat entropy", self._expl_strat.get_entropy(), 4)

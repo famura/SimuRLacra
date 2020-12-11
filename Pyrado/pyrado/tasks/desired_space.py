@@ -42,10 +42,7 @@ class DesSpaceTask(Task):
     If the state is in the desired space, the `done` flag is raised. Until then, the step reward is returned.
     """
 
-    def __init__(self,
-                 env_spec: EnvSpec,
-                 space_des: Space,
-                 rew_fcn: RewFcn = ZeroPerStepRewFcn):
+    def __init__(self, env_spec: EnvSpec, space_des: Space, rew_fcn: RewFcn = ZeroPerStepRewFcn):
         """
         Constructor
 

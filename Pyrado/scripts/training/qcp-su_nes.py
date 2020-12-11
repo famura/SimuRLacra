@@ -38,18 +38,18 @@ from pyrado.policies.recurrent.rnn import GRUPolicy
 from pyrado.utils.argparser import get_argparser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QCartPoleSwingUpSim.name, f'{NES.name}_{GRUPolicy.name}')
+    ex_dir = setup_experiment(QCartPoleSwingUpSim.name, f"{NES.name}_{GRUPolicy.name}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_hparams = dict(dt=1/100., max_steps=1300, long=False)
+    env_hparams = dict(dt=1 / 100.0, max_steps=1300, long=False)
     env = QCartPoleSwingUpSim(**env_hparams)
     env = ActNormWrapper(env)
 
@@ -67,7 +67,7 @@ if __name__ == '__main__':
         max_iter=5000,
         pop_size=50,
         num_rollouts=6,
-        eta_mean=2.,
+        eta_mean=2.0,
         eta_std=None,
         expl_std_init=0.5,
         symm_sampling=False,
@@ -77,12 +77,14 @@ if __name__ == '__main__':
     algo = NES(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha
-    algo.train(snapshot_mode='best', seed=args.seed)
+    algo.train(snapshot_mode="best", seed=args.seed)

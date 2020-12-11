@@ -42,7 +42,7 @@ from pyrado.utils.input_output import print_cbt
 from pyrado.utils.argparser import get_argparser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
@@ -53,30 +53,30 @@ if __name__ == '__main__':
     env_sim, policy, _ = load_experiment(ex_dir, args)
 
     # Detect the correct real-world counterpart and create it
-    if env_sim.name == 'wam-bic':  # use hard-coded name to avoid loading mujoco_py by loading WAMBallInCupSim
+    if env_sim.name == "wam-bic":  # use hard-coded name to avoid loading mujoco_py by loading WAMBallInCupSim
         # If `max_steps` (or `dt`) are not explicitly set using `args`, use the same as in the simulation
         max_steps = args.max_steps if args.max_steps < pyrado.inf else env_sim.max_steps
         dt = args.dt if args.dt is not None else env_sim.dt
-        mode = ''
-        while mode not in ['ep', 'sb']:
-            mode = input('Pass ep for episodic and sb for step-based control mode: ').lower()
-        if mode == 'sb':
+        mode = ""
+        while mode not in ["ep", "sb"]:
+            mode = input("Pass ep for episodic and sb for step-based control mode: ").lower()
+        if mode == "sb":
             env_real = WAMBallInCupRealStepBased(dt=dt, max_steps=max_steps, num_dof=inner_env(env_sim).num_dof)
         else:
             env_real = WAMBallInCupRealEpisodic(dt=dt, max_steps=max_steps, num_dof=inner_env(env_sim).num_dof)
     else:
-        raise pyrado.ValueErr(given=env_sim.name, eq_constraint='wam-bic')
+        raise pyrado.ValueErr(given=env_sim.name, eq_constraint="wam-bic")
 
     # Wrap the real environment in the same way as done during training
     env_real = wrap_like_other_env(env_real, env_sim)
 
     # Run on device
     done = False
-    print_cbt('Running loaded policy ...', 'c', bright=True)
+    print_cbt("Running loaded policy ...", "c", bright=True)
     while not done:
         ro = rollout(env_real, policy, eval=True)
-        print_cbt(f'Return: {ro.undiscounted_return()}', 'g', bright=True)
-        np.save(osp.join(ex_dir, f'qpos_real_{mode}.npy'), env_real.qpos_real)
-        np.save(osp.join(ex_dir, f'qvel_real_{mode}.npy'), env_real.qvel_real)
-        print_cbt(f'Saved trajectory into qpos_real_{mode}.npy and qvel_real_{mode}.npy', 'g')
+        print_cbt(f"Return: {ro.undiscounted_return()}", "g", bright=True)
+        np.save(osp.join(ex_dir, f"qpos_real_{mode}.npy"), env_real.qpos_real)
+        np.save(osp.join(ex_dir, f"qvel_real_{mode}.npy"), env_real.qvel_real)
+        print_cbt(f"Saved trajectory into qpos_real_{mode}.npy and qvel_real_{mode}.npy", "g")
         done, _, _ = after_rollout_query(env_real, policy, ro)

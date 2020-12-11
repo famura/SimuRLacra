@@ -107,23 +107,25 @@ class SVPG(Algorithm):
         [1] Yang Liu, Prajit Ramachandran, Qiang Liu, Jian Peng, "Stein Variational Policy Gradient", arXiv, 2017
     """
 
-    name: str = 'svpg'
+    name: str = "svpg"
 
-    def __init__(self,
-                 save_dir: str,
-                 env: Env,
-                 particle_hparam: dict,
-                 max_iter: int,
-                 num_particles: int,
-                 temperature: float,
-                 lr: float,
-                 horizon: int,
-                 std_init: float = 1.0,
-                 min_rollouts: int = None,
-                 min_steps: int = 10000,
-                 num_workers: int = 4,
-                 serial: bool = True,
-                 logger: StepLogger = None):
+    def __init__(
+        self,
+        save_dir: str,
+        env: Env,
+        particle_hparam: dict,
+        max_iter: int,
+        num_particles: int,
+        temperature: float,
+        lr: float,
+        horizon: int,
+        std_init: float = 1.0,
+        min_rollouts: int = None,
+        min_steps: int = 10000,
+        num_workers: int = 4,
+        serial: bool = True,
+        logger: StepLogger = None,
+    ):
         """
         Constructor
 
@@ -146,7 +148,7 @@ class SVPG(Algorithm):
             raise pyrado.TypeErr(given=env, expected_type=Env)
         if not isinstance(particle_hparam, dict):
             raise pyrado.TypeErr(given=particle_hparam, expected_type=dict)
-        if not all([key in particle_hparam for key in ['actor', 'vfcn', 'critic']]):
+        if not all([key in particle_hparam for key in ["actor", "vfcn", "critic"]]):
             raise AttributeError
 
         # Call Algorithm's constructor
@@ -172,9 +174,9 @@ class SVPG(Algorithm):
         self.update_count = 0
 
         # Particle factory
-        actor = FNNPolicy(spec=env.spec, **particle_hparam['actor'])
-        vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **particle_hparam['vfcn'])
-        critic = GAE(vfcn, **particle_hparam['critic'])
+        actor = FNNPolicy(spec=env.spec, **particle_hparam["actor"])
+        vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **particle_hparam["vfcn"])
+        critic = GAE(vfcn, **particle_hparam["critic"])
         self.register_as_logger_parent(critic)
         particle = SVPGParticle(env.spec, actor, critic)
 
@@ -195,7 +197,7 @@ class SVPG(Algorithm):
     def step(self, snapshot_mode: str, meta_info: dict = None):
         # Serial flag must not be set when interacting through step and reset
         if not self.serial:
-            raise NotImplementedError('Step cannot be called if serial flag is False!')
+            raise NotImplementedError("Step cannot be called if serial flag is False!")
 
         self.count += 1
         ros_all_particles, rets_all_particles = [], []
@@ -205,7 +207,7 @@ class SVPG(Algorithm):
             # ro_concat.torch(data_type=to.get_default_dtype())
             ros_all_particles.append(ros_one_particle)
             rets_all_particles.append(np.array([ro.undiscounted_return() for ro in ros_one_particle]))
-            self.particleSteps[i] = + 1
+            self.particleSteps[i] = +1
             if self.horizon != 0 and (self.particleSteps[i] > self.horizon):
                 self.particles[i].init_param()
                 self.particleSteps[i] = 0
@@ -219,19 +221,19 @@ class SVPG(Algorithm):
         max_rets_all_prtcls = np.array([np.max(p) for p in rets_all_particles])
         std_rets_all_prtcls = np.array([np.std(p) for p in rets_all_particles])
         avg_explstrat_stds = np.array([to.mean(e.noise.std.data).item() for e in self.expl_strats])
-        self.logger.add_value('max return pp', max_rets_all_prtcls, 2)
-        self.logger.add_value('avg return pp', avg_rets_all_prtcls, 2)
-        self.logger.add_value('median return pp', median_rets_all_prtcls, 2)
-        self.logger.add_value('std return pp', std_rets_all_prtcls, 2)
-        self.logger.add_value('avg expl strat stds pp', avg_explstrat_stds, 2)
-        self.logger.add_value('avg rollout len pp', avg_len_ros_all_prtcls, 2)
-        self.logger.add_value('num total samples', self._cnt_samples)
+        self.logger.add_value("max return pp", max_rets_all_prtcls, 2)
+        self.logger.add_value("avg return pp", avg_rets_all_prtcls, 2)
+        self.logger.add_value("median return pp", median_rets_all_prtcls, 2)
+        self.logger.add_value("std return pp", std_rets_all_prtcls, 2)
+        self.logger.add_value("avg expl strat stds pp", avg_explstrat_stds, 2)
+        self.logger.add_value("avg rollout len pp", avg_len_ros_all_prtcls, 2)
+        self.logger.add_value("num total samples", self._cnt_samples)
 
         # Logging for recording (averaged over particles)
-        self.logger.add_value('avg rollout len', np.mean(avg_len_ros_all_prtcls), 4)
-        self.logger.add_value('avg return', np.mean(avg_rets_all_prtcls), 4)
-        self.logger.add_value('median return', np.median(median_rets_all_prtcls), 4)
-        self.logger.add_value('std return', np.mean(std_rets_all_prtcls), 4)
+        self.logger.add_value("avg rollout len", np.mean(avg_len_ros_all_prtcls), 4)
+        self.logger.add_value("avg return", np.mean(avg_rets_all_prtcls), 4)
+        self.logger.add_value("median return", np.median(median_rets_all_prtcls), 4)
+        self.logger.add_value("std return", np.mean(std_rets_all_prtcls), 4)
         self.logger.record_step()  # TODO @Robin necessary?
 
         self.update(ros_all_particles)
@@ -247,21 +249,21 @@ class SVPG(Algorithm):
         :return: the kernel and its derivatives
         """
         X_np = X.cpu().data.numpy()  # use numpy because torch median is flawed
-        pairwise_dists = squareform(pdist(X_np))**2
+        pairwise_dists = squareform(pdist(X_np)) ** 2
 
         # Median trick
         h = np.median(pairwise_dists)
-        h = np.sqrt(0.5*h/np.log(self.num_particles + 1))
+        h = np.sqrt(0.5 * h / np.log(self.num_particles + 1))
 
         # Compute RBF Kernel
-        Kxx = to.exp(-to.from_numpy(pairwise_dists).to(to.get_default_dtype())/h**2/2)
+        Kxx = to.exp(-to.from_numpy(pairwise_dists).to(to.get_default_dtype()) / h ** 2 / 2)
 
         # Compute kernel gradient
         dx_Kxx = -(Kxx).matmul(X)
         sum_Kxx = Kxx.sum(1)
         for i in range(X.shape[1]):
             dx_Kxx[:, i] = dx_Kxx[:, i] + X[:, i].matmul(sum_Kxx)
-        dx_Kxx /= (h**2)
+        dx_Kxx /= h ** 2
 
         return Kxx, dx_Kxx
 
@@ -286,14 +288,14 @@ class SVPG(Algorithm):
             entropy = act_stats.act_distr.entropy()
             log_prob = act_stats.log_probs
 
-            concat_ros.rewards = concat_ros.rewards - (0.1*klds.mean(1)).view(-1) - 0.1*entropy.mean(1).view(-1)
+            concat_ros.rewards = concat_ros.rewards - (0.1 * klds.mean(1)).view(-1) - 0.1 * entropy.mean(1).view(-1)
 
             # Update the advantage estimator's parameters and return advantage estimates
             adv = self.particles[i].critic.update(rollouts[i], use_empirical_returns=True)
 
             # Estimate policy gradients
             self.optimizers[i].zero_grad()
-            policy_grad = -to.mean(log_prob*adv.detach())
+            policy_grad = -to.mean(log_prob * adv.detach())
             policy_grad.backward()  # step comes later than usual
 
             # Collect flattened parameter and gradient vectors
@@ -303,7 +305,7 @@ class SVPG(Algorithm):
         parameters = to.stack(parameters)
         policy_grads = to.stack(policy_grads)
         Kxx, dx_Kxx = self.kernel(parameters)
-        grad_theta = (to.mm(Kxx, policy_grads/self.temperature) + dx_Kxx)/self.num_particles
+        grad_theta = (to.mm(Kxx, policy_grads / self.temperature) + dx_Kxx) / self.num_particles
 
         for i in range(self.num_particles):
             self.expl_strats[i].param_grad = grad_theta[i]
@@ -314,8 +316,8 @@ class SVPG(Algorithm):
         super().save_snapshot(meta_info)
 
         for idx, p in enumerate(self.particles):
-            pyrado.save(p, f'particle_{idx}', 'pt', self.save_dir, meta_info)
+            pyrado.save(p, f"particle_{idx}", "pt", self.save_dir, meta_info)
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            pyrado.save(self._env, 'env', 'pkl', self.save_dir, meta_info)
+            pyrado.save(self._env, "env", "pkl", self.save_dir, meta_info)

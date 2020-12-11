@@ -41,10 +41,7 @@ class ConditionOnlyTask(Task):
     This class is intended to be wrapped by `FinalRewTask`.
     """
 
-    def __init__(self,
-                 env_spec: EnvSpec,
-                 condition_fcn: Callable,
-                 is_success_condition: bool):
+    def __init__(self, env_spec: EnvSpec, condition_fcn: Callable, is_success_condition: bool):
         """
         Constructor
 
@@ -102,7 +99,7 @@ class ConditionOnlyTask(Task):
             self.is_success_condition = is_success_condition
 
     def step_rew(self, state: np.ndarray = None, act: np.ndarray = None, remaining_steps: int = None) -> float:
-        return 0.
+        return 0.0
 
     def has_succeeded(self, state: np.ndarray) -> bool:
         if self.is_success_condition:

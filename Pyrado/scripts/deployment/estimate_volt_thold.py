@@ -53,12 +53,12 @@ def estimate_one_thold_qbb(servo: str, dir_multiplier: int, dact: float, thold_t
     :return thold_V: estimated voltage threshold for the selected servo and direction
     """
     # Which servo?
-    if servo == 'x':
+    if servo == "x":
         theta_idx = 0  # index for theta_x in the observation vector
-        act_step = np.array([dact, 0.])
-    elif servo == 'y':
+        act_step = np.array([dact, 0.0])
+    elif servo == "y":
         theta_idx = 1  # index for theta_y in the observation vector
-        act_step = np.array([0., dact])
+        act_step = np.array([0.0, dact])
     else:
         raise ValueError("`servo` must be either 'x' or 'y'!")
 
@@ -66,7 +66,7 @@ def estimate_one_thold_qbb(servo: str, dir_multiplier: int, dact: float, thold_t
     if dir_multiplier == 1 or dir_multiplier == -1:
         act_step *= dir_multiplier
     else:
-        raise ValueError(f'`dir_multiplier` must be either 1 or -1, but received {dir_multiplier}!')
+        raise ValueError(f"`dir_multiplier` must be either 1 or -1, but received {dir_multiplier}!")
 
     # Initialize
     done = False
@@ -74,20 +74,23 @@ def estimate_one_thold_qbb(servo: str, dir_multiplier: int, dact: float, thold_t
     act = np.zeros(2)
     obs_init = env.reset()
 
-    print_cbt(f'Running threshold estimation on servo {servo} in direction {dir_multiplier} ...', 'c', bright=True)
+    print_cbt(f"Running threshold estimation on servo {servo} in direction {dir_multiplier} ...", "c", bright=True)
     while not done:
         # Apply voltage and wait
         obs, _, _, _ = env.step(act)
 
         theta_diff = obs[theta_idx] - obs_init[theta_idx]
-        print('act: {}  |  theta_{}: {}  |  theta_{}_diff [deg]: {:.4f}'.format(
-            act, servo, obs[theta_idx], servo, theta_diff*180./np.pi))
+        print(
+            "act: {}  |  theta_{}: {}  |  theta_{}_diff [deg]: {:.4f}".format(
+                act, servo, obs[theta_idx], servo, theta_diff * 180.0 / np.pi
+            )
+        )
 
         if abs(theta_diff) > thold_theta:
             # The servo moved more than the threshold
             thold_V = act[theta_idx]
             done = True
-            print_cbt(f'Voltage offset for theta_{servo} in direction {dir_multiplier} is {thold_V}.', 'c')
+            print_cbt(f"Voltage offset for theta_{servo} in direction {dir_multiplier} is {thold_V}.", "c")
         else:
             # Prepare for next step
             act += act_step  # increase voltage magnitude
@@ -115,7 +118,7 @@ def estimate_one_thold_qcp(dir_multiplier: int, dact: float, thold_x: float):
     if dir_multiplier == 1 or dir_multiplier == -1:
         act_step *= dir_multiplier
     else:
-        raise ValueError(f'`dir_multiplier` must be either 1 or -1, but received {dir_multiplier}!')
+        raise ValueError(f"`dir_multiplier` must be either 1 or -1, but received {dir_multiplier}!")
 
     # Initialize
     done = False
@@ -123,19 +126,19 @@ def estimate_one_thold_qcp(dir_multiplier: int, dact: float, thold_x: float):
     act = np.zeros(1)
     obs_init = env.reset()
 
-    print_cbt(f'Running threshold estimation in direction {dir_multiplier} ...', 'c', bright=True)
+    print_cbt(f"Running threshold estimation in direction {dir_multiplier} ...", "c", bright=True)
     while not done:
         # Apply voltage and wait
         obs, _, _, _ = env.step(act)
 
         x_diff = obs[0] - obs_init[0]
-        print(f'act: {act}  |  x [m]: {obs[0]}  |  x_diff [m]: {x_diff:.5f}')
+        print(f"act: {act}  |  x [m]: {obs[0]}  |  x_diff [m]: {x_diff:.5f}")
 
         if abs(x_diff) > thold_x:
             # The servo moved more than the threshold
             thold_V = act[0]
             done = True
-            print_cbt(f'Voltage offset for x in direction {dir_multiplier} is {thold_V}.', 'c')
+            print_cbt(f"Voltage offset for x in direction {dir_multiplier} is {thold_V}.", "c")
         else:
             # Prepare for next step
             act += act_step  # increase voltage magnitude
@@ -149,45 +152,48 @@ def estimate_one_thold_qcp(dir_multiplier: int, dact: float, thold_x: float):
     return thold_V
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     parser = get_argparser()
-    parser.add_argument('--dact', type=float, default=2e-5, help='Step size for the action')
-    parser.add_argument('--thold_theta_deg', type=float, default=0.1,
-                        help='Threshold for the servo shafts to rotate in degree')
-    parser.add_argument('--thold_x', type=float, default=5e-4,
-                        help='Threshold for the cart to move in meter')
+    parser.add_argument("--dact", type=float, default=2e-5, help="Step size for the action")
+    parser.add_argument(
+        "--thold_theta_deg", type=float, default=0.1, help="Threshold for the servo shafts to rotate in degree"
+    )
+    parser.add_argument("--thold_x", type=float, default=5e-4, help="Threshold for the cart to move in meter")
     args = parser.parse_args()
 
     if args.env_name == QBallBalancerReal.name:
         # Create the interface for communicating with the device
         env = QBallBalancerReal(args.dt, args.max_steps)
-        print_cbt('Set up the QBallBalancerReal environment.', 'c')
+        print_cbt("Set up the QBallBalancerReal environment.", "c")
 
         # Initialize
-        thold_theta = args.thold_theta_deg/180.*np.pi
+        thold_theta = args.thold_theta_deg / 180.0 * np.pi
         tholds_V = np.zeros((args.num_runs, 2, 2))  # num_runs matrices in format [[-x, +x], [-y, +y]]
 
         env.reset()  # sends a zero action until sth else is commanded
-        input('Servo voltages set to [0, 0]. Prepare and then press enter to start.')
+        input("Servo voltages set to [0, 0]. Prepare and then press enter to start.")
 
         # Run
         for r in range(args.num_runs):
-            tholds_V[r, 0, 0] = estimate_one_thold_qbb('x', -1, args.dact, thold_theta)
-            tholds_V[r, 0, 1] = estimate_one_thold_qbb('x', 1, args.dact, thold_theta)
-            tholds_V[r, 1, 0] = estimate_one_thold_qbb('y', -1, args.dact, thold_theta)
-            tholds_V[r, 1, 1] = estimate_one_thold_qbb('y', 1, args.dact, thold_theta)
+            tholds_V[r, 0, 0] = estimate_one_thold_qbb("x", -1, args.dact, thold_theta)
+            tholds_V[r, 0, 1] = estimate_one_thold_qbb("x", 1, args.dact, thold_theta)
+            tholds_V[r, 1, 0] = estimate_one_thold_qbb("y", -1, args.dact, thold_theta)
+            tholds_V[r, 1, 1] = estimate_one_thold_qbb("y", 1, args.dact, thold_theta)
         tholds_V_mean = np.mean(tholds_V, axis=0)
 
-        print_cbt(f"Threshold values averages over {args.num_runs} (servos in rows, lower/upper thold in columns):\n"
-                  f"{tholds_V_mean}", 'c')
+        print_cbt(
+            f"Threshold values averages over {args.num_runs} (servos in rows, lower/upper thold in columns):\n"
+            f"{tholds_V_mean}",
+            "c",
+        )
 
-        np.save(osp.join(pyrado.EVAL_DIR, 'volt_thold_qbb', 'qbb_tholds_V.npy'), tholds_V_mean)
+        np.save(osp.join(pyrado.EVAL_DIR, "volt_thold_qbb", "qbb_tholds_V.npy"), tholds_V_mean)
 
     elif args.env_name in [QCartPoleStabReal.name, QCartPoleSwingUpReal.name]:
         # Create the interface for communicating with the device
         env = QCartPoleReal(args.dt, args.max_steps)
-        print_cbt('Set up the QCartPoleReal environment.', 'c')
+        print_cbt("Set up the QCartPoleReal environment.", "c")
 
         # Initialize
         tholds_V = np.zeros((args.num_runs, 2))  # num_runs matrices in format [-x, +x]
@@ -199,11 +205,16 @@ if __name__ == '__main__':
             tholds_V[r, 1] = estimate_one_thold_qcp(1, args.dact, args.thold_x)
         tholds_V_mean = np.mean(tholds_V, axis=0)
 
-        print_cbt(f"Threshold values averages over {args.num_runs} (servos in rows, lower/upper thold in columns):\n"
-                  f"{tholds_V_mean}", 'c')
+        print_cbt(
+            f"Threshold values averages over {args.num_runs} (servos in rows, lower/upper thold in columns):\n"
+            f"{tholds_V_mean}",
+            "c",
+        )
 
-        np.save(osp.join(pyrado.EVAL_DIR, 'volt_thold_qcp', 'qcp_tholds_V.npy'), tholds_V_mean)
+        np.save(osp.join(pyrado.EVAL_DIR, "volt_thold_qcp", "qcp_tholds_V.npy"), tholds_V_mean)
 
     else:
-        raise pyrado.ValueErr(given=args.env_name, eq_constraint=f'{QBallBalancerReal.name}, {QCartPoleStabReal.name},'
-                                                                 f' or {QCartPoleSwingUpReal.name}')
+        raise pyrado.ValueErr(
+            given=args.env_name,
+            eq_constraint=f"{QBallBalancerReal.name}, {QCartPoleStabReal.name}," f" or {QCartPoleSwingUpReal.name}",
+        )

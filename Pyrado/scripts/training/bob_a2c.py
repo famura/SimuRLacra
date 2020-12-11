@@ -45,18 +45,18 @@ from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.policies.feed_forward.linear import LinearPolicy
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment
-    ex_dir = setup_experiment(BallOnBeamSim.name, f'{A2C.name}_{LinearPolicy.name}')
+    ex_dir = setup_experiment(BallOnBeamSim.name, f"{A2C.name}_{LinearPolicy.name}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1/100., max_steps=500)
+    env_hparams = dict(dt=1 / 100.0, max_steps=500)
     env = BallOnBeamSim(**env_hparams)
 
     # Policy
@@ -75,7 +75,7 @@ if __name__ == '__main__':
         batch_size=100,
         standardize_adv=False,
         lr_scheduler=lr_scheduler.ExponentialLR,
-        lr_scheduler_hparam=dict(gamma=0.99)
+        lr_scheduler_hparam=dict(gamma=0.99),
     )
     critic = GAE(vfcn, **critic_hparam)
 
@@ -90,17 +90,19 @@ if __name__ == '__main__':
         std_init=0.8,
         lr=2e-3,
         lr_scheduler=lr_scheduler.ExponentialLR,
-        lr_scheduler_hparam=dict(gamma=0.99)
+        lr_scheduler_hparam=dict(gamma=0.99),
     )
     algo = A2C(ex_dir, env, policy, critic, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(critic=critic_hparam, vfcn=vfcn_hparam),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(critic=critic_hparam, vfcn=vfcn_hparam),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha

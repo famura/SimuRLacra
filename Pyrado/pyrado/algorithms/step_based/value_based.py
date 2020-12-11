@@ -47,22 +47,24 @@ from pyrado.utils.input_output import print_cbt_once
 class ValueBased(Algorithm, ABC):
     """ Base class of all value-based algorithms """
 
-    def __init__(self,
-                 save_dir: str,
-                 env: Env,
-                 policy: Union[Policy, TwoHeadedPolicy],
-                 memory_size: int,
-                 gamma: float,
-                 max_iter: int,
-                 num_batch_updates: int,
-                 target_update_intvl: int,
-                 num_init_memory_steps: int,
-                 min_rollouts: Optional[int],
-                 min_steps: Optional[int],
-                 batch_size: int,
-                 num_workers: int,
-                 max_grad_norm: float,
-                 logger: StepLogger):
+    def __init__(
+        self,
+        save_dir: str,
+        env: Env,
+        policy: Union[Policy, TwoHeadedPolicy],
+        memory_size: int,
+        gamma: float,
+        max_iter: int,
+        num_batch_updates: int,
+        target_update_intvl: int,
+        num_init_memory_steps: int,
+        min_rollouts: Optional[int],
+        min_steps: Optional[int],
+        batch_size: int,
+        num_workers: int,
+        max_grad_norm: float,
+        logger: StepLogger,
+    ):
         r"""
         Constructor
 
@@ -94,8 +96,8 @@ class ValueBased(Algorithm, ABC):
             # Create logger that only logs every 100 steps of the algorithm
             logger = StepLogger(print_intvl=100)
             logger.printers.append(ConsolePrinter())
-            logger.printers.append(CSVPrinter(osp.join(save_dir, 'progress.csv')))
-            logger.printers.append(TensorBoardPrinter(osp.join(save_dir, 'tb')))
+            logger.printers.append(CSVPrinter(osp.join(save_dir, "progress.csv")))
+            logger.printers.append(TensorBoardPrinter(osp.join(save_dir, "tb")))
 
         # Call Algorithm's constructor
         super().__init__(save_dir, max_iter, policy, logger)
@@ -113,7 +115,7 @@ class ValueBased(Algorithm, ABC):
 
         # Heuristic for number of gradient updates per step
         if num_batch_updates is None:
-            self.num_batch_updates = ceil(min_steps/env.max_steps) if min_steps is not None else min_rollouts
+            self.num_batch_updates = ceil(min_steps / env.max_steps) if min_steps is not None else min_rollouts
         else:
             self.num_batch_updates = num_batch_updates
 
@@ -123,16 +125,18 @@ class ValueBased(Algorithm, ABC):
         else:
             self.init_expl_policy = DummyPolicy(env.spec)
         self.sampler_init = ParallelRolloutSampler(
-            self._env, self.init_expl_policy,
+            self._env,
+            self.init_expl_policy,
             num_workers=num_workers,
             min_steps=self.num_init_memory_steps,
         )
         self._expl_strat = None  # must be implemented by subclass
         self.sampler_trn = None  # must be implemented by subclass
         self.sampler_eval = ParallelRolloutSampler(
-            self._env, self._policy,
+            self._env,
+            self._policy,
             num_workers=num_workers,
-            min_steps=10*env.max_steps,
+            min_steps=10 * env.max_steps,
             min_rollouts=None,
             show_progress_bar=False,
         )
@@ -149,7 +153,7 @@ class ValueBased(Algorithm, ABC):
     def step(self, snapshot_mode: str, meta_info: dict = None):
         if self._memory.isempty:
             # Warm-up phase
-            print_cbt_once('Collecting samples until replay memory if full.', 'w')
+            print_cbt_once("Collecting samples until replay memory if full.", "w")
             # Sample steps and store them in the replay memory
             ros = self.sampler_init.sample()
             self._memory.push(ros)
@@ -160,7 +164,7 @@ class ValueBased(Algorithm, ABC):
         self._cnt_samples += sum([ro.length for ro in ros])  # don't count the evaluation samples
 
         # Log metrics computed from the old policy (before the update)
-        if self._curr_iter%self.logger.print_intvl == 0:
+        if self._curr_iter % self.logger.print_intvl == 0:
             ros = self.sampler_eval.sample()
             rets = [ro.undiscounted_return() for ro in ros]
             ret_max = np.max(rets)
@@ -169,14 +173,14 @@ class ValueBased(Algorithm, ABC):
             ret_min = np.min(rets)
             ret_std = np.std(rets)
         else:
-            ret_max, ret_med, ret_avg, ret_min, ret_std = 5*[-pyrado.inf]  # dummy values
-        self.logger.add_value('max return', ret_max, 4)
-        self.logger.add_value('median return', ret_med, 4)
-        self.logger.add_value('avg return', ret_avg, 4)
-        self.logger.add_value('min return', ret_min, 4)
-        self.logger.add_value('std return', ret_std, 4)
-        self.logger.add_value('avg memory reward', self._memory.avg_reward(), 4)
-        self.logger.add_value('avg rollout length', np.mean([ro.length for ro in ros]), 4)
+            ret_max, ret_med, ret_avg, ret_min, ret_std = 5 * [-pyrado.inf]  # dummy values
+        self.logger.add_value("max return", ret_max, 4)
+        self.logger.add_value("median return", ret_med, 4)
+        self.logger.add_value("avg return", ret_avg, 4)
+        self.logger.add_value("min return", ret_min, 4)
+        self.logger.add_value("std return", ret_std, 4)
+        self.logger.add_value("avg memory reward", self._memory.avg_reward(), 4)
+        self.logger.add_value("avg rollout length", np.mean([ro.length for ro in ros]), 4)
 
         # Use data in the memory to update the policy and the Q-functions
         self.update()
@@ -203,8 +207,8 @@ class ValueBased(Algorithm, ABC):
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
-        pyrado.save(self._expl_strat.policy, 'policy', 'pt', self.save_dir, meta_info)
+        pyrado.save(self._expl_strat.policy, "policy", "pt", self.save_dir, meta_info)
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            pyrado.save(self._env, 'env', 'pkl', self.save_dir, meta_info)
+            pyrado.save(self._env, "env", "pkl", self.save_dir, meta_info)

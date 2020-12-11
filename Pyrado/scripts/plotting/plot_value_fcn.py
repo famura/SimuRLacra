@@ -73,20 +73,20 @@ class wrap_vfcn:
         return self._fcn(state)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
-    plt.rc('text', usetex=args.use_tex)
+    plt.rc("text", usetex=args.use_tex)
 
     # Get the experiment's directory to load from
     ex_dir = ask_for_experiment() if args.dir is None else args.dir
 
     # Load the environment and the value function
     env, _, kwout = load_experiment(ex_dir, args)
-    vfcn = kwout['vfcn']
+    vfcn = kwout["vfcn"]
 
     if not len(args.idcs) == 2:
-        pyrado.ShapeErr(msg='Please provide exactly two indices to slice the value function input space (obs_space)!')
+        pyrado.ShapeErr(msg="Please provide exactly two indices to slice the value function input space (obs_space)!")
 
     # Use the environments lower and upper bounds to parametrize the mesh grid
     lb, ub = env.obs_space.bounds
@@ -94,10 +94,10 @@ if __name__ == '__main__':
     ub_inf_check = np.isinf(ub)
     if lb_inf_check.any():
         warn("Detected at least one inf entry in mesh grid's lower bound, replacing all with -1.")
-        lb[lb_inf_check] = -1.
+        lb[lb_inf_check] = -1.0
     if ub_inf_check.any():
         warn("Detected at least one inf entry in mesh grid's upper bound, replacing all with 1.")
-        ub[ub_inf_check] = 1.
+        ub[ub_inf_check] = 1.0
 
     x = np.linspace(lb[args.idcs[0]], ub[args.idcs[0]], 20)
     y = np.linspace(lb[args.idcs[1]], ub[args.idcs[1]], 20)
@@ -107,7 +107,7 @@ if __name__ == '__main__':
     if space_labels is not None:
         state_labels = [space_labels[args.idcs[0]], space_labels[args.idcs[1]]]
     else:
-        state_labels = ['s_' + str(args.idcs[0]), 's_' + str(args.idcs[1])]
+        state_labels = ["s_" + str(args.idcs[0]), "s_" + str(args.idcs[1])]
 
     # Provide the state at which the value function should be evaluated (partially overwritten by the evaluation gird)
     fixed_state = to.zeros(env.obs_space.shape)
@@ -115,13 +115,18 @@ if __name__ == '__main__':
     # Wrap the function to be able to only provide the mesh gird values as inputs
     w_vfcn = wrap_vfcn(vfcn, fixed_state, args.idcs)
 
-    fig = draw_surface(to.from_numpy(x), to.from_numpy(y), w_vfcn,
-                       f'{ensure_math_mode(state_labels[0])}', f'{ensure_math_mode(state_labels[1])}',
-                       f'$V(${ensure_math_mode(state_labels[0])},{ensure_math_mode(state_labels[1])}$)$',
-                       data_format='torch')
+    fig = draw_surface(
+        to.from_numpy(x),
+        to.from_numpy(y),
+        w_vfcn,
+        f"{ensure_math_mode(state_labels[0])}",
+        f"{ensure_math_mode(state_labels[1])}",
+        f"$V(${ensure_math_mode(state_labels[0])},{ensure_math_mode(state_labels[1])}$)$",
+        data_format="torch",
+    )
 
     if args.save_figures:
-        for fmt in ['pdf', 'pgf']:
-            fig.savefig(osp.join(ex_dir, f'valuefcn-{state_labels[0]}-{state_labels[1]}.{fmt}'), dpi=500)
+        for fmt in ["pdf", "pgf"]:
+            fig.savefig(osp.join(ex_dir, f"valuefcn-{state_labels[0]}-{state_labels[1]}.{fmt}"), dpi=500)
 
     plt.show()

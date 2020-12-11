@@ -41,13 +41,15 @@ from pyrado.utils.input_output import print_cbt, completion_context
 class QuanserReal(RealEnv, ABC):
     """ Base class of all real-world Quanser environments in Pyrado """
 
-    def __init__(self,
-                 ip: str,
-                 rcv_dim: int,
-                 snd_dim: int,
-                 dt: float = 1/500.,
-                 max_steps: int = pyrado.inf,
-                 task_args: [dict, None] = None):
+    def __init__(
+        self,
+        ip: str,
+        rcv_dim: int,
+        snd_dim: int,
+        dt: float = 1 / 500.0,
+        max_steps: int = pyrado.inf,
+        task_args: [dict, None] = None,
+    ):
         """
         Constructor
 
@@ -88,7 +90,7 @@ class QuanserReal(RealEnv, ABC):
         if self._qsoc.is_open():
             self.step(np.zeros(self.act_space.shape))
             self._qsoc.close()
-            print_cbt('Closed the connection to the Quanser device.', 'c')
+            print_cbt("Closed the connection to the Quanser device.", "c")
 
     @property
     def state_space(self) -> Space:
@@ -126,7 +128,7 @@ class QuanserReal(RealEnv, ABC):
         :param kwargs: just for compatibility with SimEnv. All kwargs can be ignored.
         """
         # Cancel and re-open the connection to the socket
-        with completion_context('Connecting to Quanser device', color='c'):
+        with completion_context("Connecting to Quanser device", color="c"):
             self._qsoc.close()
             self._qsoc.open()
 
@@ -143,7 +145,7 @@ class QuanserReal(RealEnv, ABC):
         return meas
 
     def step(self, act):
-        info = dict(t=self._curr_step*self._dt, act_raw=act)
+        info = dict(t=self._curr_step * self._dt, act_raw=act)
 
         # Current reward depending on the (measurable) state and the current (unlimited) action
         remaining_steps = self._max_steps - (self._curr_step + 1) if self._max_steps is not pyrado.inf else 0
@@ -180,13 +182,15 @@ class QuanserReal(RealEnv, ABC):
         :param mode: render mode: console, video, or both
         :param render_step: interval for rendering
         """
-        if self._curr_step%render_step == 0:
+        if self._curr_step % render_step == 0:
             if mode.text:
-                print(f'step: {self._curr_step:4d}  |  '
-                      f'in bounds: {self._state_space.contains(self.state):1d}  |  '
-                      f'rew: {self._curr_rew:1.3f}  |  '
-                      f'act: {self._curr_act}  |  '
-                      f'next state: {self.state}')
+                print(
+                    f"step: {self._curr_step:4d}  |  "
+                    f"in bounds: {self._state_space.contains(self.state):1d}  |  "
+                    f"rew: {self._curr_rew:1.3f}  |  "
+                    f"act: {self._curr_act}  |  "
+                    f"next state: {self.state}"
+                )
             if mode:
                 # Print out of bounds to console if the mode is not empty
                 self.state_space.contains(self.state, verbose=True)

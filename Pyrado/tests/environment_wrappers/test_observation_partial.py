@@ -35,7 +35,7 @@ from tests.environment_wrappers.mock_env import MockEnv
 
 @pytest.mark.wrapper
 def test_spaces():
-    mockenv = MockEnv(obs_space=BoxSpace([-1, -2, -3], [1, 2, 3], labels=['one', 'two', 'three']))
+    mockenv = MockEnv(obs_space=BoxSpace([-1, -2, -3], [1, 2, 3], labels=["one", "two", "three"]))
 
     # Use a simple mask to drop the second element
     mask = [0, 1, 0]
@@ -45,12 +45,12 @@ def test_spaces():
     lb, ub = wenv.obs_space.bounds
     assert list(lb) == [-1, -3]
     assert list(ub) == [1, 3]
-    assert list(wenv.obs_space.labels) == ['one', 'three']
+    assert list(wenv.obs_space.labels) == ["one", "three"]
 
 
 @pytest.mark.wrapper
 def test_values():
-    mockenv = MockEnv(obs_space=BoxSpace([-1, -2, -3], [1, 2, 3], labels=['one', 'two', 'three']))
+    mockenv = MockEnv(obs_space=BoxSpace([-1, -2, -3], [1, 2, 3], labels=["one", "two", "three"]))
 
     # Use a simple mask to drop the second element
     mask = [0, 1, 0]
@@ -68,7 +68,7 @@ def test_values():
 
 @pytest.mark.wrapper
 def test_mask_invert():
-    mockenv = MockEnv(obs_space=BoxSpace([-1, -2, -3], [1, 2, 3], labels=['one', 'two', 'three']))
+    mockenv = MockEnv(obs_space=BoxSpace([-1, -2, -3], [1, 2, 3], labels=["one", "two", "three"]))
 
     # Use a simple mask to drop the second element
     mask = [0, 1, 0]
@@ -97,8 +97,8 @@ def test_mask_from_indices():
 @pytest.mark.wrapper
 def test_mask_from_labels():
     # Test the create_mask helper separately
-    space = BoxSpace(-1, 1, shape=5, labels=['w', 'o', 'r', 'l', 'd'])
-    indices = ['w', 'o']
+    space = BoxSpace(-1, 1, shape=5, labels=["w", "o", "r", "l", "d"])
+    indices = ["w", "o"]
 
     mask = space.create_mask(indices)
     assert list(mask) == [1, 1, 0, 0, 0]

@@ -42,15 +42,17 @@ from pyrado.utils.tensor import atleast_2D
 class FNN(nn.Module):
     """ Feed-forward neural network """
 
-    def __init__(self,
-                 input_size: int,
-                 output_size: int,
-                 hidden_sizes: Sequence[int],
-                 hidden_nonlin: [Callable, Sequence[Callable]],
-                 dropout: float = 0.,
-                 output_nonlin: Callable = None,
-                 init_param_kwargs: dict = None,
-                 use_cuda: bool = False):
+    def __init__(
+        self,
+        input_size: int,
+        output_size: int,
+        hidden_sizes: Sequence[int],
+        hidden_nonlin: [Callable, Sequence[Callable]],
+        dropout: float = 0.0,
+        output_nonlin: Callable = None,
+        init_param_kwargs: dict = None,
+        use_cuda: bool = False,
+    ):
         """
         Constructor
 
@@ -63,13 +65,15 @@ class FNN(nn.Module):
         :param init_param_kwargs: additional keyword arguments for the policy parameter initialization
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
-        self._device = 'cuda' if use_cuda and to.cuda.is_available() else 'cpu'
+        self._device = "cuda" if use_cuda and to.cuda.is_available() else "cpu"
 
         super().__init__()  # init nn.Module
 
         # Store settings
         # TODO One day replace legacy above with below
-        self.hidden_nonlin = hidden_nonlin if isinstance(hidden_nonlin, Iterable) else len(hidden_sizes)*[hidden_nonlin]
+        self.hidden_nonlin = (
+            hidden_nonlin if isinstance(hidden_nonlin, Iterable) else len(hidden_sizes) * [hidden_nonlin]
+        )
         self.dropout = dropout
         self.output_nonlin = output_nonlin
 
@@ -122,7 +126,7 @@ class FNN(nn.Module):
                 if self.dropout == 0:
                     # If there is no dropout, initialize weights and biases for every layer
                     init_param(layer, **kwargs)
-                elif self.dropout > 0 and i%2 == 0:
+                elif self.dropout > 0 and i % 2 == 0:
                     # If there is dropout, omit the initialization for the dropout layers
                     init_param(layer, **kwargs)
 
@@ -144,10 +148,10 @@ class FNN(nn.Module):
                 # If there is no dropout, apply the nonlinearity to every layer
                 if self.hidden_nonlin[i] is not None:
                     next_input = self.hidden_nonlin[i](next_input)
-            elif self.dropout > 0 and i%2 == 0:
+            elif self.dropout > 0 and i % 2 == 0:
                 # If there is dropout, only apply the nonlinearity to every second layer
-                if self.hidden_nonlin[i//2] is not None:
-                    next_input = self.hidden_nonlin[i//2](next_input)
+                if self.hidden_nonlin[i // 2] is not None:
+                    next_input = self.hidden_nonlin[i // 2](next_input)
 
         # And through the output layer
         output = self.output_layer(next_input)
@@ -160,16 +164,18 @@ class FNN(nn.Module):
 class FNNPolicy(Policy):
     """ Feed-forward neural network policy """
 
-    name: str = 'fnn'
+    name: str = "fnn"
 
-    def __init__(self,
-                 spec: EnvSpec,
-                 hidden_sizes: Sequence[int],
-                 hidden_nonlin: [Callable, Sequence[Callable]],
-                 dropout: float = 0.,
-                 output_nonlin: Callable = None,
-                 init_param_kwargs: dict = None,
-                 use_cuda: bool = False):
+    def __init__(
+        self,
+        spec: EnvSpec,
+        hidden_sizes: Sequence[int],
+        hidden_nonlin: [Callable, Sequence[Callable]],
+        dropout: float = 0.0,
+        output_nonlin: Callable = None,
+        init_param_kwargs: dict = None,
+        use_cuda: bool = False,
+    ):
         """
         Constructor
 
@@ -191,7 +197,8 @@ class FNNPolicy(Policy):
             hidden_nonlin=hidden_nonlin,
             dropout=dropout,
             output_nonlin=output_nonlin,
-            use_cuda=use_cuda)
+            use_cuda=use_cuda,
+        )
 
         # Call custom initialization function after PyTorch network parameter initialization
         init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()
@@ -212,13 +219,9 @@ class FNNPolicy(Policy):
 class DiscreteActQValPolicy(Policy):
     """ State-action value (Q-value) feed-forward neural network policy for discrete actions """
 
-    name: str = 'discrqval'
+    name: str = "discrqval"
 
-    def __init__(self,
-                 spec: EnvSpec,
-                 net: nn.Module,
-                 init_param_kwargs: dict = None,
-                 use_cuda: bool = False):
+    def __init__(self, spec: EnvSpec, net: nn.Module, init_param_kwargs: dict = None, use_cuda: bool = False):
         """
         Constructor
 

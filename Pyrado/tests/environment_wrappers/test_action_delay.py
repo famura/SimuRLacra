@@ -106,7 +106,7 @@ def test_domain_param():
     assert mockenv.last_act == [0, 1]
 
     # change the delay and reset
-    wenv.domain_param = {'act_delay': 2}
+    wenv.domain_param = {"act_delay": 2}
     wenv.reset()
 
     wenv.step(np.array([1, 2]))

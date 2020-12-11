@@ -49,14 +49,16 @@ class ResultContainer:
     of the experiments called `evaluation`. If there are multiple evaluation files, the returns are averaged.
     """
 
-    def __init__(self,
-                 name: str,
-                 parent_dir: str,
-                 incl_pattern: str = None,
-                 excl_pattern: str = None,
-                 latest_evals_only: bool = False,
-                 eval_subdir_name: str = 'evaluation',
-                 sort: bool = False):
+    def __init__(
+        self,
+        name: str,
+        parent_dir: str,
+        incl_pattern: str = None,
+        excl_pattern: str = None,
+        latest_evals_only: bool = False,
+        eval_subdir_name: str = "evaluation",
+        sort: bool = False,
+    ):
         """
         Constructor
 
@@ -108,10 +110,10 @@ class ResultContainer:
                 for root, dirs, files in os.walk(eval_dir):
                     files.sort(reverse=True)  # in case there are multiple evaluations
                     for f in files:
-                        if f.endswith('.npy'):
+                        if f.endswith(".npy"):
                             rets.append(np.load(osp.join(eval_dir, f)))
                             num_samples.append(len(rets))
-                        elif f.endswith('.pt'):
+                        elif f.endswith(".pt"):
                             rets.append(to.load(osp.join(eval_dir, f)).numpy())
                         else:
                             raise FileNotFoundError
@@ -128,54 +130,56 @@ class ResultContainer:
             self.returns_est.extend(np.mean(np.asarray(rets), axis=1))
 
         # Print what has been loaded
-        ex_names = ['...' + m[m.rfind('/'):] for m in self.matches]  # cut off everything until the experiment's name
-        print(tabulate(
-            [[ex_name, ret] for ex_name, ret in zip(ex_names, self._returns_est_per_ex)],
-            headers=['Loaded directory', 'Returns averaged per experiment']
-        ))
+        ex_names = ["..." + m[m.rfind("/") :] for m in self.matches]  # cut off everything until the experiment's name
+        print(
+            tabulate(
+                [[ex_name, ret] for ex_name, ret in zip(ex_names, self._returns_est_per_ex)],
+                headers=["Loaded directory", "Returns averaged per experiment"],
+            )
+        )
 
         if cnt_nonexist_dirs == 0:
-            print_cbt('All evaluation sub-directories have been found.', 'g')
+            print_cbt("All evaluation sub-directories have been found.", "g")
         else:
-            print_cbt(f'{cnt_nonexist_dirs} evaluation sub-directories have been missed.', 'y')
+            print_cbt(f"{cnt_nonexist_dirs} evaluation sub-directories have been missed.", "y")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Get the the experiments directory
-    env_name = 'qq-su' if args.env_name is None else args.env_name
+    env_name = "qq-su" if args.env_name is None else args.env_name
 
     # Extract the return values
     results = [
         ResultContainer(
-            name='BayRn',
-            parent_dir=osp.join(pyrado.EXP_DIR, env_name, 'DIR_NAME'),
+            name="BayRn",
+            parent_dir=osp.join(pyrado.EXP_DIR, env_name, "DIR_NAME"),
             # incl_pattern='',
             latest_evals_only=False,
-            sort=True
+            sort=True,
         ),
         ResultContainer(
-            name='SimOpt',
-            parent_dir=osp.join(pyrado.EXP_DIR, env_name, 'DIR_NAME'),
+            name="SimOpt",
+            parent_dir=osp.join(pyrado.EXP_DIR, env_name, "DIR_NAME"),
             # incl_pattern='',
             latest_evals_only=False,
-            sort=True
+            sort=True,
         ),
         ResultContainer(
-            name='UDR',
-            parent_dir=osp.join(pyrado.EXP_DIR, env_name, 'DIR_NAME'),
+            name="UDR",
+            parent_dir=osp.join(pyrado.EXP_DIR, env_name, "DIR_NAME"),
             # incl_pattern='',
             latest_evals_only=False,
-            sort=True
+            sort=True,
         ),
         ResultContainer(
-            name='PPO',
-            parent_dir=osp.join(pyrado.EXP_DIR, env_name, 'DIR_NAME'),
+            name="PPO",
+            parent_dir=osp.join(pyrado.EXP_DIR, env_name, "DIR_NAME"),
             # incl_pattern='',
             latest_evals_only=False,
-            sort=True
+            sort=True,
         ),
     ]
 
@@ -184,16 +188,25 @@ if __name__ == '__main__':
     algo_names = [r.name for r in results]
 
     # Plot and save
-    fig_fize = (3.5, 2.5/18*10)  # pyrado.figsize_IEEE_1col_18to10 = (3.5, 3.5/18*10)
+    fig_fize = (3.5, 2.5 / 18 * 10)  # pyrado.figsize_IEEE_1col_18to10 = (3.5, 3.5/18*10)
     fig, ax = plt.subplots(1, figsize=fig_fize, constrained_layout=True)
-    means_str = [f'{k}: {np.mean(v)}' for k, v in zip(algo_names, data)]
-    fig.canvas.set_window_title(f'Mean returns on real {env_name.upper()}: ' + ', '.join(means_str))
+    means_str = [f"{k}: {np.mean(v)}" for k, v in zip(algo_names, data)]
+    fig.canvas.set_window_title(f"Mean returns on real {env_name.upper()}: " + ", ".join(means_str))
 
-    draw_categorical(ax, data, args.mode, x_label=algo_names, y_label='return', show_legend=False,
-                     vline_level=375, vline_label='approx.\nsolved', plot_kwargs=None)
+    draw_categorical(
+        ax,
+        data,
+        args.mode,
+        x_label=algo_names,
+        y_label="return",
+        show_legend=False,
+        vline_level=375,
+        vline_label="approx.\nsolved",
+        plot_kwargs=None,
+    )
 
     # Save and show
     if args.save_figures:
-        for fmt in ['pdf', 'pgf']:
-            fig.savefig(osp.join(pyrado.TEMP_DIR, f'returns_{env_name}_{args.mode}plot.{fmt}'), dpi=500, backend='pgf')
+        for fmt in ["pdf", "pgf"]:
+            fig.savefig(osp.join(pyrado.TEMP_DIR, f"returns_{env_name}_{args.mode}plot.{fmt}"), dpi=500, backend="pgf")
     plt.show()

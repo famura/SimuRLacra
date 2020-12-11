@@ -36,29 +36,21 @@ from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 
 
 @pytest.mark.parametrize(
-    'env', [
+    "env",
+    [
         BallOnBeamSim(dt=0.02, max_steps=1),
         QBallBalancerSim(dt=0.02, max_steps=1),
     ],
-    ids=['bob', 'qbb']
+    ids=["bob", "qbb"],
 )
-@pytest.mark.parametrize(
-    'policy',
-    ['linear_policy', 'fnn_policy'],
-    ids=['lin', 'fnn'],
-    indirect=True
-)
+@pytest.mark.parametrize("policy", ["linear_policy", "fnn_policy"], ids=["lin", "fnn"], indirect=True)
 def test_noise_on_act(env, policy):
     for _ in range(100):
         # Init the exploration strategy
-        act_noise_strat = NormalActNoiseExplStrat(
-            policy,
-            std_init=0.5,
-            train_mean=True
-        )
+        act_noise_strat = NormalActNoiseExplStrat(policy, std_init=0.5, train_mean=True)
 
         # Set new parameters for the exploration noise
-        std = to.ones(env.act_space.flat_dim)*to.rand(1)
+        std = to.ones(env.act_space.flat_dim) * to.rand(1)
         mean = to.rand(env.act_space.shape)
         act_noise_strat.noise.adapt(mean, std)
         assert (mean == act_noise_strat.noise.mean).all()
@@ -74,27 +66,19 @@ def test_noise_on_act(env, policy):
 
 
 @pytest.mark.parametrize(
-    'env', [
+    "env",
+    [
         BallOnBeamSim(dt=0.02, max_steps=1),
         QBallBalancerSim(dt=0.02, max_steps=1),
     ],
-    ids=['bob', 'qbb']
+    ids=["bob", "qbb"],
 )
-@pytest.mark.parametrize(
-    'policy',
-    ['linear_policy', 'fnn_policy'],
-    ids=['lin', 'fnn'],
-    indirect=True
-)
+@pytest.mark.parametrize("policy", ["linear_policy", "fnn_policy"], ids=["lin", "fnn"], indirect=True)
 def test_noise_on_param(env, policy):
     for _ in range(5):
         # Init the exploration strategy
         param_noise_strat = NormalParamNoise(
-            policy.num_param,
-            full_cov=True,
-            std_init=1.,
-            std_min=0.01,
-            train_mean=True
+            policy.num_param, full_cov=True, std_init=1.0, std_min=0.01, train_mean=True
         )
 
         # Set new parameters for the exploration noise

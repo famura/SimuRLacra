@@ -44,13 +44,7 @@ from pyrado.utils.input_output import print_cbt
 class ActorCritic(Algorithm, ABC):
     """ Base class of all actor critic algorithms """
 
-    def __init__(self,
-                 env: Env,
-                 actor: Policy,
-                 critic: GAE,
-                 save_dir: str,
-                 max_iter: int,
-                 logger: StepLogger = None):
+    def __init__(self, env: Env, actor: Policy, critic: GAE, save_dir: str, max_iter: int, logger: StepLogger = None):
         """
         Constructor
 
@@ -103,13 +97,13 @@ class ActorCritic(Algorithm, ABC):
         all_lengths = np.array([ro.length for ro in ros])
         self._cnt_samples += int(np.sum(all_lengths))
         rets = [ro.undiscounted_return() for ro in ros]
-        self.logger.add_value('max return', np.max(rets), 4)
-        self.logger.add_value('median return', np.median(rets), 4)
-        self.logger.add_value('avg return', np.mean(rets), 4)
-        self.logger.add_value('min return', np.min(rets), 4)
-        self.logger.add_value('std return', np.std(rets), 4)
-        self.logger.add_value('avg rollout len', np.mean(all_lengths), 4)
-        self.logger.add_value('num total samples', self._cnt_samples)
+        self.logger.add_value("max return", np.max(rets), 4)
+        self.logger.add_value("median return", np.median(rets), 4)
+        self.logger.add_value("avg return", np.mean(rets), 4)
+        self.logger.add_value("min return", np.min(rets), 4)
+        self.logger.add_value("std return", np.std(rets), 4)
+        self.logger.add_value("avg rollout len", np.mean(all_lengths), 4)
+        self.logger.add_value("num total samples", self._cnt_samples)
 
         # Update the advantage estimator and the policy
         self.update(ros)
@@ -140,41 +134,39 @@ class ActorCritic(Algorithm, ABC):
         if self._lr_scheduler is not None:
             self._lr_scheduler.last_epoch = -1
 
-    def init_modules(self, warmstart: bool, suffix: str = '', prefix: str = None, **kwargs):
+    def init_modules(self, warmstart: bool, suffix: str = "", prefix: str = None, **kwargs):
         if prefix is None:
-            prefix = f'iter_{self._curr_iter - 1}'
+            prefix = f"iter_{self._curr_iter - 1}"
 
-        ppi = kwargs.get('policy_param_init', None)
-        vpi = kwargs.get('valuefcn_param_init', None)
+        ppi = kwargs.get("policy_param_init", None)
+        vpi = kwargs.get("valuefcn_param_init", None)
 
         if warmstart and ppi is not None and vpi is not None:
             self._policy.init_param(ppi)
             self._critic.vfcn.init_param(vpi)
-            print_cbt('Learning given an fixed parameter initialization.', 'w')
+            print_cbt("Learning given an fixed parameter initialization.", "w")
 
         elif warmstart and ppi is None and self._curr_iter > 0:
             self._policy = pyrado.load(
-                self._policy, 'policy', 'pt', self.save_dir,
-                meta_info=dict(prefix=prefix, suffix=suffix)
+                self._policy, "policy", "pt", self.save_dir, meta_info=dict(prefix=prefix, suffix=suffix)
             )
             self._critic.vfcn = pyrado.load(
-                self._critic.vfcn, 'vfcn', 'pt', self.save_dir,
-                meta_info=dict(prefix=prefix, suffix=suffix)
+                self._critic.vfcn, "vfcn", "pt", self.save_dir, meta_info=dict(prefix=prefix, suffix=suffix)
             )
-            print_cbt(f'Learning given the results from iteration {self._curr_iter - 1}', 'w')
+            print_cbt(f"Learning given the results from iteration {self._curr_iter - 1}", "w")
 
         else:
             # Reset the policy
             self._policy.init_param()
             self._critic.vfcn.init_param()
-            print_cbt('Learning from scratch.', 'w')
+            print_cbt("Learning from scratch.", "w")
 
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
-        pyrado.save(self._expl_strat.policy, 'policy', 'pt', self.save_dir, meta_info)
-        pyrado.save(self._critic.vfcn, 'vfcn', 'pt', self.save_dir, meta_info)
+        pyrado.save(self._expl_strat.policy, "policy", "pt", self.save_dir, meta_info)
+        pyrado.save(self._critic.vfcn, "vfcn", "pt", self.save_dir, meta_info)
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            pyrado.save(self._env, 'env', 'pkl', self.save_dir, meta_info)
+            pyrado.save(self._env, "env", "pkl", self.save_dir, meta_info)

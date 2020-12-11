@@ -52,7 +52,7 @@ def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, ch
         mps_left=None,  # use defaults
         mps_right=None,  # use defaults
         ref_frame=ref_frame,
-        collisionConfig={'file': 'collisionModel.xml'},
+        collisionConfig={"file": "collisionModel.xml"},
         checkJointLimits=checkJointLimits,
     )
     env.reset(domain_param=env.get_nominal_domain_param())
@@ -67,8 +67,7 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
     def policy(t: float):
         # return [1, 0, 1, 1, 1,
         #         0, 0, 0, 0, 0, 1]
-        return [0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 1]
+        return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
 
     # Set up environment
     env = BoxLiftingPosDSSim(
@@ -81,8 +80,8 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         mps_right=None,  # use defaults
         ref_frame=ref_frame,
         fixedInitState=True,
-        collisionConfig={'file': 'collisionModel.xml'},
-        taskCombinationMethod='sum',
+        collisionConfig={"file": "collisionModel.xml"},
+        taskCombinationMethod="sum",
         checkJointLimits=checkJointLimits,
         collisionAvoidanceIK=False,
         observeVelocity=False,
@@ -104,14 +103,11 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
 def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     def policy(t: float):
         if t < 2:
-            return [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
-                    0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            return [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
         elif t < 6:
-            return [-0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5,
-                    -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5]
+            return [-0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5]
         else:
-            return [0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0]
+            return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
     # Set up environment
     env = BoxLiftingVelDSSim(
@@ -124,8 +120,8 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         mps_right=None,  # use defaults
         ref_frame=ref_frame,
         fixedInitState=True,
-        collisionConfig={'file': 'collisionModel.xml'},
-        taskCombinationMethod='sum',
+        collisionConfig={"file": "collisionModel.xml"},
+        taskCombinationMethod="sum",
         checkJointLimits=checkJointLimits,
         collisionAvoidanceIK=False,
         observeVelocity=True,
@@ -145,33 +141,39 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
     return env, policy
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Choose setup
-    setup_type = 'vel'  # idle, pos, vel
+    setup_type = "vel"  # idle, pos, vel
     common_hparam = dict(
-        physicsEngine='Bullet',  # Bullet or Vortex
-        graphFileName='gBoxLifting_posCtrl.xml',  # gBoxLifting_trqCtrl or gBoxLifting_posCtrl
-        dt=1/100.,
-        max_steps=int(20*100),
-        ref_frame='basket',  # world, table, or slider
+        physicsEngine="Bullet",  # Bullet or Vortex
+        graphFileName="gBoxLifting_posCtrl.xml",  # gBoxLifting_trqCtrl or gBoxLifting_posCtrl
+        dt=1 / 100.0,
+        max_steps=int(20 * 100),
+        ref_frame="basket",  # world, table, or slider
         checkJointLimits=False,
     )
 
-    if setup_type == 'idle':
+    if setup_type == "idle":
         env, policy = create_idle_setup(**common_hparam)
-    elif setup_type == 'pos':
+    elif setup_type == "pos":
         env, policy = create_position_mps_setup(**common_hparam)
-    elif setup_type == 'vel':
+    elif setup_type == "vel":
         env, policy = create_velocity_mps_setup(**common_hparam)
     else:
         raise pyrado.ValueErr(given=setup_type, eq_constraint="'idle', 'pos', 'vel")
 
     # Simulate and plot
-    print('observations:\n', env.obs_space.labels)
+    print("observations:\n", env.obs_space.labels)
     done, param, state = False, None, None
     while not done:
-        ro = rollout(env, policy, render_mode=RenderMode(text=False, video=True), stop_on_done=False,
-                     eval=True, max_steps=common_hparam['max_steps'],
-                     reset_kwargs=dict(domain_param=param, init_state=state))
-        print_cbt(f'Return: {ro.undiscounted_return()}', 'g', bright=True)
+        ro = rollout(
+            env,
+            policy,
+            render_mode=RenderMode(text=False, video=True),
+            stop_on_done=False,
+            eval=True,
+            max_steps=common_hparam["max_steps"],
+            reset_kwargs=dict(domain_param=param, init_state=state),
+        )
+        print_cbt(f"Return: {ro.undiscounted_return()}", "g", bright=True)
         done, state, param = after_rollout_query(env, policy, ro)

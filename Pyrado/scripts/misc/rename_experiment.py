@@ -42,17 +42,18 @@ from pyrado.logger.step import CSVPrinter, TensorBoardPrinter
 from pyrado.utils.argparser import get_argparser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     parser = get_argparser()
-    parser.add_argument('--new_ex_dir', type=str, nargs='?',
-                        help="path to the directory where the experiment should be saved/moved to")
+    parser.add_argument(
+        "--new_ex_dir", type=str, nargs="?", help="path to the directory where the experiment should be saved/moved to"
+    )
     args = parser.parse_args()
 
     if not osp.isdir(args.dir):
         raise pyrado.PathErr(given=args.dir)
     if args.new_ex_dir is None:
-        raise pyrado.ValueErr(msg='Provide the path to the new experiment directory using --new_ex_dir')
+        raise pyrado.ValueErr(msg="Provide the path to the new experiment directory using --new_ex_dir")
 
     # Create the new directory and test it
     os.makedirs(args.new_ex_dir, exist_ok=True)
@@ -66,7 +67,7 @@ if __name__ == '__main__':
     algo.save_dir = args.new_ex_dir
     for printer in algo.logger.printers:
         if isinstance(printer, CSVPrinter):
-            printer.file = osp.join(args.new_ex_dir, printer.file[printer.file.rfind('/') + 1:])
+            printer.file = osp.join(args.new_ex_dir, printer.file[printer.file.rfind("/") + 1 :])
         elif isinstance(printer, TensorBoardPrinter):
             printer.dir = args.new_ex_dir
 

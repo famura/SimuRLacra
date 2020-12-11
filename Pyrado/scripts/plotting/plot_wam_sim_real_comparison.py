@@ -46,7 +46,7 @@ from pyrado.utils.experiments import load_experiment
 from pyrado.utils.input_output import print_cbt
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
@@ -54,18 +54,21 @@ if __name__ == '__main__':
     ex_dir = ask_for_experiment() if args.dir is None else args.dir
 
     # Load real trajectories
-    mode = ''
+    mode = ""
     real_data_exists = True
     try:
-        while mode not in ['ep', 'sb']:
-            mode = input('Pass ep for episodic and sb for step-based control mode: ').lower()
-        qpos_real = np.load(osp.join(ex_dir, f'qpos_real_{mode}.npy'))
-        qvel_real = np.load(osp.join(ex_dir, f'qvel_real_{mode}.npy'))
+        while mode not in ["ep", "sb"]:
+            mode = input("Pass ep for episodic and sb for step-based control mode: ").lower()
+        qpos_real = np.load(osp.join(ex_dir, f"qpos_real_{mode}.npy"))
+        qvel_real = np.load(osp.join(ex_dir, f"qvel_real_{mode}.npy"))
     except FileNotFoundError:
         real_data_exists = False
-        print_cbt(f'Did not find a recorded real trajectory (qpos_real_{mode} and qvel_real_{mode}) for this policy. '
-                  f'Run deployment/run_policy_wam.py to get real-world trajectories.',
-                  'y', bright=True)
+        print_cbt(
+            f"Did not find a recorded real trajectory (qpos_real_{mode} and qvel_real_{mode}) for this policy. "
+            f"Run deployment/run_policy_wam.py to get real-world trajectories.",
+            "y",
+            bright=True,
+        )
 
     # Load the policy and the environment
     env, policy, _ = load_experiment(ex_dir, args)
@@ -81,57 +84,57 @@ if __name__ == '__main__':
     # Use the recorded initial state from the real system
     init_state = env.init_space.sample_uniform()
     if real_data_exists:
-        if input('Use the recorded initial state from the real system? [y] / n ').lower() == '' or 'y':
-            init_state[:env.num_dof] = qpos_real[0, :]
+        if input("Use the recorded initial state from the real system? [y] / n ").lower() == "" or "y":
+            init_state[: env.num_dof] = qpos_real[0, :]
 
     # Define indices of actuated joints
     act_idcs = [1, 3, 5] if env.num_dof == 7 else [1, 3]
 
     # Do rollout in simulation
     ro = rollout(env, policy, eval=True, render_mode=RenderMode(video=False), reset_kwargs=dict(init_state=init_state))
-    t = ro.env_infos['t']
-    qpos_sim, qvel_sim = ro.env_infos['qpos'], ro.env_infos['qvel']
-    qpos_des, qvel_des = ro.env_infos['qpos_des'], ro.env_infos['qvel_des']
+    t = ro.env_infos["t"]
+    qpos_sim, qvel_sim = ro.env_infos["qpos"], ro.env_infos["qvel"]
+    qpos_des, qvel_des = ro.env_infos["qpos_des"], ro.env_infos["qvel_des"]
 
     plot_des = False
-    if input('Plot the desired joint states and velocities (i.e. the policy features)? [y] / n ') == '' or 'y':
+    if input("Plot the desired joint states and velocities (i.e. the policy features)? [y] / n ") == "" or "y":
         plot_des = True
 
     # Plot trajectories of the directly controlled joints and their corresponding desired trajectories
-    fig, ax = plt.subplots(nrows=len(act_idcs), ncols=2, figsize=(12, 8), sharex='all', constrained_layout=True)
-    fig.canvas.set_window_title('Trajectory Comparison')
+    fig, ax = plt.subplots(nrows=len(act_idcs), ncols=2, figsize=(12, 8), sharex="all", constrained_layout=True)
+    fig.canvas.set_window_title("Trajectory Comparison")
 
     # Compute the RMSE (root mean squared error) in degree
     if real_data_exists:
-        err_deg = 180/np.pi*(qpos_real - qpos_sim)
+        err_deg = 180 / np.pi * (qpos_real - qpos_sim)
         rmse = np.sqrt(np.mean(np.power(err_deg, 2), axis=0)).round(2)
-        suptitle = f'RMSE: q_1 = {rmse[1]} deg, q_3 = {rmse[3]} deg'
+        suptitle = f"RMSE: q_1 = {rmse[1]} deg, q_3 = {rmse[3]} deg"
         if env.num_dof == 7:
-            suptitle = suptitle + f', q_5 {rmse[5]} deg'
+            suptitle = suptitle + f", q_5 {rmse[5]} deg"
         fig.suptitle(suptitle)
 
     for i, idx in enumerate(act_idcs):
-        ax[i, 0].plot(t, 180/np.pi*qpos_sim[:, idx], label='sim')
-        ax[i, 1].plot(t, 180/np.pi*qvel_sim[:, idx], label='sim')
+        ax[i, 0].plot(t, 180 / np.pi * qpos_sim[:, idx], label="sim")
+        ax[i, 1].plot(t, 180 / np.pi * qvel_sim[:, idx], label="sim")
 
         if real_data_exists:
-            ax[i, 0].plot(t, 180/np.pi*qpos_real[:, idx], label='real')
-            ax[i, 1].plot(t, 180/np.pi*qvel_real[:, idx], label='real')
+            ax[i, 0].plot(t, 180 / np.pi * qpos_real[:, idx], label="real")
+            ax[i, 1].plot(t, 180 / np.pi * qvel_real[:, idx], label="real")
 
         if plot_des:
-            ax[i, 0].plot(t, 180/np.pi*qpos_des[:, idx], label='des', ls='--')
-            ax[i, 1].plot(t, 180/np.pi*qvel_des[:, idx], label='des', ls='--')
+            ax[i, 0].plot(t, 180 / np.pi * qpos_des[:, idx], label="des", ls="--")
+            ax[i, 1].plot(t, 180 / np.pi * qvel_des[:, idx], label="des", ls="--")
 
-        ax[i, 0].set_ylabel(f'q_{idx} [deg]')
-        ax[i, 1].set_ylabel(f'qd_{idx} [deg/s]')
+        ax[i, 0].set_ylabel(f"q_{idx} [deg]")
+        ax[i, 1].set_ylabel(f"qd_{idx} [deg/s]")
 
     ax[0, 0].legend()
     ax[0, 1].legend()
 
-    ax[0, 0].set_title('joint position')
-    ax[0, 1].set_title('joint velocity')
+    ax[0, 0].set_title("joint position")
+    ax[0, 1].set_title("joint velocity")
 
-    ax[len(act_idcs) - 1, 0].set_xlabel('t [s]')
-    ax[len(act_idcs) - 1, 1].set_xlabel('t [s]')
+    ax[len(act_idcs) - 1, 0].set_xlabel("t [s]")
+    ax[len(act_idcs) - 1, 1].set_xlabel("t [s]")
 
     plt.show()

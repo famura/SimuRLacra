@@ -43,12 +43,12 @@ from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(HopperSim.name, f'{PPO.name}_{FNNPolicy.name}')
+    ex_dir = setup_experiment(HopperSim.name, f"{PPO.name}_{FNNPolicy.name}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
@@ -78,7 +78,7 @@ if __name__ == '__main__':
         batch_size=512,
         standardize_adv=False,
         standardizer=None,
-        max_grad_norm=1.,
+        max_grad_norm=1.0,
         lr=5e-4,
     )
     critic = GAE(vfcn, **critic_hparam)
@@ -86,24 +86,26 @@ if __name__ == '__main__':
     # Algorithm
     algo_hparam = dict(
         max_iter=500,
-        min_steps=20*env.max_steps,
+        min_steps=20 * env.max_steps,
         num_epoch=10,
         eps_clip=0.15,
         batch_size=512,
-        max_grad_norm=1.,
+        max_grad_norm=1.0,
         lr=3e-4,
         num_workers=12,
     )
     algo = PPO(ex_dir, env, policy, critic, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(critic=critic_hparam, vfcn=vfcn_hparam),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(critic=critic_hparam, vfcn=vfcn_hparam),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha
-    algo.train(seed=args.seed, snapshot_mode='best')
+    algo.train(seed=args.seed, snapshot_mode="best")

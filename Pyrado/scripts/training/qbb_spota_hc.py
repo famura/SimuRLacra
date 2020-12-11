@@ -50,26 +50,38 @@ from pyrado.sampling.sequences import *
 from pyrado.utils.argparser import get_argparser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QBallBalancerSim.name, f'{SPOTA.name}-{HCNormal.name}_{LinearPolicy.name}',
-                              'obsnoise_actedlay-10')
+    ex_dir = setup_experiment(
+        QBallBalancerSim.name, f"{SPOTA.name}-{HCNormal.name}_{LinearPolicy.name}", "obsnoise_actedlay-10"
+    )
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment and domain randomization
-    env_hparams = dict(dt=1/100., max_steps=500)
+    env_hparams = dict(dt=1 / 100.0, max_steps=500)
     env = QBallBalancerSim(**env_hparams)
-    env = GaussianObsNoiseWrapper(env, noise_std=[1/180*pi, 1/180*pi, 0.005, 0.005,  # [rad, rad, m, m, ...
-                                                  10/180*pi, 10/180*pi, 0.05, 0.05])  # ... rad/s, rad/s, m/s, m/s]
+    env = GaussianObsNoiseWrapper(
+        env,
+        noise_std=[
+            1 / 180 * pi,
+            1 / 180 * pi,
+            0.005,
+            0.005,  # [rad, rad, m, m, ...
+            10 / 180 * pi,
+            10 / 180 * pi,
+            0.05,
+            0.05,
+        ],
+    )  # ... rad/s, rad/s, m/s, m/s]
     # env = ObsPartialWrapper(env, mask=[0, 0, 0, 0, 1, 1, 0, 0])
     env = ActDelayWrapper(env)
     randomizer = create_default_randomizer(env)
-    randomizer.add_domain_params(UniformDomainParam(name='act_delay', mean=5, halfspan=5, clip_lo=0, roundint=True))
+    randomizer.add_domain_params(UniformDomainParam(name="act_delay", mean=5, halfspan=5, clip_lo=0, roundint=True))
     env = DomainRandWrapperBuffer(env, randomizer)
 
     # Policy
@@ -77,8 +89,9 @@ if __name__ == '__main__':
     policy = LinearPolicy(spec=env.spec, **policy_hparam)
 
     # Initialize with Quanser's PD gains
-    init_policy_param_values = to.tensor([-14., 0, -14*3.45, 0, 0, 0, -14*2.11, 0,
-                                          0, -14., 0, -14*3.45, 0, 0, 0, -14*2.11])
+    init_policy_param_values = to.tensor(
+        [-14.0, 0, -14 * 3.45, 0, 0, 0, -14 * 2.11, 0, 0, -14.0, 0, -14 * 3.45, 0, 0, 0, -14 * 2.11]
+    )
 
     # Algorithm
     subrtn_hparam_cand = dict(
@@ -87,7 +100,7 @@ if __name__ == '__main__':
         pop_size=50,
         expl_factor=1.1,
         expl_std_init=0.5,
-        num_workers=8
+        num_workers=8,
     )
     subrtn_hparam_refs = deepcopy(subrtn_hparam_cand)
 
@@ -114,12 +127,14 @@ if __name__ == '__main__':
     algo = SPOTA(ex_dir, env, sr_cand, sr_refs, **algo_hparam)
 
     # Save the environments and the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(subrtn_name=sr_cand.name, subrtn_cand=subrtn_hparam_cand, subrtn_refs=subrtn_hparam_refs),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(subrtn_name=sr_cand.name, subrtn_cand=subrtn_hparam_cand, subrtn_refs=subrtn_hparam_refs),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha

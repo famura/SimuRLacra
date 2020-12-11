@@ -60,7 +60,7 @@ def to_format(data, data_format, data_type=None):
     :param data_type: type to return data in. When None is passed, the data type is left unchanged.
     :return: numpy.ndarray or torch.Tensor
     """
-    if data_format == 'numpy':
+    if data_format == "numpy":
         if isinstance(data, np.ndarray):
             if data_type is None:
                 return data
@@ -75,7 +75,7 @@ def to_format(data, data_format, data_type=None):
             # Can't guarantee this, but let's try
             return np.asanyarray(data)
 
-    elif data_format == 'torch':
+    elif data_format == "torch":
         if isinstance(data, np.ndarray):
             try:
                 if data_type is None:
@@ -130,9 +130,9 @@ def stack_to_format(data: Union[dict, tuple, Sequence], data_format: str):
             return new_tuple(type(data[0]), (stack_to_format([d[i] for d in data], data_format) for i in range(tsize)))
 
         # Convert elements, then stack
-        if data_format == 'numpy':
+        if data_format == "numpy":
             return np.stack([to_format(d, data_format) for d in data])
-        elif data_format == 'torch':
+        elif data_format == "torch":
             if not isinstance(data[0], (to.Tensor, np.ndarray)):
                 # Torch's stack doesn't work with non-tensors, so this is more efficient
                 return to.tensor(data, dtype=to.get_default_dtype())
@@ -173,9 +173,9 @@ def cat_to_format(data: Union[dict, tuple, Sequence], data_format: str):
             return new_tuple(type(data[0]), (cat_to_format([d[i] for d in data], data_format) for i in range(tsize)))
 
         # Convert elements, then stack
-        if data_format == 'numpy':
+        if data_format == "numpy":
             return np.concatenate([to_format(d, data_format) for d in data])
-        elif data_format == 'torch':
+        elif data_format == "torch":
             if not isinstance(data[0], (to.Tensor, np.ndarray)):
                 # Torch's stack doesn't work with non-tensors, so this is more efficient
                 return to.tensor(data, dtype=to.get_default_dtype())

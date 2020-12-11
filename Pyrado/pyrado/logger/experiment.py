@@ -44,8 +44,8 @@ from pyrado.utils import get_class_name
 from pyrado.utils.input_output import select_query, print_cbt
 
 
-timestamp_format = '%Y-%m-%d_%H-%M-%S'
-timestamp_date_format = '%Y-%m-%d'
+timestamp_format = "%Y-%m-%d_%H-%M-%S"
+timestamp_date_format = "%Y-%m-%d"
 
 
 class Experiment:
@@ -57,13 +57,15 @@ class Experiment:
     <base_dir>/<env_name>/<algo_name>/<timestamp>--<extra_info>
     """
 
-    def __init__(self,
-                 env_name: str,
-                 algo_name: str,
-                 extra_info: str = None,
-                 exp_id: str = None,
-                 timestamp: datetime = None,
-                 base_dir: str = pyrado.TEMP_DIR):
+    def __init__(
+        self,
+        env_name: str,
+        algo_name: str,
+        extra_info: str = None,
+        exp_id: str = None,
+        timestamp: datetime = None,
+        base_dir: str = pyrado.TEMP_DIR,
+    ):
         """
         Constructor
 
@@ -76,13 +78,13 @@ class Experiment:
         """
         if exp_id is not None:
             # Try to parse extra_info from exp id
-            sd = exp_id.split('--', 1)
+            sd = exp_id.split("--", 1)
             if len(sd) == 1:
                 timestr = sd[0]
             else:
                 timestr, extra_info = sd
             # Parse time string
-            if '_' in timestr:
+            if "_" in timestr:
                 timestamp = datetime.strptime(timestr, timestamp_format)
             else:
                 timestamp = datetime.strptime(timestr, timestamp_date_format)
@@ -93,7 +95,7 @@ class Experiment:
             exp_id = timestamp.strftime(timestamp_format)
 
             if extra_info is not None:
-                exp_id = exp_id + '--' + extra_info
+                exp_id = exp_id + "--" + extra_info
 
         # Store values
         self.env_name = env_name
@@ -109,7 +111,7 @@ class Experiment:
 
     def __str__(self):
         """ Get an information string. """
-        return f'{self.env_name}/{self.algo_name}/{self.exp_id}'
+        return f"{self.env_name}/{self.algo_name}/{self.exp_id}"
 
     @property
     def prefix(self):
@@ -122,7 +124,7 @@ class Experiment:
         parts = Path(hint).parts
         if len(parts) == 1:
             # Filter by exp name only
-            env_name, = parts
+            (env_name,) = parts
             return self.env_name == env_name
         elif len(parts) == 2:
             # Filter by exp name only
@@ -134,10 +136,7 @@ class Experiment:
             return self.env_name == env_name and self.algo_name == algo_name and self.exp_id == eid
 
 
-def setup_experiment(env_name: str,
-                     algo_name: str,
-                     extra_info: str = None,
-                     base_dir: str = pyrado.TEMP_DIR):
+def setup_experiment(env_name: str, algo_name: str, extra_info: str = None, base_dir: str = pyrado.TEMP_DIR):
     """ Setup a new experiment for recording. """
     # Create experiment object
     exp = Experiment(env_name, algo_name, extra_info, base_dir=base_dir)
@@ -182,12 +181,9 @@ def _le_select_filter(env_name: str, algo_name: str, base_dir: str):
     return _le_env_algo(env_name, algo_name, base_dir)
 
 
-def list_experiments(env_name: str = None,
-                     algo_name: str = None,
-                     base_dir: str = None,
-                     *,
-                     temp: bool = True,
-                     perma: bool = True):
+def list_experiments(
+    env_name: str = None, algo_name: str = None, base_dir: str = None, *, temp: bool = True, perma: bool = True
+):
     """
     List all stored experiments.
 
@@ -247,7 +243,7 @@ def select_by_hint(exps: Sequence[Experiment], hint: str):
     sl = _select_latest(selected)
 
     if sl is None:
-        print_cbt(f'No experiment matching hint {hint}', 'r')
+        print_cbt(f"No experiment matching hint {hint}", "r")
     return sl
 
 
@@ -281,20 +277,20 @@ def split_path_custom_common(path: Union[str, Experiment]) -> (str, str):
             # The keyword was not found in the path
             return None, None
         else:
-            idx += + 1  # +1 for the actual keyword
+            idx += +1  # +1 for the actual keyword
             return osp.join(*path.parts[:idx]), osp.join(*path.parts[idx:])
 
     # First try to split at pyrado.EXP_DIR
-    custom, common = _split_path_at(path, keyword='experiments')
+    custom, common = _split_path_at(path, keyword="experiments")
     if custom is None or common is None:
         # If that did not work, try to split at pyrado.TEMP_DIR
-        custom, common = _split_path_at(path, keyword='temp')
+        custom, common = _split_path_at(path, keyword="temp")
     if custom is None or common is None:
         # If that did not work, try to split at the pytest's temporary path
-        custom, common = _split_path_at(path, keyword='tmp')  # actually they are reversed, but we don't care for tests
+        custom, common = _split_path_at(path, keyword="tmp")  # actually they are reversed, but we don't care for tests
     if custom is None or common is None:
         # If that also did not work, there is sth wrong
-        raise pyrado.PathErr(msg='Failed to split the path between the machine-dependent and machine-independent part.')
+        raise pyrado.PathErr(msg="Failed to split the path between the machine-dependent and machine-independent part.")
 
     return custom, common
 
@@ -310,7 +306,7 @@ def ask_for_experiment(latest_only: bool = False):
     all_exps = list(list_experiments())
 
     if len(all_exps) == 0:
-        print_cbt('No experiments found!', 'r')
+        print_cbt("No experiments found!", "r")
         exit(1)
 
     # Obtain experiment prefixes and timestamps
@@ -327,9 +323,9 @@ def ask_for_experiment(latest_only: bool = False):
     return select_query(
         sel_exp_by_prefix,
         fallback=lambda hint: select_by_hint(all_exps, hint),
-        item_formatter=lambda exp: f'({exp.timestamp}) {exp.prefix}',
-        header='Available experiments:',
-        footer='Enter experiment number or a partial path to an experiment.'
+        item_formatter=lambda exp: f"({exp.timestamp}) {exp.prefix}",
+        header="Available experiments:",
+        footer="Enter experiment number or a partial path to an experiment.",
     )
 
 
@@ -365,7 +361,7 @@ def _process_list_for_saving(l: list) -> list:
             # If the value is a list, recursively go through this one
             copy[i] = _process_list_for_saving(item)
         elif item is None:
-            copy[i] = 'None'
+            copy[i] = "None"
     return copy
 
 
@@ -404,7 +400,7 @@ def _process_dict_for_saving(d: dict) -> dict:
             # If the value is a list, recursively go through this one
             copy[k] = _process_list_for_saving(v)
         elif v is None:
-            copy[k] = 'None'
+            copy[k] = "None"
     return copy
 
 
@@ -414,12 +410,10 @@ class AugmentedSafeLoader(yaml.SafeLoader):
         return tuple(self.construct_sequence(node))
 
 
-AugmentedSafeLoader.add_constructor(
-    u'tag:yaml.org,2002:python/tuple',
-    AugmentedSafeLoader.construct_python_tuple)
+AugmentedSafeLoader.add_constructor("tag:yaml.org,2002:python/tuple", AugmentedSafeLoader.construct_python_tuple)
 
 
-def save_list_of_dicts_to_yaml(lod: Sequence[dict], save_dir: str, file_name: str = 'hyperparams'):
+def save_list_of_dicts_to_yaml(lod: Sequence[dict], save_dir: str, file_name: str = "hyperparams"):
     """
     Save a list of dicts (e.g. hyper-parameters) of an experiment a YAML-file.
 
@@ -427,7 +421,7 @@ def save_list_of_dicts_to_yaml(lod: Sequence[dict], save_dir: str, file_name: st
     :param save_dir: directory to save the results in
     :param file_name: name of the YAML-file without suffix
     """
-    with open(osp.join(save_dir, file_name + '.yaml'), 'w') as yaml_file:
+    with open(osp.join(save_dir, file_name + ".yaml"), "w") as yaml_file:
         for d in lod:
             # For every dict in the list
             d = _process_dict_for_saving(d)
@@ -444,6 +438,6 @@ def load_dict_from_yaml(yaml_file: str) -> dict:
     if not osp.isfile(yaml_file):
         raise pyrado.PathErr(given=yaml_file)
 
-    with open(yaml_file, 'r') as yaml_file:
+    with open(yaml_file, "r") as yaml_file:
         data = yaml.load(yaml_file, Loader=AugmentedSafeLoader)
     return data

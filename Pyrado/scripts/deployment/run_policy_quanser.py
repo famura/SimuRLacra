@@ -45,7 +45,7 @@ from pyrado.utils.input_output import print_cbt
 from pyrado.utils.argparser import get_argparser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
@@ -70,9 +70,10 @@ if __name__ == '__main__':
 
     # Run on device
     done = False
-    print_cbt('Running loaded policy ...', 'c', bright=True)
+    print_cbt("Running loaded policy ...", "c", bright=True)
     while not done:
-        ro = rollout(env_real, policy, eval=True, record_dts=True,
-                     render_mode=RenderMode(text=False, video=args.animation))
-        print_cbt(f'Return: {ro.undiscounted_return()}', 'g', bright=True)
+        ro = rollout(
+            env_real, policy, eval=True, record_dts=True, render_mode=RenderMode(text=False, video=args.animation)
+        )
+        print_cbt(f"Return: {ro.undiscounted_return()}", "g", bright=True)
         done, _, _ = after_rollout_query(env_real, policy, ro)

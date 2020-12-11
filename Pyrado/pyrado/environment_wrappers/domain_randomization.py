@@ -142,7 +142,7 @@ class DomainRandWrapperLive(DomainRandWrapper, Serializable):
         if domain_param is None:
             # No explicit specification of domain parameters, so randomizer is called to draw a parameter dict
             self._randomizer.randomize(num_samples=1)
-            domain_param = self._randomizer.get_params(format='dict', dtype='numpy')
+            domain_param = self._randomizer.get_params(format="dict", dtype="numpy")
 
         # Set the new domain parameters (and the initial sate) by calling the reset method of the wrapped env
         return self._wrapped_env.reset(init_state, domain_param)
@@ -186,7 +186,7 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
         """
         assert isinstance(num_domains, int) and num_domains >= 0
         self._randomizer.randomize(num_domains)
-        self._buffer = self._randomizer.get_params(-1, format='list', dtype='numpy')
+        self._buffer = self._randomizer.get_params(-1, format="list", dtype="numpy")
         self._ring_idx = 0
 
     @property
@@ -215,9 +215,9 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
             elif isinstance(self._buffer, list):
                 # The buffer consists of a list of domain parameter sets
                 domain_param = self._buffer[self._ring_idx]
-                self._ring_idx = (self._ring_idx + 1)%len(self._buffer)  # idx cycles over buffer
+                self._ring_idx = (self._ring_idx + 1) % len(self._buffer)  # idx cycles over buffer
             else:
-                raise pyrado.TypeErr(given=self._buffer, given_name='self._buffer', expected_type=[dict, list])
+                raise pyrado.TypeErr(given=self._buffer, given_name="self._buffer", expected_type=[dict, list])
         else:
             # Explicit specification of domain parameters
             self._load_domain_param(domain_param)
@@ -230,13 +230,13 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
 
     def _get_state(self, state_dict: dict):
         super()._get_state(state_dict)
-        state_dict['buffer'] = self._buffer
-        state_dict['ring_idx'] = self._ring_idx
+        state_dict["buffer"] = self._buffer
+        state_dict["ring_idx"] = self._ring_idx
 
     def _set_state(self, state_dict: dict, copying: bool = False):
         super()._set_state(state_dict, copying)
-        self._buffer = state_dict['buffer']
-        self._ring_idx = state_dict['ring_idx']
+        self._buffer = state_dict["buffer"]
+        self._ring_idx = state_dict["ring_idx"]
 
 
 def remove_all_dr_wrappers(env: SimEnv, verbose: bool = False):
@@ -249,11 +249,11 @@ def remove_all_dr_wrappers(env: SimEnv, verbose: bool = False):
     """
     while any(isinstance(subenv, DomainRandWrapper) for subenv in all_envs(env)):
         if verbose:
-            print_cbt('Found domain randomization wrapper, trying to remove it.', 'y', bright=True)
+            print_cbt("Found domain randomization wrapper, trying to remove it.", "y", bright=True)
         try:
             env = remove_env(env, DomainRandWrapper)
             if verbose:
-                print_cbt('Removed a domain randomization wrapper.', 'g', bright=True)
+                print_cbt("Removed a domain randomization wrapper.", "g", bright=True)
         except Exception:
-            raise RuntimeError('Could not remove the domain randomization wrapper!')
+            raise RuntimeError("Could not remove the domain randomization wrapper!")
     return env

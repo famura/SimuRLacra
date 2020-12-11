@@ -63,34 +63,36 @@ class SAC(ValueBased):
         implementation out there. Here we follow the one from [3].
     """
 
-    name: str = 'sac'
+    name: str = "sac"
 
-    def __init__(self,
-                 save_dir: str,
-                 env: Env,
-                 policy: TwoHeadedPolicy,
-                 qfcn_1: Policy,
-                 qfcn_2: Policy,
-                 memory_size: int,
-                 gamma: float,
-                 max_iter: int,
-                 num_batch_updates: Optional[int] = None,
-                 tau: float = 0.995,
-                 ent_coeff_init: float = 0.2,
-                 learn_ent_coeff: bool = True,
-                 target_update_intvl: int = 1,
-                 num_init_memory_steps: int = None,
-                 standardize_rew: bool = True,
-                 rew_scale: Union[int, float] = 1.,
-                 min_rollouts: int = None,
-                 min_steps: int = None,
-                 batch_size: int = 256,
-                 num_workers: int = 4,
-                 max_grad_norm: float = 5.,
-                 lr: float = 3e-4,
-                 lr_scheduler=None,
-                 lr_scheduler_hparam: Optional[dict] = None,
-                 logger: StepLogger = None):
+    def __init__(
+        self,
+        save_dir: str,
+        env: Env,
+        policy: TwoHeadedPolicy,
+        qfcn_1: Policy,
+        qfcn_2: Policy,
+        memory_size: int,
+        gamma: float,
+        max_iter: int,
+        num_batch_updates: Optional[int] = None,
+        tau: float = 0.995,
+        ent_coeff_init: float = 0.2,
+        learn_ent_coeff: bool = True,
+        target_update_intvl: int = 1,
+        num_init_memory_steps: int = None,
+        standardize_rew: bool = True,
+        rew_scale: Union[int, float] = 1.0,
+        min_rollouts: int = None,
+        min_steps: int = None,
+        batch_size: int = 256,
+        num_workers: int = 4,
+        max_grad_norm: float = 5.0,
+        lr: float = 3e-4,
+        lr_scheduler=None,
+        lr_scheduler_hparam: Optional[dict] = None,
+        logger: StepLogger = None,
+    ):
         r"""
         Constructor
 
@@ -127,15 +129,30 @@ class SAC(ValueBased):
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         if typed_env(env, ActNormWrapper) is None:
-            raise pyrado.TypeErr(msg='SAC required an environment wrapped by an ActNormWrapper!')
+            raise pyrado.TypeErr(msg="SAC required an environment wrapped by an ActNormWrapper!")
         if not isinstance(qfcn_1, Policy):
             raise pyrado.TypeErr(given=qfcn_1, expected_type=Policy)
         if not isinstance(qfcn_2, Policy):
             raise pyrado.TypeErr(given=qfcn_2, expected_type=Policy)
 
         # Call ValueBased's constructor
-        super().__init__(save_dir, env, policy, memory_size, gamma, max_iter, num_batch_updates, target_update_intvl,
-                         num_init_memory_steps, min_rollouts, min_steps, batch_size, num_workers, max_grad_norm, logger)
+        super().__init__(
+            save_dir,
+            env,
+            policy,
+            memory_size,
+            gamma,
+            max_iter,
+            num_batch_updates,
+            target_update_intvl,
+            num_init_memory_steps,
+            min_rollouts,
+            min_steps,
+            batch_size,
+            num_workers,
+            max_grad_norm,
+            logger,
+        )
 
         self.qfcn_1 = qfcn_1
         self.qfcn_2 = qfcn_2
@@ -149,22 +166,24 @@ class SAC(ValueBased):
         # Create sampler for exploration during training
         self._expl_strat = SACExplStrat(self._policy)
         self.sampler_trn = ParallelRolloutSampler(
-            self._env, self._expl_strat,
+            self._env,
+            self._expl_strat,
             num_workers=num_workers if min_steps != 1 else 1,
             min_steps=min_steps,  # in [2] this would be 1
             min_rollouts=min_rollouts,  # in [2] this would be None
         )
 
         # Q-function optimizers
-        self._optim_policy = to.optim.Adam([{'params': self._policy.parameters()}], lr=lr, eps=1e-5)
-        self._optim_qfcns = to.optim.Adam([{'params': self.qfcn_1.parameters()},
-                                           {'params': self.qfcn_2.parameters()}], lr=lr, eps=1e-5)
+        self._optim_policy = to.optim.Adam([{"params": self._policy.parameters()}], lr=lr, eps=1e-5)
+        self._optim_qfcns = to.optim.Adam(
+            [{"params": self.qfcn_1.parameters()}, {"params": self.qfcn_2.parameters()}], lr=lr, eps=1e-5
+        )
 
         # Automatic entropy tuning
         log_ent_coeff_init = to.log(to.tensor(ent_coeff_init, device=policy.device, dtype=to.get_default_dtype()))
         if learn_ent_coeff:
             self._log_ent_coeff = nn.Parameter(log_ent_coeff_init, requires_grad=True)
-            self._ent_coeff_optim = to.optim.Adam([{'params': self._log_ent_coeff}], lr=lr, eps=1e-5)
+            self._ent_coeff_optim = to.optim.Adam([{"params": self._log_ent_coeff}], lr=lr, eps=1e-5)
             self.target_entropy = -to.prod(to.tensor(env.act_space.shape))
         else:
             self._log_ent_coeff = log_ent_coeff_init
@@ -192,10 +211,10 @@ class SAC(ValueBased):
         :param tau: interpolation factor for averaging, between 0 and 1
         """
         if not 0 < tau < 1:
-            raise pyrado.ValueErr(given=tau, g_constraint='0', l_constraint='1')
+            raise pyrado.ValueErr(given=tau, g_constraint="0", l_constraint="1")
 
         for targ_param, src_param in zip(target.parameters(), source.parameters()):
-            targ_param.data = targ_param.data*tau + src_param.data*(1. - tau)
+            targ_param.data = targ_param.data * tau + src_param.data * (1.0 - tau)
 
     def update(self):
         """ Update the policy's and Q-functions' parameters on transitions sampled from the replay memory. """
@@ -208,8 +227,14 @@ class SAC(ValueBased):
         policy_losses = to.zeros(self.num_batch_updates)
         policy_grad_norm = to.zeros(self.num_batch_updates)
 
-        for b in tqdm(range(self.num_batch_updates), total=self.num_batch_updates,
-                      desc=f'Updating', unit='batches', file=sys.stdout, leave=False):
+        for b in tqdm(
+            range(self.num_batch_updates),
+            total=self.num_batch_updates,
+            desc=f"Updating",
+            unit="batches",
+            file=sys.stdout,
+            leave=False,
+        ):
             # Sample steps and the associated next step from the replay memory
             steps, next_steps = self._memory.sample(self.batch_size)
             steps.torch(data_type=to.get_default_dtype())
@@ -232,27 +257,28 @@ class SAC(ValueBased):
             # Update the the entropy coefficient
             if self.learn_ent_coeff:
                 # Compute entropy coefficient loss
-                ent_coeff_loss = -to.mean(self._log_ent_coeff*(log_probs_expl.detach() + self.target_entropy))
+                ent_coeff_loss = -to.mean(self._log_ent_coeff * (log_probs_expl.detach() + self.target_entropy))
                 self._ent_coeff_optim.zero_grad()
                 ent_coeff_loss.backward()
                 self._ent_coeff_optim.step()
 
             with to.no_grad():
                 # Create masks for the non-final observations
-                not_done = to.tensor(1. - steps.done, dtype=to.get_default_dtype()).unsqueeze(1)
+                not_done = to.tensor(1.0 - steps.done, dtype=to.get_default_dtype()).unsqueeze(1)
 
                 # Compute the (next)state-(next)action values Q(s',a') from the target networks
                 if self.policy.is_recurrent:
-                    next_act_expl, next_log_probs, _ = self._expl_strat(next_steps.observations,
-                                                                        next_steps.hidden_states)
+                    next_act_expl, next_log_probs, _ = self._expl_strat(
+                        next_steps.observations, next_steps.hidden_states
+                    )
                 else:
                     next_act_expl, next_log_probs = self._expl_strat(next_steps.observations)
                 next_q_val_target_1 = self.qfcn_targ_1(to.cat([next_steps.observations, next_act_expl], dim=1))
                 next_q_val_target_2 = self.qfcn_targ_2(to.cat([next_steps.observations, next_act_expl], dim=1))
                 next_q_val_target_min = to.min(next_q_val_target_1, next_q_val_target_2)
-                next_q_val_target_min -= self.ent_coeff*next_log_probs  # add entropy term
+                next_q_val_target_min -= self.ent_coeff * next_log_probs  # add entropy term
                 # TD error (including entropy term)
-                next_q_val = rewards + not_done*self.gamma*next_q_val_target_min  # [4] does not use the reward here
+                next_q_val = rewards + not_done * self.gamma * next_q_val_target_min  # [4] does not use the reward here
 
             # Compute the (current)state-(current)action values Q(s,a) from the two Q-networks
             # E_{(s_t, a_t) ~ D} [1/2 * (Q_i(s_t, a_t) - r_t - gamma * E_{s_{t+1} ~ p} [V(s_{t+1})] )^2]
@@ -260,7 +286,7 @@ class SAC(ValueBased):
             q_val_2 = self.qfcn_2(to.cat([steps.observations, steps.actions], dim=1))
             q_1_loss = nn.functional.mse_loss(q_val_1, next_q_val)
             q_2_loss = nn.functional.mse_loss(q_val_2, next_q_val)
-            q_loss = (q_1_loss + q_2_loss)/2.  # averaging the Q-functions is taken from [3]
+            q_loss = (q_1_loss + q_2_loss) / 2.0  # averaging the Q-functions is taken from [3]
             qfcn_1_losses[b] = q_1_loss.data
             qfcn_2_losses[b] = q_2_loss.data
 
@@ -276,7 +302,7 @@ class SAC(ValueBased):
             q_1_val_expl = self.qfcn_1(to.cat([steps.observations, act_expl], dim=1))
             q_2_val_expl = self.qfcn_2(to.cat([steps.observations, act_expl], dim=1))
             min_q_val_expl = to.min(q_1_val_expl, q_2_val_expl)
-            policy_loss = to.mean(self.ent_coeff*log_probs_expl - min_q_val_expl)  # self.ent_coeff is detached
+            policy_loss = to.mean(self.ent_coeff * log_probs_expl - min_q_val_expl)  # self.ent_coeff is detached
             policy_losses[b] = policy_loss.data
 
             # Update the policy
@@ -286,7 +312,7 @@ class SAC(ValueBased):
             self._optim_policy.step()
 
             # Soft-update the target networks
-            if (self._curr_iter*self.num_batch_updates + b)%self.target_update_intvl == 0:
+            if (self._curr_iter * self.num_batch_updates + b) % self.target_update_intvl == 0:
                 SAC.soft_update(self.qfcn_targ_1, self.qfcn_1, self.tau)
                 SAC.soft_update(self.qfcn_targ_2, self.qfcn_2, self.tau)
 
@@ -296,15 +322,15 @@ class SAC(ValueBased):
             self._lr_scheduler_qfcns.step()
 
         # Logging
-        self.logger.add_value('Q1 loss', to.mean(qfcn_1_losses))
-        self.logger.add_value('Q2 loss', to.mean(qfcn_2_losses))
-        self.logger.add_value('policy loss', to.mean(policy_losses))
-        self.logger.add_value('avg grad norm policy', to.mean(policy_grad_norm))
-        self.logger.add_value('avg expl strat std', to.mean(expl_strat_stds))
-        self.logger.add_value('ent_coeff', self.ent_coeff)
+        self.logger.add_value("Q1 loss", to.mean(qfcn_1_losses))
+        self.logger.add_value("Q2 loss", to.mean(qfcn_2_losses))
+        self.logger.add_value("policy loss", to.mean(policy_losses))
+        self.logger.add_value("avg grad norm policy", to.mean(policy_grad_norm))
+        self.logger.add_value("avg expl strat std", to.mean(expl_strat_stds))
+        self.logger.add_value("ent_coeff", self.ent_coeff)
         if self._lr_scheduler_policy is not None:
-            self.logger.add_value('avg lr policy', to.mean(self._lr_scheduler_policy.get_last_lr()), 6)
-            self.logger.add_value('avg lr critic', to.mean(self._lr_scheduler_qfcns.get_last_lr()), 6)
+            self.logger.add_value("avg lr policy", to.mean(self._lr_scheduler_policy.get_last_lr()), 6)
+            self.logger.add_value("avg lr critic", to.mean(self._lr_scheduler_qfcns.get_last_lr()), 6)
 
     def reset(self, seed: int = None):
         # Reset samplers, replay memory, exploration strategy, internal variables and the random seeds
@@ -316,24 +342,26 @@ class SAC(ValueBased):
         if self._lr_scheduler_qfcns is not None:
             self._lr_scheduler_qfcns.last_epoch = -1
 
-    def init_modules(self, warmstart: bool, suffix: str = '', prefix: str = None, **kwargs):
+    def init_modules(self, warmstart: bool, suffix: str = "", prefix: str = None, **kwargs):
         # Initialize the policy
         super().init_modules(warmstart, suffix, prefix, **kwargs)
 
         if prefix is None:
-            prefix = f'iter_{self._curr_iter - 1}'
+            prefix = f"iter_{self._curr_iter - 1}"
 
-        t1pi = kwargs.get('target1_param_init', None)
-        t2pi = kwargs.get('target2_param_init', None)
+        t1pi = kwargs.get("target1_param_init", None)
+        t2pi = kwargs.get("target2_param_init", None)
 
         if warmstart and t1pi is not None and t2pi is not None:
             self.qfcn_targ_1.init_param(t1pi)
             self.qfcn_targ_2.init_param(t2pi)
         elif warmstart and (t1pi is None or t2pi is None) and self._curr_iter > 0:
-            self.qfcn_targ_1 = pyrado.load(self.qfcn_targ_1, 'qfcn_target1', 'pt', self.save_dir,
-                                           meta_info=dict(prefix=prefix, suffix=suffix))
-            self.qfcn_targ_2 = pyrado.load(self.qfcn_targ_2, 'qfcn_target2', 'pt', self.save_dir,
-                                           meta_info=dict(prefix=prefix, suffix=suffix))
+            self.qfcn_targ_1 = pyrado.load(
+                self.qfcn_targ_1, "qfcn_target1", "pt", self.save_dir, meta_info=dict(prefix=prefix, suffix=suffix)
+            )
+            self.qfcn_targ_2 = pyrado.load(
+                self.qfcn_targ_2, "qfcn_target2", "pt", self.save_dir, meta_info=dict(prefix=prefix, suffix=suffix)
+            )
         else:
             # Reset the target Q-functions
             self.qfcn_targ_1.init_param()
@@ -342,5 +370,5 @@ class SAC(ValueBased):
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
-        pyrado.save(self.qfcn_targ_1, 'qfcn_target1', 'pt', self.save_dir, meta_info)
-        pyrado.save(self.qfcn_targ_2, 'qfcn_target2', 'pt', self.save_dir, meta_info)
+        pyrado.save(self.qfcn_targ_1, "qfcn_target1", "pt", self.save_dir, meta_info)
+        pyrado.save(self.qfcn_targ_2, "qfcn_target2", "pt", self.save_dir, meta_info)

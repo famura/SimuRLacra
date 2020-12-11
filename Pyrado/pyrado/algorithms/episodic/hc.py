@@ -50,18 +50,20 @@ class HC(ParameterExploring):
     If the exploration parameters grow too large, they are reset.
     """
 
-    name: str = 'hc'
+    name: str = "hc"
 
-    def __init__(self,
-                 save_dir: str,
-                 env: Env,
-                 policy: Policy,
-                 max_iter: int,
-                 num_rollouts: int,
-                 expl_factor: float,
-                 pop_size: Optional[int] = None,
-                 num_workers: int = 4,
-                 logger: Optional[StepLogger] = None):
+    def __init__(
+        self,
+        save_dir: str,
+        env: Env,
+        policy: Policy,
+        max_iter: int,
+        num_rollouts: int,
+        expl_factor: float,
+        pop_size: Optional[int] = None,
+        num_workers: int = 4,
+        logger: Optional[StepLogger] = None,
+    ):
         r"""
         Constructor
 
@@ -77,14 +79,7 @@ class HC(ParameterExploring):
         """
         # Call ParameterExploring's constructor
         super().__init__(
-            save_dir,
-            env,
-            policy,
-            max_iter,
-            num_rollouts,
-            pop_size=pop_size,
-            num_workers=num_workers,
-            logger=logger
+            save_dir, env, policy, max_iter, num_rollouts, pop_size=pop_size, num_workers=num_workers, logger=logger
         )
 
         # Store the inputs
@@ -106,7 +101,7 @@ class HC(ParameterExploring):
         # Re-initialize the policy parameters if the became too large
         if (to.abs(self._policy.param_values) > self.max_policy_param).any():
             self._policy.init_param()
-            print_cbt('Reset policy parameters.', 'y')
+            print_cbt("Reset policy parameters.", "y")
 
         # Update exploration strategy in subclass
         self.update_expl_strat(rets_avg_ros, ret_avg_curr)
@@ -128,13 +123,13 @@ class HCNormal(HC):
         :param kwargs: forwarded the superclass constructor
         """
         # Preprocess inputs and call HC's constructor
-        expl_std_init = kwargs.pop('expl_std_init')
-        if 'expl_r_init' in kwargs:
+        expl_std_init = kwargs.pop("expl_std_init")
+        if "expl_r_init" in kwargs:
             # This is just for the ability to create one common hyper-param list for HCNormal and HCHyper
-            kwargs.pop('expl_r_init')
+            kwargs.pop("expl_r_init")
 
         # Get from kwargs with default values
-        expl_std_min = kwargs.pop('expl_std_min', 0.01)
+        expl_std_min = kwargs.pop("expl_std_min", 0.01)
 
         # Call HC's constructor
         super().__init__(*args, **kwargs)
@@ -148,14 +143,14 @@ class HCNormal(HC):
     def update_expl_strat(self, rets_avg_ros: np.ndarray, ret_avg_curr: float):
         # Update the exploration distribution
         if np.max(rets_avg_ros) > ret_avg_curr:
-            self._expl_strat.adapt(std=self._expl_strat.std/self.expl_factor**2)
+            self._expl_strat.adapt(std=self._expl_strat.std / self.expl_factor ** 2)
         else:
-            self._expl_strat.adapt(std=self._expl_strat.std*self.expl_factor)
+            self._expl_strat.adapt(std=self._expl_strat.std * self.expl_factor)
 
-        self.logger.add_value('min expl strat std', to.min(self._expl_strat.std), 4)
-        self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.std), 4)
-        self.logger.add_value('max expl strat std', to.max(self._expl_strat.std), 4)
-        self.logger.add_value('expl strat entropy', self._expl_strat.get_entropy(), 4)
+        self.logger.add_value("min expl strat std", to.min(self._expl_strat.std), 4)
+        self.logger.add_value("avg expl strat std", to.mean(self._expl_strat.std), 4)
+        self.logger.add_value("max expl strat std", to.max(self._expl_strat.std), 4)
+        self.logger.add_value("expl strat entropy", self._expl_strat.get_entropy(), 4)
 
 
 class HCHyper(HC):
@@ -170,17 +165,17 @@ class HCHyper(HC):
         :param kwargs: forwarded the superclass constructor
         """
         # Preprocess inputs and call HC's constructor
-        expl_r_init = kwargs.pop('expl_r_init')
+        expl_r_init = kwargs.pop("expl_r_init")
         if expl_r_init <= 0:
-            raise pyrado.ValueErr(given=expl_r_init, g_constraint='0')
+            raise pyrado.ValueErr(given=expl_r_init, g_constraint="0")
 
-        if 'expl_std_init' in kwargs:
+        if "expl_std_init" in kwargs:
             # This is just for the ability to create one common hyper-param list for HCNormal and HCHyper
-            kwargs.pop('expl_std_init')
+            kwargs.pop("expl_std_init")
 
         # Get from kwargs with default values
-        self.expl_r_min = kwargs.pop('expl_r_min', 0.01)
-        self.expl_r_max = max(expl_r_init, kwargs.pop('expl_r_max', 10.))
+        self.expl_r_min = kwargs.pop("expl_r_min", 0.01)
+        self.expl_r_max = max(expl_r_init, kwargs.pop("expl_r_max", 10.0))
 
         # Call HC's constructor
         super().__init__(*args, **kwargs)
@@ -193,13 +188,13 @@ class HCHyper(HC):
     def update_expl_strat(self, rets_avg_ros: np.ndarray, ret_avg_curr: float):
         # Update the exploration strategy
         if np.max(rets_avg_ros) > ret_avg_curr:
-            self._expl_strat.adapt(r=self._expl_strat.r/self.expl_factor**2)
+            self._expl_strat.adapt(r=self._expl_strat.r / self.expl_factor ** 2)
         else:
-            self._expl_strat.adapt(r=self._expl_strat.r*self.expl_factor)
+            self._expl_strat.adapt(r=self._expl_strat.r * self.expl_factor)
 
         # Re-initialize the exploration parameters if the became too small or too large
         if self._expl_strat.r < self.expl_r_min or self._expl_strat.r > self.expl_r_max:
             self._expl_strat.reset_expl_params()
 
-        self.logger.add_value('smallest expl param', self._expl_strat.r, 4)
-        self.logger.add_value('largest expl param', self._expl_strat.r, 4)
+        self.logger.add_value("smallest expl param", self._expl_strat.r, 4)
+        self.logger.add_value("largest expl param", self._expl_strat.r, 4)

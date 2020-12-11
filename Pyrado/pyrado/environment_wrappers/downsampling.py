@@ -49,11 +49,13 @@ class DownsamplingWrapper(EnvWrapperAct, EnvWrapperObs, Serializable):
         i.e. send and receive at the real device's sampling frequency.
     """
 
-    def __init__(self,
-                 wrapped_env: [RealEnv, EnvWrapper],
-                 factor: int,
-                 obs_filter_fcn: callable = functools.partial(np.mean, axis=0),
-                 init_obs: np.ndarray = None):
+    def __init__(
+        self,
+        wrapped_env: [RealEnv, EnvWrapper],
+        factor: int,
+        obs_filter_fcn: callable = functools.partial(np.mean, axis=0),
+        init_obs: np.ndarray = None,
+    ):
         """
         Constructor
 
@@ -97,7 +99,7 @@ class DownsamplingWrapper(EnvWrapperAct, EnvWrapperObs, Serializable):
         :param domain_param: domain parameter dict
         """
         # Cast to integer for consistency
-        domain_param['downsampling'] = int(self._factor)
+        domain_param["downsampling"] = int(self._factor)
 
     def _load_domain_param(self, domain_param: dict):
         """
@@ -106,7 +108,7 @@ class DownsamplingWrapper(EnvWrapperAct, EnvWrapperObs, Serializable):
         :param domain_param: domain parameter dict
         """
         # Cast the factor value to int, since randomizer yields ndarrays or Tensors
-        self._factor = int(domain_param.get('downsampling', self._factor))
+        self._factor = int(domain_param.get("downsampling", self._factor))
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         # Adapt _factor to the new act_downsampling if provided
@@ -133,7 +135,7 @@ class DownsamplingWrapper(EnvWrapperAct, EnvWrapperObs, Serializable):
         :return: next action
         """
         if self._factor >= 1:
-            if self._cnt%self._factor == 0:
+            if self._cnt % self._factor == 0:
                 # Set new action (downsampling does not affect the current action)
                 self._act_last = act.copy()
             else:

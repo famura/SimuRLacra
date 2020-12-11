@@ -40,8 +40,12 @@ from pyrado.tasks.masked import MaskedTask
 from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn, MinusOnePerStepRewFcn, RewFcn, AbsErrRewFcn
 from pyrado.tasks.parallel import ParallelTasks
 from pyrado.tasks.utils import proximity_succeeded
-from pyrado.tasks.predefined import create_goal_dist_task, create_check_all_boundaries_task, \
-    create_task_space_discrepancy_task, create_collision_task
+from pyrado.tasks.predefined import (
+    create_goal_dist_task,
+    create_check_all_boundaries_task,
+    create_task_space_discrepancy_task,
+    create_collision_task,
+)
 from pyrado.utils.input_output import print_cbt
 from pyrado.utils.data_types import EnvSpec
 
@@ -51,20 +55,18 @@ rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)
 
 def create_box_upper_shelve_task(env_spec: EnvSpec, continuous_rew_fcn: bool, succ_thold: float):
     # Define the indices for selection. This needs to match the observations' names in RcsPySim.
-    idcs = ['Box_X', 'Box_Y', 'Box_Z', 'Box_A', 'Box_B', 'Box_C']
+    idcs = ["Box_X", "Box_Y", "Box_Z", "Box_A", "Box_B", "Box_C"]
 
     # Get the masked environment specification
     spec = EnvSpec(
-        env_spec.obs_space,
-        env_spec.act_space,
-        env_spec.state_space.subspace(env_spec.state_space.create_mask(idcs))
+        env_spec.obs_space, env_spec.act_space, env_spec.state_space.subspace(env_spec.state_space.create_mask(idcs))
     )
 
     # Create a desired state task
     state_des = np.zeros(6)  # zeros since we observe the box position relative to the goal
     if continuous_rew_fcn:
         Q = np.diag([5e0, 5e0, 5e0, 1e-1, 1e-1, 1e-1])
-        R = 5e-2*np.eye(spec.act_space.flat_dim)
+        R = 5e-2 * np.eye(spec.act_space.flat_dim)
         rew_fcn = ExpQuadrErrRewFcn(Q, R)
     else:
         rew_fcn = MinusOnePerStepRewFcn
@@ -77,12 +79,7 @@ def create_box_upper_shelve_task(env_spec: EnvSpec, continuous_rew_fcn: bool, su
 class BoxShelvingSim(RcsSim, Serializable):
     """ Base class for 2-armed humanoid robot putting a box into a shelve """
 
-    def __init__(self,
-                 task_args: dict,
-                 ref_frame: str,
-                 position_mps: bool,
-                 mps_left: [Sequence[dict], None],
-                 **kwargs):
+    def __init__(self, task_args: dict, ref_frame: str, position_mps: bool, mps_left: [Sequence[dict], None], **kwargs):
         """
         Constructor
 
@@ -113,51 +110,42 @@ class BoxShelvingSim(RcsSim, Serializable):
         RcsSim.__init__(
             self,
             task_args=task_args,
-            envType='BoxShelving',
-            extraConfigDir=osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, 'BoxShelving'),
-            hudColor='BLACK_RUBBER',
+            envType="BoxShelving",
+            extraConfigDir=osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "BoxShelving"),
+            hudColor="BLACK_RUBBER",
             refFrame=ref_frame,
             positionTasks=position_mps,
             tasksLeft=mps_left,
-            **kwargs
+            **kwargs,
         )
 
     def _create_task(self, task_args: dict) -> Task:
         # Create the tasks
-        continuous_rew_fcn = task_args.get('continuous_rew_fcn', True)
+        continuous_rew_fcn = task_args.get("continuous_rew_fcn", True)
         task_box = create_box_upper_shelve_task(self.spec, continuous_rew_fcn, succ_thold=5e-2)
         task_check_bounds = create_check_all_boundaries_task(self.spec, penalty=1e3)
-        task_collision = create_collision_task(self.spec, factor=1.)
+        task_collision = create_collision_task(self.spec, factor=1.0)
         task_ts_discrepancy = create_task_space_discrepancy_task(
-            self.spec, AbsErrRewFcn(q=0.5*np.ones(3), r=np.zeros(self.act_space.shape))
+            self.spec, AbsErrRewFcn(q=0.5 * np.ones(3), r=np.zeros(self.act_space.shape))
         )
 
-        return ParallelTasks([
-            task_box,
-            task_check_bounds,
-            task_collision,
-            task_ts_discrepancy
-        ], hold_rew_when_done=False)
+        return ParallelTasks(
+            [task_box, task_check_bounds, task_collision, task_ts_discrepancy], hold_rew_when_done=False
+        )
 
     @classmethod
     def get_nominal_domain_param(cls):
-        return dict(box_length=0.32,
-                    box_width=0.2,
-                    box_height=0.1,
-                    box_mass=1.,
-                    box_friction_coefficient=0.8)
+        return dict(box_length=0.32, box_width=0.2, box_height=0.1, box_mass=1.0, box_friction_coefficient=0.8)
 
 
 class BoxShelvingPosDSSim(BoxShelvingSim, Serializable):
     """ Humanoid robot putting a box into a shelve using one arm and position-level movement primitives """
 
-    name: str = 'bs-pos'
+    name: str = "bs-pos"
 
-    def __init__(self,
-                 ref_frame: str,
-                 mps_left: [Sequence[dict], None] = None,
-                 continuous_rew_fcn: bool = True,
-                 **kwargs):
+    def __init__(
+        self, ref_frame: str, mps_left: [Sequence[dict], None] = None, continuous_rew_fcn: bool = True, **kwargs
+    ):
         """
         Constructor
 
@@ -185,35 +173,53 @@ class BoxShelvingPosDSSim(BoxShelvingSim, Serializable):
 
         # Fall back to some defaults of no MPs are defined (e.g. for testing)
         if mps_left is None:
-            if not ref_frame == 'upperGoal':
-                print_cbt(f'Using tasks specified in the upperGoal frame in the {ref_frame} frame!', 'y', bright=True)
+            if not ref_frame == "upperGoal":
+                print_cbt(f"Using tasks specified in the upperGoal frame in the {ref_frame} frame!", "y", bright=True)
             mps_left = [
                 # Left power grasp position
                 {
-                    'function': 'msd', 'attractorStiffness': 30., 'mass': 1., 'damping': 100.,
-                    'goal': np.array([0.65, 0, 0.0]),  # far in front
+                    "function": "msd",
+                    "attractorStiffness": 30.0,
+                    "mass": 1.0,
+                    "damping": 100.0,
+                    "goal": np.array([0.65, 0, 0.0]),  # far in front
                 },
                 {
-                    'function': 'msd', 'attractorStiffness': 30., 'mass': 1., 'damping': 100.,
-                    'goal': np.array([0.35, 0, -0.15]),  # below and in front
+                    "function": "msd",
+                    "attractorStiffness": 30.0,
+                    "mass": 1.0,
+                    "damping": 100.0,
+                    "goal": np.array([0.35, 0, -0.15]),  # below and in front
                 },
                 {
-                    'function': 'msd', 'attractorStiffness': 30., 'mass': 1., 'damping': 100.,
-                    'goal': np.array([0.2, 0, 0.1]),  # close and slightly above
+                    "function": "msd",
+                    "attractorStiffness": 30.0,
+                    "mass": 1.0,
+                    "damping": 100.0,
+                    "goal": np.array([0.2, 0, 0.1]),  # close and slightly above
                 },
                 # Left power grasp orientation
                 {
-                    'function': 'msd', 'attractorStiffness': 30., 'mass': 1., 'damping': 100.,
-                    'goal': np.pi/180*np.array([-90, 0, -90.]),  # upright
+                    "function": "msd",
+                    "attractorStiffness": 30.0,
+                    "mass": 1.0,
+                    "damping": 100.0,
+                    "goal": np.pi / 180 * np.array([-90, 0, -90.0]),  # upright
                 },
                 {
-                    'function': 'msd', 'attractorStiffness': 30., 'mass': 1., 'damping': 100.,
-                    'goal': np.pi/180*np.array([-90, 0, -160.]),  # tilted forward (into shelve)
+                    "function": "msd",
+                    "attractorStiffness": 30.0,
+                    "mass": 1.0,
+                    "damping": 100.0,
+                    "goal": np.pi / 180 * np.array([-90, 0, -160.0]),  # tilted forward (into shelve)
                 },
                 # Joints SDH
                 {
-                    'function': 'msd_nlin', 'attractorStiffness': 50., 'mass': 1., 'damping': 50.,
-                    'goal': 10/180*np.pi*np.array([0, 2, -1.5, 2, 0, 2, 0])
+                    "function": "msd_nlin",
+                    "attractorStiffness": 50.0,
+                    "mass": 1.0,
+                    "damping": 50.0,
+                    "goal": 10 / 180 * np.pi * np.array([0, 2, -1.5, 2, 0, 2, 0]),
                 },
             ]
 
@@ -223,21 +229,23 @@ class BoxShelvingPosDSSim(BoxShelvingSim, Serializable):
             mps_left=mps_left,
             ref_frame=ref_frame,
             position_mps=True,
-            **kwargs
+            **kwargs,
         )
 
 
 class BoxShelvingVelDSSim(BoxShelvingSim, Serializable):
     """ Humanoid robot putting a box into a shelve using one arm and velocity-level movement primitives """
 
-    name: str = 'bs-vel'
+    name: str = "bs-vel"
 
-    def __init__(self,
-                 ref_frame: str,
-                 bidirectional_mps: bool,
-                 mps_left: [Sequence[dict], None] = None,
-                 continuous_rew_fcn: bool = True,
-                 **kwargs):
+    def __init__(
+        self,
+        ref_frame: str,
+        bidirectional_mps: bool,
+        mps_left: [Sequence[dict], None] = None,
+        continuous_rew_fcn: bool = True,
+        **kwargs,
+    ):
         """
         Constructor
 
@@ -268,47 +276,53 @@ class BoxShelvingVelDSSim(BoxShelvingSim, Serializable):
 
         # Fall back to some defaults of no MPs are defined (e.g. for testing)
         if mps_left is None:
-            dt = kwargs.get('dt', 0.01)  # 100 Hz is the default
+            dt = kwargs.get("dt", 0.01)  # 100 Hz is the default
 
             if bidirectional_mps:
                 mps_left = [
                     # Xd
-                    {'function': 'lin', 'errorDynamics': 1., 'goal': dt*np.array([0.15])},  # [m/s]
+                    {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([0.15])},  # [m/s]
                     # Yd
-                    {'function': 'lin', 'errorDynamics': 1., 'goal': dt*np.array([0.15])},  # [m/s]
+                    {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([0.15])},  # [m/s]
                     # Zd
-                    {'function': 'lin', 'errorDynamics': 1., 'goal': dt*np.array([0.15])},  # [m/s]
+                    {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([0.15])},  # [m/s]
                     # Ad
-                    {'function': 'lin', 'errorDynamics': 1., 'goal': dt*np.array([10/180*np.pi])},  # [rad/s]
+                    {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([10 / 180 * np.pi])},  # [rad/s]
                     # Bd
-                    {'function': 'lin', 'errorDynamics': 1., 'goal': dt*np.array([10/180*np.pi])},  # [rad/s]
+                    {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([10 / 180 * np.pi])},  # [rad/s]
                     # Joints SDH
                     {
-                        'function': 'msd_nlin', 'attractorStiffness': 50., 'mass': 1., 'damping': 50.,
-                        'goal': 10/180*np.pi*np.array([0, 2, -1.5, 2, 0, 2, 0])
+                        "function": "msd_nlin",
+                        "attractorStiffness": 50.0,
+                        "mass": 1.0,
+                        "damping": 50.0,
+                        "goal": 10 / 180 * np.pi * np.array([0, 2, -1.5, 2, 0, 2, 0]),
                     },
                 ]
             else:
                 mps_left = [
                     # Xd
-                    {'function': 'lin', 'errorDynamics': 1., 'goal': dt*np.array([0.15])},  # [m/s]
-                    {'function': 'lin', 'errorDynamics': 1., 'goal': dt*np.array([-0.15])},  # [m/s]
+                    {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([0.15])},  # [m/s]
+                    {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([-0.15])},  # [m/s]
                     # Yd
-                    {'function': 'lin', 'errorDynamics': 1., 'goal': dt*np.array([0.15])},  # [m/s]
-                    {'function': 'lin', 'errorDynamics': 1., 'goal': dt*np.array([-0.15])},  # [m/s]
+                    {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([0.15])},  # [m/s]
+                    {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([-0.15])},  # [m/s]
                     # Zd
-                    {'function': 'lin', 'errorDynamics': 1., 'goal': dt*np.array([0.15])},  # [m/s]
-                    {'function': 'lin', 'errorDynamics': 1., 'goal': dt*np.array([-0.15])},  # [m/s]
+                    {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([0.15])},  # [m/s]
+                    {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([-0.15])},  # [m/s]
                     # Ad
-                    {'function': 'lin', 'errorDynamics': 1., 'goal': dt*np.array([10/180*np.pi])},  # [rad/s]
-                    {'function': 'lin', 'errorDynamics': 1., 'goal': dt*np.array([-10/180*np.pi])},  # [rad/s]
+                    {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([10 / 180 * np.pi])},  # [rad/s]
+                    {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([-10 / 180 * np.pi])},  # [rad/s]
                     # Bd
-                    {'function': 'lin', 'errorDynamics': 1., 'goal': dt*np.array([10/180*np.pi])},  # [rad/s]
-                    {'function': 'lin', 'errorDynamics': 1., 'goal': dt*np.array([-10/180*np.pi])},  # [rad/s]
+                    {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([10 / 180 * np.pi])},  # [rad/s]
+                    {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([-10 / 180 * np.pi])},  # [rad/s]
                     # Joints SDH
                     {
-                        'function': 'msd_nlin', 'attractorStiffness': 50., 'mass': 1., 'damping': 50.,
-                        'goal': 10/180*np.pi*np.array([0, 2, -1.5, 2, 0, 2, 0])
+                        "function": "msd_nlin",
+                        "attractorStiffness": 50.0,
+                        "mass": 1.0,
+                        "damping": 50.0,
+                        "goal": 10 / 180 * np.pi * np.array([0, 2, -1.5, 2, 0, 2, 0]),
                     },
                 ]
 
@@ -319,5 +333,5 @@ class BoxShelvingVelDSSim(BoxShelvingSim, Serializable):
             ref_frame=ref_frame,
             position_mps=False,
             bidirectionalMPs=bidirectional_mps,
-            **kwargs
+            **kwargs,
         )

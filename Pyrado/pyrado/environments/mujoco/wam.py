@@ -32,8 +32,14 @@ import os.path as osp
 from init_args_serializer import Serializable
 
 import pyrado
-from pyrado.environments.barrett_wam import init_qpos_des_4dof, init_qpos_des_7dof, act_space_wam_4dof, \
-    act_space_wam_7dof, wam_pgains, wam_dgains
+from pyrado.environments.barrett_wam import (
+    init_qpos_des_4dof,
+    init_qpos_des_7dof,
+    act_space_wam_4dof,
+    act_space_wam_7dof,
+    wam_pgains,
+    wam_dgains,
+)
 from pyrado.environments.mujoco.base import MujocoSimEnv
 from pyrado.spaces.base import Space
 from pyrado.spaces.singular import SingularStateSpace
@@ -63,12 +69,9 @@ class WAMSim(MujocoSimEnv, Serializable):
         http://www.mujoco.org/book/XMLreference.html (e.g. for joint damping)
     """
 
-    name: str = 'wam'
+    name: str = "wam"
 
-    def __init__(self,
-                 frame_skip: int = 1,
-                 max_steps: int = pyrado.inf,
-                 task_args: [dict, None] = None):
+    def __init__(self, frame_skip: int = 1, max_steps: int = pyrado.inf, task_args: [dict, None] = None):
         """
         Constructor
 
@@ -76,13 +79,13 @@ class WAMSim(MujocoSimEnv, Serializable):
         :param max_steps: max number of simulation time steps
         :param task_args: arguments for the task construction
         """
-        model_path = osp.join(pyrado.MUJOCO_ASSETS_DIR, 'wam_7dof_base.xml')
+        model_path = osp.join(pyrado.MUJOCO_ASSETS_DIR, "wam_7dof_base.xml")
         super().__init__(model_path, frame_skip, max_steps, task_args)
 
         self.camera_config = dict(
             trackbodyid=0,  # id of the body to track
             elevation=-30,  # camera rotation around the axis in the plane
-            azimuth=-90  # camera rotation around the camera's vertical axis
+            azimuth=-90,  # camera rotation around the camera's vertical axis
         )
 
     @classmethod
@@ -91,7 +94,7 @@ class WAMSim(MujocoSimEnv, Serializable):
 
     def _create_spaces(self):
         # Action space
-        max_act = np.array([150., 125., 40., 60., 5., 5., 2.])
+        max_act = np.array([150.0, 125.0, 40.0, 60.0, 5.0, 5.0, 2.0])
         self._act_space = BoxSpace(-max_act, max_act)
 
         # State space
@@ -131,15 +134,17 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         [1] https://github.com/psclklnk/self-paced-rl/tree/master/sprl/envs/ball_in_a_cup.py
     """
 
-    name: str = 'wam-bic'
+    name: str = "wam-bic"
 
-    def __init__(self,
-                 num_dof: int = 7,
-                 frame_skip: int = 4,
-                 max_steps: int = pyrado.inf,
-                 fixed_init_state: bool = True,
-                 stop_on_collision: bool = True,
-                 task_args: [dict, None] = None):
+    def __init__(
+        self,
+        num_dof: int = 7,
+        frame_skip: int = 4,
+        max_steps: int = pyrado.inf,
+        fixed_init_state: bool = True,
+        stop_on_collision: bool = True,
+        task_args: [dict, None] = None,
+    ):
         """
         Constructor
 
@@ -160,13 +165,13 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         # File name of the xml and desired joint position for the initial state
         self.num_dof = num_dof
         if num_dof == 4:
-            graph_file_name = 'wam_4dof_bic.xml'
+            graph_file_name = "wam_4dof_bic.xml"
             self.qpos_des_init = init_qpos_des_4dof
         elif num_dof == 7:
-            graph_file_name = 'wam_7dof_bic.xml'
+            graph_file_name = "wam_7dof_bic.xml"
             self.qpos_des_init = init_qpos_des_7dof
         else:
-            raise pyrado.ValueErr(given=num_dof, eq_constraint='4 or 7')
+            raise pyrado.ValueErr(given=num_dof, eq_constraint="4 or 7")
 
         model_path = osp.join(pyrado.MUJOCO_ASSETS_DIR, graph_file_name)
         super().__init__(model_path, frame_skip, max_steps, task_args)
@@ -175,9 +180,16 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         self.p_gains = wam_pgains
         self.d_gains = wam_dgains
 
-        self._collision_bodies = ['wam/base_link', 'wam/shoulder_yaw_link', 'wam/shoulder_pitch_link',
-                                  'wam/upper_arm_link', 'wam/forearm_link', 'wrist_palm_link',
-                                  'wam/wrist_pitch_link', 'wam/wrist_yaw_link']
+        self._collision_bodies = [
+            "wam/base_link",
+            "wam/shoulder_yaw_link",
+            "wam/shoulder_pitch_link",
+            "wam/upper_arm_link",
+            "wam/forearm_link",
+            "wrist_palm_link",
+            "wam/wrist_pitch_link",
+            "wam/wrist_yaw_link",
+        ]
 
         if self.num_dof == 4:
             self.p_gains = self.p_gains[:4]
@@ -186,7 +198,7 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
 
         # We access a private attribute since a method like 'model.geom_names[geom_id]' cannot be used because
         # not every geom has a name
-        self._collision_geom_ids = [self.model._geom_name2id[name] for name in ['cup_geom1', 'cup_geom2']]
+        self._collision_geom_ids = [self.model._geom_name2id[name] for name in ["cup_geom1", "cup_geom2"]]
 
         self.stop_on_collision = stop_on_collision
 
@@ -194,7 +206,7 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             distance=2.7,
             trackbodyid=0,  # id of the body to track
             elevation=-30,  # camera rotation around the axis in the plane
-            azimuth=-90  # camera rotation around the camera's vertical axis
+            azimuth=-90,  # camera rotation around the camera's vertical axis
         )
 
     @property
@@ -204,7 +216,7 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
         return dict(
-            cup_scale=1.,  # scaling factor for the radius of the cup [-] (should be >0.65)
+            cup_scale=1.0,  # scaling factor for the radius of the cup [-] (should be >0.65)
             rope_length=0.3,  # length of the rope [m] (previously 0.3103)
             ball_mass=0.021,  # mass of the ball [kg]
             joint_damping=0.05,  # damping of motor joints [N/s] (default value is small)
@@ -217,14 +229,14 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         # Set the actual stable initial position. This position would be reached after some time using the internal
         # PD controller to stabilize at self.qpos_des_init
         if self.num_dof == 7:
-            self.init_qpos[:7] = np.array([0., 0.65, 0., 1.41, 0., -0.28, -1.57])
+            self.init_qpos[:7] = np.array([0.0, 0.65, 0.0, 1.41, 0.0, -0.28, -1.57])
             self.init_qpos[7] = -0.21  # angle of the first rope segment relative to the cup bottom plate
-            init_ball_pos = np.array([0.828, 0., 1.131])
+            init_ball_pos = np.array([0.828, 0.0, 1.131])
             init_cup_goal = np.array([0.82521, 0, 1.4469])
         elif self.num_dof == 4:
-            self.init_qpos[:4] = np.array([0., 0.63, 0., 1.27])
+            self.init_qpos[:4] = np.array([0.0, 0.63, 0.0, 1.27])
             self.init_qpos[4] = -0.34  # angle of the first rope segment relative to the cup bottom plate
-            init_ball_pos = np.array([0.723, 0., 1.168])
+            init_ball_pos = np.array([0.723, 0.0, 1.168])
             init_cup_goal = np.array([0.758, 0, 1.5])
         # The initial position of the ball in cartesian coordinates
         init_state = np.concatenate([self.init_qpos, self.init_qvel, init_ball_pos, init_cup_goal])
@@ -233,22 +245,25 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         else:
             # Add plus/minus one degree to each motor joint and the first rope segment joint
             init_state_up = init_state.copy()
-            init_state_up[:self.num_dof] += np.pi/180*np.array([0.1, 1, 0.5, 1., 0.1, 1., 1.])[:self.num_dof]
+            init_state_up[: self.num_dof] += np.pi / 180 * np.array([0.1, 1, 0.5, 1.0, 0.1, 1.0, 1.0])[: self.num_dof]
             init_state_lo = init_state.copy()
-            init_state_lo[:self.num_dof] -= np.pi/180*np.array([0.1, 1, 0.5, 1., 0.1, 1., 1.])[:self.num_dof]
+            init_state_lo[: self.num_dof] -= np.pi / 180 * np.array([0.1, 1, 0.5, 1.0, 0.1, 1.0, 1.0])[: self.num_dof]
             self._init_space = BoxSpace(init_state_lo, init_state_up)
 
         # State space
         state_shape = init_state.shape
         state_up, state_lo = np.full(state_shape, pyrado.inf), np.full(state_shape, -pyrado.inf)
         # Ensure that joint limits of the arm are not reached (5 deg safety margin)
-        state_up[:self.num_dof] = np.array([2.6, 1.985, 2.8, 3.14159, 1.25, 1.5707, 2.7])[:self.num_dof] - 5*np.pi/180
-        state_lo[:self.num_dof] = np.array([-2.6, -1.985, -2.8, -0.9, -4.55, -1.5707, -2.7])[
-                                  :self.num_dof] + 5*np.pi/180
+        state_up[: self.num_dof] = (
+            np.array([2.6, 1.985, 2.8, 3.14159, 1.25, 1.5707, 2.7])[: self.num_dof] - 5 * np.pi / 180
+        )
+        state_lo[: self.num_dof] = (
+            np.array([-2.6, -1.985, -2.8, -0.9, -4.55, -1.5707, -2.7])[: self.num_dof] + 5 * np.pi / 180
+        )
         self._state_space = BoxSpace(state_lo, state_up)
 
         # Torque space
-        max_torque = np.array([150.0, 125.0, 40.0, 60.0, 5.0, 5.0, 2.0])[:self.num_dof]
+        max_torque = np.array([150.0, 125.0, 40.0, 60.0, 5.0, 5.0, 2.0])[: self.num_dof]
         self._torque_space = BoxSpace(-max_torque, max_torque)
 
         # Action space (PD controller on joint positions and velocities)
@@ -258,10 +273,10 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             self._act_space = act_space_wam_7dof
 
         # Observation space (normalized time)
-        self._obs_space = BoxSpace(np.array([0.]), np.array([1.]), labels=['t'])
+        self._obs_space = BoxSpace(np.array([0.0]), np.array([1.0]), labels=["t"])
 
     def _create_task(self, task_args: dict) -> Task:
-        if task_args.get('sparse_rew_fcn', False):
+        if task_args.get("sparse_rew_fcn", False):
             # Create a task with binary reward
             return self._create_main_task(task_args)
         else:
@@ -269,11 +284,13 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             #   1.) Main task: Desired state task for the cartesian ball distance
             #   2.) Deviation task: Desired state task for the cartesian- and joint deviation from the init position
             #   3.) Binary Bonus: Adds a binary bonus when ball is catched [inactive by default]
-            return ParallelTasks([
-                self._create_main_task(task_args),
-                self._create_deviation_task(task_args),
-                self._create_main_task(dict(sparse_rew_fcn=True, success_bonus=task_args.get('success_bonus', 0)))
-            ])
+            return ParallelTasks(
+                [
+                    self._create_main_task(task_args),
+                    self._create_deviation_task(task_args),
+                    self._create_main_task(dict(sparse_rew_fcn=True, success_bonus=task_args.get("success_bonus", 0))),
+                ]
+            )
 
     def _create_main_task(self, task_args: dict) -> Task:
         # Create a DesStateTask that masks everything but the ball position
@@ -281,24 +298,24 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         spec = EnvSpec(
             self.spec.obs_space,
             self.spec.act_space,
-            self.spec.state_space.subspace(self.spec.state_space.create_mask(idcs))
+            self.spec.state_space.subspace(self.spec.state_space.create_mask(idcs)),
         )
 
         # If we do not use copy(), state_des coming from MuJoCo is a reference and updates automatically at each step.
         # Note: sim.forward() + get_body_xpos() results in wrong output for state_des, as sim has not been updated to
         # init_space.sample(), which is first called in reset()
 
-        if task_args.get('sparse_rew_fcn', False):
-            factor = task_args.get('success_bonus', 1)
+        if task_args.get("sparse_rew_fcn", False):
+            factor = task_args.get("success_bonus", 1)
             # Binary final reward task
             main_task = FinalRewTask(
                 ConditionOnlyTask(spec, condition_fcn=self.check_ball_in_cup, is_success_condition=True),
-                mode=FinalRewMode(always_positive=True), factor=factor
+                mode=FinalRewMode(always_positive=True),
+                factor=factor,
             )
             # Yield -1 on fail after the main task ist done (successfully or not)
             dont_fail_after_succ_task = FinalRewTask(
-                GoallessTask(spec, ZeroPerStepRewFcn()),
-                mode=FinalRewMode(always_negative=True), factor=factor
+                GoallessTask(spec, ZeroPerStepRewFcn()), mode=FinalRewMode(always_negative=True), factor=factor
             )
 
             # Augment the binary task with an endless dummy task, to avoid early stopping
@@ -307,18 +324,17 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             return MaskedTask(self.spec, task, idcs)
 
         else:
-            state_des = self.sim.data.get_site_xpos('cup_goal')  # this is a reference
+            state_des = self.sim.data.get_site_xpos("cup_goal")  # this is a reference
             R_default = np.diag([0, 0, 1, 1e-2, 1e-2, 1e-1]) if self.num_dof == 7 else np.diag([0, 0, 1e-2, 1e-2])
             rew_fcn = ExpQuadrErrRewFcn(
-                Q=task_args.get('Q', np.diag([2e1, 1e-4, 2e1])),  # distance ball - cup; shouldn't move in y-direction
-                R=task_args.get('R', R_default)  # last joint is really unreliable
+                Q=task_args.get("Q", np.diag([2e1, 1e-4, 2e1])),  # distance ball - cup; shouldn't move in y-direction
+                R=task_args.get("R", R_default),  # last joint is really unreliable
             )
             task = DesStateTask(spec, state_des, rew_fcn)
 
             # Wrap the masked DesStateTask to add a bonus for the best state in the rollout
             return BestStateFinalRewTask(
-                MaskedTask(self.spec, task, idcs),
-                max_steps=self.max_steps, factor=task_args.get('final_factor', 0.05)
+                MaskedTask(self.spec, task, idcs), max_steps=self.max_steps, factor=task_args.get("final_factor", 0.05)
             )
 
     def _create_deviation_task(self, task_args: dict) -> Task:
@@ -326,13 +342,13 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         spec = EnvSpec(
             self.spec.obs_space,
             self.spec.act_space,
-            self.spec.state_space.subspace(self.spec.state_space.create_mask(idcs))
+            self.spec.state_space.subspace(self.spec.state_space.create_mask(idcs)),
         )
         # init cup goal position
         state_des = np.array([0.82521, 0, 1.4469]) if self.num_dof == 7 else np.array([0.758, 0, 1.5])
         rew_fcn = QuadrErrRewFcn(
-            Q=task_args.get('Q_dev', np.diag([2e-1, 1e-4, 5e0])),  # Cartesian distance from init position
-            R=task_args.get('R_dev', np.zeros((self._act_space.shape[0], self._act_space.shape[0])))
+            Q=task_args.get("Q_dev", np.diag([2e-1, 1e-4, 5e0])),  # Cartesian distance from init position
+            R=task_args.get("R_dev", np.zeros((self._act_space.shape[0], self._act_space.shape[0]))),
         )
         task = DesStateTask(spec, state_des, rew_fcn)
 
@@ -340,31 +356,31 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
 
     def _adapt_model_file(self, xml_model: str, domain_param: dict) -> str:
         # First replace special domain parameters
-        cup_scale = domain_param.pop('cup_scale', None)
-        rope_length = domain_param.pop('rope_length', None)
-        joint_stiction = domain_param.pop('joint_stiction', None)
+        cup_scale = domain_param.pop("cup_scale", None)
+        rope_length = domain_param.pop("rope_length", None)
+        joint_stiction = domain_param.pop("joint_stiction", None)
 
         if cup_scale is not None:
             # See [1, l.93-96]
-            xml_model = xml_model.replace('[scale_mesh]', str(cup_scale*0.001))
-            xml_model = xml_model.replace('[pos_mesh]', str(0.055 - (cup_scale - 1.)*0.023))
-            xml_model = xml_model.replace('[pos_goal]', str(0.1165 + (cup_scale - 1.)*0.0385))
-            xml_model = xml_model.replace('[size_cup]', str(cup_scale*0.038))
-            xml_model = xml_model.replace('[size_cup_inner]', str(cup_scale*0.03))
+            xml_model = xml_model.replace("[scale_mesh]", str(cup_scale * 0.001))
+            xml_model = xml_model.replace("[pos_mesh]", str(0.055 - (cup_scale - 1.0) * 0.023))
+            xml_model = xml_model.replace("[pos_goal]", str(0.1165 + (cup_scale - 1.0) * 0.0385))
+            xml_model = xml_model.replace("[size_cup]", str(cup_scale * 0.038))
+            xml_model = xml_model.replace("[size_cup_inner]", str(cup_scale * 0.03))
 
         if rope_length is not None:
             # The rope consists of 30 capsules
-            xml_model = xml_model.replace('[pos_capsule]', str(rope_length/30))
+            xml_model = xml_model.replace("[pos_capsule]", str(rope_length / 30))
             # Each joint is at the top of each capsule (therefore negative direction from center)
-            xml_model = xml_model.replace('[pos_capsule_joint]', str(-rope_length/60))
+            xml_model = xml_model.replace("[pos_capsule_joint]", str(-rope_length / 60))
             # Pure visualization component
-            xml_model = xml_model.replace('[size_capsule_geom]', str(rope_length/72))
+            xml_model = xml_model.replace("[size_capsule_geom]", str(rope_length / 72))
 
         if joint_stiction is not None:
             # Amplify joint stiction (dry friction) for the stronger motor joints
-            xml_model = xml_model.replace('[stiction_1]', str(4*joint_stiction))
-            xml_model = xml_model.replace('[stiction_3]', str(2*joint_stiction))
-            xml_model = xml_model.replace('[stiction_5]', str(joint_stiction))
+            xml_model = xml_model.replace("[stiction_1]", str(4 * joint_stiction))
+            xml_model = xml_model.replace("[stiction_3]", str(2 * joint_stiction))
+            xml_model = xml_model.replace("[stiction_5]", str(joint_stiction))
         # Resolve mesh directory and replace the remaining domain parameters
         return super()._adapt_model_file(xml_model, domain_param)
 
@@ -380,15 +396,15 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             np.add.at(qvel_des, [1, 3, 5], act[3:])
 
         # Compute the position and velocity errors
-        err_pos = qpos_des - self.state[:self.num_dof]
-        err_vel = qvel_des - self.state[self.model.nq:self.model.nq + self.num_dof]
+        err_pos = qpos_des - self.state[: self.num_dof]
+        err_vel = qvel_des - self.state[self.model.nq : self.model.nq + self.num_dof]
 
         # Compute the torques for the PD controller and clip them to their max values
-        torque = self.p_gains*err_pos + self.d_gains*err_vel
+        torque = self.p_gains * err_pos + self.d_gains * err_vel
         torque = self._torque_space.project_to(torque)
 
         # Apply the torques to the robot
-        self.sim.data.qfrc_applied[:self.num_dof] = torque
+        self.sim.data.qfrc_applied[: self.num_dof] = torque
         try:
             self.sim.step()
             mjsim_crashed = False
@@ -398,8 +414,8 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             mjsim_crashed = True
 
         qpos, qvel = self.sim.data.qpos.copy(), self.sim.data.qvel.copy()
-        ball_pos = self.sim.data.get_body_xpos('ball').copy()
-        cup_goal = self.sim.data.get_site_xpos('cup_goal').copy()
+        ball_pos = self.sim.data.get_body_xpos("ball").copy()
+        cup_goal = self.sim.data.get_site_xpos("cup_goal").copy()
         self.state = np.concatenate([qpos, qvel, ball_pos, cup_goal])
 
         # If desired, check for collisions of the ball with the robot
@@ -409,8 +425,13 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         state_oob = False if self.state_space.contains(self.state) else True
 
         return dict(
-            qpos_des=qpos_des, qvel_des=qvel_des, qpos=qpos[:self.num_dof], qvel=qvel[:self.num_dof],
-            ball_pos=ball_pos, cup_pos=cup_goal, failed=mjsim_crashed or ball_collided or state_oob
+            qpos_des=qpos_des,
+            qvel_des=qvel_des,
+            qpos=qpos[: self.num_dof],
+            qvel=qvel[: self.num_dof],
+            ball_pos=ball_pos,
+            cup_pos=cup_goal,
+            failed=mjsim_crashed or ball_collided or state_oob,
         )
 
     def check_ball_collisions(self, verbose: bool = False) -> bool:
@@ -432,13 +453,15 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
 
             # Evaluate if the ball collides with part of the WAM (collision bodies)
             # or the connection of WAM and cup (geom_ids)
-            c1 = body1_name == 'ball' and (body2_name in self._collision_bodies or
-                                           contact.geom2 in self._collision_geom_ids)
-            c2 = body2_name == 'ball' and (body1_name in self._collision_bodies or
-                                           contact.geom1 in self._collision_geom_ids)
+            c1 = body1_name == "ball" and (
+                body2_name in self._collision_bodies or contact.geom2 in self._collision_geom_ids
+            )
+            c2 = body2_name == "ball" and (
+                body1_name in self._collision_bodies or contact.geom1 in self._collision_geom_ids
+            )
             if c1 or c2:
                 if verbose:
-                    print_cbt(f'Undesired collision of {body1_name} and {body2_name} detected!', 'y')
+                    print_cbt(f"Undesired collision of {body1_name} and {body2_name} detected!", "y")
                 return True
 
         return False
@@ -462,16 +485,16 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
 
             # Evaluate if the ball collides with part of the WAM (collision bodies)
             # or the connection of WAM and cup (geom_ids)
-            cup_inner_id = self.model._geom_name2id['cup_inner']
-            c1 = body1_name == 'ball' and contact.geom2 == cup_inner_id
-            c2 = body2_name == 'ball' and contact.geom1 == cup_inner_id
+            cup_inner_id = self.model._geom_name2id["cup_inner"]
+            c1 = body1_name == "ball" and contact.geom2 == cup_inner_id
+            c2 = body2_name == "ball" and contact.geom1 == cup_inner_id
             if c1 or c2:
                 if verbose:
-                    print_cbt(f'The ball is in the cup at time step {self.curr_step}.', 'y')
+                    print_cbt(f"The ball is in the cup at time step {self.curr_step}.", "y")
                 return True
 
         return False
 
     def observe(self, state: np.ndarray) -> np.ndarray:
         # Only observe the normalized time
-        return np.array([self._curr_step/self.max_steps])
+        return np.array([self._curr_step / self.max_steps])

@@ -46,13 +46,9 @@ rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)
 class TargetTrackingSim(RcsSim, Serializable):
     """ 2-armed humanoid robot going to a target position with both hands """
 
-    name: str = 'tt'
+    name: str = "tt"
 
-    def __init__(self,
-                 mps_left: Sequence[dict],
-                 mps_right: Sequence[dict],
-                 continuous_rew_fcn: bool = True,
-                 **kwargs):
+    def __init__(self, mps_left: Sequence[dict], mps_right: Sequence[dict], continuous_rew_fcn: bool = True, **kwargs):
         """
         Constructor
 
@@ -70,41 +66,43 @@ class TargetTrackingSim(RcsSim, Serializable):
         # Forward to the RcsSim's constructor
         RcsSim.__init__(
             self,
-            envType='TargetTracking',
+            envType="TargetTracking",
             task_args=dict(continuous_rew_fcn=continuous_rew_fcn, mps_left=mps_left, mps_right=mps_right),
-            extraConfigDir=osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, 'TargetTracking'),
+            extraConfigDir=osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "TargetTracking"),
             tasksLeft=mps_left,
             tasksRight=mps_right,
-            **kwargs
+            **kwargs,
         )
 
     def _create_task(self, task_args: dict) -> Task:
         # Set up task. We track the distance to the goal for both hands separately.
-        continuous_rew_fcn = task_args.get('continuous_rew_fcn', True)
-        mps_left = task_args.get('mps_left')
-        mps_right = task_args.get('mps_right')
+        continuous_rew_fcn = task_args.get("continuous_rew_fcn", True)
+        mps_left = task_args.get("mps_left")
+        mps_right = task_args.get("mps_right")
 
         if continuous_rew_fcn:
             Q = np.diag([1, 1e-3])
-            R = 1e-4*np.eye(self.act_space.flat_dim)
+            R = 1e-4 * np.eye(self.act_space.flat_dim)
             rew_fcn_factory = lambda: ExpQuadrErrRewFcn(Q, R)
         else:
             rew_fcn_factory = MinusOnePerStepRewFcn
         succ_thold = 7.5e-2
 
         tasks_left = [
-            create_goal_dist_distvel_task(self.spec, i, rew_fcn_factory(), succ_thold)
-            for i in range(len(mps_left))
+            create_goal_dist_distvel_task(self.spec, i, rew_fcn_factory(), succ_thold) for i in range(len(mps_left))
         ]
         tasks_right = [
             create_goal_dist_distvel_task(self.spec, i + len(mps_left), rew_fcn_factory(), succ_thold)
             for i in range(len(mps_right))
         ]
 
-        return ParallelTasks([
-            SequentialTasks(tasks_left, hold_rew_when_done=continuous_rew_fcn),
-            SequentialTasks(tasks_right, hold_rew_when_done=continuous_rew_fcn),
-        ], hold_rew_when_done=continuous_rew_fcn)
+        return ParallelTasks(
+            [
+                SequentialTasks(tasks_left, hold_rew_when_done=continuous_rew_fcn),
+                SequentialTasks(tasks_right, hold_rew_when_done=continuous_rew_fcn),
+            ],
+            hold_rew_when_done=continuous_rew_fcn,
+        )
 
     @classmethod
     def get_nominal_domain_param(cls):

@@ -37,10 +37,10 @@ from pyrado.utils.order import get_immediate_subdirs
 
 
 def test_experiment():
-    ex_dir = setup_experiment('testenv', 'testalgo', 'testinfo', base_dir=TEMP_DIR)
+    ex_dir = setup_experiment("testenv", "testalgo", "testinfo", base_dir=TEMP_DIR)
 
     # Get the directory that should have been created by setup_experiment
-    parent_dir = osp.join(ex_dir, '..')
+    parent_dir = osp.join(ex_dir, "..")
 
     assert osp.exists(ex_dir)
     assert osp.isdir(ex_dir)
@@ -50,17 +50,17 @@ def test_experiment():
     assert len(child_dirs) > 0
 
     # Delete the created folder recursively
-    shutil.rmtree(osp.join(TEMP_DIR, 'testenv'), ignore_errors=True)  # also deletes read-only files
+    shutil.rmtree(osp.join(TEMP_DIR, "testenv"), ignore_errors=True)  # also deletes read-only files
 
 
 def test_save_and_laod_yaml():
-    ex_dir = setup_experiment('testenv', 'testalgo', 'testinfo', base_dir=TEMP_DIR)
+    ex_dir = setup_experiment("testenv", "testalgo", "testinfo", base_dir=TEMP_DIR)
 
     # Save test data to YAML-file (ndarrays should be converted to lists)
-    save_list_of_dicts_to_yaml([dict(a=1), dict(b=2.0), dict(c=np.array([1., 2.]).tolist())], ex_dir, 'testfile')
+    save_list_of_dicts_to_yaml([dict(a=1), dict(b=2.0), dict(c=np.array([1.0, 2.0]).tolist())], ex_dir, "testfile")
 
-    data = load_dict_from_yaml(osp.join(ex_dir, 'testfile.yaml'))
+    data = load_dict_from_yaml(osp.join(ex_dir, "testfile.yaml"))
     assert isinstance(data, dict)
 
     # Delete the created folder recursively
-    shutil.rmtree(osp.join(TEMP_DIR, 'testenv'), ignore_errors=True)  # also deletes read-only files
+    shutil.rmtree(osp.join(TEMP_DIR, "testenv"), ignore_errors=True)  # also deletes read-only files

@@ -14,9 +14,10 @@ SimuRLacra (composed of the two modules Pyrado and RcsPySim) is a Python/C++ fra
 The focus is on robotics tasks with mostly continuous control.
 It features __randomizable simulations__ written __in standalone Python__ (no license required) as well as simulations driven by the physics engines __Bullet__ (no license required), __Vortex__ (license required), __or MuJoCo__ (license required).
 
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Maintainability](https://api.codeclimate.com/v1/badges/73ad23bdf05361b022b4/maintainability)](https://codeclimate.com/github/famura/SimuRLacra/maintainability)
 ![Documentation](https://github.com/famura/SimuRLacra/workflows/Documentation/badge.svg?branch=master)
-[![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-32CD32.svg)](https://github.com/psf/black)
 [![codecov](https://codecov.io/gh/famura/SimuRLacra/branch/master/graph/badge.svg)](https://codecov.io/gh/famura/SimuRLacra)
 
 __Pros__  

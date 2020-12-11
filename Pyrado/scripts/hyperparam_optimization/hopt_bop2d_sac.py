@@ -65,28 +65,27 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     pyrado.set_seed(seed)
 
     # Environment
-    env_hparams = dict(
-        physicsEngine='Bullet',
-        dt=1/100.,
-        max_steps=500
-    )
+    env_hparams = dict(physicsEngine="Bullet", dt=1 / 100.0, max_steps=500)
     env = BallOnPlate2DSim(**env_hparams)
     env = ActNormWrapper(env)
 
     # Policy
     policy_hparam = dict(
-        shared_hidden_sizes=trial.suggest_categorical('shared_hidden_sizes_policy',
-                                                      [(16, 16), (32, 32), (64, 64), (16, 16, 16), (32, 32, 32)]),
+        shared_hidden_sizes=trial.suggest_categorical(
+            "shared_hidden_sizes_policy", [(16, 16), (32, 32), (64, 64), (16, 16, 16), (32, 32, 32)]
+        ),
         shared_hidden_nonlin=fcn_from_str(
-            trial.suggest_categorical('shared_hidden_nonlin_policy', ['to_tanh', 'to_relu'])),
+            trial.suggest_categorical("shared_hidden_nonlin_policy", ["to_tanh", "to_relu"])
+        ),
     )
     policy = TwoHeadedFNNPolicy(spec=env.spec, **policy_hparam)
 
     # Critic
     qfcn_hparam = dict(
-        hidden_sizes=trial.suggest_categorical('hidden_sizes_critic',
-                                               [(16, 16), (32, 32), (64, 64), (16, 16, 16), (32, 32, 32)]),
-        hidden_nonlin=fcn_from_str(trial.suggest_categorical('hidden_nonlin_critic', ['to_tanh', 'to_relu'])),
+        hidden_sizes=trial.suggest_categorical(
+            "hidden_sizes_critic", [(16, 16), (32, 32), (64, 64), (16, 16, 16), (32, 32, 32)]
+        ),
+        hidden_nonlin=fcn_from_str(trial.suggest_categorical("hidden_nonlin_critic", ["to_tanh", "to_relu"])),
     )
     obsact_space = BoxSpace.cat([env.obs_space, env.act_space])
     qfcn_1 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **qfcn_hparam)
@@ -95,59 +94,60 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     # Algorithm
     algo_hparam = dict(
         num_workers=1,  # parallelize via optuna n_jobs
-        max_iter=100*env.max_steps,
-        min_steps=trial.suggest_categorical('min_steps_algo', [1]),  # 10, env.max_steps, 10*env.max_steps
-        memory_size=trial.suggest_loguniform('memory_size_algo', 1e2*env.max_steps, 1e4*env.max_steps),
-        tau=trial.suggest_uniform('tau_algo', 0.99, 1.),
-        ent_coeff_init=trial.suggest_uniform('ent_coeff_init_algo', 0.1, 0.9),
-        learn_ent_coeff=trial.suggest_categorical('learn_ent_coeff_algo', [True, False]),
-        standardize_rew=trial.suggest_categorical('standardize_rew_algo', [False]),
-        gamma=trial.suggest_uniform('gamma_algo', 0.99, 1.),
-        target_update_intvl=trial.suggest_categorical('target_update_intvl_algo', [1, 5]),
-        num_batch_updates=trial.suggest_categorical('num_batch_updates_algo', [1, 5]),
-        batch_size=trial.suggest_categorical('batch_size_algo', [128, 256, 512]),
-        lr=trial.suggest_loguniform('lr_algo', 1e-5, 1e-3),
+        max_iter=100 * env.max_steps,
+        min_steps=trial.suggest_categorical("min_steps_algo", [1]),  # 10, env.max_steps, 10*env.max_steps
+        memory_size=trial.suggest_loguniform("memory_size_algo", 1e2 * env.max_steps, 1e4 * env.max_steps),
+        tau=trial.suggest_uniform("tau_algo", 0.99, 1.0),
+        ent_coeff_init=trial.suggest_uniform("ent_coeff_init_algo", 0.1, 0.9),
+        learn_ent_coeff=trial.suggest_categorical("learn_ent_coeff_algo", [True, False]),
+        standardize_rew=trial.suggest_categorical("standardize_rew_algo", [False]),
+        gamma=trial.suggest_uniform("gamma_algo", 0.99, 1.0),
+        target_update_intvl=trial.suggest_categorical("target_update_intvl_algo", [1, 5]),
+        num_batch_updates=trial.suggest_categorical("num_batch_updates_algo", [1, 5]),
+        batch_size=trial.suggest_categorical("batch_size_algo", [128, 256, 512]),
+        lr=trial.suggest_loguniform("lr_algo", 1e-5, 1e-3),
     )
-    csv_logger = create_csv_step_logger(osp.join(study_dir, f'trial_{trial.number}'))
+    csv_logger = create_csv_step_logger(osp.join(study_dir, f"trial_{trial.number}"))
     algo = SAC(study_dir, env, policy, qfcn_1, qfcn_2, **algo_hparam, logger=csv_logger)
 
     # Train without saving the results
-    algo.train(snapshot_mode='latest', seed=seed)
+    algo.train(snapshot_mode="latest", seed=seed)
 
     # Evaluate
     min_rollouts = 1000
-    sampler = ParallelRolloutSampler(env, policy, num_workers=1,
-                                     min_rollouts=min_rollouts)  # parallelize via optuna n_jobs
+    sampler = ParallelRolloutSampler(
+        env, policy, num_workers=1, min_rollouts=min_rollouts
+    )  # parallelize via optuna n_jobs
     ros = sampler.sample()
-    mean_ret = sum([r.undiscounted_return() for r in ros])/min_rollouts
+    mean_ret = sum([r.undiscounted_return() for r in ros]) / min_rollouts
 
     return mean_ret
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     if args.dir is None:
-        ex_dir = setup_experiment('hyperparams', BallOnPlate2DSim.name, f'{SAC.name}_{FNNPolicy.name}_100Hz')
+        ex_dir = setup_experiment("hyperparams", BallOnPlate2DSim.name, f"{SAC.name}_{FNNPolicy.name}_100Hz")
         study_dir = osp.join(pyrado.TEMP_DIR, ex_dir)
-        print_cbt(f'Starting a new Optuna study.', 'c', bright=True)
+        print_cbt(f"Starting a new Optuna study.", "c", bright=True)
     else:
         study_dir = args.dir
         if not osp.isdir(study_dir):
             raise pyrado.PathErr(given=study_dir)
-        print_cbt(f'Continuing an existing Optuna study.', 'c', bright=True)
+        print_cbt(f"Continuing an existing Optuna study.", "c", bright=True)
 
-    name = f'{BallOnPlate2DSim.name}_{SAC.name}_{FNNPolicy.name}_100Hz'
+    name = f"{BallOnPlate2DSim.name}_{SAC.name}_{FNNPolicy.name}_100Hz"
     study = optuna.create_study(
         study_name=name,
         storage=f"sqlite:////{osp.join(study_dir, f'{name}.db')}",
-        direction='maximize',
-        load_if_exists=True
+        direction="maximize",
+        load_if_exists=True,
     )
 
     # Start optimizing
     study.optimize(functools.partial(train_and_eval, study_dir=study_dir, seed=args.seed), n_trials=100, n_jobs=16)
 
     # Save the best hyper-parameters
-    save_list_of_dicts_to_yaml([study.best_params, dict(seed=args.seed)], study_dir, 'best_hyperparams')
+    save_list_of_dicts_to_yaml([study.best_params, dict(seed=args.seed)], study_dir, "best_hyperparams")

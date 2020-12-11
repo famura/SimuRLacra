@@ -75,7 +75,7 @@ class CompoundSpace(Space):
     def contains(self, cand: np.ndarray, verbose: bool = False) -> bool:
         valid = any([s.contains(cand) for s in self._spaces])
         if not valid and verbose:
-            print_cbt(f'Violated all of the {len(self._spaces)} subspaces!', 'r')
+            print_cbt(f"Violated all of the {len(self._spaces)} subspaces!", "r")
             for s in self._spaces:
                 s.contains(cand, verbose)
         return valid

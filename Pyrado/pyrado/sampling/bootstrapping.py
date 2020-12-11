@@ -32,14 +32,16 @@ from warnings import warn
 import pyrado
 
 
-def bootstrap_ci(data: np.ndarray,
-                 stat_fcn,
-                 num_reps: int,
-                 alpha: float,
-                 ci_sides: int,
-                 bias_correction: bool = False,
-                 studentized: bool = False,
-                 seed: int = None):
+def bootstrap_ci(
+    data: np.ndarray,
+    stat_fcn,
+    num_reps: int,
+    alpha: float,
+    ci_sides: int,
+    bias_correction: bool = False,
+    studentized: bool = False,
+    seed: int = None,
+):
     r"""
     Re-sampling input data using the nonparametric bootstrap method, computing bootstrap replications using stat_fcn and
     computing a confidence interval on the statistic of interest given by stat_fcn.
@@ -93,7 +95,7 @@ def bootstrap_ci(data: np.ndarray,
     # Note: other estimates of the bias-correction factor than stat_emt possible, see [4]
     if bias_correction:
         # bias-corrected statistic (see (2) in [2], or (11.10) in [3])
-        stat_bs_bc = 2*stat_emp - np.mean(stat_bs)  # same as bias = mean_repl - stat_emp; repl_bc = stat_emp - bias
+        stat_bs_bc = 2 * stat_emp - np.mean(stat_bs)  # same as bias = mean_repl - stat_emp; repl_bc = stat_emp - bias
         stat_ret = stat_bs_bc  # use the correction also for the bs replications? -->> No (so far)
         # Note: bias-correction can be dangerous in practice. Even though T_bc(D) is less biased than T(D),
         # the bias-corrected estimator may have substantially larger variance. This is due to a possibly higher
@@ -111,31 +113,34 @@ def bootstrap_ci(data: np.ndarray,
     # Confidence interval with asymptotic refinement (a.k.a. percentile-t method)
     if studentized:
         # Compute the standard deviation of the original sample
-        se_emp = np.std(data, ddof=0)/np.sqrt(data.shape[0])  # for dividing by (n-1) set ddof=1
+        se_emp = np.std(data, ddof=0) / np.sqrt(data.shape[0])  # for dividing by (n-1) set ddof=1
         if se_emp < 1e-9:
-            warn('Standard deviation in the empirical data (se_emp) is below 1e-9.', UserWarning)
+            warn("Standard deviation in the empirical data (se_emp) is below 1e-9.", UserWarning)
 
         # Compute the standard error of the replications for the bootstrapped t-statistic
-        se_bs = np.std(stat_bs, ddof=0)/np.sqrt(data_bs.shape[0])  # dim = num_reps x 1
+        se_bs = np.std(stat_bs, ddof=0) / np.sqrt(data_bs.shape[0])  # dim = num_reps x 1
         if se_bs < 1e-9:  # use any for version 2 above
-            warn('Standard deviation in the bootstrapped data (se_bs) is below 1e-9. '
-                 'Setting confidence interval bounds to infinity.', UserWarning)
+            warn(
+                "Standard deviation in the bootstrapped data (se_bs) is below 1e-9. "
+                "Setting confidence interval bounds to infinity.",
+                UserWarning,
+            )
             return stat_ret, [-np.infty, np.infty]
 
         # Compute the t-statistic of the replications
-        t_bs = delta_bs/se_bs  # is consistent with [3, p. 360]
+        t_bs = delta_bs / se_bs  # is consistent with [3, p. 360]
 
         if ci_sides == 2:  # Two-sided confidence interval
             t_bs.sort()
-            t_lo, t_up = np.percentile(t_bs, [100*alpha/2., 100 - 100*alpha/2.])
-            ci_lo = stat_emp - t_up*se_emp  # see [3, (11.6) p. 364]
-            ci_up = stat_emp - t_lo*se_emp  # see [3, (11.6) p. 364]
+            t_lo, t_up = np.percentile(t_bs, [100 * alpha / 2.0, 100 - 100 * alpha / 2.0])
+            ci_lo = stat_emp - t_up * se_emp  # see [3, (11.6) p. 364]
+            ci_up = stat_emp - t_lo * se_emp  # see [3, (11.6) p. 364]
 
         elif ci_sides == 1:  # One-sided confidence interval (upper bound)
             t_bs.sort()
-            t_lo = np.percentile(t_bs, 100*alpha)
+            t_lo = np.percentile(t_bs, 100 * alpha)
             ci_lo = -np.inf
-            ci_up = stat_emp - t_lo*se_emp  # see [3, (11.6) p. 364]
+            ci_up = stat_emp - t_lo * se_emp  # see [3, (11.6) p. 364]
 
         else:
             raise pyrado.ValueErr(given=ci_sides, eq_constraint="1 or 2")
@@ -144,13 +149,13 @@ def bootstrap_ci(data: np.ndarray,
     else:
         if ci_sides == 2:  # Two-sided confidence interval
             delta_bs.sort()
-            delta_lo, delta_up = np.percentile(delta_bs, [100*alpha/2., 100 - 100*alpha/2.])
+            delta_lo, delta_up = np.percentile(delta_bs, [100 * alpha / 2.0, 100 - 100 * alpha / 2.0])
             ci_lo = stat_emp - delta_up
             ci_up = stat_emp - delta_lo
 
         elif ci_sides == 1:  # One-sided confidence interval (upper bound)
             delta_bs.sort()
-            delta_lo = np.percentile(delta_bs, 100*alpha)
+            delta_lo = np.percentile(delta_bs, 100 * alpha)
             ci_lo = -np.inf
             ci_up = stat_emp - delta_lo
 

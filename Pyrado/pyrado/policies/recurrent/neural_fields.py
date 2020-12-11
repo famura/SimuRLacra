@@ -42,30 +42,32 @@ from pyrado.utils.nn_layers import MirrConv1d, IndiNonlinLayer
 class NFPolicy(PotentialBasedPolicy):
     """
     Neural Fields (NF)
-    
+
     .. seealso::
         [1] S.-I. Amari "Dynamics of Pattern Formation in Lateral-Inhibition Type Neural Fields",
         Biological Cybernetics, 1977
     """
 
-    name: str = 'nf'
+    name: str = "nf"
 
-    def __init__(self,
-                 spec: EnvSpec,
-                 hidden_size: int,
-                 obs_layer: [nn.Module, Policy] = None,
-                 activation_nonlin: Callable = to.sigmoid,
-                 mirrored_conv_weights: bool = True,
-                 conv_out_channels: int = 1,
-                 conv_kernel_size: int = None,
-                 conv_padding_mode: str = 'circular',
-                 tau_init: float = 10.,
-                 tau_learnable: bool = True,
-                 kappa_init: float = 0.,
-                 kappa_learnable: bool = True,
-                 potential_init_learnable: bool = False,
-                 init_param_kwargs: dict = None,
-                 use_cuda: bool = False):
+    def __init__(
+        self,
+        spec: EnvSpec,
+        hidden_size: int,
+        obs_layer: [nn.Module, Policy] = None,
+        activation_nonlin: Callable = to.sigmoid,
+        mirrored_conv_weights: bool = True,
+        conv_out_channels: int = 1,
+        conv_kernel_size: int = None,
+        conv_padding_mode: str = "circular",
+        tau_init: float = 10.0,
+        tau_learnable: bool = True,
+        kappa_init: float = 0.0,
+        kappa_learnable: bool = True,
+        potential_init_learnable: bool = False,
+        init_param_kwargs: dict = None,
+        use_cuda: bool = False,
+    ):
         """
         Constructor
 
@@ -87,30 +89,50 @@ class NFPolicy(PotentialBasedPolicy):
         if not isinstance(hidden_size, int):
             raise pyrado.TypeErr(given=hidden_size, expected_type=int)
         if hidden_size < 2:
-            raise pyrado.ValueErr(given=hidden_size, g_constraint='1')
+            raise pyrado.ValueErr(given=hidden_size, g_constraint="1")
         if conv_kernel_size is None:
             conv_kernel_size = hidden_size
-        if not conv_kernel_size%2 == 1:
-            print_cbt(f'Increased the kernel size {conv_kernel_size} the next odd number ({conv_kernel_size + 1}) '
-                      f'in order to obtain shape-conserving padding.', 'y')
+        if not conv_kernel_size % 2 == 1:
+            print_cbt(
+                f"Increased the kernel size {conv_kernel_size} the next odd number ({conv_kernel_size + 1}) "
+                f"in order to obtain shape-conserving padding.",
+                "y",
+            )
             conv_kernel_size = conv_kernel_size + 1
-        if conv_padding_mode not in ['circular', 'reflected', 'zeros']:
-            raise pyrado.ValueErr(given=conv_padding_mode, eq_constraint='circular, reflected, or zeros')
+        if conv_padding_mode not in ["circular", "reflected", "zeros"]:
+            raise pyrado.ValueErr(given=conv_padding_mode, eq_constraint="circular, reflected, or zeros")
         if not callable(activation_nonlin):
             raise pyrado.TypeErr(given=activation_nonlin, expected_type=Callable)
 
-        super().__init__(spec, obs_layer, activation_nonlin, tau_init, tau_learnable, kappa_init, kappa_learnable,
-                         potential_init_learnable, use_cuda, hidden_size)
+        super().__init__(
+            spec,
+            obs_layer,
+            activation_nonlin,
+            tau_init,
+            tau_learnable,
+            kappa_init,
+            kappa_learnable,
+            potential_init_learnable,
+            use_cuda,
+            hidden_size,
+        )
 
         # Create custom NFPolicy layers
         self.mirrored_conv_weights = mirrored_conv_weights
-        padding = conv_kernel_size//2 if conv_padding_mode != 'circular' else conv_kernel_size - 1  # 1 means no padding
+        padding = (
+            conv_kernel_size // 2 if conv_padding_mode != "circular" else conv_kernel_size - 1
+        )  # 1 means no padding
         conv1d_class = MirrConv1d if mirrored_conv_weights else nn.Conv1d
         self.conv_layer = conv1d_class(
             in_channels=1,  # treat potentials as a time series of values (convolutions is over the "time" axis)
             out_channels=conv_out_channels,
-            kernel_size=conv_kernel_size, padding_mode=conv_padding_mode, padding=padding, bias=False,
-            stride=1, dilation=1, groups=1  # defaults
+            kernel_size=conv_kernel_size,
+            padding_mode=conv_padding_mode,
+            padding=padding,
+            bias=False,
+            stride=1,
+            dilation=1,
+            groups=1,  # defaults
         )
         # self.post_conv_layer = nn.Linear(conv_out_channels, spec.act_space.flat_dim, bias=False)
         self.pot_to_activ = IndiNonlinLayer(self.hidden_size, nonlin=activation_nonlin, bias=True, weight=True)
@@ -131,8 +153,8 @@ class NFPolicy(PotentialBasedPolicy):
         :param stimuli: sum of external and internal stimuli at the current point in time
         :return: time derivative of the potentials
         """
-        rhs = stimuli + self.resting_level - potentials + self.kappa*to.pow(self.resting_level - potentials, 3)
-        return rhs/self.tau
+        rhs = stimuli + self.resting_level - potentials + self.kappa * to.pow(self.resting_level - potentials, 3)
+        return rhs / self.tau
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         super().init_param(init_values, **kwargs)
@@ -156,8 +178,9 @@ class NFPolicy(PotentialBasedPolicy):
         elif len(obs.shape) == 2:
             batch_size = obs.shape[0]
         else:
-            raise pyrado.ShapeErr(msg=f"Improper shape of 'obs'. Policy received {obs.shape},"
-                                      f"but shape should be 1- or 2-dim")
+            raise pyrado.ShapeErr(
+                msg=f"Improper shape of 'obs'. Policy received {obs.shape}," f"but shape should be 1- or 2-dim"
+            )
 
         # Unpack hidden tensor (i.e. the potentials of the last step) if specified, else initialize them
         pot = self._unpack_hidden(hidden, batch_size) if hidden is not None else self.init_hidden(batch_size)
@@ -178,8 +201,9 @@ class NFPolicy(PotentialBasedPolicy):
         # Reshape and convolve
         b = batch_size if batch_size is not None else 1
         self._stimuli_internal = self.conv_layer(activations_prev.view(b, 1, self._hidden_size))
-        self._stimuli_internal = to.sum(self._stimuli_internal,
-                                        dim=1)  # TODO do multiple out channels makes sense if just summed up?
+        self._stimuli_internal = to.sum(
+            self._stimuli_internal, dim=1
+        )  # TODO do multiple out channels makes sense if just summed up?
         self._stimuli_internal = self._stimuli_internal.squeeze()
 
         # Combine the different output channels of the convolution
@@ -206,4 +230,3 @@ class NFPolicy(PotentialBasedPolicy):
 
         # Return the next action and store the current potentials as a hidden variable
         return act, hidden_out
-

@@ -41,25 +41,23 @@ from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.utils.argparser import get_argparser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(OneMassOscillatorSim.name, f'{PEPG.name}_{LinearPolicy.name}')
+    ex_dir = setup_experiment(OneMassOscillatorSim.name, f"{PEPG.name}_{LinearPolicy.name}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1/50., max_steps=200)
+    env_hparams = dict(dt=1 / 50.0, max_steps=200)
     env = OneMassOscillatorSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
     env = ActNormWrapper(env)
 
     # Policy
-    policy_hparam = dict(
-        feats=FeatureStack([const_feat, identity_feat])
-    )
+    policy_hparam = dict(feats=FeatureStack([const_feat, identity_feat]))
     policy = LinearPolicy(spec=env.spec, **policy_hparam)
 
     # Algorithm
@@ -77,11 +75,13 @@ if __name__ == '__main__':
     algo = PEPG(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha

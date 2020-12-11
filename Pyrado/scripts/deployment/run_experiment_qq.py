@@ -43,7 +43,7 @@ from pyrado.utils.input_output import print_cbt
 from pyrado.utils.argparser import get_argparser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
@@ -52,25 +52,25 @@ if __name__ == '__main__':
 
     # Load the policy and the environment (for constructing the real-world counterpart)
     env_sim, policy, _ = load_experiment(ex_dir, args)
-    if 'argmax' in args.policy_name:
-        policy = to.load(osp.join(ex_dir, 'policy_argmax.pt'))
-        print_cbt(f"Loaded {osp.join(ex_dir, 'policy_argmax.pt')}", 'g', bright=True)
+    if "argmax" in args.policy_name:
+        policy = to.load(osp.join(ex_dir, "policy_argmax.pt"))
+        print_cbt(f"Loaded {osp.join(ex_dir, 'policy_argmax.pt')}", "g", bright=True)
 
     # Create real-world counterpart
     # If `max_steps` (or `dt`) are not explicitly set using `args`, use the same as in the simulation
     max_steps = args.max_steps if args.max_steps < pyrado.inf else env_sim.max_steps
     dt = args.dt if args.dt is not None else env_sim.dt
     env_real = QQubeReal(dt, max_steps)
-    print_cbt(f'Set up the QQubeReal environment with dt={env_real.dt} max_steps={env_real.max_steps}.', 'c')
+    print_cbt(f"Set up the QQubeReal environment with dt={env_real.dt} max_steps={env_real.max_steps}.", "c")
 
     # Finally wrap the env in the same as done during training
     env_real = wrap_like_other_env(env_real, env_sim)
 
     ex_ts = datetime.now().strftime(timestamp_format)
-    save_dir = osp.join(ex_dir, 'evaluation')
+    save_dir = osp.join(ex_dir, "evaluation")
     os.makedirs(save_dir, exist_ok=True)
     num_ro_per_config = args.num_ro_per_config if args.num_ro_per_config is not None else 5
     est_ret = BayRn.eval_policy(
         save_dir, env_real, policy, mc_estimator=True, prefix=ex_ts, num_rollouts=num_ro_per_config
     )
-    print_cbt(f'Estimated return: {est_ret.item()}', 'g')
+    print_cbt(f"Estimated return: {est_ret.item()}", "g")

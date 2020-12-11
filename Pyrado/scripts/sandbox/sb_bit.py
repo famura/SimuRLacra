@@ -31,8 +31,12 @@ Script to test the bi-manual ball-in-tube task using a hard-coded time-based pol
 """
 import rcsenv
 import pyrado
-from pyrado.environments.rcspysim.ball_in_tube import BallInTubeVelDSSim, BallInTubePosDSSim, BallInTubeIKActivationSim, \
-    BallInTubeIKSim
+from pyrado.environments.rcspysim.ball_in_tube import (
+    BallInTubeVelDSSim,
+    BallInTubePosDSSim,
+    BallInTubeIKActivationSim,
+    BallInTubeIKSim,
+)
 from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import rollout, after_rollout_query
@@ -67,11 +71,9 @@ def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, ch
 def create_ik_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     def policy(t: float):
         if t < 2:
-            return [0.001, 0.001, 0.001, 0.002, 0.002, 0.002,
-                    0.001, 0.001, 0.001, 0.002, 0.002, 0.002]
+            return [0.001, 0.001, 0.001, 0.002, 0.002, 0.002, 0.001, 0.001, 0.001, 0.002, 0.002, 0.002]
         else:
-            return [0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0]
+            return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
     # Set up environment
     env = BallInTubeIKSim(
@@ -101,23 +103,17 @@ def create_ik_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, chec
 def create_ik_activation_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     def policy(t: float):
         if t < 3:
-            return [0, 0, 0.1,
-                    0, 0, 0, 0.1]
+            return [0, 0, 0.1, 0, 0, 0, 0.1]
         elif t < 5:
-            return [0, 0, 0.001,
-                    0, 0.3, 0, 0.001]
+            return [0, 0, 0.001, 0, 0.3, 0, 0.001]
         elif t < 7:
-            return [0, 0, 0.001,
-                    0, 0, 1, 0.001]
+            return [0, 0, 0.001, 0, 0, 1, 0.001]
         elif t < 12:
-            return [0, 1, 0.001,
-                    0, 0, 0, 0.001]
+            return [0, 1, 0.001, 0, 0, 0, 0.001]
         elif t < 15:
-            return [1, 0, 0,
-                    1, 0, 0, 0]
+            return [1, 0, 0, 1, 0, 0, 0]
         else:
-            return [0, 0, 0,
-                    0, 0, 0, 0]
+            return [0, 0, 0, 0, 0, 0, 0]
 
     # Set up environment
     env = BallInTubeIKActivationSim(
@@ -128,7 +124,7 @@ def create_ik_activation_setup(physicsEngine, graphFileName, dt, max_steps, ref_
         max_steps=max_steps,
         ref_frame=ref_frame,
         fixedInitState=True,
-        taskCombinationMethod='sum',
+        taskCombinationMethod="sum",
         checkJointLimits=checkJointLimits,
         collisionAvoidanceIK=True,
         observeVelocity=False,
@@ -147,8 +143,7 @@ def create_ik_activation_setup(physicsEngine, graphFileName, dt, max_steps, ref_
 
 def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     def policy(t: float):
-        return [0.2, 0,
-                0.5, 0]
+        return [0.2, 0, 0.5, 0]
 
     # Set up environment
     env = BallInTubePosDSSim(
@@ -161,7 +156,7 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         mps_right=None,  # use defaults
         ref_frame=ref_frame,
         fixedInitState=True,
-        taskCombinationMethod='sum',
+        taskCombinationMethod="sum",
         checkJointLimits=checkJointLimits,
         collisionAvoidanceIK=False,
         observeVelocity=False,
@@ -182,8 +177,7 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
 
 def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     def policy(t: float):
-        return [1, 1, 1, 1, 1, 1,
-                1, 1, 1, 1, 1, 1]
+        return [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
     # Set up environment
     env = BallInTubeVelDSSim(
@@ -196,7 +190,7 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         mps_right=None,  # use defaults
         ref_frame=ref_frame,
         fixedInitState=True,
-        taskCombinationMethod='sum',
+        taskCombinationMethod="sum",
         checkJointLimits=checkJointLimits,
         collisionAvoidanceIK=False,
         observeVelocity=True,
@@ -216,36 +210,42 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
     return env, policy
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Choose setup
-    setup_type = 'idle'  # idle, ik, ik_activation, ds_activation_pos, ds_activation_vel
+    setup_type = "idle"  # idle, ik, ik_activation, ds_activation_pos, ds_activation_vel
     common_hparam = dict(
-        physicsEngine='Bullet',  # Bullet or Vortex
-        graphFileName='gBallInTube_trqCtrl.xml',  # gBallInTube_trqCtrl
-        dt=1/100.,
-        max_steps=int(20*100),
-        ref_frame='table',  # world, table, or slider
+        physicsEngine="Bullet",  # Bullet or Vortex
+        graphFileName="gBallInTube_trqCtrl.xml",  # gBallInTube_trqCtrl
+        dt=1 / 100.0,
+        max_steps=int(20 * 100),
+        ref_frame="table",  # world, table, or slider
         checkJointLimits=False,
     )
-    if setup_type == 'idle':
+    if setup_type == "idle":
         env, policy = create_idle_setup(**common_hparam)
-    elif setup_type == 'ik':
+    elif setup_type == "ik":
         env, policy = create_ik_setup(**common_hparam)
-    elif setup_type == 'ik_activation':
+    elif setup_type == "ik_activation":
         env, policy = create_ik_activation_setup(**common_hparam)
-    elif setup_type == 'ds_activation_pos':
+    elif setup_type == "ds_activation_pos":
         env, policy = create_position_mps_setup(**common_hparam)
-    elif setup_type == 'ds_activation_vel':
+    elif setup_type == "ds_activation_vel":
         env, policy = create_velocity_mps_setup(**common_hparam)
     else:
         raise pyrado.ValueErr(given=setup_type, eq_constraint="'idle', 'ds_activation_pos', 'ds_activation_vel")
 
     # Simulate and plot
-    print('observations:\n', env.obs_space.labels)
+    print("observations:\n", env.obs_space.labels)
     done, param, state = False, None, None
     while not done:
-        ro = rollout(env, policy, render_mode=RenderMode(text=False, video=True), stop_on_done=False,
-                     eval=True, max_steps=common_hparam['max_steps'],
-                     reset_kwargs=dict(domain_param=param, init_state=state))
-        print_cbt(f'Return: {ro.undiscounted_return()}', 'g', bright=True)
+        ro = rollout(
+            env,
+            policy,
+            render_mode=RenderMode(text=False, video=True),
+            stop_on_done=False,
+            eval=True,
+            max_steps=common_hparam["max_steps"],
+            reset_kwargs=dict(domain_param=param, init_state=state),
+        )
+        print_cbt(f"Return: {ro.undiscounted_return()}", "g", bright=True)
         done, state, param = after_rollout_query(env, policy, ro)

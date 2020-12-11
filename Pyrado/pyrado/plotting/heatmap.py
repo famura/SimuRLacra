@@ -76,22 +76,19 @@ def _setup_index_axis(ax: plt.Axes, index: pd.Index, use_index_labels: bool = Fa
             low = index[iloc_low]
             high = index[iloc_high]
 
-            tick_val = low*(x - iloc_low) + high*(1 - x + iloc_low)
+            tick_val = low * (x - iloc_low) + high * (1 - x + iloc_low)
 
         # Format tick value
-        return f'{tick_val:.{tick_label_precision}f}'
+        return f"{tick_val:.{tick_label_precision}f}"
 
     # Apply tick format
     ax.set_major_formatter(ticker.FuncFormatter(_index_tick))  # index[int(x)]))
     ax.set_minor_formatter(ticker.NullFormatter())
 
 
-def _annotate_heatmap(img,
-                      data=None,
-                      valfmt: str = '{x:.2f}',
-                      textcolors: tuple = ('black', 'white'),
-                      thold: float = None,
-                      **textkw: Any):
+def _annotate_heatmap(
+    img, data=None, valfmt: str = "{x:.2f}", textcolors: tuple = ("black", "white"), thold: float = None, **textkw: Any
+):
     """
     Annotate a given heat map.
     .. note:: The text color changes based on a threshold which only makes sense for color maps going from dark to bright.
@@ -110,10 +107,10 @@ def _annotate_heatmap(img,
         data = img.get_array()
 
     # Normalize the threshold to the images color range
-    thold = img.norm(thold) if thold is not None else img.norm(data.max())/2.
+    thold = img.norm(thold) if thold is not None else img.norm(data.max()) / 2.0
 
     # Set default alignment to center, but allow it to be overwritten by textkw
-    kw = dict(horizontalalignment='center', verticalalignment='center')
+    kw = dict(horizontalalignment="center", verticalalignment="center")
     kw.update(textkw)
 
     # Get the formatter in case a string is supplied
@@ -135,11 +132,11 @@ def render_heatmap(
     cmap: colors.Colormap = None,
     norm: colors.Normalize = colors.Normalize(),
     annotate: bool = True,
-    annotation_valfmt: str = '{x:.0f}',
+    annotation_valfmt: str = "{x:.0f}",
     add_sep_colorbar: bool = False,
     ax_cb: plt.Axes = None,
     colorbar_label: str = None,
-    colorbar_orientation: str = 'vertical',
+    colorbar_orientation: str = "vertical",
     use_index_labels: bool = False,
     x_label: str = None,
     y_label: str = None,
@@ -205,8 +202,14 @@ def render_heatmap(
         fig_hm.canvas.set_window_title(fig_canvas_title)
 
     # Create the image
-    img = ax_hm.imshow(data, cmap=cmap, norm=norm, aspect=(x.max() - x.min())/(y.max() - y.min()), origin='lower',
-                       extent=[x.min(), x.max(), y.min(), y.max()])  # former: aspect='auto'
+    img = ax_hm.imshow(
+        data,
+        cmap=cmap,
+        norm=norm,
+        aspect=(x.max() - x.min()) / (y.max() - y.min()),
+        origin="lower",
+        extent=[x.min(), x.max(), y.min(), y.max()],
+    )  # former: aspect='auto'
 
     # Set axes limits
     ax_hm.set_xlim(x.min(), x.max())
@@ -218,11 +221,13 @@ def render_heatmap(
 
     # Prepare the ticks
     if xtick_label_prec is not None:
-        _setup_index_axis(ax_hm.xaxis, x, use_index_labels,
-                          xtick_label_prec if xtick_label_prec is not None else tick_label_prec)
+        _setup_index_axis(
+            ax_hm.xaxis, x, use_index_labels, xtick_label_prec if xtick_label_prec is not None else tick_label_prec
+        )
     if ytick_label_prec is not None:
-        _setup_index_axis(ax_hm.yaxis, y, use_index_labels,
-                          ytick_label_prec if ytick_label_prec is not None else tick_label_prec)
+        _setup_index_axis(
+            ax_hm.yaxis, y, use_index_labels, ytick_label_prec if ytick_label_prec is not None else tick_label_prec
+        )
     if num_major_ticks_hm is not None:
         ax_hm.xaxis.set_major_locator(plt.MaxNLocator(num_major_ticks_hm, min_n_ticks=num_major_ticks_hm))
         ax_hm.yaxis.set_major_locator(plt.MaxNLocator(num_major_ticks_hm, min_n_ticks=num_major_ticks_hm))
@@ -244,20 +249,16 @@ def render_heatmap(
             fig_cb = plt.gcf()
 
         if colorbar_label is not None:
-            colorbar.ColorbarBase(
-                ax_cb, cmap=cmap, norm=norm, label=colorbar_label, orientation=colorbar_orientation
-            )
+            colorbar.ColorbarBase(ax_cb, cmap=cmap, norm=norm, label=colorbar_label, orientation=colorbar_orientation)
         else:
-            colorbar.ColorbarBase(
-                ax_cb, cmap=cmap, norm=norm, orientation=colorbar_orientation
-            )
+            colorbar.ColorbarBase(ax_cb, cmap=cmap, norm=norm, orientation=colorbar_orientation)
 
         if num_major_ticks_cb is not None:
-            if colorbar_orientation == 'horizontal':
-                ax_cb.xaxis.set_label_position('top')
-                ax_cb.xaxis.set_ticks_position('top')
+            if colorbar_orientation == "horizontal":
+                ax_cb.xaxis.set_label_position("top")
+                ax_cb.xaxis.set_ticks_position("top")
                 ax_cb.xaxis.set_major_locator(plt.MaxNLocator(nbins=num_major_ticks_cb, min_n_ticks=num_major_ticks_cb))
-            elif colorbar_orientation == 'vertical':
+            elif colorbar_orientation == "vertical":
                 ax_cb.yaxis.set_major_locator(plt.MaxNLocator(nbins=num_major_ticks_cb, min_n_ticks=num_major_ticks_cb))
 
         return fig_hm, fig_cb

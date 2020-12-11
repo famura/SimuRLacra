@@ -39,11 +39,7 @@ from pyrado.tasks.reward_functions import RewFcn
 class DesStateTask(Task):
     """ Task class for moving to a desired state. Operates on the error in state and action. """
 
-    def __init__(self,
-                 env_spec: EnvSpec,
-                 state_des: np.ndarray,
-                 rew_fcn: RewFcn,
-                 success_fcn: Callable = None):
+    def __init__(self, env_spec: EnvSpec, state_des: np.ndarray, rew_fcn: RewFcn, success_fcn: Callable = None):
         """
         Constructor
 
@@ -122,13 +118,15 @@ class RadiallySymmDesStateTask(DesStateTask):
     In contrast to DesStateTask, a subset of the state is radially symmetric, e.g. and angular position.
     """
 
-    def __init__(self,
-                 env_spec: EnvSpec,
-                 state_des: np.ndarray,
-                 rew_fcn: RewFcn,
-                 idcs: Sequence[int],
-                 modulation: [float, np.ndarray] = 2*np.pi,
-                 success_fcn: Callable = None):
+    def __init__(
+        self,
+        env_spec: EnvSpec,
+        state_des: np.ndarray,
+        rew_fcn: RewFcn,
+        idcs: Sequence[int],
+        modulation: [float, np.ndarray] = 2 * np.pi,
+        success_fcn: Callable = None,
+    ):
         """
         Constructor
 
@@ -142,7 +140,7 @@ class RadiallySymmDesStateTask(DesStateTask):
         super().__init__(env_spec, state_des, rew_fcn, success_fcn)
 
         self.idcs = idcs
-        self.mod = modulation*np.ones(len(idcs))
+        self.mod = modulation * np.ones(len(idcs))
 
     def step_rew(self, state: np.ndarray, act: np.ndarray, remaining_steps: int = None) -> float:
         # Modulate the state error
@@ -150,7 +148,7 @@ class RadiallySymmDesStateTask(DesStateTask):
         err_state[self.idcs] = np.fmod(err_state[self.idcs], self.mod)  # by default map to [-2pi, 2pi]
 
         # Look at the shortest path to the desired state i.e. desired angle
-        err_state[err_state > np.pi] = 2*np.pi - err_state[err_state > np.pi]  # e.g. 360 - (210) = 150
-        err_state[err_state < -np.pi] = -2*np.pi - err_state[err_state < -np.pi]  # e.g. -360 - (-210) = -150
+        err_state[err_state > np.pi] = 2 * np.pi - err_state[err_state > np.pi]  # e.g. 360 - (210) = 150
+        err_state[err_state < -np.pi] = -2 * np.pi - err_state[err_state < -np.pi]  # e.g. -360 - (-210) = -150
 
         return self.rew_fcn(err_state, -act, remaining_steps)  # act_des = 0

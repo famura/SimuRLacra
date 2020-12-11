@@ -47,11 +47,7 @@ from pyrado.utils.input_output import print_cbt, completion_context
 class QCartPoleReal(QuanserReal, Serializable):
     """ Base class for the real Quanser Cart-Pole """
 
-    def __init__(self,
-                 dt: float,
-                 max_steps: int,
-                 task_args: [dict, None] = None,
-                 ip: str = '192.168.2.17'):
+    def __init__(self, dt: float, max_steps: int, task_args: [dict, None] = None, ip: str = "192.168.2.17"):
         """
         Constructor
 
@@ -76,10 +72,9 @@ class QCartPoleReal(QuanserReal, Serializable):
     def _create_spaces(self):
         # Define the spaces
         self._state_space = None  # needs to be set in subclasses
-        max_obs = np.array([0.814/2., 1., 1., pyrado.inf, pyrado.inf])
-        self._obs_space = BoxSpace(-max_obs, max_obs,
-                                   labels=['x', 'sin_theta', 'cos_theta', 'x_dot', 'theta_dot'])
-        self._act_space = BoxSpace(-max_act_qcp, max_act_qcp, labels=['V'])
+        max_obs = np.array([0.814 / 2.0, 1.0, 1.0, pyrado.inf, pyrado.inf])
+        self._obs_space = BoxSpace(-max_obs, max_obs, labels=["x", "sin_theta", "cos_theta", "x_dot", "theta_dot"])
+        self._act_space = BoxSpace(-max_act_qcp, max_act_qcp, labels=["V"])
 
     @abstractmethod
     def _create_task(self, task_args: dict):
@@ -95,10 +90,10 @@ class QCartPoleReal(QuanserReal, Serializable):
     def calibrate(self):
         if self._calibrated:
             return
-        print_cbt('Calibrating the cart-pole ...', 'c')
+        print_cbt("Calibrating the cart-pole ...", "c")
 
         # Go to the left
-        with completion_context('Going to the left', color='c', bright=True):
+        with completion_context("Going to the left", color="c", bright=True):
             obs, _, _, _ = self.step(np.zeros(self.act_space.shape))
             ctrl = QCartPoleGoToLimCtrl(obs, positive=True)
             while not ctrl.done:
@@ -108,10 +103,10 @@ class QCartPoleReal(QuanserReal, Serializable):
             if ctrl.success:
                 self._norm_x_lim[1] = obs[0]
             else:
-                raise RuntimeError('Going to the left limit failed!')
+                raise RuntimeError("Going to the left limit failed!")
 
         # Go to the right
-        with completion_context('Going to the right', color='c', bright=True):
+        with completion_context("Going to the right", color="c", bright=True):
             obs, _, _, _ = self.step(np.zeros(self.act_space.shape))
             ctrl = QCartPoleGoToLimCtrl(obs, positive=False)
             while not ctrl.done:
@@ -121,7 +116,7 @@ class QCartPoleReal(QuanserReal, Serializable):
             if ctrl.success:
                 self._norm_x_lim[0] = obs[0]
             else:
-                raise RuntimeError('Going to the right limit failed!')
+                raise RuntimeError("Going to the right limit failed!")
 
         # Activate the absolute cart position:
         self._calibrated = True
@@ -132,12 +127,12 @@ class QCartPoleReal(QuanserReal, Serializable):
         t_max, t_start = 10.0, time.time()
         obs, _, _, _ = self.step(np.zeros(self.act_space.shape))
 
-        with completion_context('Centering the cart', color='c', bright=True):
+        with completion_context("Centering the cart", color="c", bright=True):
             while (time.time() - t_start) < t_max:
-                act = -np.sign(obs[0])*1.5*np.ones(self.act_space.shape)
+                act = -np.sign(obs[0]) * 1.5 * np.ones(self.act_space.shape)
                 obs, _, _, _ = self.step(act)
 
-                if np.abs(obs[0]) <= self._c_lim/10.:
+                if np.abs(obs[0]) <= self._c_lim / 10.0:
                     break
 
             # Stop the cart
@@ -146,16 +141,15 @@ class QCartPoleReal(QuanserReal, Serializable):
 
             if np.abs(obs[0]) > self._c_lim:
                 # time.sleep(0.1)
-                raise RuntimeError(
-                    f'Centering of the cart failed: |x| = {np.abs(obs[0]):.2f} > {self._c_lim:.2f}')
+                raise RuntimeError(f"Centering of the cart failed: |x| = {np.abs(obs[0]):.2f} > {self._c_lim:.2f}")
 
     def _correct_sensor_offset(self, meas: np.ndarray) -> np.ndarray:
         # Transform the relative cart position to [-0.4, +0.4]
         if self._calibrated:
-            meas[0] = (meas[0] - self._norm_x_lim[0]) - 0.5*(self._norm_x_lim[1] - self._norm_x_lim[0])
+            meas[0] = (meas[0] - self._norm_x_lim[0]) - 0.5 * (self._norm_x_lim[1] - self._norm_x_lim[0])
 
         # Normalize the angle from -pi to +pi:
-        meas[1] = np.mod(meas[1] + np.pi, 2*np.pi) - np.pi
+        meas[1] = np.mod(meas[1] + np.pi, 2 * np.pi) - np.pi
 
         return meas
 
@@ -163,13 +157,15 @@ class QCartPoleReal(QuanserReal, Serializable):
 class QCartPoleStabReal(QCartPoleReal):
     """ Stabilization task on the real Quanser Cart-Pole """
 
-    name: str = 'qcp-st'
+    name: str = "qcp-st"
 
-    def __init__(self,
-                 dt: float = 1/500.,
-                 max_steps: int = pyrado.inf,
-                 task_args: [dict, None] = None,
-                 ip: str = '192.168.2.17'):
+    def __init__(
+        self,
+        dt: float = 1 / 500.0,
+        max_steps: int = pyrado.inf,
+        task_args: [dict, None] = None,
+        ip: str = "192.168.2.17",
+    ):
         """
         Constructor
 
@@ -181,46 +177,46 @@ class QCartPoleStabReal(QCartPoleReal):
         super().__init__(dt, max_steps, task_args, ip)
 
         # Define the task-specific state space
-        stab_thold = 15/180.*np.pi  # threshold angle for the stabilization task to be a failure [rad]
-        min_state_1 = np.array([-self._l_rail/2. + self._x_buffer, np.pi - stab_thold, -np.inf, -np.inf])
-        max_state_1 = np.array([+self._l_rail/2. - self._x_buffer, np.pi + stab_thold, np.inf, np.inf])
-        min_state_2 = np.array([-self._l_rail/2. + self._x_buffer, -np.pi - stab_thold, -np.inf, -np.inf])
-        max_state_2 = np.array([+self._l_rail/2. - self._x_buffer, -np.pi + stab_thold, np.inf, np.inf])
+        stab_thold = 15 / 180.0 * np.pi  # threshold angle for the stabilization task to be a failure [rad]
+        min_state_1 = np.array([-self._l_rail / 2.0 + self._x_buffer, np.pi - stab_thold, -np.inf, -np.inf])
+        max_state_1 = np.array([+self._l_rail / 2.0 - self._x_buffer, np.pi + stab_thold, np.inf, np.inf])
+        min_state_2 = np.array([-self._l_rail / 2.0 + self._x_buffer, -np.pi - stab_thold, -np.inf, -np.inf])
+        max_state_2 = np.array([+self._l_rail / 2.0 - self._x_buffer, -np.pi + stab_thold, np.inf, np.inf])
 
-        bs_1 = BoxSpace(min_state_1, max_state_1, labels=['x', 'theta', 'x_dot', 'theta_dot'])
-        bs_2 = BoxSpace(min_state_2, max_state_2, labels=['x', 'theta', 'x_dot', 'theta_dot'])
+        bs_1 = BoxSpace(min_state_1, max_state_1, labels=["x", "theta", "x_dot", "theta_dot"])
+        bs_2 = BoxSpace(min_state_2, max_state_2, labels=["x", "theta", "x_dot", "theta_dot"])
 
         self._state_space = CompoundSpace([bs_1, bs_2])
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
-        state_des = task_args.get('state_des', np.array([0., np.pi, 0., 0.]))
-        Q = task_args.get('Q', np.diag([5e-0, 1e+1, 1e-2, 1e-2]))
-        R = task_args.get('R', np.diag([1e-3]))
+        state_des = task_args.get("state_des", np.array([0.0, np.pi, 0.0, 0.0]))
+        Q = task_args.get("Q", np.diag([5e-0, 1e1, 1e-2, 1e-2]))
+        R = task_args.get("R", np.diag([1e-3]))
 
         return FinalRewTask(
             RadiallySymmDesStateTask(self.spec, state_des, QuadrErrRewFcn(Q, R), idcs=[1]),
-            mode=FinalRewMode(state_dependent=True, time_dependent=True)
+            mode=FinalRewMode(state_dependent=True, time_dependent=True),
         )
 
     def _wait_for_upright_pole(self):
         """ Waiting until the user manually set the pole upright """
-        with completion_context('Centering the cart', color='c', bright=True):
+        with completion_context("Centering the cart", color="c", bright=True):
             # Initialize
             t_max, t_start = 15.0, time.time()
             upright = False
 
-            pos_th = np.array([self._c_lim, 2.*np.pi/180.])
-            vel_th = 0.1*np.ones(2)
+            pos_th = np.array([self._c_lim, 2.0 * np.pi / 180.0])
+            vel_th = 0.1 * np.ones(2)
             th = np.hstack((pos_th, vel_th))
 
             # Wait until the pole is upright
             while (time.time() - t_start) <= t_max:
                 obs, _, _, _ = self.step(np.zeros(self.act_space.shape))
-                time.sleep(1/550.)
+                time.sleep(1 / 550.0)
 
-                abs_err = np.abs(np.array([obs[1], obs[2]]) - np.array([[0., -1.]]))
-                err_th = np.array([np.sin(np.deg2rad(3.)), np.sin(np.deg2rad(3.))])
+                abs_err = np.abs(np.array([obs[1], obs[2]]) - np.array([[0.0, -1.0]]))
+                err_th = np.array([np.sin(np.deg2rad(3.0)), np.sin(np.deg2rad(3.0))])
 
                 if np.all(abs_err <= err_th):
                     upright = True
@@ -228,11 +224,16 @@ class QCartPoleStabReal(QCartPoleReal):
 
             if not upright:
                 # time.sleep(0.1)
-                state_str = np.array2string(np.abs(obs), suppress_small=True, precision=2,
-                                            formatter={'float_kind': lambda x: '{0:+05.2f}'.format(x)})
-                th_str = np.array2string(th, suppress_small=True, precision=2,
-                                         formatter={'float_kind': lambda x: '{0:+05.2f}'.format(x)})
-                raise TimeoutError('The pole is not upright: {0} > {1}'.format(state_str, th_str))
+                state_str = np.array2string(
+                    np.abs(obs),
+                    suppress_small=True,
+                    precision=2,
+                    formatter={"float_kind": lambda x: "{0:+05.2f}".format(x)},
+                )
+                th_str = np.array2string(
+                    th, suppress_small=True, precision=2, formatter={"float_kind": lambda x: "{0:+05.2f}".format(x)}
+                )
+                raise TimeoutError("The pole is not upright: {0} > {1}".format(state_str, th_str))
 
     def reset(self, *args, **kwargs):
         # Reset socket, task, and calibrate
@@ -260,13 +261,15 @@ class QCartPoleStabReal(QCartPoleReal):
 class QCartPoleSwingUpReal(QCartPoleReal):
     """ Swing-up task on the real Quanser Cart-Pole """
 
-    name: str = 'qcp-su'
+    name: str = "qcp-su"
 
-    def __init__(self,
-                 dt: float = 1/500.,
-                 max_steps: int = pyrado.inf,
-                 task_args: [dict, None] = None,
-                 ip: str = '192.168.2.17'):
+    def __init__(
+        self,
+        dt: float = 1 / 500.0,
+        max_steps: int = pyrado.inf,
+        task_args: [dict, None] = None,
+        ip: str = "192.168.2.17",
+    ):
         """
         Constructor
 
@@ -278,19 +281,21 @@ class QCartPoleSwingUpReal(QCartPoleReal):
         super().__init__(dt, max_steps, task_args, ip)
 
         # Define the task-specific state space
-        max_state = np.array([self._l_rail/2. - self._x_buffer, +4*np.pi, np.inf, np.inf])  # [m, rad, m/s, rad/s]
-        min_state = np.array([-self._l_rail/2. + self._x_buffer, -4*np.pi, -np.inf, -np.inf])  # [m, rad, m/s, rad/s]
-        self._state_space = BoxSpace(min_state, max_state, labels=['x', 'theta', 'x_dot', 'theta_dot'])
+        max_state = np.array([self._l_rail / 2.0 - self._x_buffer, +4 * np.pi, np.inf, np.inf])  # [m, rad, m/s, rad/s]
+        min_state = np.array(
+            [-self._l_rail / 2.0 + self._x_buffer, -4 * np.pi, -np.inf, -np.inf]
+        )  # [m, rad, m/s, rad/s]
+        self._state_space = BoxSpace(min_state, max_state, labels=["x", "theta", "x_dot", "theta_dot"])
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
-        state_des = task_args.get('state_des', None)
+        state_des = task_args.get("state_des", None)
         if state_des is None:
-            state_des = np.array([0., np.pi, 0., 0.])
+            state_des = np.array([0.0, np.pi, 0.0, 0.0])
 
         return FinalRewTask(
             RadiallySymmDesStateTask(self.spec, state_des, UnderActuatedSwingUpRewFcn(), idcs=[1]),
-            mode=FinalRewMode(always_negative=True)
+            mode=FinalRewMode(always_negative=True),
         )
 
     def reset(self, *args, **kwargs):

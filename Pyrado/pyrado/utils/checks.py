@@ -67,7 +67,7 @@ def is_sequence(obj) -> bool:
     :param obj: any object
     :return: `True` if input is iterable, else `False`
     """
-    return hasattr(type(obj), '__len__') and hasattr(type(obj), '__getitem__')
+    return hasattr(type(obj), "__len__") and hasattr(type(obj), "__getitem__")
 
 
 def check_all_types_equal(iterable) -> bool:

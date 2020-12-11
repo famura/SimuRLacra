@@ -47,18 +47,20 @@ class TwoHeadedRNNPolicyBase(TwoHeadedPolicy, RecurrentPolicy):
     # Type of recurrent network. Is None in base class to force inheritance.
     recurrent_network_type = None
 
-    def __init__(self,
-                 spec: EnvSpec,
-                 shared_hidden_size: int,
-                 shared_num_recurrent_layers: int,
-                 head_1_size: int = None,
-                 head_2_size: int = None,
-                 head_1_output_nonlin: Callable = None,
-                 head_2_output_nonlin: Callable = None,
-                 shared_dropout: float = 0.,
-                 init_param_kwargs: dict = None,
-                 use_cuda: bool = False,
-                 **recurrent_net_kwargs):
+    def __init__(
+        self,
+        spec: EnvSpec,
+        shared_hidden_size: int,
+        shared_num_recurrent_layers: int,
+        head_1_size: int = None,
+        head_2_size: int = None,
+        head_1_output_nonlin: Callable = None,
+        head_2_output_nonlin: Callable = None,
+        shared_dropout: float = 0.0,
+        init_param_kwargs: dict = None,
+        use_cuda: bool = False,
+        **recurrent_net_kwargs,
+    ):
         """
         Constructor
 
@@ -79,7 +81,7 @@ class TwoHeadedRNNPolicyBase(TwoHeadedPolicy, RecurrentPolicy):
         self.num_recurrent_layers = shared_num_recurrent_layers
 
         # Create RNN layers
-        assert self.recurrent_network_type is not None, 'Can not instantiate RNNPolicyBase!'
+        assert self.recurrent_network_type is not None, "Can not instantiate RNNPolicyBase!"
         self.shared = self.recurrent_network_type(
             input_size=spec.obs_space.flat_dim,
             hidden_size=shared_hidden_size,
@@ -88,7 +90,7 @@ class TwoHeadedRNNPolicyBase(TwoHeadedPolicy, RecurrentPolicy):
             batch_first=False,
             dropout=shared_dropout,
             bidirectional=False,
-            **recurrent_net_kwargs
+            **recurrent_net_kwargs,
         )
 
         # Create output layer
@@ -117,7 +119,7 @@ class TwoHeadedRNNPolicyBase(TwoHeadedPolicy, RecurrentPolicy):
     @property
     def hidden_size(self) -> int:
         # The total number of hidden parameters is the hidden layer size times the hidden layer count
-        return self._hidden_size*self.num_recurrent_layers
+        return self._hidden_size * self.num_recurrent_layers
 
     def forward(self, obs: to.Tensor, hidden: to.Tensor = None) -> Tuple[to.Tensor, to.Tensor, to.Tensor]:
         obs = obs.to(self.device)
@@ -131,8 +133,9 @@ class TwoHeadedRNNPolicyBase(TwoHeadedPolicy, RecurrentPolicy):
             batch_size = obs.shape[0]
             obs = obs.view(1, obs.shape[0], obs.shape[1])
         else:
-            raise pyrado.ShapeErr(msg=f"Improper shape of 'obs'. Policy received {obs.shape},"
-                                      f"but shape should be 1-dim or 2-dim")
+            raise pyrado.ShapeErr(
+                msg=f"Improper shape of 'obs'. Policy received {obs.shape}," f"but shape should be 1-dim or 2-dim"
+            )
 
         # Unpack hidden tensor if specified
         # The network can handle getting None by using default values
@@ -164,11 +167,11 @@ class TwoHeadedRNNPolicyBase(TwoHeadedPolicy, RecurrentPolicy):
 
         return output_1, output_2, new_hidden
 
-    def evaluate(self, rollout: StepSequence, hidden_states_name: str = 'hidden_states') -> Tuple[to.Tensor, to.Tensor]:
-        if not rollout.data_format == 'torch':
-            raise pyrado.TypeErr(msg='The rollout rollout passed to evaluate() must be of type torch.Tensor!')
+    def evaluate(self, rollout: StepSequence, hidden_states_name: str = "hidden_states") -> Tuple[to.Tensor, to.Tensor]:
+        if not rollout.data_format == "torch":
+            raise pyrado.TypeErr(msg="The rollout rollout passed to evaluate() must be of type torch.Tensor!")
         if not rollout.continuous:
-            raise pyrado.ValueErr(msg='The rollout rollout passed to evaluate() from a continuous rollout!')
+            raise pyrado.ValueErr(msg="The rollout rollout passed to evaluate() from a continuous rollout!")
 
         # Set policy, i.e. PyTorch nn.Module, to evaluation mode
         self.eval()
@@ -221,22 +224,24 @@ class TwoHeadedRNNPolicyBase(TwoHeadedPolicy, RecurrentPolicy):
 class TwoHeadedRNNPolicy(TwoHeadedRNNPolicyBase):
     """ Two-headed policy backed by a multi-layer RNN """
 
-    name: str = 'thrnn'
+    name: str = "thrnn"
 
     recurrent_network_type = nn.RNN
 
-    def __init__(self,
-                 spec: EnvSpec,
-                 shared_hidden_size: int,
-                 shared_num_recurrent_layers: int,
-                 shared_hidden_nonlin: str = 'tanh',
-                 head_1_size: int = None,
-                 head_2_size: int = None,
-                 head_1_output_nonlin: Callable = None,
-                 head_2_output_nonlin: Callable = None,
-                 shared_dropout: float = 0.,
-                 init_param_kwargs: dict = None,
-                 use_cuda: bool = False):
+    def __init__(
+        self,
+        spec: EnvSpec,
+        shared_hidden_size: int,
+        shared_num_recurrent_layers: int,
+        shared_hidden_nonlin: str = "tanh",
+        head_1_size: int = None,
+        head_2_size: int = None,
+        head_1_output_nonlin: Callable = None,
+        head_2_output_nonlin: Callable = None,
+        shared_dropout: float = 0.0,
+        init_param_kwargs: dict = None,
+        use_cuda: bool = False,
+    ):
         """
         Constructor
 
@@ -270,7 +275,7 @@ class TwoHeadedRNNPolicy(TwoHeadedRNNPolicyBase):
 class TwoHeadedGRUPolicy(TwoHeadedRNNPolicyBase):
     """ Two-headed policy backed by a multi-layer GRU """
 
-    name: str = 'thgru'
+    name: str = "thgru"
 
     recurrent_network_type = nn.GRU
 
@@ -278,24 +283,24 @@ class TwoHeadedGRUPolicy(TwoHeadedRNNPolicyBase):
 class TwoHeadedLSTMPolicy(TwoHeadedRNNPolicyBase):
     """ Two-headed policy backed by a multi-layer LSTM """
 
-    name: str = 'thlstm'
+    name: str = "thlstm"
 
     recurrent_network_type = nn.LSTM
 
     @property
     def hidden_size(self) -> int:
         # LSTM has two hidden variables per layer
-        return self.num_recurrent_layers*self._hidden_size*2
+        return self.num_recurrent_layers * self._hidden_size * 2
 
     def _unpack_hidden(self, hidden: to.Tensor, batch_size: int = None):
         # Special case - need to split into hidden and cell term memory
         # Assume it's a flattened view of hid/cell x nrl x batch x hs
         if len(hidden.shape) == 1:
-            assert hidden.shape[0] == self.hidden_size, \
-                "Passed hidden variable's size doesn't match the one required by the network."
+            assert (
+                hidden.shape[0] == self.hidden_size
+            ), "Passed hidden variable's size doesn't match the one required by the network."
             # We could handle this case, but for now it's not necessary
-            assert batch_size is None, \
-                'Cannot use batched observations with unbatched hidden state'
+            assert batch_size is None, "Cannot use batched observations with unbatched hidden state"
 
             # Reshape to hid/cell x nrl x batch x hs
             hd = hidden.view(2, self.num_recurrent_layers, 1, self._hidden_size)
@@ -303,10 +308,12 @@ class TwoHeadedLSTMPolicy(TwoHeadedRNNPolicyBase):
             return hd[0, ...], hd[1, ...]
 
         elif len(hidden.shape) == 2:
-            assert hidden.shape[1] == self.hidden_size, \
-                "Passed hidden variable's size doesn't match the one required by the network."
-            assert hidden.shape[0] == batch_size, \
-                f'Batch size of hidden state ({hidden.shape[0]}) must match batch size of observations ({batch_size})'
+            assert (
+                hidden.shape[1] == self.hidden_size
+            ), "Passed hidden variable's size doesn't match the one required by the network."
+            assert (
+                hidden.shape[0] == batch_size
+            ), f"Batch size of hidden state ({hidden.shape[0]}) must match batch size of observations ({batch_size})"
 
             # Reshape to hid/cell x nrl x batch x hs
             hd = hidden.view(batch_size, 2, self.num_recurrent_layers, self._hidden_size).permute(1, 2, 0, 3)
@@ -314,8 +321,9 @@ class TwoHeadedLSTMPolicy(TwoHeadedRNNPolicyBase):
             return hd[0, ...], hd[1, ...]
 
         else:
-            raise pyrado.ShapeErr(msg=f"Improper shape of 'hidden'. Policy received {hidden.shape},"
-                                      f"but shape should be 1- or 2-dim")
+            raise pyrado.ShapeErr(
+                msg=f"Improper shape of 'hidden'. Policy received {hidden.shape}," f"but shape should be 1- or 2-dim"
+            )
 
     def _pack_hidden(self, hidden: to.Tensor, batch_size: int = None):
         # Hidden is a tuple, need to turn it to stacked state

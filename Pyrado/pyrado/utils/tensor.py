@@ -117,7 +117,8 @@ def insert_tensor_col(x: to.Tensor, idx: int, col: to.Tensor) -> to.Tensor:
     assert isinstance(col, to.Tensor)
     if not x.shape[0] == col.shape[0]:
         raise pyrado.ShapeErr(
-            msg=f'Number of rows does not match! Original: {x.shape[0]}, column to insert: {col.shape[0]}')
+            msg=f"Number of rows does not match! Original: {x.shape[0]}, column to insert: {col.shape[0]}"
+        )
 
     # Concatenate along columns
     if 0 <= idx < x.shape[1]:

@@ -36,7 +36,7 @@ from pyrado.logger.experiment import ask_for_experiment, load_dict_from_yaml
 from pyrado.utils.argparser import get_argparser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
@@ -44,10 +44,10 @@ if __name__ == '__main__':
     ex_dir = ask_for_experiment() if args.dir is None else args.dir
 
     # Load the
-    hparams = load_dict_from_yaml(osp.join(ex_dir, 'hyperparams.yaml'))
+    hparams = load_dict_from_yaml(osp.join(ex_dir, "hyperparams.yaml"))
 
     # Load the complete algorithm
     algo = Algorithm.load_snapshot(ex_dir)
 
     # Jeeeha
-    algo.train(seed=hparams.get('seed', None))
+    algo.train(seed=hparams.get("seed", None))

@@ -44,7 +44,7 @@ from pyrado.utils.argparser import get_argparser
 from pyrado.utils.input_output import print_cbt
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
@@ -54,14 +54,14 @@ if __name__ == '__main__':
     # Find and load the Optuna data base
     study, study_name = None, None
     for file in os.listdir(ex_dir):
-        if file.endswith('.db'):
+        if file.endswith(".db"):
             study_name = file[:-3]  # the file is named like the study, just need to cut the ending
-            storage = f'sqlite:////{osp.join(ex_dir, file)}'
+            storage = f"sqlite:////{osp.join(ex_dir, file)}"
             study = optuna.load_study(study_name, storage)
             break  # assuming there is only one database
 
     if study is None:
-        pyrado.PathErr(msg=f'No Optuna study found in {ex_dir}!')
+        pyrado.PathErr(msg=f"No Optuna study found in {ex_dir}!")
 
     # Extract the values of all trials (Optuna was set to solve a minimization problem)
     trials = [t for t in study.trials if t.value is not None]  # broken trials return None
@@ -72,14 +72,18 @@ if __name__ == '__main__':
         idcs_best = values.argsort()[::-1]
 
     # Print the best parameter configurations
-    print_cbt(f'The best parameter set of study {study_name} was found in trial_{study.best_trial.number} with value '
-              f'{study.best_value} (average return on independent test rollouts).', 'g', bright=True)
+    print_cbt(
+        f"The best parameter set of study {study_name} was found in trial_{study.best_trial.number} with value "
+        f"{study.best_value} (average return on independent test rollouts).",
+        "g",
+        bright=True,
+    )
     pprint(study.best_params, indent=4)
 
     for i in idcs_best[1:]:
-        if not input('Print next best trial? [y / any other] ').lower() == 'y':
+        if not input("Print next best trial? [y / any other] ").lower() == "y":
             break
-        print(f'Next best parameter set was found in trial_{i} with value {trials[i].value}')
+        print(f"Next best parameter set was found in trial_{i} with value {trials[i].value}")
         pprint(trials[i].params, indent=4)
 
     # Plot the normal histogram and with log-scaled axis
@@ -89,12 +93,12 @@ if __name__ == '__main__':
     _, _, _ = axs[1].hist(values, bins=logbins, density=False)
     axs[0].yaxis.set_major_locator(MaxNLocator(integer=True))
     axs[1].yaxis.set_major_locator(MaxNLocator(integer=True))
-    axs[0].set_xlabel('value')
-    axs[1].set_xlabel('log_10 value')
-    axs[1].set_xscale('log')
-    axs[0].set_ylabel('count')
-    axs[1].set_ylabel('count')
+    axs[0].set_xlabel("value")
+    axs[1].set_xlabel("log_10 value")
+    axs[1].set_xscale("log")
+    axs[0].set_ylabel("count")
+    axs[1].set_ylabel("count")
     axs[0].grid(True)
     axs[1].grid(True)
-    plt.suptitle('Histogram of the Values (Returns)')
+    plt.suptitle("Histogram of the Values (Returns)")
     plt.show()

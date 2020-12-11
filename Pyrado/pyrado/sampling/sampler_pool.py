@@ -40,13 +40,14 @@ import pyrado
 
 class GlobalNamespace:
     """ Type of the worker's global namespace """
+
     pass
 
 
-_CMD_STOP = 'stop'
-_RES_SUCCESS = 'success'
-_RES_ERROR = 'error'
-_RES_FATAL = 'fatal'
+_CMD_STOP = "stop"
+_RES_SUCCESS = "success"
+_RES_ERROR = "error"
+_RES_FATAL = "fatal"
 
 
 def _pool_worker(from_master, to_master):
@@ -56,7 +57,7 @@ def _pool_worker(from_master, to_master):
     :param from_master: tuple (func, args) or the special _CMD_STOP
     :param to_master: tuple (success, obj), where obj is the result on success=True and an error message on success=False
     """
-    # Use a custom global namespace. This 'trick' 
+    # Use a custom global namespace. This 'trick'
     G = GlobalNamespace()
 
     while True:
@@ -81,8 +82,7 @@ def _pool_worker(from_master, to_master):
             to_master.put((_RES_FATAL, msg))
             raise
         else:
-            to_master.put((_RES_SUCCESS,
-                           res))
+            to_master.put((_RES_SUCCESS, res))
 
 
 class _OpState(Enum):
@@ -104,7 +104,7 @@ class _WorkerInfo:
         self._process = mp.Process(
             target=_pool_worker,
             args=(self._to_slave, self._from_slave),
-            name=f'Sampler-Worker-{num}',
+            name=f"Sampler-Worker-{num}",
         )
         self._process.daemon = True
         # Start it
@@ -118,9 +118,9 @@ class _WorkerInfo:
 
     def invoke_start(self, func, *args, **kwargs):
         if not self._process.is_alive():
-            raise RuntimeError('Worker has terminated')
+            raise RuntimeError("Worker has terminated")
         if self._pending:
-            raise RuntimeError('There is still a pending call waiting for completion.')
+            raise RuntimeError("There is still a pending call waiting for completion.")
         # Send to slave
         self._to_slave.put((func, args, kwargs))
         self._pending = True
@@ -131,7 +131,7 @@ class _WorkerInfo:
         :return: False if there was an error result and the loop should be cancelled
         """
         if not self._process.is_alive():
-            raise RuntimeError('Worker has terminated')
+            raise RuntimeError("Worker has terminated")
         if not self._pending:
             return _OpState.PENDING
 
@@ -151,9 +151,9 @@ class _WorkerInfo:
 
     def invoke_wait(self):
         if not self._process.is_alive():
-            raise RuntimeError('Worker has terminated')
+            raise RuntimeError("Worker has terminated")
         if not self._pending:
-            raise RuntimeError('There is no pending call.')
+            raise RuntimeError("There is no pending call.")
 
         if self._result is None:
             # Await result if not done yet
@@ -170,15 +170,15 @@ class _WorkerInfo:
         if stat == _RES_SUCCESS:
             return value
         elif stat == _RES_ERROR:
-            raise RuntimeError(f'Caught error in {self._process.name}:\n{value}')
+            raise RuntimeError(f"Caught error in {self._process.name}:\n{value}")
         elif stat == _RES_FATAL:
             # Mark as failed. For now, there is no way to recover, we just get an error on the next start method.
-            raise RuntimeError(f'Fatal error in {self._process.name}:\n{value}')
+            raise RuntimeError(f"Fatal error in {self._process.name}:\n{value}")
         raise pyrado.ValueErr(given=stat, eq_constraint="_RES_SUCCESS, _RES_ERROR, or _RES_FATAL")
 
     def stop(self):
         if self._pending:
-            raise RuntimeError('There is still a pending call waiting for completion.')
+            raise RuntimeError("There is still a pending call waiting for completion.")
         # Send stop signal
         self._to_slave.put(_CMD_STOP)
 
@@ -223,15 +223,15 @@ def _run_map(G, func, argqueue):
 
 class SamplerPool:
     """
-    A process pool capable of executing operations in parallel. This differs from the multiprocessing.Pool class in 
+    A process pool capable of executing operations in parallel. This differs from the multiprocessing.Pool class in
     that it explicitly incorporates process-local state.
-    
-    Every parallel function gets a GlobalNamespace object as first argument, which can hold arbitrary worker-local 
+
+    Every parallel function gets a GlobalNamespace object as first argument, which can hold arbitrary worker-local
     state. This allows for certain optimizations. For example, when the parallel operation requires an object that is
-    expensive to transmit, we can create this object once in each process, store it in the namespace, and then use it 
+    expensive to transmit, we can create this object once in each process, store it in the namespace, and then use it
     in every map function call.
-    
-    This class also contains additional methods to call a function exactly once in each worker, to setup worker-local 
+
+    This class also contains additional methods to call a function exactly once in each worker, to setup worker-local
     state.
     """
 
@@ -239,7 +239,7 @@ class SamplerPool:
         if not isinstance(num_threads, int):
             raise pyrado.TypeErr(given=num_threads, expected_type=int)
         if num_threads < 1:
-            raise pyrado.ValueErr(given=num_threads, ge_constraint='1')
+            raise pyrado.ValueErr(given=num_threads, ge_constraint="1")
 
         self._n_threads = num_threads
         if num_threads > 1:
@@ -363,23 +363,23 @@ class SamplerPool:
     def run_collect(self, n, func, *args, collect_progressbar: tqdm = None, min_runs=None, **kwargs) -> tuple:
         """
         Collect at least n samples from func, where the number of samples per run can vary.
-        
+
         This is done by calling res, ns = func(G, *args, **kwargs) until the sum of ns exceeds n.
-        
-        This is intended for situations like reinforcement learning runs. If the environment ends up 
+
+        This is intended for situations like reinforcement learning runs. If the environment ends up
         in an error state, you get less samples per run. To ensure a stable learning behaviour, you can
         specify the minimum amount of samples to collect before returning.
-        
-        Since the workers can only check the amount of samples before starting a run, you will likely 
-        get more samples than the minimum. No generated samples are dropped; if that is desired, 
+
+        Since the workers can only check the amount of samples before starting a run, you will likely
+        get more samples than the minimum. No generated samples are dropped; if that is desired,
         do so manually.
-        
+
         :param n: minimum number of samples to collect
         :param func: sampler function. Must be pickleable.
         :param args: remaining positional args are passed to the function
         :param collect_progressbar: tdqm progress bar to use; default None
         :param min_runs: optionally specify a minimum amount of runs to be executed before returning
-        :param kwargs: remaining keyword args are passed to the function 
+        :param kwargs: remaining keyword args are passed to the function
         :return: list of all results
         :return: total number of samples
         """
@@ -405,8 +405,8 @@ class SamplerPool:
             return result, counter
 
         # Create counter + counter-lock as shared vars (counter has no own lock since there is an explicit one).
-        counter = self._manager.Value('i', 0)
-        run_counter = self._manager.Value('i', 0)
+        counter = self._manager.Value("i", 0)
+        run_counter = self._manager.Value("i", 0)
         lock = self._manager.RLock()
 
         # Start async computation
@@ -441,7 +441,7 @@ class SamplerPool:
 
     def __reduce__(self):
         # We cannot really pickle this object since it has a lot of hidden state in the worker processes
-        raise RuntimeError('The sampler pool is not serializable!')
+        raise RuntimeError("The sampler pool is not serializable!")
 
     def __del__(self):
         # stop the workers as soon as the pool is not referenced anymore

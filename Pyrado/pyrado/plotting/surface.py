@@ -45,10 +45,10 @@ def draw_surface(
     x_label: str,
     y_label: str,
     z_label: str,
-    data_format='numpy',
+    data_format="numpy",
     fig: plt.Figure = None,
     title: str = None,
-    plot_kwargs: dict = None
+    plot_kwargs: dict = None,
 ) -> plt.Figure:
     """
     Render a 3-dim surface plot by providing a 1-dim array of x and y points and a function to calculate the z values.
@@ -69,7 +69,7 @@ def draw_surface(
     :param plot_kwargs: keyword arguments forwarded to pyplot's `plot_surface()` function
     :return: handle to figure
     """
-    plot_kwargs = merge_dicts([dict(cmap=mpl.rcParams['image.cmap']), plot_kwargs])
+    plot_kwargs = merge_dicts([dict(cmap=mpl.rcParams["image.cmap"]), plot_kwargs])
 
     if fig is None:
         fig = plt.figure()
@@ -79,16 +79,16 @@ def draw_surface(
     xx, yy = np.meshgrid(x, y)
 
     # Check which version to use based on the output of the function
-    if data_format == 'numpy':
+    if data_format == "numpy":
         # Operate on ndarrays
         zz = np.array([z_fcn(np.stack((x, y), axis=0)) for x, y in zip(xx, yy)])
 
-    elif data_format == 'torch':
+    elif data_format == "torch":
         # Operate on Tensors
         xx_tensor = to.from_numpy(xx)
         yy_tensor = to.from_numpy(yy)
 
-        if hasattr(z_fcn, '_fcn'):
+        if hasattr(z_fcn, "_fcn"):
             # Passed function was wrapped (e.g. by functools)
             check_fcn = z_fcn._fcn
         else:
@@ -96,11 +96,19 @@ def draw_surface(
 
         if isinstance(check_fcn, nn.Module):
             # Adapt for batch-first behavior of NN-based policies
-            zz = to.stack([z_fcn(to.stack((x, y), dim=1).view(-1, 1, 2).to(to.get_default_dtype()))
-                           for x, y in zip(xx_tensor, yy_tensor)])
+            zz = to.stack(
+                [
+                    z_fcn(to.stack((x, y), dim=1).view(-1, 1, 2).to(to.get_default_dtype()))
+                    for x, y in zip(xx_tensor, yy_tensor)
+                ]
+            )
         else:
-            zz = to.stack([z_fcn(to.stack((x, y), dim=1).transpose(0, 1).to(to.get_default_dtype()))
-                           for x, y in zip(xx_tensor, yy_tensor)])
+            zz = to.stack(
+                [
+                    z_fcn(to.stack((x, y), dim=1).transpose(0, 1).to(to.get_default_dtype()))
+                    for x, y in zip(xx_tensor, yy_tensor)
+                ]
+            )
         zz = zz.squeeze().detach().cpu().numpy()
 
     else:

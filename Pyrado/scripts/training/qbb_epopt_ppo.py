@@ -49,26 +49,38 @@ from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QBallBalancerSim.name, f'{EPOpt.name}-{PPO.name}_{FNNPolicy.name}',
-                              'obsnoise_actnorm_actdelay-30')
+    ex_dir = setup_experiment(
+        QBallBalancerSim.name, f"{EPOpt.name}-{PPO.name}_{FNNPolicy.name}", "obsnoise_actnorm_actdelay-30"
+    )
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1/500., max_steps=2500)
+    env_hparams = dict(dt=1 / 500.0, max_steps=2500)
     env = QBallBalancerSim(**env_hparams)
-    env = GaussianObsNoiseWrapper(env, noise_std=[1/180*pi, 1/180*pi, 0.0025, 0.0025,  # [rad, rad, m, m, ...
-                                                  2/180*pi, 2/180*pi, 0.05, 0.05])  # ... rad/s, rad/s, m/s, m/s]
+    env = GaussianObsNoiseWrapper(
+        env,
+        noise_std=[
+            1 / 180 * pi,
+            1 / 180 * pi,
+            0.0025,
+            0.0025,  # [rad, rad, m, m, ...
+            2 / 180 * pi,
+            2 / 180 * pi,
+            0.05,
+            0.05,
+        ],
+    )  # ... rad/s, rad/s, m/s, m/s]
     env = ActNormWrapper(env)
     env = ActDelayWrapper(env)
     randomizer = create_default_randomizer_qbb()
-    randomizer.add_domain_params(UniformDomainParam(name='act_delay', mean=15, halfspan=15, clip_lo=0, roundint=True))
+    randomizer.add_domain_params(UniformDomainParam(name="act_delay", mean=15, halfspan=15, clip_lo=0, roundint=True))
     env = DomainRandWrapperLive(env, randomizer)
 
     # Policy
@@ -98,7 +110,7 @@ if __name__ == '__main__':
     # Subroutine
     subrtn_hparam = dict(
         max_iter=1000,
-        min_steps=30*env.max_steps,
+        min_steps=30 * env.max_steps,
         num_workers=4,
         num_epoch=5,
         eps_clip=0.1,
@@ -114,13 +126,15 @@ if __name__ == '__main__':
     algo = EPOpt(env, subrtn, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(critic=critic_hparam, vfcn=vfcn_hparam),
-        dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(critic=critic_hparam, vfcn=vfcn_hparam),
+            dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha

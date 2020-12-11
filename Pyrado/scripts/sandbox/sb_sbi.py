@@ -50,33 +50,32 @@ plt.rcParams.update({"text.usetex": True})
 
 def simulator(mu):
     # In the end, the output of this could be a distance measure over trajectories instead of just the final state
-    ro = rollout(env, policy, eval=True, reset_kwargs=dict(
-        # domain_param=dict(k=mu[0], d=mu[1]), init_state=np.array([-0.7, 0.])  # no variance over the init state
-        domain_param=dict(k=mu[0], d=mu[1])  # no variance over the parameters
-    ))
+    ro = rollout(
+        env,
+        policy,
+        eval=True,
+        reset_kwargs=dict(
+            # domain_param=dict(k=mu[0], d=mu[1]), init_state=np.array([-0.7, 0.])  # no variance over the init state
+            domain_param=dict(k=mu[0], d=mu[1])  # no variance over the parameters
+        ),
+    )
     return to.from_numpy(ro.observations[-1]).to(dtype=to.float32)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pyrado.set_seed(0)
 
     env = OneMassOscillatorSim(dt=0.005, max_steps=200)
     policy = IdlePolicy(env.spec)
 
-    prior = utils.BoxUniform(
-        low=to.tensor([25., 0.05]),
-        high=to.tensor([35., 0.15])
-    )
+    prior = utils.BoxUniform(low=to.tensor([25.0, 0.05]), high=to.tensor([35.0, 0.15]))
 
     # Let’s learn a likelihood from the simulator
     num_sim = 500
-    method = 'SNRE'  # SNPE or SNLE or SNRE
+    method = "SNRE"  # SNPE or SNLE or SNRE
     posterior = infer(
-        simulator,
-        prior,
-        method=method,  # SNRE newer than SNLE newer than SNPE
-        num_workers=-1,
-        num_simulations=num_sim)
+        simulator, prior, method=method, num_workers=-1, num_simulations=num_sim  # SNRE newer than SNLE newer than SNPE
+    )
 
     # Let’s record our “observations” of the true distribution
     n_observations = 5
@@ -90,39 +89,35 @@ if __name__ == '__main__':
 
     # Computing the log-probability
     bounds = [20, 40, 0.0, 0.2]
-    mu_1, mu_2 = to.tensor(np.mgrid[bounds[0]:bounds[1]:20/50., bounds[2]:bounds[3]:0.2/50.]).float()
-    grids = to.cat(
-        (mu_1.reshape(-1, 1), mu_2.reshape(-1, 1)),
-        dim=1
-    )
-    if method == 'SNPE':
-        log_prob = sum([
-            posterior.log_prob(grids, observation[i])
-            for i in range(len(observation))
-        ])
+    mu_1, mu_2 = to.tensor(np.mgrid[bounds[0] : bounds[1] : 20 / 50.0, bounds[2] : bounds[3] : 0.2 / 50.0]).float()
+    grids = to.cat((mu_1.reshape(-1, 1), mu_2.reshape(-1, 1)), dim=1)
+    if method == "SNPE":
+        log_prob = sum([posterior.log_prob(grids, observation[i]) for i in range(len(observation))])
     else:
-        log_prob = sum([
-            posterior.net(to.cat([grids, observation[i].repeat((grids.shape[0], 1))], dim=1))[:, 0] +
-            posterior._prior.log_prob(grids)
-            for i in range(len(observation))
-        ]).detach()
+        log_prob = sum(
+            [
+                posterior.net(to.cat([grids, observation[i].repeat((grids.shape[0], 1))], dim=1))[:, 0]
+                + posterior._prior.log_prob(grids)
+                for i in range(len(observation))
+            ]
+        ).detach()
     prob = to.exp(log_prob - log_prob.max())  # scale the probabilities to [0, 1]
 
     # log_probability = posterior.log_prob(samples, x=observation[0])  # log_probability seems to be unused
 
     # Plot
     sns.scatterplot(x=observation[:, 0], y=observation[:, 1])
-    plt.xlabel(r'$x_0$')
-    plt.ylabel(r'$x_1$')
+    plt.xlabel(r"$x_0$")
+    plt.ylabel(r"$x_1$")
 
-    out = utils.pairplot(samples, limits=[[20., 40.], [0.0, 0.2]], fig_size=(6, 6), upper='kde', diag='kde')
+    out = utils.pairplot(samples, limits=[[20.0, 40.0], [0.0, 0.2]], fig_size=(6, 6), upper="kde", diag="kde")
 
     plt.figure(dpi=200)
-    plt.plot([20., 40.], [0.1, 0.1], color='w', ls='--')
-    plt.plot([30., 30.], [0.0, 0.2], color='w', ls='--')
+    plt.plot([20.0, 40.0], [0.1, 0.1], color="w", ls="--")
+    plt.plot([30.0, 30.0], [0.0, 0.2], color="w", ls="--")
     plt.contourf(mu_1.numpy(), mu_2.numpy(), prob.reshape(*mu_1.shape).numpy())
     # plt.contourf(prob.reshape(*mu_1.shape), extent=bounds, origin='lower')
-    plt.title(f'Posterior with learned likelihood \n from {num_sim} examples of the true distribution')
-    plt.xlabel(r'$k$')
-    plt.ylabel(r'$d$')
+    plt.title(f"Posterior with learned likelihood \n from {num_sim} examples of the true distribution")
+    plt.xlabel(r"$k$")
+    plt.ylabel(r"$d$")
     plt.show()

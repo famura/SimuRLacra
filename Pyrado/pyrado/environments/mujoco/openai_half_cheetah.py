@@ -47,7 +47,7 @@ class HalfCheetahSim(MujocoSimEnv, Serializable):
         https://github.com/openai/gym/blob/master/gym/envs/mujoco/half_cheetah.py
     """
 
-    name: str = 'cth'
+    name: str = "cth"
 
     def __init__(self, frame_skip: int = 5, max_steps: int = 1000, task_args: Optional[dict] = None):
         """
@@ -59,7 +59,7 @@ class HalfCheetahSim(MujocoSimEnv, Serializable):
         :param task_args: arguments for the task construction, e.g `dict(fwd_rew_weight=1.)`
         """
         # Call MujocoSimEnv's constructor
-        model_path = osp.join(osp.dirname(__file__), 'assets', 'openai_half_cheetah.xml')
+        model_path = osp.join(osp.dirname(__file__), "assets", "openai_half_cheetah.xml")
         super().__init__(model_path, frame_skip, max_steps, task_args)
 
         self.camera_config = dict(distance=5.0)
@@ -71,13 +71,13 @@ class HalfCheetahSim(MujocoSimEnv, Serializable):
             tangential_friction_coeff=0.4,
             torsional_friction_coeff=0.1,
             rolling_friction_coeff=0.1,
-            reset_noise_halfspan=0.1
+            reset_noise_halfspan=0.1,
         )
 
     def _create_spaces(self):
         # Action
         act_bounds = self.model.actuator_ctrlrange.copy().T
-        self._act_space = BoxSpace(*act_bounds, labels=['bthigh', 'bshin', 'bfoot', 'fthigh', 'fshin', 'ffoot'])
+        self._act_space = BoxSpace(*act_bounds, labels=["bthigh", "bshin", "bfoot", "fthigh", "fshin", "ffoot"])
 
         # State
         state_shape = np.concatenate([self.sim.data.qpos, self.sim.data.qvel]).shape
@@ -85,7 +85,7 @@ class HalfCheetahSim(MujocoSimEnv, Serializable):
         self._state_space = BoxSpace(-max_state, max_state)
 
         # Initial state
-        noise_halfspan = self.domain_param['reset_noise_halfspan']
+        noise_halfspan = self.domain_param["reset_noise_halfspan"]
         min_init_qpos = self.init_qpos - np.full_like(self.init_qpos, noise_halfspan)
         max_init_qpos = self.init_qpos + np.full_like(self.init_qpos, noise_halfspan)
         min_init_qvel = self.init_qvel - np.full_like(self.init_qpos, noise_halfspan)
@@ -100,10 +100,10 @@ class HalfCheetahSim(MujocoSimEnv, Serializable):
         self._obs_space = BoxSpace(-max_obs, max_obs)
 
     def _create_task(self, task_args: dict) -> Task:
-        if 'fwd_rew_weight' not in task_args:
-            task_args['fwd_rew_weight'] = 1.
-        if 'ctrl_cost_weight' not in task_args:
-            task_args['ctrl_cost_weight'] = 0.1
+        if "fwd_rew_weight" not in task_args:
+            task_args["fwd_rew_weight"] = 1.0
+        if "ctrl_cost_weight" not in task_args:
+            task_args["ctrl_cost_weight"] = 0.1
 
         return GoallessTask(self.spec, ForwardVelocityRewFcn(self._dt, idx_fwd=0, **task_args))
 

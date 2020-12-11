@@ -69,7 +69,7 @@ class ActDelayWrapper(EnvWrapperAct, Serializable):
         :param domain_param: domain parameter dict
         """
         # Cast to integer for consistency
-        domain_param['act_delay'] = int(self._delay)
+        domain_param["act_delay"] = int(self._delay)
 
     def _load_domain_param(self, domain_param: dict):
         """
@@ -78,7 +78,7 @@ class ActDelayWrapper(EnvWrapperAct, Serializable):
         :param domain_param: domain parameter dict
         """
         # Cast the delay value to int, since randomizer yields ndarrays or Tensors
-        self._delay = int(domain_param.get('act_delay', self._delay))
+        self._delay = int(domain_param.get("act_delay", self._delay))
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         # Adapt _delay to the new act_delay if provided
@@ -86,7 +86,7 @@ class ActDelayWrapper(EnvWrapperAct, Serializable):
             self._load_domain_param(domain_param)
 
         # Init action queue with the right amount of 0 actions
-        self._act_queue = [np.zeros(self.act_space.shape)]*self._delay
+        self._act_queue = [np.zeros(self.act_space.shape)] * self._delay
 
         # Call the reset function of the super class and forwards the arguments
         return super().reset(init_state, domain_param)

@@ -33,8 +33,14 @@ from abc import ABC, abstractmethod
 from init_args_serializer import Serializable
 
 import pyrado
-from pyrado.environments.barrett_wam import init_qpos_des_4dof, init_qpos_des_7dof, act_space_wam_7dof, \
-    act_space_wam_4dof, wam_pgains, wam_dgains
+from pyrado.environments.barrett_wam import (
+    init_qpos_des_4dof,
+    init_qpos_des_7dof,
+    act_space_wam_7dof,
+    act_space_wam_4dof,
+    wam_pgains,
+    wam_dgains,
+)
 from pyrado.environments.real_base import RealEnv
 from pyrado.spaces import BoxSpace
 from pyrado.spaces.base import Space
@@ -56,13 +62,11 @@ class WAMBallInCupReal(RealEnv, ABC, Serializable):
     The concrete control approach (step-based or episodic) is implemented by the sub class
     """
 
-    name: str = 'wam-bic'
+    name: str = "wam-bic"
 
-    def __init__(self,
-                 dt: float = 1/500.,
-                 max_steps: int = pyrado.inf,
-                 num_dof: int = 7,
-                 ip: [str, None] = '192.168.2.2'):
+    def __init__(
+        self, dt: float = 1 / 500.0, max_steps: int = pyrado.inf, num_dof: int = 7, ip: [str, None] = "192.168.2.2"
+    ):
         """
         Constructor
 
@@ -75,7 +79,7 @@ class WAMBallInCupReal(RealEnv, ABC, Serializable):
 
         # Make sure max_steps is reachable
         if not max_steps < pyrado.inf:
-            raise pyrado.ValueErr(given=max_steps, given_name='max_steps', l_constraint=pyrado.inf)
+            raise pyrado.ValueErr(given=max_steps, given_name="max_steps", l_constraint=pyrado.inf)
 
         # Call the base class constructor to initialize fundamental members
         super().__init__(dt, max_steps)
@@ -83,13 +87,13 @@ class WAMBallInCupReal(RealEnv, ABC, Serializable):
         # Create the robcom client and connect to it. Use a Process to timeout if connection cannot be established
         self._connected = False
         self._client = robcom.Client()
-        self._robot_group_name = 'RIGHT_ARM'
+        self._robot_group_name = "RIGHT_ARM"
         try:
             self._client.start(ip, 2013, 1000)  # ip address, port, timeout in ms
             self._connected = True
-            print_cbt('Connected to the Barret WAM client.', 'c', bright=True)
+            print_cbt("Connected to the Barret WAM client.", "c", bright=True)
         except RuntimeError:
-            print_cbt('Connection to the Barret WAM client failed.', 'r', bright=True)
+            print_cbt("Connection to the Barret WAM client failed.", "r", bright=True)
         self._jg = self._client.robot.get_group([self._robot_group_name])
         self._dc = None  # direct-control process
         self._t = None  # only needed for WAMBallInCupRealStepBased
@@ -152,15 +156,15 @@ class WAMBallInCupReal(RealEnv, ABC, Serializable):
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         if not self._connected:
-            print_cbt('Not connected to Barret WAM client.', 'r', bright=True)
+            print_cbt("Not connected to Barret WAM client.", "r", bright=True)
             raise pyrado.ValueErr(given=self._connected, eq_constraint=True)
 
         # Create a direct control process to set the PD gains
-        self._client.set(robcom.Streaming, 500.)  # Hz
+        self._client.set(robcom.Streaming, 500.0)  # Hz
         dc = self._client.create(robcom.DirectControl, self._robot_group_name, "")
         dc.start()
-        dc.groups.set(robcom.JointDesState.P_GAIN, wam_pgains[:self.num_dof].tolist())
-        dc.groups.set(robcom.JointDesState.D_GAIN, wam_dgains[:self.num_dof].tolist())
+        dc.groups.set(robcom.JointDesState.P_GAIN, wam_pgains[: self.num_dof].tolist())
+        dc.groups.set(robcom.JointDesState.D_GAIN, wam_dgains[: self.num_dof].tolist())
         dc.send_updates()
         dc.stop()
 
@@ -168,16 +172,16 @@ class WAMBallInCupReal(RealEnv, ABC, Serializable):
         time.sleep(0.1)  # short active waiting because updates are sent in another thread
         pgains_des = self._jg.get_desired(robcom.JointDesState.P_GAIN)
         dgains_des = self._jg.get_desired(robcom.JointDesState.D_GAIN)
-        print_cbt(f'Desired PD gains are set to: {pgains_des} \t {dgains_des}', color='g')
+        print_cbt(f"Desired PD gains are set to: {pgains_des} \t {dgains_des}", color="g")
 
         # Create robcom GoTo process
-        gt = self._client.create(robcom.Goto, self._robot_group_name, '')
+        gt = self._client.create(robcom.Goto, self._robot_group_name, "")
 
         # Move to initial state within 5 seconds
-        gt.add_step(5., self.qpos_des_init)
+        gt.add_step(5.0, self.qpos_des_init)
 
         # Start process and wait for completion
-        with completion_context('Moving the Barret WAM to the initial position', color='c', bright=True):
+        with completion_context("Moving the Barret WAM to the initial position", color="c", bright=True):
             gt.start()
             gt.wait_for_completion()
 
@@ -192,7 +196,7 @@ class WAMBallInCupReal(RealEnv, ABC, Serializable):
         self.qvel_real = np.zeros((self.max_steps, self.num_dof))
 
         # Reset the control process as well as state and trajectory params
-        input('Hit enter to continue.')
+        input("Hit enter to continue.")
         self._reset()
 
         return self.observe(self.state)
@@ -226,7 +230,7 @@ class WAMBallInCupRealEpisodic(WAMBallInCupReal, Serializable):
 
     def _create_spaces(self):
         # State space (normalized time, since we do not have a simulation)
-        self._state_space = BoxSpace(np.array([0.]), np.array([1.]))
+        self._state_space = BoxSpace(np.array([0.0]), np.array([1.0]))
 
         # Action space (PD controller on joint positions and velocities)
         if self.num_dof == 4:
@@ -235,27 +239,27 @@ class WAMBallInCupRealEpisodic(WAMBallInCupReal, Serializable):
             self._act_space = act_space_wam_7dof
 
         # Observation space (normalized time)
-        self._obs_space = BoxSpace(np.array([0.]), np.array([1.]), labels=['t'])
+        self._obs_space = BoxSpace(np.array([0.0]), np.array([1.0]), labels=["t"])
 
     def _reset(self):
         # Reset current step of the real robot
         self._curr_step_rr = 0
 
         # Reset state
-        self.state = np.array([self._curr_step/self.max_steps])
+        self.state = np.array([self._curr_step / self.max_steps])
 
         # Reset trajectory params
         self.qpos_des = np.tile(self.qpos_des_init, (self.max_steps, 1))
         self.qvel_des = np.zeros_like(self.qpos_des)
 
         # Create robcom direct-control process
-        self._dc = self._client.create(robcom.ClosedLoopDirectControl, self._robot_group_name, '')
+        self._dc = self._client.create(robcom.ClosedLoopDirectControl, self._robot_group_name, "")
 
     def step(self, act: np.ndarray) -> tuple:
         if self._curr_step == 0:
-            print_cbt('Pre-sampling policy...', 'w')
+            print_cbt("Pre-sampling policy...", "w")
 
-        info = dict(t=self._curr_step*self._dt, act_raw=act)
+        info = dict(t=self._curr_step * self._dt, act_raw=act)
 
         # Current reward depending on the (measurable) state and the current (unlimited) action
         remaining_steps = self._max_steps - (self._curr_step + 1) if self._max_steps is not pyrado.inf else 0
@@ -265,12 +269,12 @@ class WAMBallInCupRealEpisodic(WAMBallInCupReal, Serializable):
         act = self.limit_act(act)
 
         # The policy operates on specific indices self.idcs_act, i.e. joint 1 and 3 (and 5)
-        self.qpos_des[self._curr_step, self.idcs_act] += act[:len(self.idcs_act)]
-        self.qvel_des[self._curr_step, self.idcs_act] += act[len(self.idcs_act):]
+        self.qpos_des[self._curr_step, self.idcs_act] += act[: len(self.idcs_act)]
+        self.qvel_des[self._curr_step, self.idcs_act] += act[len(self.idcs_act) :]
 
         # Update current step and state
         self._curr_step += 1
-        self.state = np.array([self._curr_step/self.max_steps])
+        self.state = np.array([self._curr_step / self.max_steps])
 
         # A GoallessTask only signals done when has_failed() is true, i.e. the the state is out of bounds
         done = self._task.is_done(self.state)  # always false for wam-bic-real
@@ -278,12 +282,12 @@ class WAMBallInCupRealEpisodic(WAMBallInCupReal, Serializable):
         # Only start execution of process when all desired poses have been sampled from the policy
         if self._curr_step >= self._max_steps:
             done = True  # exceeded max time steps
-            with completion_context('Executing trajectory on Barret WAM', color='c', bright=True):
-                self._dc.start(False, round(500*self._dt), self._callback, ['POS', 'VEL'], [], [])
+            with completion_context("Executing trajectory on Barret WAM", color="c", bright=True):
+                self._dc.start(False, round(500 * self._dt), self._callback, ["POS", "VEL"], [], [])
                 t_start = time.time()
                 self._dc.wait_for_completion()
                 t_stop = time.time()
-            print_cbt(f'Execution took {t_stop - t_start:1.5f} s.', 'g')
+            print_cbt(f"Execution took {t_stop - t_start:1.5f} s.", "g")
 
         # Add final reward if done
         if done:
@@ -334,7 +338,7 @@ class WAMBallInCupRealStepBased(WAMBallInCupReal, Serializable):
 
     def _create_spaces(self):
         # State space (joint positions and velocities)
-        state_shape = (2*self.num_dof,)
+        state_shape = (2 * self.num_dof,)
         state_up, state_lo = np.full(state_shape, pyrado.inf), np.full(state_shape, -pyrado.inf)
         self._state_space = BoxSpace(state_lo, state_up)
 
@@ -345,7 +349,7 @@ class WAMBallInCupRealStepBased(WAMBallInCupReal, Serializable):
             self._act_space = act_space_wam_7dof
 
         # Observation space (normalized time)
-        self._obs_space = BoxSpace(np.array([0.]), np.array([1.]), labels=['t'])
+        self._obs_space = BoxSpace(np.array([0.0]), np.array([1.0]), labels=["t"])
 
     def _reset(self):
         # Get the robot access manager, to control that synchronized data is received
@@ -380,10 +384,10 @@ class WAMBallInCupRealStepBased(WAMBallInCupReal, Serializable):
     def step(self, act: np.ndarray) -> tuple:
         # Start robcom direct-control process
         if self._curr_step == 0:
-            print_cbt('Executing trajectory on Barret WAM', color='c', bright=True)
+            print_cbt("Executing trajectory on Barret WAM", color="c", bright=True)
             self._dc.start()
 
-        info = dict(t=self._curr_step*self._dt, act_raw=act)
+        info = dict(t=self._curr_step * self._dt, act_raw=act)
 
         # Current reward depending on the (measurable) state and the current (unlimited) action
         remaining_steps = self._max_steps - (self._curr_step + 1) if self._max_steps is not pyrado.inf else 0
@@ -393,8 +397,8 @@ class WAMBallInCupRealStepBased(WAMBallInCupReal, Serializable):
         act = self.limit_act(act)
 
         # The policy operates on specific indices `self.idcs_act`, i.e. joint 1 and 3 (and 5)
-        self._qpos_des[self.idcs_act] = self.qpos_des_init[self.idcs_act] + act[:len(self.idcs_act)]
-        self._qvel_des[self.idcs_act] = act[len(self.idcs_act):]
+        self._qpos_des[self.idcs_act] = self.qpos_des_init[self.idcs_act] + act[: len(self.idcs_act)]
+        self._qvel_des[self.idcs_act] = act[len(self.idcs_act) :]
 
         # Send desired positions and velocities to robcom
         self._dc.groups.set(robcom.JointDesState.POS, self._qpos_des)
@@ -403,10 +407,10 @@ class WAMBallInCupRealStepBased(WAMBallInCupReal, Serializable):
 
         # Sleep to keep the frequency
         to_sleep = self._dt - (time.time() - self._t)
-        if to_sleep > 0.:
+        if to_sleep > 0.0:
             time.sleep(to_sleep)
         else:
-            print_cbt_once('The step call was too slow for the control frequency', color='y')
+            print_cbt_once("The step call was too slow for the control frequency", color="y")
         self._t = time.time()
 
         # Get current joint angles and angular velocities
@@ -439,4 +443,4 @@ class WAMBallInCupRealStepBased(WAMBallInCupReal, Serializable):
         return self.observe(self.state), self._curr_rew, done, info
 
     def observe(self, state: np.ndarray) -> np.ndarray:
-        return np.array([self._curr_step/self.max_steps])
+        return np.array([self._curr_step / self.max_steps])

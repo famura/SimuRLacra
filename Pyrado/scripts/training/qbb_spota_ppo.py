@@ -52,26 +52,38 @@ from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QBallBalancerSim.name, f'{SPOTA.name}-{PPO.name}_{GRUPolicy.name}',
-                              'actnorm_obsnoise_actedlay-10_ws')
+    ex_dir = setup_experiment(
+        QBallBalancerSim.name, f"{SPOTA.name}-{PPO.name}_{GRUPolicy.name}", "actnorm_obsnoise_actedlay-10_ws"
+    )
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment and domain randomization
-    env_hparams = dict(dt=1/100., max_steps=500, load_experimental_tholds=True)
+    env_hparams = dict(dt=1 / 100.0, max_steps=500, load_experimental_tholds=True)
     env = QBallBalancerSim(**env_hparams)
-    env = GaussianObsNoiseWrapper(env, noise_std=[1/180*pi, 1/180*pi, 0.005, 0.005,  # [rad, rad, m, m, ...
-                                                  10/180*pi, 10/180*pi, 0.05, 0.05])  # ... rad/s, rad/s, m/s, m/s]
+    env = GaussianObsNoiseWrapper(
+        env,
+        noise_std=[
+            1 / 180 * pi,
+            1 / 180 * pi,
+            0.005,
+            0.005,  # [rad, rad, m, m, ...
+            10 / 180 * pi,
+            10 / 180 * pi,
+            0.05,
+            0.05,
+        ],
+    )  # ... rad/s, rad/s, m/s, m/s]
     env = ActNormWrapper(env)
     env = ActDelayWrapper(env)
     randomizer = create_conservative_randomizer(env)
-    randomizer.add_domain_params(UniformDomainParam(name='act_delay', mean=5, halfspan=5, clip_lo=0, roundint=True))
+    randomizer.add_domain_params(UniformDomainParam(name="act_delay", mean=5, halfspan=5, clip_lo=0, roundint=True))
     env = DomainRandWrapperBuffer(env, randomizer)
 
     # Policy
@@ -98,7 +110,7 @@ if __name__ == '__main__':
         batch_size=100,
         lr=1e-4,
         standardize_adv=False,
-        max_grad_norm=1.,
+        max_grad_norm=1.0,
     )
     critic_cand = GAE(vfcn, **critic_hparam)
     critic_refs = GAE(deepcopy(vfcn), **critic_hparam)
@@ -111,7 +123,7 @@ if __name__ == '__main__':
         eps_clip=0.1,
         batch_size=100,
         std_init=0.8,
-        max_grad_norm=1.,
+        max_grad_norm=1.0,
         lr=1e-4,
     )
     subrtn_hparam_refs = deepcopy(subrtn_hparam_cand)
@@ -141,13 +153,15 @@ if __name__ == '__main__':
     algo = SPOTA(ex_dir, env, sr_cand, sr_refs, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(critic_cand_and_ref=critic_hparam),
-        dict(subrtn_name=sr_cand.name, subrtn_cand=subrtn_hparam_cand, subrtn_refs=subrtn_hparam_refs),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(critic_cand_and_ref=critic_hparam),
+            dict(subrtn_name=sr_cand.name, subrtn_cand=subrtn_hparam_cand, subrtn_refs=subrtn_hparam_refs),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha

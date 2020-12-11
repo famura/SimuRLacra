@@ -39,9 +39,11 @@ from pyrado.policies.base import Policy
 class TimePolicy(Policy):
     """ A purely time-based policy, mainly useful for testing """
 
-    name: str = 'time'
+    name: str = "time"
 
-    def __init__(self, spec: EnvSpec, fcn_of_time: Callable[[float], Sequence[float]], dt: float, use_cuda: bool = False):
+    def __init__(
+        self, spec: EnvSpec, fcn_of_time: Callable[[float], Sequence[float]], dt: float, use_cuda: bool = False
+    ):
         """
         Constructor
 
@@ -85,7 +87,7 @@ class TraceableTimePolicy(Module):
     Better to just write another class.
     """
 
-    name: str = 'trtime'
+    name: str = "trtime"
 
     # Attributes
     input_size: int
@@ -101,14 +103,19 @@ class TraceableTimePolicy(Module):
         self.input_size = spec.obs_space.flat_dim
         self.output_size = spec.act_space.flat_dim
         self.dt = dt
-        self.current_time = 0.
+        self.current_time = 0.0
 
         # Validate function signature
         sig = inspect.signature(fcn_of_time, follow_wrapped=False)
-        posp = [p for p in sig.parameters.values() if p.kind in {
-            inspect.Parameter.POSITIONAL_ONLY,
-            inspect.Parameter.POSITIONAL_OR_KEYWORD,
-        }]
+        posp = [
+            p
+            for p in sig.parameters.values()
+            if p.kind
+            in {
+                inspect.Parameter.POSITIONAL_ONLY,
+                inspect.Parameter.POSITIONAL_OR_KEYWORD,
+            }
+        ]
         assert len(posp) == 1
         param = next(iter(posp))
         # check parameter type
@@ -121,7 +128,7 @@ class TraceableTimePolicy(Module):
 
     @export
     def reset(self):
-        self.current_time = 0.
+        self.current_time = 0.0
 
     def forward(self, obs_ignore):
         act = to.tensor(self.fcn_of_time(self.current_time), dtype=to.double)

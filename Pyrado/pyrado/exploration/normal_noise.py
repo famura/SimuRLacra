@@ -40,13 +40,15 @@ import pyrado
 class DiagNormalNoise(nn.Module):
     """ Module for learnable additive Gaussian noise with a diagonal covariance matrix """
 
-    def __init__(self,
-                 use_cuda: bool,
-                 noise_dim: [int, tuple],
-                 std_init: [float, int, to.Tensor],
-                 std_min: [float, to.Tensor] = 1e-3,
-                 train_mean: bool = False,
-                 learnable: bool = True):
+    def __init__(
+        self,
+        use_cuda: bool,
+        noise_dim: [int, tuple],
+        std_init: [float, int, to.Tensor],
+        std_min: [float, to.Tensor] = 1e-3,
+        train_mean: bool = False,
+        learnable: bool = True,
+    ):
         """
         Constructor
 
@@ -61,8 +63,10 @@ class DiagNormalNoise(nn.Module):
             raise pyrado.TypeErr(given=std_init, expected_type=[float, int, to.Tensor])
         if isinstance(std_init, to.Tensor) and not std_init.size() == noise_dim:
             raise pyrado.ShapeErr(given=std_init, expected_match=to.empty(noise_dim))
-        if not (isinstance(std_init, (float, int)) and std_init > 0 or isinstance(std_init, to.Tensor) and all(std_init > 0)):
-            raise pyrado.ValueErr(given=std_init, g_constraint='0')
+        if not (
+            isinstance(std_init, (float, int)) and std_init > 0 or isinstance(std_init, to.Tensor) and all(std_init > 0)
+        ):
+            raise pyrado.ValueErr(given=std_init, g_constraint="0")
         if not isinstance(std_min, (float, to.Tensor)):
             raise pyrado.TypeErr(given=std_min, expected_type=[float, to.Tensor])
 
@@ -70,12 +74,12 @@ class DiagNormalNoise(nn.Module):
         super().__init__()
 
         if not use_cuda:
-            self._device = 'cpu'
+            self._device = "cpu"
         elif use_cuda and to.cuda.is_available():
-            self._device = 'cuda'
+            self._device = "cuda"
         elif use_cuda and not to.cuda.is_available():
-            warn('Tried to run on CUDA, but it is not available. Falling back to CPU.')
-            self._device = 'cpu'
+            warn("Tried to run on CUDA, but it is not available. Falling back to CPU.")
+            self._device = "cpu"
 
         # Register parameters
         if learnable:
@@ -87,7 +91,9 @@ class DiagNormalNoise(nn.Module):
 
         # Initialize parameters
         self.log_std_init = to.log(to.tensor(std_init)) if isinstance(std_init, float) else to.log(std_init)
-        self.std_min = to.tensor(std_min, dtype=to.get_default_dtype()) if isinstance(std_min, (float, int)) else std_min
+        self.std_min = (
+            to.tensor(std_min, dtype=to.get_default_dtype()) if isinstance(std_min, (float, int)) else std_min
+        )
         if not isinstance(self.log_std_init, to.Tensor):
             raise pyrado.TypeErr(given=self.log_std_init, expected_type=to.Tensor)
         if not isinstance(self.std_min, to.Tensor):
@@ -132,10 +138,10 @@ class DiagNormalNoise(nn.Module):
         if not (isinstance(mean, to.Tensor) or mean is None):
             raise pyrado.TypeErr(given=mean, expected_type=to.Tensor)
         if not (isinstance(std, to.Tensor) and (std >= 0).all() or std is None):
-            raise pyrado.TypeErr(msg='The std must be a Tensor with all elements > 0 or None!')
+            raise pyrado.TypeErr(msg="The std must be a Tensor with all elements > 0 or None!")
 
         if mean is not None:
-            assert self.mean is not None, 'Can not change fixed zero mean!'
+            assert self.mean is not None, "Can not change fixed zero mean!"
             if not mean.shape == self.mean.shape:
                 raise pyrado.ShapeErr(given=mean, expected_match=self.mean)
             self.mean.data = mean
@@ -161,19 +167,21 @@ class DiagNormalNoise(nn.Module):
 
         :return: entropy value
         """
-        return 0.5 + 0.5*to.log(to.tensor(2*math.pi)) + 0.5*to.log(to.prod(to.pow(self.std, 2)))
+        return 0.5 + 0.5 * to.log(to.tensor(2 * math.pi)) + 0.5 * to.log(to.prod(to.pow(self.std, 2)))
 
 
 class FullNormalNoise(nn.Module):
     """ Module for learnable additive Gaussian noise with a full covariance matrix """
 
-    def __init__(self,
-                 use_cuda: bool,
-                 noise_dim: [int, tuple],
-                 std_init: [float, int, to.Tensor],
-                 std_min: [float, to.Tensor] = 1e-3,
-                 train_mean: bool = False,
-                 learnable: bool = True):
+    def __init__(
+        self,
+        use_cuda: bool,
+        noise_dim: [int, tuple],
+        std_init: [float, int, to.Tensor],
+        std_min: [float, to.Tensor] = 1e-3,
+        train_mean: bool = False,
+        learnable: bool = True,
+    ):
         """
         Constructor
 
@@ -188,25 +196,23 @@ class FullNormalNoise(nn.Module):
             raise pyrado.TypeErr(given=std_init, expected_type=[float, int, to.Tensor])
         if isinstance(std_init, to.Tensor) and not std_init.size() == noise_dim:
             raise pyrado.ShapeErr(given=std_init, expected_match=to.empty(noise_dim))
-        if not (isinstance(std_init, float) and std_init > 0 or
-                isinstance(std_init, to.Tensor) and all(std_init > 0)):
-            raise pyrado.ValueErr(given=std_init, g_constraint='0')
+        if not (isinstance(std_init, float) and std_init > 0 or isinstance(std_init, to.Tensor) and all(std_init > 0)):
+            raise pyrado.ValueErr(given=std_init, g_constraint="0")
         if not isinstance(std_min, (float, to.Tensor)):
             raise pyrado.TypeErr(given=std_min, expected_type=[float, to.Tensor])
-        if not (isinstance(std_min, float) and std_min > 0 or
-                isinstance(std_min, to.Tensor) and all(std_min > 0)):
-            raise pyrado.ValueErr(given=std_min, g_constraint='0')
+        if not (isinstance(std_min, float) and std_min > 0 or isinstance(std_min, to.Tensor) and all(std_min > 0)):
+            raise pyrado.ValueErr(given=std_min, g_constraint="0")
 
         # Call torch.nn.Module's constructor
         super().__init__()
 
         if not use_cuda:
-            self._device = 'cpu'
+            self._device = "cpu"
         elif use_cuda and to.cuda.is_available():
-            self._device = 'cuda'
+            self._device = "cuda"
         elif use_cuda and not to.cuda.is_available():
-            warn('Tried to run on CUDA, but it is not available. Falling back to CPU.')
-            self._device = 'cpu'
+            warn("Tried to run on CUDA, but it is not available. Falling back to CPU.")
+            self._device = "cpu"
 
         # Register parameters
         if learnable:
@@ -217,7 +223,9 @@ class FullNormalNoise(nn.Module):
             self.mean = None
 
         # Initialize parameters
-        self.cov_init = std_init**2*to.eye(noise_dim) if isinstance(std_init, float) else to.diag(to.pow(std_init, 2))
+        self.cov_init = (
+            std_init ** 2 * to.eye(noise_dim) if isinstance(std_init, float) else to.diag(to.pow(std_init, 2))
+        )
         self.std_min = to.tensor(std_min) if isinstance(std_min, float) else std_min
         if not isinstance(self.cov_init, to.Tensor):
             raise pyrado.TypeErr(given=self.cov_init, expected_type=to.Tensor)
@@ -258,7 +266,7 @@ class FullNormalNoise(nn.Module):
             raise pyrado.TypeErr(given=cov, expected_type=to.Tensor)
 
         if mean is not None:
-            assert self.mean is not None, 'Can not change fixed zero mean!'
+            assert self.mean is not None, "Can not change fixed zero mean!"
             if not mean.shape == self.mean.shape:
                 raise pyrado.ShapeErr(given=mean, expected_match=self.mean)
             self.mean.data = mean
@@ -270,14 +278,14 @@ class FullNormalNoise(nn.Module):
 
             # Check the eigenvalues of the new matrix and make if positive definite if necessary
             eigs = to.symeig(self.cov.data, eigenvectors=False)[0]
-            if not min(eigs > 0.):
-                repair_diag = min(eigs - 1e-3)*to.eye(self.cov.shape[0])
+            if not min(eigs > 0.0):
+                repair_diag = min(eigs - 1e-3) * to.eye(self.cov.shape[0])
                 self.cov.data -= repair_diag  # shifting the eigenvalues
-                warn('The covariance matrix has not been positive definite.', UserWarning)
+                warn("The covariance matrix has not been positive definite.", UserWarning)
 
             # Check if the diagonal elements of the new covariance matrix are neither too small nor too big
             for i in range(cov.shape[0]):
-                self.cov.data[i, i] = to.max(self.cov.data[i, i], self.std_min**2)
+                self.cov.data[i, i] = to.max(self.cov.data[i, i], self.std_min ** 2)
 
     def forward(self, value: to.Tensor) -> MultivariateNormal:
         """
@@ -298,4 +306,4 @@ class FullNormalNoise(nn.Module):
         """
         # det_cov = to.cholesky(self.cov).diag().prod()  # cholesky returns lower triangular matrix
         det_cov = to.prod(to.symeig(self.cov.data, eigenvectors=False)[0])
-        return self.cov.shape[0]/2.*(1. + to.log(to.tensor(2*math.pi))) + to.log(det_cov)/2.
+        return self.cov.shape[0] / 2.0 * (1.0 + to.log(to.tensor(2 * math.pi))) + to.log(det_cov) / 2.0

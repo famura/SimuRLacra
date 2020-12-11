@@ -51,8 +51,8 @@ def pd_linear(p: to.Tensor, s: to.Tensor, h: to.Tensor, tau: to.Tensor, **kwargs
     :param kwargs: additional parameters to the potential dynamics
     """
     if not all(tau > 0):
-        raise pyrado.ValueErr(given=tau, g_constraint='0')
-    return (s + h - p)/tau
+        raise pyrado.ValueErr(given=tau, g_constraint="0")
+    return (s + h - p) / tau
 
 
 def pd_cubic(p: to.Tensor, s: to.Tensor, h: to.Tensor, tau: to.Tensor, **kwargs) -> to.Tensor:
@@ -68,10 +68,10 @@ def pd_cubic(p: to.Tensor, s: to.Tensor, h: to.Tensor, tau: to.Tensor, **kwargs)
     :param kwargs: additional parameters to the potential dynamics
     """
     if not all(tau > 0):
-        raise pyrado.ValueErr(given=tau, g_constraint='0')
-    if not all(kwargs['kappa'] >= 0):
-        raise pyrado.ValueErr(given=kwargs['kappa'], ge_constraint='0')
-    return (s + h - p + kwargs['kappa']*to.pow(h - p, 3))/tau
+        raise pyrado.ValueErr(given=tau, g_constraint="0")
+    if not all(kwargs["kappa"] >= 0):
+        raise pyrado.ValueErr(given=kwargs["kappa"], ge_constraint="0")
+    return (s + h - p + kwargs["kappa"] * to.pow(h - p, 3)) / tau
 
 
 def pd_capacity_21(p: to.Tensor, s: to.Tensor, h: to.Tensor, tau: to.Tensor, **kwargs) -> to.Tensor:
@@ -90,8 +90,8 @@ def pd_capacity_21(p: to.Tensor, s: to.Tensor, h: to.Tensor, tau: to.Tensor, **k
     :param kwargs: additional parameters to the potential dynamics
     """
     if not all(tau > 0):
-        raise pyrado.ValueErr(given=tau, g_constraint='0')
-    return (s - (h - p)*(to.ones_like(p) - (h - p)**2/kwargs['capacity']**2))/tau
+        raise pyrado.ValueErr(given=tau, g_constraint="0")
+    return (s - (h - p) * (to.ones_like(p) - (h - p) ** 2 / kwargs["capacity"] ** 2)) / tau
 
 
 def pd_capacity_21_abs(p: to.Tensor, s: to.Tensor, h: to.Tensor, tau: to.Tensor, **kwargs) -> to.Tensor:
@@ -112,8 +112,8 @@ def pd_capacity_21_abs(p: to.Tensor, s: to.Tensor, h: to.Tensor, tau: to.Tensor,
     :param kwargs: additional parameters to the potential dynamics
     """
     if not all(tau > 0):
-        raise pyrado.ValueErr(given=tau, g_constraint='0')
-    return (s - (h - p)*(to.ones_like(p) - to.abs(h - p)/kwargs['capacity']))/tau
+        raise pyrado.ValueErr(given=tau, g_constraint="0")
+    return (s - (h - p) * (to.ones_like(p) - to.abs(h - p) / kwargs["capacity"])) / tau
 
 
 def pd_capacity_32(p: to.Tensor, s: to.Tensor, h: to.Tensor, tau: to.Tensor, **kwargs) -> to.Tensor:
@@ -132,9 +132,13 @@ def pd_capacity_32(p: to.Tensor, s: to.Tensor, h: to.Tensor, tau: to.Tensor, **k
     :param kwargs: additional parameters to the potential dynamics
     """
     if not all(tau > 0):
-        raise pyrado.ValueErr(given=tau, g_constraint='0')
-    return (s + (h - p)*(to.ones_like(p) - (h - p)**2/kwargs['capacity']**2)*
-            (to.ones_like(p) - ((2*(h - p))**2/kwargs['capacity']**2)))/tau
+        raise pyrado.ValueErr(given=tau, g_constraint="0")
+    return (
+        s
+        + (h - p)
+        * (to.ones_like(p) - (h - p) ** 2 / kwargs["capacity"] ** 2)
+        * (to.ones_like(p) - ((2 * (h - p)) ** 2 / kwargs["capacity"] ** 2))
+    ) / tau
 
 
 def pd_capacity_32_abs(p: to.Tensor, s: to.Tensor, h: to.Tensor, tau: to.Tensor, **kwargs) -> to.Tensor:
@@ -156,9 +160,13 @@ def pd_capacity_32_abs(p: to.Tensor, s: to.Tensor, h: to.Tensor, tau: to.Tensor,
     :param kwargs: additional parameters to the potential dynamics
     """
     if not all(tau > 0):
-        raise pyrado.ValueErr(given=tau, g_constraint='0')
-    return (s + (h - p)*(to.ones_like(p) - to.abs(h - p)/kwargs['capacity'])*
-            (to.ones_like(p) - 2*to.abs(h - p)/kwargs['capacity']))/tau
+        raise pyrado.ValueErr(given=tau, g_constraint="0")
+    return (
+        s
+        + (h - p)
+        * (to.ones_like(p) - to.abs(h - p) / kwargs["capacity"])
+        * (to.ones_like(p) - 2 * to.abs(h - p) / kwargs["capacity"])
+    ) / tau
 
 
 class ADNPolicy(PotentialBasedPolicy):
@@ -170,21 +178,23 @@ class ADNPolicy(PotentialBasedPolicy):
         on Hierarchical Dynamical Systems", IROS, 2012
     """
 
-    name: str = 'adn'
+    name: str = "adn"
 
-    def __init__(self,
-                 spec: EnvSpec,
-                 activation_nonlin: [Callable, Sequence[Callable]],
-                 potentials_dyn_fcn: Callable,
-                 obs_layer: [nn.Module, Policy] = None,
-                 tau_init: float = 10.,
-                 tau_learnable: bool = True,
-                 kappa_init: float = 1e-3,
-                 kappa_learnable: bool = True,
-                 capacity_learnable: bool = True,
-                 potential_init_learnable: bool = False,
-                 init_param_kwargs: dict = None,
-                 use_cuda: bool = False):
+    def __init__(
+        self,
+        spec: EnvSpec,
+        activation_nonlin: [Callable, Sequence[Callable]],
+        potentials_dyn_fcn: Callable,
+        obs_layer: [nn.Module, Policy] = None,
+        tau_init: float = 10.0,
+        tau_learnable: bool = True,
+        kappa_init: float = 1e-3,
+        kappa_learnable: bool = True,
+        capacity_learnable: bool = True,
+        potential_init_learnable: bool = False,
+        init_param_kwargs: dict = None,
+        use_cuda: bool = False,
+    ):
         """
         Constructor
 
@@ -203,13 +213,23 @@ class ADNPolicy(PotentialBasedPolicy):
         :param init_param_kwargs: additional keyword arguments for the policy parameter initialization
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
-        super().__init__(spec, obs_layer, activation_nonlin, tau_init, tau_learnable, kappa_init, kappa_learnable,
-                         potential_init_learnable, use_cuda)
+        super().__init__(
+            spec,
+            obs_layer,
+            activation_nonlin,
+            tau_init,
+            tau_learnable,
+            kappa_init,
+            kappa_learnable,
+            potential_init_learnable,
+            use_cuda,
+        )
 
         # Create custom ADNPolicy layers
         self.prev_act_layer = nn.Linear(self._hidden_size, self._hidden_size, bias=False)
-        self.pot_to_act_layer = IndiNonlinLayer(self._hidden_size, nonlin=activation_nonlin, bias=False,
-                                                weight=True)  # scaling weight equals beta in eq (4) of [1]
+        self.pot_to_act_layer = IndiNonlinLayer(
+            self._hidden_size, nonlin=activation_nonlin, bias=False, weight=True
+        )  # scaling weight equals beta in eq (4) of [1]
 
         # Potential dynamics
         self.potentials_dot_fcn = potentials_dyn_fcn
@@ -217,17 +237,25 @@ class ADNPolicy(PotentialBasedPolicy):
         if potentials_dyn_fcn in [pd_capacity_21, pd_capacity_21_abs, pd_capacity_32, pd_capacity_32_abs]:
             if activation_nonlin is to.sigmoid:
                 # sigmoid(7.) approx 0.999
-                self._log_capacity_init = to.log(to.tensor([7.], dtype=to.get_default_dtype()))
-                self._log_capacity = nn.Parameter(self._log_capacity_init, requires_grad=True) \
-                    if self.capacity_learnable else self._log_capacity_init
+                self._log_capacity_init = to.log(to.tensor([7.0], dtype=to.get_default_dtype()))
+                self._log_capacity = (
+                    nn.Parameter(self._log_capacity_init, requires_grad=True)
+                    if self.capacity_learnable
+                    else self._log_capacity_init
+                )
             elif activation_nonlin is to.tanh:
                 # tanh(3.8) approx 0.999
                 self._log_capacity_init = to.log(to.tensor([3.8], dtype=to.get_default_dtype()))
-                self._log_capacity = nn.Parameter(self._log_capacity_init, requires_grad=True) \
-                    if self.capacity_learnable else self._log_capacity_init
+                self._log_capacity = (
+                    nn.Parameter(self._log_capacity_init, requires_grad=True)
+                    if self.capacity_learnable
+                    else self._log_capacity_init
+                )
             else:
-                raise pyrado.TypeErr(msg='Only output nonlinearities of type torch.sigmoid and torch.tanh are supported'
-                                         'for capacity-based potential dynamics.')
+                raise pyrado.TypeErr(
+                    msg="Only output nonlinearities of type torch.sigmoid and torch.tanh are supported"
+                    "for capacity-based potential dynamics."
+                )
         else:
             self._log_capacity = None
 
@@ -237,7 +265,7 @@ class ADNPolicy(PotentialBasedPolicy):
         self.to(self.device)
 
     def extra_repr(self) -> str:
-        return super().extra_repr().join(f', capacity_learnable={self.capacity_learnable}')
+        return super().extra_repr().join(f", capacity_learnable={self.capacity_learnable}")
 
     @property
     def capacity(self) -> [None, to.Tensor]:
@@ -254,7 +282,8 @@ class ADNPolicy(PotentialBasedPolicy):
         :return: time derivative of the potentials
         """
         return self.potentials_dot_fcn(
-            potentials, stimuli, self.resting_level, self.tau, kappa=self.kappa, capacity=self.capacity)
+            potentials, stimuli, self.resting_level, self.tau, kappa=self.kappa, capacity=self.capacity
+        )
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         super().init_param(init_values, **kwargs)
@@ -262,10 +291,10 @@ class ADNPolicy(PotentialBasedPolicy):
         if init_values is None:
             # Initialize layers
             init_param(self.prev_act_layer, **kwargs)
-            if kwargs.get('sigmoid_nlin', False):
+            if kwargs.get("sigmoid_nlin", False):
                 self.prev_act_layer.weight.data.fill_(-0.5)  # inhibit others
                 for i in range(self.prev_act_layer.weight.data.shape[0]):
-                    self.prev_act_layer.weight.data[i, i] = 1.  # excite self
+                    self.prev_act_layer.weight.data[i, i] = 1.0  # excite self
             init_param(self.pot_to_act_layer, **kwargs)
 
             # Initialize cubic decay and capacity if learnable
@@ -287,8 +316,9 @@ class ADNPolicy(PotentialBasedPolicy):
         elif len(obs.shape) == 2:
             batch_size = obs.shape[0]
         else:
-            raise pyrado.ShapeErr(msg=f"Improper shape of 'obs'. Policy received {obs.shape},"
-                                      f"but shape should be 1- or 2-dim")
+            raise pyrado.ShapeErr(
+                msg=f"Improper shape of 'obs'. Policy received {obs.shape}," f"but shape should be 1- or 2-dim"
+            )
 
         # Unpack hidden tensor (i.e. the potentials of the last step) if specified, else initialize them
         pot = self._unpack_hidden(hidden, batch_size) if hidden is not None else self.init_hidden(batch_size)

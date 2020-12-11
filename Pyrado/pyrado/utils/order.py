@@ -81,6 +81,6 @@ def natural_sort(lst: list):
         return int(text) if text.isdigit() else text.lower()
 
     def _alphanum_key(key):
-        return [_convert(c) for c in re.split('([0-9]+)', key)]
+        return [_convert(c) for c in re.split("([0-9]+)", key)]
 
     return sorted(lst, key=_alphanum_key)

@@ -55,18 +55,20 @@ class GAE(LoggerAware, nn.Module):
         Generalized Advantage Estimation', ICLR 2016
     """
 
-    def __init__(self,
-                 vfcn: [nn.Module, Policy],
-                 gamma: float = 0.99,
-                 lamda: float = 0.95,
-                 num_epoch: int = 10,
-                 batch_size: int = 64,
-                 standardize_adv: bool = True,
-                 standardizer: [None, RunningStandardizer] = None,
-                 max_grad_norm: float = None,
-                 lr: float = 5e-4,
-                 lr_scheduler=None,
-                 lr_scheduler_hparam: [dict, None] = None):
+    def __init__(
+        self,
+        vfcn: [nn.Module, Policy],
+        gamma: float = 0.99,
+        lamda: float = 0.95,
+        num_epoch: int = 10,
+        batch_size: int = 64,
+        standardize_adv: bool = True,
+        standardizer: [None, RunningStandardizer] = None,
+        max_grad_norm: float = None,
+        lr: float = 5e-4,
+        lr_scheduler=None,
+        lr_scheduler_hparam: [dict, None] = None,
+    ):
         r"""
         Constructor
 
@@ -88,11 +90,11 @@ class GAE(LoggerAware, nn.Module):
             raise pyrado.TypeErr(given=vfcn, expected_type=[nn.Module, Policy])
         if isinstance(vfcn, Policy):
             if not vfcn.env_spec.act_space == ValueFunctionSpace:
-                raise pyrado.ShapeErr(msg='The given act_space held by the vfcn should be a ValueFunctionSpace.')
+                raise pyrado.ShapeErr(msg="The given act_space held by the vfcn should be a ValueFunctionSpace.")
         if not 0 <= gamma <= 1:
-            raise pyrado.ValueErr(given=gamma, ge_constraint='0', le_constraint='1')
+            raise pyrado.ValueErr(given=gamma, ge_constraint="0", le_constraint="1")
         if not 0 <= lamda <= 1:
-            raise pyrado.ValueErr(given=lamda, ge_constraint='0', le_constraint='1')
+            raise pyrado.ValueErr(given=lamda, ge_constraint="0", le_constraint="1")
 
         # Call Module's constructor
         super().__init__()
@@ -153,8 +155,12 @@ class GAE(LoggerAware, nn.Module):
                 if concat_ros[k].done:
                     adv[k] = concat_ros[k].reward - v_pred[k]
                 else:
-                    adv[k] = concat_ros[k].reward + self.gamma*v_pred[k + 1] - v_pred[k] + \
-                             self.gamma*self.lamda*adv[k + 1]
+                    adv[k] = (
+                        concat_ros[k].reward
+                        + self.gamma * v_pred[k + 1]
+                        - v_pred[k]
+                        + self.gamma * self.lamda * adv[k + 1]
+                    )
 
             if self.standardize_adv:
                 if isinstance(self.standardizer, RunningStandardizer):
@@ -164,10 +170,9 @@ class GAE(LoggerAware, nn.Module):
 
             return adv
 
-    def tdlamda_returns(self,
-                        v_pred: to.Tensor = None,
-                        adv: to.Tensor = None,
-                        concat_ros: StepSequence = None) -> to.Tensor:
+    def tdlamda_returns(
+        self, v_pred: to.Tensor = None, adv: to.Tensor = None, concat_ros: StepSequence = None
+    ) -> to.Tensor:
         r"""
         Compute the TD($\lambda$) returns based on the predictions of the network (introduces a bias).
 
@@ -198,7 +203,7 @@ class GAE(LoggerAware, nn.Module):
         """
         if isinstance(self._vfcn, Policy):
             # Use the Policy's forward method and the hidden states if they have been saved during the rollout
-            v_pred = self._vfcn.evaluate(concat_ros, hidden_states_name='vf_hidden_states')
+            v_pred = self._vfcn.evaluate(concat_ros, hidden_states_name="vf_hidden_states")
         else:
             v_pred = self._vfcn(concat_ros.observations)  # not a recurrent network
         return v_pred
@@ -221,7 +226,7 @@ class GAE(LoggerAware, nn.Module):
         else:
             # Use the value function to compute the value targets (also called bootstrapping)
             v_targ = self.tdlamda_returns(concat_ros=concat_ros)
-        concat_ros.add_data('v_targ', v_targ)
+        concat_ros.add_data("v_targ", v_targ)
 
         # Logging
         with to.no_grad():
@@ -232,10 +237,16 @@ class GAE(LoggerAware, nn.Module):
         # Iterate over all gathered samples num_epoch times
         for e in range(self.num_epoch):
 
-            for batch in tqdm(concat_ros.split_shuffled_batches(
-                self.batch_size, complete_rollouts=isinstance(self.vfcn, RecurrentPolicy)),
+            for batch in tqdm(
+                concat_ros.split_shuffled_batches(
+                    self.batch_size, complete_rollouts=isinstance(self.vfcn, RecurrentPolicy)
+                ),
                 total=num_iter_from_rollouts(None, concat_ros, self.batch_size),
-                desc=f'Epoch {e}', unit='batches', file=sys.stdout, leave=False):
+                desc=f"Epoch {e}",
+                unit="batches",
+                file=sys.stdout,
+                leave=False,
+            ):
                 # Reset the gradients
                 self.optim.zero_grad()
 
@@ -266,11 +277,11 @@ class GAE(LoggerAware, nn.Module):
             explvar = explained_var(v_pred_new, v_targ)  # values close to 1 are desired
 
         # Log metrics computed from the old value function (before the update)
-        self.logger.add_value('explained var critic', explvar, 4)
-        self.logger.add_value('loss improv critic', vfcn_loss_impr, 4)
-        self.logger.add_value('avg grad norm critic', np.mean(vfcn_grad_norm), 4)
+        self.logger.add_value("explained var critic", explvar, 4)
+        self.logger.add_value("loss improv critic", vfcn_loss_impr, 4)
+        self.logger.add_value("avg grad norm critic", np.mean(vfcn_grad_norm), 4)
         if self._lr_scheduler is not None:
-            self.logger.add_value('lr critic', self._lr_scheduler.get_last_lr(), 6)
+            self.logger.add_value("lr critic", self._lr_scheduler.get_last_lr(), 6)
 
         return adv
 

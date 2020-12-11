@@ -44,15 +44,17 @@ from pyrado.utils.input_output import print_cbt
 class ParameterExploring(Algorithm):
     """ Base for all algorithms that explore directly in the policy parameter space """
 
-    def __init__(self,
-                 save_dir: str,
-                 env: Env,
-                 policy: Policy,
-                 max_iter: int,
-                 num_rollouts: int,
-                 pop_size: [int, None] = None,
-                 num_workers: int = 4,
-                 logger: StepLogger = None):
+    def __init__(
+        self,
+        save_dir: str,
+        env: Env,
+        policy: Policy,
+        max_iter: int,
+        num_rollouts: int,
+        pop_size: [int, None] = None,
+        num_workers: int = 4,
+        logger: StepLogger = None,
+    ):
         """
         Constructor
 
@@ -71,7 +73,7 @@ class ParameterExploring(Algorithm):
         if not (isinstance(pop_size, int) or pop_size is None):
             raise pyrado.TypeErr(given=pop_size, expected_type=int)
         if isinstance(pop_size, int) and pop_size <= 0:
-            raise pyrado.ValueErr(given=pop_size, g_constraint='0')
+            raise pyrado.ValueErr(given=pop_size, g_constraint="0")
 
         # Call Algorithm's constructor
         super().__init__(save_dir, max_iter, policy, logger)
@@ -82,8 +84,8 @@ class ParameterExploring(Algorithm):
 
         # Auto-select population size if needed
         if pop_size is None:
-            pop_size = 4 + int(3*np.log(policy.num_param))
-            print_cbt(f'Initialized population size to {pop_size}.', 'y')
+            pop_size = 4 + int(3 * np.log(policy.num_param))
+            print_cbt(f"Initialized population size to {pop_size}.", "y")
         self.pop_size = pop_size
 
         # Create sampler
@@ -95,7 +97,7 @@ class ParameterExploring(Algorithm):
         )
 
         # Stopping criterion
-        self.ret_avg_stack = 1e3*np.random.randn(20)  # stack size = 20
+        self.ret_avg_stack = 1e3 * np.random.randn(20)  # stack size = 20
         self.thold_ret_std = 1e-1  # algorithm terminates if below for multiple iterations
 
         # Saving the best policy (this is not the mean for policy parameter exploration)
@@ -134,7 +136,7 @@ class ParameterExploring(Algorithm):
             self.pop_size,
             # If you do not want to include the current policy parameters, be aware that you also have to do follow-up
             # changes in the update() functions in all subclasses of ParameterExploring
-            include_nominal_params=True
+            include_nominal_params=True,
         )
 
         with to.no_grad():
@@ -153,18 +155,20 @@ class ParameterExploring(Algorithm):
 
         # Log metrics computed from the old policy (before the update)
         self._cnt_samples += int(np.sum(all_lengths))
-        self.logger.add_value('curr policy return', ret_avg_curr, 4)
-        self.logger.add_value('max return', np.max(all_rets), 4)
-        self.logger.add_value('median return', np.median(all_rets), 4)
-        self.logger.add_value('min return', np.min(all_rets), 4)
-        self.logger.add_value('avg return', np.mean(all_rets), 4)
-        self.logger.add_value('std return', np.std(all_rets), 4)
-        self.logger.add_value('avg rollout len', np.mean(all_lengths), 4)
-        self.logger.add_value('num total samples', self._cnt_samples)
-        self.logger.add_value('min mag policy param',
-                              self._policy.param_values[to.argmin(abs(self._policy.param_values))])
-        self.logger.add_value('max mag policy param',
-                              self._policy.param_values[to.argmax(abs(self._policy.param_values))])
+        self.logger.add_value("curr policy return", ret_avg_curr, 4)
+        self.logger.add_value("max return", np.max(all_rets), 4)
+        self.logger.add_value("median return", np.median(all_rets), 4)
+        self.logger.add_value("min return", np.min(all_rets), 4)
+        self.logger.add_value("avg return", np.mean(all_rets), 4)
+        self.logger.add_value("std return", np.std(all_rets), 4)
+        self.logger.add_value("avg rollout len", np.mean(all_lengths), 4)
+        self.logger.add_value("num total samples", self._cnt_samples)
+        self.logger.add_value(
+            "min mag policy param", self._policy.param_values[to.argmin(abs(self._policy.param_values))]
+        )
+        self.logger.add_value(
+            "max mag policy param", self._policy.param_values[to.argmax(abs(self._policy.param_values))]
+        )
 
         # Extract the best policy parameter sample for saving it later
         self.best_policy_param = param_samp_res.parameters[np.argmax(param_samp_res.mean_returns)].clone()
@@ -191,8 +195,8 @@ class ParameterExploring(Algorithm):
         # Save the best element of the current population
         best_policy = deepcopy(self._policy)
         best_policy.param_values = self.best_policy_param
-        pyrado.save(best_policy, 'policy', 'pt', self.save_dir, meta_info)
+        pyrado.save(best_policy, "policy", "pt", self.save_dir, meta_info)
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            pyrado.save(self._env, 'env', 'pkl', self.save_dir, meta_info)
+            pyrado.save(self._env, "env", "pkl", self.save_dir, meta_info)

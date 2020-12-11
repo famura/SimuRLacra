@@ -38,7 +38,7 @@ from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
@@ -48,12 +48,12 @@ if __name__ == '__main__':
     # Load the environment and the policy
     env_sim, policy, kwout = load_experiment(ex_dir, args)
 
-    subrtn = Algorithm.load_snapshot(load_dir=ex_dir, load_name='subrtn')
+    subrtn = Algorithm.load_snapshot(load_dir=ex_dir, load_name="subrtn")
 
     # Start from previous results policy if desired
     ppi = policy.param_values.data if args.warmstart is not None else None
     if isinstance(subrtn, ActorCritic):
-        vpi = kwout['vfcn'].param_values.data if args.warmstart is not None else None
+        vpi = kwout["vfcn"].param_values.data if args.warmstart is not None else None
     else:
         vpi = None
 
@@ -61,5 +61,6 @@ if __name__ == '__main__':
     pyrado.set_seed(args.seed, verbose=True)
 
     # Train the policy on the most lucrative domain
-    BayRn.train_argmax_policy(ex_dir, env_sim, subrtn, num_restarts=500, num_samples=1000,
-                              policy_param_init=ppi, valuefcn_param_init=vpi)
+    BayRn.train_argmax_policy(
+        ex_dir, env_sim, subrtn, num_restarts=500, num_samples=1000, policy_param_init=ppi, valuefcn_param_init=vpi
+    )

@@ -35,24 +35,30 @@ from pyrado.spaces.discrete import DiscreteSpace
 from pyrado.spaces.polar import Polar2DPosVelSpace
 
 
-@pytest.fixture(scope='function',
-                params=[
-                    (-np.ones((7,)), np.ones((7,))),
-                    (-np.ones((7, 1)), np.ones((7, 1))),
-                    (np.array([5, -math.pi/2, -math.pi]), np.array([5, math.pi/2, math.pi])),
-                ],
-                ids=['box_flatdim', 'box', 'half_sphere'])
+@pytest.fixture(
+    scope="function",
+    params=[
+        (-np.ones((7,)), np.ones((7,))),
+        (-np.ones((7, 1)), np.ones((7, 1))),
+        (np.array([5, -math.pi / 2, -math.pi]), np.array([5, math.pi / 2, math.pi])),
+    ],
+    ids=["box_flatdim", "box", "half_sphere"],
+)
 def bs(request):
     return BoxSpace(request.param[0], request.param[1])
 
 
-@pytest.fixture(scope='function',
-                params=[np.array([1]),
-                        np.array([1, 2, 3], dtype=np.int32),
-                        np.array([-2, -1, 0, 1, 2], dtype=np.int64),
-                        np.array([4, -3, 5, 0, 1, 2, 6, -7], dtype=np.int32),
-                        np.array([4., -3, 5, 0, 1, 2, 6, -7], dtype=np.float)],
-                ids=['1dim', 'pos', 'pos_neg', 'prandom', 'prandom_float'])
+@pytest.fixture(
+    scope="function",
+    params=[
+        np.array([1]),
+        np.array([1, 2, 3], dtype=np.int32),
+        np.array([-2, -1, 0, 1, 2], dtype=np.int64),
+        np.array([4, -3, 5, 0, 1, 2, 6, -7], dtype=np.int32),
+        np.array([4.0, -3, 5, 0, 1, 2, 6, -7], dtype=np.float),
+    ],
+    ids=["1dim", "pos", "pos_neg", "prandom", "prandom_float"],
+)
 def ds(request):
     return DiscreteSpace(request.param)
 
@@ -82,7 +88,7 @@ def test_copy_box_space(bs):
 def test_project_to_box_space(bs):
     for _ in range(100):
         # Sample from within the space w.p. 1/5 and from outside the space w.p. 4/5
-        ele_s = bs.sample_uniform()*5.
+        ele_s = bs.sample_uniform() * 5.0
         ele_p = bs.project_to(ele_s)
         assert bs.contains(ele_p)
 
@@ -92,11 +98,12 @@ def test_flat_dim_box_space(bs):
 
 
 @pytest.mark.parametrize(
-    'idcs', [
+    "idcs",
+    [
         [0, 1, 2],
         [0, 2],
     ],
-    ids=['3_wo_gap', '2_w_gap']
+    ids=["3_wo_gap", "2_w_gap"],
 )
 def test_subspace_box_space(bs, idcs):
     subbox = bs.subspace(idcs)
@@ -106,18 +113,19 @@ def test_subspace_box_space(bs, idcs):
         np.testing.assert_equal(subbox.bound_up, bs.bound_up[idcs])
         np.testing.assert_equal(subbox.labels, bs.labels[idcs])
     elif len(bs.shape) == 2:
-        assert subbox.flat_dim == len(idcs)*bs.shape[1]
+        assert subbox.flat_dim == len(idcs) * bs.shape[1]
         np.testing.assert_equal(subbox.bound_lo, bs.bound_lo[idcs, :])
         np.testing.assert_equal(subbox.bound_up, bs.bound_up[idcs, :])
         np.testing.assert_equal(subbox.labels, bs.labels[idcs, :])
 
 
 @pytest.mark.parametrize(
-    'bs_list', [
+    "bs_list",
+    [
         [BoxSpace([-1, -2, -3], [1, 2, 3]), BoxSpace([-11, -22, -33], [11, 22, 33])],
         [BoxSpace([-1], [1]), BoxSpace([-22, 33], [22, 33])],
     ],
-    ids=['identical_sizes', 'different_sizes']
+    ids=["identical_sizes", "different_sizes"],
 )
 def test_cat_box_space(bs_list):
     bs_cat = BoxSpace.cat(bs_list)
@@ -126,11 +134,12 @@ def test_cat_box_space(bs_list):
 
 
 @pytest.mark.parametrize(
-    'ds_list', [
+    "ds_list",
+    [
         [DiscreteSpace([-1, -2, -3]), DiscreteSpace([11, 22, 33])],
         [DiscreteSpace([-1]), DiscreteSpace([22, 33])],
     ],
-    ids=['identical_sizes', 'different_sizes']
+    ids=["identical_sizes", "different_sizes"],
 )
 def test_cat_discrete_space(ds_list):
     ds_cat = DiscreteSpace.cat(ds_list)
@@ -156,7 +165,7 @@ def test_copy_discrete_space(ds):
 def test_project_to_discrete_space(ds):
     for _ in range(100):
         # Sample from within the space and from outside the space
-        ele_s = ds.sample_uniform()*5.
+        ele_s = ds.sample_uniform() * 5.0
         ele_p = ds.project_to(ele_s)
         assert ds.contains(ele_p)
 
@@ -168,6 +177,6 @@ def test_torus2D():
     assert sample_0deg[0] == 1  # x position
     assert sample_0deg[1] == 0  # y position
 
-    torus_90deg = Polar2DPosVelSpace(np.array([1, np.pi/2, 0, 0]), np.array([1, np.pi/2, 0, 0]))
+    torus_90deg = Polar2DPosVelSpace(np.array([1, np.pi / 2, 0, 0]), np.array([1, np.pi / 2, 0, 0]))
     sample_90deg = torus_90deg.sample_uniform()
     assert np.all(np.isclose(sample_90deg, np.array([0, 1, 0, 0])))

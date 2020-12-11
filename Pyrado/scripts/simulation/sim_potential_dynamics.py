@@ -43,7 +43,7 @@ from pyrado.utils.experiments import load_experiment
 from pyrado.utils.input_output import print_cbt
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
@@ -56,13 +56,16 @@ if __name__ == '__main__':
         raise pyrado.TypeErr(given=policy, expected_type=PotentialBasedPolicy)
 
     # Define the parameters for evaluation
-    num_steps, dt_eval = 1000, env.dt/2
+    num_steps, dt_eval = 1000, env.dt / 2
     policy._dt = dt_eval
-    p_init_min, p_init_max, num_p_init = -6., 6., 11
-    print_cbt(f'Evaluating an {policy.name} for {num_steps} steps ad {1/dt_eval} Hz with initial potentials ranging '
-              f'from {p_init_min} to {p_init_max}.', 'c')
+    p_init_min, p_init_max, num_p_init = -6.0, 6.0, 11
+    print_cbt(
+        f"Evaluating an {policy.name} for {num_steps} steps ad {1/dt_eval} Hz with initial potentials ranging "
+        f"from {p_init_min} to {p_init_max}.",
+        "c",
+    )
 
-    time = to.linspace(0., num_steps*dt_eval, num_steps)  # endpoint included
+    time = to.linspace(0.0, num_steps * dt_eval, num_steps)  # endpoint included
     p_init = to.linspace(p_init_min, p_init_max, num_p_init)  # endpoint included
     num_p = policy.hidden_size
 
@@ -70,11 +73,11 @@ if __name__ == '__main__':
     # However, this does not necessarily have to be that way. Thus we plot the same way as for mode = policy.
     for idx_p in range(num_p):
         # Create the figure
-        fig, ax = plt.subplots(1, figsize=(12, 10), subplot_kw={'projection': '3d'})
-        fig.canvas.set_window_title(f'Potential dynamics for the {idx_p}-th dimension for initial values')
-        ax.set_xlabel('$t$ [s]')
-        ax.set_ylabel('$p_0$')
-        ax.set_zlabel('$p(t)$')
+        fig, ax = plt.subplots(1, figsize=(12, 10), subplot_kw={"projection": "3d"})
+        fig.canvas.set_window_title(f"Potential dynamics for the {idx_p}-th dimension for initial values")
+        ax.set_xlabel("$t$ [s]")
+        ax.set_ylabel("$p_0$")
+        ax.set_zlabel("$p(t)$")
 
         final_values = to.zeros(num_p_init)
 
@@ -82,7 +85,7 @@ if __name__ == '__main__':
             p = to.zeros(num_steps, num_p)
             s = to.zeros(num_steps, num_p)
 
-            potentials_init = p_0*to.ones(policy.hidden_size)
+            potentials_init = p_0 * to.ones(policy.hidden_size)
             if isinstance(policy, ADNPolicy):
                 hidden = to.cat([to.zeros(policy.env_spec.act_space.shape), potentials_init], dim=-1)  # pack hidden
             elif isinstance(policy, NFPolicy):
@@ -98,12 +101,14 @@ if __name__ == '__main__':
 
             # Plot
             plt.plot(time.numpy(), p_0.repeat(num_steps).numpy(), p[:, idx_p].detach().cpu().numpy())
-        plt.title(f'Final values for the different initial potentials\n'
-                  f'{final_values.detach().cpu().numpy().round(3)}', y=1.05)
+        plt.title(
+            f"Final values for the different initial potentials\n" f"{final_values.detach().cpu().numpy().round(3)}",
+            y=1.05,
+        )
 
     # Save
     if args.save_figures:
-        for fmt in ['pdf', 'pgf']:
-            fig.savefig(osp.join(ex_dir, f'potdyn-kappa.{fmt}'), dpi=500)
+        for fmt in ["pdf", "pgf"]:
+            fig.savefig(osp.join(ex_dir, f"potdyn-kappa.{fmt}"), dpi=500)
 
     plt.show()

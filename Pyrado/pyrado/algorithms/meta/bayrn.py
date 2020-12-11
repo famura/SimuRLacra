@@ -73,31 +73,33 @@ class BayRn(InterruptableAlgorithm):
         arXiv, 2020
     """
 
-    name: str = 'bayrn'
-    iteration_key: str = 'bayrn_iteration'  # logger's iteration key
+    name: str = "bayrn"
+    iteration_key: str = "bayrn_iteration"  # logger's iteration key
 
-    def __init__(self,
-                 save_dir: str,
-                 env_sim: MetaDomainRandWrapper,
-                 env_real: [RealEnv, EnvWrapper],
-                 subrtn: Algorithm,
-                 ddp_space: BoxSpace,
-                 max_iter: int,
-                 acq_fc: str,
-                 acq_restarts: int,
-                 acq_samples: int,
-                 acq_param: dict = None,
-                 num_init_cand: int = 5,
-                 mc_estimator: bool = True,
-                 num_eval_rollouts_real: int = 5,
-                 num_eval_rollouts_sim: int = 50,
-                 thold_succ: float = pyrado.inf,
-                 thold_succ_subrtn: float = -pyrado.inf,
-                 warmstart: bool = True,
-                 policy_param_init: Optional[to.Tensor] = None,
-                 valuefcn_param_init: Optional[to.Tensor] = None,
-                 subrtn_snapshot_mode: str = 'best',
-                 logger: Optional[StepLogger] = None):
+    def __init__(
+        self,
+        save_dir: str,
+        env_sim: MetaDomainRandWrapper,
+        env_real: [RealEnv, EnvWrapper],
+        subrtn: Algorithm,
+        ddp_space: BoxSpace,
+        max_iter: int,
+        acq_fc: str,
+        acq_restarts: int,
+        acq_samples: int,
+        acq_param: dict = None,
+        num_init_cand: int = 5,
+        mc_estimator: bool = True,
+        num_eval_rollouts_real: int = 5,
+        num_eval_rollouts_sim: int = 50,
+        thold_succ: float = pyrado.inf,
+        thold_succ_subrtn: float = -pyrado.inf,
+        warmstart: bool = True,
+        policy_param_init: Optional[to.Tensor] = None,
+        valuefcn_param_init: Optional[to.Tensor] = None,
+        subrtn_snapshot_mode: str = "best",
+        logger: Optional[StepLogger] = None,
+    ):
         """
         Constructor
 
@@ -140,19 +142,26 @@ class BayRn(InterruptableAlgorithm):
         if not isinstance(ddp_space, BoxSpace):
             raise pyrado.TypeErr(given=ddp_space, expected_type=BoxSpace)
         if num_init_cand < 1:
-            raise pyrado.ValueErr(given=num_init_cand, ge_constraint='1')
+            raise pyrado.ValueErr(given=num_init_cand, ge_constraint="1")
 
         # Call InterruptableAlgorithm's constructor without specifying the policy
-        super().__init__(num_checkpoints=2, init_checkpoint=-2, save_dir=save_dir, max_iter=max_iter,
-                         policy=subrtn.policy, logger=logger)
+        super().__init__(
+            num_checkpoints=2,
+            init_checkpoint=-2,
+            save_dir=save_dir,
+            max_iter=max_iter,
+            policy=subrtn.policy,
+            logger=logger,
+        )
 
         self._env_sim = env_sim
         self._env_real = env_real
         self._subrtn = subrtn
-        self._subrtn.save_name = 'subrtn'
+        self._subrtn.save_name = "subrtn"
         self.ddp_space = ddp_space
-        self.ddp_projector = UnitCubeProjector(to.from_numpy(self.ddp_space.bound_lo),
-                                               to.from_numpy(self.ddp_space.bound_up))
+        self.ddp_projector = UnitCubeProjector(
+            to.from_numpy(self.ddp_space.bound_lo), to.from_numpy(self.ddp_space.bound_up)
+        )
         self.cands = None  # called x in the context of GPs
         self.cands_values = None  # called y in the context of GPs
         self.argmax_cand = to.Tensor()
@@ -181,7 +190,7 @@ class BayRn(InterruptableAlgorithm):
 
         # Save initial environments and the domain distribution parameter space
         self.save_snapshot(meta_info=None)
-        pyrado.save(self.ddp_space, 'ddp_space', 'pkl', self.save_dir)
+        pyrado.save(self.ddp_space, "ddp_space", "pkl", self.save_dir)
 
     @property
     def subroutine(self) -> Algorithm:
@@ -204,7 +213,7 @@ class BayRn(InterruptableAlgorithm):
         :return: estimated return of the trained policy in the target domain
         """
         # Save the current candidate
-        to.save(cand.view(-1), osp.join(self.save_dir, f'{prefix}_candidate.pt'))
+        to.save(cand.view(-1), osp.join(self.save_dir, f"{prefix}_candidate.pt"))
 
         # Set the domain randomizer
         self._env_sim.adapt_randomizer(cand.detach().cpu().numpy())
@@ -234,20 +243,21 @@ class BayRn(InterruptableAlgorithm):
         """
         cands = to.empty(self.num_init_cand, self.ddp_space.shape[0])
         for i in range(self.num_init_cand):
-            print_cbt(f'Generating initial domain instance and policy {i + 1} of {self.num_init_cand} ...',
-                      'g', bright=True)
+            print_cbt(
+                f"Generating initial domain instance and policy {i + 1} of {self.num_init_cand} ...", "g", bright=True
+            )
             # Sample random domain distribution parameters
             cands[i, :] = to.from_numpy(self.ddp_space.sample_uniform())
 
             # Train a policy for each candidate, repeat if the resulting policy did not exceed the success threshold
-            print_cbt(f'Randomly sampled the next candidate: {cands[i].numpy()}', 'g')
-            wrapped_trn_fcn = until_thold_exceeded(
-                self.thold_succ_subrtn.item(), self.max_subrtn_rep
-            )(self.train_policy_sim)
-            wrapped_trn_fcn(cands[i], prefix=f'init_{i}')
+            print_cbt(f"Randomly sampled the next candidate: {cands[i].numpy()}", "g")
+            wrapped_trn_fcn = until_thold_exceeded(self.thold_succ_subrtn.item(), self.max_subrtn_rep)(
+                self.train_policy_sim
+            )
+            wrapped_trn_fcn(cands[i], prefix=f"init_{i}")
 
         # Save candidates into a single tensor (policy is saved during training or exists already)
-        pyrado.save(cands, 'candidates', 'pt', self.save_dir, meta_info=None)
+        pyrado.save(cands, "candidates", "pt", self.save_dir, meta_info=None)
         self.cands = cands
 
     def eval_init_policies(self):
@@ -258,12 +268,12 @@ class BayRn(InterruptableAlgorithm):
         # Crawl through the experiment's directory
         for root, dirs, files in os.walk(self.save_dir):
             dirs.clear()  # prevents walk() from going into subdirectories
-            found_policies = [p for p in files if p.startswith('init_') and p.endswith('_policy.pt')]
-            found_cands = [c for c in files if c.startswith('init_') and c.endswith('_candidate.pt')]
+            found_policies = [p for p in files if p.startswith("init_") and p.endswith("_policy.pt")]
+            found_cands = [c for c in files if c.startswith("init_") and c.endswith("_candidate.pt")]
         if not len(found_policies) == len(found_cands):
-            raise pyrado.ValueErr(msg='Found a different number of initial policies than candidates!')
+            raise pyrado.ValueErr(msg="Found a different number of initial policies than candidates!")
         elif len(found_policies) == 0:
-            raise pyrado.ValueErr(msg='No policies or candidates found!')
+            raise pyrado.ValueErr(msg="No policies or candidates found!")
 
         num_init_cand = len(found_cands)
         cands_values = to.empty(num_init_cand)
@@ -274,23 +284,31 @@ class BayRn(InterruptableAlgorithm):
 
         # Evaluate learned policies from random candidates on the target environment (real-world) system
         for i in range(num_init_cand):
-            policy = pyrado.load(self.policy, 'policy', 'pt', self.save_dir, meta_info=dict(prefix=f'init_{i}'))
-            cands_values[i] = self.eval_policy(self.save_dir, self._env_real, policy, self.mc_estimator,
-                                               prefix=f'init_{i}', num_rollouts=self.num_eval_rollouts_real)
+            policy = pyrado.load(self.policy, "policy", "pt", self.save_dir, meta_info=dict(prefix=f"init_{i}"))
+            cands_values[i] = self.eval_policy(
+                self.save_dir,
+                self._env_real,
+                policy,
+                self.mc_estimator,
+                prefix=f"init_{i}",
+                num_rollouts=self.num_eval_rollouts_real,
+            )
 
         # Save candidates's and their returns into tensors (policy is saved during training or exists already)
         # pyrado.save(cands, 'candidates', 'pt', self._save_dir, meta_info)
-        pyrado.save(cands_values, 'candidates_values', 'pt', self.save_dir, meta_info=None)
+        pyrado.save(cands_values, "candidates_values", "pt", self.save_dir, meta_info=None)
         self.cands, self.cands_values = cands, cands_values
 
     @staticmethod
-    def eval_policy(save_dir: [str, None],
-                    env: [RealEnv, SimEnv, MetaDomainRandWrapper],
-                    policy: Policy,
-                    mc_estimator: bool,
-                    prefix: str,
-                    num_rollouts: int,
-                    num_parallel_envs: int = 1) -> to.Tensor:
+    def eval_policy(
+        save_dir: [str, None],
+        env: [RealEnv, SimEnv, MetaDomainRandWrapper],
+        policy: Policy,
+        mc_estimator: bool,
+        prefix: str,
+        num_rollouts: int,
+        num_parallel_envs: int = 1,
+    ) -> to.Tensor:
         """
         Evaluate a policy on the target system (real-world platform).
         This method is static to facilitate evaluation of specific policies in hindsight.
@@ -307,7 +325,7 @@ class BayRn(InterruptableAlgorithm):
         :return: estimated return in the target domain
         """
         if save_dir is not None:
-            print_cbt(f'Executing {prefix}_policy ...', 'c', bright=True)
+            print_cbt(f"Executing {prefix}_policy ...", "c", bright=True)
 
         rets_real = to.zeros(num_rollouts)
         if isinstance(inner_env(env), RealEnv):
@@ -316,7 +334,7 @@ class BayRn(InterruptableAlgorithm):
                 rets_real[i] = rollout(env, policy, eval=True).undiscounted_return()
                 # If a reward of -1 is given, skip evaluation ahead and set all returns to zero
                 if rets_real[i] == -1:
-                    print_cbt('Set all returns for this policy to zero.', color='c')
+                    print_cbt("Set all returns for this policy to zero.", color="c")
                     rets_real = to.zeros(num_rollouts)
                     break
         elif isinstance(inner_env(env), SimEnv):
@@ -330,21 +348,28 @@ class BayRn(InterruptableAlgorithm):
 
         if save_dir is not None:
             # Save the evaluation results
-            to.save(rets_real, osp.join(save_dir, f'{prefix}_returns_real.pt'))
+            to.save(rets_real, osp.join(save_dir, f"{prefix}_returns_real.pt"))
 
-            print_cbt('Target domain performance', bright=True)
-            print(tabulate([['mean return', to.mean(rets_real).item()],
-                            ['std return', to.std(rets_real)],
-                            ['min return', to.min(rets_real)],
-                            ['max return', to.max(rets_real)]]))
+            print_cbt("Target domain performance", bright=True)
+            print(
+                tabulate(
+                    [
+                        ["mean return", to.mean(rets_real).item()],
+                        ["std return", to.std(rets_real)],
+                        ["min return", to.min(rets_real)],
+                        ["max return", to.max(rets_real)],
+                    ]
+                )
+            )
 
         if mc_estimator:
             return to.mean(rets_real)
         else:
-            return to.from_numpy(bootstrap_ci(rets_real.numpy(), np.mean,
-                                              num_reps=1000, alpha=0.05, ci_sides=1, studentized=False)[1])
+            return to.from_numpy(
+                bootstrap_ci(rets_real.numpy(), np.mean, num_reps=1000, alpha=0.05, ci_sides=1, studentized=False)[1]
+            )
 
-    def step(self, snapshot_mode: str = 'latest', meta_info: dict = None):
+    def step(self, snapshot_mode: str = "latest", meta_info: dict = None):
         # Save snapshot to save the correct iteration count
         self.save_snapshot()
 
@@ -365,17 +390,17 @@ class BayRn(InterruptableAlgorithm):
 
             # Create and fit the GP model
             gp = SingleTaskGP(cands_norm, cands_values_stdized)
-            gp.likelihood.noise_covar.register_constraint('raw_noise', GreaterThan(1e-5))
+            gp.likelihood.noise_covar.register_constraint("raw_noise", GreaterThan(1e-5))
             mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
             fit_gpytorch_model(mll)
-            print_cbt('Fitted the GP.', 'g')
+            print_cbt("Fitted the GP.", "g")
 
             # Acquisition functions
-            if self.acq_fcn_type == 'UCB':
-                acq_fcn = UpperConfidenceBound(gp, beta=self.acq_param.get('beta', 0.1), maximize=True)
-            elif self.acq_fcn_type == 'EI':
+            if self.acq_fcn_type == "UCB":
+                acq_fcn = UpperConfidenceBound(gp, beta=self.acq_param.get("beta", 0.1), maximize=True)
+            elif self.acq_fcn_type == "EI":
                 acq_fcn = ExpectedImprovement(gp, best_f=cands_values_stdized.max().item(), maximize=True)
-            elif self.acq_fcn_type == 'PI':
+            elif self.acq_fcn_type == "PI":
                 acq_fcn = ProbabilityOfImprovement(gp, best_f=cands_values_stdized.max().item(), maximize=True)
             else:
                 raise pyrado.ValueErr(given=self.acq_fcn_type, eq_constraint="'UCB', 'EI', 'PI'")
@@ -386,39 +411,44 @@ class BayRn(InterruptableAlgorithm):
                 bounds=to.stack([to.zeros(self.ddp_space.flat_dim), to.ones(self.ddp_space.flat_dim)]),
                 q=1,
                 num_restarts=self.acq_restarts,
-                raw_samples=self.acq_samples
+                raw_samples=self.acq_samples,
             )
             next_cand = self.ddp_projector.project_back(cand_norm)
-            print_cbt(f'Found the next candidate: {next_cand.numpy()}', 'g')
+            print_cbt(f"Found the next candidate: {next_cand.numpy()}", "g")
             self.cands = to.cat([self.cands, next_cand], dim=0)
-            pyrado.save(self.cands, 'candidates', 'pt', self.save_dir, meta_info)
+            pyrado.save(self.cands, "candidates", "pt", self.save_dir, meta_info)
             self.reached_checkpoint()  # setting counter to 1
 
         if self.curr_checkpoint == 1:
             # Train and evaluate a new policy, repeat if the resulting policy did not exceed the success threshold
-            wrapped_trn_fcn = until_thold_exceeded(
-                self.thold_succ_subrtn.item(), self.max_subrtn_rep
-            )(self.train_policy_sim)
-            wrapped_trn_fcn(self.cands[-1, :], prefix=f'iter_{self._curr_iter}')
+            wrapped_trn_fcn = until_thold_exceeded(self.thold_succ_subrtn.item(), self.max_subrtn_rep)(
+                self.train_policy_sim
+            )
+            wrapped_trn_fcn(self.cands[-1, :], prefix=f"iter_{self._curr_iter}")
             self.reached_checkpoint()  # setting counter to 2
 
         if self.curr_checkpoint == 2:
             # Evaluate the current policy in the target domain
-            policy = pyrado.load(self.policy, 'policy', 'pt', self.save_dir,
-                                        meta_info=dict(prefix=f'iter_{self._curr_iter}'))
+            policy = pyrado.load(
+                self.policy, "policy", "pt", self.save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter}")
+            )
             self.curr_cand_value = self.eval_policy(
-                self.save_dir, self._env_real, policy, self.mc_estimator, f'iter_{self._curr_iter}',
-                self.num_eval_rollouts_real
+                self.save_dir,
+                self._env_real,
+                policy,
+                self.mc_estimator,
+                f"iter_{self._curr_iter}",
+                self.num_eval_rollouts_real,
             )
             self.cands_values = to.cat([self.cands_values, self.curr_cand_value.view(1)], dim=0)
-            pyrado.save(self.cands_values, 'candidates_values', 'pt', self.save_dir, meta_info)
+            pyrado.save(self.cands_values, "candidates_values", "pt", self.save_dir, meta_info)
 
             # Store the argmax after training and evaluating
             curr_argmax_cand = BayRn.argmax_posterior_mean(
                 self.cands, self.cands_values.unsqueeze(1), self.ddp_space, self.acq_restarts, self.acq_samples
             )
             self.argmax_cand = to.cat([self.argmax_cand, curr_argmax_cand], dim=0)
-            pyrado.save(self.argmax_cand, 'candidates_argmax', 'pt', self.save_dir, meta_info)
+            pyrado.save(self.argmax_cand, "candidates_argmax", "pt", self.save_dir, meta_info)
             self.reached_checkpoint()  # setting counter to 0
 
     def save_snapshot(self, meta_info: dict = None):
@@ -427,18 +457,16 @@ class BayRn(InterruptableAlgorithm):
         # Policies of every iteration are saved by the subroutine in train_policy_sim()
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            joblib.dump(self._env_sim, osp.join(self.save_dir, 'env_sim.pkl'))
-            joblib.dump(self._env_real, osp.join(self.save_dir, 'env_real.pkl'))
-            pyrado.save(self.policy, 'policy', 'pt', self.save_dir, None)
+            joblib.dump(self._env_sim, osp.join(self.save_dir, "env_sim.pkl"))
+            joblib.dump(self._env_real, osp.join(self.save_dir, "env_real.pkl"))
+            pyrado.save(self.policy, "policy", "pt", self.save_dir, None)
         else:
-            raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
+            raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subroutine!")
 
     @staticmethod
-    def argmax_posterior_mean(cands: to.Tensor,
-                              cands_values: to.Tensor,
-                              ddp_space: BoxSpace,
-                              num_restarts: int,
-                              num_samples: int) -> to.Tensor:
+    def argmax_posterior_mean(
+        cands: to.Tensor, cands_values: to.Tensor, ddp_space: BoxSpace, num_restarts: int, num_samples: int
+    ) -> to.Tensor:
         """
         Compute the GP input with the maximal posterior mean.
 
@@ -462,13 +490,16 @@ class BayRn(InterruptableAlgorithm):
         cands_values_stdized = standardize(cands_values)
 
         if cands_norm.shape[0] > cands_values.shape[0]:
-            print_cbt(f'There are {cands.shape[0]} candidates but only {cands_values.shape[0]} evaluations. Ignoring '
-                      f'the candidates without evaluation for computing the argmax.', 'y')
-            cands_norm = cands_norm[:cands_values.shape[0], :]
+            print_cbt(
+                f"There are {cands.shape[0]} candidates but only {cands_values.shape[0]} evaluations. Ignoring "
+                f"the candidates without evaluation for computing the argmax.",
+                "y",
+            )
+            cands_norm = cands_norm[: cands_values.shape[0], :]
 
         # Create and fit the GP model
         gp = SingleTaskGP(cands_norm, cands_values_stdized)
-        gp.likelihood.noise_covar.register_constraint('raw_noise', GreaterThan(1e-5))
+        gp.likelihood.noise_covar.register_constraint("raw_noise", GreaterThan(1e-5))
         mll = ExactMarginalLogLikelihood(gp.likelihood, gp)
         fit_gpytorch_model(mll)
 
@@ -478,22 +509,24 @@ class BayRn(InterruptableAlgorithm):
             bounds=to.stack([to.zeros(ddp_space.flat_dim), to.ones(ddp_space.flat_dim)]),
             q=1,
             num_restarts=num_restarts,
-            raw_samples=num_samples
+            raw_samples=num_samples,
         )
 
         cand = uc_projector.project_back(cand_norm.detach())
-        print_cbt(f'Converged to argmax of the posterior mean: {cand.numpy()}', 'g', bright=True)
+        print_cbt(f"Converged to argmax of the posterior mean: {cand.numpy()}", "g", bright=True)
         return cand
 
     @staticmethod
-    def train_argmax_policy(load_dir: str,
-                            env_sim: MetaDomainRandWrapper,
-                            subrtn: Algorithm,
-                            num_restarts: int,
-                            num_samples: int,
-                            policy_param_init: to.Tensor = None,
-                            valuefcn_param_init: to.Tensor = None,
-                            subrtn_snapshot_mode: str = 'best') -> Policy:
+    def train_argmax_policy(
+        load_dir: str,
+        env_sim: MetaDomainRandWrapper,
+        subrtn: Algorithm,
+        num_restarts: int,
+        num_samples: int,
+        policy_param_init: to.Tensor = None,
+        valuefcn_param_init: to.Tensor = None,
+        subrtn_snapshot_mode: str = "best",
+    ) -> Policy:
         """
         Train a policy based on the maximizer of the posterior mean.
 
@@ -508,15 +541,17 @@ class BayRn(InterruptableAlgorithm):
         :return: the final BayRn policy
         """
         # Load the required data
-        cands = pyrado.load(None, 'candidates', 'pt', load_dir)
-        cands_values = pyrado.load(None, 'candidates_values', 'pt', load_dir).unsqueeze(1)
-        ddp_space = pyrado.load(None, 'ddp_space', 'pkl', load_dir)
+        cands = pyrado.load(None, "candidates", "pt", load_dir)
+        cands_values = pyrado.load(None, "candidates_values", "pt", load_dir).unsqueeze(1)
+        ddp_space = pyrado.load(None, "ddp_space", "pkl", load_dir)
 
         if cands.shape[0] > cands_values.shape[0]:
             print_cbt(
-                f'There are {cands.shape[0]} candidates but only {cands_values.shape[0]} evaluations. Ignoring the'
-                f'candidates without evaluation for computing the argmax.', 'y')
-            cands = cands[:cands_values.shape[0], :]
+                f"There are {cands.shape[0]} candidates but only {cands_values.shape[0]} evaluations. Ignoring the"
+                f"candidates without evaluation for computing the argmax.",
+                "y",
+            )
+            cands = cands[: cands_values.shape[0], :]
 
         # Find the maximizer
         argmax_cand = BayRn.argmax_posterior_mean(cands, cands_values, ddp_space, num_restarts, num_samples)
@@ -532,5 +567,5 @@ class BayRn(InterruptableAlgorithm):
             warmstart=True, policy_param_init=policy_param_init, valuefcn_param_init=valuefcn_param_init
         )
 
-        subrtn.train(snapshot_mode=subrtn_snapshot_mode, meta_info=dict(suffix='argmax'))
+        subrtn.train(snapshot_mode=subrtn_snapshot_mode, meta_info=dict(suffix="argmax"))
         return subrtn.policy

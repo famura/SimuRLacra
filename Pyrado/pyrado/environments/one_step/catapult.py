@@ -44,7 +44,7 @@ class CatapultSim(SimEnv, Serializable):
     use it in combination with a linear policy that has only one constant feature.
     """
 
-    name: str = 'cata'
+    name: str = "cata"
 
     def __init__(self, max_steps: int, example_config: bool):
         """
@@ -63,19 +63,19 @@ class CatapultSim(SimEnv, Serializable):
         # Initialize the domain parameters (Earth)
         self._g = 9.81  # gravity constant [m/s**2]
         self._k = 2e3  # catapult spring's stiffness constant [N/m]
-        self._x = 1.  # catapult spring's pre-elongation [m]
+        self._x = 1.0  # catapult spring's pre-elongation [m]
 
         # Domain independent parameter
-        self._m = 70.  # victim's mass [kg]
+        self._m = 70.0  # victim's mass [kg]
 
         # Set the bounds for the system's states adn actions
-        max_state = np.array([1000.])  # [m], arbitrary but >> self._x
+        max_state = np.array([1000.0])  # [m], arbitrary but >> self._x
         max_act = max_state
         self._curr_act = np.zeros_like(max_act)  # just for usage in render function
 
-        self._state_space = BoxSpace(-max_state, max_state, labels=['h'])
-        self._init_space = SingularStateSpace(np.zeros(self._state_space.shape), labels=['h_0'])
-        self._act_space = BoxSpace(-max_act, max_act, labels=['theta'])
+        self._state_space = BoxSpace(-max_state, max_state, labels=["h"])
+        self._init_space = SingularStateSpace(np.zeros(self._state_space.shape), labels=["h_0"])
+        self._act_space = BoxSpace(-max_act, max_act, labels=["theta"])
 
         # Define the task including the reward function
         self._task = self._create_task(task_args=dict())
@@ -98,10 +98,10 @@ class CatapultSim(SimEnv, Serializable):
 
     def _create_task(self, task_args: dict) -> DesStateTask:
         # Define the task including the reward function
-        state_des = task_args.get('state_des', None)
+        state_des = task_args.get("state_des", None)
         if state_des is None:
             state_des = np.zeros(self._state_space.shape)
-        return DesStateTask(self.spec, state_des, rew_fcn=AbsErrRewFcn(q=np.array([1.]), r=np.array([0.])))
+        return DesStateTask(self.spec, state_des, rew_fcn=AbsErrRewFcn(q=np.array([1.0]), r=np.array([0.0])))
 
     @property
     def task(self):
@@ -112,43 +112,40 @@ class CatapultSim(SimEnv, Serializable):
         if self.example_config:
             return dict(planet=self._planet)
         else:
-            return dict(g=self._g,
-                        k=self._k,
-                        x=self._x)
+            return dict(g=self._g, k=self._k, x=self._x)
 
     @domain_param.setter
     def domain_param(self, param: dict):
         assert isinstance(param, dict)
         # Set the new domain params if given, else the default value
         if self.example_config:
-            if param['planet'] == 0:
+            if param["planet"] == 0:
                 # Mars
                 self._g = 3.71
                 self._k = 1e3
                 self._x = 0.5
-            elif param['planet'] == 1:
+            elif param["planet"] == 1:
                 # Venus
                 self._g = 8.87
                 self._k = 3e3
                 self._x = 1.5
-            elif param['planet'] == -1:
+            elif param["planet"] == -1:
                 # Default value which should make the computation invalid
                 self._g = None
                 self._k = None
                 self._x = None
             else:
-                raise ValueError("Domain parameter planet was {}, but must be either 0 or 1!".format(
-                    param['planet']))
+                raise ValueError("Domain parameter planet was {}, but must be either 0 or 1!".format(param["planet"]))
 
         else:
             assert self._g > 0 and self._k > 0 and self._x > 0
-            self._g = param.get('g', self._g)
-            self._k = param.get('k', self._k)
-            self._x = param.get('x', self._x)
+            self._g = param.get("g", self._g)
+            self._k = param.get("k", self._k)
+            self._x = param.get("x", self._x)
 
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
-        return dict(g=9.81, k=200., x=1.)
+        return dict(g=9.81, k=200.0, x=1.0)
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         # Reset time
@@ -184,7 +181,7 @@ class CatapultSim(SimEnv, Serializable):
         self._curr_act = act  # just for the render function
 
         # Calculate the maximum height of the flight trajectory ("one step dynamics")
-        self.state = self._k/(2.*self._m*self._g)*(act - self._x)**2  # h(theta, xi)
+        self.state = self._k / (2.0 * self._m * self._g) * (act - self._x) ** 2  # h(theta, xi)
 
         # Current reward depending on the state after the step (since there is only one step) and the (unlimited) action
         self._curr_rew = self.task.step_rew(self.state, act, self._curr_step)
@@ -209,12 +206,12 @@ class CatapultSim(SimEnv, Serializable):
 
         # Print to console
         if mode.text:
-            if self._curr_step%render_step == 0 and self._curr_step > 0:  # skip the render before the first step
-                print("step: {:3}  |  r_t: {: 1.3f}  |  a_t: {}\t |  s_t+1: {}".format(
-                    self._curr_step,
-                    self._curr_rew,
-                    self._curr_act,
-                    self.state))
+            if self._curr_step % render_step == 0 and self._curr_step > 0:  # skip the render before the first step
+                print(
+                    "step: {:3}  |  r_t: {: 1.3f}  |  a_t: {}\t |  s_t+1: {}".format(
+                        self._curr_step, self._curr_rew, self._curr_act, self.state
+                    )
+                )
 
 
 class CatapultExample:
@@ -244,11 +241,11 @@ class CatapultExample:
         :return: optimal policy parameter
         """
         # Calculate (mixed-domain) constants
-        c_M = n_M*self.k_M*self.g_V
-        c_V = n_V*self.k_V*self.g_M
+        c_M = n_M * self.k_M * self.g_V
+        c_V = n_V * self.k_V * self.g_M
 
         # Calculate optimal policy parameter
-        th_opt = (self.x_M*c_M + self.x_V*c_V)/(c_M + c_V)
+        th_opt = (self.x_M * c_M + self.x_V * c_V) / (c_M + c_V)
         return th_opt
 
     def opt_est_expec_return(self, n_M, n_V):
@@ -259,13 +256,13 @@ class CatapultExample:
         :param n_V: number of Venus samples
         :return: optimal value of the estimated expected return
         """
-        c_M = n_M*self.k_M*self.g_V
-        c_V = n_V*self.k_V*self.g_M
+        c_M = n_M * self.k_M * self.g_V
+        c_V = n_V * self.k_V * self.g_M
         c = c_M + c_V
 
         n = n_M + n_V
-        M_part = -n_M*self.k_M/(2*n*self.m*self.g_M)*((self.x_V*c_V - self.x_M*c_V)/c)**2
-        V_part = -n_V*self.k_V/(2*n*self.m*self.g_V)*((self.x_M*c_M - self.x_V*c_M)/c)**2
+        M_part = -n_M * self.k_M / (2 * n * self.m * self.g_M) * ((self.x_V * c_V - self.x_M * c_V) / c) ** 2
+        V_part = -n_V * self.k_V / (2 * n * self.m * self.g_V) * ((self.x_M * c_M - self.x_V * c_M) / c) ** 2
         Jhat_n_opt = M_part + V_part
 
         # Check and return
@@ -282,8 +279,8 @@ class CatapultExample:
         :return: value of the estimated expected return
         """
         n = n_M + n_V
-        M_part = -n_M/n*self.k_M/(2*self.m*self.g_M)*(th - self.x_M)**2
-        V_part = -n_V/n*self.k_V/(2*self.m*self.g_V)*(th - self.x_V)**2
+        M_part = -n_M / n * self.k_M / (2 * self.m * self.g_M) * (th - self.x_M) ** 2
+        V_part = -n_V / n * self.k_V / (2 * self.m * self.g_V) * (th - self.x_V) ** 2
         Jhat_n = M_part + V_part
 
         # Check and return

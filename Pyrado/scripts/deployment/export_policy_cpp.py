@@ -45,7 +45,7 @@ from pyrado.utils.experiments import load_experiment
 from pyrado.utils.input_output import print_cbt
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
@@ -59,12 +59,12 @@ if __name__ == '__main__':
     ts_module = policy.script()  # can be evaluated like a regular PyTorch module
 
     # Serialize the script module to a file and save it in the same directory we loaded the policy from
-    policy_export_file = osp.join(ex_dir, 'policy_export.pt')
+    policy_export_file = osp.join(ex_dir, "policy_export.pt")
     ts_module.save(policy_export_file)  # former .zip, and before that .pth
-    print_cbt(f'Exported the loaded policy to\n{policy_export_file}', 'g', bright=True)
+    print_cbt(f"Exported the loaded policy to\n{policy_export_file}", "g", bright=True)
 
     # Export the experiment config for C++
     if isinstance(inner_env(env), RcsSim):
-        exp_export_file = osp.join(ex_dir, f'ex_{env.name}_export.xml')
+        exp_export_file = osp.join(ex_dir, f"ex_{env.name}_export.xml")
         inner_env(env).save_config_xml(exp_export_file)
-        print_cbt(f'Exported experiment configuration to\n{exp_export_file}', 'g', bright=True)
+        print_cbt(f"Exported experiment configuration to\n{exp_export_file}", "g", bright=True)

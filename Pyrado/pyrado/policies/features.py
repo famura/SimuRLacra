@@ -57,7 +57,7 @@ class FeatureStack:
     def __str__(self):
         """ Get an information string. """
         feat_fcn_names = [f.__name__ if f is callable else str(f) for f in self.feat_fcns]
-        return f'{get_class_name(self)} [' + ', '.join(feat_fcn_names) + ']'
+        return f"{get_class_name(self)} [" + ", ".join(feat_fcn_names) + "]"
 
     def __call__(self, inp: to.Tensor):
         """
@@ -79,7 +79,7 @@ class FeatureStack:
         num_fcns = len(self.feat_fcns)
 
         # Add the number of parameters for all feature functions that are based on the observations
-        num_feat = num_fcns*inp_flat_dim
+        num_feat = num_fcns * inp_flat_dim
 
         # Special cases
         if const_feat in self.feat_fcns:  # check for a function
@@ -127,7 +127,7 @@ def const_feat(inp: to.Tensor):
         return to.ones(inp.shape[0], 1).type_as(inp)
     else:
         # When the input is not given in batches
-        return to.tensor([1.]).type_as(inp)
+        return to.tensor([1.0]).type_as(inp)
 
 
 def identity_feat(inp: to.Tensor):
@@ -150,12 +150,12 @@ def cubic_feat(inp: to.Tensor):
     return to.pow(inp, 3)
 
 
-def sig_feat(inp: to.Tensor, scale: float = 1.):
-    return to.sigmoid(scale*inp)
+def sig_feat(inp: to.Tensor, scale: float = 1.0):
+    return to.sigmoid(scale * inp)
 
 
-def bell_feat(inp: to.Tensor, scale: float = 1.):
-    return to.exp(-scale*to.pow(inp, 2))
+def bell_feat(inp: to.Tensor, scale: float = 1.0):
+    return to.exp(-scale * to.pow(inp, 2))
 
 
 def sin_feat(inp: to.Tensor):
@@ -167,11 +167,11 @@ def cos_feat(inp: to.Tensor):
 
 
 def sinsin_feat(inp: to.Tensor):
-    return to.sin(inp)*to.sin(inp)
+    return to.sin(inp) * to.sin(inp)
 
 
 def sincos_feat(inp: to.Tensor):
-    return to.sin(inp)*to.cos(inp)
+    return to.sin(inp) * to.cos(inp)
 
 
 class MultFeat:
@@ -184,12 +184,12 @@ class MultFeat:
         :param idcs: indices of the dimensions to multiply
         """
         if not len(idcs) >= 2:
-            raise pyrado.ShapeErr(msg='Provide at least provide two indices.')
+            raise pyrado.ShapeErr(msg="Provide at least provide two indices.")
         self._idcs = deepcopy(idcs)
 
     def __str__(self):
         """ Get an information string. """
-        return f'{get_class_name(self)} (indices ' + ' '.join([str(i) for i in self._idcs]) + ')'
+        return f"{get_class_name(self)} (indices " + " ".join([str(i) for i in self._idcs]) + ")"
 
     def __call__(self, inp: to.Tensor) -> to.Tensor:
         """
@@ -220,7 +220,7 @@ class ATan2Feat:
 
     def __str__(self):
         """ Get an information string. """
-        return f'{get_class_name(self)} (index for numerator {self._idx_sin}, index for denominator {self._idx_cos})'
+        return f"{get_class_name(self)} (index for numerator {self._idx_sin}, index for denominator {self._idx_cos})"
 
     def __call__(self, inp: to.Tensor) -> to.Tensor:
         """
@@ -255,15 +255,15 @@ class RandFourierFeat:
                           Actually, it is not a bandwidth since it is not a frequency.
         """
         self.num_feat_per_dim = num_feat_per_dim
-        self.scale = to.sqrt(to.tensor(2./num_feat_per_dim))
+        self.scale = to.sqrt(to.tensor(2.0 / num_feat_per_dim))
         # Sample omega from a standardized normal distribution
         self.freq = to.randn(num_feat_per_dim, inp_dim)
         # Scale the frequency matrix with the bandwidth factor
         if not isinstance(bandwidth, to.Tensor):
             bandwidth = to.from_numpy(np.asanyarray(bandwidth))
-        self.freq *= to.sqrt(to.tensor(2.)/atleast_2D(bandwidth))
+        self.freq *= to.sqrt(to.tensor(2.0) / atleast_2D(bandwidth))
         # Sample b from a uniform distribution [0, 2pi]
-        self.shift = 2*np.pi*to.rand(num_feat_per_dim)
+        self.shift = 2 * np.pi * to.rand(num_feat_per_dim)
 
     def __call__(self, inp: to.Tensor) -> to.Tensor:
         """
@@ -276,22 +276,24 @@ class RandFourierFeat:
         :return: 1-dim vector of all feature values given the observations
         """
         if inp.ndimension() > 2:
-            raise pyrado.ShapeErr(msg='RBF class can only handle 1-dim or 2-dim input!')
+            raise pyrado.ShapeErr(msg="RBF class can only handle 1-dim or 2-dim input!")
         inp = atleast_2D(inp)  # first dim is the batch size, the second dim it the actual input dimension
 
         # Resize if batched and return the feature value
         shift = self.shift.repeat(inp.shape[0], 1)
-        return self.scale*to.cos(inp@self.freq.t() + shift)
+        return self.scale * to.cos(inp @ self.freq.t() + shift)
 
 
 class RBFFeat:
     """ Normalized Gaussian radial basis function features """
 
-    def __init__(self,
-                 num_feat_per_dim: int,
-                 bounds: [Sequence[np.ndarray], Sequence[to.Tensor], Sequence[float]],
-                 scale: float = None,
-                 state_wise_norm: bool = True):
+    def __init__(
+        self,
+        num_feat_per_dim: int,
+        bounds: [Sequence[np.ndarray], Sequence[to.Tensor], Sequence[float]],
+        scale: float = None,
+        state_wise_norm: bool = True,
+    ):
         """
         Constructor
 
@@ -303,7 +305,7 @@ class RBFFeat:
                                  dimension sums to one), or `False` to jointly normalize them
         """
         if not num_feat_per_dim > 1:
-            raise pyrado.ValueErr(given=num_feat_per_dim, g_constraint='1')
+            raise pyrado.ValueErr(given=num_feat_per_dim, g_constraint="1")
         if not len(bounds) == 2:
             raise pyrado.ShapeErr(given=bounds, expected_match=np.empty(2))
 
@@ -315,18 +317,20 @@ class RBFFeat:
             elif isinstance(b, to.Tensor):
                 bounds_to[i] = b.clone()
             elif isinstance(b, (int, float)):
-                bounds_to[i] = to.tensor(b, dtype=to.get_default_dtype()).view(1, )
+                bounds_to[i] = to.tensor(b, dtype=to.get_default_dtype()).view(
+                    1,
+                )
             else:
                 raise pyrado.TypeErr(given=b, expected_type=[np.ndarray, to.Tensor, int, float])
         if any([any(np.isinf(b)) for b in bounds_to]):
             bound_lo, bound_up = [to.clamp(b, min=-1e6, max=1e6) for b in bounds_to]
-            print_cbt('Clipped the bounds of the RBF centers to [-1e6, 1e6].', 'y')
+            print_cbt("Clipped the bounds of the RBF centers to [-1e6, 1e6].", "y")
         else:
             bound_lo, bound_up = bounds_to
 
         # Create a matrix with center locations for the Gaussians
         num_dim = len(bound_lo)
-        self.num_feat = num_feat_per_dim*num_dim
+        self.num_feat = num_feat_per_dim * num_dim
         self.centers = to.empty(num_feat_per_dim, num_dim)
         for i in range(num_dim):
             # Features along columns
@@ -334,7 +338,7 @@ class RBFFeat:
 
         if scale is None:
             delta_center = self.centers[1, :] - self.centers[0, :]
-            self.scale = -to.log(to.tensor(0.2))/to.pow(delta_center, 2)
+            self.scale = -to.log(to.tensor(0.2)) / to.pow(delta_center, 2)
         else:
             self.scale = scale
 
@@ -351,20 +355,32 @@ class RBFFeat:
         :return: 1-dim vector of all feature values given the observations
         """
         if inp.ndimension() > 2:
-            raise pyrado.ShapeErr(msg='RBF class can only handle 1-dim or 2-dim input!')
+            raise pyrado.ShapeErr(msg="RBF class can only handle 1-dim or 2-dim input!")
         inp = atleast_2D(inp)  # first dim is the batch size, the second dim it the actual input dimension
         inp = inp.reshape(inp.shape[0], 1, inp.shape[1]).repeat(1, self.centers.shape[0], 1)  # reshape explicitly
 
-        exp_sq_dist = to.exp(-self.scale*to.pow(inp - self.centers, 2))
+        exp_sq_dist = to.exp(-self.scale * to.pow(inp - self.centers, 2))
 
         feat_val = to.empty(inp.shape[0], self.num_feat)
         for i, sample in enumerate(exp_sq_dist):
             if self._state_wise_norm:
                 # Normalize the features such that the activation for every state dimension sums up to one
-                feat_val[i, :] = normalize(sample, axis=0, order=1).t().reshape(-1, )
+                feat_val[i, :] = (
+                    normalize(sample, axis=0, order=1)
+                    .t()
+                    .reshape(
+                        -1,
+                    )
+                )
             else:
                 # Turn the features into a vector and normalize over all of them
-                feat_val[i, :] = normalize(sample.t().reshape(-1, ), axis=-1, order=1)
+                feat_val[i, :] = normalize(
+                    sample.t().reshape(
+                        -1,
+                    ),
+                    axis=-1,
+                    order=1,
+                )
         return feat_val
 
     def derivative(self, inp: to.Tensor) -> to.Tensor:
@@ -379,12 +395,12 @@ class RBFFeat:
         """
 
         if inp.ndimension() > 2:
-            raise pyrado.ShapeErr(msg='RBF class can only handle 1-dim or 2-dim input!')
+            raise pyrado.ShapeErr(msg="RBF class can only handle 1-dim or 2-dim input!")
         inp = atleast_2D(inp)  # first dim is the batch size, the second dim it the actual input dimension
         inp = inp.reshape(inp.shape[0], 1, inp.shape[1]).repeat(1, self.centers.shape[0], 1)  # reshape explicitly
 
-        exp_sq_dist = to.exp(-self.scale*to.pow(inp - self.centers, 2))
-        exp_sq_dist_d = -2*self.scale*(inp - self.centers)
+        exp_sq_dist = to.exp(-self.scale * to.pow(inp - self.centers, 2))
+        exp_sq_dist_d = -2 * self.scale * (inp - self.centers)
 
         feat_val = to.empty(inp.shape[0], self.num_feat)
         feat_val_dot = to.empty(inp.shape[0], self.num_feat)
@@ -392,12 +408,21 @@ class RBFFeat:
         for i, (sample, sample_d) in enumerate(zip(exp_sq_dist, exp_sq_dist_d)):
             if self._state_wise_norm:
                 # Normalize the features such that the activation for every state dimension sums up to one
-                feat_val[i, :] = normalize(sample, axis=0, order=1).reshape(-1, )
+                feat_val[i, :] = normalize(sample, axis=0, order=1).reshape(
+                    -1,
+                )
             else:
                 # Turn the features into a vector and normalize over all of them
-                feat_val[i, :] = normalize(sample.t().reshape(-1, ), axis=-1, order=1)
+                feat_val[i, :] = normalize(
+                    sample.t().reshape(
+                        -1,
+                    ),
+                    axis=-1,
+                    order=1,
+                )
 
-            feat_val_dot[i, :] = sample_d.squeeze()*feat_val[i, :] - feat_val[i, :]*sum(
-                sample_d.squeeze()*feat_val[i, :])
+            feat_val_dot[i, :] = sample_d.squeeze() * feat_val[i, :] - feat_val[i, :] * sum(
+                sample_d.squeeze() * feat_val[i, :]
+            )
 
         return feat_val_dot

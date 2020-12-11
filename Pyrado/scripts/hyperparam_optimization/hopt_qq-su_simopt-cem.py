@@ -59,7 +59,7 @@ from pyrado.utils.input_output import print_cbt
 def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     """
     Objective function for the Optuna `Study` to maximize.
-    
+
     .. note::
         Optuna expects only the `trial` argument, thus we use `functools.partial` to sneak in custom arguments.
 
@@ -72,30 +72,34 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     pyrado.set_seed(seed)
 
     # Environments
-    env_hparams = dict(dt=1/100., max_steps=600)
+    env_hparams = dict(dt=1 / 100.0, max_steps=600)
     env_real = QQubeSwingUpSim(**env_hparams)
     env_real.domain_param = dict(
-        Mr=0.095*0.9,  # 0.095*0.9 = 0.0855
-        Mp=0.024*1.1,  # 0.024*1.1 = 0.0264
-        Lr=0.085*0.9,  # 0.085*0.9 = 0.0765
-        Lp=0.129*1.1,  # 0.129*1.1 = 0.1419
+        Mr=0.095 * 0.9,  # 0.095*0.9 = 0.0855
+        Mp=0.024 * 1.1,  # 0.024*1.1 = 0.0264
+        Lr=0.085 * 0.9,  # 0.085*0.9 = 0.0765
+        Lp=0.129 * 1.1,  # 0.129*1.1 = 0.1419
     )
 
     env_sim = QQubeSwingUpSim(**env_hparams)
     randomizer = DomainRandomizer(
-        NormalDomainParam(name='Mr', mean=0., std=1e6, clip_lo=1e-3),
-        NormalDomainParam(name='Mp', mean=0., std=1e6, clip_lo=1e-3),
-        NormalDomainParam(name='Lr', mean=0., std=1e6, clip_lo=1e-3),
-        NormalDomainParam(name='Lp', mean=0., std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="Mr", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="Mp", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="Lr", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="Lp", mean=0.0, std=1e6, clip_lo=1e-3),
     )
     env_sim = DomainRandWrapperLive(env_sim, randomizer)
     dp_map = {
-        0: ('Mr', 'mean'), 1: ('Mr', 'std'),
-        2: ('Mp', 'mean'), 3: ('Mp', 'std'),
-        4: ('Lr', 'mean'), 5: ('Lr', 'std'),
-        6: ('Lp', 'mean'), 7: ('Lp', 'std')
+        0: ("Mr", "mean"),
+        1: ("Mr", "std"),
+        2: ("Mp", "mean"),
+        3: ("Mp", "std"),
+        4: ("Lr", "mean"),
+        5: ("Lr", "std"),
+        6: ("Lp", "mean"),
+        7: ("Lp", "std"),
     }
-    trafo_mask = [True]*8
+    trafo_mask = [True] * 8
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
 
     # Subroutine for policy improvement
@@ -110,65 +114,65 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
         batch_size=500,
         standardize_adv=False,
         lr=5.792e-4,
-        max_grad_norm=1.,
+        max_grad_norm=1.0,
     )
     critic = GAE(vfcn, **critic_hparam)
     subrtn_policy_hparam = dict(
         max_iter=200,
-        min_steps=3*23*env_sim.max_steps,
+        min_steps=3 * 23 * env_sim.max_steps,
         num_epoch=7,
         eps_clip=0.0744,
         batch_size=500,
         std_init=0.9074,
         lr=3.446e-04,
-        max_grad_norm=1.,
+        max_grad_norm=1.0,
         num_workers=1,
     )
     subrtn_policy = PPO(study_dir, env_sim, behav_policy, critic, **subrtn_policy_hparam)
 
     # Subroutine for system identification
-    prior_std_denom = trial.suggest_uniform('prior_std_denom', 5, 20)
+    prior_std_denom = trial.suggest_uniform("prior_std_denom", 5, 20)
     prior = DomainRandomizer(
-        NormalDomainParam(name='Mr', mean=0.095, std=0.095/prior_std_denom),
-        NormalDomainParam(name='Mp', mean=0.024, std=0.024/prior_std_denom),
-        NormalDomainParam(name='Lr', mean=0.085, std=0.085/prior_std_denom),
-        NormalDomainParam(name='Lp', mean=0.129, std=0.129/prior_std_denom),
+        NormalDomainParam(name="Mr", mean=0.095, std=0.095 / prior_std_denom),
+        NormalDomainParam(name="Mp", mean=0.024, std=0.024 / prior_std_denom),
+        NormalDomainParam(name="Lr", mean=0.085, std=0.085 / prior_std_denom),
+        NormalDomainParam(name="Lp", mean=0.129, std=0.129 / prior_std_denom),
     )
     ddp_policy = DomainDistrParamPolicy(
         mapping=dp_map,
         trafo_mask=trafo_mask,
         prior=prior,
-        scale_params=trial.suggest_categorical('ddp_policy_scale_params', [True, False]),
+        scale_params=trial.suggest_categorical("ddp_policy_scale_params", [True, False]),
     )
     subsubrtn_distr_hparam = dict(
-        max_iter=trial.suggest_categorical('subsubrtn_distr_max_iter', [20]),
-        pop_size=trial.suggest_int('pop_size', 50, 500),
+        max_iter=trial.suggest_categorical("subsubrtn_distr_max_iter", [20]),
+        pop_size=trial.suggest_int("pop_size", 50, 500),
         num_rollouts=1,
-        num_is_samples=trial.suggest_int('num_is_samples', 5, 20),
-        expl_std_init=trial.suggest_loguniform('expl_std_init', 1e-3, 1e-1),
-        expl_std_min=trial.suggest_categorical('expl_std_min', [1e-4]),
-        extra_expl_std_init=trial.suggest_loguniform('expl_std_init', 1e-3, 1e-1),
-        extra_expl_decay_iter=trial.suggest_int('extra_expl_decay_iter', 0, 10),
+        num_is_samples=trial.suggest_int("num_is_samples", 5, 20),
+        expl_std_init=trial.suggest_loguniform("expl_std_init", 1e-3, 1e-1),
+        expl_std_min=trial.suggest_categorical("expl_std_min", [1e-4]),
+        extra_expl_std_init=trial.suggest_loguniform("expl_std_init", 1e-3, 1e-1),
+        extra_expl_decay_iter=trial.suggest_int("extra_expl_decay_iter", 0, 10),
         num_workers=1,
     )
-    csv_logger = create_csv_step_logger(osp.join(study_dir, f'trial_{trial.number}'))
+    csv_logger = create_csv_step_logger(osp.join(study_dir, f"trial_{trial.number}"))
     subsubrtn_distr = CEM(study_dir, env_sim, ddp_policy, **subsubrtn_distr_hparam, logger=csv_logger)
-    obs_vel_weight = trial.suggest_loguniform('obs_vel_weight', 1, 100)
+    obs_vel_weight = trial.suggest_loguniform("obs_vel_weight", 1, 100)
     subrtn_distr_hparam = dict(
         metric=None,
         obs_dim_weight=[1, 1, 1, 1, obs_vel_weight, obs_vel_weight],
-        num_rollouts_per_distr=trial.suggest_int('num_rollouts_per_distr', 20, 100),
+        num_rollouts_per_distr=trial.suggest_int("num_rollouts_per_distr", 20, 100),
         num_workers=1,
     )
     subrtn_distr = SysIdViaEpisodicRL(subsubrtn_distr, behav_policy, **subrtn_distr_hparam)
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=trial.suggest_categorical('algo_max_iter', [10]),
-        num_eval_rollouts=trial.suggest_categorical('algo_num_eval_rollouts', [5]),
-        warmstart=trial.suggest_categorical('algo_warmstart', [True]),
-        thold_succ_subrtn=trial.suggest_categorical('algo_thold_succ_subrtn', [50]),
-        subrtn_snapshot_mode='latest',
+        max_iter=trial.suggest_categorical("algo_max_iter", [10]),
+        num_eval_rollouts=trial.suggest_categorical("algo_num_eval_rollouts", [5]),
+        warmstart=trial.suggest_categorical("algo_warmstart", [True]),
+        thold_succ_subrtn=trial.suggest_categorical("algo_thold_succ_subrtn", [50]),
+        subrtn_snapshot_mode="latest",
     )
     algo = SimOpt(study_dir, env_sim, env_real, subrtn_policy, subrtn_distr, **algo_hparam, logger=csv_logger)
 
@@ -177,39 +181,41 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
 
     # Evaluate
     min_rollouts = 1000
-    sampler = ParallelRolloutSampler(env_real, algo.policy, num_workers=1,
-                                     min_rollouts=min_rollouts)  # parallelize via optuna n_jobs
+    sampler = ParallelRolloutSampler(
+        env_real, algo.policy, num_workers=1, min_rollouts=min_rollouts
+    )  # parallelize via optuna n_jobs
     ros = sampler.sample()
-    mean_ret = sum([r.undiscounted_return() for r in ros])/min_rollouts
+    mean_ret = sum([r.undiscounted_return() for r in ros]) / min_rollouts
 
     return mean_ret
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     if args.dir is None:
-        ex_dir = setup_experiment('hyperparams', QQubeSwingUpSim.name,
-                                  f'{SimOpt.name}-{CEM.name}_{QQubeSwingUpAndBalanceCtrl.name}_100Hz')
+        ex_dir = setup_experiment(
+            "hyperparams", QQubeSwingUpSim.name, f"{SimOpt.name}-{CEM.name}_{QQubeSwingUpAndBalanceCtrl.name}_100Hz"
+        )
         study_dir = osp.join(pyrado.TEMP_DIR, ex_dir)
-        print_cbt(f'Starting a new Optuna study.', 'c', bright=True)
+        print_cbt(f"Starting a new Optuna study.", "c", bright=True)
     else:
         study_dir = args.dir
         if not osp.isdir(study_dir):
             raise pyrado.PathErr(given=study_dir)
-        print_cbt(f'Continuing an existing Optuna study.', 'c', bright=True)
+        print_cbt(f"Continuing an existing Optuna study.", "c", bright=True)
 
-    name = f'{QQubeSwingUpSim.name}_{SimOpt.name}-{CEM.name}_{QQubeSwingUpAndBalanceCtrl.name}_100Hz'
+    name = f"{QQubeSwingUpSim.name}_{SimOpt.name}-{CEM.name}_{QQubeSwingUpAndBalanceCtrl.name}_100Hz"
     study = optuna.create_study(
         study_name=name,
         storage=f"sqlite:////{osp.join(study_dir, f'{name}.db')}",
-        direction='maximize',
-        load_if_exists=True
+        direction="maximize",
+        load_if_exists=True,
     )
 
     # Start optimizing
     study.optimize(functools.partial(train_and_eval, study_dir=study_dir, seed=args.seed), n_trials=100, n_jobs=16)
 
     # Save the best hyper-parameters
-    save_list_of_dicts_to_yaml([study.best_params, dict(seed=args.seed)], study_dir, 'best_hyperparams')
+    save_list_of_dicts_to_yaml([study.best_params, dict(seed=args.seed)], study_dir, "best_hyperparams")
