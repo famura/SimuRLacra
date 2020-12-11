@@ -227,8 +227,7 @@
 <span class="kn">from</span> <span class="nn">tests.environment_wrappers.mock_env</span> <span class="kn">import</span> <span class="n">MockEnv</span>
 
 
-<div class="viewcode-block" id="mock_obs_space"><a class="viewcode-back" href="../../../tests.environment_wrappers.html#tests.environment_wrappers.test_observation_normalization.mock_obs_space">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">,</span>
-                <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mock_obs_space&#39;</span><span class="p">])</span>
+<div class="viewcode-block" id="mock_obs_space"><a class="viewcode-back" href="../../../tests.environment_wrappers.html#tests.environment_wrappers.test_observation_normalization.mock_obs_space">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">,</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mock_obs_space&quot;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">mock_obs_space</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">BoxSpace</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span></div>
 

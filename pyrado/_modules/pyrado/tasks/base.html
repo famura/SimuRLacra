@@ -250,7 +250,7 @@
 <span class="sd">        Get the desired state (same dimensions as the environment&#39;s state).</span>
 <span class="sd">        Only override this if the task has a desired state.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s1"> has no desired state.&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> has no desired state.&quot;</span><span class="p">)</span>
 
     <span class="nd">@state_des</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">state_des</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_des</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
@@ -258,7 +258,7 @@
 <span class="sd">        Set the desired state (same dimensions as the environment&#39;s state).</span>
 <span class="sd">        Only override this if the task has a desired state.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s1"> has no desired state.&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> has no desired state.&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">space_des</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Space</span><span class="p">:</span>
@@ -266,7 +266,7 @@
 <span class="sd">        Get the desired state (same dimensions as the environment&#39;s state).</span>
 <span class="sd">        Only override this if the task has a desired state.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s1"> has no desired space.&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> has no desired space.&quot;</span><span class="p">)</span>
 
     <span class="nd">@space_des</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">space_des</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">space_des</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
@@ -274,7 +274,7 @@
 <span class="sd">        Set the desired state (same dimensions as the environment&#39;s state).</span>
 <span class="sd">        Only override this if the task has a desired state.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s1"> has no desired space.&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> has no desired space.&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
@@ -322,7 +322,7 @@
 <span class="sd">        :param remaining_steps: number of time steps left in the episode forwarded to `compute_final_rew`</span>
 <span class="sd">        :return rew: summed final reward</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">sum_final_rew</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">sum_final_rew</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">all_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="n">sum_final_rew</span> <span class="o">+=</span> <span class="n">t</span><span class="o">.</span><span class="n">compute_final_rew</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">sum_final_rew</span></div>
@@ -338,7 +338,7 @@
 <span class="sd">        :param remaining_steps: number of time steps left in the episode</span>
 <span class="sd">        :return: final reward</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="mf">0.</span></div>
+        <span class="k">return</span> <span class="mf">0.0</span></div>
 
 <div class="viewcode-block" id="Task.has_succeeded"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.base.Task.has_succeeded">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">has_succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>

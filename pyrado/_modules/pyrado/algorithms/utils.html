@@ -335,9 +335,9 @@
 <span class="sd">        :return: average reward</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;The replay memory is empty!&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;The replay memory is empty!&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">rewards</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">length</span></div></div>
+            <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">rewards</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">length</span></div></div>
 
 
 <div class="viewcode-block" id="until_thold_exceeded"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.utils.until_thold_exceeded">[docs]</a><span class="k">def</span> <span class="nf">until_thold_exceeded</span><span class="p">(</span><span class="n">thold</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -368,17 +368,18 @@
 
                 <span class="c1"># Break if done</span>
                 <span class="k">if</span> <span class="n">ret</span> <span class="o">&gt;=</span> <span class="n">thold</span><span class="p">:</span>
-                    <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The policy exceeded the threshold </span><span class="si">{</span><span class="n">thold</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+                    <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The policy exceeded the threshold </span><span class="si">{</span><span class="n">thold</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
                     <span class="k">break</span>
 
                 <span class="c1"># Break if max_iter is reached</span>
                 <span class="k">if</span> <span class="n">max_iter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cnt_iter</span> <span class="o">==</span> <span class="n">max_iter</span><span class="p">:</span>
-                    <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Exiting the training and evaluation loop after </span><span class="si">{</span><span class="n">max_iter</span><span class="si">}</span><span class="s1"> iterations.&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+                    <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exiting the training and evaluation loop after </span><span class="si">{</span><span class="n">max_iter</span><span class="si">}</span><span class="s2"> iterations.&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
                     <span class="k">break</span>
 
                 <span class="c1"># Else repeat training</span>
-                <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The policy did not exceed the threshold </span><span class="si">{</span><span class="n">thold</span><span class="si">}</span><span class="s1">. Repeating training and evaluation ...&#39;</span><span class="p">,</span>
-                          <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+                <span class="n">print_cbt</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The policy did not exceed the threshold </span><span class="si">{</span><span class="n">thold</span><span class="si">}</span><span class="s2">. Repeating training and evaluation ...&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="kc">True</span>
+                <span class="p">)</span>
             <span class="k">return</span> <span class="n">ret</span>
 
         <span class="k">return</span> <span class="n">wrapper_trn_eval_fcn</span>
@@ -386,9 +387,9 @@
     <span class="k">return</span> <span class="n">actual_decorator</span></div>
 
 
-<div class="viewcode-block" id="num_iter_from_rollouts"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.utils.num_iter_from_rollouts">[docs]</a><span class="k">def</span> <span class="nf">num_iter_from_rollouts</span><span class="p">(</span><span class="n">ros</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
-                           <span class="n">concat_ros</span><span class="p">:</span> <span class="p">[</span><span class="n">StepSequence</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
-                           <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<div class="viewcode-block" id="num_iter_from_rollouts"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.utils.num_iter_from_rollouts">[docs]</a><span class="k">def</span> <span class="nf">num_iter_from_rollouts</span><span class="p">(</span>
+    <span class="n">ros</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span> <span class="n">concat_ros</span><span class="p">:</span> <span class="p">[</span><span class="n">StepSequence</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the number of iterations from the given rollout data.</span>
 
@@ -399,9 +400,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">ros</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">assert</span> <span class="n">concat_ros</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">concat_ros</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="n">batch_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">//</span><span class="n">batch_size</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">concat_ros</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="n">batch_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">batch_size</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">ro</span><span class="o">.</span><span class="n">length</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">ros</span><span class="p">)</span> <span class="o">+</span> <span class="n">batch_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">//</span><span class="n">batch_size</span></div>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">ro</span><span class="o">.</span><span class="n">length</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">ros</span><span class="p">)</span> <span class="o">+</span> <span class="n">batch_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">batch_size</span></div>
 
 
 <div class="viewcode-block" id="get_grad_via_torch"><a class="viewcode-back" href="../../../algorithms.html#pyrado.algorithms.utils.get_grad_via_torch">[docs]</a><span class="k">def</span> <span class="nf">get_grad_via_torch</span><span class="p">(</span><span class="n">x_np</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fcn_to</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">*</span><span class="n">args_to</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs_to</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>

@@ -232,11 +232,7 @@
 <div class="viewcode-block" id="MaskedTask"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.masked.MaskedTask">[docs]</a><span class="k">class</span> <span class="nc">MaskedTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Task using only a subset of state and actions &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
-                 <span class="n">wrapped_task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span>
-                 <span class="n">state_idcs</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-                 <span class="n">action_idcs</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">wrapped_task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">state_idcs</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">action_idcs</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
@@ -301,9 +297,11 @@
             <span class="n">env_spec</span><span class="o">=</span><span class="n">EnvSpec</span><span class="p">(</span>
                 <span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span>
                 <span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_action_mask</span><span class="p">),</span>
-                <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_state_mask</span><span class="p">)</span> <span class="k">if</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">EmptySpace</span> <span class="k">else</span> <span class="n">EmptySpace</span><span class="p">),</span>
-            <span class="o">**</span><span class="n">kwargs</span>
+                <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_mask</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">EmptySpace</span>
+                <span class="k">else</span> <span class="n">EmptySpace</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="MaskedTask.step_rew"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.masked.MaskedTask.step_rew">[docs]</a>    <span class="k">def</span> <span class="nf">step_rew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>

@@ -232,15 +232,15 @@
 <div class="viewcode-block" id="SamplerBase"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sampler.SamplerBase">[docs]</a><span class="k">class</span> <span class="nc">SamplerBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A sampler generates a list of rollouts in some unspecified way.</span>
-<span class="sd">    </span>
-<span class="sd">    Since the sampling might occur in parallel, there is no way to reliably generate an exact amount of samples. </span>
-<span class="sd">    The sampler can however guarantee a minimum amount of samples to be available. The sampler does not discard any </span>
-<span class="sd">    samples on it&#39;s own, all sampled data will be returned. </span>
+
+<span class="sd">    Since the sampling might occur in parallel, there is no way to reliably generate an exact amount of samples.</span>
+<span class="sd">    The sampler can however guarantee a minimum amount of samples to be available. The sampler does not discard any</span>
+<span class="sd">    samples on it&#39;s own, all sampled data will be returned.</span>
 <span class="sd">    There are two ways to regulate the sampling process:</span>
 <span class="sd">    1. the minimum number of rollouts</span>
 <span class="sd">    2. the minimum number of steps in all rollouts</span>
-<span class="sd">    </span>
-<span class="sd">    At least one of these bounds must be specified. If both are set, the sampler will only terminate once both are </span>
+
+<span class="sd">    At least one of these bounds must be specified. If both are set, the sampler will only terminate once both are</span>
 <span class="sd">    fulfilled.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -262,7 +262,7 @@
 <span class="sd">        :param min_rollouts: minimum number of complete rollouts to sample</span>
 <span class="sd">        :param min_steps: minimum total number of steps to sample</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="n">min_rollouts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">min_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;At least one limit must be given&#39;</span>
+        <span class="k">assert</span> <span class="n">min_rollouts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">min_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;At least one limit must be given&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_rollouts</span> <span class="o">=</span> <span class="n">min_rollouts</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_steps</span> <span class="o">=</span> <span class="n">min_steps</span></div>
 
@@ -270,16 +270,16 @@
     <span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Env</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reset the sampler after changes were made to the environment or the policy, optionally replacing one of them.</span>
-<span class="sd">        </span>
-<span class="sd">        Most samplers will be implemented in parallel, so if there are changes to the environment or the policy, </span>
-<span class="sd">        they will not automatically propagate to all processes. This method exists as a workaround; call it to </span>
+
+<span class="sd">        Most samplers will be implemented in parallel, so if there are changes to the environment or the policy,</span>
+<span class="sd">        they will not automatically propagate to all processes. This method exists as a workaround; call it to</span>
 <span class="sd">        force a reinitialization of environment and policy in all subprocesses.</span>
-<span class="sd">        </span>
-<span class="sd">        Note that you don&#39;t need to call this if the policy parameters change, since that is to be expected between </span>
+
+<span class="sd">        Note that you don&#39;t need to call this if the policy parameters change, since that is to be expected between</span>
 <span class="sd">        sampling runs, the sample() method takes care of this on it&#39;s own.</span>
-<span class="sd">        </span>
+
 <span class="sd">        You can use the env and policy parameters to completely replace the stored environment or policy.</span>
-<span class="sd">        </span>
+
 <span class="sd">        :param env: new environment to use, or None to keep the old one</span>
 <span class="sd">        :param policy: new policy to use, or None to keep the old one</span>
 <span class="sd">        &quot;&quot;&quot;</span>

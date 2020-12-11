@@ -262,10 +262,10 @@ This is done by sampling more rollouts, and then only using the epsilon-qunatile
 <dt id="pyrado.sampling.cvar_sampler.CVaRSampler.reinit">
 <code class="sig-name descname">reinit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">policy</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/cvar_sampler.html#CVaRSampler.reinit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.cvar_sampler.CVaRSampler.reinit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset the sampler after changes were made to the environment or the policy, optionally replacing one of them.</p>
-<p>Most samplers will be implemented in parallel, so if there are changes to the environment or the policy, 
-they will not automatically propagate to all processes. This method exists as a workaround; call it to 
+<p>Most samplers will be implemented in parallel, so if there are changes to the environment or the policy,
+they will not automatically propagate to all processes. This method exists as a workaround; call it to
 force a reinitialization of environment and policy in all subprocesses.</p>
-<p>Note that you don’t need to call this if the policy parameters change, since that is to be expected between 
+<p>Note that you don’t need to call this if the policy parameters change, since that is to be expected between
 sampling runs, the sample() method takes care of this on it’s own.</p>
 <p>You can use the env and policy parameters to completely replace the stored environment or policy.</p>
 <dl class="field-list simple">
@@ -681,22 +681,22 @@ This policy may be wrapped by an exploration strategy.</p></li>
 <em class="property">class </em><code class="sig-name descname">SamplerBase</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">min_rollouts</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sampler.html#SamplerBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sampler.SamplerBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>A sampler generates a list of rollouts in some unspecified way.</p>
-<p>Since the sampling might occur in parallel, there is no way to reliably generate an exact amount of samples. 
-The sampler can however guarantee a minimum amount of samples to be available. The sampler does not discard any 
-samples on it’s own, all sampled data will be returned. 
+<p>Since the sampling might occur in parallel, there is no way to reliably generate an exact amount of samples.
+The sampler can however guarantee a minimum amount of samples to be available. The sampler does not discard any
+samples on it’s own, all sampled data will be returned.
 There are two ways to regulate the sampling process:
 1. the minimum number of rollouts
 2. the minimum number of steps in all rollouts</p>
-<p>At least one of these bounds must be specified. If both are set, the sampler will only terminate once both are 
+<p>At least one of these bounds must be specified. If both are set, the sampler will only terminate once both are
 fulfilled.</p>
 <dl class="py method">
 <dt id="pyrado.sampling.sampler.SamplerBase.reinit">
 <em class="property">abstract </em><code class="sig-name descname">reinit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sampler.html#SamplerBase.reinit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sampler.SamplerBase.reinit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset the sampler after changes were made to the environment or the policy, optionally replacing one of them.</p>
-<p>Most samplers will be implemented in parallel, so if there are changes to the environment or the policy, 
-they will not automatically propagate to all processes. This method exists as a workaround; call it to 
+<p>Most samplers will be implemented in parallel, so if there are changes to the environment or the policy,
+they will not automatically propagate to all processes. This method exists as a workaround; call it to
 force a reinitialization of environment and policy in all subprocesses.</p>
-<p>Note that you don’t need to call this if the policy parameters change, since that is to be expected between 
+<p>Note that you don’t need to call this if the policy parameters change, since that is to be expected between
 sampling runs, the sample() method takes care of this on it’s own.</p>
 <p>You can use the env and policy parameters to completely replace the stored environment or policy.</p>
 <dl class="field-list simple">
@@ -750,13 +750,13 @@ sampling runs, the sample() method takes care of this on it’s own.</p>
 <dt id="pyrado.sampling.sampler_pool.SamplerPool">
 <em class="property">class </em><code class="sig-name descname">SamplerPool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_threads</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/sampler_pool.html#SamplerPool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sampler_pool.SamplerPool" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A process pool capable of executing operations in parallel. This differs from the multiprocessing.Pool class in 
+<p>A process pool capable of executing operations in parallel. This differs from the multiprocessing.Pool class in
 that it explicitly incorporates process-local state.</p>
-<p>Every parallel function gets a GlobalNamespace object as first argument, which can hold arbitrary worker-local 
+<p>Every parallel function gets a GlobalNamespace object as first argument, which can hold arbitrary worker-local
 state. This allows for certain optimizations. For example, when the parallel operation requires an object that is
-expensive to transmit, we can create this object once in each process, store it in the namespace, and then use it 
+expensive to transmit, we can create this object once in each process, store it in the namespace, and then use it
 in every map function call.</p>
-<p>This class also contains additional methods to call a function exactly once in each worker, to setup worker-local 
+<p>This class also contains additional methods to call a function exactly once in each worker, to setup worker-local
 state.</p>
 <dl class="py method">
 <dt id="pyrado.sampling.sampler_pool.SamplerPool.invoke_all">
@@ -784,11 +784,11 @@ The return values are collected into a list.</p>
 <code class="sig-name descname">run_collect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em>, <em class="sig-param"><span class="n">func</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">collect_progressbar</span><span class="p">:</span> <span class="n">tqdm.std.tqdm</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_runs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; tuple<a class="reference internal" href="_modules/pyrado/sampling/sampler_pool.html#SamplerPool.run_collect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.sampler_pool.SamplerPool.run_collect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collect at least n samples from func, where the number of samples per run can vary.</p>
 <p>This is done by calling res, ns = func(G, <a href="#id1"><span class="problematic" id="id2">*</span></a>args, <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs) until the sum of ns exceeds n.</p>
-<p>This is intended for situations like reinforcement learning runs. If the environment ends up 
+<p>This is intended for situations like reinforcement learning runs. If the environment ends up
 in an error state, you get less samples per run. To ensure a stable learning behaviour, you can
 specify the minimum amount of samples to collect before returning.</p>
-<p>Since the workers can only check the amount of samples before starting a run, you will likely 
-get more samples than the minimum. No generated samples are dropped; if that is desired, 
+<p>Since the workers can only check the amount of samples before starting a run, you will likely
+get more samples than the minimum. No generated samples are dropped; if that is desired,
 do so manually.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

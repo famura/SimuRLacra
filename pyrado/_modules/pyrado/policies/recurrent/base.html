@@ -272,7 +272,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="RecurrentPolicy.evaluate"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.base.RecurrentPolicy.evaluate">[docs]</a>    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rollout</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">hidden_states_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;hidden_states&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rollout</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">hidden_states_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hidden_states&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Re-evaluate the given rollout and return a derivable action tensor.</span>
 <span class="sd">        This method makes sure that the gradient is propagated through the hidden state.</span>
@@ -326,15 +326,15 @@
         <span class="c1"># Make absolutely sure there are no leftover back-connections here!</span>
         <span class="n">hidden_buf</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">hidden</span><span class="p">)</span>
         <span class="n">hidden_buf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">hidden</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;hidden&#39;</span><span class="p">,</span> <span class="n">hidden_buf</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;hidden&quot;</span><span class="p">,</span> <span class="n">hidden_buf</span><span class="p">)</span>
 
         <span class="c1"># Trace network (using random observation and init hidden state)</span>
         <span class="n">inputs</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;forward&#39;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">&quot;forward&quot;</span><span class="p">:</span> <span class="p">(</span>
                 <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">())</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
-                <span class="n">hidden_buf</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
+                <span class="n">hidden_buf</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">()),</span>
             <span class="p">),</span>
-            <span class="s1">&#39;init_hidden&#39;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">()</span>  <span class="c1"># call with no arguments</span>
+            <span class="s2">&quot;init_hidden&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(),</span>  <span class="c1"># call with no arguments</span>
         <span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">trace_module</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span>
 
@@ -364,22 +364,26 @@
 <span class="sd">    :return: unpacked hidden state, a tensor of num_recurrent_layers x batch_size x hidden_size.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">num_recurrent_layers</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">,</span> \
-            <span class="s2">&quot;Passed hidden variable&#39;s size doesn&#39;t match the one required by the network.&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">num_recurrent_layers</span> <span class="o">*</span> <span class="n">hidden_size</span>
+        <span class="p">),</span> <span class="s2">&quot;Passed hidden variable&#39;s size doesn&#39;t match the one required by the network.&quot;</span>
         <span class="c1"># we could handle that case, but for now it&#39;s not necessary.</span>
-        <span class="k">assert</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;Cannot use batched observations with unbatched hidden state&#39;</span>
+        <span class="k">assert</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Cannot use batched observations with unbatched hidden state&quot;</span>
         <span class="k">return</span> <span class="n">hidden</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">num_recurrent_layers</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">)</span>
 
     <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">num_recurrent_layers</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">,</span> \
-            <span class="s2">&quot;Passed hidden variable&#39;s size doesn&#39;t match the one required by the network.&quot;</span>
-        <span class="k">assert</span> <span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">batch_size</span><span class="p">,</span> \
-            <span class="sa">f</span><span class="s1">&#39;Batch size of hidden state (</span><span class="si">{</span><span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">) must match batch size of observations (</span><span class="si">{</span><span class="n">batch_size</span><span class="si">}</span><span class="s1">)&#39;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">num_recurrent_layers</span> <span class="o">*</span> <span class="n">hidden_size</span>
+        <span class="p">),</span> <span class="s2">&quot;Passed hidden variable&#39;s size doesn&#39;t match the one required by the network.&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">batch_size</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Batch size of hidden state (</span><span class="si">{</span><span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">) must match batch size of observations (</span><span class="si">{</span><span class="n">batch_size</span><span class="si">}</span><span class="s2">)&quot;</span>
         <span class="k">return</span> <span class="n">hidden</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">)</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Improper shape of &#39;hidden&#39;. Policy received </span><span class="si">{</span><span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, &quot;</span>
-                           <span class="sa">f</span><span class="s2">&quot;but shape should be 1- or 2-dim&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Improper shape of &#39;hidden&#39;. Policy received </span><span class="si">{</span><span class="n">hidden</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, &quot;</span> <span class="sa">f</span><span class="s2">&quot;but shape should be 1- or 2-dim&quot;</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="default_pack_hidden"><a class="viewcode-back" href="../../../../policies.recurrent.html#pyrado.policies.recurrent.base.default_pack_hidden">[docs]</a><span class="k">def</span> <span class="nf">default_pack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -395,10 +399,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Simply flatten the hidden state</span>
-        <span class="k">return</span> <span class="n">hidden</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">num_recurrent_layers</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hidden</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">num_recurrent_layers</span> <span class="o">*</span> <span class="n">hidden_size</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Need to make sure that the batch dimension is the first element</span>
-        <span class="k">return</span> <span class="n">hidden</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="o">*</span><span class="n">hidden_size</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">hidden</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">num_recurrent_layers</span> <span class="o">*</span> <span class="n">hidden_size</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

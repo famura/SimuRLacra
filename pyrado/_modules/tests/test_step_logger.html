@@ -234,19 +234,19 @@
     <span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ap</span><span class="p">)</span>
 
     <span class="c1"># Test first step</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Dummy&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Dummy&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">record_step</span><span class="p">()</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">print_values</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">reset_mock</span><span class="p">()</span>
 
     <span class="c1"># Test second step</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Dummy&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Dummy&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">record_step</span><span class="p">()</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">print_values</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">reset_mock</span><span class="p">()</span>
 
     <span class="c1"># Test third step</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Dummy&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Dummy&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">record_step</span><span class="p">()</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">print_values</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">reset_mock</span><span class="p">()</span></div>
@@ -258,23 +258,23 @@
     <span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ap</span><span class="p">)</span>
 
     <span class="c1"># Test one value combi</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value1&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value2&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value1&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value2&quot;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">record_step</span><span class="p">()</span>
-    <span class="n">ap</span><span class="o">.</span><span class="n">print_values</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">({</span><span class="s1">&#39;Value1&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Value2&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">},</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">)</span>
+    <span class="n">ap</span><span class="o">.</span><span class="n">print_values</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">({</span><span class="s2">&quot;Value1&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Value2&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">},</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">)</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">reset_mock</span><span class="p">()</span>
 
     <span class="c1"># And another</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value1&#39;</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value2&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.7</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value1&quot;</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value2&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.7</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">record_step</span><span class="p">()</span>
-    <span class="n">ap</span><span class="o">.</span><span class="n">print_values</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">({</span><span class="s1">&#39;Value1&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;Value2&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">6.7</span><span class="p">},</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">)</span>
+    <span class="n">ap</span><span class="o">.</span><span class="n">print_values</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">({</span><span class="s2">&quot;Value1&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;Value2&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">6.7</span><span class="p">},</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">)</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">reset_mock</span><span class="p">()</span>
 
     <span class="c1"># Only update value1 - value2 should still be there</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value1&#39;</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value1&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">record_step</span><span class="p">()</span>
-    <span class="n">ap</span><span class="o">.</span><span class="n">print_values</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">({</span><span class="s1">&#39;Value1&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span> <span class="s1">&#39;Value2&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">6.7</span><span class="p">},</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">)</span>
+    <span class="n">ap</span><span class="o">.</span><span class="n">print_values</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">({</span><span class="s2">&quot;Value1&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span> <span class="s2">&quot;Value2&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">6.7</span><span class="p">},</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">)</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">reset_mock</span><span class="p">()</span></div>
 
 
@@ -284,17 +284,17 @@
     <span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ap</span><span class="p">)</span>
 
     <span class="c1"># Add Value1 first</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value1&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value2&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value1&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value2&quot;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">record_step</span><span class="p">()</span>
-    <span class="n">ap</span><span class="o">.</span><span class="n">print_values</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Value1&#39;</span><span class="p">,</span> <span class="s1">&#39;Value2&#39;</span><span class="p">],</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">)</span>
+    <span class="n">ap</span><span class="o">.</span><span class="n">print_values</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Value1&quot;</span><span class="p">,</span> <span class="s2">&quot;Value2&quot;</span><span class="p">],</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">)</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">reset_mock</span><span class="p">()</span>
 
     <span class="c1"># Now add value2 first</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value2&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.7</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value1&#39;</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value2&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.7</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value1&quot;</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">record_step</span><span class="p">()</span>
-    <span class="n">ap</span><span class="o">.</span><span class="n">print_values</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Value1&#39;</span><span class="p">,</span> <span class="s1">&#39;Value2&#39;</span><span class="p">],</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">)</span>
+    <span class="n">ap</span><span class="o">.</span><span class="n">print_values</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Value1&quot;</span><span class="p">,</span> <span class="s2">&quot;Value2&quot;</span><span class="p">],</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">)</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">reset_mock</span><span class="p">()</span></div>
 
 
@@ -304,7 +304,7 @@
     <span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ap</span><span class="p">)</span>
 
     <span class="c1"># Record a step</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Dummy&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Dummy&quot;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">record_step</span><span class="p">()</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">print_values</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">reset_mock</span><span class="p">()</span>
@@ -315,7 +315,7 @@
     <span class="n">ap</span><span class="o">.</span><span class="n">reset_mock</span><span class="p">()</span>
 
     <span class="c1"># Add a value again</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Dummy&#39;</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Dummy&quot;</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">record_step</span><span class="p">()</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">print_values</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">reset_mock</span><span class="p">()</span></div>
@@ -327,13 +327,13 @@
     <span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ap</span><span class="p">)</span>
 
     <span class="c1"># Record a step</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value1&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value2&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value1&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value2&quot;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">record_step</span><span class="p">()</span>
 
     <span class="c1"># Try to add an unknown key</span>
     <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">pyrado</span><span class="o">.</span><span class="n">KeyErr</span><span class="p">):</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Unknown&#39;</span><span class="p">,</span> <span class="mi">42</span><span class="p">)</span></div>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Unknown&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_prefix"><a class="viewcode-back" href="../../tests.html#tests.test_step_logger.test_prefix">[docs]</a><span class="k">def</span> <span class="nf">test_prefix</span><span class="p">():</span>
@@ -342,24 +342,24 @@
     <span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ap</span><span class="p">)</span>
 
     <span class="c1"># Record plain value</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value0&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value0&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># Record prefixed value manually</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">push_prefix</span><span class="p">(</span><span class="s1">&#39;Prefix1_&#39;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value1&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">push_prefix</span><span class="p">(</span><span class="s2">&quot;Prefix1_&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value1&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">pop_prefix</span><span class="p">()</span>
 
     <span class="c1"># Record prefixed value with contextmanager</span>
-    <span class="k">with</span> <span class="n">logger</span><span class="o">.</span><span class="n">prefix</span><span class="p">(</span><span class="s1">&#39;Prefix2_&#39;</span><span class="p">):</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value2&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">logger</span><span class="o">.</span><span class="n">prefix</span><span class="p">(</span><span class="s2">&quot;Prefix2_&quot;</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value2&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 
     <span class="c1"># Assert key names are correct</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">record_step</span><span class="p">()</span>
-    <span class="n">ap</span><span class="o">.</span><span class="n">print_values</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Value0&#39;</span><span class="p">,</span> <span class="s1">&#39;Prefix1_Value1&#39;</span><span class="p">,</span> <span class="s1">&#39;Prefix2_Value2&#39;</span><span class="p">],</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">)</span></div>
+    <span class="n">ap</span><span class="o">.</span><span class="n">print_values</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Value0&quot;</span><span class="p">,</span> <span class="s2">&quot;Prefix1_Value1&quot;</span><span class="p">,</span> <span class="s2">&quot;Prefix2_Value2&quot;</span><span class="p">],</span> <span class="n">mock</span><span class="o">.</span><span class="n">ANY</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_csv_logger_serializer"><a class="viewcode-back" href="../../tests.html#tests.test_step_logger.test_csv_logger_serializer">[docs]</a><span class="k">def</span> <span class="nf">test_csv_logger_serializer</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">):</span>
-    <span class="n">outfile</span> <span class="o">=</span> <span class="n">tmpdir</span><span class="o">/</span><span class="s1">&#39;testout.csv&#39;</span>
+    <span class="n">outfile</span> <span class="o">=</span> <span class="n">tmpdir</span> <span class="o">/</span> <span class="s2">&quot;testout.csv&quot;</span>
 
     <span class="c1"># Create csv logger</span>
     <span class="n">cp</span> <span class="o">=</span> <span class="n">uut</span><span class="o">.</span><span class="n">CSVPrinter</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
@@ -367,26 +367,26 @@
     <span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cp</span><span class="p">)</span>
 
     <span class="c1"># Log some values</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value1&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value2&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value1&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value2&quot;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">record_step</span><span class="p">()</span>
 
     <span class="c1"># Serialize / deserialize</span>
     <span class="n">logger_reser</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">))</span>
 
     <span class="c1"># Log values with new logger</span>
-    <span class="n">logger_reser</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value1&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-    <span class="n">logger_reser</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value2&#39;</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+    <span class="n">logger_reser</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value1&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">logger_reser</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value2&quot;</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
     <span class="n">logger_reser</span><span class="o">.</span><span class="n">record_step</span><span class="p">()</span>
 
     <span class="c1"># This should have properly appended to the csv file</span>
     <span class="k">with</span> <span class="n">outfile</span><span class="o">.</span><span class="n">open</span><span class="p">()</span> <span class="k">as</span> <span class="n">outfilehandle</span><span class="p">:</span>
         <span class="n">rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">outfilehandle</span><span class="p">))</span>
 
-    <span class="k">assert</span> <span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;Value1&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;10&#39;</span>
-    <span class="k">assert</span> <span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;Value2&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;20&#39;</span>
-    <span class="k">assert</span> <span class="n">rows</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;Value1&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;100&#39;</span>
-    <span class="k">assert</span> <span class="n">rows</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;Value2&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;200&#39;</span></div>
+    <span class="k">assert</span> <span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;Value1&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;10&quot;</span>
+    <span class="k">assert</span> <span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;Value2&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;20&quot;</span>
+    <span class="k">assert</span> <span class="n">rows</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;Value1&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;100&quot;</span>
+    <span class="k">assert</span> <span class="n">rows</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;Value2&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;200&quot;</span></div>
 
 
 <div class="viewcode-block" id="test_tb_logger_serializer"><a class="viewcode-back" href="../../tests.html#tests.test_step_logger.test_tb_logger_serializer">[docs]</a><span class="k">def</span> <span class="nf">test_tb_logger_serializer</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">):</span>
@@ -396,16 +396,16 @@
     <span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cp</span><span class="p">)</span>
 
     <span class="c1"># Log some values</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value1&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value2&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value1&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value2&quot;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">record_step</span><span class="p">()</span>
 
     <span class="c1"># Serialize / deserialize</span>
     <span class="n">logger_reser</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">))</span>
 
     <span class="c1"># Log values with new logger</span>
-    <span class="n">logger_reser</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value1&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-    <span class="n">logger_reser</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;Value2&#39;</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+    <span class="n">logger_reser</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value1&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">logger_reser</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s2">&quot;Value2&quot;</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
     <span class="n">logger_reser</span><span class="o">.</span><span class="n">record_step</span><span class="p">()</span>
 
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">logger_reser</span><span class="o">.</span><span class="n">printers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>

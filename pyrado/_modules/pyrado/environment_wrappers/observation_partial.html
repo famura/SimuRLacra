@@ -255,7 +255,7 @@
                 <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">mask</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">obs_space</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Parse indices</span>
-            <span class="k">assert</span> <span class="n">idcs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;Either mask or indices must be specified&#39;</span>
+            <span class="k">assert</span> <span class="n">idcs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Either mask or indices must be specified&quot;</span>
             <span class="n">mask</span> <span class="o">=</span> <span class="n">wrapped_env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">idcs</span><span class="p">)</span>
         <span class="c1"># Invert if needed</span>
         <span class="k">if</span> <span class="n">keep_selected</span><span class="p">:</span>

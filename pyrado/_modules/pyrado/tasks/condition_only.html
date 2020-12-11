@@ -236,10 +236,7 @@
 <span class="sd">    This class is intended to be wrapped by `FinalRewTask`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
-                 <span class="n">condition_fcn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
-                 <span class="n">is_success_condition</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">condition_fcn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">is_success_condition</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
@@ -297,7 +294,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">is_success_condition</span> <span class="o">=</span> <span class="n">is_success_condition</span></div>
 
 <div class="viewcode-block" id="ConditionOnlyTask.step_rew"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.condition_only.ConditionOnlyTask.step_rew">[docs]</a>    <span class="k">def</span> <span class="nf">step_rew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="k">return</span> <span class="mf">0.</span></div>
+        <span class="k">return</span> <span class="mf">0.0</span></div>
 
 <div class="viewcode-block" id="ConditionOnlyTask.has_succeeded"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.condition_only.ConditionOnlyTask.has_succeeded">[docs]</a>    <span class="k">def</span> <span class="nf">has_succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_success_condition</span><span class="p">:</span>

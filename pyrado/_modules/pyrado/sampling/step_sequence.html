@@ -249,7 +249,8 @@
 
 <div class="viewcode-block" id="DictIndexProxy"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.step_sequence.DictIndexProxy">[docs]</a><span class="k">class</span> <span class="nc">DictIndexProxy</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Views a slice through a dict of lists or tensors. &quot;&quot;&quot;</span>
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;__dict__&#39;</span><span class="p">,</span> <span class="s1">&#39;_obj&#39;</span><span class="p">,</span> <span class="s1">&#39;_index&#39;</span><span class="p">,</span> <span class="s1">&#39;_prefix&#39;</span><span class="p">)</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;__dict__&quot;</span><span class="p">,</span> <span class="s2">&quot;_obj&quot;</span><span class="p">,</span> <span class="s2">&quot;_index&quot;</span><span class="p">,</span> <span class="s2">&quot;_prefix&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -269,10 +270,10 @@
         <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Try pluralized keys</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">error_type</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No entry named </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span><span class="si">}{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">error_type</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No entry named </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span><span class="si">}{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">value</span>
 
     <span class="k">def</span> <span class="nf">_index_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">error_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="ne">RuntimeError</span><span class="p">):</span>
@@ -284,10 +285,9 @@
             <span class="c1"># Return tuple of slices</span>
             <span class="c1"># Since we can&#39;t proxy a tuple, we slice eagerly</span>
             <span class="c1"># Use type(value) to support named tuples. (the keys is still index though)</span>
-            <span class="k">return</span> <span class="n">new_tuple</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_index_value</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">]&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">error_type</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-            <span class="p">))</span>
+            <span class="k">return</span> <span class="n">new_tuple</span><span class="p">(</span>
+                <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_index_value</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">error_type</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+            <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
             <span class="c1"># Return slice of ndarray / tensor</span>
             <span class="k">return</span> <span class="n">value</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
@@ -296,7 +296,7 @@
             <span class="k">return</span> <span class="n">value</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Unsupported type</span>
-            <span class="k">raise</span> <span class="n">error_type</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Entry </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span><span class="si">}{</span><span class="n">key</span><span class="si">}</span><span class="s1"> has un-gettable type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">error_type</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Entry </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span><span class="si">}{</span><span class="n">key</span><span class="si">}</span><span class="s2"> has un-gettable type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_indexed_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">error_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="ne">RuntimeError</span><span class="p">):</span>
         <span class="n">real_key</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_key</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">,</span> <span class="n">error_type</span><span class="p">)</span>
@@ -318,17 +318,17 @@
             <span class="n">value</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_value</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Don&#39;t support setting dict proxies</span>
-            <span class="k">raise</span> <span class="n">error_type</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Entry </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> has un-settable type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">error_type</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Entry </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> has un-settable type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_indexed_value</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">error_type</span><span class="o">=</span><span class="ne">AttributeError</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_set_indexed_value</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">error_type</span><span class="o">=</span><span class="ne">AttributeError</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
@@ -340,7 +340,7 @@
 
     <span class="k">def</span> <span class="fm">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># List dict items not starting with _</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)]</span>
 
     <span class="c1"># Define getitem and setitem too, helps with ie return attr which is a keyword</span>
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
@@ -354,25 +354,23 @@
 
     <span class="c1"># Serialize only dict and index</span>
     <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s1">&#39;obj&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span>
-            <span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span>
-        <span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;obj&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;obj&#39;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;obj&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="Step"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.step_sequence.Step">[docs]</a><span class="k">class</span> <span class="nc">Step</span><span class="p">(</span><span class="n">DictIndexProxy</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A single step in a rollout.</span>
-<span class="sd">    </span>
+
 <span class="sd">    This object is a proxy, referring a specific index in the rollout. When querying an attribute from the step,</span>
 <span class="sd">    it will try to return the corresponding slice from the rollout. Additionally, one can prefix attributes with `next_`</span>
 <span class="sd">    to access the value for the next step, i.e. `next_observations` the observation made at the start of the next step.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_rollout&#39;</span><span class="p">)</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s2">&quot;_rollout&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rollout</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -387,29 +385,29 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_rollout</span> <span class="o">=</span> <span class="n">rollout</span>
 
     <span class="k">def</span> <span class="nf">_process_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">error_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]):</span>
-        <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;next_&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;next_&quot;</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rollout</span><span class="o">.</span><span class="n">continuous</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">error_type</span><span class="p">(</span><span class="s1">&#39;Access to next element is not supported for non-continuous rollouts.&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">error_type</span><span class="p">(</span><span class="s2">&quot;Access to next element is not supported for non-continuous rollouts.&quot;</span><span class="p">)</span>
             <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span>
             <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rollout</span><span class="o">.</span><span class="n">data_names</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;s&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rollout</span><span class="o">.</span><span class="n">data_names</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;done&#39;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">error_type</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No such rollout data field: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rollout</span><span class="o">.</span><span class="n">data_names</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rollout</span><span class="o">.</span><span class="n">data_names</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;done&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">error_type</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No such rollout data field: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">key</span><span class="p">,</span> <span class="n">index</span>
 
     <span class="c1"># Serialize rollout and index</span>
     <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;rollout&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rollout</span><span class="p">,</span> <span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;rollout&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rollout</span><span class="p">,</span> <span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_rollout</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;rollout&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rollout</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;rollout&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rollout</span><span class="o">.</span><span class="vm">__dict__</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="StepSequence"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.step_sequence.StepSequence">[docs]</a><span class="k">class</span> <span class="nc">StepSequence</span><span class="p">(</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Step</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A sequence of steps.</span>
-<span class="sd">    </span>
+
 <span class="sd">    During the rollout, the values of different variables are recorded. This class provides efficient storage and</span>
 <span class="sd">    access for these values. The constructor accepts a list of step entries for each variable. For every step,</span>
 <span class="sd">    the list should contain a Tensor/ndarray of values for that step. The shape of these tensors must be the same for</span>
@@ -420,25 +418,29 @@
 <span class="sd">    be seen as a sequence of steps. Each Step object is a proxy, it&#39;s attributes refer to the respective slice of the</span>
 <span class="sd">    corresponding variable. The only required result variable is rewards. All other variables are optional.</span>
 <span class="sd">    Common are observations, actions, policy_infos and env_infos.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Storing PyTorch tensors with gradient tracing is NOT supported. The rationale behind this is eager error avoidance.</span>
 <span class="sd">    The only reason you would add them is to profit from the optimized slicing, but using that with gradient tracking</span>
 <span class="sd">    risks lingering incomplete graphs. Thus, just don&#39;t.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="c1"># Set of required rollout fields IN ADDITION to the rewards.</span>
     <span class="c1"># Putting this into a class field instead of using the constructor arguments reduces duplicate code and allows to</span>
     <span class="c1"># override it during unit tests.</span>
-    <span class="n">required_fields</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;observations&#39;</span><span class="p">,</span> <span class="s1">&#39;actions&#39;</span><span class="p">}</span>
+    <span class="n">required_fields</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;observations&quot;</span><span class="p">,</span> <span class="s2">&quot;actions&quot;</span><span class="p">}</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-                 <span class="n">complete</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-                 <span class="n">rollout_info</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">done</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">continuous</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-                 <span class="n">rollout_bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">rewards</span><span class="p">,</span>
-                 <span class="o">**</span><span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">complete</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">rollout_info</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">done</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">continuous</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">rollout_bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">rewards</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">data</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
@@ -467,20 +469,20 @@
             <span class="c1"># We ignore rewards here since it&#39;s probably scalar</span>
             <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)):</span>
-                    <span class="n">data_format</span> <span class="o">=</span> <span class="s1">&#39;torch&#39;</span>
+                    <span class="n">data_format</span> <span class="o">=</span> <span class="s2">&quot;torch&quot;</span>
                     <span class="k">break</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Use numpy by default</span>
-                <span class="n">data_format</span> <span class="o">=</span> <span class="s1">&#39;numpy&#39;</span>
+                <span class="n">data_format</span> <span class="o">=</span> <span class="s2">&quot;numpy&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_format</span> <span class="o">=</span> <span class="n">data_format</span>
 
         <span class="c1"># Check for missing extra fields</span>
         <span class="n">missing_fields</span> <span class="o">=</span> <span class="n">StepSequence</span><span class="o">.</span><span class="n">required_fields</span> <span class="o">-</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">missing_fields</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Missing required data fields: </span><span class="si">{</span><span class="n">missing_fields</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing required data fields: </span><span class="si">{</span><span class="n">missing_fields</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># Set mandatory data fields</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="s1">&#39;rewards&#39;</span><span class="p">,</span> <span class="n">rewards</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="s2">&quot;rewards&quot;</span><span class="p">,</span> <span class="n">rewards</span><span class="p">)</span>
 
         <span class="c1"># Set other data fields and verify their length</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -522,19 +524,21 @@
     <span class="k">def</span> <span class="nf">_validate_data_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="c1"># In torch case: check that we don&#39;t mess with gradients</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-            <span class="k">assert</span> <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="s2">&quot;Do not add gradient-sensitive tensors to SampleCollections.&quot;</span> \
-                                            <span class="s2">&quot;This is a fast road to weird retain_graph errors!&quot;</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="p">(</span>
+                <span class="s2">&quot;Do not add gradient-sensitive tensors to SampleCollections.&quot;</span>
+                <span class="s2">&quot;This is a fast road to weird retain_graph errors!&quot;</span>
+            <span class="p">)</span>
 
         <span class="c1"># Check type of data</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="c1"># Validate dict entries</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_validate_data_size</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_validate_data_size</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
             <span class="k">return</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="c1"># Validate dict entries</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_validate_data_size</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">]&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_validate_data_size</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)):</span>
@@ -547,13 +551,16 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">continuous</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">vlen</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="ow">or</span> <span class="n">vlen</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;The data list </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> must have </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="si">}</span><span class="s1"> or </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="si">}</span><span class="s1">+1 elements,&#39;</span>
-                                          <span class="sa">f</span><span class="s1">&#39;but has </span><span class="si">{</span><span class="n">vlen</span><span class="si">}</span><span class="s1"> elements.&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span>
+                    <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;The data list </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must have </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="si">}</span><span class="s2"> or </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="si">}</span><span class="s2">+1 elements,&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;but has </span><span class="si">{</span><span class="n">vlen</span><span class="si">}</span><span class="s2"> elements.&quot;</span>
+                <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Disallow +1 tensors</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">vlen</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;The data list </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> must have </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="si">}</span><span class="s1"> elements,&#39;</span>
-                                          <span class="sa">f</span><span class="s1">&#39;but has </span><span class="si">{</span><span class="n">vlen</span><span class="si">}</span><span class="s1"> elements.&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span>
+                    <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;The data list </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must have </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="si">}</span><span class="s2"> elements,&quot;</span> <span class="sa">f</span><span class="s2">&quot;but has </span><span class="si">{</span><span class="n">vlen</span><span class="si">}</span><span class="s2"> elements.&quot;</span>
+                <span class="p">)</span>
 
 <div class="viewcode-block" id="StepSequence.add_data"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.step_sequence.StepSequence.add_data">[docs]</a>    <span class="k">def</span> <span class="nf">add_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">item_shape</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">with_after_last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -565,7 +572,7 @@
 <span class="sd">        :param with_after_last: `True` if there is one more element than the length (e.g. last observation)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_names</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Trying to add a duplicate data field for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Trying to add a duplicate data field for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Compute desired step length</span>
@@ -574,7 +581,7 @@
                 <span class="n">ro_length</span> <span class="o">+=</span> <span class="mi">1</span>
 
             <span class="c1"># Create zero-filled</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_format</span> <span class="o">==</span> <span class="s1">&#39;torch&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_format</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">Size</span><span class="p">([</span><span class="n">ro_length</span><span class="p">])</span> <span class="o">+</span> <span class="n">to</span><span class="o">.</span><span class="n">Size</span><span class="p">(</span><span class="n">item_shape</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">ro_length</span><span class="p">,)</span> <span class="o">+</span> <span class="n">item_shape</span><span class="p">)</span>
@@ -590,7 +597,7 @@
                 <span class="c1"># Ensure right array format</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">to_format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_format</span><span class="p">)</span>
 
-        <span class="c1"># Store in dict   </span>
+        <span class="c1"># Store in dict</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
 
@@ -633,7 +640,7 @@
                 <span class="n">done</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">done</span><span class="p">[</span><span class="n">index</span><span class="p">],</span>
                 <span class="n">continuous</span><span class="o">=</span><span class="n">continuous</span><span class="p">,</span>
                 <span class="n">rollout_bounds</span><span class="o">=</span><span class="n">rollout_bounds</span><span class="p">,</span>
-                <span class="o">**</span><span class="n">sliced_data</span>
+                <span class="o">**</span><span class="n">sliced_data</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="c1"># Should be a singular element index. Return step proxy.</span>
@@ -688,7 +695,7 @@
 
 <span class="sd">        :param data_type: type to return data in. When None is passed, the data type is left unchanged.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;numpy&#39;</span><span class="p">,</span> <span class="n">data_type</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="n">data_type</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="StepSequence.torch"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.step_sequence.StepSequence.torch">[docs]</a>    <span class="k">def</span> <span class="nf">torch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -696,7 +703,7 @@
 
 <span class="sd">        :param data_type: type to return data in. When None is passed, the data type is left unchanged.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s1">&#39;torch&#39;</span><span class="p">,</span> <span class="n">data_type</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;torch&quot;</span><span class="p">,</span> <span class="n">data_type</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="StepSequence.convert"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.step_sequence.StepSequence.convert">[docs]</a>    <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -705,7 +712,7 @@
 <span class="sd">        :param data_format: torch to use Tensors, numpy to use ndarrays</span>
 <span class="sd">        :param data_type: optional torch/numpy dtype for data. When `None` is passed, the data type is left unchanged.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">data_format</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;torch&#39;</span><span class="p">,</span> <span class="s1">&#39;numpy&#39;</span><span class="p">}:</span>
+        <span class="k">if</span> <span class="n">data_format</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;torch&quot;</span><span class="p">,</span> <span class="s2">&quot;numpy&quot;</span><span class="p">}:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">data_format</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;&#39;torch&#39; or &#39;numpy&#39;&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_format</span> <span class="o">==</span> <span class="n">data_format</span><span class="p">:</span>
@@ -719,10 +726,10 @@
 <span class="sd">        Get an indexed sub-rollout.</span>
 
 <span class="sd">        :param index: generic index of sub-rollout, negative values, slices and iterables are allowed</span>
-<span class="sd">        :return: selected subset. </span>
+<span class="sd">        :return: selected subset.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">continuous</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Sub-rollouts are only supported on continuous data.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Sub-rollouts are only supported on continuous data.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
             <span class="c1"># Analyze slice</span>
             <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rollout_count</span><span class="p">)</span>
@@ -750,21 +757,21 @@
     <span class="k">def</span> <span class="nf">rollout_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Count the number of sub-rollouts inside this step sequence. &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">continuous</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Sub-rollouts are only supported on continuous data.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Sub-rollouts are only supported on continuous data.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rollout_bounds</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">rollout_lengths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Lengths of sub-rollouts. &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">continuous</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Sub-rollouts are only supported on continuous data.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Sub-rollouts are only supported on continuous data.&quot;</span><span class="p">)</span>
         <span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rollout_bounds</span>
         <span class="k">return</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">bounds</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
 <div class="viewcode-block" id="StepSequence.iterate_rollouts"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.step_sequence.StepSequence.iterate_rollouts">[docs]</a>    <span class="k">def</span> <span class="nf">iterate_rollouts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Iterate over all sub-rollouts of a concatenated rollout. &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">continuous</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Sub-rollouts are only supported on continuous data.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Sub-rollouts are only supported on continuous data.&quot;</span><span class="p">)</span>
         <span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rollout_bounds</span>
         <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -785,7 +792,7 @@
 <span class="sd">        :return: randomly sampled batch of steps</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;2&quot;</span><span class="p">)</span>
 
         <span class="n">shuffled_idcs</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">-</span> <span class="mi">2</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">)</span>  <span class="c1"># - 2 to always have a next step</span>
         <span class="n">shuffled_next_idcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">shuffled_idcs</span><span class="p">]</span>
@@ -853,7 +860,7 @@
 <span class="sd">        :return: sum of rewards</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rollout_bounds</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;The StepSequence must be a single continuous rollout.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;The StepSequence must be a single continuous rollout.&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewards</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span></div>
 
@@ -865,17 +872,17 @@
 <span class="sd">        :return: exponentially weighted sum of rewards</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rollout_bounds</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;The StepSequence must be a single continuous rollout.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;The StepSequence must be a single continuous rollout.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">gamma</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">le_constraint</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="n">le_constraint</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_format</span> <span class="o">==</span> <span class="s1">&#39;torch&#39;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rewards</span><span class="p">,</span> <span class="p">(</span><span class="n">gamma</span><span class="o">**</span><span class="n">to</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_format</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rewards</span><span class="p">,</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">**</span> <span class="n">to</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">)))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rewards</span><span class="p">,</span> <span class="p">(</span><span class="n">gamma</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">)))</span></div>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rewards</span><span class="p">,</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">**</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">)))</span></div>
 
 <div class="viewcode-block" id="StepSequence.concat"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.step_sequence.StepSequence.concat">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">concat</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="s1">&#39;StepSequence&#39;</span><span class="p">],</span> <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">truncate_last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">concat</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="s2">&quot;StepSequence&quot;</span><span class="p">],</span> <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">truncate_last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Concatenate multiple step sequences into one, truncating the last observation.</span>
 
@@ -892,8 +899,10 @@
             <span class="n">data_format</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data_format</span>
 
         <span class="c1"># Concat data fields</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">cat_to_format</span><span class="p">([</span><span class="n">ro</span><span class="o">.</span><span class="n">get_data_values</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">truncate_last</span><span class="p">)</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">],</span> <span class="n">data_format</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">data_names</span><span class="p">}</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">:</span> <span class="n">cat_to_format</span><span class="p">([</span><span class="n">ro</span><span class="o">.</span><span class="n">get_data_values</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">truncate_last</span><span class="p">)</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">],</span> <span class="n">data_format</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">data_names</span>
+        <span class="p">}</span>
 
         <span class="c1"># Treat done separately since it should stay a ndarray</span>
         <span class="n">done</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">ro</span><span class="o">.</span><span class="n">done</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">])</span>
@@ -910,11 +919,7 @@
                 <span class="n">acc_len</span> <span class="o">+=</span> <span class="n">ro</span><span class="o">.</span><span class="n">rollout_bounds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">StepSequence</span><span class="p">(</span>
-            <span class="n">data_format</span><span class="o">=</span><span class="n">data_format</span><span class="p">,</span>
-            <span class="n">done</span><span class="o">=</span><span class="n">done</span><span class="p">,</span>
-            <span class="n">continuous</span><span class="o">=</span><span class="n">continuous</span><span class="p">,</span>
-            <span class="n">rollout_bounds</span><span class="o">=</span><span class="n">rollout_bounds</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">data</span>
+            <span class="n">data_format</span><span class="o">=</span><span class="n">data_format</span><span class="p">,</span> <span class="n">done</span><span class="o">=</span><span class="n">done</span><span class="p">,</span> <span class="n">continuous</span><span class="o">=</span><span class="n">continuous</span><span class="p">,</span> <span class="n">rollout_bounds</span><span class="o">=</span><span class="n">rollout_bounds</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span>
         <span class="p">)</span></div></div>
 
 
@@ -944,7 +949,7 @@
     <span class="k">return</span> <span class="n">discounted_reverse_cumsum</span><span class="p">(</span><span class="n">rewards</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="discounted_values"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.step_sequence.discounted_values">[docs]</a><span class="k">def</span> <span class="nf">discounted_values</span><span class="p">(</span><span class="n">rollouts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">],</span> <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;torch&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="discounted_values"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.step_sequence.discounted_values">[docs]</a><span class="k">def</span> <span class="nf">discounted_values</span><span class="p">(</span><span class="n">rollouts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">StepSequence</span><span class="p">],</span> <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;torch&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the discounted state values for multiple rollouts.</span>
 
@@ -953,10 +958,10 @@
 <span class="sd">    :param data_format: data format of the given</span>
 <span class="sd">    :return: state values for every time step in the rollouts (concatenated sequence across rollouts)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">data_format</span> <span class="o">==</span> <span class="s1">&#39;torch&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">data_format</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">:</span>
         <span class="c1"># The ndarray.copy() is necessary due to (currently) unsupported negative strides</span>
         <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">discounted_value</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rollouts</span><span class="p">])</span>
-    <span class="k">elif</span> <span class="n">data_format</span> <span class="o">==</span> <span class="s1">&#39;numpy&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">data_format</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">discounted_value</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">rollouts</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">data_format</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;&#39;torch&#39; or &#39;numpy&#39;&quot;</span><span class="p">)</span></div>
@@ -979,11 +984,11 @@
     <span class="k">def</span> <span class="nf">_next_value</span><span class="p">(</span><span class="n">step</span><span class="p">:</span> <span class="n">Step</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Helper to return `next_value = 0` for last step &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">done</span><span class="p">:</span>
-            <span class="k">return</span> <span class="mf">0.</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
         <span class="k">return</span> <span class="n">step</span><span class="o">.</span><span class="n">next_value</span>
 
-    <span class="n">deltas</span> <span class="o">=</span> <span class="p">[</span><span class="n">step</span><span class="o">.</span><span class="n">reward</span> <span class="o">+</span> <span class="n">gamma</span><span class="o">*</span><span class="n">_next_value</span><span class="p">(</span><span class="n">step</span><span class="p">)</span> <span class="o">-</span> <span class="n">step</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">rollout</span><span class="p">]</span>
-    <span class="n">cumsum</span> <span class="o">=</span> <span class="n">discounted_reverse_cumsum</span><span class="p">(</span><span class="n">deltas</span><span class="p">,</span> <span class="n">gamma</span><span class="o">*</span><span class="n">lamb</span><span class="p">)</span>
+    <span class="n">deltas</span> <span class="o">=</span> <span class="p">[</span><span class="n">step</span><span class="o">.</span><span class="n">reward</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">_next_value</span><span class="p">(</span><span class="n">step</span><span class="p">)</span> <span class="o">-</span> <span class="n">step</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">rollout</span><span class="p">]</span>
+    <span class="n">cumsum</span> <span class="o">=</span> <span class="n">discounted_reverse_cumsum</span><span class="p">(</span><span class="n">deltas</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">lamb</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">cumsum</span></div>
 </pre></div>
 

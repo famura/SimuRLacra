@@ -233,11 +233,13 @@
 <div class="viewcode-block" id="BoxSpace"><a class="viewcode-back" href="../../../spaces.html#pyrado.spaces.box.BoxSpace">[docs]</a><span class="k">class</span> <span class="nc">BoxSpace</span><span class="p">(</span><span class="n">Space</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Multidimensional box space. This class can also be used to describe a sphere. &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">bound_lo</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-                 <span class="n">bound_up</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-                 <span class="n">shape</span><span class="p">:</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">labels</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">bound_lo</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">bound_up</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">shape</span><span class="p">:</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">labels</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
@@ -248,8 +250,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">shape</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># The bounds are scalars</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">bound_lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span><span class="o">*</span><span class="n">bound_lo</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">bound_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span><span class="o">*</span><span class="n">bound_up</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bound_lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">bound_lo</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bound_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">bound_up</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Cast the bounds into arrays if necessary</span>
             <span class="k">try</span><span class="p">:</span>
@@ -318,9 +320,9 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">new_lo</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">new_up</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">new_up</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="n">new_lo</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">new_lo</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bound_lo</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;At least one new lower bound is too low!&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;At least one new lower bound is too low!&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">new_up</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bound_up</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;At least one new upper bound is too high!&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;At least one new upper bound is too high!&quot;</span><span class="p">)</span>
 
         <span class="n">shrinked_box</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">shrinked_box</span><span class="o">.</span><span class="n">bound_lo</span> <span class="o">=</span> <span class="n">new_lo</span>
@@ -333,9 +335,8 @@
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">cand</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">cand</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span>
-                <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;At least one value is NaN!&#39;</span> <span class="o">+</span>
-                    <span class="n">tabulate</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">),</span> <span class="p">[</span><span class="o">*</span><span class="n">color_validity</span><span class="p">(</span><span class="n">cand</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">cand</span><span class="p">)))]],</span>
-                             <span class="n">headers</span><span class="o">=</span><span class="s1">&#39;firstrow&#39;</span><span class="p">)</span>
+                <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;At least one value is NaN!&quot;</span>
+                <span class="o">+</span> <span class="n">tabulate</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">),</span> <span class="p">[</span><span class="o">*</span><span class="n">color_validity</span><span class="p">(</span><span class="n">cand</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">cand</span><span class="p">)))]],</span> <span class="n">headers</span><span class="o">=</span><span class="s2">&quot;firstrow&quot;</span><span class="p">)</span>
             <span class="p">)</span>
 
         <span class="c1"># Check upper and lower bound separately</span>
@@ -347,11 +348,16 @@
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">([</span>
-                    <span class="p">[</span><span class="s1">&#39;lower bound &#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">color_validity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bound_lo</span><span class="p">,</span> <span class="n">check_lo</span><span class="p">)],</span>
-                    <span class="p">[</span><span class="s1">&#39;candidate &#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">color_validity</span><span class="p">(</span><span class="n">cand</span><span class="p">,</span> <span class="n">idcs_valid</span><span class="p">)],</span>
-                    <span class="p">[</span><span class="s1">&#39;upper bound &#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">color_validity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bound_up</span><span class="p">,</span> <span class="n">check_up</span><span class="p">)]</span>
-                <span class="p">],</span> <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">)))</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="n">tabulate</span><span class="p">(</span>
+                        <span class="p">[</span>
+                            <span class="p">[</span><span class="s2">&quot;lower bound &quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">color_validity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bound_lo</span><span class="p">,</span> <span class="n">check_lo</span><span class="p">)],</span>
+                            <span class="p">[</span><span class="s2">&quot;candidate &quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">color_validity</span><span class="p">(</span><span class="n">cand</span><span class="p">,</span> <span class="n">idcs_valid</span><span class="p">)],</span>
+                            <span class="p">[</span><span class="s2">&quot;upper bound &quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">color_validity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bound_up</span><span class="p">,</span> <span class="n">check_up</span><span class="p">)],</span>
+                        <span class="p">],</span>
+                        <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
 <div class="viewcode-block" id="BoxSpace.sample_uniform"><a class="viewcode-back" href="../../../spaces.html#pyrado.spaces.box.BoxSpace.sample_uniform">[docs]</a>    <span class="k">def</span> <span class="nf">sample_uniform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concrete_inf</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e6</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>

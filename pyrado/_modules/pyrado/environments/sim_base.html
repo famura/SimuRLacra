@@ -303,12 +303,12 @@
     <span class="k">def</span> <span class="nf">_get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SimEnv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_get_state</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span>
         <span class="c1"># Add</span>
-        <span class="n">state_dict</span><span class="p">[</span><span class="s1">&#39;domain_param&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span>
+        <span class="n">state_dict</span><span class="p">[</span><span class="s2">&quot;domain_param&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span>
 
     <span class="k">def</span> <span class="nf">_set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">copying</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SimEnv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_set_state</span><span class="p">(</span><span class="n">state_dict</span><span class="p">,</span> <span class="n">copying</span><span class="o">=</span><span class="n">copying</span><span class="p">)</span>
         <span class="c1"># Retrieve</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">=</span> <span class="n">state_dict</span><span class="p">[</span><span class="s1">&#39;domain_param&#39;</span><span class="p">]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">=</span> <span class="n">state_dict</span><span class="p">[</span><span class="s2">&quot;domain_param&quot;</span><span class="p">]</span></div>
 </pre></div>
 
            </div>

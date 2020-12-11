@@ -223,21 +223,26 @@
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 
-<span class="kn">from</span> <span class="nn">pyrado.utils.tensor</span> <span class="kn">import</span> <span class="n">stack_tensor_list</span><span class="p">,</span> <span class="n">stack_tensor_dict_list</span><span class="p">,</span> <span class="n">insert_tensor_col</span><span class="p">,</span> \
-    <span class="n">atleast_2D</span><span class="p">,</span> <span class="n">atleast_3D</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.tensor</span> <span class="kn">import</span> <span class="n">stack_tensor_list</span><span class="p">,</span> <span class="n">stack_tensor_dict_list</span><span class="p">,</span> <span class="n">insert_tensor_col</span><span class="p">,</span> <span class="n">atleast_2D</span><span class="p">,</span> <span class="n">atleast_3D</span>
 
 
 <div class="viewcode-block" id="test_atleast_2D"><a class="viewcode-back" href="../../tests.html#tests.test_tensor_utils.test_atleast_2D">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">3.</span><span class="p">),</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">),</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">),</span>
+    <span class="s2">&quot;x&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">3.0</span><span class="p">),</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span>
+            <span class="mi">2</span><span class="p">,</span>
+        <span class="p">),</span>
         <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
         <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
         <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
     <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sclar&#39;</span><span class="p">,</span> <span class="s1">&#39;scalar_1D&#39;</span><span class="p">,</span> <span class="s1">&#39;vec_1D&#39;</span><span class="p">,</span> <span class="s1">&#39;vec_2D&#39;</span><span class="p">,</span> <span class="s1">&#39;vec_2D_T&#39;</span><span class="p">,</span> <span class="s1">&#39;arr_2D&#39;</span><span class="p">,</span> <span class="s1">&#39;arr_3D&#39;</span><span class="p">])</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sclar&quot;</span><span class="p">,</span> <span class="s2">&quot;scalar_1D&quot;</span><span class="p">,</span> <span class="s2">&quot;vec_1D&quot;</span><span class="p">,</span> <span class="s2">&quot;vec_2D&quot;</span><span class="p">,</span> <span class="s2">&quot;vec_2D_T&quot;</span><span class="p">,</span> <span class="s2">&quot;arr_2D&quot;</span><span class="p">,</span> <span class="s2">&quot;arr_3D&quot;</span><span class="p">],</span>
+<span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_atleast_2D</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="n">x_al2d</span> <span class="o">=</span> <span class="n">atleast_2D</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">x_al2d</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">2</span>
@@ -248,16 +253,22 @@
 
 
 <div class="viewcode-block" id="test_atleast_3D"><a class="viewcode-back" href="../../tests.html#tests.test_tensor_utils.test_atleast_3D">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">3.</span><span class="p">),</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">),</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">),</span>
+    <span class="s2">&quot;x&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">3.0</span><span class="p">),</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span>
+            <span class="mi">2</span><span class="p">,</span>
+        <span class="p">),</span>
         <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
         <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
         <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
     <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sclar&#39;</span><span class="p">,</span> <span class="s1">&#39;scalar_1D&#39;</span><span class="p">,</span> <span class="s1">&#39;vec_1D&#39;</span><span class="p">,</span> <span class="s1">&#39;vec_2D&#39;</span><span class="p">,</span> <span class="s1">&#39;vec_2D_T&#39;</span><span class="p">,</span> <span class="s1">&#39;arr_2D&#39;</span><span class="p">,</span> <span class="s1">&#39;arr_3D&#39;</span><span class="p">])</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sclar&quot;</span><span class="p">,</span> <span class="s2">&quot;scalar_1D&quot;</span><span class="p">,</span> <span class="s2">&quot;vec_1D&quot;</span><span class="p">,</span> <span class="s2">&quot;vec_2D&quot;</span><span class="p">,</span> <span class="s2">&quot;vec_2D_T&quot;</span><span class="p">,</span> <span class="s2">&quot;arr_2D&quot;</span><span class="p">,</span> <span class="s2">&quot;arr_3D&quot;</span><span class="p">],</span>
+<span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_atleast_3D</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="n">x_al3d</span> <span class="o">=</span> <span class="n">atleast_3D</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">x_al3d</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">3</span>
@@ -276,11 +287,16 @@
 
     <span class="n">stack</span> <span class="o">=</span> <span class="n">stack_tensor_list</span><span class="p">(</span><span class="n">tensors</span><span class="p">)</span>
 
-    <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">stack</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
-        <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
-        <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span>
-    <span class="p">]))</span></div>
+    <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+        <span class="n">stack</span><span class="p">,</span>
+        <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span>
+            <span class="p">]</span>
+        <span class="p">),</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_stack_tensors_scalar"><a class="viewcode-back" href="../../tests.html#tests.test_tensor_utils.test_stack_tensors_scalar">[docs]</a><span class="k">def</span> <span class="nf">test_stack_tensors_scalar</span><span class="p">():</span>
@@ -291,21 +307,22 @@
 
 <div class="viewcode-block" id="test_stack_tensor_dicts"><a class="viewcode-back" href="../../tests.html#tests.test_tensor_utils.test_stack_tensor_dicts">[docs]</a><span class="k">def</span> <span class="nf">test_stack_tensor_dicts</span><span class="p">():</span>
     <span class="n">tensors</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="p">{</span><span class="s1">&#39;multi&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;single&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
-        <span class="p">{</span><span class="s1">&#39;multi&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="s1">&#39;single&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
-        <span class="p">{</span><span class="s1">&#39;multi&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="s1">&#39;single&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;multi&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="s2">&quot;single&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;multi&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="s2">&quot;single&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;multi&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="s2">&quot;single&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span>
     <span class="p">]</span>
     <span class="n">stack</span> <span class="o">=</span> <span class="n">stack_tensor_dict_list</span><span class="p">(</span><span class="n">tensors</span><span class="p">)</span>
-    <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">stack</span><span class="p">[</span><span class="s1">&#39;single&#39;</span><span class="p">],</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
-    <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">stack</span><span class="p">[</span><span class="s1">&#39;multi&#39;</span><span class="p">],</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]))</span></div>
+    <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">stack</span><span class="p">[</span><span class="s2">&quot;single&quot;</span><span class="p">],</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
+    <span class="n">to</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">stack</span><span class="p">[</span><span class="s2">&quot;multi&quot;</span><span class="p">],</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]))</span></div>
 
 
 <div class="viewcode-block" id="test_insert_tensor_col"><a class="viewcode-back" href="../../tests.html#tests.test_tensor_utils.test_insert_tensor_col">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;orig, col&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="s2">&quot;orig, col&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
         <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
         <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span> <span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
     <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;1_dim&#39;</span><span class="p">,</span> <span class="s1">&#39;3_dim&#39;</span><span class="p">]</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1_dim&quot;</span><span class="p">,</span> <span class="s2">&quot;3_dim&quot;</span><span class="p">],</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_insert_tensor_col</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">col_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">orig</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>  <span class="c1"># also check appending case</span>

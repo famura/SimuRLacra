@@ -241,8 +241,8 @@
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">select_query</span><span class="p">,</span> <span class="n">print_cbt</span>
 
 
-<span class="n">timestamp_format</span> <span class="o">=</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">_%H-%M-%S&#39;</span>
-<span class="n">timestamp_date_format</span> <span class="o">=</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span>
+<span class="n">timestamp_format</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">_%H-%M-%S&quot;</span>
+<span class="n">timestamp_date_format</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span>
 
 
 <div class="viewcode-block" id="Experiment"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.Experiment">[docs]</a><span class="k">class</span> <span class="nc">Experiment</span><span class="p">:</span>
@@ -254,13 +254,15 @@
 <span class="sd">    &lt;base_dir&gt;/&lt;env_name&gt;/&lt;algo_name&gt;/&lt;timestamp&gt;--&lt;extra_info&gt;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                 <span class="n">algo_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                 <span class="n">extra_info</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">exp_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">timestamp</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">base_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TEMP_DIR</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">algo_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">extra_info</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">exp_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">timestamp</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">base_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TEMP_DIR</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
@@ -273,13 +275,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">exp_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Try to parse extra_info from exp id</span>
-            <span class="n">sd</span> <span class="o">=</span> <span class="n">exp_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">sd</span> <span class="o">=</span> <span class="n">exp_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sd</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">timestr</span> <span class="o">=</span> <span class="n">sd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">timestr</span><span class="p">,</span> <span class="n">extra_info</span> <span class="o">=</span> <span class="n">sd</span>
             <span class="c1"># Parse time string</span>
-            <span class="k">if</span> <span class="s1">&#39;_&#39;</span> <span class="ow">in</span> <span class="n">timestr</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;_&quot;</span> <span class="ow">in</span> <span class="n">timestr</span><span class="p">:</span>
                 <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">timestr</span><span class="p">,</span> <span class="n">timestamp_format</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">timestr</span><span class="p">,</span> <span class="n">timestamp_date_format</span><span class="p">)</span>
@@ -290,7 +292,7 @@
             <span class="n">exp_id</span> <span class="o">=</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">timestamp_format</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">extra_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">exp_id</span> <span class="o">=</span> <span class="n">exp_id</span> <span class="o">+</span> <span class="s1">&#39;--&#39;</span> <span class="o">+</span> <span class="n">extra_info</span>
+                <span class="n">exp_id</span> <span class="o">=</span> <span class="n">exp_id</span> <span class="o">+</span> <span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">extra_info</span>
 
         <span class="c1"># Store values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">env_name</span> <span class="o">=</span> <span class="n">env_name</span>
@@ -306,7 +308,7 @@
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get an information string. &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env_name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_id</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">exp_id</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -319,7 +321,7 @@
         <span class="n">parts</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span><span class="o">.</span><span class="n">parts</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># Filter by exp name only</span>
-            <span class="n">env_name</span><span class="p">,</span> <span class="o">=</span> <span class="n">parts</span>
+            <span class="p">(</span><span class="n">env_name</span><span class="p">,)</span> <span class="o">=</span> <span class="n">parts</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_name</span> <span class="o">==</span> <span class="n">env_name</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="c1"># Filter by exp name only</span>
@@ -331,10 +333,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_name</span> <span class="o">==</span> <span class="n">env_name</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">algo_name</span> <span class="o">==</span> <span class="n">algo_name</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_id</span> <span class="o">==</span> <span class="n">eid</span></div></div>
 
 
-<div class="viewcode-block" id="setup_experiment"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.setup_experiment">[docs]</a><span class="k">def</span> <span class="nf">setup_experiment</span><span class="p">(</span><span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                     <span class="n">algo_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                     <span class="n">extra_info</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="n">base_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TEMP_DIR</span><span class="p">):</span>
+<div class="viewcode-block" id="setup_experiment"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.setup_experiment">[docs]</a><span class="k">def</span> <span class="nf">setup_experiment</span><span class="p">(</span><span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">extra_info</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TEMP_DIR</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Setup a new experiment for recording. &quot;&quot;&quot;</span>
     <span class="c1"># Create experiment object</span>
     <span class="n">exp</span> <span class="o">=</span> <span class="n">Experiment</span><span class="p">(</span><span class="n">env_name</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">,</span> <span class="n">extra_info</span><span class="p">,</span> <span class="n">base_dir</span><span class="o">=</span><span class="n">base_dir</span><span class="p">)</span>
@@ -379,12 +378,9 @@
     <span class="k">return</span> <span class="n">_le_env_algo</span><span class="p">(</span><span class="n">env_name</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="list_experiments"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.list_experiments">[docs]</a><span class="k">def</span> <span class="nf">list_experiments</span><span class="p">(</span><span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="n">algo_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="n">base_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                     <span class="o">*</span><span class="p">,</span>
-                     <span class="n">temp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-                     <span class="n">perma</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="list_experiments"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.list_experiments">[docs]</a><span class="k">def</span> <span class="nf">list_experiments</span><span class="p">(</span>
+    <span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">algo_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">temp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">perma</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    List all stored experiments.</span>
 
@@ -444,7 +440,7 @@
     <span class="n">sl</span> <span class="o">=</span> <span class="n">_select_latest</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">sl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No experiment matching hint </span><span class="si">{</span><span class="n">hint</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No experiment matching hint </span><span class="si">{</span><span class="n">hint</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">sl</span></div>
 
 
@@ -478,20 +474,20 @@
             <span class="c1"># The keyword was not found in the path</span>
             <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">idx</span> <span class="o">+=</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># +1 for the actual keyword</span>
+            <span class="n">idx</span> <span class="o">+=</span> <span class="o">+</span><span class="mi">1</span>  <span class="c1"># +1 for the actual keyword</span>
             <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="o">.</span><span class="n">parts</span><span class="p">[:</span><span class="n">idx</span><span class="p">]),</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="n">idx</span><span class="p">:])</span>
 
     <span class="c1"># First try to split at pyrado.EXP_DIR</span>
-    <span class="n">custom</span><span class="p">,</span> <span class="n">common</span> <span class="o">=</span> <span class="n">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s1">&#39;experiments&#39;</span><span class="p">)</span>
+    <span class="n">custom</span><span class="p">,</span> <span class="n">common</span> <span class="o">=</span> <span class="n">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s2">&quot;experiments&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">custom</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">common</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># If that did not work, try to split at pyrado.TEMP_DIR</span>
-        <span class="n">custom</span><span class="p">,</span> <span class="n">common</span> <span class="o">=</span> <span class="n">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s1">&#39;temp&#39;</span><span class="p">)</span>
+        <span class="n">custom</span><span class="p">,</span> <span class="n">common</span> <span class="o">=</span> <span class="n">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s2">&quot;temp&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">custom</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">common</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># If that did not work, try to split at the pytest&#39;s temporary path</span>
-        <span class="n">custom</span><span class="p">,</span> <span class="n">common</span> <span class="o">=</span> <span class="n">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s1">&#39;tmp&#39;</span><span class="p">)</span>  <span class="c1"># actually they are reversed, but we don&#39;t care for tests</span>
+        <span class="n">custom</span><span class="p">,</span> <span class="n">common</span> <span class="o">=</span> <span class="n">_split_path_at</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s2">&quot;tmp&quot;</span><span class="p">)</span>  <span class="c1"># actually they are reversed, but we don&#39;t care for tests</span>
     <span class="k">if</span> <span class="n">custom</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">common</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># If that also did not work, there is sth wrong</span>
-        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Failed to split the path between the machine-dependent and machine-independent part.&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Failed to split the path between the machine-dependent and machine-independent part.&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">custom</span><span class="p">,</span> <span class="n">common</span></div>
 
@@ -507,7 +503,7 @@
     <span class="n">all_exps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">list_experiments</span><span class="p">())</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_exps</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">print_cbt</span><span class="p">(</span><span class="s1">&#39;No experiments found!&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;No experiments found!&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
         <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># Obtain experiment prefixes and timestamps</span>
@@ -524,9 +520,9 @@
     <span class="k">return</span> <span class="n">select_query</span><span class="p">(</span>
         <span class="n">sel_exp_by_prefix</span><span class="p">,</span>
         <span class="n">fallback</span><span class="o">=</span><span class="k">lambda</span> <span class="n">hint</span><span class="p">:</span> <span class="n">select_by_hint</span><span class="p">(</span><span class="n">all_exps</span><span class="p">,</span> <span class="n">hint</span><span class="p">),</span>
-        <span class="n">item_formatter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">exp</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;(</span><span class="si">{</span><span class="n">exp</span><span class="o">.</span><span class="n">timestamp</span><span class="si">}</span><span class="s1">) </span><span class="si">{</span><span class="n">exp</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
-        <span class="n">header</span><span class="o">=</span><span class="s1">&#39;Available experiments:&#39;</span><span class="p">,</span>
-        <span class="n">footer</span><span class="o">=</span><span class="s1">&#39;Enter experiment number or a partial path to an experiment.&#39;</span>
+        <span class="n">item_formatter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">exp</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">exp</span><span class="o">.</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">) </span><span class="si">{</span><span class="n">exp</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">header</span><span class="o">=</span><span class="s2">&quot;Available experiments:&quot;</span><span class="p">,</span>
+        <span class="n">footer</span><span class="o">=</span><span class="s2">&quot;Enter experiment number or a partial path to an experiment.&quot;</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -562,7 +558,7 @@
             <span class="c1"># If the value is a list, recursively go through this one</span>
             <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">_process_list_for_saving</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+            <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;None&quot;</span>
     <span class="k">return</span> <span class="n">copy</span>
 
 
@@ -601,7 +597,7 @@
             <span class="c1"># If the value is a list, recursively go through this one</span>
             <span class="n">copy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">_process_list_for_saving</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">copy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
+            <span class="n">copy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;None&quot;</span>
     <span class="k">return</span> <span class="n">copy</span>
 
 
@@ -611,12 +607,10 @@
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">construct_sequence</span><span class="p">(</span><span class="n">node</span><span class="p">))</span></div></div>
 
 
-<span class="n">AugmentedSafeLoader</span><span class="o">.</span><span class="n">add_constructor</span><span class="p">(</span>
-    <span class="sa">u</span><span class="s1">&#39;tag:yaml.org,2002:python/tuple&#39;</span><span class="p">,</span>
-    <span class="n">AugmentedSafeLoader</span><span class="o">.</span><span class="n">construct_python_tuple</span><span class="p">)</span>
+<span class="n">AugmentedSafeLoader</span><span class="o">.</span><span class="n">add_constructor</span><span class="p">(</span><span class="s2">&quot;tag:yaml.org,2002:python/tuple&quot;</span><span class="p">,</span> <span class="n">AugmentedSafeLoader</span><span class="o">.</span><span class="n">construct_python_tuple</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="save_list_of_dicts_to_yaml"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.save_list_of_dicts_to_yaml">[docs]</a><span class="k">def</span> <span class="nf">save_list_of_dicts_to_yaml</span><span class="p">(</span><span class="n">lod</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;hyperparams&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="save_list_of_dicts_to_yaml"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.save_list_of_dicts_to_yaml">[docs]</a><span class="k">def</span> <span class="nf">save_list_of_dicts_to_yaml</span><span class="p">(</span><span class="n">lod</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hyperparams&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Save a list of dicts (e.g. hyper-parameters) of an experiment a YAML-file.</span>
 
@@ -624,7 +618,7 @@
 <span class="sd">    :param save_dir: directory to save the results in</span>
 <span class="sd">    :param file_name: name of the YAML-file without suffix</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s1">&#39;.yaml&#39;</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">yaml_file</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">yaml_file</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">lod</span><span class="p">:</span>
             <span class="c1"># For every dict in the list</span>
             <span class="n">d</span> <span class="o">=</span> <span class="n">_process_dict_for_saving</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
@@ -641,7 +635,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">PathErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">yaml_file</span><span class="p">)</span>
 
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">yaml_file</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">yaml_file</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">AugmentedSafeLoader</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span></div>
 </pre></div>

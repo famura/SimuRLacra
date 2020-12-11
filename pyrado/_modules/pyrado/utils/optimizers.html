@@ -247,15 +247,15 @@
 
         <span class="n">defaults</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">param_min</span><span class="o">=</span><span class="n">param_min</span><span class="p">,</span> <span class="n">param_max</span><span class="o">=</span><span class="n">param_max</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">defaults</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gr</span> <span class="o">=</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gr</span> <span class="o">=</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 
 <div class="viewcode-block" id="GSS.reset"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.optimizers.GSS.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">group</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">]:</span>
                 <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
-                <span class="n">state</span><span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="n">state</span><span class="p">[</span><span class="s1">&#39;lb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s1">&#39;param_min&#39;</span><span class="p">]</span>
-                <span class="n">state</span><span class="p">[</span><span class="s1">&#39;ub&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s1">&#39;param_max&#39;</span><span class="p">]</span></div>
+                <span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">state</span><span class="p">[</span><span class="s2">&quot;lb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;param_min&quot;</span><span class="p">]</span>
+                <span class="n">state</span><span class="p">[</span><span class="s2">&quot;ub&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;param_max&quot;</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="GSS.step"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.optimizers.GSS.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closure</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -264,22 +264,22 @@
 <span class="sd">        :param closure: a closure that reevaluates the model and returns the loss</span>
 <span class="sd">        :return: accumulated loss for all parameter groups after the parameter update</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.</span><span class="p">])</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.0</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">group</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">]:</span>
                 <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
 
                 <span class="c1"># State initialization</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">state</span><span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-                    <span class="n">state</span><span class="p">[</span><span class="s1">&#39;lb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s1">&#39;param_min&#39;</span><span class="p">]</span>
-                    <span class="n">state</span><span class="p">[</span><span class="s1">&#39;ub&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s1">&#39;param_max&#39;</span><span class="p">]</span>
+                    <span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">state</span><span class="p">[</span><span class="s2">&quot;lb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;param_min&quot;</span><span class="p">]</span>
+                    <span class="n">state</span><span class="p">[</span><span class="s2">&quot;ub&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;param_max&quot;</span><span class="p">]</span>
 
-                <span class="n">state</span><span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 
                 <span class="c1"># Compute new bounds for evaluating</span>
-                <span class="n">cand_lb</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;ub&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;ub&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;lb&#39;</span><span class="p">])</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">gr</span>
-                <span class="n">cand_ub</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;lb&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;ub&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;lb&#39;</span><span class="p">])</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">gr</span>
+                <span class="n">cand_lb</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;ub&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;ub&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;lb&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">gr</span>
+                <span class="n">cand_ub</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;lb&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;ub&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;lb&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">gr</span>
 
                 <span class="c1"># Set param to lower bound and evaluate</span>
                 <span class="n">p</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">cand_lb</span>
@@ -290,12 +290,12 @@
                 <span class="n">loss_ub</span> <span class="o">=</span> <span class="n">closure</span><span class="p">()</span>
 
                 <span class="k">if</span> <span class="n">loss_lb</span> <span class="o">&lt;</span> <span class="n">loss_ub</span><span class="p">:</span>
-                    <span class="n">state</span><span class="p">[</span><span class="s1">&#39;ub&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cand_ub</span>
+                    <span class="n">state</span><span class="p">[</span><span class="s2">&quot;ub&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cand_ub</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">state</span><span class="p">[</span><span class="s1">&#39;lb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cand_lb</span>
+                    <span class="n">state</span><span class="p">[</span><span class="s2">&quot;lb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cand_lb</span>
 
                 <span class="c1"># Set param to average value</span>
-                <span class="n">p</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;ub&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;lb&#39;</span><span class="p">])</span><span class="o">/</span><span class="mf">2.</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;ub&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;lb&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span>
 
                 <span class="c1"># Accumulate the loss</span>
                 <span class="n">loss</span> <span class="o">+=</span> <span class="n">closure</span><span class="p">()</span>

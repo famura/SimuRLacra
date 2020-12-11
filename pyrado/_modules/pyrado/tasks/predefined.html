@@ -234,19 +234,17 @@
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
 
 
-<div class="viewcode-block" id="create_goal_dist_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_goal_dist_task">[docs]</a><span class="k">def</span> <span class="nf">create_goal_dist_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
-                          <span class="n">ds_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                          <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span><span class="p">,</span>
-                          <span class="n">succ_thold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
+<div class="viewcode-block" id="create_goal_dist_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_goal_dist_task">[docs]</a><span class="k">def</span> <span class="nf">create_goal_dist_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">ds_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span><span class="p">,</span> <span class="n">succ_thold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
     <span class="c1"># Define the indices for selection. This needs to match the observations&#39; names in RcsPySim.</span>
-    <span class="n">idcs</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;GD_DS</span><span class="si">{</span><span class="n">ds_index</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
+    <span class="n">idcs</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;GD_DS</span><span class="si">{</span><span class="n">ds_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
 
     <span class="c1"># Get the masked environment specification</span>
     <span class="n">spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span>
         <span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span>
         <span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span>
-        <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span>
-            <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">idcs</span><span class="p">))</span> <span class="k">if</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">EmptySpace</span> <span class="k">else</span> <span class="n">EmptySpace</span>
+        <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">idcs</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">EmptySpace</span>
+        <span class="k">else</span> <span class="n">EmptySpace</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># Create a desired state task with the goal [0, 0]</span>
@@ -256,19 +254,19 @@
     <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">idcs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_goal_dist_distvel_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_goal_dist_distvel_task">[docs]</a><span class="k">def</span> <span class="nf">create_goal_dist_distvel_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
-                                  <span class="n">ds_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                                  <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span><span class="p">,</span>
-                                  <span class="n">succ_thold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
+<div class="viewcode-block" id="create_goal_dist_distvel_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_goal_dist_distvel_task">[docs]</a><span class="k">def</span> <span class="nf">create_goal_dist_distvel_task</span><span class="p">(</span>
+    <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">ds_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">:</span> <span class="n">RewFcn</span><span class="p">,</span> <span class="n">succ_thold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskedTask</span><span class="p">:</span>
     <span class="c1"># Define the indices for selection. This needs to match the observations&#39; names in RcsPySim.</span>
-    <span class="n">idcs</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;GD_DS</span><span class="si">{</span><span class="n">ds_index</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;GD_DS</span><span class="si">{</span><span class="n">ds_index</span><span class="si">}</span><span class="s1">d&#39;</span><span class="p">]</span>
+    <span class="n">idcs</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;GD_DS</span><span class="si">{</span><span class="n">ds_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;GD_DS</span><span class="si">{</span><span class="n">ds_index</span><span class="si">}</span><span class="s2">d&quot;</span><span class="p">]</span>
 
     <span class="c1"># Get the masked environment specification</span>
     <span class="n">spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span>
         <span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span>
         <span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span>
-        <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span>
-            <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">idcs</span><span class="p">))</span> <span class="k">if</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">EmptySpace</span> <span class="k">else</span> <span class="n">EmptySpace</span>
+        <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">idcs</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">EmptySpace</span>
+        <span class="k">else</span> <span class="n">EmptySpace</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># Create a desired state task with the goal [0, 0]</span>
@@ -282,7 +280,8 @@
     <span class="c1"># Check every limit (nut just of a subspace of the state state as it could happen when using a MaskedTask)</span>
     <span class="k">return</span> <span class="n">FinalRewTask</span><span class="p">(</span>
         <span class="n">DesStateTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">ZeroPerStepRewFcn</span><span class="p">(),</span> <span class="n">never_succeeded</span><span class="p">),</span>
-        <span class="n">FinalRewMode</span><span class="p">(</span><span class="n">always_negative</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">factor</span><span class="o">=</span><span class="n">penalty</span>
+        <span class="n">FinalRewMode</span><span class="p">(</span><span class="n">always_negative</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">factor</span><span class="o">=</span><span class="n">penalty</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -297,15 +296,13 @@
 <span class="sd">    :return: masked task</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Define the indices for selection. This needs to match the observations&#39; names in RcsPySim.</span>
-    <span class="n">idcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">labels</span> <span class="k">if</span> <span class="s1">&#39;DiscrepTS&#39;</span> <span class="ow">in</span> <span class="n">idx</span><span class="p">]</span>
+    <span class="n">idcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">labels</span> <span class="k">if</span> <span class="s2">&quot;DiscrepTS&quot;</span> <span class="ow">in</span> <span class="n">idx</span><span class="p">]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">idcs</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;No state space labels found that contain &#39;DiscrepTS&#39;&quot;</span><span class="p">)</span>
 
     <span class="c1"># Get the masked environment specification</span>
     <span class="n">spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span>
-        <span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span>
-        <span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span>
-        <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">idcs</span><span class="p">))</span>
+        <span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">idcs</span><span class="p">))</span>
     <span class="p">)</span>
 
     <span class="c1"># Create a desired state task (no task space discrepancy is desired and the task never stops because of success)</span>
@@ -325,16 +322,14 @@
 <span class="sd">    :return: masked task</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">factor</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">factor</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">factor</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
 
     <span class="c1"># Define the indices for selection. This needs to match the observations&#39; names in RcsPySim.</span>
-    <span class="n">idcs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CollCost&#39;</span><span class="p">]</span>
+    <span class="n">idcs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CollCost&quot;</span><span class="p">]</span>
 
     <span class="c1"># Get the masked environment specification</span>
     <span class="n">spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span>
-        <span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span>
-        <span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span>
-        <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">idcs</span><span class="p">))</span>
+        <span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">idcs</span><span class="p">))</span>
     <span class="p">)</span>
 
     <span class="n">rew_fcn</span> <span class="o">=</span> <span class="n">AbsErrRewFcn</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">factor</span><span class="p">]),</span> <span class="n">r</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>

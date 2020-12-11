@@ -229,29 +229,21 @@
 
 
 <div class="viewcode-block" id="test_noise_on_act"><a class="viewcode-back" href="../../tests.html#tests.test_exploration.test_noise_on_act">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="s2">&quot;env&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
         <span class="n">BallOnBeamSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
         <span class="n">QBallBalancerSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
     <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">]</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;bob&quot;</span><span class="p">,</span> <span class="s2">&quot;qbb&quot;</span><span class="p">],</span>
 <span class="p">)</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;policy&#39;</span><span class="p">,</span>
-    <span class="p">[</span><span class="s1">&#39;linear_policy&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn_policy&#39;</span><span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;linear_policy&quot;</span><span class="p">,</span> <span class="s2">&quot;fnn_policy&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="s2">&quot;fnn&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_noise_on_act</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
         <span class="c1"># Init the exploration strategy</span>
-        <span class="n">act_noise_strat</span> <span class="o">=</span> <span class="n">NormalActNoiseExplStrat</span><span class="p">(</span>
-            <span class="n">policy</span><span class="p">,</span>
-            <span class="n">std_init</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-            <span class="n">train_mean</span><span class="o">=</span><span class="kc">True</span>
-        <span class="p">)</span>
+        <span class="n">act_noise_strat</span> <span class="o">=</span> <span class="n">NormalActNoiseExplStrat</span><span class="p">(</span><span class="n">policy</span><span class="p">,</span> <span class="n">std_init</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">train_mean</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># Set new parameters for the exploration noise</span>
-        <span class="n">std</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)</span><span class="o">*</span><span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">std</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)</span> <span class="o">*</span> <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">mean</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
         <span class="n">act_noise_strat</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">)</span>
         <span class="k">assert</span> <span class="p">(</span><span class="n">mean</span> <span class="o">==</span> <span class="n">act_noise_strat</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
@@ -267,27 +259,19 @@
 
 
 <div class="viewcode-block" id="test_noise_on_param"><a class="viewcode-back" href="../../tests.html#tests.test_exploration.test_noise_on_param">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="s2">&quot;env&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
         <span class="n">BallOnBeamSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
         <span class="n">QBallBalancerSim</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
     <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;qbb&#39;</span><span class="p">]</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;bob&quot;</span><span class="p">,</span> <span class="s2">&quot;qbb&quot;</span><span class="p">],</span>
 <span class="p">)</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;policy&#39;</span><span class="p">,</span>
-    <span class="p">[</span><span class="s1">&#39;linear_policy&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn_policy&#39;</span><span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lin&#39;</span><span class="p">,</span> <span class="s1">&#39;fnn&#39;</span><span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;linear_policy&quot;</span><span class="p">,</span> <span class="s2">&quot;fnn_policy&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="s2">&quot;fnn&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_noise_on_param</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
         <span class="c1"># Init the exploration strategy</span>
         <span class="n">param_noise_strat</span> <span class="o">=</span> <span class="n">NormalParamNoise</span><span class="p">(</span>
-            <span class="n">policy</span><span class="o">.</span><span class="n">num_param</span><span class="p">,</span>
-            <span class="n">full_cov</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">std_init</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>
-            <span class="n">std_min</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-            <span class="n">train_mean</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">policy</span><span class="o">.</span><span class="n">num_param</span><span class="p">,</span> <span class="n">full_cov</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">std_init</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">std_min</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">train_mean</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
 
         <span class="c1"># Set new parameters for the exploration noise</span>

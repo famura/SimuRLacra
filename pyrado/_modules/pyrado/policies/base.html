@@ -269,12 +269,12 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span> <span class="o">=</span> <span class="n">spec</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">use_cuda</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="s1">&#39;cpu&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span>
         <span class="k">elif</span> <span class="n">use_cuda</span> <span class="ow">and</span> <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="s1">&#39;cuda&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span>
         <span class="k">elif</span> <span class="n">use_cuda</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-            <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Tried to run on CUDA, but it is not available. Falling back to CPU.&#39;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="s1">&#39;cpu&#39;</span>
+            <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Tried to run on CUDA, but it is not available. Falling back to CPU.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">device</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -334,8 +334,10 @@
 <span class="sd">        :param batch_size: number of states to track in parallel</span>
 <span class="sd">        :return: Tensor of batch_size x hidden_size</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;Only recurrent policies should use the init_hidden() method.&#39;</span>
-                             <span class="s1">&#39;Make sure to implement this function for every recurrent policy type.&#39;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+            <span class="s2">&quot;Only recurrent policies should use the init_hidden() method.&quot;</span>
+            <span class="s2">&quot;Make sure to implement this function for every recurrent policy type.&quot;</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Policy.init_param"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base.Policy.init_param">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">init_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_values</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -365,7 +367,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="Policy.evaluate"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base.Policy.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rollout</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">hidden_states_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;hidden_states&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<div class="viewcode-block" id="Policy.evaluate"><a class="viewcode-back" href="../../../policies.html#pyrado.policies.base.Policy.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rollout</span><span class="p">:</span> <span class="n">StepSequence</span><span class="p">,</span> <span class="n">hidden_states_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hidden_states&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Re-evaluate the given rollout and return a derivable action tensor.</span>
 <span class="sd">        The default implementation simply calls `forward()`.</span>
@@ -378,7 +380,7 @@
         <span class="c1"># Set policy, i.e. PyTorch nn.Module, to evaluation mode</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
 
-        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">rollout</span><span class="o">.</span><span class="n">get_data_values</span><span class="p">(</span><span class="s1">&#39;observations&#39;</span><span class="p">,</span> <span class="n">truncate_last</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>  <span class="c1"># all observations at once</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">rollout</span><span class="o">.</span><span class="n">get_data_values</span><span class="p">(</span><span class="s2">&quot;observations&quot;</span><span class="p">,</span> <span class="n">truncate_last</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>  <span class="c1"># all observations at once</span>
 
         <span class="c1"># Set policy, i.e. PyTorch nn.Module, back to training mode</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>

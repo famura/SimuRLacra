@@ -226,12 +226,13 @@
 
 <span class="k">if</span> <span class="n">use_pgf</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">matplotlib</span>
-    <span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;pgf&#39;</span><span class="p">)</span>
+
+    <span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;pgf&quot;</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">font_manager</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 
 
-<div class="viewcode-block" id="set_style"><a class="viewcode-back" href="../../plotting.html#pyrado.plotting.set_style">[docs]</a><span class="k">def</span> <span class="nf">set_style</span><span class="p">(</span><span class="n">style_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="set_style"><a class="viewcode-back" href="../../plotting.html#pyrado.plotting.set_style">[docs]</a><span class="k">def</span> <span class="nf">set_style</span><span class="p">(</span><span class="n">style_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sets colors, fonts, font sizes, bounding boxes, and more for plots using pyplot.</span>
 
@@ -249,38 +250,40 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">font_manager</span><span class="o">.</span><span class="n">findSystemFonts</span><span class="p">(</span><span class="n">fontpaths</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fontext</span><span class="o">=</span><span class="s1">&#39;ttf&#39;</span><span class="p">)</span>
-        <span class="n">font_manager</span><span class="o">.</span><span class="n">findfont</span><span class="p">(</span><span class="s1">&#39;serif&#39;</span><span class="p">,</span> <span class="n">rebuild_if_missing</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">font_manager</span><span class="o">.</span><span class="n">findSystemFonts</span><span class="p">(</span><span class="n">fontpaths</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fontext</span><span class="o">=</span><span class="s2">&quot;ttf&quot;</span><span class="p">)</span>
+        <span class="n">font_manager</span><span class="o">.</span><span class="n">findfont</span><span class="p">(</span><span class="s2">&quot;serif&quot;</span><span class="p">,</span> <span class="n">rebuild_if_missing</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
         <span class="k">pass</span>
 
-    <span class="k">if</span> <span class="n">style_name</span> <span class="o">==</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s1">&#39;serif&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">usetex</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;text.latex&#39;</span><span class="p">,</span> <span class="n">preamble</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\usepackage</span><span class="si">{lmodern}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># direct font input</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;mathtext&#39;</span><span class="p">,</span> <span class="n">fontset</span><span class="o">=</span><span class="s1">&#39;cm&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;pgf&#39;</span><span class="p">,</span> <span class="n">rcfonts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># to use the LaTeX document&#39;s fonts in the PGF plots</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;inferno&#39;</span><span class="p">)</span>  <span class="c1"># default: viridis</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;legend&#39;</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;legend&#39;</span><span class="p">,</span> <span class="n">framealpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;axes&#39;</span><span class="p">,</span> <span class="n">xmargin</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>  <span class="c1"># disable margins by default</span>
-    <span class="k">elif</span> <span class="n">style_name</span> <span class="o">==</span> <span class="s1">&#39;ggplot&#39;</span><span class="p">:</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;ggplot&#39;</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">style_name</span> <span class="o">==</span> <span class="s1">&#39;dark_background&#39;</span><span class="p">:</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;dark_background&#39;</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">style_name</span> <span class="o">==</span> <span class="s1">&#39;seaborn&#39;</span><span class="p">:</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn&#39;</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">style_name</span> <span class="o">==</span> <span class="s1">&#39;seaborn-muted&#39;</span><span class="p">:</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-muted&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">style_name</span> <span class="o">==</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;font&quot;</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s2">&quot;serif&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">usetex</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;text.latex&quot;</span><span class="p">,</span> <span class="n">preamble</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\usepackage</span><span class="si">{lmodern}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># direct font input</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;mathtext&quot;</span><span class="p">,</span> <span class="n">fontset</span><span class="o">=</span><span class="s2">&quot;cm&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;pgf&quot;</span><span class="p">,</span> <span class="n">rcfonts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># to use the LaTeX document&#39;s fonts in the PGF plots</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;inferno&quot;</span><span class="p">)</span>  <span class="c1"># default: viridis</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;legend&quot;</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;legend&quot;</span><span class="p">,</span> <span class="n">framealpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;axes&quot;</span><span class="p">,</span> <span class="n">xmargin</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># disable margins by default</span>
+    <span class="k">elif</span> <span class="n">style_name</span> <span class="o">==</span> <span class="s2">&quot;ggplot&quot;</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;ggplot&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">style_name</span> <span class="o">==</span> <span class="s2">&quot;dark_background&quot;</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;dark_background&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">style_name</span> <span class="o">==</span> <span class="s2">&quot;seaborn&quot;</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;seaborn&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">style_name</span> <span class="o">==</span> <span class="s2">&quot;seaborn-muted&quot;</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;seaborn-muted&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown style name! Got </span><span class="si">{}</span><span class="s2">, but expected &#39;default&#39;, &#39;ggplot&#39;, &#39;dark_background&#39;,&quot;</span>
-                   <span class="s2">&quot;&#39;seaborn&#39;, or &#39;seaborn-muted&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">style_name</span><span class="p">))</span>
+        <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Unknown style name! Got </span><span class="si">{}</span><span class="s2">, but expected &#39;default&#39;, &#39;ggplot&#39;, &#39;dark_background&#39;,&quot;</span>
+            <span class="s2">&quot;&#39;seaborn&#39;, or &#39;seaborn-muted&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">style_name</span><span class="p">)</span>
+        <span class="p">)</span>
 
-    <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;xtick&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;ytick&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;savefig&#39;</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>  <span class="c1"># &#39;tight&#39; is incompatible with pipe-based animation backends</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;savefig&#39;</span><span class="p">,</span> <span class="n">pad_inches</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;font&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;xtick&quot;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;ytick&quot;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;savefig&quot;</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>  <span class="c1"># &#39;tight&#39; is incompatible with pipe-based animation backends</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s2">&quot;savefig&quot;</span><span class="p">,</span> <span class="n">pad_inches</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
 
 <span class="n">set_style</span><span class="p">()</span>

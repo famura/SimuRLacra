@@ -235,13 +235,14 @@
 
 <div class="viewcode-block" id="GlobalNamespace"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sampler_pool.GlobalNamespace">[docs]</a><span class="k">class</span> <span class="nc">GlobalNamespace</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Type of the worker&#39;s global namespace &quot;&quot;&quot;</span>
+
     <span class="k">pass</span></div>
 
 
-<span class="n">_CMD_STOP</span> <span class="o">=</span> <span class="s1">&#39;stop&#39;</span>
-<span class="n">_RES_SUCCESS</span> <span class="o">=</span> <span class="s1">&#39;success&#39;</span>
-<span class="n">_RES_ERROR</span> <span class="o">=</span> <span class="s1">&#39;error&#39;</span>
-<span class="n">_RES_FATAL</span> <span class="o">=</span> <span class="s1">&#39;fatal&#39;</span>
+<span class="n">_CMD_STOP</span> <span class="o">=</span> <span class="s2">&quot;stop&quot;</span>
+<span class="n">_RES_SUCCESS</span> <span class="o">=</span> <span class="s2">&quot;success&quot;</span>
+<span class="n">_RES_ERROR</span> <span class="o">=</span> <span class="s2">&quot;error&quot;</span>
+<span class="n">_RES_FATAL</span> <span class="o">=</span> <span class="s2">&quot;fatal&quot;</span>
 
 
 <span class="k">def</span> <span class="nf">_pool_worker</span><span class="p">(</span><span class="n">from_master</span><span class="p">,</span> <span class="n">to_master</span><span class="p">):</span>
@@ -251,7 +252,7 @@
 <span class="sd">    :param from_master: tuple (func, args) or the special _CMD_STOP</span>
 <span class="sd">    :param to_master: tuple (success, obj), where obj is the result on success=True and an error message on success=False</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Use a custom global namespace. This &#39;trick&#39; </span>
+    <span class="c1"># Use a custom global namespace. This &#39;trick&#39;</span>
     <span class="n">G</span> <span class="o">=</span> <span class="n">GlobalNamespace</span><span class="p">()</span>
 
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
@@ -276,8 +277,7 @@
             <span class="n">to_master</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">_RES_FATAL</span><span class="p">,</span> <span class="n">msg</span><span class="p">))</span>
             <span class="k">raise</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">to_master</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">_RES_SUCCESS</span><span class="p">,</span>
-                           <span class="n">res</span><span class="p">))</span>
+            <span class="n">to_master</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">_RES_SUCCESS</span><span class="p">,</span> <span class="n">res</span><span class="p">))</span>
 
 
 <span class="k">class</span> <span class="nc">_OpState</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
@@ -299,7 +299,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_process</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span>
             <span class="n">target</span><span class="o">=</span><span class="n">_pool_worker</span><span class="p">,</span>
             <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_to_slave</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_slave</span><span class="p">),</span>
-            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Sampler-Worker-</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Sampler-Worker-</span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="c1"># Start it</span>
@@ -313,9 +313,9 @@
 
     <span class="k">def</span> <span class="nf">invoke_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Worker has terminated&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Worker has terminated&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;There is still a pending call waiting for completion.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;There is still a pending call waiting for completion.&quot;</span><span class="p">)</span>
         <span class="c1"># Send to slave</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_to_slave</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pending</span> <span class="o">=</span> <span class="kc">True</span>
@@ -326,7 +326,7 @@
 <span class="sd">        :return: False if there was an error result and the loop should be cancelled</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Worker has terminated&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Worker has terminated&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_OpState</span><span class="o">.</span><span class="n">PENDING</span>
 
@@ -346,9 +346,9 @@
 
     <span class="k">def</span> <span class="nf">invoke_wait</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Worker has terminated&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Worker has terminated&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;There is no pending call.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;There is no pending call.&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Await result if not done yet</span>
@@ -365,15 +365,15 @@
         <span class="k">if</span> <span class="n">stat</span> <span class="o">==</span> <span class="n">_RES_SUCCESS</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">value</span>
         <span class="k">elif</span> <span class="n">stat</span> <span class="o">==</span> <span class="n">_RES_ERROR</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Caught error in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">:</span><span class="se">\n</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Caught error in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">stat</span> <span class="o">==</span> <span class="n">_RES_FATAL</span><span class="p">:</span>
             <span class="c1"># Mark as failed. For now, there is no way to recover, we just get an error on the next start method.</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Fatal error in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">:</span><span class="se">\n</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fatal error in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">stat</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;_RES_SUCCESS, _RES_ERROR, or _RES_FATAL&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;There is still a pending call waiting for completion.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;There is still a pending call waiting for completion.&quot;</span><span class="p">)</span>
         <span class="c1"># Send stop signal</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_to_slave</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">_CMD_STOP</span><span class="p">)</span>
 
@@ -418,15 +418,15 @@
 
 <div class="viewcode-block" id="SamplerPool"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sampler_pool.SamplerPool">[docs]</a><span class="k">class</span> <span class="nc">SamplerPool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A process pool capable of executing operations in parallel. This differs from the multiprocessing.Pool class in </span>
+<span class="sd">    A process pool capable of executing operations in parallel. This differs from the multiprocessing.Pool class in</span>
 <span class="sd">    that it explicitly incorporates process-local state.</span>
-<span class="sd">    </span>
-<span class="sd">    Every parallel function gets a GlobalNamespace object as first argument, which can hold arbitrary worker-local </span>
+
+<span class="sd">    Every parallel function gets a GlobalNamespace object as first argument, which can hold arbitrary worker-local</span>
 <span class="sd">    state. This allows for certain optimizations. For example, when the parallel operation requires an object that is</span>
-<span class="sd">    expensive to transmit, we can create this object once in each process, store it in the namespace, and then use it </span>
+<span class="sd">    expensive to transmit, we can create this object once in each process, store it in the namespace, and then use it</span>
 <span class="sd">    in every map function call.</span>
-<span class="sd">    </span>
-<span class="sd">    This class also contains additional methods to call a function exactly once in each worker, to setup worker-local </span>
+
+<span class="sd">    This class also contains additional methods to call a function exactly once in each worker, to setup worker-local</span>
 <span class="sd">    state.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -434,7 +434,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_threads</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_threads</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">num_threads</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_threads</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_threads</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_threads</span> <span class="o">=</span> <span class="n">num_threads</span>
         <span class="k">if</span> <span class="n">num_threads</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -558,23 +558,23 @@
 <div class="viewcode-block" id="SamplerPool.run_collect"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.sampler_pool.SamplerPool.run_collect">[docs]</a>    <span class="k">def</span> <span class="nf">run_collect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">collect_progressbar</span><span class="p">:</span> <span class="n">tqdm</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">min_runs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Collect at least n samples from func, where the number of samples per run can vary.</span>
-<span class="sd">        </span>
+
 <span class="sd">        This is done by calling res, ns = func(G, *args, **kwargs) until the sum of ns exceeds n.</span>
-<span class="sd">        </span>
-<span class="sd">        This is intended for situations like reinforcement learning runs. If the environment ends up </span>
+
+<span class="sd">        This is intended for situations like reinforcement learning runs. If the environment ends up</span>
 <span class="sd">        in an error state, you get less samples per run. To ensure a stable learning behaviour, you can</span>
 <span class="sd">        specify the minimum amount of samples to collect before returning.</span>
-<span class="sd">        </span>
-<span class="sd">        Since the workers can only check the amount of samples before starting a run, you will likely </span>
-<span class="sd">        get more samples than the minimum. No generated samples are dropped; if that is desired, </span>
+
+<span class="sd">        Since the workers can only check the amount of samples before starting a run, you will likely</span>
+<span class="sd">        get more samples than the minimum. No generated samples are dropped; if that is desired,</span>
 <span class="sd">        do so manually.</span>
-<span class="sd">        </span>
+
 <span class="sd">        :param n: minimum number of samples to collect</span>
 <span class="sd">        :param func: sampler function. Must be pickleable.</span>
 <span class="sd">        :param args: remaining positional args are passed to the function</span>
 <span class="sd">        :param collect_progressbar: tdqm progress bar to use; default None</span>
 <span class="sd">        :param min_runs: optionally specify a minimum amount of runs to be executed before returning</span>
-<span class="sd">        :param kwargs: remaining keyword args are passed to the function </span>
+<span class="sd">        :param kwargs: remaining keyword args are passed to the function</span>
 <span class="sd">        :return: list of all results</span>
 <span class="sd">        :return: total number of samples</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -600,8 +600,8 @@
             <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">counter</span>
 
         <span class="c1"># Create counter + counter-lock as shared vars (counter has no own lock since there is an explicit one).</span>
-        <span class="n">counter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">run_counter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">counter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">run_counter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">lock</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span><span class="o">.</span><span class="n">RLock</span><span class="p">()</span>
 
         <span class="c1"># Start async computation</span>
@@ -636,7 +636,7 @@
 
     <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># We cannot really pickle this object since it has a lot of hidden state in the worker processes</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;The sampler pool is not serializable!&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;The sampler pool is not serializable!&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># stop the workers as soon as the pool is not referenced anymore</span>

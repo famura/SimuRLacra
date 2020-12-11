@@ -242,7 +242,7 @@
     <span class="k">assert</span> <span class="n">num_dim</span> <span class="o">&gt;</span> <span class="mi">0</span>
     <span class="n">num_dim</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_dim</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;uniform&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;uniform&quot;</span><span class="p">:</span>
         <span class="c1"># Initialization</span>
         <span class="n">ones</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">num_dim</span><span class="p">,))</span>
         <span class="n">udistr</span> <span class="o">=</span> <span class="n">Uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="n">ones</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">ones</span><span class="p">)</span>
@@ -254,16 +254,16 @@
             <span class="n">sum_squares</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
 
         <span class="c1"># Return scaled sample</span>
-        <span class="k">return</span> <span class="n">sample</span><span class="o">/</span><span class="n">to</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sum_squares</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sample</span> <span class="o">/</span> <span class="n">to</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sum_squares</span><span class="p">)</span>
 
-    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;normal&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;normal&quot;</span><span class="p">:</span>
         <span class="c1"># Sample fom standardized normal</span>
         <span class="n">sample</span> <span class="o">=</span> <span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_dim</span><span class="p">,)),</span> <span class="n">scale</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">num_dim</span><span class="p">,)))</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
 
         <span class="c1"># Return scaled sample</span>
-        <span class="k">return</span> <span class="n">sample</span><span class="o">/</span><span class="n">to</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sample</span> <span class="o">/</span> <span class="n">to</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
-    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;Marsaglia&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;Marsaglia&quot;</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">num_dim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">num_dim</span> <span class="o">==</span> <span class="mi">4</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Method &#39;Marsaglia&#39; is only defined for 3-dim space&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -279,9 +279,13 @@
 
             <span class="k">if</span> <span class="n">num_dim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
                 <span class="c1"># Return scaled sample</span>
-                <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">2</span><span class="o">*</span><span class="n">sample</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">to</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sum_squares</span><span class="p">),</span>
-                                  <span class="mi">2</span><span class="o">*</span><span class="n">sample</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">to</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sum_squares</span><span class="p">),</span>
-                                  <span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">sum_squares</span><span class="p">])</span>
+                <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="mi">2</span> <span class="o">*</span> <span class="n">sample</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">to</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sum_squares</span><span class="p">),</span>
+                        <span class="mi">2</span> <span class="o">*</span> <span class="n">sample</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">to</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sum_squares</span><span class="p">),</span>
+                        <span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">sum_squares</span><span class="p">,</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># num_dim = 4</span>
                 <span class="n">sum_squares2</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span>
@@ -289,9 +293,14 @@
                     <span class="n">sample2</span> <span class="o">=</span> <span class="n">udistr</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
                     <span class="n">sum_squares2</span> <span class="o">=</span> <span class="n">sample2</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">sample2</span><span class="p">)</span>
                 <span class="c1"># Return scaled sample</span>
-                <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">sample</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sample</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                                  <span class="n">sample2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">to</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sum_squares</span><span class="p">)</span><span class="o">/</span><span class="n">sum_squares2</span><span class="p">),</span>
-                                  <span class="n">sample2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">to</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sum_squares</span><span class="p">)</span><span class="o">/</span><span class="n">sum_squares2</span><span class="p">)])</span>
+                <span class="k">return</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">sample</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="n">sample</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="n">sample2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">to</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sum_squares</span><span class="p">)</span> <span class="o">/</span> <span class="n">sum_squares2</span><span class="p">),</span>
+                        <span class="n">sample2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">to</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sum_squares</span><span class="p">)</span> <span class="o">/</span> <span class="n">sum_squares2</span><span class="p">),</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;&#39;uniform&#39;, &#39;normal&#39;, or &#39;Marsaglia&#39;&quot;</span><span class="p">)</span></div>
 </pre></div>

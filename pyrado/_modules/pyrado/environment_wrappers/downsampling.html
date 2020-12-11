@@ -244,11 +244,13 @@
 <span class="sd">        i.e. send and receive at the real device&#39;s sampling frequency.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">wrapped_env</span><span class="p">:</span> <span class="p">[</span><span class="n">RealEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">],</span>
-                 <span class="n">factor</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                 <span class="n">obs_filter_fcn</span><span class="p">:</span> <span class="n">callable</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
-                 <span class="n">init_obs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">wrapped_env</span><span class="p">:</span> <span class="p">[</span><span class="n">RealEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">],</span>
+        <span class="n">factor</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">obs_filter_fcn</span><span class="p">:</span> <span class="n">callable</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+        <span class="n">init_obs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
@@ -292,7 +294,7 @@
 <span class="sd">        :param domain_param: domain parameter dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Cast to integer for consistency</span>
-        <span class="n">domain_param</span><span class="p">[</span><span class="s1">&#39;downsampling&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_factor</span><span class="p">)</span>
+        <span class="n">domain_param</span><span class="p">[</span><span class="s2">&quot;downsampling&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_factor</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_load_domain_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -301,7 +303,7 @@
 <span class="sd">        :param domain_param: domain parameter dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Cast the factor value to int, since randomizer yields ndarrays or Tensors</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_factor</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">domain_param</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;downsampling&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factor</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_factor</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">domain_param</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;downsampling&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factor</span><span class="p">))</span>
 
 <div class="viewcode-block" id="DownsamplingWrapper.reset"><a class="viewcode-back" href="../../../environment_wrappers.html#pyrado.environment_wrappers.downsampling.DownsamplingWrapper.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="c1"># Adapt _factor to the new act_downsampling if provided</span>
@@ -328,7 +330,7 @@
 <span class="sd">        :return: next action</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factor</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cnt</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">_factor</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cnt</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factor</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="c1"># Set new action (downsampling does not affect the current action)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_act_last</span> <span class="o">=</span> <span class="n">act</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>

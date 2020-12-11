@@ -237,14 +237,16 @@
 <div class="viewcode-block" id="DomainDistrParamPolicy"><a class="viewcode-back" href="../../../../policies.special.html#pyrado.policies.special.domain_distribution.DomainDistrParamPolicy">[docs]</a><span class="k">class</span> <span class="nc">DomainDistrParamPolicy</span><span class="p">(</span><span class="n">Policy</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A proxy to the Policy class in order to use the policy&#39;s parameters as domain distribution parameters &quot;&quot;&quot;</span>
 
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;ddp&#39;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ddp&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">mapping</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
-                 <span class="n">trafo_mask</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
-                 <span class="n">prior</span><span class="p">:</span> <span class="n">DomainRandomizer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">scale_params</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-                 <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">mapping</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+        <span class="n">trafo_mask</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+        <span class="n">prior</span><span class="p">:</span> <span class="n">DomainRandomizer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">scale_params</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
@@ -301,7 +303,7 @@
             <span class="n">ddp</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">ddp</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">])</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Inputs must not have more than 2 dimensions!&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Inputs must not have more than 2 dimensions!&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">ddp</span></div>
 
@@ -310,29 +312,33 @@
             <span class="c1"># First check if there are some specific values to set</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">param_values</span> <span class="o">=</span> <span class="n">init_values</span>
 
-        <span class="k">elif</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;prior&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prior&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Prior information is expected to be in form of a DomainRandomizer since it holds the distributions</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;prior&#39;</span><span class="p">],</span> <span class="n">DomainRandomizer</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;prior&#39;</span><span class="p">],</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">DomainRandomizer</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;prior&quot;</span><span class="p">],</span> <span class="n">DomainRandomizer</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;prior&quot;</span><span class="p">],</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">DomainRandomizer</span><span class="p">)</span>
 
             <span class="c1"># For every domain distribution parameter in the mapping, check if there is prior information</span>
             <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ddp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">for</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;prior&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">domain_params</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;prior&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">domain_params</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">ddp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">dp</span><span class="o">.</span><span class="n">name</span> <span class="ow">and</span> <span class="n">ddp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">dp</span><span class="o">.</span><span class="n">get_field_names</span><span class="p">():</span>
                         <span class="c1"># The domain parameter exists in the prior and in the mapping</span>
-                        <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ddp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                        <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ddp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">[</span><span class="n">idx</span><span class="p">]:</span>
                             <span class="c1"># Log-transform since it will later be exp-transformed</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">val</span><span class="p">)))</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
                         <span class="k">if</span> <span class="n">to</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)):</span>
-                            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;DomainDistrParamPolicy parameter became NaN during&#39;</span>
-                                                      <span class="s1">&#39;initialization! Check the mask and negative mean values.&#39;</span><span class="p">)</span>
+                            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span>
+                                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;DomainDistrParamPolicy parameter became NaN during&quot;</span>
+                                <span class="s2">&quot;initialization! Check the mask and negative mean values.&quot;</span>
+                            <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;DomainDistrParamPolicy needs to be initialized! Either with a set of policy&#39;</span>
-                                      <span class="s1">&#39;parameters, or with a prior in form of a DomainRandomizer!&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;DomainDistrParamPolicy needs to be initialized! Either with a set of policy&quot;</span>
+                <span class="s2">&quot;parameters, or with a prior in form of a DomainRandomizer!&quot;</span>
+            <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale_params</span><span class="p">:</span>
             <span class="c1"># After initializing, we have an estimate on the magnitude of the policy parameters. Usually, the</span>

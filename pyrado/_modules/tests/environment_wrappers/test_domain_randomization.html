@@ -227,11 +227,12 @@
 
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">wrapper</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;default_qbb&#39;</span><span class="p">,</span>
+    <span class="s2">&quot;env&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;default_bob&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;default_qbb&quot;</span><span class="p">,</span>
     <span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_dr_wrapper_live_bob</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
     <span class="n">param_init</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">domain_param</span>
@@ -249,11 +250,12 @@
 
 <div class="viewcode-block" id="test_dr_wrapper_live_bob"><a class="viewcode-back" href="../../../tests.environment_wrappers.html#tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_live_bob">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">wrapper</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span>
-        <span class="s1">&#39;default_bob&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;default_qbb&#39;</span><span class="p">,</span>
+    <span class="s2">&quot;env&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;default_bob&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;default_qbb&quot;</span><span class="p">,</span>
     <span class="p">],</span>
-    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_dr_wrapper_live_bob</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
     <span class="n">param_init</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">domain_param</span>

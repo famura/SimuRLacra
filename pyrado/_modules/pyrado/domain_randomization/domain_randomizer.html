@@ -229,8 +229,13 @@
 <span class="kn">from</span> <span class="nn">torch.distributions.bernoulli</span> <span class="kn">import</span> <span class="n">Bernoulli</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
-<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="n">DomainParam</span><span class="p">,</span> <span class="n">NormalDomainParam</span><span class="p">,</span> <span class="n">UniformDomainParam</span><span class="p">,</span> \
-    <span class="n">BernoulliDomainParam</span><span class="p">,</span> <span class="n">MultivariateNormalDomainParam</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DomainParam</span><span class="p">,</span>
+    <span class="n">NormalDomainParam</span><span class="p">,</span>
+    <span class="n">UniformDomainParam</span><span class="p">,</span>
+    <span class="n">BernoulliDomainParam</span><span class="p">,</span>
+    <span class="n">MultivariateNormalDomainParam</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="DomainRandomizer"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer">[docs]</a><span class="k">class</span> <span class="nc">DomainRandomizer</span><span class="p">:</span>
@@ -260,30 +265,30 @@
                 <span class="n">dp</span><span class="o">.</span><span class="n">cov</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">cov</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
 
         <span class="c1"># Manually order them. A set would reduce the duplicated, too but yield a random order.</span>
-        <span class="n">headers_ordered</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="s1">&#39;std&#39;</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
-            <span class="n">headers_ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;std&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;cov&#39;</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
-            <span class="n">headers_ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;cov&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;halfspan&#39;</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
-            <span class="n">headers_ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;halfspan&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;val_0&#39;</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
-            <span class="n">headers_ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;val_0&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;val_1&#39;</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
-            <span class="n">headers_ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;val_1&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;prob_1&#39;</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
-            <span class="n">headers_ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;prob_1&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;clip_lo&#39;</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
-            <span class="n">headers_ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;clip_lo&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;clip_up&#39;</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
-            <span class="n">headers_ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;clip_up&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;roundint&#39;</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
-            <span class="n">headers_ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;roundint&#39;</span><span class="p">)</span>
+        <span class="n">headers_ordered</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;std&quot;</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
+            <span class="n">headers_ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;std&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;cov&quot;</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
+            <span class="n">headers_ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;cov&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;halfspan&quot;</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
+            <span class="n">headers_ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;halfspan&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;val_0&quot;</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
+            <span class="n">headers_ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;val_0&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;val_1&quot;</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
+            <span class="n">headers_ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;val_1&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;prob_1&quot;</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
+            <span class="n">headers_ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;prob_1&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;clip_lo&quot;</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
+            <span class="n">headers_ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;clip_lo&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;clip_up&quot;</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
+            <span class="n">headers_ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;clip_up&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;roundint&quot;</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
+            <span class="n">headers_ordered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;roundint&quot;</span><span class="p">)</span>
 
         <span class="c1"># Create string</span>
-        <span class="k">return</span> <span class="n">tabulate</span><span class="p">([[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">headers_ordered</span><span class="p">]</span>
-                         <span class="k">for</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">dps</span><span class="p">],</span>
-                        <span class="n">headers</span><span class="o">=</span><span class="n">headers_ordered</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s1">&#39;simple&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tabulate</span><span class="p">(</span>
+            <span class="p">[[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">headers_ordered</span><span class="p">]</span> <span class="k">for</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">dps</span><span class="p">],</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers_ordered</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;simple&quot;</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="DomainRandomizer.add_domain_params"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.add_domain_params">[docs]</a>    <span class="k">def</span> <span class="nf">add_domain_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">domain_params</span><span class="p">:</span> <span class="n">DomainParam</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -316,7 +321,7 @@
                 <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DomainRandomizer.get_params"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;list&#39;</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;numpy&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
+<div class="viewcode-block" id="DomainRandomizer.get_params"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;numpy&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the values in the data frame of the perturbed parameters.</span>
 
@@ -326,24 +331,24 @@
 <span class="sd">        :return: dict of num_samples perturbed values per specified param or one dict of one perturbed</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_samples</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">2</span> <span class="ow">and</span> <span class="n">num_samples</span> <span class="o">!=</span> <span class="mi">0</span>
-        <span class="k">assert</span> <span class="nb">format</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;list&#39;</span> <span class="ow">or</span> <span class="nb">format</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;dict&#39;</span>
-        <span class="k">assert</span> <span class="n">dtype</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;numpy&#39;</span> <span class="ow">or</span> <span class="n">dtype</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;torch&#39;</span>
+        <span class="k">assert</span> <span class="nb">format</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span> <span class="ow">or</span> <span class="nb">format</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;dict&quot;</span>
+        <span class="k">assert</span> <span class="n">dtype</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span> <span class="ow">or</span> <span class="n">dtype</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span>
 
         <span class="k">if</span> <span class="n">num_samples</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># Return all samples that the randomizer holds</span>
-            <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s1">&#39;list&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>
                 <span class="c1"># Return a list with all domain parameter sets</span>
                 <span class="n">copy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_list</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s1">&#39;numpy&#39;</span><span class="p">:</span>  <span class="c1"># nothing to be done for torch</span>
+                <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>  <span class="c1"># nothing to be done for torch</span>
                     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">copy</span><span class="p">)):</span>
                         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                             <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
                 <span class="k">return</span> <span class="n">copy</span>
 
-            <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s1">&#39;dict&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;dict&quot;</span><span class="p">:</span>
                 <span class="c1"># Returns a dict (as many entries as parameters) with lists as values (as many entries as samples)</span>
                 <span class="n">copy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_dict</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s1">&#39;numpy&#39;</span><span class="p">:</span>  <span class="c1"># nothing to be done for torch</span>
+                <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>  <span class="c1"># nothing to be done for torch</span>
                     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">copy</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                         <span class="n">copy</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">samples</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">samples</span> <span class="ow">in</span> <span class="n">copy</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
                 <span class="k">return</span> <span class="n">copy</span>
@@ -351,38 +356,37 @@
         <span class="k">elif</span> <span class="n">num_samples</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># If only one sample is wanted or the internal list just contains 1 element</span>
             <span class="n">copy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s1">&#39;numpy&#39;</span><span class="p">:</span>  <span class="c1"># nothing to be done for torch</span>
+            <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>  <span class="c1"># nothing to be done for torch</span>
                 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">copy</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                     <span class="n">copy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-            <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s1">&#39;list&#39;</span><span class="p">:</span>  <span class="c1"># nothing to be done for dict</span>
+            <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>  <span class="c1"># nothing to be done for dict</span>
                 <span class="n">copy</span> <span class="o">=</span> <span class="p">[</span><span class="n">copy</span><span class="p">]</span>
             <span class="k">return</span> <span class="n">copy</span>
 
         <span class="k">elif</span> <span class="n">num_samples</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># Return a subset of all samples that the randomizer holds</span>
-            <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s1">&#39;list&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>
                 <span class="n">copy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_list</span><span class="p">[:</span><span class="n">num_samples</span><span class="p">])</span>
                 <span class="c1"># Return a list with the fist num_samples domain parameter sets</span>
-                <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s1">&#39;numpy&#39;</span><span class="p">:</span>  <span class="c1"># nothing to be done for torch</span>
+                <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>  <span class="c1"># nothing to be done for torch</span>
                     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_samples</span><span class="p">):</span>
                         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                             <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
                 <span class="k">return</span> <span class="n">copy</span>
 
-            <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s1">&#39;dict&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;dict&quot;</span><span class="p">:</span>
                 <span class="c1"># Return a dict with as many keys as perturbed params and num_samples values for each of them</span>
                 <span class="n">params_pert_subset</span> <span class="o">=</span> <span class="p">{}</span>
                 <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_dict</span><span class="p">:</span>
                     <span class="c1"># Only select the fist num_samples elements of the list</span>
                     <span class="n">params_pert_subset</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][:</span><span class="n">num_samples</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s1">&#39;numpy&#39;</span><span class="p">:</span>  <span class="c1"># nothing to be done for torch</span>
+                    <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>  <span class="c1"># nothing to be done for torch</span>
                         <span class="n">params_pert_subset</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params_pert_subset</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
                 <span class="k">return</span> <span class="n">params_pert_subset</span></div>
 
-<div class="viewcode-block" id="DomainRandomizer.adapt_one_distr_param"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.adapt_one_distr_param">[docs]</a>    <span class="k">def</span> <span class="nf">adapt_one_distr_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                              <span class="n">domain_param_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                              <span class="n">domain_distr_param</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                              <span class="n">domain_distr_param_value</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]):</span>
+<div class="viewcode-block" id="DomainRandomizer.adapt_one_distr_param"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.adapt_one_distr_param">[docs]</a>    <span class="k">def</span> <span class="nf">adapt_one_distr_param</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">domain_param_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">domain_distr_param</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">domain_distr_param_value</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update the randomizer&#39;s domain parameter distribution for one domain parameter.</span>
 
@@ -398,8 +402,10 @@
                         <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">domain_distr_param_value</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span>
                     <span class="n">dp</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="n">domain_distr_param</span><span class="p">,</span> <span class="n">domain_distr_param_value</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The domain parameter </span><span class="si">{</span><span class="n">dp</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> does not have a domain distribution parameter &#39;</span>
-                                   <span class="sa">f</span><span class="s1">&#39;called </span><span class="si">{</span><span class="n">domain_distr_param</span><span class="si">}</span><span class="s1">!&#39;</span><span class="p">)</span></div>
+                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;The domain parameter </span><span class="si">{</span><span class="n">dp</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> does not have a domain distribution parameter &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;called </span><span class="si">{</span><span class="n">domain_distr_param</span><span class="si">}</span><span class="s2">!&quot;</span>
+                    <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DomainRandomizer.rescale_distr_param"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.rescale_distr_param">[docs]</a>    <span class="k">def</span> <span class="nf">rescale_distr_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -409,12 +415,12 @@
 <span class="sd">        :param scale: scaling factor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">scale</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">dp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_params</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
                 <span class="c1"># Scale the param attribute of the domain parameters object</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">scale</span><span class="o">*</span><span class="nb">getattr</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">param</span><span class="p">))</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">scale</span> <span class="o">*</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">param</span><span class="p">))</span>
 
             <span class="c1"># Also scale the distribution (afterwards)</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">UniformDomainParam</span><span class="p">):</span>

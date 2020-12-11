@@ -234,6 +234,7 @@
 
 <div class="viewcode-block" id="FinalRewMode"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.final_reward.FinalRewMode">[docs]</a><span class="k">class</span> <span class="nc">FinalRewMode</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The specification of how the final state should be rewarded or punished &quot;&quot;&quot;</span>
+
     <span class="n">state_dependent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">time_dependent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">always_positive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -242,18 +243,27 @@
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get an information string. &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">RESET_ALL</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39; (id: </span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> \
-               <span class="n">tabulate</span><span class="p">(</span>
-                   <span class="p">[[</span><span class="s1">&#39;state_dependent&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;time_dependent&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">],</span>
-                    <span class="p">[</span><span class="s1">&#39;always_positive&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">always_positive</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;always_negative&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">always_negative</span><span class="p">],</span>
-                    <span class="p">[</span><span class="s1">&#39;user_input&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_input</span><span class="p">]]</span>
-               <span class="p">)</span></div>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">Style</span><span class="o">.</span><span class="n">BRIGHT</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">get_class_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="n">Style</span><span class="o">.</span><span class="n">RESET_ALL</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; (id: </span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="n">tabulate</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="p">[</span><span class="s2">&quot;state_dependent&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">],</span>
+                    <span class="p">[</span><span class="s2">&quot;time_dependent&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">],</span>
+                    <span class="p">[</span><span class="s2">&quot;always_positive&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">always_positive</span><span class="p">],</span>
+                    <span class="p">[</span><span class="s2">&quot;always_negative&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">always_negative</span><span class="p">],</span>
+                    <span class="p">[</span><span class="s2">&quot;user_input&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_input</span><span class="p">],</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="FinalRewTask"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.final_reward.FinalRewTask">[docs]</a><span class="k">class</span> <span class="nc">FinalRewTask</span><span class="p">(</span><span class="n">TaskWrapper</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper for tasks which yields a reward / cost on success / failure</span>
-<span class="sd">    </span>
+
 <span class="sd">    :usage:</span>
 <span class="sd">    .. code-block:: python</span>
 
@@ -273,9 +283,10 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">FinalRewMode</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">FinalRewMode</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">user_input</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span> <span class="ow">or</span> <span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span> <span class="ow">or</span>
-                                <span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span> <span class="ow">or</span> <span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">):</span>
-            <span class="n">print_cbt</span><span class="p">(</span><span class="s1">&#39;If the user_input == True, then all other specifications in FinalRewMode are ignored.&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">user_input</span> <span class="ow">and</span> <span class="p">(</span>
+            <span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span> <span class="ow">or</span> <span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span> <span class="ow">or</span> <span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span> <span class="ow">or</span> <span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span>
+        <span class="p">):</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;If the user_input == True, then all other specifications in FinalRewMode are ignored.&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">=</span> <span class="n">factor</span>
@@ -310,123 +321,148 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yielded_final_rew</span><span class="p">:</span>
             <span class="c1"># Only yield the final reward once</span>
-            <span class="k">return</span> <span class="mf">0.</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_yielded_final_rew</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">user_input</span><span class="p">:</span>
                 <span class="c1"># Default case</span>
-                <span class="k">if</span> <span class="n">mode_switch</span><span class="p">(</span><span class="n">off</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span><span class="p">,</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">mode_switch</span><span class="p">(</span>
+                    <span class="n">off</span><span class="o">=</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">):</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_failed</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="o">-</span><span class="mf">1.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">factor</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">factor</span><span class="p">)</span>
                     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_succeeded</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
                         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">factor</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="mf">0.</span>
+                        <span class="k">return</span> <span class="mf">0.0</span>
 
-                <span class="k">elif</span> <span class="n">mode_switch</span><span class="p">(</span><span class="n">on</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,),</span>
-                                 <span class="n">off</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">)):</span>
+                <span class="k">elif</span> <span class="n">mode_switch</span><span class="p">(</span>
+                    <span class="n">on</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,),</span>
+                    <span class="n">off</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">),</span>
+                <span class="p">):</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_failed</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="mf">0.</span>
+                        <span class="k">return</span> <span class="mf">0.0</span>
                     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_succeeded</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
                         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">factor</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="mf">0.</span>
+                        <span class="k">return</span> <span class="mf">0.0</span>
 
-                <span class="k">elif</span> <span class="n">mode_switch</span><span class="p">(</span><span class="n">on</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span><span class="p">,),</span>
-                                 <span class="n">off</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">)):</span>
+                <span class="k">elif</span> <span class="n">mode_switch</span><span class="p">(</span>
+                    <span class="n">on</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span><span class="p">,),</span>
+                    <span class="n">off</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">),</span>
+                <span class="p">):</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_failed</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="o">-</span><span class="mf">1.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">factor</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">factor</span><span class="p">)</span>
                     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_succeeded</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="mf">0.</span>
+                        <span class="k">return</span> <span class="mf">0.0</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="mf">0.</span>
+                        <span class="k">return</span> <span class="mf">0.0</span>
 
-                <span class="k">elif</span> <span class="n">mode_switch</span><span class="p">(</span><span class="n">on</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">),</span>
-                                 <span class="n">off</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">)):</span>
+                <span class="k">elif</span> <span class="n">mode_switch</span><span class="p">(</span>
+                    <span class="n">on</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">),</span>
+                    <span class="n">off</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">),</span>
+                <span class="p">):</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_failed</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="mf">0.</span>
+                        <span class="k">return</span> <span class="mf">0.0</span>
                     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_succeeded</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
                         <span class="n">act</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># dummy</span>
                         <span class="n">step_rew</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_task</span><span class="o">.</span><span class="n">step_rew</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">act</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">)</span>
                         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">step_rew</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="mf">0.</span>
+                        <span class="k">return</span> <span class="mf">0.0</span>
 
-                <span class="k">elif</span> <span class="n">mode_switch</span><span class="p">(</span><span class="n">on</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">),</span>
-                                 <span class="n">off</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">)):</span>
+                <span class="k">elif</span> <span class="n">mode_switch</span><span class="p">(</span>
+                    <span class="n">on</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">),</span>
+                    <span class="n">off</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">),</span>
+                <span class="p">):</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_failed</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
                         <span class="n">act</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># dummy</span>
                         <span class="n">step_rew</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_task</span><span class="o">.</span><span class="n">step_rew</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">act</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">)</span>
-                        <span class="k">return</span> <span class="o">-</span><span class="mf">1.</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">step_rew</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">step_rew</span><span class="p">)</span>
                     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_succeeded</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="mf">0.</span>
+                        <span class="k">return</span> <span class="mf">0.0</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="mf">0.</span>
+                        <span class="k">return</span> <span class="mf">0.0</span>
 
-                <span class="k">elif</span> <span class="n">mode_switch</span><span class="p">(</span><span class="n">on</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">,),</span>
-                                 <span class="n">off</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">)):</span>
+                <span class="k">elif</span> <span class="n">mode_switch</span><span class="p">(</span>
+                    <span class="n">on</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">,),</span>
+                    <span class="n">off</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">),</span>
+                <span class="p">):</span>
                     <span class="n">act</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># dummy</span>
                     <span class="n">step_rew</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_task</span><span class="o">.</span><span class="n">step_rew</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">act</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">)</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_failed</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="o">-</span><span class="mf">1.</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">step_rew</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">step_rew</span><span class="p">)</span>
                     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_succeeded</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
                         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">step_rew</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="mf">0.</span>
+                        <span class="k">return</span> <span class="mf">0.0</span>
 
-                <span class="k">elif</span> <span class="n">mode_switch</span><span class="p">(</span><span class="n">on</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">),</span>
-                                 <span class="n">off</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span><span class="p">)):</span>
+                <span class="k">elif</span> <span class="n">mode_switch</span><span class="p">(</span>
+                    <span class="n">on</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">),</span>
+                    <span class="n">off</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span><span class="p">),</span>
+                <span class="p">):</span>
                     <span class="n">act</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># dummy</span>
                     <span class="n">step_rew</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_task</span><span class="o">.</span><span class="n">step_rew</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">act</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">)</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_failed</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="o">-</span><span class="mf">1.</span> <span class="o">*</span> <span class="n">remaining_steps</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">step_rew</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">remaining_steps</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">step_rew</span><span class="p">)</span>
                     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_succeeded</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
                         <span class="k">return</span> <span class="n">remaining_steps</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">step_rew</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="mf">0.</span>
+                        <span class="k">return</span> <span class="mf">0.0</span>
 
-                <span class="k">elif</span> <span class="n">mode_switch</span><span class="p">(</span><span class="n">on</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">,),</span>
-                                 <span class="n">off</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">)):</span>
+                <span class="k">elif</span> <span class="n">mode_switch</span><span class="p">(</span>
+                    <span class="n">on</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">,),</span>
+                    <span class="n">off</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">),</span>
+                <span class="p">):</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_failed</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="o">-</span><span class="mf">1.</span> <span class="o">*</span> <span class="n">remaining_steps</span>
+                        <span class="k">return</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">remaining_steps</span>
                     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_succeeded</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
                         <span class="k">return</span> <span class="n">remaining_steps</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="mf">0.</span>
+                        <span class="k">return</span> <span class="mf">0.0</span>
 
-                <span class="k">elif</span> <span class="n">mode_switch</span><span class="p">(</span><span class="n">on</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">),</span>
-                                 <span class="n">off</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">)):</span>
+                <span class="k">elif</span> <span class="n">mode_switch</span><span class="p">(</span>
+                    <span class="n">on</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">),</span>
+                    <span class="n">off</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">),</span>
+                <span class="p">):</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_failed</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="mf">0.</span>
+                        <span class="k">return</span> <span class="mf">0.0</span>
                     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_succeeded</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
                         <span class="k">return</span> <span class="n">remaining_steps</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="mf">0.</span>
+                        <span class="k">return</span> <span class="mf">0.0</span>
 
-                <span class="k">elif</span> <span class="n">mode_switch</span><span class="p">(</span><span class="n">on</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">),</span>
-                                 <span class="n">off</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">)):</span>
+                <span class="k">elif</span> <span class="n">mode_switch</span><span class="p">(</span>
+                    <span class="n">on</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_negative</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">),</span>
+                    <span class="n">off</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">),</span>
+                <span class="p">):</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_failed</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="o">-</span><span class="mf">1.</span> <span class="o">*</span> <span class="n">remaining_steps</span>
+                        <span class="k">return</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">remaining_steps</span>
                     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_succeeded</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="mf">0.</span>
+                        <span class="k">return</span> <span class="mf">0.0</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="mf">0.</span>
+                        <span class="k">return</span> <span class="mf">0.0</span>
 
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No matching configuration found for the given&#39;</span>
-                                              <span class="sa">f</span><span class="s1">&#39;FinalRewMode:</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;No matching configuration found for the given&quot;</span> <span class="sa">f</span><span class="s2">&quot;FinalRewMode:</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">user_rew</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="k">while</span> <span class="n">user_rew</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">user_input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;Please enter a final reward: &#39;</span><span class="p">)</span>
+                    <span class="n">user_input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Please enter a final reward: &quot;</span><span class="p">)</span>
                     <span class="k">try</span><span class="p">:</span>
                         <span class="n">user_rew</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">user_input</span><span class="p">)</span>
                     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                        <span class="n">print_cbt</span><span class="p">(</span><span class="s1">&#39;The received input could not be casted to a float. Try again: &#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span>
+                        <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;The received input could not be casted to a float. Try again: &quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
                         <span class="n">user_rew</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="k">return</span> <span class="n">user_rew</span></div></div>
 
@@ -437,7 +473,7 @@
 <span class="sd">    current trajectory that is scaled by the number of taken / remaining time steps.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapped_task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">max_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapped_task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">max_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
@@ -481,7 +517,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yielded_final_rew</span><span class="p">:</span>
             <span class="c1"># Only yield the final reward once</span>
-            <span class="k">return</span> <span class="mf">0.</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_yielded_final_rew</span> <span class="o">=</span> <span class="kc">True</span>

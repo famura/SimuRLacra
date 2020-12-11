@@ -237,6 +237,7 @@
 
 <div class="viewcode-block" id="EnvSpec"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.EnvSpec">[docs]</a><span class="k">class</span> <span class="nc">EnvSpec</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The specification of an environment&#39;s input and output space &quot;&quot;&quot;</span>
+
     <span class="n">obs_space</span><span class="p">:</span> <span class="n">Space</span>
     <span class="n">act_space</span><span class="p">:</span> <span class="n">Space</span>
     <span class="n">state_space</span><span class="p">:</span> <span class="n">Space</span> <span class="o">=</span> <span class="n">EmptySpace</span></div>
@@ -244,12 +245,14 @@
 
 <div class="viewcode-block" id="RenderMode"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.RenderMode">[docs]</a><span class="k">class</span> <span class="nc">RenderMode</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The specification of a render mode, do not print or render anything by default &quot;&quot;&quot;</span>
+
     <span class="n">text</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">video</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></div>
 
 
 <div class="viewcode-block" id="TimeSeriesDataPair"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.TimeSeriesDataPair">[docs]</a><span class="k">class</span> <span class="nc">TimeSeriesDataPair</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Pair of an input sequence and an associated target value for training time series prediction. &quot;&quot;&quot;</span>
+
     <span class="n">inp_seq</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span>
     <span class="n">targ</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span></div>
 
@@ -280,12 +283,14 @@
 <span class="sd">    MSDDSSpec(function=&#39;msd_nlin&#39;, goal=np.array([-1., 2.]), attractorStiffness=50., damping=10., mass=1.)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">function</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                 <span class="n">goal</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-                 <span class="n">attractorStiffness</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-                 <span class="n">damping</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-                 <span class="n">mass</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">function</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">goal</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+        <span class="n">attractorStiffness</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+        <span class="n">damping</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+        <span class="n">mass</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
@@ -295,11 +300,12 @@
 <span class="sd">        :param damping: damping parameter of the dynamical system</span>
 <span class="sd">        :param mass: mass parameter of the dynamical system</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">function</span> <span class="o">==</span> <span class="s1">&#39;msd&#39;</span> <span class="ow">or</span> <span class="n">function</span> <span class="o">==</span> <span class="s1">&#39;msd_nlin&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">function</span> <span class="o">==</span> <span class="s2">&quot;msd&quot;</span> <span class="ow">or</span> <span class="n">function</span> <span class="o">==</span> <span class="s2">&quot;msd_nlin&quot;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">function</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;&#39;msd&#39; or &#39;msd_nlin&quot;</span><span class="p">)</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">function</span><span class="o">=</span><span class="n">function</span><span class="p">,</span> <span class="n">goal</span><span class="o">=</span><span class="n">goal</span><span class="p">,</span> <span class="n">attractorStiffness</span><span class="o">=</span><span class="n">attractorStiffness</span><span class="p">,</span> <span class="n">damping</span><span class="o">=</span><span class="n">damping</span><span class="p">,</span>
-                         <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">function</span><span class="o">=</span><span class="n">function</span><span class="p">,</span> <span class="n">goal</span><span class="o">=</span><span class="n">goal</span><span class="p">,</span> <span class="n">attractorStiffness</span><span class="o">=</span><span class="n">attractorStiffness</span><span class="p">,</span> <span class="n">damping</span><span class="o">=</span><span class="n">damping</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">mass</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="LinDSSpec"><a class="viewcode-back" href="../../../utils.html#pyrado.utils.data_types.LinDSSpec">[docs]</a><span class="k">class</span> <span class="nc">LinDSSpec</span><span class="p">(</span><span class="n">DSSpec</span><span class="p">):</span>
@@ -310,10 +316,7 @@
 <span class="sd">    LinDSSpec(function=&#39;lin&#39;, goal=np.array([-1., 2.]), errorDynamics=np.eye(2))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">function</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                 <span class="n">goal</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-                 <span class="n">errorDynamics</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">goal</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">errorDynamics</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
@@ -321,7 +324,7 @@
 <span class="sd">        :param goal: desired state, e.g. a task space position or velocity</span>
 <span class="sd">        :param errorDynamics: a matrix determining the dynamics or the error difference between</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">function</span> <span class="o">==</span> <span class="s1">&#39;lin&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">function</span> <span class="o">==</span> <span class="s2">&quot;lin&quot;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">function</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;&#39;lin&#39;&quot;</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">function</span><span class="o">=</span><span class="n">function</span><span class="p">,</span> <span class="n">goal</span><span class="o">=</span><span class="n">goal</span><span class="p">,</span> <span class="n">errorDynamics</span><span class="o">=</span><span class="n">errorDynamics</span><span class="p">)</span></div>

@@ -236,11 +236,9 @@
 <div class="viewcode-block" id="SequentialTasks"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.sequential.SequentialTasks">[docs]</a><span class="k">class</span> <span class="nc">SequentialTasks</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Task class for a sequence of tasks a.k.a. goals &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">tasks</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Task</span><span class="p">],</span>
-                 <span class="n">start_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                 <span class="n">hold_rew_when_done</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-                 <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Task</span><span class="p">],</span> <span class="n">start_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">hold_rew_when_done</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
@@ -283,7 +281,7 @@
     <span class="k">def</span> <span class="nf">idx_curr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the index of the currently active task. &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">le_constraint</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">ge_constraint</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="n">le_constraint</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span> <span class="o">=</span> <span class="n">idx</span>
 
     <span class="nd">@property</span>
@@ -317,7 +315,7 @@
 
 <div class="viewcode-block" id="SequentialTasks.step_rew"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.sequential.SequentialTasks.step_rew">[docs]</a>    <span class="k">def</span> <span class="nf">step_rew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Get the step reward from the current task. &quot;&quot;&quot;</span>
-        <span class="n">step_rew</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">step_rew</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hold_rew_when_done</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
                 <span class="c1"># Iterate over previous tasks</span>
@@ -347,7 +345,7 @@
 <span class="sd">        :param remaining_steps: number of time steps left in the episode</span>
 <span class="sd">        :return: final reward of all sub-tasks</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">sum_final_rew</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">sum_final_rew</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">:</span>
             <span class="n">sum_final_rew</span> <span class="o">+=</span> <span class="n">t</span><span class="o">.</span><span class="n">compute_final_rew</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">sum_final_rew</span></div>
@@ -361,18 +359,16 @@
         <span class="c1"># Reset internal check list for done tasks</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">succeeded_tasks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="kc">False</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">failed_tasks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="kc">False</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;start_idx&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">succeeded_tasks</span><span class="p">[:</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;start_idx&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="s2">&quot;start_idx&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">succeeded_tasks</span><span class="p">[:</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;start_idx&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="c1"># Reset the stored reward values for done tasks</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hold_rew_when_done</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">held_rews</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>  <span class="c1"># doesn&#39;t work with start_idx</span></div>
 
-    <span class="k">def</span> <span class="nf">_is_curr_task_done</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                           <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-                           <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-                           <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                           <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_is_curr_task_done</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">act</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the current task is done. If so, move to the next one and return the final reward of this task.</span>
 
@@ -382,24 +378,27 @@
 <span class="sd">        :param verbose: print messages on success or failure</span>
 <span class="sd">        :return: final return of the current subtask</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">succeeded_tasks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">failed_tasks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">[</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="p">]</span><span class="o">.</span><span class="n">is_done</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">succeeded_tasks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="p">]</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">failed_tasks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="p">]</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="p">]</span><span class="o">.</span><span class="n">is_done</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="p">):</span>
             <span class="c1"># Task has not been marked done yet, but is now done</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="p">]</span><span class="o">.</span><span class="n">has_succeeded</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
                 <span class="c1"># Check off successfully completed task</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">succeeded_tasks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                    <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="si">}</span><span class="s1"> has succeeded (is done) at state </span><span class="si">{</span><span class="n">state</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">)</span>
+                    <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="si">}</span><span class="s2"> has succeeded (is done) at state </span><span class="si">{</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">)</span>
 
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="p">]</span><span class="o">.</span><span class="n">has_failed</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
                 <span class="c1"># Check off unsuccessfully completed task</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">failed_tasks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                    <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="si">}</span><span class="s1"> has failed (is done) at state </span><span class="si">{</span><span class="n">state</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+                    <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="si">}</span><span class="s2"> has failed (is done) at state </span><span class="si">{</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="si">}</span><span class="s1"> neither succeeded or failed but is done!&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="si">}</span><span class="s2"> neither succeeded or failed but is done!&quot;</span><span class="p">)</span>
 
             <span class="c1"># Memorize current reward</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hold_rew_when_done</span><span class="p">:</span>
@@ -409,10 +408,10 @@
             <span class="n">task_final_rew</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span><span class="p">]</span><span class="o">.</span><span class="n">final_rew</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">)</span>
 
             <span class="c1"># Advance to the next task</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">idx_curr</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">idx_curr</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_curr</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">task_final_rew</span> <span class="o">=</span> <span class="mf">0.</span>
+            <span class="n">task_final_rew</span> <span class="o">=</span> <span class="mf">0.0</span>
 
         <span class="k">return</span> <span class="n">task_final_rew</span>
 
@@ -425,7 +424,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">successful</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">succeeded_tasks</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">successful</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;All </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s1"> sequential sub-tasks are done successfully&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">)</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;All </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> sequential sub-tasks are done successfully&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">successful</span></div></div>
 </pre></div>
 
