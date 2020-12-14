@@ -371,11 +371,11 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.BallInTubeIKActivationSim">BallInTubeIKActivationSim (class in pyrado.environments.rcspysim.ball_in_tube)</a>
-</li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.BallInTubeIKSim">BallInTubeIKSim (class in pyrado.environments.rcspysim.ball_in_tube)</a>
 </li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.BallInTubePosDSSim">BallInTubePosDSSim (class in pyrado.environments.rcspysim.ball_in_tube)</a>
+</li>
+      <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.BallInTubePosIKActivationSim">BallInTubePosIKActivationSim (class in pyrado.environments.rcspysim.ball_in_tube)</a>
 </li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.BallInTubeSim">BallInTubeSim (class in pyrado.environments.rcspysim.ball_in_tube)</a>
 </li>
@@ -465,15 +465,13 @@
 </li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingPosDSSim">BoxLiftingPosDSSim (class in pyrado.environments.rcspysim.box_lifting)</a>
 </li>
+      <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingPosIKActivationSim">BoxLiftingPosIKActivationSim (class in pyrado.environments.rcspysim.box_lifting)</a>
+</li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingSim">BoxLiftingSim (class in pyrado.environments.rcspysim.box_lifting)</a>
 </li>
-      <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingSimplePosDSSim">BoxLiftingSimplePosDSSim (class in pyrado.environments.rcspysim.box_lifting)</a>
-</li>
-      <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingSimpleSim">BoxLiftingSimpleSim (class in pyrado.environments.rcspysim.box_lifting)</a>
-</li>
-      <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingSimpleVelDSSim">BoxLiftingSimpleVelDSSim (class in pyrado.environments.rcspysim.box_lifting)</a>
-</li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingVelDSSim">BoxLiftingVelDSSim (class in pyrado.environments.rcspysim.box_lifting)</a>
+</li>
+      <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingVelIKActivationSim">BoxLiftingVelIKActivationSim (class in pyrado.environments.rcspysim.box_lifting)</a>
 </li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_shelving.BoxShelvingPosDSSim">BoxShelvingPosDSSim (class in pyrado.environments.rcspysim.box_shelving)</a>
 </li>
@@ -603,10 +601,10 @@
         <li><a href="spaces.html#pyrado.spaces.base.Space.contains">(Space method)</a>
 </li>
       </ul></li>
-      <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.convert">convert() (StepSequence method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.convert">convert() (StepSequence method)</a>
+</li>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.convert_step_sequence">convert_step_sequence() (in module pyrado.algorithms.meta.adr)</a>
 </li>
       <li><a href="spaces.html#pyrado.spaces.base.Space.copy">copy() (Space method)</a>
@@ -621,12 +619,6 @@
 
       <ul>
         <li><a href="exploration.html#pyrado.exploration.stochastic_params.NormalParamNoise.cov">(NormalParamNoise property)</a>
-</li>
-      </ul></li>
-      <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_flipping.create_box_flip_task">create_box_flip_task() (in module pyrado.environments.rcspysim.box_flipping)</a>
-
-      <ul>
-        <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.create_box_flip_task">(in module pyrado.environments.rcspysim.box_lifting)</a>
 </li>
       </ul></li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.create_box_lift_task">create_box_lift_task() (in module pyrado.environments.rcspysim.box_lifting)</a>
@@ -674,6 +666,8 @@
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.create_extract_ball_task">create_extract_ball_task() (in module pyrado.environments.rcspysim.ball_in_tube)</a>
 </li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.create_extract_slider_task">create_extract_slider_task() (in module pyrado.environments.rcspysim.ball_in_tube)</a>
+</li>
+      <li><a href="tasks.html#pyrado.tasks.predefined.create_flipping_task">create_flipping_task() (in module pyrado.tasks.predefined)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.predefined.create_goal_dist_distvel_task">create_goal_dist_distvel_task() (in module pyrado.tasks.predefined)</a>
 </li>
@@ -729,19 +723,19 @@
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.adversarial.AdversarialWrapper.decide_apply">decide_apply() (AdversarialWrapper method)</a>
 </li>
-      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bf_ik_bt">default_bf_ik_bt() (DefaultEnvs static method)</a>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bf_ds_vel_bt">default_bf_ds_vel_bt() (DefaultEnvs static method)</a>
 </li>
-      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bf_vel_bt">default_bf_vel_bt() (DefaultEnvs static method)</a>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bf_ika_bt">default_bf_ika_bt() (DefaultEnvs static method)</a>
 </li>
-      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bit_ik_bt">default_bit_ik_bt() (DefaultEnvs static method)</a>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bit_ds_vel_bt">default_bit_ds_vel_bt() (DefaultEnvs static method)</a>
 </li>
-      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bit_vel_bt">default_bit_vel_bt() (DefaultEnvs static method)</a>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bit_ika_pos_bt">default_bit_ika_pos_bt() (DefaultEnvs static method)</a>
 </li>
-      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bl_pos_bt">default_bl_pos_bt() (DefaultEnvs static method)</a>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bl_ds_pos_bt">default_bl_ds_pos_bt() (DefaultEnvs static method)</a>
 </li>
-      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bl_pos_vx">default_bl_pos_vx() (DefaultEnvs static method)</a>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bl_ds_pos_vx">default_bl_ds_pos_vx() (DefaultEnvs static method)</a>
 </li>
-      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bl_vel_bt">default_bl_vel_bt() (DefaultEnvs static method)</a>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bl_ds_vel_bt">default_bl_ds_vel_bt() (DefaultEnvs static method)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bob">default_bob() (DefaultEnvs static method)</a>
 </li>
@@ -755,9 +749,9 @@
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bop5d_vx">default_bop5d_vx() (DefaultEnvs static method)</a>
 </li>
-      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bs_pos_bt">default_bs_pos_bt() (DefaultEnvs static method)</a>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bs_ds_pos_bt">default_bs_ds_pos_bt() (DefaultEnvs static method)</a>
 </li>
-      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bs_pos_vx">default_bs_pos_vx() (DefaultEnvs static method)</a>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bs_ds_pos_vx">default_bs_ds_pos_vx() (DefaultEnvs static method)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_cata">default_cata() (DefaultEnvs static method)</a>
 </li>
@@ -773,9 +767,9 @@
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_omo">default_omo() (DefaultEnvs static method)</a>
 </li>
-      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_p3l_ik_bt">default_p3l_ik_bt() (DefaultEnvs static method)</a>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_p3l_ika_bt">default_p3l_ika_bt() (DefaultEnvs static method)</a>
 </li>
-      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_p3l_ik_vx">default_p3l_ik_vx() (DefaultEnvs static method)</a>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_p3l_ika_vx">default_p3l_ika_vx() (DefaultEnvs static method)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_p3l_ta_bt">default_p3l_ta_bt() (DefaultEnvs static method)</a>
 </li>
@@ -785,9 +779,9 @@
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_pend">default_pend() (DefaultEnvs static method)</a>
 </li>
-      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_pi_ik_5l_bt">default_pi_ik_5l_bt() (DefaultEnvs static method)</a>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_pi_ika_5l_bt">default_pi_ika_5l_bt() (DefaultEnvs static method)</a>
 </li>
-      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_pi_ik_6l_vx">default_pi_ik_6l_vx() (DefaultEnvs static method)</a>
+      <li><a href="tests.html#tests.conftest.DefaultEnvs.default_pi_ika_6l_vx">default_pi_ika_6l_vx() (DefaultEnvs static method)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_pi_ta_5l_vx">default_pi_ta_5l_vx() (DefaultEnvs static method)</a>
 </li>
@@ -1327,10 +1321,10 @@
 </li>
       <li><a href="policies.special.html#pyrado.policies.special.environment_specific.get_lin_ctrl">get_lin_ctrl() (in module pyrado.policies.special.environment_specific)</a>
 </li>
-      <li><a href="logger.html#pyrado.logger.get_log_prefix_dir">get_log_prefix_dir() (in module pyrado.logger)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="logger.html#pyrado.logger.get_log_prefix_dir">get_log_prefix_dir() (in module pyrado.logger)</a>
+</li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.BallInTubeSim.get_nominal_domain_param">get_nominal_domain_param() (BallInTubeSim class method)</a>
 
       <ul>
@@ -1341,8 +1335,6 @@
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_flipping.BoxFlippingSim.get_nominal_domain_param">(BoxFlippingSim class method)</a>
 </li>
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingSim.get_nominal_domain_param">(BoxLiftingSim class method)</a>
-</li>
-        <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingSimpleSim.get_nominal_domain_param">(BoxLiftingSimpleSim class method)</a>
 </li>
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_shelving.BoxShelvingSim.get_nominal_domain_param">(BoxShelvingSim class method)</a>
 </li>
@@ -2251,11 +2243,11 @@
 </li>
         <li><a href="algorithms.meta.html#pyrado.algorithms.meta.arpl.ARPL.name">(ARPL attribute)</a>
 </li>
-        <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.BallInTubeIKActivationSim.name">(BallInTubeIKActivationSim attribute)</a>
-</li>
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.BallInTubeIKSim.name">(BallInTubeIKSim attribute)</a>
 </li>
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.BallInTubePosDSSim.name">(BallInTubePosDSSim attribute)</a>
+</li>
+        <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.BallInTubePosIKActivationSim.name">(BallInTubePosIKActivationSim attribute)</a>
 </li>
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.BallInTubeVelDSSim.name">(BallInTubeVelDSSim attribute)</a>
 </li>
@@ -2277,11 +2269,11 @@
 </li>
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingPosDSSim.name">(BoxLiftingPosDSSim attribute)</a>
 </li>
-        <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingSimplePosDSSim.name">(BoxLiftingSimplePosDSSim attribute)</a>
-</li>
-        <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingSimpleVelDSSim.name">(BoxLiftingSimpleVelDSSim attribute)</a>
+        <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingPosIKActivationSim.name">(BoxLiftingPosIKActivationSim attribute)</a>
 </li>
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingVelDSSim.name">(BoxLiftingVelDSSim attribute)</a>
+</li>
+        <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingVelIKActivationSim.name">(BoxLiftingVelIKActivationSim attribute)</a>
 </li>
         <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.box_shelving.BoxShelvingPosDSSim.name">(BoxShelvingPosDSSim attribute)</a>
 </li>

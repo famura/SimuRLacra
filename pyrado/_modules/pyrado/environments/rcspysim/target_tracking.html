@@ -243,12 +243,14 @@
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;tt&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mps_left</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">mps_right</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">continuous_rew_fcn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">tasks_left</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">tasks_right</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">continuous_rew_fcn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
-<span class="sd">        :param mps_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
-<span class="sd">        :param mps_right: right arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
+<span class="sd">        :param tasks_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
+<span class="sd">        :param tasks_right: right arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
 <span class="sd">        :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used</span>
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
 <span class="sd">                       checkJointLimits: bool = False,</span>
@@ -262,18 +264,18 @@
         <span class="n">RcsSim</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">envType</span><span class="o">=</span><span class="s2">&quot;TargetTracking&quot;</span><span class="p">,</span>
-            <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">continuous_rew_fcn</span><span class="o">=</span><span class="n">continuous_rew_fcn</span><span class="p">,</span> <span class="n">mps_left</span><span class="o">=</span><span class="n">mps_left</span><span class="p">,</span> <span class="n">mps_right</span><span class="o">=</span><span class="n">mps_right</span><span class="p">),</span>
+            <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">continuous_rew_fcn</span><span class="o">=</span><span class="n">continuous_rew_fcn</span><span class="p">,</span> <span class="n">tasks_left</span><span class="o">=</span><span class="n">tasks_left</span><span class="p">,</span> <span class="n">tasks_right</span><span class="o">=</span><span class="n">tasks_right</span><span class="p">),</span>
             <span class="n">extraConfigDir</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rcsenv</span><span class="o">.</span><span class="n">RCSPYSIM_CONFIG_PATH</span><span class="p">,</span> <span class="s2">&quot;TargetTracking&quot;</span><span class="p">),</span>
-            <span class="n">tasksLeft</span><span class="o">=</span><span class="n">mps_left</span><span class="p">,</span>
-            <span class="n">tasksRight</span><span class="o">=</span><span class="n">mps_right</span><span class="p">,</span>
+            <span class="n">tasksLeft</span><span class="o">=</span><span class="n">tasks_left</span><span class="p">,</span>
+            <span class="n">tasksRight</span><span class="o">=</span><span class="n">tasks_right</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_create_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Task</span><span class="p">:</span>
         <span class="c1"># Set up task. We track the distance to the goal for both hands separately.</span>
         <span class="n">continuous_rew_fcn</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;continuous_rew_fcn&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">mps_left</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mps_left&quot;</span><span class="p">)</span>
-        <span class="n">mps_right</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mps_right&quot;</span><span class="p">)</span>
+        <span class="n">tasks_left</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tasks_left&quot;</span><span class="p">)</span>
+        <span class="n">tasks_right</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tasks_right&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">continuous_rew_fcn</span><span class="p">:</span>
             <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">])</span>
@@ -284,11 +286,11 @@
         <span class="n">succ_thold</span> <span class="o">=</span> <span class="mf">7.5e-2</span>
 
         <span class="n">tasks_left</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">create_goal_dist_distvel_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">rew_fcn_factory</span><span class="p">(),</span> <span class="n">succ_thold</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mps_left</span><span class="p">))</span>
+            <span class="n">create_goal_dist_distvel_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">rew_fcn_factory</span><span class="p">(),</span> <span class="n">succ_thold</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tasks_left</span><span class="p">))</span>
         <span class="p">]</span>
         <span class="n">tasks_right</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">create_goal_dist_distvel_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">mps_left</span><span class="p">),</span> <span class="n">rew_fcn_factory</span><span class="p">(),</span> <span class="n">succ_thold</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mps_right</span><span class="p">))</span>
+            <span class="n">create_goal_dist_distvel_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">tasks_left</span><span class="p">),</span> <span class="n">rew_fcn_factory</span><span class="p">(),</span> <span class="n">succ_thold</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tasks_right</span><span class="p">))</span>
         <span class="p">]</span>
 
         <span class="k">return</span> <span class="n">ParallelTasks</span><span class="p">(</span>

@@ -225,25 +225,16 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
 <span class="kn">from</span> <span class="nn">init_args_serializer</span> <span class="kn">import</span> <span class="n">Serializable</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">rcsenv</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.rcspysim.base</span> <span class="kn">import</span> <span class="n">RcsSim</span>
-<span class="kn">from</span> <span class="nn">pyrado.spaces.box</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
-<span class="kn">from</span> <span class="nn">pyrado.spaces.singular</span> <span class="kn">import</span> <span class="n">SingularStateSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.base</span> <span class="kn">import</span> <span class="n">Task</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.desired_state</span> <span class="kn">import</span> <span class="n">DesStateTask</span>
-<span class="kn">from</span> <span class="nn">pyrado.tasks.endless_flipping</span> <span class="kn">import</span> <span class="n">EndlessFlippingTask</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.masked</span> <span class="kn">import</span> <span class="n">MaskedTask</span>
-<span class="kn">from</span> <span class="nn">pyrado.tasks.reward_functions</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">ExpQuadrErrRewFcn</span><span class="p">,</span>
-    <span class="n">MinusOnePerStepRewFcn</span><span class="p">,</span>
-    <span class="n">AbsErrRewFcn</span><span class="p">,</span>
-    <span class="n">CosOfOneEleRewFcn</span><span class="p">,</span>
-    <span class="n">CompoundRewFcn</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.reward_functions</span> <span class="kn">import</span> <span class="n">ExpQuadrErrRewFcn</span><span class="p">,</span> <span class="n">AbsErrRewFcn</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.parallel</span> <span class="kn">import</span> <span class="n">ParallelTasks</span>
-<span class="kn">from</span> <span class="nn">pyrado.tasks.utils</span> <span class="kn">import</span> <span class="n">proximity_succeeded</span><span class="p">,</span> <span class="n">never_succeeded</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.utils</span> <span class="kn">import</span> <span class="n">proximity_succeeded</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.predefined</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">create_check_all_boundaries_task</span><span class="p">,</span>
     <span class="n">create_task_space_discrepancy_task</span><span class="p">,</span>
@@ -253,9 +244,10 @@
 
 
 <span class="n">rcsenv</span><span class="o">.</span><span class="n">addResourcePath</span><span class="p">(</span><span class="n">rcsenv</span><span class="o">.</span><span class="n">RCSPYSIM_CONFIG_PATH</span><span class="p">)</span>
+<span class="n">rcsenv</span><span class="o">.</span><span class="n">addResourcePath</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rcsenv</span><span class="o">.</span><span class="n">RCSPYSIM_CONFIG_PATH</span><span class="p">,</span> <span class="s2">&quot;BoxLifting&quot;</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="create_box_lift_task"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.create_box_lift_task">[docs]</a><span class="k">def</span> <span class="nf">create_box_lift_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">continuous_rew_fcn</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">succ_thold</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<div class="viewcode-block" id="create_box_lift_task"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.create_box_lift_task">[docs]</a><span class="k">def</span> <span class="nf">create_box_lift_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">succ_thold</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
     <span class="c1"># Define the indices for selection. This needs to match the observations&#39; names in RcsPySim.</span>
     <span class="n">idcs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Box_Z&quot;</span><span class="p">]</span>
 
@@ -265,58 +257,20 @@
     <span class="p">)</span>
 
     <span class="c1"># Create a desired state task</span>
-    <span class="c1"># state_des = np.array([0.3])  # box position is measured relative to the table</span>
-    <span class="n">state_des</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.1</span><span class="p">])</span>  <span class="c1"># box position is measured world coordinates</span>
-    <span class="k">if</span> <span class="n">continuous_rew_fcn</span><span class="p">:</span>
-        <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">3e1</span><span class="p">])</span>
-        <span class="n">R</span> <span class="o">=</span> <span class="mf">1e0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)</span>
-        <span class="n">rew_fcn</span> <span class="o">=</span> <span class="n">ExpQuadrErrRewFcn</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">rew_fcn</span> <span class="o">=</span> <span class="n">MinusOnePerStepRewFcn</span><span class="p">()</span>
-    <span class="n">dst</span> <span class="o">=</span> <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">state_des</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">proximity_succeeded</span><span class="p">,</span> <span class="n">thold_dist</span><span class="o">=</span><span class="n">succ_thold</span><span class="p">))</span>
+    <span class="n">state_des</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.79</span><span class="p">])</span>  <span class="c1"># box position is measured world coordinates</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">5e2</span><span class="p">])</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="mf">1e-1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)</span>
+    <span class="n">rew_fcn</span> <span class="o">=</span> <span class="n">ExpQuadrErrRewFcn</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
+    <span class="n">dst</span> <span class="o">=</span> <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">state_des</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">)</span>
 
     <span class="c1"># Return the masked tasks</span>
     <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">idcs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="create_box_flip_task"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.create_box_flip_task">[docs]</a><span class="k">def</span> <span class="nf">create_box_flip_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">continuous_rew_fcn</span><span class="p">):</span>
-    <span class="c1"># Define the indices for selection. This needs to match the observations&#39; names in RcsPySim.</span>
-    <span class="n">idcs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Box_A&quot;</span><span class="p">]</span>
-
-    <span class="c1"># Get the masked environment specification</span>
-    <span class="n">spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span>
-        <span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">idcs</span><span class="p">))</span>
-    <span class="p">)</span>
-
-    <span class="c1"># Create a desired state task</span>
-    <span class="c1"># state_des = np.array([0.3])  # box position is measured relative to the table</span>
-    <span class="n">state_des</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">])</span>  <span class="c1"># box position is measured world coordinates</span>
-    <span class="k">if</span> <span class="n">continuous_rew_fcn</span><span class="p">:</span>
-        <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">])</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="mf">1e-6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)</span>
-        <span class="n">rew_fcn_act</span> <span class="o">=</span> <span class="n">AbsErrRewFcn</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
-        <span class="n">rew_fcn_box</span> <span class="o">=</span> <span class="n">CosOfOneEleRewFcn</span><span class="p">(</span><span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">rew_fcn</span> <span class="o">=</span> <span class="n">CompoundRewFcn</span><span class="p">([</span><span class="n">rew_fcn_act</span><span class="p">,</span> <span class="n">rew_fcn_box</span><span class="p">])</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">rew_fcn</span> <span class="o">=</span> <span class="n">MinusOnePerStepRewFcn</span><span class="p">()</span>
-    <span class="n">ef_task</span> <span class="o">=</span> <span class="n">EndlessFlippingTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">,</span> <span class="n">init_angle</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
-
-    <span class="c1"># Return the masked tasks</span>
-    <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">ef_task</span><span class="p">,</span> <span class="n">idcs</span><span class="p">)</span></div>
-
-
 <div class="viewcode-block" id="BoxLiftingSim"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingSim">[docs]</a><span class="k">class</span> <span class="nc">BoxLiftingSim</span><span class="p">(</span><span class="n">RcsSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Base class for 2-armed humanoid robot lifting a box out of a basket &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-        <span class="n">ref_frame</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">position_mps</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-        <span class="n">mps_left</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
-        <span class="n">mps_right</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">ref_frame</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
@@ -325,9 +279,6 @@
 
 <span class="sd">        :param task_args: arguments for the task construction</span>
 <span class="sd">        :param ref_frame: reference frame for the MPs, e.g. &#39;world&#39;, &#39;basket&#39;, or &#39;box&#39;</span>
-<span class="sd">        :param position_mps: `True` if the MPs are defined on position level, `False` if defined on velocity level</span>
-<span class="sd">        :param mps_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
-<span class="sd">        :param mps_right: right arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
 <span class="sd">                       fixedInitState: bool = False,</span>
 <span class="sd">                       taskCombinationMethod: str = &#39;sum&#39;,  # or &#39;mean&#39;, &#39;softmax&#39;, &#39;product&#39;</span>
@@ -353,24 +304,26 @@
             <span class="n">extraConfigDir</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rcsenv</span><span class="o">.</span><span class="n">RCSPYSIM_CONFIG_PATH</span><span class="p">,</span> <span class="s2">&quot;BoxLifting&quot;</span><span class="p">),</span>
             <span class="n">hudColor</span><span class="o">=</span><span class="s2">&quot;BLACK_RUBBER&quot;</span><span class="p">,</span>
             <span class="n">refFrame</span><span class="o">=</span><span class="n">ref_frame</span><span class="p">,</span>
-            <span class="n">positionTasks</span><span class="o">=</span><span class="n">position_mps</span><span class="p">,</span>
-            <span class="n">tasksLeft</span><span class="o">=</span><span class="n">mps_left</span><span class="p">,</span>
-            <span class="n">tasksRight</span><span class="o">=</span><span class="n">mps_right</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_create_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Task</span><span class="p">:</span>
         <span class="c1"># Create the tasks</span>
-        <span class="n">continuous_rew_fcn</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;continuous_rew_fcn&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">task_box</span> <span class="o">=</span> <span class="n">create_box_lift_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">continuous_rew_fcn</span><span class="p">,</span> <span class="n">succ_thold</span><span class="o">=</span><span class="mf">0.03</span><span class="p">)</span>
+        <span class="n">task_box</span> <span class="o">=</span> <span class="n">create_box_lift_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">succ_thold</span><span class="o">=</span><span class="mf">0.03</span><span class="p">)</span>
         <span class="n">task_check_bounds</span> <span class="o">=</span> <span class="n">create_check_all_boundaries_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">penalty</span><span class="o">=</span><span class="mf">1e3</span><span class="p">)</span>
-        <span class="n">task_collision</span> <span class="o">=</span> <span class="n">create_collision_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-        <span class="n">task_ts_discrepancy</span> <span class="o">=</span> <span class="n">create_task_space_discrepancy_task</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">AbsErrRewFcn</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">r</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-        <span class="p">)</span>
+        <span class="c1"># task_collision = create_collision_task(self.spec, factor=1.0)</span>
+        <span class="c1"># task_ts_discrepancy = create_task_space_discrepancy_task(</span>
+        <span class="c1">#     self.spec, AbsErrRewFcn(q=0.5 * np.ones(2), r=np.zeros(self.act_space.shape))</span>
+        <span class="c1"># )</span>
 
         <span class="k">return</span> <span class="n">ParallelTasks</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">task_box</span><span class="p">,</span> <span class="n">task_check_bounds</span><span class="p">,</span> <span class="n">task_collision</span><span class="p">,</span> <span class="n">task_ts_discrepancy</span><span class="p">],</span> <span class="n">hold_rew_when_done</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">[</span>
+                <span class="n">task_box</span><span class="p">,</span>
+                <span class="n">task_check_bounds</span><span class="p">,</span>
+                <span class="c1"># task_collision,</span>
+                <span class="c1"># task_ts_discrepancy</span>
+            <span class="p">],</span>
+            <span class="n">hold_rew_when_done</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="BoxLiftingSim.get_nominal_domain_param"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingSim.get_nominal_domain_param">[docs]</a>    <span class="nd">@classmethod</span>
@@ -385,26 +338,107 @@
         <span class="p">)</span></div></div>
 
 
+<div class="viewcode-block" id="BoxLiftingPosIKActivationSim"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingPosIKActivationSim">[docs]</a><span class="k">class</span> <span class="nc">BoxLiftingPosIKActivationSim</span><span class="p">(</span><span class="n">BoxLiftingSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Humanoid robot lifting a box out of a basket using a position-level Rcs IK-based controller &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bl-ika-pos&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_frame</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param ref_frame: reference frame for the Rcs tasks, e.g. &#39;world&#39;, &#39;table&#39;, or &#39;box&#39;</span>
+<span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
+<span class="sd">                       checkJointLimits:m bool = False,</span>
+<span class="sd">                       collisionAvoidanceIK: bool = True,</span>
+<span class="sd">                       positionTasks: bool = True,</span>
+<span class="sd">                       observeVelocities: bool = False,</span>
+<span class="sd">                       observeCollisionCost: bool = True,</span>
+<span class="sd">                       observePredictedCollisionCost: bool = False,</span>
+<span class="sd">                       observeManipulabilityIndex: bool = False,</span>
+<span class="sd">                       observeCurrentManipulability: bool = True,</span>
+<span class="sd">                       observeDynamicalSystemDiscrepancy: bool = False,</span>
+<span class="sd">                       observeTaskSpaceDiscrepancy: bool = True,</span>
+<span class="sd">                       observeForceTorque: bool = True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+
+        <span class="n">task_spec_ik</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">dict</span><span class="p">(</span><span class="n">x_des</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.4</span><span class="p">])),</span>  <span class="c1"># Y right</span>
+            <span class="nb">dict</span><span class="p">(</span><span class="n">x_des</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.3</span><span class="p">])),</span>  <span class="c1"># Z right</span>
+            <span class="nb">dict</span><span class="p">(</span><span class="n">x_des</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">])),</span>  <span class="c1"># distance Box</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Forward to the BoxLiftingSim&#39;s constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
+            <span class="n">ref_frame</span><span class="o">=</span><span class="n">ref_frame</span><span class="p">,</span>
+            <span class="n">actionModelType</span><span class="o">=</span><span class="s2">&quot;ik_activation&quot;</span><span class="p">,</span>
+            <span class="n">taskSpecIK</span><span class="o">=</span><span class="n">task_spec_ik</span><span class="p">,</span>
+            <span class="n">positionTasks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BoxLiftingVelIKActivationSim"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingVelIKActivationSim">[docs]</a><span class="k">class</span> <span class="nc">BoxLiftingVelIKActivationSim</span><span class="p">(</span><span class="n">BoxLiftingSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Humanoid robot lifting a box out of a basket using a velocity-level Rcs IK-based controller &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bl-ika-vel&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_frame</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+
+<span class="sd">        :param ref_frame: reference frame for the Rcs tasks, e.g. &#39;world&#39;, &#39;table&#39;, or &#39;box&#39;</span>
+<span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
+<span class="sd">                       checkJointLimits:m bool = False,</span>
+<span class="sd">                       collisionAvoidanceIK: bool = True,</span>
+<span class="sd">                       positionTasks: bool = True,</span>
+<span class="sd">                       observeVelocities: bool = False,</span>
+<span class="sd">                       observeCollisionCost: bool = True,</span>
+<span class="sd">                       observePredictedCollisionCost: bool = False,</span>
+<span class="sd">                       observeManipulabilityIndex: bool = False,</span>
+<span class="sd">                       observeCurrentManipulability: bool = True,</span>
+<span class="sd">                       observeDynamicalSystemDiscrepancy: bool = False,</span>
+<span class="sd">                       observeTaskSpaceDiscrepancy: bool = True,</span>
+<span class="sd">                       observeForceTorque: bool = True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dt&quot;</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>  <span class="c1"># 100 Hz is the default</span>
+        <span class="n">task_spec_ik</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">dict</span><span class="p">(</span><span class="n">x_des</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">+</span><span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">15</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">])])),</span>  <span class="c1"># Yd right</span>
+            <span class="nb">dict</span><span class="p">(</span><span class="n">x_des</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">15</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">])])),</span>  <span class="c1"># Yd right</span>
+            <span class="nb">dict</span><span class="p">(</span><span class="n">x_des</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">+</span><span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">15</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">])])),</span>  <span class="c1"># Zd right</span>
+            <span class="nb">dict</span><span class="p">(</span><span class="n">x_des</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">15</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">])])),</span>  <span class="c1"># Zd right</span>
+            <span class="nb">dict</span><span class="p">(</span><span class="n">x_des</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">])),</span>  <span class="c1"># X (always active)</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Forward to the BoxLiftingSim&#39;s constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
+            <span class="n">ref_frame</span><span class="o">=</span><span class="n">ref_frame</span><span class="p">,</span>
+            <span class="n">actionModelType</span><span class="o">=</span><span class="s2">&quot;ik_activation&quot;</span><span class="p">,</span>
+            <span class="n">taskSpecIK</span><span class="o">=</span><span class="n">task_spec_ik</span><span class="p">,</span>
+            <span class="n">positionTasks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="BoxLiftingPosDSSim"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingPosDSSim">[docs]</a><span class="k">class</span> <span class="nc">BoxLiftingPosDSSim</span><span class="p">(</span><span class="n">BoxLiftingSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Humanoid robot lifting a box out of a basket using two arms and position-level movement primitives &quot;&quot;&quot;</span>
 
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bl-pos&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bl-ds-pos&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">ref_frame</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">mps_left</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
-        <span class="n">mps_right</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
-        <span class="n">continuous_rew_fcn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">ref_frame</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tasks_left</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">]],</span> <span class="n">tasks_right</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">]],</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param ref_frame: reference frame for the MPs, e.g. &#39;world&#39;, &#39;basket&#39;, or &#39;box&#39;</span>
-<span class="sd">        :param mps_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
-<span class="sd">        :param mps_right: right arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
-<span class="sd">        :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used</span>
+<span class="sd">        :param tasks_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
+<span class="sd">        :param tasks_right: right arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
 <span class="sd">                       fixedInitState: bool = False,</span>
 <span class="sd">                       taskCombinationMethod: str = &#39;sum&#39;,  # or &#39;mean&#39;, &#39;softmax&#39;, &#39;product&#39;</span>
@@ -423,8 +457,8 @@
 
         <span class="c1"># Fall back to some defaults of no MPs are defined (e.g. for testing)</span>
         <span class="c1"># basket_extends = self.get_body_extents(&#39;Basket&#39;, 0)</span>
-        <span class="k">if</span> <span class="n">mps_left</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">mps_left</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="k">if</span> <span class="n">tasks_left</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tasks_left</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="c1"># Power grasp position in basket frame (basket width = 0.7)</span>
                 <span class="p">{</span>
                     <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;msd_nlin&quot;</span><span class="p">,</span>
@@ -467,8 +501,8 @@
                     <span class="s2">&quot;goal&quot;</span><span class="p">:</span> <span class="mi">10</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
                 <span class="p">},</span>
             <span class="p">]</span>
-        <span class="k">if</span> <span class="n">mps_right</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">mps_right</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="k">if</span> <span class="n">tasks_right</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tasks_right</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="c1"># Power grasp position in basket frame (basket width = 0.7)</span>
                 <span class="p">{</span>
                     <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;msd_nlin&quot;</span><span class="p">,</span>
@@ -509,16 +543,16 @@
                 <span class="p">},</span>
                 <span class="c1"># Distance</span>
                 <span class="c1"># {&#39;function&#39;: &#39;msd&#39;, &#39;attractorStiffness&#39;: 50., &#39;mass&#39;: 1., &#39;damping&#39;: 10.,</span>
-                <span class="p">{</span><span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="s2">&quot;errorDynamics&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;goal&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">])},</span>  <span class="c1"># [m/s]  # [m]</span>
             <span class="p">]</span>
 
         <span class="c1"># Forward to the BoxLiftingSim&#39;s constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">continuous_rew_fcn</span><span class="o">=</span><span class="n">continuous_rew_fcn</span><span class="p">),</span>
+            <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
             <span class="n">ref_frame</span><span class="o">=</span><span class="n">ref_frame</span><span class="p">,</span>
-            <span class="n">position_mps</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">mps_left</span><span class="o">=</span><span class="n">mps_left</span><span class="p">,</span>
-            <span class="n">mps_right</span><span class="o">=</span><span class="n">mps_right</span><span class="p">,</span>
+            <span class="n">actionModelType</span><span class="o">=</span><span class="s2">&quot;ds_activation&quot;</span><span class="p">,</span>
+            <span class="n">tasksLeft</span><span class="o">=</span><span class="n">tasks_left</span><span class="p">,</span>
+            <span class="n">tasksRight</span><span class="o">=</span><span class="n">tasks_right</span><span class="p">,</span>
+            <span class="n">positionTasks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span></div>
 
@@ -526,23 +560,17 @@
 <div class="viewcode-block" id="BoxLiftingVelDSSim"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingVelDSSim">[docs]</a><span class="k">class</span> <span class="nc">BoxLiftingVelDSSim</span><span class="p">(</span><span class="n">BoxLiftingSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Humanoid robot lifting a box out of a basket using two arms and velocity-level movement primitives &quot;&quot;&quot;</span>
 
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bl-vel&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bl-ds-vel&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">ref_frame</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">mps_left</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
-        <span class="n">mps_right</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
-        <span class="n">continuous_rew_fcn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">ref_frame</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tasks_left</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">]],</span> <span class="n">tasks_right</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">]],</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param ref_frame: reference frame for the MPs, e.g. &#39;world&#39;, &#39;basket&#39;, or &#39;box&#39;</span>
-<span class="sd">        :param mps_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
-<span class="sd">        :param mps_right: right arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
-<span class="sd">        :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used</span>
+<span class="sd">        :param tasks_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
+<span class="sd">        :param tasks_right: right arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
 <span class="sd">                       fixedInitState: bool = False,</span>
 <span class="sd">                       taskCombinationMethod: str = &#39;sum&#39;,  # or &#39;mean&#39;, &#39;softmax&#39;, &#39;product&#39;</span>
@@ -562,8 +590,8 @@
         <span class="c1"># Fall back to some defaults of no MPs are defined (e.g. for testing)</span>
         <span class="n">dt</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dt&quot;</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>  <span class="c1"># 100 Hz is the default</span>
         <span class="c1"># basket_extends = self.get_body_extents(&#39;Basket&#39;, 0)</span>
-        <span class="k">if</span> <span class="n">mps_left</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">mps_left</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="k">if</span> <span class="n">tasks_left</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tasks_left</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="c1"># Power grasp Xd</span>
                 <span class="p">{</span><span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="s2">&quot;errorDynamics&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;goal&quot;</span><span class="p">:</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.15</span><span class="p">])},</span>  <span class="c1"># [m/s]</span>
                 <span class="c1"># Power grasp Yd</span>
@@ -585,8 +613,8 @@
                     <span class="s2">&quot;goal&quot;</span><span class="p">:</span> <span class="mi">10</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
                 <span class="p">},</span>
             <span class="p">]</span>
-        <span class="k">if</span> <span class="n">mps_right</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">mps_right</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="k">if</span> <span class="n">tasks_right</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tasks_right</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="c1"># Power grasp Xd</span>
                 <span class="p">{</span><span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="s2">&quot;errorDynamics&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;goal&quot;</span><span class="p">:</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.15</span><span class="p">])},</span>  <span class="c1"># [m/s]</span>
                 <span class="c1"># Power grasp Yd</span>
@@ -611,221 +639,12 @@
 
         <span class="c1"># Forward to the BoxLiftingSim&#39;s constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">continuous_rew_fcn</span><span class="o">=</span><span class="n">continuous_rew_fcn</span><span class="p">),</span>
+            <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
             <span class="n">ref_frame</span><span class="o">=</span><span class="n">ref_frame</span><span class="p">,</span>
-            <span class="n">position_mps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">mps_left</span><span class="o">=</span><span class="n">mps_left</span><span class="p">,</span>
-            <span class="n">mps_right</span><span class="o">=</span><span class="n">mps_right</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-        <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="BoxLiftingSimpleSim"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingSimpleSim">[docs]</a><span class="k">class</span> <span class="nc">BoxLiftingSimpleSim</span><span class="p">(</span><span class="n">RcsSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Base class for simplified robotic manipulator turning a box in a basket &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">ref_frame</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">position_mps</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">mps_left</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor</span>
-
-<span class="sd">        .. note::</span>
-<span class="sd">            This constructor should only be called via the subclasses.</span>
-
-<span class="sd">        :param task_args: arguments for the task construction</span>
-<span class="sd">        :param ref_frame: reference frame for the MPs, e.g. &#39;world&#39;, &#39;basket&#39;, or &#39;box&#39;</span>
-<span class="sd">        :param position_mps: `True` if the MPs are defined on position level, `False` if defined on velocity level</span>
-<span class="sd">        :param mps_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
-<span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
-<span class="sd">                       fixedInitState: bool = False,</span>
-<span class="sd">                       taskCombinationMethod: str = &#39;sum&#39;,  # or &#39;mean&#39;, &#39;softmax&#39;, &#39;product&#39;</span>
-<span class="sd">                       checkJointLimits: bool = False,</span>
-<span class="sd">                       collisionAvoidanceIK: bool = True,</span>
-<span class="sd">                       observeVelocities: bool = False,</span>
-<span class="sd">                       observeCollisionCost: bool = True,</span>
-<span class="sd">                       observePredictedCollisionCost: bool = False,</span>
-<span class="sd">                       observeManipulabilityIndex: bool = False,</span>
-<span class="sd">                       observeCurrentManipulability: bool = True,</span>
-<span class="sd">                       observeDynamicalSystemDiscrepancy: bool = False,</span>
-<span class="sd">                       observeTaskSpaceDiscrepancy: bool = True,</span>
-<span class="sd">                       observeForceTorque: bool = True</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
-
-        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;collisionConfig&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="n">collisionConfig</span><span class="o">=</span><span class="p">{</span>
-                    <span class="s2">&quot;pairs&quot;</span><span class="p">:</span> <span class="p">[</span>
-                        <span class="p">{</span><span class="s2">&quot;body1&quot;</span><span class="p">:</span> <span class="s2">&quot;Hand&quot;</span><span class="p">,</span> <span class="s2">&quot;body2&quot;</span><span class="p">:</span> <span class="s2">&quot;Table&quot;</span><span class="p">},</span>
-                    <span class="p">],</span>
-                    <span class="s2">&quot;threshold&quot;</span><span class="p">:</span> <span class="mf">0.07</span><span class="p">,</span>
-                <span class="p">}</span>
-            <span class="p">)</span>
-
-        <span class="c1"># Forward to the RcsSim&#39;s constructor</span>
-        <span class="n">RcsSim</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">task_args</span><span class="o">=</span><span class="n">task_args</span><span class="p">,</span>
-            <span class="n">envType</span><span class="o">=</span><span class="s2">&quot;BoxLiftingSimple&quot;</span><span class="p">,</span>
-            <span class="n">physicsConfigFile</span><span class="o">=</span><span class="s2">&quot;pBoxLifting.xml&quot;</span><span class="p">,</span>
-            <span class="n">extraConfigDir</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rcsenv</span><span class="o">.</span><span class="n">RCSPYSIM_CONFIG_PATH</span><span class="p">,</span> <span class="s2">&quot;BoxLifting&quot;</span><span class="p">),</span>
-            <span class="n">hudColor</span><span class="o">=</span><span class="s2">&quot;BLACK_RUBBER&quot;</span><span class="p">,</span>
-            <span class="n">refFrame</span><span class="o">=</span><span class="n">ref_frame</span><span class="p">,</span>
-            <span class="n">positionTasks</span><span class="o">=</span><span class="n">position_mps</span><span class="p">,</span>
-            <span class="n">tasksLeft</span><span class="o">=</span><span class="n">mps_left</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_create_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Task</span><span class="p">:</span>
-        <span class="c1"># Create the tasks</span>
-        <span class="n">continuous_rew_fcn</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;continuous_rew_fcn&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">task_box</span> <span class="o">=</span> <span class="n">create_box_flip_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">continuous_rew_fcn</span><span class="p">)</span>
-        <span class="n">task_check_bounds</span> <span class="o">=</span> <span class="n">create_check_all_boundaries_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">penalty</span><span class="o">=</span><span class="mf">1e3</span><span class="p">)</span>
-        <span class="c1"># task_collision = create_collision_task(self.spec, factor=5e-2)</span>
-        <span class="c1"># task_ts_discrepancy = create_task_space_discrepancy_task(self.spec,</span>
-        <span class="c1">#                                                          AbsErrRewFcn(q=5e-2*np.ones(6),</span>
-        <span class="c1">#                                                                       r=np.zeros(self.act_space.shape)))</span>
-
-        <span class="k">return</span> <span class="n">ParallelTasks</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">task_box</span><span class="p">,</span>
-                <span class="n">task_check_bounds</span><span class="p">,</span>
-                <span class="c1"># task_collision,</span>
-                <span class="c1"># task_ts_discrepancy</span>
-            <span class="p">],</span>
-            <span class="n">hold_rew_when_done</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="p">)</span>
-
-<div class="viewcode-block" id="BoxLiftingSimpleSim.get_nominal_domain_param"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingSimpleSim.get_nominal_domain_param">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_nominal_domain_param</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">box_length</span><span class="o">=</span><span class="mf">0.14</span><span class="p">,</span>  <span class="c1"># x_world dimension</span>
-            <span class="n">box_width</span><span class="o">=</span><span class="mf">0.18</span><span class="p">,</span>  <span class="c1"># y_world dimension</span>
-            <span class="n">box_mass</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
-            <span class="n">box_friction_coefficient</span><span class="o">=</span><span class="mf">1.3</span><span class="p">,</span>
-            <span class="n">basket_mass</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-            <span class="n">basket_friction_coefficient</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
-        <span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="BoxLiftingSimplePosDSSim"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingSimplePosDSSim">[docs]</a><span class="k">class</span> <span class="nc">BoxLiftingSimplePosDSSim</span><span class="p">(</span><span class="n">BoxLiftingSimpleSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Simplified robotic manipulator turning a box in a basket using position-level movement primitives &quot;&quot;&quot;</span>
-
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bls-pos&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_frame</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mps_left</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span> <span class="n">continuous_rew_fcn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor</span>
-
-<span class="sd">        :param ref_frame: reference frame for the MPs, e.g. &#39;world&#39;, &#39;basket&#39;, or &#39;box&#39;</span>
-<span class="sd">        :param mps_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
-<span class="sd">        :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used</span>
-<span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
-<span class="sd">                       fixedInitState: bool = False,</span>
-<span class="sd">                       taskCombinationMethod: str = &#39;sum&#39;,  # or &#39;mean&#39;, &#39;softmax&#39;, &#39;product&#39;</span>
-<span class="sd">                       checkJointLimits: bool = False,</span>
-<span class="sd">                       collisionAvoidanceIK: bool = True,</span>
-<span class="sd">                       observeVelocities: bool = False,</span>
-<span class="sd">                       observeCollisionCost: bool = True,</span>
-<span class="sd">                       observePredictedCollisionCost: bool = False,</span>
-<span class="sd">                       observeManipulabilityIndex: bool = False,</span>
-<span class="sd">                       observeCurrentManipulability: bool = True,</span>
-<span class="sd">                       observeDynamicalSystemDiscrepancy: bool = False,</span>
-<span class="sd">                       observeTaskSpaceDiscrepancy: bool = True,</span>
-<span class="sd">                       observeForceTorque: bool = True</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
-
-        <span class="c1"># Fall back to some defaults of no MPs are defined (e.g. for testing)</span>
-        <span class="k">if</span> <span class="n">mps_left</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">mps_left</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="c1"># Y</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;msd_nlin&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;attractorStiffness&quot;</span><span class="p">:</span> <span class="mf">30.0</span><span class="p">,</span>
-                    <span class="s2">&quot;mass&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-                    <span class="s2">&quot;damping&quot;</span><span class="p">:</span> <span class="mf">60.0</span><span class="p">,</span>
-                    <span class="s2">&quot;goal&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.4</span><span class="p">]),</span>
-                <span class="p">},</span>  <span class="c1"># [m]</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;msd_nlin&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;attractorStiffness&quot;</span><span class="p">:</span> <span class="mf">30.0</span><span class="p">,</span>
-                    <span class="s2">&quot;mass&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-                    <span class="s2">&quot;damping&quot;</span><span class="p">:</span> <span class="mf">60.0</span><span class="p">,</span>
-                    <span class="s2">&quot;goal&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">+</span><span class="mf">0.4</span><span class="p">]),</span>
-                <span class="p">},</span>  <span class="c1"># [m]</span>
-                <span class="c1"># Z</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;msd_nlin&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;attractorStiffness&quot;</span><span class="p">:</span> <span class="mf">30.0</span><span class="p">,</span>
-                    <span class="s2">&quot;mass&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-                    <span class="s2">&quot;damping&quot;</span><span class="p">:</span> <span class="mf">60.0</span><span class="p">,</span>
-                    <span class="s2">&quot;goal&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.05</span><span class="p">]),</span>
-                <span class="p">},</span>  <span class="c1"># [m]</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;msd_nlin&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;attractorStiffness&quot;</span><span class="p">:</span> <span class="mf">30.0</span><span class="p">,</span>
-                    <span class="s2">&quot;mass&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-                    <span class="s2">&quot;damping&quot;</span><span class="p">:</span> <span class="mf">60.0</span><span class="p">,</span>
-                    <span class="s2">&quot;goal&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">+</span><span class="mf">0.3</span><span class="p">]),</span>
-                <span class="p">},</span>  <span class="c1"># [m]</span>
-            <span class="p">]</span>
-
-        <span class="c1"># Forward to the BoxLiftingSimpleSim&#39;s constructor</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">continuous_rew_fcn</span><span class="o">=</span><span class="n">continuous_rew_fcn</span><span class="p">),</span>
-            <span class="n">ref_frame</span><span class="o">=</span><span class="n">ref_frame</span><span class="p">,</span>
-            <span class="n">position_mps</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">mps_left</span><span class="o">=</span><span class="n">mps_left</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-        <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="BoxLiftingSimpleVelDSSim"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingSimpleVelDSSim">[docs]</a><span class="k">class</span> <span class="nc">BoxLiftingSimpleVelDSSim</span><span class="p">(</span><span class="n">BoxLiftingSimpleSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Simplified robotic manipulator turning a box in a basket using velocity-level movement primitives &quot;&quot;&quot;</span>
-
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bls-vel&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_frame</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mps_left</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span> <span class="n">continuous_rew_fcn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor</span>
-
-<span class="sd">        :param ref_frame: reference frame for the MPs, e.g. &#39;world&#39;, &#39;basket&#39;, or &#39;box&#39;</span>
-<span class="sd">        :param mps_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
-<span class="sd">        :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used</span>
-<span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
-<span class="sd">                       fixedInitState: bool = False,</span>
-<span class="sd">                       taskCombinationMethod: str = &#39;sum&#39;,  # or &#39;mean&#39;, &#39;softmax&#39;, &#39;product&#39;</span>
-<span class="sd">                       checkJointLimits: bool = False,</span>
-<span class="sd">                       collisionAvoidanceIK: bool = True,</span>
-<span class="sd">                       observeVelocities: bool = False,</span>
-<span class="sd">                       observeCollisionCost: bool = True,</span>
-<span class="sd">                       observePredictedCollisionCost: bool = False,</span>
-<span class="sd">                       observeManipulabilityIndex: bool = False,</span>
-<span class="sd">                       observeCurrentManipulability: bool = True,</span>
-<span class="sd">                       observeDynamicalSystemDiscrepancy: bool = False,</span>
-<span class="sd">                       observeTaskSpaceDiscrepancy: bool = True,</span>
-<span class="sd">                       observeForceTorque: bool = True</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
-
-        <span class="c1"># Fall back to some defaults of no MPs are defined (e.g. for testing)</span>
-        <span class="n">dt</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dt&quot;</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>  <span class="c1"># 100 Hz is the default</span>
-        <span class="c1"># basket_extends = self.get_body_extents(&#39;Basket&#39;, 0)</span>
-        <span class="k">if</span> <span class="n">mps_left</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">mps_left</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="c1"># Yd</span>
-                <span class="p">{</span><span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="s2">&quot;errorDynamics&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;goal&quot;</span><span class="p">:</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">])},</span>  <span class="c1"># [m/s]</span>
-                <span class="p">{</span><span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="s2">&quot;errorDynamics&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;goal&quot;</span><span class="p">:</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.1</span><span class="p">])},</span>  <span class="c1"># [m/s]</span>
-                <span class="c1"># Zd</span>
-                <span class="p">{</span><span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="s2">&quot;errorDynamics&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;goal&quot;</span><span class="p">:</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">])},</span>  <span class="c1"># [m/s]</span>
-                <span class="p">{</span><span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="s2">&quot;errorDynamics&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;goal&quot;</span><span class="p">:</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.1</span><span class="p">])},</span>  <span class="c1"># [m/s]</span>
-            <span class="p">]</span>
-
-        <span class="c1"># Forward to the BoxLiftingSimpleSim&#39;s constructor</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">continuous_rew_fcn</span><span class="o">=</span><span class="n">continuous_rew_fcn</span><span class="p">),</span>
-            <span class="n">ref_frame</span><span class="o">=</span><span class="n">ref_frame</span><span class="p">,</span>
-            <span class="n">position_mps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">mps_left</span><span class="o">=</span><span class="n">mps_left</span><span class="p">,</span>
+            <span class="n">actionModelType</span><span class="o">=</span><span class="s2">&quot;ds_activation&quot;</span><span class="p">,</span>
+            <span class="n">tasksLeft</span><span class="o">=</span><span class="n">tasks_left</span><span class="p">,</span>
+            <span class="n">tasksRight</span><span class="o">=</span><span class="n">tasks_right</span><span class="p">,</span>
+            <span class="n">positionTasks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span></div>
 </pre></div>

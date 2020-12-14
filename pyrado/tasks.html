@@ -1421,6 +1421,23 @@ This task only looks at the instantaneous collision cost.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt id="pyrado.tasks.predefined.create_flipping_task">
+<code class="sig-name descname">create_flipping_task</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">body_names</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/predefined.html#create_flipping_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.predefined.create_flipping_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a task for lifting an object upright</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_spec</strong> – environment specification</p></li>
+<li><p><strong>body_names</strong> – indices for selection, e.g. [‘Box_A’]. This needs to match the observations’ names in RcsPySim</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>masked task</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="pyrado.tasks.predefined.create_goal_dist_distvel_task">
 <code class="sig-name descname">create_goal_dist_distvel_task</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">ds_index</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">rew_fcn</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.tasks.reward_functions.RewFcn" title="pyrado.tasks.reward_functions.RewFcn">pyrado.tasks.reward_functions.RewFcn</a></span></em>, <em class="sig-param"><span class="n">succ_thold</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.01</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.tasks.masked.MaskedTask" title="pyrado.tasks.masked.MaskedTask">pyrado.tasks.masked.MaskedTask</a><a class="reference internal" href="_modules/pyrado/tasks/predefined.html#create_goal_dist_distvel_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.predefined.create_goal_dist_distvel_task" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
