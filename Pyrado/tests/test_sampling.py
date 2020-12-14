@@ -418,8 +418,8 @@ def test_cuda_sampling_w_dr(env: SimEnv, policy: Policy):
     "env",
     [
         pytest.param("default_qqsurcs_bt", marks=m_needs_bullet),
-        pytest.param("default_bs_pos_bt", marks=m_needs_bullet),
-        pytest.param("default_bit_ik_bt", marks=m_needs_bullet),
+        pytest.param("default_bs_ds_pos_bt", marks=m_needs_bullet),
+        pytest.param("default_bit_ika_pos_bt", marks=m_needs_bullet),
     ],
     ids=["qqsurcs_bt", "bs_pos_bt", "bit_ik_bt"],
     indirect=True,

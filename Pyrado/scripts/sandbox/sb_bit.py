@@ -34,7 +34,7 @@ import pyrado
 from pyrado.environments.rcspysim.ball_in_tube import (
     BallInTubeVelDSSim,
     BallInTubePosDSSim,
-    BallInTubeIKActivationSim,
+    BallInTubePosIKActivationSim,
     BallInTubeIKSim,
 )
 from pyrado.policies.special.dummy import IdlePolicy
@@ -54,11 +54,12 @@ def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, ch
         graphFileName=graphFileName,
         dt=dt,
         max_steps=max_steps,
-        mps_left=None,  # use defaults
-        mps_right=None,  # use defaults
+        tasks_left=None,  # use defaults
+        tasks_right=None,  # use defaults
         ref_frame=ref_frame,
         fixedInitState=False,
         checkJointLimits=checkJointLimits,
+        taskCombinationMethod="sum",
     )
     env.reset(domain_param=env.get_nominal_domain_param())
 
@@ -85,6 +86,7 @@ def create_ik_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, chec
         ref_frame=ref_frame,
         fixedInitState=True,
         checkJointLimits=checkJointLimits,
+        taskCombinationMethod="sum",
         collisionAvoidanceIK=True,
         observeVelocity=False,
         observeCollisionCost=True,
@@ -100,7 +102,7 @@ def create_ik_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, chec
     return env, policy
 
 
-def create_ik_activation_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
+def create_ika_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     def policy(t: float):
         if t < 3:
             return [0, 0, 0.1, 0, 0, 0, 0.1]
@@ -116,7 +118,7 @@ def create_ik_activation_setup(physicsEngine, graphFileName, dt, max_steps, ref_
             return [0, 0, 0, 0, 0, 0, 0]
 
     # Set up environment
-    env = BallInTubeIKActivationSim(
+    env = BallInTubePosIKActivationSim(
         usePhysicsNode=True,
         physicsEngine=physicsEngine,
         graphFileName=graphFileName,
@@ -124,8 +126,8 @@ def create_ik_activation_setup(physicsEngine, graphFileName, dt, max_steps, ref_
         max_steps=max_steps,
         ref_frame=ref_frame,
         fixedInitState=True,
-        taskCombinationMethod="sum",
         checkJointLimits=checkJointLimits,
+        taskCombinationMethod="sum",
         collisionAvoidanceIK=True,
         observeVelocity=False,
         observeCollisionCost=True,
@@ -141,7 +143,7 @@ def create_ik_activation_setup(physicsEngine, graphFileName, dt, max_steps, ref_
     return env, policy
 
 
-def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
+def create_pos_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     def policy(t: float):
         return [0.2, 0, 0.5, 0]
 
@@ -152,12 +154,12 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         graphFileName=graphFileName,
         dt=dt,
         max_steps=max_steps,
-        mps_left=None,  # use defaults
-        mps_right=None,  # use defaults
+        tasks_left=None,  # use defaults
+        tasks_right=None,  # use defaults
         ref_frame=ref_frame,
         fixedInitState=True,
-        taskCombinationMethod="sum",
         checkJointLimits=checkJointLimits,
+        taskCombinationMethod="sum",
         collisionAvoidanceIK=False,
         observeVelocity=False,
         observeCollisionCost=True,
@@ -175,7 +177,7 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
     return env, policy
 
 
-def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
+def create_vel_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     def policy(t: float):
         return [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
@@ -186,12 +188,12 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         graphFileName=graphFileName,
         dt=dt,
         max_steps=max_steps,
-        mps_left=None,  # use defaults
-        mps_right=None,  # use defaults
+        tasks_left=None,  # use defaults
+        tasks_right=None,  # use defaults
         ref_frame=ref_frame,
         fixedInitState=True,
-        taskCombinationMethod="sum",
         checkJointLimits=checkJointLimits,
+        taskCombinationMethod="sum",
         collisionAvoidanceIK=False,
         observeVelocity=True,
         observeCollisionCost=True,
@@ -212,7 +214,7 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
 
 if __name__ == "__main__":
     # Choose setup
-    setup_type = "idle"  # idle, ik, ik_activation, ds_activation_pos, ds_activation_vel
+    setup_type = "ds_pos"  # idle, ik, ika, ds_pos, ds_vel
     common_hparam = dict(
         physicsEngine="Bullet",  # Bullet or Vortex
         graphFileName="gBallInTube_trqCtrl.xml",  # gBallInTube_trqCtrl
@@ -225,14 +227,14 @@ if __name__ == "__main__":
         env, policy = create_idle_setup(**common_hparam)
     elif setup_type == "ik":
         env, policy = create_ik_setup(**common_hparam)
-    elif setup_type == "ik_activation":
-        env, policy = create_ik_activation_setup(**common_hparam)
-    elif setup_type == "ds_activation_pos":
-        env, policy = create_position_mps_setup(**common_hparam)
-    elif setup_type == "ds_activation_vel":
-        env, policy = create_velocity_mps_setup(**common_hparam)
+    elif setup_type == "ika":
+        env, policy = create_ika_setup(**common_hparam)
+    elif setup_type == "ds_pos":
+        env, policy = create_pos_mps_setup(**common_hparam)
+    elif setup_type == "ds_vel":
+        env, policy = create_vel_mps_setup(**common_hparam)
     else:
-        raise pyrado.ValueErr(given=setup_type, eq_constraint="'idle', 'ds_activation_pos', 'ds_activation_vel")
+        raise pyrado.ValueErr(given=setup_type, eq_constraint="'idle', 'ds_pos', 'ds_vel")
 
     # Simulate and plot
     print("observations:\n", env.obs_space.labels)

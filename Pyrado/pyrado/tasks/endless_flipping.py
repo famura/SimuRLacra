@@ -27,7 +27,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import numpy as np
-from typing import Sequence
 
 import pyrado
 from pyrado.utils.data_types import EnvSpec

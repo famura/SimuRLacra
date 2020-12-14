@@ -37,7 +37,7 @@ from pyrado.environments.rcspysim.base import RcsSim
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import DesStateTask
 from pyrado.tasks.masked import MaskedTask
-from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn, MinusOnePerStepRewFcn, RewFcn, AbsErrRewFcn
+from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn, MinusOnePerStepRewFcn, AbsErrRewFcn
 from pyrado.tasks.parallel import ParallelTasks
 from pyrado.tasks.utils import proximity_succeeded
 from pyrado.tasks.predefined import (
@@ -51,6 +51,7 @@ from pyrado.utils.data_types import EnvSpec
 
 
 rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)
+rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "BoxShelving"))
 
 
 def create_box_upper_shelve_task(env_spec: EnvSpec, continuous_rew_fcn: bool, succ_thold: float):
@@ -79,7 +80,9 @@ def create_box_upper_shelve_task(env_spec: EnvSpec, continuous_rew_fcn: bool, su
 class BoxShelvingSim(RcsSim, Serializable):
     """ Base class for 2-armed humanoid robot putting a box into a shelve """
 
-    def __init__(self, task_args: dict, ref_frame: str, position_mps: bool, mps_left: [Sequence[dict], None], **kwargs):
+    def __init__(
+        self, task_args: dict, ref_frame: str, position_mps: bool, tasks_left: [Sequence[dict], None], **kwargs
+    ):
         """
         Constructor
 
@@ -88,7 +91,7 @@ class BoxShelvingSim(RcsSim, Serializable):
 
         :param task_args: arguments for the task construction
         :param ref_frame: reference frame for the MPs, e.g. 'world', 'box', or 'upperGoal'
-        :param mps_left: left arm's movement primitives holding the dynamical systems and the goal states
+        :param tasks_left: left arm's movement primitives holding the dynamical systems and the goal states
         :param position_mps: `True` if the MPs are defined on position level, `False` if defined on velocity level
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        fixedInitState: bool = False,
@@ -115,7 +118,7 @@ class BoxShelvingSim(RcsSim, Serializable):
             hudColor="BLACK_RUBBER",
             refFrame=ref_frame,
             positionTasks=position_mps,
-            tasksLeft=mps_left,
+            tasksLeft=tasks_left,
             **kwargs,
         )
 
@@ -144,13 +147,13 @@ class BoxShelvingPosDSSim(BoxShelvingSim, Serializable):
     name: str = "bs-pos"
 
     def __init__(
-        self, ref_frame: str, mps_left: [Sequence[dict], None] = None, continuous_rew_fcn: bool = True, **kwargs
+        self, ref_frame: str, tasks_left: [Sequence[dict], None] = None, continuous_rew_fcn: bool = True, **kwargs
     ):
         """
         Constructor
 
         :param ref_frame: reference frame for the MPs, e.g. 'world', 'box', or 'upperGoal'
-        :param mps_left: left arm's movement primitives holding the dynamical systems and the goal states
+        :param tasks_left: left arm's movement primitives holding the dynamical systems and the goal states
         :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        fixedInitState: bool = False,
@@ -172,10 +175,10 @@ class BoxShelvingPosDSSim(BoxShelvingSim, Serializable):
         dp_nom = BoxShelvingSim.get_nominal_domain_param()
 
         # Fall back to some defaults of no MPs are defined (e.g. for testing)
-        if mps_left is None:
+        if tasks_left is None:
             if not ref_frame == "upperGoal":
                 print_cbt(f"Using tasks specified in the upperGoal frame in the {ref_frame} frame!", "y", bright=True)
-            mps_left = [
+            tasks_left = [
                 # Left power grasp position
                 {
                     "function": "msd",
@@ -225,8 +228,8 @@ class BoxShelvingPosDSSim(BoxShelvingSim, Serializable):
 
         # Forward to the BoxShelvingSim's constructor
         super().__init__(
-            task_args=dict(continuous_rew_fcn=continuous_rew_fcn, mps_left=mps_left),
-            mps_left=mps_left,
+            task_args=dict(continuous_rew_fcn=continuous_rew_fcn, tasks_left=tasks_left),
+            tasks_left=tasks_left,
             ref_frame=ref_frame,
             position_mps=True,
             **kwargs,
@@ -242,7 +245,7 @@ class BoxShelvingVelDSSim(BoxShelvingSim, Serializable):
         self,
         ref_frame: str,
         bidirectional_mps: bool,
-        mps_left: [Sequence[dict], None] = None,
+        tasks_left: [Sequence[dict], None] = None,
         continuous_rew_fcn: bool = True,
         **kwargs,
     ):
@@ -253,7 +256,7 @@ class BoxShelvingVelDSSim(BoxShelvingSim, Serializable):
         :param bidirectional_mps: if `True` then the MPs can be activated "forward" and "backward", thus the `ADN`
                                   output activations must be in [-1, 1] and the output nonlinearity should be a tanh.
                                   If `false` then the behavior is the same as for position-level MPs.
-        :param mps_left: left arm's movement primitives holding the dynamical systems and the goal states
+        :param tasks_left: left arm's movement primitives holding the dynamical systems and the goal states
         :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        fixedInitState: bool = False,
@@ -275,11 +278,11 @@ class BoxShelvingVelDSSim(BoxShelvingSim, Serializable):
         dp_nom = BoxShelvingSim.get_nominal_domain_param()
 
         # Fall back to some defaults of no MPs are defined (e.g. for testing)
-        if mps_left is None:
+        if tasks_left is None:
             dt = kwargs.get("dt", 0.01)  # 100 Hz is the default
 
             if bidirectional_mps:
-                mps_left = [
+                tasks_left = [
                     # Xd
                     {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([0.15])},  # [m/s]
                     # Yd
@@ -300,7 +303,7 @@ class BoxShelvingVelDSSim(BoxShelvingSim, Serializable):
                     },
                 ]
             else:
-                mps_left = [
+                tasks_left = [
                     # Xd
                     {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([0.15])},  # [m/s]
                     {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([-0.15])},  # [m/s]
@@ -329,7 +332,7 @@ class BoxShelvingVelDSSim(BoxShelvingSim, Serializable):
         # Forward to the BoxShelvingSim's constructor
         super().__init__(
             task_args=dict(continuous_rew_fcn=continuous_rew_fcn),
-            mps_left=mps_left,
+            tasks_left=tasks_left,
             ref_frame=ref_frame,
             position_mps=False,
             bidirectionalMPs=bidirectional_mps,

@@ -56,7 +56,7 @@ env = TargetTrackingSim(
     graphFileName="TargetTracking.xml",
     dt=dt,
     max_steps=1000,
-    mps_left=[
+    tasks_left=[
         {
             "function": "lin",
             "errorDynamics": 1.0 * np.eye(3),
@@ -68,7 +68,7 @@ env = TargetTrackingSim(
             "goal": np.array([0.5, -0.5, 1]),
         },
     ],
-    mps_right=[
+    tasks_right=[
         {
             "function": "lin",
             "errorDynamics": 1.0 * np.eye(3),

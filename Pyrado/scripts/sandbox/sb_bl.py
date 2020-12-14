@@ -31,7 +31,12 @@ Script to test the bi-manual box lifting task using a hard-coded time-based poli
 """
 import rcsenv
 import pyrado
-from pyrado.environments.rcspysim.box_lifting import BoxLiftingVelDSSim, BoxLiftingPosDSSim
+from pyrado.environments.rcspysim.box_lifting import (
+    BoxLiftingVelDSSim,
+    BoxLiftingPosDSSim,
+    BoxLiftingPosIKActivationSim,
+    BoxLiftingVelIKActivationSim,
+)
 from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import rollout, after_rollout_query
@@ -39,7 +44,7 @@ from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt
 
 
-rcsenv.setLogLevel(0)
+rcsenv.setLogLevel(4)
 
 
 def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
@@ -49,10 +54,12 @@ def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, ch
         graphFileName=graphFileName,
         dt=dt,
         max_steps=max_steps,
-        mps_left=None,  # use defaults
-        mps_right=None,  # use defaults
+        tasks_left=None,  # use defaults
+        tasks_right=None,  # use defaults
         ref_frame=ref_frame,
         collisionConfig={"file": "collisionModel.xml"},
+        fixedInitState=True,
+        taskCombinationMethod="sum",
         checkJointLimits=checkJointLimits,
     )
     env.reset(domain_param=env.get_nominal_domain_param())
@@ -63,11 +70,91 @@ def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, ch
     return env, policy
 
 
-def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
+def create_pos_ika_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
+    # Set up environment
+    env = BoxLiftingPosIKActivationSim(
+        usePhysicsNode=True,
+        physicsEngine=physicsEngine,
+        graphFileName=graphFileName,
+        dt=dt,
+        max_steps=max_steps,
+        ref_frame=ref_frame,
+        collisionConfig={"file": "collisionModel.xml"},
+        fixedInitState=True,
+        checkJointLimits=checkJointLimits,
+        taskCombinationMethod="sum",
+        collisionAvoidanceIK=True,
+        observeVelocity=True,
+        observeCollisionCost=True,
+        observePredictedCollisionCost=False,
+        observeManipulabilityIndex=False,
+        observeCurrentManipulability=True,
+        observeDynamicalSystemDiscrepancy=False,
+        observeTaskSpaceDiscrepancy=True,
+        observeForceTorque=True,
+        observeDynamicalSystemGoalDistance=False,
+    )
+
+    # Set up policy
     def policy(t: float):
-        # return [1, 0, 1, 1, 1,
-        #         0, 0, 0, 0, 0, 1]
-        return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+        if t < 2:
+            return [1.0, 1.0, 0.1]  # right Y, Z, dist_box
+        elif t < 7:
+            return [0.1, 0.1, 1.0]  # right Y, Z, dist_box
+        else:
+            return [0.0, 0.0, 0.1]  # right Y, Z, dist_box
+
+    policy = TimePolicy(env.spec, policy, dt)
+
+    return env, policy
+
+
+def create_vel_ika_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
+    # Set up environment
+    env = BoxLiftingVelIKActivationSim(
+        usePhysicsNode=True,
+        physicsEngine=physicsEngine,
+        graphFileName=graphFileName,
+        dt=dt,
+        max_steps=max_steps,
+        ref_frame=ref_frame,
+        collisionConfig={"file": "collisionModel.xml"},
+        fixedInitState=True,
+        checkJointLimits=checkJointLimits,
+        taskCombinationMethod="sum",
+        collisionAvoidanceIK=True,
+        observeVelocity=True,
+        observeCollisionCost=True,
+        observePredictedCollisionCost=False,
+        observeManipulabilityIndex=False,
+        observeCurrentManipulability=True,
+        observeDynamicalSystemDiscrepancy=False,
+        observeTaskSpaceDiscrepancy=True,
+        observeForceTorque=True,
+        observeDynamicalSystemGoalDistance=False,
+    )
+
+    # Set up policy
+    def policy(t: float):
+        if t < 2:
+            return [0.0, 0.0, 0.0, 0.4]
+        if t < 5.0:
+            return [0.8, 0.0, 0.0, 0.05]
+        if t < 8:
+            return [0.3, 0.0, 0.6, 0]
+        elif t < 10:
+            return [0.2, 0.0, 0.9, 0.0]
+        else:
+            return [0.0, 0.0, 0.0, 0.0]
+
+    policy = TimePolicy(env.spec, policy, dt)
+
+    return env, policy
+
+
+def create_pos_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
+    def policy(t: float):
+        return [1, 0, 1, 0, 0]
 
     # Set up environment
     env = BoxLiftingPosDSSim(
@@ -76,11 +163,11 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         graphFileName=graphFileName,
         dt=dt,
         max_steps=max_steps,
-        mps_left=None,  # use defaults
-        mps_right=None,  # use defaults
+        tasks_left=None,  # use defaults
+        tasks_right=None,  # use defaults
         ref_frame=ref_frame,
-        fixedInitState=True,
         collisionConfig={"file": "collisionModel.xml"},
+        fixedInitState=True,
         taskCombinationMethod="sum",
         checkJointLimits=checkJointLimits,
         collisionAvoidanceIK=False,
@@ -100,14 +187,14 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
     return env, policy
 
 
-def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
+def create_vel_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     def policy(t: float):
         if t < 2:
-            return [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            return [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
         elif t < 6:
-            return [-0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5]
+            return [-0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5]
         else:
-            return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            return [0, 0, 0, 0, 0, 0, 0]
 
     # Set up environment
     env = BoxLiftingVelDSSim(
@@ -116,11 +203,11 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         graphFileName=graphFileName,
         dt=dt,
         max_steps=max_steps,
-        mps_left=None,  # use defaults
-        mps_right=None,  # use defaults
+        tasks_left=None,  # use defaults
+        tasks_right=None,  # use defaults
         ref_frame=ref_frame,
-        fixedInitState=True,
         collisionConfig={"file": "collisionModel.xml"},
+        fixedInitState=True,
         taskCombinationMethod="sum",
         checkJointLimits=checkJointLimits,
         collisionAvoidanceIK=False,
@@ -143,24 +230,32 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
 
 if __name__ == "__main__":
     # Choose setup
-    setup_type = "vel"  # idle, pos, vel
+    setup_type = "bl-ika-vel"  # idle, bl-ika-pos, bl-ika-vel, bl-ds-pos, bl-ds-vel
     common_hparam = dict(
         physicsEngine="Bullet",  # Bullet or Vortex
-        graphFileName="gBoxLifting_posCtrl.xml",  # gBoxLifting_trqCtrl or gBoxLifting_posCtrl
+        graphFileName="gBoxLifting_trqCtrl.xml",  # gBoxLifting_trqCtrl or gBoxLifting_posCtrl
         dt=1 / 100.0,
-        max_steps=int(20 * 100),
+        max_steps=int(16 * 100),
         ref_frame="basket",  # world, table, or slider
         checkJointLimits=False,
     )
 
     if setup_type == "idle":
         env, policy = create_idle_setup(**common_hparam)
-    elif setup_type == "pos":
-        env, policy = create_position_mps_setup(**common_hparam)
-    elif setup_type == "vel":
-        env, policy = create_velocity_mps_setup(**common_hparam)
+    elif setup_type == BoxLiftingPosIKActivationSim.name:
+        env, policy = create_pos_ika_setup(**common_hparam)
+    elif setup_type == BoxLiftingVelIKActivationSim.name:
+        env, policy = create_vel_ika_setup(**common_hparam)
+    elif setup_type == BoxLiftingPosDSSim.name:
+        env, policy = create_pos_mps_setup(**common_hparam)
+    elif setup_type == BoxLiftingVelDSSim.name:
+        env, policy = create_vel_mps_setup(**common_hparam)
     else:
-        raise pyrado.ValueErr(given=setup_type, eq_constraint="'idle', 'pos', 'vel")
+        raise pyrado.ValueErr(
+            given=setup_type,
+            eq_constraint=f"idle, {BoxLiftingPosIKActivationSim.name}, {BoxLiftingVelIKActivationSim.name}, "
+            f"{BoxLiftingPosDSSim.name}, {BoxLiftingVelDSSim.name}",
+        )
 
     # Simulate and plot
     print("observations:\n", env.obs_space.labels)

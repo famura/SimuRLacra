@@ -44,7 +44,7 @@ from pyrado.utils.data_types import RenderMode
 rcsenv.setLogLevel(4)
 
 
-def ik_activation_variant(dt, max_steps, max_dist_force, physics_engine, graph_file_name):
+def create_ik_aktivation_setup(dt, max_steps, max_dist_force, physics_engine, graph_file_name):
     # Set up environment
     env = PlanarInsertIKActivationSim(
         physicsEngine=physics_engine,
@@ -75,7 +75,7 @@ def ik_activation_variant(dt, max_steps, max_dist_force, physics_engine, graph_f
     return rollout(env, policy, render_mode=RenderMode(video=True), stop_on_done=False)
 
 
-def ds_activation_variant(dt, max_steps, max_dist_force, physics_engine, graph_file_name):
+def create_ds_aktivation_setup(dt, max_steps, max_dist_force, physics_engine, graph_file_name):
     # Set up environment
     env = PlanarInsertTASim(
         physicsEngine=physics_engine,
@@ -119,9 +119,9 @@ if __name__ == "__main__":
     )
 
     if setup_type == "ik_activation":
-        ro = ik_activation_variant(**common_hparam)
+        ro = create_ik_aktivation_setup(**common_hparam)
     elif setup_type == "ds_activation":
-        ro = ds_activation_variant(**common_hparam)
+        ro = create_ds_aktivation_setup(**common_hparam)
         draw_potentials(ro)
     else:
         raise pyrado.ValueErr(given_name=setup_type, eq_constraint="ik_activation or ds_activation")

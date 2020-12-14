@@ -407,8 +407,6 @@ def create_default_randomizer_bs() -> DomainRandomizer:
 
 @default_randomizer("pyrado.environments.sim_rcs.box_lifting", "BoxLiftingPosDSSim")
 @default_randomizer("pyrado.environments.sim_rcs.box_lifting", "BoxLiftingVelDSSim")
-@default_randomizer("pyrado.environments.sim_rcs.box_lifting", "BoxLiftingSimplePosDSSim")
-@default_randomizer("pyrado.environments.sim_rcs.box_lifting", "BoxLiftingSimpleVelDSSim")
 def create_default_randomizer_bl() -> DomainRandomizer:
     """
     Create the default randomizer for the `BoxLifting`.

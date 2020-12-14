@@ -75,8 +75,8 @@ Rcs::RcsSimEnv::RcsSimEnv(PropertySource* propertySource)
     
     // Load physics parameter manager from config
     physicsManager = config->createPhysicsParameterManager();
-    // Physics simulator instance is null at the start. It will only be created once reset is called.
-    physicsSim = NULL;
+    // Physics simulator instance is nullptr at the start. It will only be created once reset is called.
+    physicsSim = nullptr;
     
     // Create force disturber
     disturber = config->createForceDisturber();
@@ -84,15 +84,15 @@ Rcs::RcsSimEnv::RcsSimEnv(PropertySource* propertySource)
     // Load init state setter
     initStateSetter = config->createInitStateSetter();
     
-    // Init temp matrices
+    // Initialize temporary matrices
     q_ctrl = MatNd_clone(config->graph->q);
     qd_ctrl = MatNd_clone(config->graph->q_dot);
     T_ctrl = MatNd_create(config->graph->dof, 1);
     
     // Other state-related stuff
-    viewer = NULL;
+    viewer = nullptr;
     usePhysicsNode = propertySource->getPropertyBool("usePhysicsNode", false);
-    hud = NULL;
+    hud = nullptr;
     currentObservation = config->observationModel->getSpace()->createValueMatrix();
     currentAction = config->actionModel->getSpace()->createValueMatrix();
 //    adWidgetHandle = -1;
@@ -101,8 +101,8 @@ Rcs::RcsSimEnv::RcsSimEnv(PropertySource* propertySource)
     currentTime = 0;
 //    lastStepReward = 0;
     
-    // Init transition noise (unused if not explicitly flagged)
-    transitionNoiseBuffer = NULL;
+    // Initialize transition noise (unused if not explicitly flagged)
+    transitionNoiseBuffer = nullptr;
     tnbIndex = 0;
     transitionNoiseIncludeVelocity = propertySource->getPropertyBool("transitionNoiseIncludeVelocity");
 }
@@ -140,8 +140,8 @@ MatNd* Rcs::RcsSimEnv::reset(PropertySource* domainParam, const MatNd* initState
         MatNd_setZero(SENSOR->rawData);
     }
     
-    // Then, apply the initState
-    if (initState && initStateSetter != NULL) {
+    // Apply the initial state
+    if (initState && initStateSetter != nullptr) {
         std::string errorMsg;
         if (!initStateSetter->getSpace()->contains(initState, &errorMsg)) {
             throw std::invalid_argument("init state space does not contain the init state: " + errorMsg);
@@ -150,9 +150,9 @@ MatNd* Rcs::RcsSimEnv::reset(PropertySource* domainParam, const MatNd* initState
     }
     
     // Rebuild physics sim with new parameters
-    // We set it to NULL before creating the new one since there might be exceptions during parameter loading
+    // We set it to nullptr before creating the new one since there might be exceptions during parameter loading
     delete physicsSim;
-    physicsSim = NULL;
+    physicsSim = nullptr;
     physicsSim = physicsManager->createSimulator(domainParam);
     
     // Reset control command vectors
@@ -227,7 +227,7 @@ MatNd* Rcs::RcsSimEnv::step(const MatNd* action, const MatNd* disturbance)
         }
     }
     
-    if (disturbance != NULL && disturber != NULL) {
+    if (disturbance != nullptr && disturber != nullptr) {
         // Check disturbance shape
         if (disturbance->m != 3 || disturbance->n != 1) {
             throw std::invalid_argument("Invalid disturbance");
@@ -236,14 +236,14 @@ MatNd* Rcs::RcsSimEnv::step(const MatNd* action, const MatNd* disturbance)
     }
     
     /*-------------------------------------------------------------------------*
-     * Inverse Dynamics in Joint Space (Compliance Control)
+     * Inverse dynamics in joint space (compliance control)
      *-------------------------------------------------------------------------*/
     if (!allJointsPosCtrl) {
         Rcs::ControllerBase::computeInvDynJointSpace(T_ctrl, config->graph, q_ctrl, 1000.);
     }
     
     /*-------------------------------------------------------------------------*
-     * Call the Physics Simulation and Get the New Current State
+     * Call the physicssimulation and get the new current state
      *-------------------------------------------------------------------------*/
     physicsSim->setControlInput(q_ctrl, qd_ctrl, T_ctrl);
     
@@ -252,7 +252,7 @@ MatNd* Rcs::RcsSimEnv::step(const MatNd* action, const MatNd* disturbance)
     /*-------------------------------------------------------------------------*
      * Apply transition noise if desired
      *-------------------------------------------------------------------------*/
-    if (transitionNoiseBuffer != NULL) {
+    if (transitionNoiseBuffer != nullptr) {
         // Get noise set to use for this timestamp
         MatNd* noise;
         MatNd_fromStack(noise, getInternalStateDim(), 1);
@@ -274,7 +274,7 @@ MatNd* Rcs::RcsSimEnv::step(const MatNd* action, const MatNd* disturbance)
             tnbIndex = 0;
         }
         
-        // cleanup
+        // Cleanup
         MatNd_destroy(noise);
     }
     
@@ -282,7 +282,7 @@ MatNd* Rcs::RcsSimEnv::step(const MatNd* action, const MatNd* disturbance)
      * Store new physics simulation state in the ExperimentConfig's graph
      *-------------------------------------------------------------------------*/
     // Apply forward kinematics
-//    RcsGraph_setState(config->graph, NULL, config->graph->q_dot); // NULL leads to using the q vector from the graph
+//    RcsGraph_setState(config->graph, nullptr, config->graph->q_dot); // nullptr leads to using the q vector from the graph
     RcsGraph_setState(config->graph, config->graph->q, config->graph->q_dot);
     
     // Unlock the graph
@@ -292,7 +292,7 @@ MatNd* Rcs::RcsSimEnv::step(const MatNd* action, const MatNd* disturbance)
      * For transition noise, we need to update the state of the physics
      * simulator to match the state of the graph after applying the noise.
      *-------------------------------------------------------------------------*/
-    if (transitionNoiseBuffer != NULL) {
+    if (transitionNoiseBuffer != nullptr) {
         RCSGRAPH_TRAVERSE_BODIES(config->graph) {
             physicsSim->applyTransform(BODY, BODY->A_BI);
             physicsSim->applyLinearVelocity(BODY, BODY->x_dot);
@@ -307,7 +307,7 @@ MatNd* Rcs::RcsSimEnv::step(const MatNd* action, const MatNd* disturbance)
     /*-------------------------------------------------------------------------*
      * Assemble results
      *-------------------------------------------------------------------------*/
-    // compute observation
+    // Compute observation
     MatNd* observation = config->observationModel->computeObservation(action, config->dt);
     MatNd_copy(currentObservation, observation);
     
@@ -341,9 +341,9 @@ void Rcs::RcsSimEnv::render(std::string mode, bool close)
     if (close) {
         // Close the viewer
         if (viewer) {
-            hud = NULL;
+            hud = nullptr;
             delete viewer;
-            viewer = NULL;
+            viewer = nullptr;
         }
     }
     else if (mode == "human") {
@@ -357,7 +357,7 @@ void Rcs::RcsSimEnv::render(std::string mode, bool close)
             // would be better, but it's not possible right now.
             // Visualize the IK controller graph (a.k.a. desired graph)
             auto amIK = config->actionModel->unwrap<ActionModelIK>();
-            if (amIK != NULL) {
+            if (amIK != nullptr) {
                 Rcs::GraphNode* gDesNode = new Rcs::GraphNode(amIK->getController()->getGraph(), true, false);
                 gDesNode->setGhostMode(true);
                 viewer->add(gDesNode);
@@ -406,7 +406,7 @@ void Rcs::RcsSimEnv::render(std::string mode, bool close)
     if (!warned)
     {
         warned = true;
-        RMSGS("RcsPySim compiled in headless mode, thus rendering is not available");
+        RMSGS("RcsPySim compiled in headless mode, therefore rendering is not available!");
     }
 #endif
 }
@@ -414,20 +414,20 @@ void Rcs::RcsSimEnv::render(std::string mode, bool close)
 void Rcs::RcsSimEnv::toggleVideoRecording()
 {
 #ifdef GRAPHICS_AVAILABLE
-    if (viewer == NULL) {
-        // The viewer has not been opened yet, so do that.
+    if (viewer == nullptr) {
+        // The viewer has not been opened yet, so do that
         render("human", false);
-        // If we start the recording right away, the recording target frame will be off.
+        // If we start the recording right away, the recording target frame will be off
         RPAUSE_MSG("Please move the graphics window so the window position is initialized properly."
                    "Press ENTER to continue.");
     }
     viewer->toggleVideoRecording();
 #else
-    // warn about headless mode
+    // Warn about headless mode
     static bool warned = false;
     if(!warned) {
         warned = true;
-        RMSGS("RcsPySim compiled in headless mode; rendering not available");
+        RMSGS("RcsPySim compiled in headless mode, therefore rendering not available!");
     }
 #endif
 }
@@ -444,8 +444,8 @@ const Rcs::BoxSpace* Rcs::RcsSimEnv::actionSpace()
 
 const Rcs::BoxSpace* Rcs::RcsSimEnv::initStateSpace()
 {
-    if (initStateSetter == NULL) {
-        return NULL;
+    if (initStateSetter == nullptr) {
+        return nullptr;
     }
     return initStateSetter->getSpace();
 }
@@ -458,16 +458,16 @@ const Rcs::BoxSpace* Rcs::RcsSimEnv::initStateSpace()
 
 void Rcs::RcsSimEnv::setTransitionNoiseBuffer(const MatNd* tnb)
 {
-    if (tnb == NULL) {
-        // remove it
+    if (tnb == nullptr) {
+        // Remove it
         MatNd_destroy(transitionNoiseBuffer);
-        transitionNoiseBuffer = NULL;
+        transitionNoiseBuffer = nullptr;
     }
     else if (tnb->m != getInternalStateDim()) {
         throw std::invalid_argument("Transition noise dimension must match internal state dimension");
     }
     else {
-        // store copy
+        // Store copy
         MatNd_resizeCopy(&transitionNoiseBuffer, tnb);
         tnbIndex = 0;
     }

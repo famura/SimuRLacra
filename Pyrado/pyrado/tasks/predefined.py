@@ -27,14 +27,17 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import functools
+from typing import Sequence
+
 import numpy as np
 
 import pyrado
 from pyrado.spaces.empty import EmptySpace
 from pyrado.tasks.desired_state import DesStateTask
+from pyrado.tasks.endless_flipping import EndlessFlippingTask
 from pyrado.tasks.final_reward import FinalRewTask, FinalRewMode
 from pyrado.tasks.masked import MaskedTask
-from pyrado.tasks.reward_functions import RewFcn, ZeroPerStepRewFcn, AbsErrRewFcn
+from pyrado.tasks.reward_functions import RewFcn, ZeroPerStepRewFcn, AbsErrRewFcn, CosOfOneEleRewFcn, CompoundRewFcn
 from pyrado.tasks.utils import proximity_succeeded, never_succeeded
 from pyrado.utils.data_types import EnvSpec
 
@@ -144,3 +147,32 @@ def create_collision_task(env_spec: EnvSpec, factor: float) -> MaskedTask:
 
     # Mask selected collision cost observation
     return MaskedTask(env_spec, dst, idcs)
+
+
+def create_flipping_task(env_spec: EnvSpec, body_names: Sequence[str]):
+    """
+    Create a task for lifting an object upright
+
+    :param env_spec: environment specification
+    :param body_names: indices for selection, e.g. ['Box_A']. This needs to match the observations' names in RcsPySim
+    :return: masked task
+    """
+    # Get the masked environment specification
+    spec = EnvSpec(
+        env_spec.obs_space,
+        env_spec.act_space,
+        env_spec.state_space.subspace(env_spec.state_space.create_mask(body_names)),
+    )
+
+    # Create a desired state task
+    # state_des = np.array([0.3])  # box position is measured relative to the table
+    # state_des = np.array([-np.pi/2])  # box position is measured world coordinates
+    q = np.array([0.0 / np.pi])
+    r = 1e-6 * np.ones(spec.act_space.flat_dim)
+    rew_fcn_act = AbsErrRewFcn(q, r)
+    rew_fcn_box = CosOfOneEleRewFcn(idx=0)
+    rew_fcn = CompoundRewFcn([rew_fcn_act, rew_fcn_box])
+    ef_task = EndlessFlippingTask(spec, rew_fcn, init_angle=0.0)
+
+    # Return the masked tasks
+    return MaskedTask(env_spec, ef_task, body_names)

@@ -49,8 +49,8 @@ def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, ch
         graphFileName=graphFileName,
         dt=dt,
         max_steps=max_steps,
-        mps_left=None,  # use defaults
-        mps_right=None,  # use defaults
+        tasks_left=None,  # use defaults
+        tasks_right=None,  # use defaults
         ref_frame=ref_frame,
         fixedInitState=False,
         collisionConfig={"file": "collisionModel.xml"},
@@ -63,7 +63,7 @@ def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, ch
     return env, policy
 
 
-def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
+def create_pos_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     def policy_fcn(t: float):
         return [0, 0, 1, 0, 0, 0.01]  # PG position  # PG orientation  # hand joints
 
@@ -73,8 +73,8 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         graphFileName=graphFileName,
         dt=dt,
         max_steps=max_steps,
-        mps_left=None,  # use defaults
-        mps_right=None,  # use defaults
+        tasks_left=None,  # use defaults
+        tasks_right=None,  # use defaults
         ref_frame=ref_frame,
         fixedInitState=True,
         collisionConfig={"file": "collisionModel.xml"},
@@ -101,9 +101,7 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
     return env, policy
 
 
-def create_velocity_mps_setup(
-    physicsEngine, graphFileName, dt, max_steps, ref_frame, bidirectional_mps, checkJointLimits
-):
+def create_vel_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, bidirectional_mps, checkJointLimits):
     if bidirectional_mps:
 
         def policy_fcn(t: float):
@@ -162,8 +160,8 @@ def create_velocity_mps_setup(
         graphFileName=graphFileName,
         dt=dt,
         max_steps=max_steps,
-        mps_left=None,  # use defaults
-        mps_right=None,  # use defaults
+        tasks_left=None,  # use defaults
+        tasks_right=None,  # use defaults
         ref_frame=ref_frame,
         bidirectional_mps=bidirectional_mps,
         fixedInitState=True,
@@ -200,11 +198,9 @@ if __name__ == "__main__":
     if setup_type == "idle":
         env, policy = create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits)
     elif setup_type == "pos":
-        env, policy = create_position_mps_setup(
-            physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits
-        )
+        env, policy = create_pos_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits)
     elif setup_type == "vel":
-        env, policy = create_velocity_mps_setup(
+        env, policy = create_vel_mps_setup(
             physicsEngine, graphFileName, dt, max_steps, ref_frame, bidirectional_mps, checkJointLimits
         )
     else:

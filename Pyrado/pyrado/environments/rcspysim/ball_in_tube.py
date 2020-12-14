@@ -203,10 +203,10 @@ class BallInTubeIKSim(BallInTubeSim, Serializable):
         )
 
 
-class BallInTubeIKActivationSim(BallInTubeSim, Serializable):
+class BallInTubePosIKActivationSim(BallInTubeSim, Serializable):
     """ Humanoid robot fiddling a ball out of a tube using two hooks and an position-level IK controller """
 
-    name: str = "bit-ika"
+    name: str = "bit-ika-pos"
 
     def __init__(self, ref_frame: str, continuous_rew_fcn: bool = True, **kwargs):
         """
@@ -260,8 +260,8 @@ class BallInTubePosDSSim(BallInTubeSim, Serializable):
     def __init__(
         self,
         ref_frame: str,
-        mps_left: [Sequence[dict], None],
-        mps_right: [Sequence[dict], None],
+        tasks_left: [Sequence[dict], None],
+        tasks_right: [Sequence[dict], None],
         continuous_rew_fcn: bool = True,
         **kwargs,
     ):
@@ -269,8 +269,8 @@ class BallInTubePosDSSim(BallInTubeSim, Serializable):
         Constructor
 
         :param ref_frame: reference frame for the MPs, e.g. 'world', or 'table'
-        :param mps_left: left arm's movement primitives holding the dynamical systems and the goal states
-        :param mps_right: right arm's movement primitives holding the dynamical systems and the goal states
+        :param tasks_left: left arm's movement primitives holding the dynamical systems and the goal states
+        :param tasks_right: right arm's movement primitives holding the dynamical systems and the goal states
         :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        fixedInitState: bool = False,
@@ -289,8 +289,8 @@ class BallInTubePosDSSim(BallInTubeSim, Serializable):
         Serializable._init(self, locals())
 
         # Fall back to some defaults of no MPs are defined (e.g. for testing)
-        if mps_left is None:
-            mps_left = [
+        if tasks_left is None:
+            tasks_left = [
                 # Effector position relative to slider
                 {
                     "function": "msd_nlin",
@@ -308,8 +308,8 @@ class BallInTubePosDSSim(BallInTubeSim, Serializable):
                     "goal": np.array([0.0, 0.0, 0.0]),
                 },  # [rad]
             ]
-        if mps_right is None:
-            mps_right = [
+        if tasks_right is None:
+            tasks_right = [
                 # Effector position relative to slider
                 {
                     "function": "msd_nlin",
@@ -334,8 +334,8 @@ class BallInTubePosDSSim(BallInTubeSim, Serializable):
             ref_frame=ref_frame,
             actionModelType="ds_activation",
             positionTasks=True,
-            tasksLeft=mps_left,
-            tasksRight=mps_right,
+            tasksLeft=tasks_left,
+            tasksRight=tasks_right,
             **kwargs,
         )
 
@@ -348,8 +348,8 @@ class BallInTubeVelDSSim(BallInTubeSim, Serializable):
     def __init__(
         self,
         ref_frame: str,
-        mps_left: [Sequence[dict], None],
-        mps_right: [Sequence[dict], None],
+        tasks_left: [Sequence[dict], None],
+        tasks_right: [Sequence[dict], None],
         continuous_rew_fcn: bool = True,
         **kwargs,
     ):
@@ -357,8 +357,8 @@ class BallInTubeVelDSSim(BallInTubeSim, Serializable):
         Constructor
 
         :param ref_frame: reference frame for the MPs, e.g. 'world', or 'table'
-        :param mps_left: left arm's movement primitives holding the dynamical systems and the goal states
-        :param mps_right: right arm's movement primitives holding the dynamical systems and the goal states
+        :param tasks_left: left arm's movement primitives holding the dynamical systems and the goal states
+        :param tasks_right: right arm's movement primitives holding the dynamical systems and the goal states
         :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used
         :param kwargs: keyword arguments which are available for all task-based `RcsSim`
                        fixedInitState: bool = False,
@@ -378,8 +378,8 @@ class BallInTubeVelDSSim(BallInTubeSim, Serializable):
 
         # Fall back to some defaults of no MPs are defined (e.g. for testing)
         dt = kwargs.get("dt", 0.01)  # 100 Hz is the default
-        if mps_left is None:
-            mps_left = [
+        if tasks_left is None:
+            tasks_left = [
                 # Effector Xd
                 {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([0.15])},  # [m/s]
                 # Effector Yd
@@ -393,8 +393,8 @@ class BallInTubeVelDSSim(BallInTubeSim, Serializable):
                 # Effector Cd
                 {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([15 / 180 * np.pi])},  # [rad/s]
             ]
-        if mps_right is None:
-            mps_right = [
+        if tasks_right is None:
+            tasks_right = [
                 # Effector Xd
                 {"function": "lin", "errorDynamics": 1.0, "goal": dt * np.array([0.15])},  # [m/s]
                 # Effector Yd
@@ -415,7 +415,7 @@ class BallInTubeVelDSSim(BallInTubeSim, Serializable):
             ref_frame=ref_frame,
             actionModelType="ds_activation",
             positionTasks=False,
-            tasksLeft=mps_left,
-            tasksRight=mps_right,
+            tasksLeft=tasks_left,
+            tasksRight=tasks_right,
             **kwargs,
         )

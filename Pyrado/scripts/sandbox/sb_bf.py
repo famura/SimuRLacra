@@ -57,11 +57,12 @@ def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, ch
         graphFileName=graphFileName,
         dt=dt,
         max_steps=max_steps,
-        mps_left=None,  # use defaults
-        mps_right=None,  # use defaults
+        tasks_left=None,  # use defaults
+        tasks_right=None,  # use defaults
         ref_frame=ref_frame,
         collisionConfig={"file": "collisionModel.xml"},
         checkJointLimits=checkJointLimits,
+        taskCombinationMethod="sum",
     )
 
     # Set up policy
@@ -70,7 +71,7 @@ def create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, ch
     return env, policy
 
 
-def create_ik_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
+def create_ika_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     # Set up environment
     env = BoxFlippingIKActivationSim(
         usePhysicsNode=True,
@@ -81,6 +82,7 @@ def create_ik_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, chec
         ref_frame=ref_frame,
         collisionConfig={"file": "collisionModel.xml"},
         checkJointLimits=checkJointLimits,
+        taskCombinationMethod="sum",
     )
 
     # Set up policy
@@ -94,7 +96,7 @@ def create_ik_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, chec
     return env, policy
 
 
-def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
+def create_pos_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     # Set up environment
     env = BoxFlippingPosDSSim(
         usePhysicsNode=True,
@@ -102,11 +104,12 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         graphFileName=graphFileName,
         dt=dt,
         max_steps=max_steps,
-        mps_left=None,  # use defaults
-        mps_right=None,  # use defaults
+        tasks_left=None,  # use defaults
+        tasks_right=None,  # use defaults
         ref_frame=ref_frame,
         collisionConfig={"file": "collisionModel.xml"},
         checkJointLimits=checkJointLimits,
+        taskCombinationMethod="sum",
         collisionAvoidanceIK=False,
         observeVelocities=True,
         observeCollisionCost=True,
@@ -114,7 +117,7 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         observeManipulabilityIndex=True,
         observeCurrentManipulability=True,
         observeDynamicalSystemDiscrepancy=True,
-        observeTaskSpaceDiscrepancy=False,
+        observeTaskSpaceDiscrepancy=True,
         observeDynamicalSystemGoalDistance=True,
     )
 
@@ -140,7 +143,7 @@ def create_position_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
     return env, policy
 
 
-def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
+def create_vel_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits):
     # Set up environment
     env = BoxFlippingVelDSSim(
         usePhysicsNode=True,
@@ -148,11 +151,12 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
         graphFileName=graphFileName,
         dt=dt,
         max_steps=max_steps,
-        mps_left=None,  # use defaults
-        mps_right=None,  # use defaults
+        tasks_left=None,  # use defaults
+        tasks_right=None,  # use defaults
         ref_frame=ref_frame,
         collisionConfig={"file": "collisionModel.xml"},
         checkJointLimits=checkJointLimits,
+        taskCombinationMethod="sum",
         collisionAvoidanceIK=False,
         observeVelocities=True,
         observeCollisionCost=True,
@@ -179,7 +183,7 @@ def create_velocity_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_f
 
 if __name__ == "__main__":
     # Choose setup
-    setup_type = "vel"  # idle, ik_activation, pos, or vel
+    setup_type = "vel"  # idle, ika, pos, or vel
     physicsEngine = "Bullet"  # Bullet or Vortex
     graphFileName = "gBoxFlipping_posCtrl.xml"  # gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml
     dt = 1 / 100.0
@@ -191,17 +195,13 @@ if __name__ == "__main__":
     if setup_type == "idle":
         env, policy = create_idle_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits)
     elif setup_type == "ik":
-        env, policy = create_ik_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits)
+        env, policy = create_ika_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits)
     elif setup_type == "pos":
-        env, policy = create_position_mps_setup(
-            physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits
-        )
+        env, policy = create_pos_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits)
     elif setup_type == "vel":
-        env, policy = create_velocity_mps_setup(
-            physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits
-        )
+        env, policy = create_vel_mps_setup(physicsEngine, graphFileName, dt, max_steps, ref_frame, checkJointLimits)
     else:
-        raise pyrado.ValueErr(given=setup_type, eq_constraint="'idle', 'pos', 'vel', or 'ik_activation'")
+        raise pyrado.ValueErr(given=setup_type, eq_constraint="'idle', 'pos', 'vel', or 'ika'")
 
     if randomize:
         dp_nom = env.get_nominal_domain_param()

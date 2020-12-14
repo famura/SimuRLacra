@@ -68,7 +68,7 @@ to.set_default_dtype(to.double)
 # Check if RcsPySim, Bullet, and Vortex are available
 try:
     import rcsenv
-    from pyrado.environments.rcspysim.ball_in_tube import BallInTubeIKActivationSim, BallInTubeVelDSSim
+    from pyrado.environments.rcspysim.ball_in_tube import BallInTubePosIKActivationSim, BallInTubeVelDSSim
     from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate2DSim, BallOnPlate5DSim
     from pyrado.environments.rcspysim.box_flipping import BoxFlippingVelDSSim, BoxFlippingIKActivationSim
     from pyrado.environments.rcspysim.box_lifting import BoxLiftingPosDSSim, BoxLiftingVelDSSim
@@ -203,7 +203,7 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_bullet
-    def default_p3l_ik_bt():
+    def default_p3l_ika_bt():
         return Planar3LinkIKActivationSim(
             physicsEngine="Bullet",
             dt=1 / 50.0,
@@ -223,7 +223,7 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_vortex
-    def default_p3l_ik_vx():
+    def default_p3l_ika_vx():
         return Planar3LinkIKActivationSim(
             physicsEngine="Vortex",
             dt=1 / 50.0,
@@ -289,7 +289,7 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_bullet
-    def default_pi_ik_5l_bt():
+    def default_pi_ika_5l_bt():
         return PlanarInsertIKActivationSim(
             physicsEngine="Bullet",
             graphFileName="gPlanarInsert5Link.xml",
@@ -310,7 +310,7 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_vortex
-    def default_pi_ik_6l_vx():
+    def default_pi_ika_6l_vx():
         return PlanarInsertIKActivationSim(
             physicsEngine="Vortex",
             graphFileName="gPlanarInsert6Link.xml",
@@ -373,8 +373,8 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_bullet
-    def default_bit_ik_bt():
-        return BallInTubeIKActivationSim(
+    def default_bit_ika_pos_bt():
+        return BallInTubePosIKActivationSim(
             physicsEngine="Bullet",
             graphFileName="gBallInTube_trqCtrl.xml",
             dt=1 / 100,
@@ -395,7 +395,7 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_bullet
-    def default_bit_vel_bt():
+    def default_bit_ds_vel_bt():
         return BallInTubeVelDSSim(
             usePhysicsNode=True,
             physicsEngine="Bullet",
@@ -403,8 +403,8 @@ class DefaultEnvs:
             dt=1 / 100.0,
             max_steps=2000,
             fixed_init_state=True,
-            mps_left=None,  # use defaults
-            mps_right=None,  # use defaults
+            tasks_left=None,  # use defaults
+            tasks_right=None,  # use defaults
             ref_frame="table",
             taskCombinationMethod="sum",
             checkJointLimits=True,
@@ -422,14 +422,14 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_bullet
-    def default_bl_pos_bt():
+    def default_bl_ds_pos_bt():
         return BoxLiftingPosDSSim(
             physicsEngine="Bullet",
             graphFileName="gBoxLifting_posCtrl.xml",
             dt=0.01,
             max_steps=1500,
-            mps_left=None,
-            mps_right=None,
+            tasks_left=None,
+            tasks_right=None,
             ref_frame="basket",
             collisionConfig={"file": "collisionModel.xml"},
             taskCombinationMethod="sum",
@@ -447,14 +447,14 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_bullet
-    def default_bl_vel_bt():
+    def default_bl_ds_vel_bt():
         return BoxLiftingVelDSSim(
             physicsEngine="Bullet",
             graphFileName="gBoxLifting_trqCtrl.xml",
             dt=0.01,
             max_steps=1500,
-            mps_left=None,
-            mps_right=None,
+            tasks_left=None,
+            tasks_right=None,
             ref_frame="basket",
             collisionConfig={"file": "collisionModel.xml"},
             taskCombinationMethod="sum",
@@ -472,14 +472,14 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_vortex
-    def default_bl_pos_vx():
+    def default_bl_ds_pos_vx():
         return BoxLiftingPosDSSim(
             physicsEngine="Vortex",
             graphFileName="gBoxLifting_posCtrl.xml",
             dt=0.01,
             max_steps=1500,
-            mps_left=None,
-            mps_right=None,
+            tasks_left=None,
+            tasks_right=None,
             ref_frame="basket",
             collisionConfig={"file": "collisionModel.xml"},
             taskCombinationMethod="sum",
@@ -497,7 +497,7 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_bullet
-    def default_bs_pos_bt():
+    def default_bs_ds_pos_bt():
         return BoxShelvingPosDSSim(
             physicsEngine="Bullet",
             graphFileName="gBoxShelving_posCtrl.xml",  # gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml
@@ -505,8 +505,8 @@ class DefaultEnvs:
             max_steps=2000,
             fix_init_state=True,
             ref_frame="upperGoal",
-            mps_left=None,
-            mps_right=None,
+            tasks_left=None,
+            tasks_right=None,
             collisionConfig={"file": "collisionModel.xml"},
             taskCombinationMethod="sum",
             checkJointLimits=True,
@@ -523,7 +523,7 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_vortex
-    def default_bs_pos_vx():
+    def default_bs_ds_pos_vx():
         return BoxShelvingPosDSSim(
             physicsEngine="Vortex",
             graphFileName="gBoxShelving_posCtrl.xml",  # gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml
@@ -531,8 +531,8 @@ class DefaultEnvs:
             max_steps=2000,
             fix_init_state=True,
             ref_frame="upperGoal",
-            mps_left=None,
-            mps_right=None,
+            tasks_left=None,
+            tasks_right=None,
             collisionConfig={"file": "collisionModel.xml"},
             taskCombinationMethod="sum",
             checkJointLimits=True,
@@ -549,7 +549,7 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_bullet
-    def default_bf_vel_bt():
+    def default_bf_ds_vel_bt():
         return BoxFlippingVelDSSim(
             physicsEngine="Bullet",
             graphFileName="gBoxFlipping_posCtrl.xml",  # gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml
@@ -557,8 +557,8 @@ class DefaultEnvs:
             max_steps=2000,
             fix_init_state=True,
             ref_frame="table",
-            mps_left=None,
-            mps_right=None,
+            tasks_left=None,
+            tasks_right=None,
             collisionConfig={"file": "collisionModel.xml"},
             taskCombinationMethod="sum",
             checkJointLimits=True,
@@ -575,7 +575,7 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_vortex
-    def default_bf_ik_bt():
+    def default_bf_ika_bt():
         return BoxFlippingIKActivationSim(
             physicsEngine="Bullet",
             graphFileName="gBoxFlipping_posCtrl.xml",  # gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml
@@ -583,8 +583,8 @@ class DefaultEnvs:
             max_steps=2000,
             fix_init_state=True,
             ref_frame="table",
-            mps_left=None,
-            mps_right=None,
+            tasks_left=None,
+            tasks_right=None,
             collisionConfig={"file": "collisionModel.xml"},
             taskCombinationMethod="sum",
             checkJointLimits=True,

@@ -29,10 +29,10 @@
 -->
 
 <!-- Uses a KuKa IIWA LBR to hold the plate -->
-<Graph xmlns:xi="http://www.w3.org/2003/XInclude" name="BOPBot">
+<Graph xmlns:xi="http://www.w3.org/2003/XInclude" name="BallOnPlate">
 
   <Body name="GroundPlane" physics="kinematic">
-    <Shape type="BOX" graphics="true" physics="true" extents="5.0 5.0 0.01" transform="0 0 -0.005 0 0 0" color="PEWTER" textureFile="../textures/fMRT_brown_squares_2x2.png"/>
+    <Shape type="BOX" graphics="true" physics="true" extents="6.0 6.0 0.02" transform="0 0 -0.01 0 0 0" color="PEWTER" textureFile="textures/fMRT_brown_squares_2x2.png"/>
     <!-- <Shape type="FRAME" graphics="true" scale="0.6"/> -->
   </Body>
 
@@ -51,7 +51,7 @@
     <Shape type="CYLINDER" radius="0.029" length="0.055" transform="0 0 -0.1275 0 0 0" graphics="true" distance="false" color="GRAY"/>
     <Shape type="CYLINDER" radius="0.045" length="0.09" transform="0 0 -0.065 0 0 0" graphics="true" distance="false" color="GRAY"/>
     <!-- Plate shape -->
-    <Shape type="BOX" extents="0.5 0.5 0.02" transform="0 0 -0.01 0 0 0" color="LIGHTGRAY" material="plate_mat" textureFile="../textures/fMRT_pattern_circular.png" physics="true" graphics="true"/>
+    <Shape type="BOX" extents="0.5 0.5 0.02" transform="0 0 -0.01 0 0 0" color="LIGHTGRAY" material="plate_mat" textureFile="textures/fMRT_pattern_circular.png" physics="true" graphics="true"/>
     <!-- <Shape type="MESH" physics="true" graphics="true" meshFile="plate_wave.obj" scale="0.25" transform="-0.5 0.2 0.05 90 0 0" color="LIGHTGRAY"/>-->
     <Shape type="FRAME" graphics="true" scale="0.5"/>
   </Body>
@@ -67,7 +67,7 @@
     <Shape type="FRAME" graphics="true" scale="0.3"/>
   </Body>
 
-  <model_state model="BOPBot" time_stamp="0">
+  <model_state model="BallOnPlate" time_stamp="0">
     <joint_state joint="lbr_joint_1_L" position="103.7053102110757550"/>
     <joint_state joint="lbr_joint_2_L" position="45.5406941273107009"/>
     <joint_state joint="lbr_joint_3_L" position="0.000000274"/>

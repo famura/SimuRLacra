@@ -109,7 +109,7 @@ protected:
         }
     
         // Get the method how to combine the movement primitives / tasks given their activation
-        std::string taskCombinationMethod = "mean";
+        std::string taskCombinationMethod = "unspecified";
         properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
         TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(taskCombinationMethod);
     
@@ -217,7 +217,7 @@ protected:
             
                 // Set the tasks' desired states
                 std::vector<PropertySource*> taskSpec = properties->getChildList("taskSpecIK");
-                amIK->setXdesFromTaskSpec(taskSpec, tasks);
+                amIK->setXdesFromTaskSpec(taskSpec);
             
                 // Incorporate collision costs into IK
                 if (properties->getPropertyBool("collisionAvoidanceIK", true)) {
