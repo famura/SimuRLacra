@@ -8,19 +8,9 @@ from sbi.inference.base import infer
 from sbi.inference import SNPE, SNPE_B, SNPE_C, SNLE, prepare_for_sbi, simulate_for_sbi
 
 import pyrado
-from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
-from pyrado.policies.special.dummy import IdlePolicy
-from pyrado.sampling.rollout import rollout
 from scripts.lfi.plot_trajectories import plot_trajectories
 from scripts.lfi.train_lfi import *
-
-
-def fancy_simulator(mu):
-    # In the end, the output of this could be a distance measure over trajectories instead of just the final state
-    ro = rollout(env, policy, eval=True, reset_kwargs=dict(
-        domain_param=dict(k=mu[0], d=mu[1])
-    ))
-    return to.tensor(ro.observations).to(dtype=to.float32).view(-1, 1).squeeze()
+from scripts.lfi.simulators import OscillatorTrajectories
 
 
 if __name__ == '__main__':
@@ -30,9 +20,7 @@ if __name__ == '__main__':
     n_observations = 5
 
     # define simulator
-    env = OneMassOscillatorSim(dt=0.005, max_steps=200)
-    policy = IdlePolicy(env.spec)
-    simulator = fancy_simulator
+    simulator = OscillatorTrajectories()
     prior = utils.BoxUniform(
         low=to.tensor([25., 0.05]),
         high=to.tensor([35., 0.15])
@@ -65,13 +53,12 @@ if __name__ == '__main__':
     #                                num_transforms=2, embedding_net=embedding_net)
     # new_inference = SNPE(prior, density_estimator=new_model)
     # new_posterior = train_lfi(simulator, inference, prior, x_o, num_sim=1, num_rounds=1)
+    # load_nn(new_posterior.net, "sbi_logs")
 
     # TODO: come up with smarter way to load to initialize the posterior
     # new_posterior = DirectPosterior(method_family="snpe",
     #                                 neural_net=model(true_params.unsqueeze(0), x_o.unsqueeze(0)),
     #                                 prior=prior,
     #                                 x_shape=x_o.shape)
-
-    # load_nn(new_posterior.net, "sbi_logs")
 
     # plot useful statistics

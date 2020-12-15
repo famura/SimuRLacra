@@ -13,7 +13,7 @@ def train_lfi(simulator,
               num_rounds: int = 5,
               num_sim: int = 1000,
               summary: SummaryWriter = None
-              ) -> DirectPosterior:
+              ):
     proposal_prior = prior
     for _ in range(num_rounds):
         theta, x = simulate_for_sbi(simulator, proposal_prior, num_simulations=num_sim, simulation_batch_size=1)
