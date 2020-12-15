@@ -316,9 +316,18 @@ class BernoulliDomainParam(DomainParam):
 
 
 class SelfPacedLearnerParameter(DomainParam):
-    def __init__(self, name: str, target_mean: to.Tensor, target_cov_chol_flat: to.Tensor, context_mean: to.Tensor, context_cov_chol_flat: to.Tensor):
-        assert target_mean.shape == context_mean.shape, 'Target and context mean should have same shape!'
-        assert target_cov_chol_flat.shape == context_cov_chol_flat.shape, 'Target and context cov chols should have same shape!'
+    def __init__(
+        self,
+        name: str,
+        target_mean: to.Tensor,
+        target_cov_chol_flat: to.Tensor,
+        context_mean: to.Tensor,
+        context_cov_chol_flat: to.Tensor,
+    ):
+        assert target_mean.shape == context_mean.shape, "Target and context mean should have same shape!"
+        assert (
+            target_cov_chol_flat.shape == context_cov_chol_flat.shape
+        ), "Target and context cov chols should have same shape!"
 
         super().__init__(name=name, mean=context_mean)
 
@@ -336,7 +345,7 @@ class SelfPacedLearnerParameter(DomainParam):
 
     @staticmethod
     def get_field_names() -> Sequence[str]:
-        return ['target_mean', 'target_cov_chol_flat', 'context_mean', 'context_cov_chol_flat']
+        return ["target_mean", "target_cov_chol_flat", "context_mean", "context_cov_chol_flat"]
 
     @property
     def target_distribution(self):
@@ -359,19 +368,23 @@ class SelfPacedLearnerParameter(DomainParam):
         super().adapt(domain_distr_param, domain_distr_param_value)
 
         # Re-create the distributions, otherwise the changes will have no effect
-        if domain_distr_param in ['target_mean', 'target_cov_chol_flat']:
+        if domain_distr_param in ["target_mean", "target_cov_chol_flat"]:
             try:
                 self._target_distribution = MultivariateNormal(self.target_mean, self.target_cov, validate_args=True)
             except ValueError as err:
-                print_cbt(f'Inputs that lead to the ValueError from PyTorch Distributions:\n'
-                          f'target_distribution; domain_distr_param = {domain_distr_param}\nloc = {self.target_mean}\ncov = {self.target_cov}')
+                print_cbt(
+                    f"Inputs that lead to the ValueError from PyTorch Distributions:\n"
+                    f"target_distribution; domain_distr_param = {domain_distr_param}\nloc = {self.target_mean}\ncov = {self.target_cov}"
+                )
                 raise err
-        if domain_distr_param in ['context_mean', 'context_cov_chol_flat']:
+        if domain_distr_param in ["context_mean", "context_cov_chol_flat"]:
             try:
                 self._context_distribution = MultivariateNormal(self.context_mean, self.context_cov, validate_args=True)
             except ValueError as err:
-                print_cbt(f'Inputs that lead to the ValueError from PyTorch Distributions:\n'
-                          f'init_distribution; domain_distr_param = {domain_distr_param}\nloc = {self.context_mean}\ncov = {self.context_cov}')
+                print_cbt(
+                    f"Inputs that lead to the ValueError from PyTorch Distributions:\n"
+                    f"init_distribution; domain_distr_param = {domain_distr_param}\nloc = {self.context_mean}\ncov = {self.context_cov}"
+                )
                 raise err
 
     def sample(self, num_samples: int = 1) -> list:

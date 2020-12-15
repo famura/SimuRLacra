@@ -44,9 +44,11 @@ class MultivariateNormalWrapper:
         self._cov_chol_flat = cov_chol_flat
 
     @staticmethod
-    def from_stacked(dim: int, stacked: np.ndarray) -> 'MultivariateNormalWrapper':
-        assert len(stacked.shape) == 1, 'Stacked has invalid shape! Must be 1-dimensional.'
-        assert stacked.shape[0] == 2 * dim, 'Stacked has invalid size! Must be 2*dim (one times for mean, a second time for covariance cholesky diagonal).'
+    def from_stacked(dim: int, stacked: np.ndarray) -> "MultivariateNormalWrapper":
+        assert len(stacked.shape) == 1, "Stacked has invalid shape! Must be 1-dimensional."
+        assert (
+            stacked.shape[0] == 2 * dim
+        ), "Stacked has invalid size! Must be 2*dim (one times for mean, a second time for covariance cholesky diagonal)."
         mean = stacked[:dim]
         cov_chol_flat = stacked[dim:]
         return MultivariateNormalWrapper(to.tensor(mean), to.tensor(cov_chol_flat))
@@ -57,7 +59,7 @@ class MultivariateNormalWrapper:
 
     @mean.setter
     def mean(self, mean: to.Tensor):
-        assert mean.shape == self.mean.shape, 'New mean shape differs from current mean shape!'
+        assert mean.shape == self.mean.shape, "New mean shape differs from current mean shape!"
         self._mean = mean
         self._update_distribution()
 
@@ -71,7 +73,9 @@ class MultivariateNormalWrapper:
 
     @cov_chol_flat.setter
     def cov_chol_flat(self, cov_chol_flat: to.Tensor):
-        assert cov_chol_flat.shape == self.cov_chol_flat.shape, 'New cov chol flat shape differs from current mean shape!'
+        assert (
+            cov_chol_flat.shape == self.cov_chol_flat.shape
+        ), "New cov chol flat shape differs from current mean shape!"
         self._cov_chol_flat = cov_chol_flat
         self._update_distribution()
 
@@ -92,9 +96,16 @@ class SPRL(Algorithm):
     This algorithm wraps another algorithm. The main purpose is to apply self-paced RL (Klink et al, 2020).
     """
 
-    name: str = 'sprl'
+    name: str = "sprl"
 
-    def __init__(self, env: DomainRandWrapper, subroutine: Algorithm, kl_constraints_ub, alpha_function_offset, alpha_function_percentage):
+    def __init__(
+        self,
+        env: DomainRandWrapper,
+        subroutine: Algorithm,
+        kl_constraints_ub,
+        alpha_function_offset,
+        alpha_function_percentage,
+    ):
         """
         Constructor
 
@@ -112,7 +123,7 @@ class SPRL(Algorithm):
         super().__init__(subroutine.save_dir, subroutine.max_iter, subroutine.policy, subroutine.logger)
 
         self._subroutine = subroutine
-        self._subroutine.save_name = 'sub_algorithm'
+        self._subroutine.save_name = "sub_algorithm"
 
         self._env = env
 
@@ -120,8 +131,10 @@ class SPRL(Algorithm):
         self._alpha_function_offset = alpha_function_offset
         self._alpha_function_percentage = alpha_function_percentage
 
-        spl_parameters = [param for param in env.randomizer.domain_params if isinstance(param, SelfPacedLearnerParameter)]
-        assert len(spl_parameters) == 1, 'Only exactly one SPL parameter is allowed!'
+        spl_parameters = [
+            param for param in env.randomizer.domain_params if isinstance(param, SelfPacedLearnerParameter)
+        ]
+        assert len(spl_parameters) == 1, "Only exactly one SPL parameter is allowed!"
         self._parameter = spl_parameters[0]
 
         self._seed = None
@@ -135,10 +148,7 @@ class SPRL(Algorithm):
     def sample_count(self) -> int:
         return self._subroutine.sample_count
 
-    def train(self,
-              snapshot_mode: str = 'latest',
-              seed: int = None,
-              meta_info: dict = None):
+    def train(self, snapshot_mode: str = "latest", seed: int = None, meta_info: dict = None):
         self._seed = seed
         super().train(snapshot_mode, seed, meta_info)
 
@@ -148,45 +158,73 @@ class SPRL(Algorithm):
         self._subroutine.train(snapshot_mode, self._seed, meta_info)
         # Update distribution.
 
-        previous_distribution = MultivariateNormalWrapper(self._parameter.context_mean, self._parameter.context_cov_chol_flat)
+        previous_distribution = MultivariateNormalWrapper(
+            self._parameter.context_mean, self._parameter.context_cov_chol_flat
+        )
         context_values = to.stack(self._parameter._sample_buffer)
         old_context_log_prob = self._parameter.context_distribution.log_prob(context_values)
-        kl_divergence = to.distributions.kl_divergence(self._parameter.context_distribution, self._parameter.target_distribution)
+        kl_divergence = to.distributions.kl_divergence(
+            self._parameter.context_distribution, self._parameter.target_distribution
+        )
 
         def kl_constraint_fn(x):
             distribution = MultivariateNormalWrapper.from_stacked(dim, x)
-            kl_divergence = to.distributions.kl_divergence(distribution.distribution, self._parameter.context_distribution)
+            kl_divergence = to.distributions.kl_divergence(
+                distribution.distribution, self._parameter.context_distribution
+            )
             return kl_divergence
 
         def kl_constraint_fn_prime(x):
             distribution = MultivariateNormalWrapper.from_stacked(dim, x)
-            kl_divergence = to.distributions.kl_divergence(distribution.distribution, self._parameter.context_distribution)
+            kl_divergence = to.distributions.kl_divergence(
+                distribution.distribution, self._parameter.context_distribution
+            )
             mean_grad, cov_chol_grad = to.autograd.grad(kl_divergence, distribution.parameters())
             return np.concantenate([mean_grad.detach().numpy(), cov_chol_grad.detach().numpy()])
 
         def objective(x):
             distribution = MultivariateNormalWrapper.from_stacked(dim, x)
             alphas = self._calculate_alpha(self.curr_iter, average_reward, kl_divergence)
-            val = self._compute_context_loss(distribution.distribution, context_values, old_context_log_prob, values, alphas)
+            val = self._compute_context_loss(
+                distribution.distribution, context_values, old_context_log_prob, values, alphas
+            )
             mean_grad, cov_chol_flat_grad = to.autograd.grad(val, distribution.parameters())
 
-            return -val.detach().numpy(), -np.concatenate([mean_grad.detach.numpy(), cov_chol_flat_grad.detach.numpy()]).astype(np.float64)
+            return (
+                -val.detach().numpy(),
+                -np.concatenate([mean_grad.detach.numpy(), cov_chol_flat_grad.detach.numpy()]).astype(np.float64),
+            )
 
-        constraints = [NonlinearConstraint(fun=kl_constraint_fn, lb=-np.inf, ub=self._kl_constraints_ub, jac=kl_constraint_fn_prime, keep_feasible=True)]
+        constraints = [
+            NonlinearConstraint(
+                fun=kl_constraint_fn,
+                lb=-np.inf,
+                ub=self._kl_constraints_ub,
+                jac=kl_constraint_fn_prime,
+                keep_feasible=True,
+            )
+        ]
 
         # noinspection PyTypeChecker
-        result = minimize(objective, previous_distribution.get_stacked(), method='trust-constr', jac=True, constraints=constraints, options={'gtol': 1e-4, 'xtol': 1e-6})
+        result = minimize(
+            objective,
+            previous_distribution.get_stacked(),
+            method="trust-constr",
+            jac=True,
+            constraints=constraints,
+            options={"gtol": 1e-4, "xtol": 1e-6},
+        )
 
         if result.success:
-            self._parameter.adapt('context_mean', result[0])
-            self._parameter.adapt('context_cov_chol_flat', result[1])
+            self._parameter.adapt("context_mean", result[0])
+            self._parameter.adapt("context_cov_chol_flat", result[1])
         else:
             old_f = objective(previous_distribution.get_stacked())[0]
             if kl_constraint_fn(result.x) <= self._kl_constraints_ub and result.fun < old_f:
-                self._parameter.adapt('context_mean', result[0])
-                self._parameter.adapt('context_cov_chol_flat', result[1])
+                self._parameter.adapt("context_mean", result[0])
+                self._parameter.adapt("context_cov_chol_flat", result[1])
             else:
-                raise pyrado.BaseErr('Sad… :/')
+                raise pyrado.BaseErr("Sad… :/")
 
         # Reset environment.
         self._subroutine.reset()
