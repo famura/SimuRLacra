@@ -34,7 +34,9 @@
 #include <Rcs_macros.h>
 #include <Rcs_basicMath.h>
 
+#include <limits>
 #include <sstream>
+//#include <Eigen/src/Core/arch/Default/Half.h>
 
 namespace Rcs
 {
@@ -61,9 +63,15 @@ AMIKControllerActivation::~AMIKControllerActivation()
     delete activation;
 }
 
+void AMIKControllerActivation::addAlwaysActiveTask(Task* task)
+{
+    dimAlwaysActiveTasks += task->getDim();
+    this->addTask(task);
+}
+
 unsigned int AMIKControllerActivation::getDim() const
 {
-    return (unsigned int) getController()->getNumberOfTasks();
+    return (unsigned int) getController()->getNumberOfTasks() - dimAlwaysActiveTasks;
 }
 
 void AMIKControllerActivation::getMinMax(double* min, double* max) const
@@ -97,28 +105,29 @@ void AMIKControllerActivation::computeCommand(
     RCHECK(action->n == 1);  // actions are column vectors
     
     // Copy the ExperimentConfig graph which has been updated by the physics simulation into the desired graph
-    RcsGraph_copyRigidBodyDofs(desiredGraph->q, graph, NULL);
+    RcsGraph_copyRigidBodyDofs(desiredGraph->q, graph, nullptr);
     
     // Combine the individual activations of every controller task
-    activation = MatNd_clone(action);
+    MatNd* acti;
+    acti = MatNd_clone(action);
     switch (taskCombinationMethod) {
         case TaskCombinationMethod::Sum:
             break; // no weighting
         
         case TaskCombinationMethod::Mean: {
-            MatNd_constMulSelf(activation, 1./MatNd_sumEle(activation));
+            MatNd_constMulSelf(acti, 1./MatNd_sumEle(acti));
             break;
         }
         
         case TaskCombinationMethod::SoftMax: {
-            MatNd_softMax(activation, action, action->m);  // action->m is a neat heuristic for beta
+            MatNd_softMax(acti, action, action->m);  // action->m is a neat heuristic for beta
             break;
         }
         
         case TaskCombinationMethod::Product: {
             for (unsigned int i; i < action->m; i++) {
                 // Create temp matrix
-                MatNd* otherActions = NULL; // other actions are all actions without the current
+                MatNd* otherActions = nullptr; // other actions are all actions without the current
                 MatNd_clone2(otherActions, action);
                 MatNd_deleteRow(otherActions, i);
                 
@@ -137,7 +146,7 @@ void AMIKControllerActivation::computeCommand(
                     std::cout << "prod " << prod << std::endl;
                 }
     
-                MatNd_set(activation, i, 0, action->ele[i]*prod);
+                MatNd_set(acti, i, 0, action->ele[i]*prod);
             }
     
             break;
@@ -145,12 +154,19 @@ void AMIKControllerActivation::computeCommand(
     }
     
     // Stabilize actions. If an action is exactly zero, computeDX will discard that task, leading to a shape error.
-    if (MatNd_minEle(activation) < 1e-6) {
-        MatNd_clipEleSelf(activation, 1e-6, 1e+6);
+    if (MatNd_minEle(acti) < 1e-6) {
+        MatNd_clipEleSelf(acti, 1e-6, std::numeric_limits<double>::infinity());
         REXEC(5) {
-            std::cout << "Clipped the activations to [1e-6, 1e+6]" << std::endl;
+            std::cout << "Clipped the activations to [1e-6, inf[" << std::endl;
         }
     }
+    
+    // Fill the first rows with the variable activations and the remaining rows with ones for the always active tasks
+    MatNd_copyRows(activation, 0, acti, 0, acti->m);
+    for (unsigned int i = acti->m; i < activation->m; i++ ){
+        activation->ele[i] = 1.;
+    }
+    delete acti;
     
     // Compute the differences in task space and weight them
     getController()->computeDX(dx_des, x_des, activation);
@@ -191,7 +207,7 @@ TaskCombinationMethod AMIKControllerActivation::checkTaskCombinationMethod(std::
     }
     else {
         std::ostringstream os;
-        os << "Unsupported task combination method: " << tcmName;
+        os << "Unsupported task combination method: " << tcmName << "! Supported methods: sum, mean, softmax, product.";
         throw std::invalid_argument(os.str());
     }
     return tcm;
@@ -233,19 +249,19 @@ void AMIKControllerActivation::setXdes(const MatNd* x_des)
     MatNd_copy(this->x_des, x_des);
 }
 
-void AMIKControllerActivation::setXdesFromTaskSpec(
-    std::vector<PropertySource*>& taskSpec, std::vector<Task*>& tasks)
+void AMIKControllerActivation::setXdesFromTaskSpec(std::vector<PropertySource*>& taskSpec)
 {
     MatNd* x_des = MatNd_create(1, 1); // dummy row necessary for MatNd_appendRows
-    if (taskSpec.size() != tasks.size()) {
+    
+    if (taskSpec.size() != getController()->getNumberOfTasks()) {
         std::ostringstream os;
         os << "Received " << taskSpec.size() << " elements in taskSpec, but there are "
-           << tasks.size() << " Rcs controller tasks!";
+           << getController()->getNumberOfTasks() << " Rcs controller tasks!";
         throw std::runtime_error(os.str());
     }
     
     for (PropertySource* ts : taskSpec) {
-        MatNd* x_des_temp = NULL;
+        MatNd* x_des_temp = nullptr;
         if (!ts->getProperty(x_des_temp, "x_des")) {
             throw std::invalid_argument("Field x_des is missing for at least one task specification!");
         }

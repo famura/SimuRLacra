@@ -73,7 +73,7 @@ RUN conda create -n pyrado python=3.7 blas cmake lapack libgcc-ng mkl patchelf p
 
 SHELL ["conda", "run", "-n", "pyrado", "/bin/bash", "-c"]
 
-RUN pip install argparse box2d colorama coverage cython glfw gym joblib prettyprinter matplotlib numpy optuna pandas pycairo pytest pytest-cov pytest-xdist pyyaml scipy seaborn sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tensorboard tqdm vpython git+https://github.com/Xfel/init-args-serializer.git@master
+RUN pip install argparse black box2d colorama coverage cython glfw gym joblib prettyprinter matplotlib numpy optuna pandas pycairo pytest pytest-cov pytest-xdist pyyaml scipy seaborn sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tensorboard tqdm vpython git+https://github.com/Xfel/init-args-serializer.git@master
 
 # Add env variables
 ENV PATH /opt/conda/envs/pyrado/bin:$PATH

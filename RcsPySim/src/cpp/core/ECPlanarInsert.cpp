@@ -90,7 +90,7 @@ protected:
         
         if (actionModelType == "ik_activation") {
             // Get the method how to combine the movement primitives / tasks given their activation
-            std::string taskCombinationMethod = "mean";
+            std::string taskCombinationMethod = "unspecified";
             properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
             TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(taskCombinationMethod);
             
@@ -98,7 +98,7 @@ protected:
             auto amIK = new AMIKControllerActivation(graph, tcm);
             std::vector<Task*> tasks;
             
-            // Check if the tasks are defined on position or task level. Adapt their parameters if desired.
+            // Check if the tasks are defined on position or velocity level. Adapt their parameters if desired.
             if (properties->getPropertyBool("positionTasks", false)) {
                 throw std::invalid_argument("Position tasks based are not implemented for PlanarInsert!");
             }
@@ -115,7 +115,7 @@ protected:
     
             // Set the tasks' desired states
             std::vector<PropertySource*> taskSpec = properties->getChildList("taskSpecIK");
-            amIK->setXdesFromTaskSpec(taskSpec, tasks);
+            amIK->setXdesFromTaskSpec(taskSpec);
     
             // Incorporate collision costs into IK
             if (properties->getPropertyBool("collisionAvoidanceIK", true)) {
@@ -165,7 +165,7 @@ protected:
             }
             
             // Get the method how to combine the movement primitives / tasks given their activation
-            std::string taskCombinationMethod = "mean";
+            std::string taskCombinationMethod = "unspecified";
             properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
             TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(taskCombinationMethod);
             

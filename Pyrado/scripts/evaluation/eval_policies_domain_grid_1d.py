@@ -51,12 +51,12 @@ from pyrado.utils.experiments import load_experiment, wrap_like_other_env
 from pyrado.utils.input_output import print_cbt
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
     if args.max_steps == pyrado.inf:
         args.max_steps = 2000
-        print_cbt(f'Set maximum number of time steps to {args.max_steps}', 'y')
+        print_cbt(f"Set maximum number of time steps to {args.max_steps}", "y")
 
     # Create one-dim evaluation grid
     param_spec = dict()
@@ -89,13 +89,13 @@ if __name__ == '__main__':
 
         # Get the experiments' directories to load from
         prefixes = [
-            osp.join(pyrado.EXP_DIR, 'ENV_NAME', 'ALGO_NAME'),
+            osp.join(pyrado.EXP_DIR, "ENV_NAME", "ALGO_NAME"),
         ]
         ex_names = [
-            '',
+            "",
         ]
         ex_labels = [
-            '',
+            "",
         ]
 
     elif args.env_name in [QCartPoleStabSim.name, QCartPoleSwingUpSim.name]:
@@ -106,7 +106,7 @@ if __name__ == '__main__':
             env = QCartPoleStabSim(dt=args.dt, max_steps=args.max_steps)
 
         # param_spec['g'] = np.linspace(9.8*10.7, 9.81*1.3, num=11 endpoint=True)
-        param_spec['m_cart'] = np.linspace(0.38*0.7, 0.38*1.3, num=11, endpoint=True)
+        param_spec["m_cart"] = np.linspace(0.38 * 0.7, 0.38 * 1.3, num=11, endpoint=True)
         # param_spec['l_rail'] = np.linspace(0.841*0.7, 0.841*1.3, num=11, endpoint=True)
         # param_spec['eta_m'] = np.linspace(0.9*0.7, 0.9*1.3, num=11, endpoint=True)
         # param_spec['eta_g'] = np.linspace(0.9*0.7, 0.9*1.3, num=11, endpoint=True)
@@ -122,13 +122,13 @@ if __name__ == '__main__':
 
         # Get the experiments' directories to load from
         prefixes = [
-            osp.join(pyrado.EXP_DIR, 'ENV_NAME', 'ALGO_NAME'),
+            osp.join(pyrado.EXP_DIR, "ENV_NAME", "ALGO_NAME"),
         ]
         ex_names = [
-            '',
+            "",
         ]
         ex_labels = [
-            '',
+            "",
         ]
 
     elif args.env_name == QQubeSwingUpSim.name:
@@ -146,18 +146,21 @@ if __name__ == '__main__':
 
         # Get the experiments' directories to load from
         prefixes = [
-            osp.join(pyrado.EXP_DIR, 'ENV_NAME', 'ALGO_NAME'),
+            osp.join(pyrado.EXP_DIR, "ENV_NAME", "ALGO_NAME"),
         ]
         ex_names = [
-            '',
+            "",
         ]
         ex_labels = [
-            '',
+            "",
         ]
 
     else:
-        raise pyrado.ValueErr(given=args.env_name, eq_constraint=f'{QBallBalancerSim.name}, {QCartPoleStabSim.name},'
-                                                                 f'{QCartPoleSwingUpSim.name}, or {QQubeSwingUpSim.name}')
+        raise pyrado.ValueErr(
+            given=args.env_name,
+            eq_constraint=f"{QBallBalancerSim.name}, {QCartPoleStabSim.name},"
+            f"{QCartPoleSwingUpSim.name}, or {QQubeSwingUpSim.name}",
+        )
 
         # Always add an action delay wrapper (with 0 delay by default)
     if typed_env(env, ActDelayWrapper) is None:
@@ -165,12 +168,14 @@ if __name__ == '__main__':
         # param_spec['act_delay'] = np.linspace(0, 60, num=21, endpoint=True, dtype=int)
 
     if not len(param_spec.keys()) == 1:
-        raise pyrado.ValueErr(msg='Do not vary more than one domain parameter for this script! (Check action delay.)')
-    varied_param_key = ''.join(param_spec.keys())  # to get a str
+        raise pyrado.ValueErr(msg="Do not vary more than one domain parameter for this script! (Check action delay.)")
+    varied_param_key = "".join(param_spec.keys())  # to get a str
 
     if not check_all_lengths_equal([prefixes, ex_names, ex_labels]):
-        raise pyrado.ShapeErr(msg=f'The lengths of prefixes, ex_names, and ex_labels must be equal, '
-                                  f'but they are {len(prefixes)}, {len(ex_names)}, and {len(ex_labels)}!')
+        raise pyrado.ShapeErr(
+            msg=f"The lengths of prefixes, ex_names, and ex_labels must be equal, "
+            f"but they are {len(prefixes)}, {len(ex_names)}, and {len(ex_labels)}!"
+        )
 
     # Loading the policies
     ex_dirs = [osp.join(p, e) for p, e in zip(prefixes, ex_names)]
@@ -188,7 +193,7 @@ if __name__ == '__main__':
     init_state = None
 
     # Crate empty data frame
-    df = pd.DataFrame(columns=['policy', 'ret', 'len', varied_param_key])
+    df = pd.DataFrame(columns=["policy", "ret", "len", varied_param_key])
 
     # Evaluate all policies
     for i, (env_sim, policy) in enumerate(zip(env_sim_list, policy_list)):
@@ -198,9 +203,9 @@ if __name__ == '__main__':
         # Seed the sampler
         if args.seed is not None:
             pool.set_seed(args.seed)
-            print_cbt(f"Set the random number generators' seed to {args.seed}.", 'w')
+            print_cbt(f"Set the random number generators' seed to {args.seed}.", "w")
         else:
-            print_cbt('No seed was set', 'y')
+            print_cbt("No seed was set", "y")
 
         # Add the same wrappers as during training
         env = wrap_like_other_env(env, env_sim)
@@ -211,33 +216,40 @@ if __name__ == '__main__':
         # Compute results metrics
         rets = [ro.undiscounted_return() for ro in ros]
         lengths = [float(ro.length) for ro in ros]  # int values are not numeric in pandas
-        vaired_param_values = [ro.rollout_info['domain_param'][varied_param_key] for ro in ros]
+        vaired_param_values = [ro.rollout_info["domain_param"][varied_param_key] for ro in ros]
         varied_param = {varied_param_key: vaired_param_values}
-        df = df.append(pd.DataFrame(dict(policy=ex_labels[i], ret=rets, len=lengths, **varied_param)),
-                       ignore_index=True)
+        df = df.append(
+            pd.DataFrame(dict(policy=ex_labels[i], ret=rets, len=lengths, **varied_param)), ignore_index=True
+        )
 
     metrics = dict(
-        avg_len=df.groupby('policy').mean()['len'].to_dict(),
-        avg_ret=df.groupby('policy').mean()['ret'].to_dict(),
-        median_ret=df.groupby('policy').median()['ret'].to_dict(),
-        min_ret=df.groupby('policy').min()['ret'].to_dict(),
-        max_ret=df.groupby('policy').max()['ret'].to_dict(),
-        std_ret=df.groupby('policy').std()['ret'].to_dict(),
-        quantile5_ret=df.groupby('policy').quantile(q=0.05)['ret'].to_dict(),
-        quantile95_ret=df.groupby('policy').quantile(q=0.95)['ret'].to_dict()
+        avg_len=df.groupby("policy").mean()["len"].to_dict(),
+        avg_ret=df.groupby("policy").mean()["ret"].to_dict(),
+        median_ret=df.groupby("policy").median()["ret"].to_dict(),
+        min_ret=df.groupby("policy").min()["ret"].to_dict(),
+        max_ret=df.groupby("policy").max()["ret"].to_dict(),
+        std_ret=df.groupby("policy").std()["ret"].to_dict(),
+        quantile5_ret=df.groupby("policy").quantile(q=0.05)["ret"].to_dict(),
+        quantile95_ret=df.groupby("policy").quantile(q=0.95)["ret"].to_dict(),
     )
     pprint(metrics, indent=4)
 
     # Create subfolder and save
-    save_dir = setup_experiment('multiple_policies', args.env_name, varied_param_key, base_dir=pyrado.EVAL_DIR)
+    save_dir = setup_experiment("multiple_policies", args.env_name, varied_param_key, base_dir=pyrado.EVAL_DIR)
 
-    save_list_of_dicts_to_yaml([
-        {'ex_dirs': ex_dirs},
-        {
-            'varied_param': varied_param_key,
-            'num_rpp': args.num_ro_per_config, 'seed': args.seed, 'dt': args.dt, 'max_steps': args.max_steps
-        },
-        dict_arraylike_to_float(metrics)],
-        save_dir, file_name='summary'
+    save_list_of_dicts_to_yaml(
+        [
+            {"ex_dirs": ex_dirs},
+            {
+                "varied_param": varied_param_key,
+                "num_rpp": args.num_ro_per_config,
+                "seed": args.seed,
+                "dt": args.dt,
+                "max_steps": args.max_steps,
+            },
+            dict_arraylike_to_float(metrics),
+        ],
+        save_dir,
+        file_name="summary",
     )
-    df.to_pickle(osp.join(save_dir, 'df_mp_grid_1d.pkl'))
+    df.to_pickle(osp.join(save_dir, "df_mp_grid_1d.pkl"))

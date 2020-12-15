@@ -42,7 +42,7 @@ from pyrado.utils.functions import rosenbrock
 class RosenSim(SimEnv, Serializable):
     """ This environment wraps the Rosenbrock function to use it as a test case for Pyrado algorithms. """
 
-    name: str = 'rosen'
+    name: str = "rosen"
 
     def __init__(self):
         """ Constructor """
@@ -52,14 +52,13 @@ class RosenSim(SimEnv, Serializable):
         super().__init__(dt=None, max_steps=1)
 
         # Set the bounds for the system's states adn actions
-        max_state = np.array([100., 100.])
+        max_state = np.array([100.0, 100.0])
         max_act = max_state
         self._curr_act = np.zeros_like(max_act)  # just for usage in render function
 
-        self._state_space = BoxSpace(-max_state, max_state, labels=['x_1', 'x_2'])
-        self._init_space = SingularStateSpace(np.zeros(self._state_space.shape),
-                                              labels=['x_1_init', 'x_2_init'])
-        self._act_space = BoxSpace(-max_act, max_act, labels=['x_1_next', 'x_2_next'])
+        self._state_space = BoxSpace(-max_state, max_state, labels=["x_1", "x_2"])
+        self._init_space = SingularStateSpace(np.zeros(self._state_space.shape), labels=["x_1_init", "x_2_init"])
+        self._act_space = BoxSpace(-max_act, max_act, labels=["x_1_next", "x_2_next"])
 
         # Define the task including the reward function
         self._task = self._create_task()
@@ -154,12 +153,11 @@ class RosenSim(SimEnv, Serializable):
 
         # Print to console
         if mode.text:
-            if self._curr_step%render_step == 0 and self._curr_step > 0:  # skip the render before the first step
-                print("step: {:3}  |  r_t: {: 1.3f}  |  a_t: {}\t |  s_t+1: {}".format(
-                    self._curr_step,
-                    self._curr_rew,
-                    self._curr_act,
-                    self.state)
+            if self._curr_step % render_step == 0 and self._curr_step > 0:  # skip the render before the first step
+                print(
+                    "step: {:3}  |  r_t: {: 1.3f}  |  a_t: {}\t |  s_t+1: {}".format(
+                        self._curr_step, self._curr_rew, self._curr_act, self.state
+                    )
                 )
 
         # Render using pyplot
@@ -169,17 +167,17 @@ class RosenSim(SimEnv, Serializable):
 
             plt.ion()
 
-            if self._anim['fig'] is None:
+            if self._anim["fig"] is None:
                 # Plot Rosenbrock function once if not already plotted
                 x = np.linspace(-2, 2, 20, True)
                 y = np.linspace(-1, 3, 20, True)
-                self._anim['fig'] = draw_surface(x, y, rosenbrock, 'x', 'y', 'z')
+                self._anim["fig"] = draw_surface(x, y, rosenbrock, "x", "y", "z")
 
-            self._anim['trace_x'].append(self.state[0])
-            self._anim['trace_y'].append(self.state[1])
-            self._anim['trace_z'].append(rosenbrock(self.state))
+            self._anim["trace_x"].append(self.state[0])
+            self._anim["trace_y"].append(self.state[1])
+            self._anim["trace_z"].append(rosenbrock(self.state))
 
-            ax = self._anim['fig'].gca()
-            ax.scatter(self._anim['trace_x'], self._anim['trace_y'], self._anim['trace_z'], s=8, c='w')
+            ax = self._anim["fig"].gca()
+            ax.scatter(self._anim["trace_x"], self._anim["trace_y"], self._anim["trace_z"], s=8, c="w")
 
             plt.draw()

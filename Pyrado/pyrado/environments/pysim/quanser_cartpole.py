@@ -43,11 +43,7 @@ from pyrado.tasks.reward_functions import QuadrErrRewFcn, UnderActuatedSwingUpRe
 class QCartPoleSim(SimPyEnv, Serializable):
     """ Base Environment for the Quanser Cart-Pole swing-up and stabilization task """
 
-    def __init__(self,
-                 dt: float,
-                 max_steps: int = pyrado.inf,
-                 task_args: [dict, None] = None,
-                 long: bool = False):
+    def __init__(self, dt: float, max_steps: int = pyrado.inf, task_args: [dict, None] = None, long: bool = False):
         """
         Constructor
 
@@ -69,13 +65,13 @@ class QCartPoleSim(SimPyEnv, Serializable):
         self.domain_param = self.get_nominal_domain_param(long=long)
 
     def _create_spaces(self):
-        l_rail = self.domain_param['l_rail']
-        max_obs = np.array([l_rail/2., 1., 1., np.inf, np.inf])
+        l_rail = self.domain_param["l_rail"]
+        max_obs = np.array([l_rail / 2.0, 1.0, 1.0, np.inf, np.inf])
 
         self._state_space = None
-        self._obs_space = BoxSpace(-max_obs, max_obs, labels=['x', 'sin_theta', 'cos_theta', 'x_dot', 'theta_dot'])
+        self._obs_space = BoxSpace(-max_obs, max_obs, labels=["x", "sin_theta", "cos_theta", "x_dot", "theta_dot"])
         self._init_space = None
-        self._act_space = BoxSpace(-max_act_qcp, max_act_qcp, labels=['V'])
+        self._act_space = BoxSpace(-max_act_qcp, max_act_qcp, labels=["V"])
 
     @abstractmethod
     def _create_task(self, task_args: dict) -> Task:
@@ -88,10 +84,10 @@ class QCartPoleSim(SimPyEnv, Serializable):
     def get_nominal_domain_param(cls, long: bool = False) -> dict:
         if long:
             m_pole = 0.23
-            l_pole = 0.641/2
+            l_pole = 0.641 / 2
         else:
             m_pole = 0.127
-            l_pole = 0.3365/2
+            l_pole = 0.3365 / 2
 
         return dict(
             g=9.81,  # gravity constant [m/s**2]
@@ -111,53 +107,61 @@ class QCartPoleSim(SimPyEnv, Serializable):
         )
 
     def _calc_constants(self):
-        l_pole = self.domain_param['l_pole']
-        m_pole = self.domain_param['m_pole']
-        m_cart = self.domain_param['m_cart']
-        eta_g = self.domain_param['eta_g']
-        K_g = self.domain_param['K_g']
-        J_m = self.domain_param['J_m']
-        r_mp = self.domain_param['r_mp']
+        l_pole = self.domain_param["l_pole"]
+        m_pole = self.domain_param["m_pole"]
+        m_cart = self.domain_param["m_cart"]
+        eta_g = self.domain_param["eta_g"]
+        K_g = self.domain_param["K_g"]
+        J_m = self.domain_param["J_m"]
+        r_mp = self.domain_param["r_mp"]
 
-        self.J_pole = l_pole**2*m_pole/3.  # pole inertia [kg*m**2]
-        self.J_eq = m_cart + (eta_g*K_g**2*J_m)/r_mp**2  # equiv. inertia [kg]
+        self.J_pole = l_pole ** 2 * m_pole / 3.0  # pole inertia [kg*m**2]
+        self.J_eq = m_cart + (eta_g * K_g ** 2 * J_m) / r_mp ** 2  # equiv. inertia [kg]
 
     def _step_dynamics(self, act: np.ndarray):
-        g = self.domain_param['g']
-        l_pole = self.domain_param['l_pole']
-        m_pole = self.domain_param['m_pole']
-        eta_m = self.domain_param['eta_m']
-        eta_g = self.domain_param['eta_g']
-        K_g = self.domain_param['K_g']
-        R_m = self.domain_param['R_m']
-        k_m = self.domain_param['k_m']
-        r_mp = self.domain_param['r_mp']
-        B_eq = self.domain_param['B_eq']
-        B_pole = self.domain_param['B_pole']
+        g = self.domain_param["g"]
+        l_pole = self.domain_param["l_pole"]
+        m_pole = self.domain_param["m_pole"]
+        eta_m = self.domain_param["eta_m"]
+        eta_g = self.domain_param["eta_g"]
+        K_g = self.domain_param["K_g"]
+        R_m = self.domain_param["R_m"]
+        k_m = self.domain_param["k_m"]
+        r_mp = self.domain_param["r_mp"]
+        B_eq = self.domain_param["B_eq"]
+        B_pole = self.domain_param["B_pole"]
 
         x, th, x_dot, th_dot = self.state
 
         # Force acting on the cart
-        force = (eta_g*K_g*eta_m*k_m)/(R_m*r_mp)*(eta_m*float(act) - K_g*k_m*x_dot/r_mp)
+        force = (eta_g * K_g * eta_m * k_m) / (R_m * r_mp) * (eta_m * float(act) - K_g * k_m * x_dot / r_mp)
 
-        A = np.array([[m_pole + self.J_eq, m_pole*l_pole*np.cos(th)],
-                      [m_pole*l_pole*np.cos(th), self.J_pole + m_pole*l_pole**2]])
+        A = np.array(
+            [
+                [m_pole + self.J_eq, m_pole * l_pole * np.cos(th)],
+                [m_pole * l_pole * np.cos(th), self.J_pole + m_pole * l_pole ** 2],
+            ]
+        )
 
-        b = np.array([force - B_eq*x_dot - m_pole*l_pole*np.sin(th)*th_dot**2,
-                      - B_pole*th_dot - m_pole*l_pole*g*np.sin(th)])
+        b = np.array(
+            [
+                force - B_eq * x_dot - m_pole * l_pole * np.sin(th) * th_dot ** 2,
+                -B_pole * th_dot - m_pole * l_pole * g * np.sin(th),
+            ]
+        )
 
         # Compute acceleration from linear system of equations
         x_ddot, theta_ddot = np.linalg.solve(A, b)
 
         # Integration step (symplectic Euler)
-        self.state[2:] += np.array([x_ddot, theta_ddot])*self._dt  # next velocity
-        self.state[:2] += self.state[2:]*self._dt  # next position
+        self.state[2:] += np.array([x_ddot, theta_ddot]) * self._dt  # next velocity
+        self.state[:2] += self.state[2:] * self._dt  # next position
 
     def _init_anim(self):
         import vpython as vp
 
-        l_pole = float(self.domain_param['l_pole'])
-        l_rail = float(self.domain_param['l_rail'])
+        l_pole = float(self.domain_param["l_pole"])
+        l_rail = float(self.domain_param["l_rail"])
 
         # Only for animation
         l_cart, h_cart = 0.08, 0.08
@@ -166,51 +170,56 @@ class QCartPoleSim(SimPyEnv, Serializable):
         # Get positions
         x, th, _, _ = self.state
 
-        self._anim['canvas'] = vp.canvas(width=1000, height=600, title="Quanser Cartpole")
+        self._anim["canvas"] = vp.canvas(width=1000, height=600, title="Quanser Cartpole")
         # Rail
-        self._anim['rail'] = vp.cylinder(
-            pos=vp.vec(-l_rail/2, -h_cart/2 - r_rail, 0),  # a VPython's cylinder origin is at the bottom
+        self._anim["rail"] = vp.cylinder(
+            pos=vp.vec(-l_rail / 2, -h_cart / 2 - r_rail, 0),  # a VPython's cylinder origin is at the bottom
             radius=r_rail,
             length=l_rail,
             color=vp.color.white,
-            canvas=self._anim['canvas'])
+            canvas=self._anim["canvas"],
+        )
         # Cart
-        self._anim['cart'] = vp.box(
+        self._anim["cart"] = vp.box(
             pos=vp.vec(x, 0, 0),
-            length=l_cart, height=h_cart, width=h_cart/2,
+            length=l_cart,
+            height=h_cart,
+            width=h_cart / 2,
             color=vp.color.green,
-            canvas=self._anim['canvas'])
-        self._anim['joint'] = vp.sphere(
-            pos=vp.vec(x, 0, r_pole + h_cart/4),
+            canvas=self._anim["canvas"],
+        )
+        self._anim["joint"] = vp.sphere(
+            pos=vp.vec(x, 0, r_pole + h_cart / 4),
             radius=r_pole,
             color=vp.color.white,
         )
         # Pole
-        self._anim['pole'] = vp.cylinder(
-            pos=vp.vec(x, 0, r_pole + h_cart/4),
-            axis=vp.vec(2*l_pole*vp.sin(th), -2*l_pole*vp.cos(th), 0),
+        self._anim["pole"] = vp.cylinder(
+            pos=vp.vec(x, 0, r_pole + h_cart / 4),
+            axis=vp.vec(2 * l_pole * vp.sin(th), -2 * l_pole * vp.cos(th), 0),
             radius=r_pole,
-            length=2*l_pole,
+            length=2 * l_pole,
             color=vp.color.blue,
-            canvas=self._anim['canvas'])
+            canvas=self._anim["canvas"],
+        )
 
     def _update_anim(self):
         import vpython as vp
 
-        g = self.domain_param['g']
-        m_cart = self.domain_param['m_cart']
-        m_pole = self.domain_param['m_pole']
-        l_pole = float(self.domain_param['l_pole'])
-        l_rail = float(self.domain_param['l_rail'])
-        eta_m = self.domain_param['eta_m']
-        eta_g = self.domain_param['eta_g']
-        K_g = self.domain_param['K_g']
-        J_m = self.domain_param['J_m']
-        R_m = self.domain_param['R_m']
-        k_m = self.domain_param['k_m']
-        r_mp = self.domain_param['r_mp']
-        B_eq = self.domain_param['B_eq']
-        B_pole = self.domain_param['B_pole']
+        g = self.domain_param["g"]
+        m_cart = self.domain_param["m_cart"]
+        m_pole = self.domain_param["m_pole"]
+        l_pole = float(self.domain_param["l_pole"])
+        l_rail = float(self.domain_param["l_rail"])
+        eta_m = self.domain_param["eta_m"]
+        eta_g = self.domain_param["eta_g"]
+        K_g = self.domain_param["K_g"]
+        J_m = self.domain_param["J_m"]
+        R_m = self.domain_param["R_m"]
+        k_m = self.domain_param["k_m"]
+        r_mp = self.domain_param["r_mp"]
+        B_eq = self.domain_param["B_eq"]
+        B_pole = self.domain_param["B_pole"]
 
         # Only for animation
         l_cart, h_cart = 0.08, 0.08
@@ -220,17 +229,19 @@ class QCartPoleSim(SimPyEnv, Serializable):
         x, th, _, _ = self.state
 
         # Rail
-        self._anim['rail'].pos = vp.vec(-l_rail/2, -h_cart/2 - r_rail, 0)
-        self._anim['rail'].length = l_rail
+        self._anim["rail"].pos = vp.vec(-l_rail / 2, -h_cart / 2 - r_rail, 0)
+        self._anim["rail"].length = l_rail
         # Cart
-        self._anim['cart'].pos = vp.vec(x, 0, 0)
-        self._anim['joint'].pos = vp.vec(x, 0, r_pole + h_cart/4)
+        self._anim["cart"].pos = vp.vec(x, 0, 0)
+        self._anim["joint"].pos = vp.vec(x, 0, r_pole + h_cart / 4)
         # Pole
-        self._anim['pole'].pos = vp.vec(x, 0, r_pole + h_cart/4)
-        self._anim['pole'].axis = vp.vec(2*l_pole*vp.sin(th), -2*l_pole*vp.cos(th), 0)
+        self._anim["pole"].pos = vp.vec(x, 0, r_pole + h_cart / 4)
+        self._anim["pole"].axis = vp.vec(2 * l_pole * vp.sin(th), -2 * l_pole * vp.cos(th), 0)
 
         # Set caption text
-        self._anim['canvas'].caption = f"""
+        self._anim[
+            "canvas"
+        ].caption = f"""
                     x: {self.state[0] : 1.4f}
                     theta: {self.state[1]*180/np.pi : 2.3f}
                     dt: {self._dt :1.4f}
@@ -257,13 +268,9 @@ class QCartPoleStabSim(QCartPoleSim, Serializable):
     a rail. The pole can rotate around an axis perpendicular to direction in which the cart moves.
     """
 
-    name: str = 'qcp-st'
+    name: str = "qcp-st"
 
-    def __init__(self,
-                 dt: float,
-                 max_steps: int = pyrado.inf,
-                 task_args: [dict, None] = None,
-                 long: bool = False):
+    def __init__(self, dt: float, max_steps: int = pyrado.inf, task_args: [dict, None] = None, long: bool = False):
         """
         Constructor
 
@@ -274,37 +281,41 @@ class QCartPoleStabSim(QCartPoleSim, Serializable):
         """
         Serializable._init(self, locals())
 
-        self.stab_thold = 15/180.*np.pi  # threshold angle for the stabilization task to be a failure [rad]
-        self.max_init_th_offset = 8/180.*np.pi  # [rad]
+        self.stab_thold = 15 / 180.0 * np.pi  # threshold angle for the stabilization task to be a failure [rad]
+        self.max_init_th_offset = 8 / 180.0 * np.pi  # [rad]
 
         super().__init__(dt, max_steps, task_args, long)
 
     def _create_spaces(self):
         super()._create_spaces()
-        l_rail = self.domain_param['l_rail']
+        l_rail = self.domain_param["l_rail"]
 
-        min_state = np.array([-l_rail/2. + self.x_buffer, np.pi - self.stab_thold,
-                              -l_rail, -2*np.pi])  # [m, rad, m/s, rad/s]
-        max_state = np.array([+l_rail/2. - self.x_buffer, np.pi + self.stab_thold,
-                              +l_rail, +2*np.pi])  # [m, rad, m/s, rad/s]
+        min_state = np.array(
+            [-l_rail / 2.0 + self.x_buffer, np.pi - self.stab_thold, -l_rail, -2 * np.pi]
+        )  # [m, rad, m/s, rad/s]
+        max_state = np.array(
+            [+l_rail / 2.0 - self.x_buffer, np.pi + self.stab_thold, +l_rail, +2 * np.pi]
+        )  # [m, rad, m/s, rad/s]
 
         max_init_state = np.array(
-            [+0.05, np.pi + self.max_init_th_offset, +0.05, +8/180*np.pi])  # [m, rad, m/s, rad/s]
+            [+0.05, np.pi + self.max_init_th_offset, +0.05, +8 / 180 * np.pi]
+        )  # [m, rad, m/s, rad/s]
         min_init_state = np.array(
-            [-0.05, np.pi - self.max_init_th_offset, -0.05, -8/180*np.pi])  # [m, rad, m/s, rad/s]
+            [-0.05, np.pi - self.max_init_th_offset, -0.05, -8 / 180 * np.pi]
+        )  # [m, rad, m/s, rad/s]
 
-        self._state_space = BoxSpace(min_state, max_state, labels=['x', 'theta', 'x_dot', 'theta_dot'])
-        self._init_space = BoxSpace(min_init_state, max_init_state, labels=['x', 'theta', 'x_dot', 'theta_dot'])
+        self._state_space = BoxSpace(min_state, max_state, labels=["x", "theta", "x_dot", "theta_dot"])
+        self._init_space = BoxSpace(min_init_state, max_init_state, labels=["x", "theta", "x_dot", "theta_dot"])
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
-        state_des = task_args.get('state_des', np.array([0., np.pi, 0., 0.]))
-        Q = task_args.get('Q', np.diag([5e-0, 1e+1, 1e-2, 1e-2]))
-        R = task_args.get('R', np.diag([1e-3]))
+        state_des = task_args.get("state_des", np.array([0.0, np.pi, 0.0, 0.0]))
+        Q = task_args.get("Q", np.diag([5e-0, 1e1, 1e-2, 1e-2]))
+        R = task_args.get("R", np.diag([1e-3]))
 
         return FinalRewTask(
             RadiallySymmDesStateTask(self.spec, state_des, QuadrErrRewFcn(Q, R), idcs=[1]),
-            mode=FinalRewMode(state_dependent=True, time_dependent=True)
+            mode=FinalRewMode(state_dependent=True, time_dependent=True),
         )
 
 
@@ -314,13 +325,9 @@ class QCartPoleSwingUpSim(QCartPoleSim, Serializable):
     moving a cart on a rail. The pole can rotate around an axis perpendicular to direction in which the cart moves.
     """
 
-    name: str = 'qcp-su'
+    name: str = "qcp-su"
 
-    def __init__(self,
-                 dt: float,
-                 max_steps: int = pyrado.inf,
-                 task_args: [dict, None] = None,
-                 long: bool = False):
+    def __init__(self, dt: float, max_steps: int = pyrado.inf, task_args: [dict, None] = None, long: bool = False):
         """
         Constructor
 
@@ -334,23 +341,23 @@ class QCartPoleSwingUpSim(QCartPoleSim, Serializable):
 
     def _create_spaces(self):
         super()._create_spaces()
-        l_rail = self.domain_param['l_rail']
+        l_rail = self.domain_param["l_rail"]
 
         # Define the spaces
-        max_state = np.array([+l_rail/2. - self.x_buffer, +4*np.pi, np.inf, np.inf])  # [m, rad, m/s, rad/s]
-        min_state = np.array([-l_rail/2. + self.x_buffer, -4*np.pi, -np.inf, -np.inf])  # [m, rad, m/s, rad/s]
-        max_init_state = np.array([0.03, 1/180.*np.pi, 0.005, 2/180.*np.pi])  # [m, rad, m/s, rad/s]
+        max_state = np.array([+l_rail / 2.0 - self.x_buffer, +4 * np.pi, np.inf, np.inf])  # [m, rad, m/s, rad/s]
+        min_state = np.array([-l_rail / 2.0 + self.x_buffer, -4 * np.pi, -np.inf, -np.inf])  # [m, rad, m/s, rad/s]
+        max_init_state = np.array([0.03, 1 / 180.0 * np.pi, 0.005, 2 / 180.0 * np.pi])  # [m, rad, m/s, rad/s]
 
-        self._state_space = BoxSpace(min_state, max_state, labels=['x', 'theta', 'x_dot', 'theta_dot'])
-        self._init_space = BoxSpace(-max_init_state, max_init_state, labels=['x', 'theta', 'x_dot', 'theta_dot'])
+        self._state_space = BoxSpace(min_state, max_state, labels=["x", "theta", "x_dot", "theta_dot"])
+        self._init_space = BoxSpace(-max_init_state, max_init_state, labels=["x", "theta", "x_dot", "theta_dot"])
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
-        state_des = task_args.get('state_des', None)
+        state_des = task_args.get("state_des", None)
         if state_des is None:
-            state_des = np.array([0., np.pi, 0., 0.])
+            state_des = np.array([0.0, np.pi, 0.0, 0.0])
 
         return FinalRewTask(
             RadiallySymmDesStateTask(self.spec, state_des, UnderActuatedSwingUpRewFcn(c_act=1e-2), idcs=[1]),
-            mode=FinalRewMode(always_negative=True)
+            mode=FinalRewMode(always_negative=True),
         )

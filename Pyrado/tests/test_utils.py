@@ -50,11 +50,7 @@ from pyrado.utils.data_processing import RunningNormalizer, normalize
 
 
 @pytest.mark.parametrize(
-    'x, data_along_rows', [
-        (np.random.rand(100, 4), True),
-        (np.random.rand(4, 100), False)
-    ],
-    ids=['100_4', '4_100']
+    "x, data_along_rows", [(np.random.rand(100, 4), True), (np.random.rand(4, 100), False)], ids=["100_4", "4_100"]
 )
 def test_cov(x, data_along_rows):
     rowvar = not data_along_rows
@@ -72,11 +68,11 @@ def test_cov(x, data_along_rows):
 
 
 @pytest.mark.parametrize(
-    'env, expl_strat', [
-        (BallOnBeamSim(dt=0.02, max_steps=100),
-         DummyPolicy(BallOnBeamSim(dt=0.02, max_steps=100).spec)),
+    "env, expl_strat",
+    [
+        (BallOnBeamSim(dt=0.02, max_steps=100), DummyPolicy(BallOnBeamSim(dt=0.02, max_steps=100).spec)),
     ],
-    ids=['bob_dummy']
+    ids=["bob_dummy"],
 )
 def test_concat_rollouts(env, expl_strat):
     ro1 = rollout(env, expl_strat)
@@ -87,101 +83,91 @@ def test_concat_rollouts(env, expl_strat):
 
 
 @pytest.mark.parametrize(
-    'x, y', [
-        (to.tensor([1., 2., 3.]), to.tensor([1., 2., 3.])),
-        (to.tensor([1., 0., 1.]), to.tensor([1., 1e12, 1.])),
-        (to.tensor([0., 0., 0.]), to.tensor([1., 2, 3.])),
-        (to.tensor([1., 2., 3.]), to.tensor([2., 4., 6.])),
-        (to.tensor([1., 2., 3.]), to.tensor([-1., -2., -3.])),
+    "x, y",
+    [
+        (to.tensor([1.0, 2.0, 3.0]), to.tensor([1.0, 2.0, 3.0])),
+        (to.tensor([1.0, 0.0, 1.0]), to.tensor([1.0, 1e12, 1.0])),
+        (to.tensor([0.0, 0.0, 0.0]), to.tensor([1.0, 2, 3.0])),
+        (to.tensor([1.0, 2.0, 3.0]), to.tensor([2.0, 4.0, 6.0])),
+        (to.tensor([1.0, 2.0, 3.0]), to.tensor([-1.0, -2.0, -3.0])),
     ],
-    ids=['same', 'similarity_1', 'similarity_0', 'colinear_scaled', 'colinear_opposite']
+    ids=["same", "similarity_1", "similarity_0", "colinear_scaled", "colinear_opposite"],
 )
 def test_cosine_similarity(x, y):
     # Only tested for vector inputs
     d_cos = cosine_similarity(x, y)
     assert isinstance(d_cos, to.Tensor)
     # The examples are chosen to result in 0, 1, or -1
-    assert to.isclose(d_cos, to.tensor(0.)) or to.isclose(d_cos, to.tensor(1.)) or to.isclose(d_cos, to.tensor(-1.))
+    assert to.isclose(d_cos, to.tensor(0.0)) or to.isclose(d_cos, to.tensor(1.0)) or to.isclose(d_cos, to.tensor(-1.0))
 
 
-@pytest.mark.parametrize(
-    'type', ['numpy', 'torch'],
-    ids=['numpy', 'torch']
-)
-@pytest.mark.parametrize(
-    'dim', [0, 1],
-    ids=['dim0', 'dim1']
-)
+@pytest.mark.parametrize("type", ["numpy", "torch"], ids=["numpy", "torch"])
+@pytest.mark.parametrize("dim", [0, 1], ids=["dim0", "dim1"])
 def test_rmse(type, dim):
     shape = (42, 21)
-    if type == 'numpy':
+    if type == "numpy":
         x = np.random.randn(*shape)
         y = np.random.randn(*shape)
     else:
         x = to.randn(*shape)
         y = to.randn(*shape)
     e = rmse(x, y)
-    if type == 'numpy':
+    if type == "numpy":
         assert isinstance(e, np.ndarray)
     else:
         assert isinstance(e, to.Tensor)
 
 
 @pytest.mark.parametrize(
-    'x, y', [
-        ({'a': 1, 'b': 2}, {'c': 1, 'd': 4}),
-        ({'a': 1, 'b': 2}, {'b': 3, 'd': 4}),
+    "x, y",
+    [
+        ({"a": 1, "b": 2}, {"c": 1, "d": 4}),
+        ({"a": 1, "b": 2}, {"b": 3, "d": 4}),
     ],
-    ids=['disjoint', 'overlapping']
+    ids=["disjoint", "overlapping"],
 )
 def test_merge_lod_var_dtype(x, y):
     z = merge_dicts([x, y])
-    assert z['a'] == 1
-    if z['b'] == 2:  # disjoint
-        assert z['c'] == 1
-    elif z['b'] == 3:  # overlapping
+    assert z["a"] == 1
+    if z["b"] == 2:  # disjoint
+        assert z["c"] == 1
+    elif z["b"] == 3:  # overlapping
         assert len(z) == 3
     else:
         assert False
-    assert z['d'] == 4
+    assert z["d"] == 4
 
 
 @pytest.mark.parametrize(
-    'batch_size, data_size', [
-        (3, 30),
-        (3, 29),
-        (3, 28),
-        (2, 2)
-    ],
-    ids=['division_mod0', 'division_mod1', 'division_mod2', 'edge_case']
+    "batch_size, data_size",
+    [(3, 30), (3, 29), (3, 28), (2, 2)],
+    ids=["division_mod0", "division_mod1", "division_mod2", "edge_case"],
 )
-@pytest.mark.parametrize(
-    'sorted', [True, False],
-    ids=['sorted', 'unsorted']
-)
+@pytest.mark.parametrize("sorted", [True, False], ids=["sorted", "unsorted"])
 def test_gen_batch_idcs(batch_size, data_size, sorted):
     generator = gen_batch_idcs(batch_size, data_size)
     unordered_batches = list(generator)
-    assert len(unordered_batches) == ceil(data_size/batch_size)
+    assert len(unordered_batches) == ceil(data_size / batch_size)
     assert all(len(uob) <= batch_size for uob in unordered_batches)
 
     generator = gen_ordered_batch_idcs(batch_size, data_size, sorted)
     ordered_batches = list(generator)
-    assert len(ordered_batches) == ceil(data_size/batch_size)
+    assert len(ordered_batches) == ceil(data_size / batch_size)
     assert all(len(ob) <= batch_size for ob in ordered_batches)
     # Check if each mini-batch is sorted
     assert all(all(ob[i] <= ob[i + 1] for i in range(len(ob) - 1)) for ob in ordered_batches)
 
 
 @pytest.mark.parametrize(
-    'data, batch_size', [
+    "data, batch_size",
+    [
         (list(range(9)), 3),
         (list(range(10)), 3),
     ],
-    ids=['division_mod0', 'division_mod1']
+    ids=["division_mod0", "division_mod1"],
 )
 def test_gen_ordered_batches(data, batch_size):
-    n = ceil(len(data)/batch_size)
+    n = ceil(len(data) / batch_size)
     for i, batch in enumerate(gen_ordered_batches(data, batch_size)):
         if i < n - 1:
             assert len(batch) == batch_size
@@ -189,163 +175,152 @@ def test_gen_ordered_batches(data, batch_size):
             assert len(batch) <= batch_size
 
 
-@pytest.mark.parametrize(
-    'dtype', ['torch', 'numpy'], ids=['to', 'np']
-)
-@pytest.mark.parametrize(
-    'axis', [0, 1], ids=['ax_0', 'ax_1']
-)
+@pytest.mark.parametrize("dtype", ["torch", "numpy"], ids=["to", "np"])
+@pytest.mark.parametrize("axis", [0, 1], ids=["ax_0", "ax_1"])
 def test_normalize(dtype, axis):
     for _ in range(10):
-        x = to.rand(5, 3) if dtype == 'torch' else np.random.rand(5, 3)
+        x = to.rand(5, 3) if dtype == "torch" else np.random.rand(5, 3)
         x_norm = normalize(x, axis=axis, order=1)
         if isinstance(x_norm, to.Tensor):
             x_norm = x_norm.numpy()  # for easier checking with pytest.approx
-        assert np.sum(x_norm, axis=axis) == pytest.approx(1.)
+        assert np.sum(x_norm, axis=axis) == pytest.approx(1.0)
 
 
+@pytest.mark.parametrize("dtype", ["torch", "numpy", "mixed"], ids=["to", "np", "mixed"])
 @pytest.mark.parametrize(
-    'dtype', ['torch', 'numpy', 'mixed'], ids=['to', 'np', 'mixed']
-)
-@pytest.mark.parametrize(
-    'lb, ub', [
-        (0, 1),
-        (-1, 1),
-        (-2.5, 0),
-        (-np.ones((3, 2)), np.ones((3, 2)))
-    ],
-    ids=['lb0_ub1', 'lb-1_ub1', 'lb-2.5_ub0', 'np_ones']
+    "lb, ub",
+    [(0, 1), (-1, 1), (-2.5, 0), (-np.ones((3, 2)), np.ones((3, 2)))],
+    ids=["lb0_ub1", "lb-1_ub1", "lb-2.5_ub0", "np_ones"],
 )
 def test_scale_min_max(dtype, lb, ub):
     for _ in range(10):
-        if dtype == 'torch':
+        if dtype == "torch":
             bound_lo = to.tensor([lb], dtype=to.float64)
             bound_up = to.tensor([ub], dtype=to.float64)
-        elif dtype == 'numpy':
+        elif dtype == "numpy":
             bound_lo = np.array(lb, dtype=np.float64)
             bound_up = np.array(ub, dtype=np.float64)
         else:
             bound_lo = lb
             bound_up = ub
 
-        x = 1e2*to.rand(3, 2) if dtype == 'torch' else np.random.rand(3, 2)
+        x = 1e2 * to.rand(3, 2) if dtype == "torch" else np.random.rand(3, 2)
         x_scaled = scale_min_max(x, bound_lo, bound_up)
         if isinstance(x_scaled, to.Tensor):
             x_scaled = x_scaled.numpy()  # for easier checking with pytest.approx
             bound_lo = bound_lo.numpy()
             bound_up = bound_up.numpy()
-        assert np.all(bound_lo*np.ones_like(x_scaled) <= x_scaled)
-        assert np.all(x_scaled <= bound_up*np.ones_like(x_scaled))
+        assert np.all(bound_lo * np.ones_like(x_scaled) <= x_scaled)
+        assert np.all(x_scaled <= bound_up * np.ones_like(x_scaled))
 
 
+@pytest.mark.parametrize("dtype", ["torch", "numpy"], ids=["to", "np"])
 @pytest.mark.parametrize(
-    'dtype', ['torch', 'numpy'], ids=['to', 'np']
-)
-@pytest.mark.parametrize(
-    'lb, ub', [
-        (0, 1),
-        (-1, 1),
-        (-2.5, 0),
-        (-np.ones((3, 2)), np.ones((3, 2)))
-    ],
-    ids=['lb0_ub1', 'lb-1_ub1', 'lb-2.5_ub0', 'np_ones']
+    "lb, ub",
+    [(0, 1), (-1, 1), (-2.5, 0), (-np.ones((3, 2)), np.ones((3, 2)))],
+    ids=["lb0_ub1", "lb-1_ub1", "lb-2.5_ub0", "np_ones"],
 )
 def test_minmaxscaler(dtype, lb, ub):
     for _ in range(10):
         scaler = MinMaxScaler(lb, ub)
-        x = 1e2*to.rand(3, 2) if dtype == 'torch' else np.random.rand(3, 2)
+        x = 1e2 * to.rand(3, 2) if dtype == "torch" else np.random.rand(3, 2)
         x_scaled = scaler.scale_to(x)
         x_scaled_back = scaler.scale_back(x_scaled)
 
         if isinstance(x_scaled, to.Tensor):
             x_scaled = x_scaled.numpy()  # for easier checking with pytest.approx
             x_scaled_back = x_scaled_back.numpy()  # for easier checking with pytest.approx
-        assert np.all(scaler._bound_lo*np.ones_like(x_scaled) <= x_scaled)
-        assert np.all(x_scaled <= scaler._bound_up*np.ones_like(x_scaled))
+        assert np.all(scaler._bound_lo * np.ones_like(x_scaled) <= x_scaled)
+        assert np.all(x_scaled <= scaler._bound_up * np.ones_like(x_scaled))
         assert np.allclose(x, x_scaled_back)
 
 
+@pytest.mark.parametrize("dtype", ["torch", "numpy"], ids=["to", "np"])
 @pytest.mark.parametrize(
-    'dtype', ['torch', 'numpy'],
-    ids=['to', 'np']
-)
-@pytest.mark.parametrize(
-    'lb, ub', [
-        (0, 1),
-        (-1, 1),
-        (-2.5, 0),
-        (-np.ones((3, 2)), np.ones((3, 2)))
-    ],
-    ids=['lb0_ub1', 'lb-1_ub1', 'lb-2.5_ub0', 'np_ones']
+    "lb, ub",
+    [(0, 1), (-1, 1), (-2.5, 0), (-np.ones((3, 2)), np.ones((3, 2)))],
+    ids=["lb0_ub1", "lb-1_ub1", "lb-2.5_ub0", "np_ones"],
 )
 def test_minmaxscaler(dtype, lb, ub):
     for _ in range(10):
         scaler = MinMaxScaler(lb, ub)
-        x = 1e2*to.rand(3, 2) if dtype == 'torch' else np.random.rand(3, 2)
+        x = 1e2 * to.rand(3, 2) if dtype == "torch" else np.random.rand(3, 2)
         x_scaled = scaler.scale_to(x)
         x_scaled_back = scaler.scale_back(x_scaled)
 
         if isinstance(x_scaled, to.Tensor):
             x_scaled = x_scaled.numpy()  # for easier checking with pytest.approx
             x_scaled_back = x_scaled_back.numpy()  # for easier checking with pytest.approx
-        assert np.all(scaler._bound_lo*np.ones_like(x_scaled) <= x_scaled)
-        assert np.all(x_scaled <= scaler._bound_up*np.ones_like(x_scaled))
+        assert np.all(scaler._bound_lo * np.ones_like(x_scaled) <= x_scaled)
+        assert np.all(x_scaled <= scaler._bound_up * np.ones_like(x_scaled))
         assert np.allclose(x, x_scaled_back)
 
 
+@pytest.mark.parametrize("dtype", ["torch", "numpy"], ids=["to", "np"])
 @pytest.mark.parametrize(
-    'dtype', ['torch', 'numpy'],
-    ids=['to', 'np']
-)
-@pytest.mark.parametrize(
-    'lb, ub', [
-        (0, 1),
-        (-1, 1),
-        (-2.5, 0),
-        (-np.ones((3, 2)), np.ones((3, 2)))
-    ],
-    ids=['lb0_ub1', 'lb-1_ub1', 'lb-2.5_ub0', 'np_ones']
+    "lb, ub",
+    [(0, 1), (-1, 1), (-2.5, 0), (-np.ones((3, 2)), np.ones((3, 2)))],
+    ids=["lb0_ub1", "lb-1_ub1", "lb-2.5_ub0", "np_ones"],
 )
 def test_minmaxscaler(dtype, lb, ub):
     for _ in range(10):
         scaler = MinMaxScaler(lb, ub)
-        x = 1e2*to.rand(3, 2) if dtype == 'torch' else np.random.rand(3, 2)
+        x = 1e2 * to.rand(3, 2) if dtype == "torch" else np.random.rand(3, 2)
         x_scaled = scaler.scale_to(x)
         x_scaled_back = scaler.scale_back(x_scaled)
 
         if isinstance(x_scaled, to.Tensor):
             x_scaled = x_scaled.numpy()  # for easier checking with pytest.approx
             x_scaled_back = x_scaled_back.numpy()  # for easier checking with pytest.approx
-        assert np.all(scaler._bound_lo*np.ones_like(x_scaled) <= x_scaled)
-        assert np.all(x_scaled <= scaler._bound_up*np.ones_like(x_scaled))
+        assert np.all(scaler._bound_lo * np.ones_like(x_scaled) <= x_scaled)
+        assert np.all(x_scaled <= scaler._bound_up * np.ones_like(x_scaled))
         assert np.allclose(x, x_scaled_back)
 
 
 @pytest.mark.parametrize(
-    'data_seq, axis', [
+    "data_seq, axis",
+    [
         ([np.array([1, 1, 2]), np.array([1, 6, 3]), np.array([1, 6, 3]), np.array([10, -20, 20])], 0),
         ([np.array([1, 1, 2]), np.array([1, 6, 3]), np.array([1, 6, 3]), np.array([10, -20, 20])], None),
         ([np.array([1, 1, 2, 2]), np.array([1, 6, 3]), np.array([1, 6, 3]), np.array([10, 10, -20, 20])], 0),
         ([np.array([1, 1, 2, 2]), np.array([1, 6, 3]), np.array([1, 6, 3]), np.array([10, 10, -20, 20])], None),
         (
-            [to.tensor([1., 1., 2]), to.tensor([1., 6., 3.]), to.tensor([1., 6., 3.]),
-             to.tensor([10., -20., 20.])],
-            0),
+            [
+                to.tensor([1.0, 1.0, 2]),
+                to.tensor([1.0, 6.0, 3.0]),
+                to.tensor([1.0, 6.0, 3.0]),
+                to.tensor([10.0, -20.0, 20.0]),
+            ],
+            0,
+        ),
         (
-            [to.tensor([1., 1., 2]), to.tensor([1., 6., 3.]), to.tensor([1., 6., 3.]),
-             to.tensor([10., -20., 20.])],
-            -1),
+            [
+                to.tensor([1.0, 1.0, 2]),
+                to.tensor([1.0, 6.0, 3.0]),
+                to.tensor([1.0, 6.0, 3.0]),
+                to.tensor([10.0, -20.0, 20.0]),
+            ],
+            -1,
+        ),
         (
-            [to.tensor([1., 1, 2, 2]), to.tensor([1., 6, 3]), to.tensor([1., 6, 3]),
-             to.tensor([10., 10, -20, 20])],
-            0),
+            [to.tensor([1.0, 1, 2, 2]), to.tensor([1.0, 6, 3]), to.tensor([1.0, 6, 3]), to.tensor([10.0, 10, -20, 20])],
+            0,
+        ),
         (
-            [to.tensor([1., 1, 2, 2]), to.tensor([1., 6, 3]), to.tensor([1., 6, 3]),
-             to.tensor([10., 10, -20, 20])],
-            -1),
+            [to.tensor([1.0, 1, 2, 2]), to.tensor([1.0, 6, 3]), to.tensor([1.0, 6, 3]), to.tensor([10.0, 10, -20, 20])],
+            -1,
+        ),
     ],
-    ids=['np_same_length_0', 'np_same_length_None', 'np_mixed_length_0', 'np_mixed_length_None',
-         'to_same_length_0', 'to_same_length_-1', 'to_mixed_length_0', 'to_mixed_length_-1']
+    ids=[
+        "np_same_length_0",
+        "np_same_length_None",
+        "np_mixed_length_0",
+        "np_mixed_length_None",
+        "to_same_length_0",
+        "to_same_length_-1",
+        "to_mixed_length_0",
+        "to_mixed_length_-1",
+    ],
 )
 def test_running_standardizer(data_seq, axis):
     rs = RunningStandardizer()
@@ -357,17 +332,20 @@ def test_running_standardizer(data_seq, axis):
 
 
 @pytest.mark.parametrize(
-    'data_seq, alpha', [
+    "data_seq, alpha",
+    [
+        ([np.array([1, 1, 2]), np.array([1, 6, 3]), np.array([1, 6, 3]), np.array([10, -20, 20])], 0.9),
         (
-            [np.array([1, 1, 2]), np.array([1, 6, 3]), np.array([1, 6, 3]), np.array([10, -20, 20])],
-            0.9
-        ),
-        (
-            [to.tensor([1., 1., 2]), to.tensor([1., 6., 3.]), to.tensor([1., 6., 3.]), to.tensor([10., -20., 20.])],
-            0.1
+            [
+                to.tensor([1.0, 1.0, 2]),
+                to.tensor([1.0, 6.0, 3.0]),
+                to.tensor([1.0, 6.0, 3.0]),
+                to.tensor([10.0, -20.0, 20.0]),
+            ],
+            0.1,
         ),
     ],
-    ids=['np', 'to']
+    ids=["np", "to"],
 )
 def test_running_expdecay_average(data_seq, alpha):
     reda = RunningExpDecayingAverage(alpha)
@@ -379,30 +357,32 @@ def test_running_expdecay_average(data_seq, alpha):
 
 
 @pytest.mark.parametrize(
-    'data_seq, capacity', [
-        ([np.array([1., 1, 2]), np.array([1., 1, 2]), np.array([1., 1, 2]), np.array([-2., -2, -4])], 3),
-        ([to.tensor([1., 1, 2]), to.tensor([1., 1, 2]), to.tensor([1., 1, 2]), to.tensor([-2., -2, -4])], 3),
+    "data_seq, capacity",
+    [
+        ([np.array([1.0, 1, 2]), np.array([1.0, 1, 2]), np.array([1.0, 1, 2]), np.array([-2.0, -2, -4])], 3),
+        ([to.tensor([1.0, 1, 2]), to.tensor([1.0, 1, 2]), to.tensor([1.0, 1, 2]), to.tensor([-2.0, -2, -4])], 3),
     ],
-    ids=['np', 'to']
+    ids=["np", "to"],
 )
 def test_running_mem_average(data_seq, capacity):
     rma = RunningMemoryAverage(capacity)
     for i, data in enumerate(data_seq):
         z = rma(data)
         if i <= 2:
-            to.testing.assert_allclose(z, to.tensor([1., 1, 2]))  # works with PyTorch Tensors and numpy arrays
+            to.testing.assert_allclose(z, to.tensor([1.0, 1, 2]))  # works with PyTorch Tensors and numpy arrays
         elif i == 3:
-            to.testing.assert_allclose(z, to.tensor([0., 0, 0]))  # works with PyTorch Tensors and numpy arrays
+            to.testing.assert_allclose(z, to.tensor([0.0, 0, 0]))  # works with PyTorch Tensors and numpy arrays
     rma.reset(capacity=5)
     assert rma.capacity == 5 and rma.memory is None
 
 
 @pytest.mark.parametrize(
-    'data_seq', [
-        [5*np.random.rand(25, 3), 0.1*np.random.rand(5, 3), 20*np.random.rand(70, 3)],
-        [5*to.rand(25, 3), 0.1*to.rand(5, 3), 20*to.rand(70, 3)]
+    "data_seq",
+    [
+        [5 * np.random.rand(25, 3), 0.1 * np.random.rand(5, 3), 20 * np.random.rand(70, 3)],
+        [5 * to.rand(25, 3), 0.1 * to.rand(5, 3), 20 * to.rand(70, 3)],
     ],
-    ids=['np', 'to']
+    ids=["np", "to"],
 )
 def test_running_normalizer(data_seq):
     rn = RunningNormalizer()
@@ -413,15 +393,16 @@ def test_running_normalizer(data_seq):
 
 
 @pytest.mark.parametrize(
-    'x', [
+    "x",
+    [
         to.rand(1000, 1),
         to.rand(1, 1000),
         to.rand(1000, 1000),
         np.random.rand(1, 1000),
         np.random.rand(1000, 1),
-        np.random.rand(1000, 1000)
+        np.random.rand(1000, 1000),
     ],
-    ids=['to_1x1000', 'to_1000x1', 'to_1000x1000', 'np_1x1000', 'np_1000x1', 'np_1000x1000']
+    ids=["to_1x1000", "to_1000x1", "to_1000x1000", "np_1x1000", "np_1000x1", "np_1000x1000"],
 )
 def test_stateful_standardizer(x):
     ss = Standardizer()
@@ -447,88 +428,77 @@ def test_stateful_standardizer(x):
         assert np.allclose(x_restrd, x, rtol=1e-02, atol=1e-05)
 
 
-@pytest.mark.parametrize(
-    'g, ed', [
-        (1., 2.),
-        (np.array([-1., 2.]), np.eye(2))
-    ],
-    ids=['scalar', 'array']
-)
+@pytest.mark.parametrize("g, ed", [(1.0, 2.0), (np.array([-1.0, 2.0]), np.eye(2))], ids=["scalar", "array"])
 def test_ds_spec(g, ed):
     # Base class
-    dss = DSSpec(function='name', goal=g)
+    dss = DSSpec(function="name", goal=g)
     assert isinstance(dss, dict)
-    assert dss['function'] == 'name'
+    assert dss["function"] == "name"
     if isinstance(g, np.ndarray):
-        assert np.all(dss['goal'] == g)
+        assert np.all(dss["goal"] == g)
     else:
-        assert dss['goal'] == g
+        assert dss["goal"] == g
 
     # Linear first order subclass
-    lds = LinDSSpec(function='lin', goal=g, errorDynamics=ed)
+    lds = LinDSSpec(function="lin", goal=g, errorDynamics=ed)
     assert isinstance(dss, dict)
-    assert lds['function'] == 'lin'
+    assert lds["function"] == "lin"
     if isinstance(g, np.ndarray):
-        assert np.all(lds['goal'] == g)
-        assert np.all(lds['errorDynamics'] == ed)
+        assert np.all(lds["goal"] == g)
+        assert np.all(lds["errorDynamics"] == ed)
     else:
-        assert lds['goal'] == g
-        assert lds['errorDynamics'] == ed
+        assert lds["goal"] == g
+        assert lds["errorDynamics"] == ed
 
     # Mass-Spring-Damper subclass
-    msds = MSDDSSpec(function='msd', goal=g, damping=2., attractorStiffness=3., mass=4.)
+    msds = MSDDSSpec(function="msd", goal=g, damping=2.0, attractorStiffness=3.0, mass=4.0)
     assert isinstance(dss, dict)
-    assert msds['function'] == 'msd'
+    assert msds["function"] == "msd"
     if isinstance(g, np.ndarray):
-        assert np.all(msds['goal'] == g)
+        assert np.all(msds["goal"] == g)
     else:
-        assert msds['goal'] == g
-    assert msds['damping'] == 2.
-    assert msds['attractorStiffness'] == 3.
-    assert msds['mass'] == 4.
+        assert msds["goal"] == g
+    assert msds["damping"] == 2.0
+    assert msds["attractorStiffness"] == 3.0
+    assert msds["mass"] == 4.0
 
 
-@pytest.mark.parametrize(
-    'identical_bounds', [
-        True, False
-    ],
-    ids=['identical', 'separate']
-)
+@pytest.mark.parametrize("identical_bounds", [True, False], ids=["identical", "separate"])
 def test_gss_optimizer_identical_bounds(identical_bounds):
     class Dummy:
         def loss_fcn(self):
             # Some function to minimize
-            return (self.x + self.y + 4)**2
+            return (self.x + self.y + 4) ** 2
 
         def __init__(self):
             # Test with different lower and upper bounds
-            self.x, self.y = to.tensor([0.]), to.tensor([4.])
-            x_min, x_max = to.tensor([-10.]), to.tensor([5.])
+            self.x, self.y = to.tensor([0.0]), to.tensor([4.0])
+            x_min, x_max = to.tensor([-10.0]), to.tensor([5.0])
             if identical_bounds:
-                self.optim = GSS([{'params': self.x}, {'params': self.y}], x_min, x_max)
+                self.optim = GSS([{"params": self.x}, {"params": self.y}], x_min, x_max)
             else:
-                x_min_override = to.tensor([-6.])
-                self.optim = GSS([{'params': self.x, 'param_min': x_min_override}, {'params': self.y}], x_min, x_max)
+                x_min_override = to.tensor([-6.0])
+                self.optim = GSS([{"params": self.x, "param_min": x_min_override}, {"params": self.y}], x_min, x_max)
 
     dummy = Dummy()
 
     for i in range(2):
         dummy.optim.step(dummy.loss_fcn)
     assert dummy.x != dummy.y
-    print(f'x = {dummy.x.item()} \t y = {dummy.y.item()}')
+    print(f"x = {dummy.x.item()} \t y = {dummy.y.item()}")
 
 
 def test_gss_optimizer_functional():
     class Dummy:
         def loss_fcn(self):
             # Some function to minimize
-            return (self.x + 4)**2
+            return (self.x + 4) ** 2
 
         def __init__(self):
             # Test with different lower and upper bounds
-            self.x = to.tensor([0.])
-            x_min, x_max = to.tensor([-10.]), to.tensor([10.])
-            self.optim = GSS([{'params': self.x}], x_min, x_max)
+            self.x = to.tensor([0.0])
+            x_min, x_max = to.tensor([-10.0]), to.tensor([10.0])
+            self.optim = GSS([{"params": self.x}], x_min, x_max)
 
     dummy = Dummy()
 
@@ -540,13 +510,16 @@ def test_gss_optimizer_functional():
 @pytest.mark.visualization
 def test_gss_optimizer_nlin_fcn():
     from matplotlib import pyplot as plt
+
     # Parameters
-    x_grid = to.linspace(-2., 3., 200)
-    f = 1.
+    x_grid = to.linspace(-2.0, 3.0, 200)
+    f = 1.0
     noise_std = 0.1
 
     # Init param and optimizer
-    x_init = to.rand(1)*(x_grid.max() - x_grid.min())/2 + x_grid.min() + (x_grid.max() - x_grid.min())/4  # [.25, .75]
+    x_init = (
+        to.rand(1) * (x_grid.max() - x_grid.min()) / 2 + x_grid.min() + (x_grid.max() - x_grid.min()) / 4
+    )  # [.25, .75]
     x = nn.Parameter(to.tensor([x_init]), requires_grad=False)
     optim = GSS([x], param_min=x_grid.min().unsqueeze(0), param_max=x_grid.max().unsqueeze(0))
     obj_fcn = partial(noisy_nonlin_fcn, x=x, f=f, noise_std=noise_std)
@@ -554,9 +527,9 @@ def test_gss_optimizer_nlin_fcn():
 
     # Init plotting
     plt.figure()
-    plt.plot(x_grid, noisy_nonlin_fcn(x=x_grid, f=f), label='noise free fcn')
-    plt.scatter(x.data.numpy(), obj_fcn().numpy(), s=40, marker='x', color='k', label='init guess')
-    colors = plt.get_cmap('inferno')(np.linspace(0, 1, num_epochs))
+    plt.plot(x_grid, noisy_nonlin_fcn(x=x_grid, f=f), label="noise free fcn")
+    plt.scatter(x.data.numpy(), obj_fcn().numpy(), s=40, marker="x", color="k", label="init guess")
+    colors = plt.get_cmap("inferno")(np.linspace(0, 1, num_epochs))
 
     for e in tqdm(range(num_epochs), total=num_epochs):
         # Evaluate at a the current point
@@ -566,24 +539,25 @@ def test_gss_optimizer_nlin_fcn():
         plt.plot(x_grid, noisy_nonlin_fcn(x=x_grid, f=f, noise_std=noise_std), alpha=0.2)
         plt.scatter(x.data.numpy(), obj_fcn().numpy(), s=16, color=colors[e])
 
-    plt.xlabel('$x$')
-    plt.ylabel('$f(x)$')
+    plt.xlabel("$x$")
+    plt.ylabel("$f(x)$")
     plt.legend()
     plt.show()
     assert noisy_nonlin_fcn(x, f=f, noise_std=noise_std) < noisy_nonlin_fcn(x_init, f=f, noise_std=noise_std)
 
 
-@pytest.mark.parametrize('dt', [0.1], ids=['0.1'])
-@pytest.mark.parametrize('t_end', [6.], ids=['1.'])
+@pytest.mark.parametrize("dt", [0.1], ids=["0.1"])
+@pytest.mark.parametrize("t_end", [6.0], ids=["1."])
 @pytest.mark.parametrize(
-    't_intvl_space', [
+    "t_intvl_space",
+    [
         BoxSpace(0.1, 0.11, shape=1),
         BoxSpace(0.123, 0.456, shape=1),
-        BoxSpace(10., 20., shape=1),
+        BoxSpace(10.0, 20.0, shape=1),
     ],
-    ids=['small_time_intvl', 'real_time_intvl', 'large_time_intvl'])
-@pytest.mark.parametrize('val_space', [BoxSpace(-5., 3., shape=1)],
-                         ids=['-5_to_3'])
+    ids=["small_time_intvl", "real_time_intvl", "large_time_intvl"],
+)
+@pytest.mark.parametrize("val_space", [BoxSpace(-5.0, 3.0, shape=1)], ids=["-5_to_3"])
 def test_skyline(dt: Union[int, float], t_end: Union[int, float], t_intvl_space: BoxSpace, val_space: BoxSpace):
     # Create the skyline function
     t, vals = skyline(dt, t_end, t_intvl_space, val_space)
@@ -592,28 +566,28 @@ def test_skyline(dt: Union[int, float], t_end: Union[int, float], t_intvl_space:
 
 
 def test_check_prompt():
-    with completion_context('Works fine', color='g'):
+    with completion_context("Works fine", color="g"):
         a = 3
     with pytest.raises(ZeroDivisionError):
-        with completion_context('Works fine', color='r', bright=True):
-            a = 3/0
+        with completion_context("Works fine", color="r", bright=True):
+            a = 3 / 0
 
 
-@pytest.mark.parametrize('color', ['w', 'g', 'y', 'c', 'r', 'b'], ids=['w', 'g', 'y', 'c', 'r', 'b'])
-@pytest.mark.parametrize('bright', [True, False], ids=['bright', 'not_bright'])
+@pytest.mark.parametrize("color", ["w", "g", "y", "c", "r", "b"], ids=["w", "g", "y", "c", "r", "b"])
+@pytest.mark.parametrize("bright", [True, False], ids=["bright", "not_bright"])
 def test_print_cbt_once(color, bright):
     # Reset the flag for this test
     print_cbt_once.has_run = False
 
-    msg = 'You should only read this once per color and brightness'
+    msg = "You should only read this once per color and brightness"
     for i in range(10):
-        print_cbt_once(msg, color, bright, tag='tag', end='\n')
+        print_cbt_once(msg, color, bright, tag="tag", end="\n")
         if i > 0:
             assert print_cbt_once.has_run
 
 
-@pytest.mark.parametrize('x', [to.rand(5, 3), np.random.rand(5, 3)], ids=['torch', 'numpy'])
-@pytest.mark.parametrize('dim', [0, 1], ids=['dim0', 'dim1'])
+@pytest.mark.parametrize("x", [to.rand(5, 3), np.random.rand(5, 3)], ids=["torch", "numpy"])
+@pytest.mark.parametrize("dim", [0, 1], ids=["dim0", "dim1"])
 def test_logmeanexp(x, dim):
     lme = logmeanexp(x, dim)
     assert lme is not None
@@ -624,61 +598,57 @@ def test_logmeanexp(x, dim):
 
 
 @pytest.mark.parametrize(
-    'obj, file_ext', [
-        (to.rand((5, 3)), 'pt'),
-        (np.random.rand(5, 3), 'npy'),
-        (DummyPolicy(BallOnBeamSim(dt=0.01, max_steps=500).spec), 'pt'),
-        (BallOnBeamSim(dt=0.01, max_steps=500), 'pkl'),
+    "obj, file_ext",
+    [
+        (to.rand((5, 3)), "pt"),
+        (np.random.rand(5, 3), "npy"),
+        (DummyPolicy(BallOnBeamSim(dt=0.01, max_steps=500).spec), "pt"),
+        (BallOnBeamSim(dt=0.01, max_steps=500), "pkl"),
     ],
-    ids=['tensor', 'ndarray', 'dummypol', 'pyenv']
+    ids=["tensor", "ndarray", "dummypol", "pyenv"],
 )
 @pytest.mark.parametrize(
-    'meta_info', [
+    "meta_info",
+    [
         None,
-        dict(prefix='pre', suffix='suf'),
-        dict(prefix='pre'),
-        dict(suffix='suf'),
-        dict(foo='baz'),
+        dict(prefix="pre", suffix="suf"),
+        dict(prefix="pre"),
+        dict(suffix="suf"),
+        dict(foo="baz"),
     ],
-    ids=['None', 'pre_suf', 'pre', 'suf', 'neither']
+    ids=["None", "pre_suf", "pre", "suf", "neither"],
 )
-@pytest.mark.parametrize(
-    'use_state_dict', [
-        True, False
-    ],
-    ids=['use_state_dict', 'not-use_state_dict']
-)
+@pytest.mark.parametrize("use_state_dict", [True, False], ids=["use_state_dict", "not-use_state_dict"])
 def test_save_load(obj, file_ext, tmpdir, meta_info, use_state_dict):
     # Save
-    pyrado.save(obj, 'tmpname', file_ext, tmpdir, meta_info, use_state_dict)
+    pyrado.save(obj, "tmpname", file_ext, tmpdir, meta_info, use_state_dict)
 
     # Check if sth has been saved with the correct pre- and suffix
     if meta_info is None:
         assert osp.exists(osp.join(tmpdir, f"tmpname.{file_ext}"))
-    elif 'prefix' in meta_info and 'suffix' in meta_info:
+    elif "prefix" in meta_info and "suffix" in meta_info:
         assert osp.exists(osp.join(tmpdir, f"{meta_info['prefix']}_tmpname_{meta_info['suffix']}.{file_ext}"))
-    elif 'prefix' in meta_info and 'suffix' not in meta_info:
+    elif "prefix" in meta_info and "suffix" not in meta_info:
         assert osp.exists(osp.join(tmpdir, f"{meta_info['prefix']}_tmpname.{file_ext}"))
-    elif 'prefix' not in meta_info and 'suffix' in meta_info:
+    elif "prefix" not in meta_info and "suffix" in meta_info:
         assert osp.exists(osp.join(tmpdir, f"tmpname_{meta_info['suffix']}.{file_ext}"))
 
     # Check if sth has been loaded with the correct pre- and suffix
-    res = pyrado.load(obj, 'tmpname', file_ext, tmpdir, meta_info)
+    res = pyrado.load(obj, "tmpname", file_ext, tmpdir, meta_info)
     assert res is not None
 
 
 @pytest.mark.parametrize(
-    's', [
-        [-1, 0, 1],
-        np.array([[-1, 0, 1]]),
-        np.array([-4, -2, -1, 0])
-    ],
+    "s",
+    [[-1, 0, 1], np.array([[-1, 0, 1]]), np.array([-4, -2, -1, 0])],
 )
 @pytest.mark.parametrize(
-    'd', [1, 2],
+    "d",
+    [1, 2],
 )
 @pytest.mark.parametrize(
-    'h', [1, 1e-4],
+    "h",
+    [1, 1e-4],
 )
 def test_diff_coeffs(s, d, h):
     coeffs, order = diff_coeffs(s, d, h)

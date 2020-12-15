@@ -44,20 +44,22 @@ from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import wrap_like_other_env
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSwingUpSim.name,
-                              f'{BayRn.name}-{PoWER.name}_{QQubeSwingUpAndBalanceCtrl.name}_sim2sim',
-                              f'rand-Mp-Mr_seed-{args.seed}')
+    ex_dir = setup_experiment(
+        QQubeSwingUpSim.name,
+        f"{BayRn.name}-{PoWER.name}_{QQubeSwingUpAndBalanceCtrl.name}_sim2sim",
+        f"rand-Mp-Mr_seed-{args.seed}",
+    )
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_sim_hparams = dict(dt=1/100., max_steps=600)
+    env_sim_hparams = dict(dt=1 / 100.0, max_steps=600)
     env_sim = QQubeSwingUpSim(**env_sim_hparams)
     env_sim = DomainRandWrapperLive(env_sim, create_zero_var_randomizer(env_sim))
     dp_map = get_default_domain_param_map_qq()
@@ -65,14 +67,14 @@ if __name__ == '__main__':
 
     env_real = QQubeSwingUpSim(**env_sim_hparams)
     env_real.domain_param = dict(
-        Mp=0.024*1.1,
-        Mr=0.095*1.1,
+        Mp=0.024 * 1.1,
+        Mr=0.095 * 1.1,
     )
     env_real_hparams = env_sim_hparams
     env_real = wrap_like_other_env(env_real, env_sim)
 
     # PoWER + energy-based controller setup
-    policy_hparam = dict(energy_gain=0.587, ref_energy=0.827, acc_max=10.)
+    policy_hparam = dict(energy_gain=0.587, ref_energy=0.827, acc_max=10.0)
     policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec, **policy_hparam)
     subrtn_hparam = dict(
         max_iter=10,
@@ -135,14 +137,14 @@ if __name__ == '__main__':
     # Set the boundaries for the GP
     dp_nom = QQubeSwingUpSim.get_nominal_domain_param()
     ddp_space = BoxSpace(
-        bound_lo=np.array([0.8*dp_nom['Mp'], 1e-12, 0.8*dp_nom['Mr'], 1e-12]),
-        bound_up=np.array([1.2*dp_nom['Mp'], 1e-11, 1.2*dp_nom['Mr'], 1e-11])
+        bound_lo=np.array([0.8 * dp_nom["Mp"], 1e-12, 0.8 * dp_nom["Mr"], 1e-12]),
+        bound_up=np.array([1.2 * dp_nom["Mp"], 1e-11, 1.2 * dp_nom["Mr"], 1e-11]),
     )
 
     # Algorithm
     bayrn_hparam = dict(
         max_iter=15,
-        acq_fc='UCB',
+        acq_fc="UCB",
         acq_param=dict(beta=0.25),
         acq_restarts=500,
         acq_samples=1000,
@@ -153,15 +155,17 @@ if __name__ == '__main__':
     )
 
     # Save the environments and the hyper-parameters (do it before the init routine of BayRn)
-    save_list_of_dicts_to_yaml([
-        dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(subrtn=subrtn_hparam, subrtn_name=PoWER.name),
-        dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(subrtn=subrtn_hparam, subrtn_name=PoWER.name),
+            dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map),
+        ],
+        ex_dir,
     )
 
     algo = BayRn(ex_dir, env_sim, env_real, subrtn, ddp_space, **bayrn_hparam)
 
     # Jeeeha
-    algo.train(snapshot_mode='latest', seed=args.seed)
+    algo.train(snapshot_mode="latest", seed=args.seed)

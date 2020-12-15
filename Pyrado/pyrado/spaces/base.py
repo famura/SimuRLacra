@@ -41,15 +41,23 @@ from pyrado.utils import get_class_name
 
 class Space(ABC):
     """ Base class of all state, action, and init spaces in Pyrado """
+
     bound_lo: np.ndarray
     bound_up: np.ndarray
 
     def __str__(self):
         """ Get an information string. """
-        return Style.BRIGHT + f'{get_class_name(self)}' + Style.RESET_ALL + f' (id: {id(self)})\n' + \
-               tabulate([[b for b in self.bound_lo],
-                         [b for b in self.bound_up]],
-                        headers=self.labels, showindex=['lower', 'upper'])
+        return (
+            Style.BRIGHT
+            + f"{get_class_name(self)}"
+            + Style.RESET_ALL
+            + f" (id: {id(self)})\n"
+            + tabulate(
+                [[b for b in self.bound_lo], [b for b in self.bound_up]],
+                headers=self.labels,
+                showindex=["lower", "upper"],
+            )
+        )
 
     @property
     def bounds(self) -> Tuple[np.ndarray, np.ndarray]:
@@ -75,7 +83,7 @@ class Space(ABC):
     @property
     def flat_dim(self) -> int:
         """ Get the dimension of the flattened space. """
-        return reduce((lambda x, y: x*y), self.shape)
+        return reduce((lambda x, y: x * y), self.shape)
 
     @property
     def labels(self) -> (np.ndarray, None):
@@ -112,16 +120,16 @@ class Space(ABC):
         for idx in idcs:
             if isinstance(idx, str):
                 # Handle labels
-                assert labels is not None, 'The space must be labeled to use label-based indexing'
+                assert labels is not None, "The space must be labeled to use label-based indexing"
                 for idx_label, label in np.ndenumerate(labels):
                     if label == idx:
                         idx = idx_label
                         break
                 else:
-                    raise pyrado.ValueErr(msg=f'Label {idx} not found in {self}')
+                    raise pyrado.ValueErr(msg=f"Label {idx} not found in {self}")
             if np.all(mask[idx] == 1):
-                label_desc = f' ({labels[idx]})' if labels is not None else ""
-                raise pyrado.ValueErr(msg=f'Duplicate index {idx}{label_desc}')
+                label_desc = f" ({labels[idx]})" if labels is not None else ""
+                raise pyrado.ValueErr(msg=f"Duplicate index {idx}{label_desc}")
             mask[idx] = 1
 
         return mask

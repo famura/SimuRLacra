@@ -63,11 +63,11 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     pyrado.set_seed(seed)
 
     # Environment
-    env = QBallBalancerSim(dt=1/250., max_steps=1500)
+    env = QBallBalancerSim(dt=1 / 250.0, max_steps=1500)
     env = ActNormWrapper(env)
 
     # Learning rate scheduler
-    lrs_gamma = trial.suggest_categorical('exp_lr_scheduler_gamma', [None, 0.99, 0.995, 0.999])
+    lrs_gamma = trial.suggest_categorical("exp_lr_scheduler_gamma", [None, 0.99, 0.995, 0.999])
     if lrs_gamma is not None:
         lr_sched = lr_scheduler.ExponentialLR
         lr_sched_hparam = dict(gamma=lrs_gamma)
@@ -77,27 +77,27 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     # Policy
     policy = FNNPolicy(
         spec=env.spec,
-        hidden_sizes=trial.suggest_categorical('hidden_sizes_policy', [(16, 16), (32, 32), (64, 64)]),
-        hidden_nonlin=fcn_from_str(trial.suggest_categorical('hidden_nonlin_policy', ['to_tanh', 'to_relu'])),
+        hidden_sizes=trial.suggest_categorical("hidden_sizes_policy", [(16, 16), (32, 32), (64, 64)]),
+        hidden_nonlin=fcn_from_str(trial.suggest_categorical("hidden_nonlin_policy", ["to_tanh", "to_relu"])),
     )
 
     # Critic
     vfcn = FNN(
         input_size=env.obs_space.flat_dim,
         output_size=1,
-        hidden_sizes=trial.suggest_categorical('hidden_sizes_critic', [(16, 16), (32, 32), (64, 64)]),
-        hidden_nonlin=fcn_from_str(trial.suggest_categorical('hidden_nonlin_critic', ['to_tanh', 'to_relu'])),
+        hidden_sizes=trial.suggest_categorical("hidden_sizes_critic", [(16, 16), (32, 32), (64, 64)]),
+        hidden_nonlin=fcn_from_str(trial.suggest_categorical("hidden_nonlin_critic", ["to_tanh", "to_relu"])),
     )
     critic_hparam = dict(
         batch_size=250,
-        gamma=trial.suggest_uniform('gamma_critic', 0.99, 1.),
-        lamda=trial.suggest_uniform('lamda_critic', 0.95, 1.),
-        num_epoch=trial.suggest_int('num_epoch_critic', 1, 10),
-        lr=trial.suggest_loguniform('lr_critic', 1e-5, 1e-3),
-        standardize_adv=trial.suggest_categorical('standardize_adv_critic', [True, False]),
-        max_grad_norm=trial.suggest_categorical('max_grad_norm_critic', [None, 1., 5.]),
+        gamma=trial.suggest_uniform("gamma_critic", 0.99, 1.0),
+        lamda=trial.suggest_uniform("lamda_critic", 0.95, 1.0),
+        num_epoch=trial.suggest_int("num_epoch_critic", 1, 10),
+        lr=trial.suggest_loguniform("lr_critic", 1e-5, 1e-3),
+        standardize_adv=trial.suggest_categorical("standardize_adv_critic", [True, False]),
+        max_grad_norm=trial.suggest_categorical("max_grad_norm_critic", [None, 1.0, 5.0]),
         lr_scheduler=lr_sched,
-        lr_scheduler_hparam=lr_sched_hparam
+        lr_scheduler_hparam=lr_sched_hparam,
     )
     critic = GAE(vfcn, **critic_hparam)
 
@@ -106,53 +106,53 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
         num_workers=1,  # parallelize via optuna n_jobs
         max_iter=300,
         batch_size=250,
-        min_steps=trial.suggest_int('num_rollouts_algo', 10, 30)*env.max_steps,
-        num_epoch=trial.suggest_int('num_epoch_algo', 1, 10),
-        eps_clip=trial.suggest_uniform('eps_clip_algo', 0.05, 0.2),
-        std_init=trial.suggest_uniform('std_init_algo', 0.5, 1.0),
-        lr=trial.suggest_loguniform('lr_algo', 1e-5, 1e-3),
-        max_grad_norm=trial.suggest_categorical('max_grad_norm_algo', [None, 1., 5.]),
+        min_steps=trial.suggest_int("num_rollouts_algo", 10, 30) * env.max_steps,
+        num_epoch=trial.suggest_int("num_epoch_algo", 1, 10),
+        eps_clip=trial.suggest_uniform("eps_clip_algo", 0.05, 0.2),
+        std_init=trial.suggest_uniform("std_init_algo", 0.5, 1.0),
+        lr=trial.suggest_loguniform("lr_algo", 1e-5, 1e-3),
+        max_grad_norm=trial.suggest_categorical("max_grad_norm_algo", [None, 1.0, 5.0]),
         lr_scheduler=lr_sched,
-        lr_scheduler_hparam=lr_sched_hparam
+        lr_scheduler_hparam=lr_sched_hparam,
     )
-    algo = PPO(osp.join(study_dir, f'trial_{trial.number}'), env, policy, critic, **algo_hparam)
+    algo = PPO(osp.join(study_dir, f"trial_{trial.number}"), env, policy, critic, **algo_hparam)
 
     # Train without saving the results
-    algo.train(snapshot_mode='latest', seed=seed)
+    algo.train(snapshot_mode="latest", seed=seed)
 
     # Evaluate
     min_rollouts = 1000
     sampler = ParallelRolloutSampler(env, policy, num_workers=1, min_rollouts=min_rollouts)
     ros = sampler.sample()
-    mean_ret = sum([r.undiscounted_return() for r in ros])/min_rollouts
+    mean_ret = sum([r.undiscounted_return() for r in ros]) / min_rollouts
 
     return mean_ret
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    if args.ex_dir is None:
-        ex_dir = setup_experiment('hyperparams', QBallBalancerSim.name, f'{PPO.name}_{FNNPolicy.name}_250Hz_actnorm')
+    if args.dir is None:
+        ex_dir = setup_experiment("hyperparams", QBallBalancerSim.name, f"{PPO.name}_{FNNPolicy.name}_250Hz_actnorm")
         study_dir = osp.join(pyrado.TEMP_DIR, ex_dir)
-        print_cbt(f'Starting a new Optuna study.', 'c', bright=True)
+        print_cbt(f"Starting a new Optuna study.", "c", bright=True)
     else:
-        study_dir = args.ex_dir
+        study_dir = args.dir
         if not osp.isdir(study_dir):
             raise pyrado.PathErr(given=study_dir)
-        print_cbt(f'Continuing an existing Optuna study.', 'c', bright=True)
+        print_cbt(f"Continuing an existing Optuna study.", "c", bright=True)
 
-    name = f'{QBallBalancerSim.name}_{PPO.name}_{FNNPolicy.name}_250Hz_actnorm'
+    name = f"{QBallBalancerSim.name}_{PPO.name}_{FNNPolicy.name}_250Hz_actnorm"
     study = optuna.create_study(
         study_name=name,
         storage=f"sqlite:////{osp.join(study_dir, f'{name}.db')}",
-        direction='maximize',
-        load_if_exists=True
+        direction="maximize",
+        load_if_exists=True,
     )
 
     # Start optimizing
     study.optimize(functools.partial(train_and_eval, study_dir=study_dir, seed=args.seed), n_trials=100, n_jobs=16)
 
     # Save the best hyper-parameters
-    save_list_of_dicts_to_yaml([study.best_params, dict(seed=args.seed)], study_dir, 'best_hyperparams')
+    save_list_of_dicts_to_yaml([study.best_params, dict(seed=args.seed)], study_dir, "best_hyperparams")

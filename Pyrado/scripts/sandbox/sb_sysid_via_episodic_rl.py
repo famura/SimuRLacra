@@ -53,7 +53,7 @@ from pyrado.utils.input_output import print_cbt
 
 def create_bob_setup():
     # Environments
-    env_hparams = dict(dt=1/100., max_steps=500)
+    env_hparams = dict(dt=1 / 100.0, max_steps=500)
     env_real = BallOnBeamSim(**env_hparams)
     env_real.domain_param = dict(
         # l_beam=1.95,
@@ -65,13 +65,14 @@ def create_bob_setup():
     randomizer = DomainRandomizer(
         # NormalDomainParam(name='l_beam', mean=0, std=1e-12, clip_lo=1.5, clip_up=3.5),
         # UniformDomainParam(name='ang_offset', mean=0, halfspan=1e-12),
-        NormalDomainParam(name='g', mean=0, std=1e-12),
+        NormalDomainParam(name="g", mean=0, std=1e-12),
     )
     env_sim = DomainRandWrapperLive(env_sim, randomizer)
     dp_map = {
         # 0: ('l_beam', 'mean'), 1: ('l_beam', 'std'),
         # 2: ('ang_offset', 'mean'), 3: ('ang_offset', 'halfspan')
-        0: ('g', 'mean'), 1: ('g', 'std')
+        0: ("g", "mean"),
+        1: ("g", "std"),
     }
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
 
@@ -81,7 +82,7 @@ def create_bob_setup():
     prior = DomainRandomizer(
         # NormalDomainParam(name='l_beam', mean=2.05, std=2.05/10),
         # UniformDomainParam(name='ang_offset', mean=0.03, halfspan=0.03/10),
-        NormalDomainParam(name='g', mean=8.81, std=8.81/10),
+        NormalDomainParam(name="g", mean=8.81, std=8.81 / 10),
     )
     # trafo_mask = [False, True, False, True]
     trafo_mask = [True, True]
@@ -92,40 +93,44 @@ def create_bob_setup():
 
 def create_qqsu_setup():
     # Environments
-    env_hparams = dict(dt=1/100., max_steps=600)
+    env_hparams = dict(dt=1 / 100.0, max_steps=600)
     env_real = QQubeSwingUpSim(**env_hparams)
     env_real.domain_param = dict(
-        Mr=0.095*0.9,  # 0.095*0.9 = 0.0855
-        Mp=0.024*1.1,  # 0.024*1.1 = 0.0264
-        Lr=0.085*0.9,  # 0.085*0.9 = 0.0765
-        Lp=0.129*1.1,  # 0.129*1.1 = 0.1419
+        Mr=0.095 * 0.9,  # 0.095*0.9 = 0.0855
+        Mp=0.024 * 1.1,  # 0.024*1.1 = 0.0264
+        Lr=0.085 * 0.9,  # 0.085*0.9 = 0.0765
+        Lp=0.129 * 1.1,  # 0.129*1.1 = 0.1419
     )
 
     env_sim = QQubeSwingUpSim(**env_hparams)
     randomizer = DomainRandomizer(
-        NormalDomainParam(name='Mr', mean=0., std=1e-9, clip_lo=1e-3),
-        NormalDomainParam(name='Mp', mean=0., std=1e-9, clip_lo=1e-3),
-        NormalDomainParam(name='Lr', mean=0., std=1e-9, clip_lo=1e-3),
-        NormalDomainParam(name='Lp', mean=0., std=1e-9, clip_lo=1e-3),
+        NormalDomainParam(name="Mr", mean=0.0, std=1e-9, clip_lo=1e-3),
+        NormalDomainParam(name="Mp", mean=0.0, std=1e-9, clip_lo=1e-3),
+        NormalDomainParam(name="Lr", mean=0.0, std=1e-9, clip_lo=1e-3),
+        NormalDomainParam(name="Lp", mean=0.0, std=1e-9, clip_lo=1e-3),
     )
     env_sim = DomainRandWrapperLive(env_sim, randomizer)
     dp_map = {
-        0: ('Mr', 'mean'), 1: ('Mr', 'std'),
-        2: ('Mp', 'mean'), 3: ('Mp', 'std'),
-        4: ('Lr', 'mean'), 5: ('Lr', 'std'),
-        6: ('Lp', 'mean'), 7: ('Lp', 'std')
+        0: ("Mr", "mean"),
+        1: ("Mr", "std"),
+        2: ("Mp", "mean"),
+        3: ("Mp", "std"),
+        4: ("Lr", "mean"),
+        5: ("Lr", "std"),
+        6: ("Lp", "mean"),
+        7: ("Lp", "std"),
     }
     # trafo_mask = [False, True, False, True, False, True, False, True]
-    trafo_mask = [True]*8
+    trafo_mask = [True] * 8
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
 
     # Policies (the behavioral policy needs to be deterministic)
     behavior_policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec)
     prior = DomainRandomizer(
-        NormalDomainParam(name='Mr', mean=0.095, std=0.095/10),
-        NormalDomainParam(name='Mp', mean=0.024, std=0.024/10),
-        NormalDomainParam(name='Lr', mean=0.085, std=0.085/10),
-        NormalDomainParam(name='Lp', mean=0.129, std=0.129/10),
+        NormalDomainParam(name="Mr", mean=0.095, std=0.095 / 10),
+        NormalDomainParam(name="Mp", mean=0.024, std=0.024 / 10),
+        NormalDomainParam(name="Lr", mean=0.085, std=0.085 / 10),
+        NormalDomainParam(name="Lp", mean=0.129, std=0.129 / 10),
     )
     ddp_policy = DomainDistrParamPolicy(mapping=dp_map, trafo_mask=trafo_mask, prior=prior, scale_params=False)
 
@@ -158,7 +163,7 @@ def create_reps_subrtn(ex_dir: str, env_sim: MetaDomainRandWrapper, ddp_policy: 
         expl_std_init=5e-2,
         expl_std_min=1e-4,
         num_epoch_dual=1000,
-        optim_mode='torch',
+        optim_mode="torch",
         lr_dual=5e-4,
         use_map=True,
         num_workers=8,
@@ -179,7 +184,7 @@ def create_nes_subrtn(ex_dir: str, env_sim: MetaDomainRandWrapper, ddp_policy: D
     return NES(ex_dir, env_sim, ddp_policy, **subrtn_hparam), subrtn_hparam
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
@@ -188,16 +193,16 @@ if __name__ == '__main__':
     env_sim, env_real, env_hparams, dp_map, behavior_policy, ddp_policy = create_qqsu_setup()
 
     if args.mode == CEM.name:
-        ex_dir = setup_experiment(env_real.name, f'{SysIdViaEpisodicRL.name}-{CEM.name}')
+        ex_dir = setup_experiment(env_real.name, f"{SysIdViaEpisodicRL.name}-{CEM.name}")
         subrtn, subrtn_hparam = create_cem_subrtn(ex_dir, env_sim, ddp_policy)
     elif args.mode == REPS.name:
-        ex_dir = setup_experiment(env_real.name, f'{SysIdViaEpisodicRL.name}-{REPS.name}')
+        ex_dir = setup_experiment(env_real.name, f"{SysIdViaEpisodicRL.name}-{REPS.name}")
         subrtn, subrtn_hparam = create_reps_subrtn(ex_dir, env_sim, ddp_policy)
     elif args.mode == NES.name:
-        ex_dir = setup_experiment(env_real.name, f'{SysIdViaEpisodicRL.name}-{NES.name}')
+        ex_dir = setup_experiment(env_real.name, f"{SysIdViaEpisodicRL.name}-{NES.name}")
         subrtn, subrtn_hparam = create_nes_subrtn(ex_dir, env_sim, ddp_policy)
     else:
-        raise NotImplementedError('Select mode cem, reps, or nes via the command line argument -m')
+        raise NotImplementedError("Select mode cem, reps, or nes via the command line argument -m")
 
     # Set the seed
     pyrado.set_seed(1001, verbose=True)
@@ -207,17 +212,19 @@ if __name__ == '__main__':
     algo_hparam = dict(
         metric=None,
         std_obs_filt=5,
-        obs_dim_weight=[1, 1, 1, 1, 10, 10.],
-        num_rollouts_per_distr=len(dp_map)*10,  # former 50
-        num_workers=subrtn_hparam['num_workers']
+        obs_dim_weight=[1, 1, 1, 1, 10, 10.0],
+        num_rollouts_per_distr=len(dp_map) * 10,  # former 50
+        num_workers=subrtn_hparam["num_workers"],
     )
 
     # Save the environments and the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams),
-        dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
-        dict(algo=algo_hparam, algo_name=SysIdViaEpisodicRL.name, dp_map=dp_map)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams),
+            dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
+            dict(algo=algo_hparam, algo_name=SysIdViaEpisodicRL.name, dp_map=dp_map),
+        ],
+        ex_dir,
     )
 
     algo = SysIdViaEpisodicRL(subrtn, behavior_policy, **algo_hparam)
@@ -231,17 +238,20 @@ if __name__ == '__main__':
         for _ in range(num_eval_rollouts):
             ro_real.append(rollout(env_real, behavior_policy, eval=True))
 
-        algo.step(snapshot_mode='latest', meta_info=dict(rollouts_real=ro_real))
+        algo.step(snapshot_mode="latest", meta_info=dict(rollouts_real=ro_real))
         algo.logger.record_step()
         algo._curr_iter += 1
 
     if algo.stopping_criterion_met():
-        stopping_reason = 'Stopping criterion met!'
+        stopping_reason = "Stopping criterion met!"
     else:
-        stopping_reason = 'Maximum number of iterations reached!'
+        stopping_reason = "Maximum number of iterations reached!"
 
     if algo.policy is not None:
-        print_cbt(f'{SysIdViaEpisodicRL.name} finished training a {ddp_policy.name} '
-                  f'with {ddp_policy.num_param} parameters. {stopping_reason}', 'g')
+        print_cbt(
+            f"{SysIdViaEpisodicRL.name} finished training a {ddp_policy.name} "
+            f"with {ddp_policy.num_param} parameters. {stopping_reason}",
+            "g",
+        )
     else:
-        print_cbt(f'{subrtn.name} finished training. {stopping_reason}', 'g')
+        print_cbt(f"{subrtn.name} finished training. {stopping_reason}", "g")

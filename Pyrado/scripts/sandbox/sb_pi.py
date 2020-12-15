@@ -44,7 +44,7 @@ from pyrado.utils.data_types import RenderMode
 rcsenv.setLogLevel(4)
 
 
-def ik_activation_variant(dt, max_steps, max_dist_force, physics_engine, graph_file_name):
+def create_ik_aktivation_setup(dt, max_steps, max_dist_force, physics_engine, graph_file_name):
     # Set up environment
     env = PlanarInsertIKActivationSim(
         physicsEngine=physics_engine,
@@ -62,11 +62,11 @@ def ik_activation_variant(dt, max_steps, max_dist_force, physics_engine, graph_f
         observeDynamicalSystemDiscrepancy=False,
         observeTaskSpaceDiscrepancy=True,
     )
-    env.reset(domain_param=dict(effector_friction=1.))
+    env.reset(domain_param=dict(effector_friction=1.0))
 
     # Set up policy
     def policy_fcn(t: float):
-        return [0.1*dt, -0.01*dt, 3/180.*math.pi*math.sin(2.*math.pi*2.*t)]  # [m/s, m/s, rad/s]
+        return [0.1 * dt, -0.01 * dt, 3 / 180.0 * math.pi * math.sin(2.0 * math.pi * 2.0 * t)]  # [m/s, m/s, rad/s]
 
     policy = TimePolicy(env.spec, policy_fcn, dt)
 
@@ -75,7 +75,7 @@ def ik_activation_variant(dt, max_steps, max_dist_force, physics_engine, graph_f
     return rollout(env, policy, render_mode=RenderMode(video=True), stop_on_done=False)
 
 
-def ds_activation_variant(dt, max_steps, max_dist_force, physics_engine, graph_file_name):
+def create_ds_aktivation_setup(dt, max_steps, max_dist_force, physics_engine, graph_file_name):
     # Set up environment
     env = PlanarInsertTASim(
         physicsEngine=physics_engine,
@@ -83,7 +83,7 @@ def ds_activation_variant(dt, max_steps, max_dist_force, physics_engine, graph_f
         dt=dt,
         max_steps=max_steps,
         max_dist_force=max_dist_force,
-        taskCombinationMethod='sum',  # 'sum', 'mean',  'product', or 'softmax'
+        taskCombinationMethod="sum",  # 'sum', 'mean',  'product', or 'softmax'
         checkJointLimits=False,
         collisionAvoidanceIK=True,
         observeForceTorque=True,
@@ -94,7 +94,7 @@ def ds_activation_variant(dt, max_steps, max_dist_force, physics_engine, graph_f
         observeDynamicalSystemDiscrepancy=False,
         observeTaskSpaceDiscrepancy=True,
     )
-    env.reset(domain_param=dict(effector_friction=1.))
+    env.reset(domain_param=dict(effector_friction=1.0))
 
     # Set up policy
     def policy_fcn(t: float):
@@ -107,21 +107,21 @@ def ds_activation_variant(dt, max_steps, max_dist_force, physics_engine, graph_f
     return rollout(env, policy, render_mode=RenderMode(video=True), stop_on_done=False)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Choose setup
-    setup_type = 'ds_activation'  # ik_activation, or activation
+    setup_type = "ds_activation"  # ik_activation, or activation
     common_hparam = dict(
         dt=0.01,
         max_steps=1200,
         max_dist_force=None,
-        physics_engine='Bullet',  # Bullet or Vortex
-        graph_file_name='gPlanarInsert6Link.xml',  # gPlanarInsert6Link.xml or gPlanarInsert5Link.xml
+        physics_engine="Bullet",  # Bullet or Vortex
+        graph_file_name="gPlanarInsert6Link.xml",  # gPlanarInsert6Link.xml or gPlanarInsert5Link.xml
     )
 
-    if setup_type == 'ik_activation':
-        ro = ik_activation_variant(**common_hparam)
-    elif setup_type == 'ds_activation':
-        ro = ds_activation_variant(**common_hparam)
+    if setup_type == "ik_activation":
+        ro = create_ik_aktivation_setup(**common_hparam)
+    elif setup_type == "ds_activation":
+        ro = create_ds_aktivation_setup(**common_hparam)
         draw_potentials(ro)
     else:
-        raise pyrado.ValueErr(given_name=setup_type, eq_constraint='ik_activation or ds_activation')
+        raise pyrado.ValueErr(given_name=setup_type, eq_constraint="ik_activation or ds_activation")

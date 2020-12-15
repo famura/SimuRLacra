@@ -50,14 +50,16 @@ class Algorithm(ABC, LoggerAware):
     """
 
     name: str = None  # unique identifier
-    iteration_key: str = 'iteration'
+    iteration_key: str = "iteration"
 
-    def __init__(self,
-                 save_dir: str,
-                 max_iter: int,
-                 policy: Optional[Policy],
-                 logger: Optional[StepLogger] = None,
-                 save_name: str = 'algo'):
+    def __init__(
+        self,
+        save_dir: str,
+        max_iter: int,
+        policy: Optional[Policy],
+        logger: Optional[StepLogger] = None,
+        save_name: str = "algo",
+    ):
         """
         Constructor
 
@@ -69,11 +71,11 @@ class Algorithm(ABC, LoggerAware):
                           algorithm is run as a subroutine
         """
         if not isinstance(max_iter, int) and max_iter > 0:
-            raise pyrado.ValueErr(given=max_iter, g_constraint='0')
+            raise pyrado.ValueErr(given=max_iter, g_constraint="0")
         if not isinstance(policy, Policy) and policy is not None:
-            raise pyrado.TypeErr(msg='If a policy is given, it needs to be of type Policy!')
+            raise pyrado.TypeErr(msg="If a policy is given, it needs to be of type Policy!")
         if not isinstance(logger, StepLogger) and logger is not None:
-            raise pyrado.TypeErr(msg='If a logger is given, it needs to be of type StepLogger!')
+            raise pyrado.TypeErr(msg="If a logger is given, it needs to be of type StepLogger!")
         if not isinstance(save_name, str):
             raise pyrado.TypeErr(given=save_name, expected_type=str)
 
@@ -173,7 +175,7 @@ class Algorithm(ABC, LoggerAware):
         if seed is not None:
             set_seed(seed, verbose=True)
 
-    def init_modules(self, warmstart: bool, suffix: str = '', prefix: str = None, **kwargs):
+    def init_modules(self, warmstart: bool, suffix: str = "", prefix: str = None, **kwargs):
         """
         Initialize the algorithm's learnable modules, e.g. a policy or value function.
         Overwrite this method if the algorithm uses a learnable module aside the policy, e.g. a value function.
@@ -185,28 +187,26 @@ class Algorithm(ABC, LoggerAware):
         :param kwargs: keyword arguments for initialization, e.g. `policy_param_init` or `valuefcn_param_init`
         """
         if prefix is None:
-            prefix = f'iter_{self._curr_iter - 1}'
+            prefix = f"iter_{self._curr_iter - 1}"
 
-        ppi = kwargs.get('policy_param_init', None)
+        ppi = kwargs.get("policy_param_init", None)
 
         if warmstart and ppi is not None:
             self._policy.init_param(ppi)
-            print_cbt('Learning given an fixed parameter initialization.', 'w')
+            print_cbt("Learning given an fixed parameter initialization.", "w")
 
         elif warmstart and ppi is None and self._curr_iter > 0:
-            self._policy = pyrado.load(self._policy, 'policy', 'pt', self.save_dir,
-                                       meta_info=dict(prefix=prefix, suffix=suffix))
-            print_cbt(f'Learning given the results from iteration {self._curr_iter - 1}', 'w')
+            self._policy = pyrado.load(
+                self._policy, "policy", "pt", self.save_dir, meta_info=dict(prefix=prefix, suffix=suffix)
+            )
+            print_cbt(f"Learning given the results from iteration {self._curr_iter - 1}", "w")
 
         else:
             # Reset the policy
             self._policy.init_param()
-            print_cbt('Learning from scratch.', 'w')
+            print_cbt("Learning from scratch.", "w")
 
-    def train(self,
-              snapshot_mode: str = 'latest',
-              seed: int = None,
-              meta_info: dict = None):
+    def train(self, snapshot_mode: str = "latest", seed: int = None, meta_info: dict = None):
         """
         Train one/multiple policy/policies in a given environment.
 
@@ -216,12 +216,15 @@ class Algorithm(ABC, LoggerAware):
                           contains a dict of information about the current iteration of the meta-algorithm
         """
         if self._policy is not None:
-            print_cbt(f'{get_class_name(self)} started training a {get_class_name(self._policy)} '
-                      f'with {self._policy.num_param} parameters using the snapshot mode {snapshot_mode}.', 'g')
+            print_cbt(
+                f"{get_class_name(self)} started training a {get_class_name(self._policy)} "
+                f"with {self._policy.num_param} parameters using the snapshot mode {snapshot_mode}.",
+                "g",
+            )
             # Set dropout and batch normalization layers to training mode
             self._policy.train()
         else:
-            print_cbt(f'{get_class_name(self)} started training using the snapshot mode {snapshot_mode}.', 'g')
+            print_cbt(f"{get_class_name(self)} started training using the snapshot mode {snapshot_mode}.", "g")
 
         # Set all rngs' seeds
         if seed is not None:
@@ -241,15 +244,18 @@ class Algorithm(ABC, LoggerAware):
             self._curr_iter += 1
 
         if self.stopping_criterion_met():
-            stopping_reason = 'Stopping criterion met!'
+            stopping_reason = "Stopping criterion met!"
         else:
-            stopping_reason = 'Maximum number of iterations reached!'
+            stopping_reason = "Maximum number of iterations reached!"
 
         if self._policy is not None:
-            print_cbt(f'{get_class_name(self)} finished training a {get_class_name(self._policy)} '
-                      f'with {self._policy.num_param} parameters. {stopping_reason}', 'g')
+            print_cbt(
+                f"{get_class_name(self)} finished training a {get_class_name(self._policy)} "
+                f"with {self._policy.num_param} parameters. {stopping_reason}",
+                "g",
+            )
         else:
-            print_cbt(f'{get_class_name(self)} finished training. {stopping_reason}', 'g')
+            print_cbt(f"{get_class_name(self)} finished training. {stopping_reason}", "g")
 
     @abstractmethod
     def step(self, snapshot_mode: str, meta_info: dict = None):
@@ -267,10 +273,7 @@ class Algorithm(ABC, LoggerAware):
         """ Update the policy's (and value functions') parameters based on the collected rollout data. """
         pass
 
-    def make_snapshot(self,
-                      snapshot_mode: str,
-                      curr_avg_ret: float = None,
-                      meta_info: dict = None):
+    def make_snapshot(self, snapshot_mode: str, curr_avg_ret: float = None, meta_info: dict = None):
         """
         Make a snapshot of the training progress.
         This method is called from the subclasses and delegates to the custom method `save_snapshot()`.
@@ -280,15 +283,15 @@ class Algorithm(ABC, LoggerAware):
         :param meta_info: is not `None` if this algorithm is run as a subroutine of a meta-algorithm,
                           contains a dict of information about the current iteration of the meta-algorithm
         """
-        if snapshot_mode == 'latest':
+        if snapshot_mode == "latest":
             self.save_snapshot(meta_info)
-        elif snapshot_mode == 'best':
+        elif snapshot_mode == "best":
             if curr_avg_ret is None:
                 raise pyrado.ValueErr(msg="curr_avg_ret must not be None when snapshot_mode = 'best'!")
             if curr_avg_ret > self._highest_avg_ret:
                 self._highest_avg_ret = curr_avg_ret
                 self.save_snapshot(meta_info)
-        elif snapshot_mode in {'no', 'None'}:
+        elif snapshot_mode in {"no", "None"}:
             pass  # don't save anything
         else:
             raise pyrado.ValueErr(given=snapshot_mode, eq_constraint="'latest', 'best', or 'no'")
@@ -301,10 +304,10 @@ class Algorithm(ABC, LoggerAware):
         :param meta_info: is not `None` if this algorithm is run as a subroutine of a meta-algorithm,
                           contains a `dict` of information about the current iteration of the meta-algorithm
         """
-        joblib.dump(self, osp.join(self.save_dir, f'{self._save_name}.pkl'))
+        joblib.dump(self, osp.join(self.save_dir, f"{self._save_name}.pkl"))
 
     @staticmethod
-    def load_snapshot(load_dir: str, load_name: str = 'algo'):
+    def load_snapshot(load_dir: str, load_name: str = "algo"):
         """
         Load an algorithm from file, i.e. unpickle it.
 
@@ -314,7 +317,7 @@ class Algorithm(ABC, LoggerAware):
         if not osp.isdir(load_dir):
             raise pyrado.PathErr(given=load_dir)
 
-        file = osp.join(load_dir, f'{load_name}.pkl')
+        file = osp.join(load_dir, f"{load_name}.pkl")
         if not osp.isfile(file):
             raise pyrado.PathErr(given=file)
 
@@ -341,22 +344,22 @@ class Algorithm(ABC, LoggerAware):
             nn.utils.clip_grad_norm_(module.parameters(), max_grad_norm, norm_type=2)  # returns unclipped norm
 
         # Calculate the clipped gradient's L2 norm (for logging)
-        total_norm = 0.
+        total_norm = 0.0
         for p in list(filter(lambda p: p.grad is not None, module.parameters())):
             param_norm = p.grad.data.norm(2)
-            total_norm += param_norm.item()**2
-        return total_norm**0.5
+            total_norm += param_norm.item() ** 2
+        return total_norm ** 0.5
 
     def __getstate__(self):
         # Disassemble the directory on pickling
         _, common_part = split_path_custom_common(self._save_dir)
-        self.__dict__['_save_dir_common'] = common_part
+        self.__dict__["_save_dir_common"] = common_part
         return self.__dict__
 
     def __setstate__(self, state):
         # Assemble the directory on unpickling
         self.__dict__ = state
-        common_part = state['_save_dir_common']
+        common_part = state["_save_dir_common"]
 
         # First, try if it has been split at pyrado.EXP_DIR
         self._save_dir = osp.join(pyrado.EXP_DIR, common_part)
@@ -365,7 +368,7 @@ class Algorithm(ABC, LoggerAware):
             self._save_dir = osp.join(pyrado.TEMP_DIR, common_part)
             if not osp.isdir(self._save_dir):
                 # If that did not work, try if it has been split at the pytest's temporary path
-                self._save_dir = osp.join('/tmp', common_part)
+                self._save_dir = osp.join("/tmp", common_part)
                 if not osp.isdir(self._save_dir):
                     raise pyrado.PathErr(given=self._save_dir)
 
@@ -389,7 +392,7 @@ class InterruptableAlgorithm(Algorithm, ABC):
         if not isinstance(num_checkpoints, int):
             raise pyrado.TypeErr(given=num_checkpoints, expected_type=int)
         if num_checkpoints < 1:
-            raise pyrado.ValueErr(given=num_checkpoints, ge_constraint='1')
+            raise pyrado.ValueErr(given=num_checkpoints, ge_constraint="1")
         if not isinstance(init_checkpoint, int):
             raise pyrado.TypeErr(given=init_checkpoint, expected_type=int)
 
@@ -428,6 +431,6 @@ class InterruptableAlgorithm(Algorithm, ABC):
         :param meta_info: information forwarded to `save_snapshot()`
         """
         next = self._curr_checkpoint + 1
-        self._curr_checkpoint = next%(self._num_checkpoints + 1) if next > 0 else next  # no modulo for negative count
+        self._curr_checkpoint = next % (self._num_checkpoints + 1) if next > 0 else next  # no modulo for negative count
 
         self.save_snapshot(meta_info)

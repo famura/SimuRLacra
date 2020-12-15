@@ -47,18 +47,18 @@ from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{UDR.name}-{PPO.name}_{FNNPolicy.name}', '100Hz')
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{UDR.name}-{PPO.name}_{FNNPolicy.name}", "100Hz")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1/100., max_steps=600)
+    env_hparams = dict(dt=1 / 100.0, max_steps=600)
     env = QQubeSwingUpSim(**env_hparams)
     env = ActNormWrapper(env)
 
@@ -79,9 +79,9 @@ if __name__ == '__main__':
         batch_size=500,
         standardize_adv=False,
         lr=7.058326426522811e-4,
-        max_grad_norm=6.,
+        max_grad_norm=6.0,
         lr_scheduler=lr_scheduler.ExponentialLR,
-        lr_scheduler_hparam=dict(gamma=0.999)
+        lr_scheduler_hparam=dict(gamma=0.999),
     )
     critic = GAE(vfcn, **critic_hparam)
 
@@ -89,15 +89,15 @@ if __name__ == '__main__':
     subrtn_hparam = dict(
         max_iter=200,
         eps_clip=0.12648736789309026,
-        min_steps=30*env.max_steps,
+        min_steps=30 * env.max_steps,
         num_epoch=7,
         batch_size=500,
         std_init=0.7573286998997557,
         lr=6.999956625305722e-04,
-        max_grad_norm=1.,
+        max_grad_norm=1.0,
         num_workers=8,
         lr_scheduler=lr_scheduler.ExponentialLR,
-        lr_scheduler_hparam=dict(gamma=0.999)
+        lr_scheduler_hparam=dict(gamma=0.999),
     )
     subrtn = PPO(ex_dir, env, policy, critic, **subrtn_hparam)
 
@@ -105,14 +105,16 @@ if __name__ == '__main__':
     algo = UDR(env, subrtn)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(critic=critic_hparam, vfcn=vfcn_hparam),
-        dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
-        dict(algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(critic=critic_hparam, vfcn=vfcn_hparam),
+            dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
+            dict(algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha
-    algo.train(snapshot_mode='latest', seed=args.seed)
+    algo.train(snapshot_mode="latest", seed=args.seed)

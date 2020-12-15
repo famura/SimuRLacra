@@ -31,6 +31,7 @@
 #include "ExperimentConfig.h"
 #include "action/ActionModelIK.h"
 #include "action/AMDynamicalSystemActivation.h"
+#include "action/AMIKControllerActivation.h"
 #include "initState/ISSBoxLifting.h"
 #include "observation/OMCombined.h"
 #include "observation/OMBodyStateLinear.h"
@@ -76,11 +77,13 @@ class ECBoxLifting : public ExperimentConfig
 protected:
     virtual ActionModel* createActionModel()
     {
-        // Setup inner action model
-        RcsBody* leftGrasp = RcsGraph_getBodyByName(graph, "PowerGrasp_L");
-        RCHECK(leftGrasp);
+        // Get the relevant bodies
         RcsBody* rightGrasp = RcsGraph_getBodyByName(graph, "PowerGrasp_R");
         RCHECK(rightGrasp);
+        RcsBody* box = RcsGraph_getBodyByName(graph, "Box");
+        RCHECK(box);
+        RcsBody* basket = RcsGraph_getBodyByName(graph, "Basket");
+        RCHECK(basket);
         
         // Get reference frames for the position and orientation tasks
         std::string refFrameType = "world";
@@ -91,14 +94,11 @@ protected:
             // Keep nullptr
         }
         else if (refFrameType == "box") {
-            RcsBody* box = RcsGraph_getBodyByName(graph, "Box");
-            RCHECK(box);
+            
             refBody = box;
             refFrame = box;
         }
         else if (refFrameType == "basket") {
-            RcsBody* basket = RcsGraph_getBodyByName(graph, "Basket");
-            RCHECK(basket);
             refBody = basket;
             refFrame = basket;
         }
@@ -108,146 +108,154 @@ protected:
             throw std::invalid_argument(os.str());
         }
         
-        // Initialize action model and tasks
-        std::unique_ptr<AMIKGeneric> innerAM(new AMIKGeneric(graph));
-        std::vector<std::unique_ptr<DynamicalSystem>> tasks;
+        // Get the type of action model
+        std::string actionModelType = "unspecified";
+        properties->getProperty(actionModelType, "actionModelType");
         
-        // Control effector positions and orientation
-        if (properties->getPropertyBool("positionTasks", false)) {
-            RcsBody* basket = RcsGraph_getBodyByName(graph, "Basket");
-            RCHECK(basket);
-            // Left
-            innerAM->addTask(new TaskPosition3D(graph, leftGrasp, basket, basket));
-            innerAM->addTask(new TaskEuler3D(graph, leftGrasp, basket, basket));
-            innerAM->addTask(TaskFactory::createTask(
-                R"(<Task name="Hand L Joints" controlVariable="Joints" jnts="fing1-knuck1_L tip1-fing1_L fing2-knuck2_L tip2-fing2_L fing3-knuck3_L tip3-fing3_L knuck1-base_L" tmc="0.1" vmax="1000" active="untrue"/>)",
-                graph)
-            );
-            // Right
-            innerAM->addTask(new TaskPosition3D(graph, rightGrasp, basket, basket));
-            innerAM->addTask(new TaskEuler3D(graph, rightGrasp, basket, basket));
-            innerAM->addTask(TaskFactory::createTask(
-                R"(<Task name="Hand R Joints" controlVariable="Joints" jnts="fing1-knuck1_R tip1-fing1_R fing2-knuck2_R tip2-fing2_R fing3-knuck3_R tip3-fing3_R knuck1-base_R" tmc="0.1" vmax="1000" active="untrue"/>)",
-                graph)
-            );
-            innerAM->addTask(TaskFactory::createTask(
-                R"(<Task name="Distance R" controlVariable="Distance" effector="tip2_R" refBdy="Box" gainDX="1." active="true"/>)",
-                graph)
-            );
-            
-            // Obtain task data (depends on the order of the MPs coming from Pyrado)
-            // Left
-            unsigned int i = 0;
-            std::vector<unsigned int> taskDimsLeft{
-                3, 3, 3, 3, 7
-            };
-            std::vector<unsigned int> offsetsLeft{
-                0, 0, 3, 3, 6
-            };
-            auto& tsLeft = properties->getChildList("tasksLeft");
-            for (auto tsk : tsLeft) {
-                DynamicalSystem* ds = DynamicalSystem::create(tsk, taskDimsLeft[i]);
-                tasks.emplace_back(new DSSlice(ds, offsetsLeft[i], taskDimsLeft[i]));
-                i++;
-            }
-            // Right
-            std::vector<unsigned int> taskDimsRight{
-                3, 3, 3, 3, 7, 1
-            };
-            unsigned int oL = offsetsLeft.back() + taskDimsLeft.back();
-            std::vector<unsigned int> offsetsRight{
-                oL, oL, oL + 3, oL + 3, oL + 6, oL + 13,
-            };
-            i = 0;
-            auto& tsRight = properties->getChildList("tasksRight");
-            for (auto tsk : tsRight) {
-                DynamicalSystem* ds = DynamicalSystem::create(tsk, taskDimsRight[i]);
-                tasks.emplace_back(new DSSlice(ds, offsetsRight[i], taskDimsRight[i]));
-                i++;
-            }
-        }
-        // Control effector velocity and orientation
-        else {
-            // Left
-            innerAM->addTask(new TaskVelocity1D("Xd", graph, leftGrasp, refBody, refFrame));
-            innerAM->addTask(new TaskVelocity1D("Yd", graph, leftGrasp, refBody, refFrame));
-            innerAM->addTask(new TaskVelocity1D("Zd", graph, leftGrasp, refBody, refFrame));
-            innerAM->addTask(new TaskOmega1D("Ad", graph, leftGrasp, refBody, refFrame));
-            innerAM->addTask(new TaskOmega1D("Bd", graph, leftGrasp, refBody, refFrame));
-            innerAM->addTask(new TaskOmega1D("Cd", graph, leftGrasp, refBody, refFrame));
-            innerAM->addTask(TaskFactory::createTask(
-                R"(<Task name="Hand L Joints" controlVariable="Joints" jnts="fing1-knuck1_L tip1-fing1_L fing2-knuck2_L tip2-fing2_L fing3-knuck3_L tip3-fing3_L knuck1-base_L" tmc="0.1" vmax="1000" active="untrue"/>)",
-                graph)
-            );
-            // Right
-            innerAM->addTask(new TaskVelocity1D("Xd", graph, rightGrasp, refBody, refFrame));
-            innerAM->addTask(new TaskVelocity1D("Yd", graph, rightGrasp, refBody, refFrame));
-            innerAM->addTask(new TaskVelocity1D("Zd", graph, rightGrasp, refBody, refFrame));
-            innerAM->addTask(new TaskOmega1D("Ad", graph, rightGrasp, refBody, refFrame));
-            innerAM->addTask(new TaskOmega1D("Bd", graph, rightGrasp, refBody, refFrame));
-            innerAM->addTask(new TaskOmega1D("Cd", graph, rightGrasp, refBody, refFrame));
-            //        innerAM->addTask(new TaskJoint(graph, RcsGraph_getJointByName(graph, "fing1-knuck1_R")));
-            innerAM->addTask(TaskFactory::createTask(
-                R"(<Task name="Hand R Joints" controlVariable="Joints" jnts="fing1-knuck1_R tip1-fing1_R fing2-knuck2_R tip2-fing2_R fing3-knuck3_R tip3-fing3_R knuck1-base_R" tmc="0.1" vmax="1000" active="untrue"/>)",
-                graph)
-            );
-            
-            // Obtain task data (depends on the order of the MPs coming from Pyrado)
-            // Left
-            unsigned int i = 0;
-            std::vector<unsigned int> taskDimsLeft{
-                1, 1, 1, 1, 1, 1, 7
-            };
-            std::vector<unsigned int> offsetsLeft{
-                0, 1, 2, 3, 4, 5, 6
-            };
-            auto& tsLeft = properties->getChildList("tasksLeft");
-            for (auto tsk : tsLeft) {
-                DynamicalSystem* ds = DynamicalSystem::create(tsk, taskDimsLeft[i]);
-                tasks.emplace_back(new DSSlice(ds, offsetsLeft[i], taskDimsLeft[i]));
-                i++;
-            }
-            // Right
-            std::vector<unsigned int> taskDimsRight{
-                1, 1, 1, 1, 1, 1, 7
-            };
-            unsigned int oL = offsetsLeft.back() + taskDimsLeft.back();
-            std::vector<unsigned int> offsetsRight{
-                oL, oL + 1, oL + 2, oL + 3, oL + 4, oL + 5, oL + 6
-            };
-            i = 0;
-            auto& tsRight = properties->getChildList("tasksRight");
-            for (auto tsk : tsRight) {
-                DynamicalSystem* ds = DynamicalSystem::create(tsk, taskDimsRight[i]);
-                tasks.emplace_back(new DSSlice(ds, offsetsRight[i], taskDimsRight[i]));
-                i++;
-            }
-        }
-        
-        if (tasks.empty()) {
-            throw std::invalid_argument("No tasks specified!");
-        }
-        
-        // Incorporate collision costs into IK
-        if (properties->getPropertyBool("collisionAvoidanceIK", true)) {
-            REXEC(4) {
-                std::cout << "IK considers the provided collision model" << std::endl;
-            }
-            innerAM->setupCollisionModel(collisionMdl);
-        }
-        
-        // Setup task-based action model
-        std::vector<DynamicalSystem*> taskRel;
-        for (auto& task : tasks) {
-            taskRel.push_back(task.release());
-        }
-        
-        // Get the method how to combine the movement primitives / tasks given their activation
-        std::string taskCombinationMethod = "mean";
+        // Get the method how to combine the movement primitives / tasks given their activation (common for both)
+        std::string taskCombinationMethod = "unspecified";
         properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
         TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(taskCombinationMethod);
         
-        return new AMDynamicalSystemActivation(innerAM.release(), taskRel, tcm);
+        if (actionModelType == "ik_activation") {
+            // Create the action model
+            auto amIK = new AMIKControllerActivation(graph, tcm);
+            std::vector<Task*> tasks;
+            
+            // Check if the tasks are defined on position or velocity level. Adapt their parameters if desired.
+            if (properties->getPropertyBool("positionTasks", true)) {
+                RcsBody* tip1R = RcsGraph_getBodyByName(graph, "tip1_R");
+                RCHECK(tip1R);
+                // Right
+                tasks.emplace_back(new TaskPosition1D("Y", graph, rightGrasp, refBody, refFrame));
+                tasks.emplace_back(new TaskPosition1D("Z", graph, rightGrasp, refBody, refFrame));
+//                tasks.emplace_back(new TaskPosition1D("Y", graph, rightGrasp, refBody, refFrame));
+                tasks.emplace_back(new TaskDistance(graph, tip1R, box, 0.05));
+            }
+            
+            else {
+                // Right
+                tasks.emplace_back(new TaskVelocity1D("Yd", graph, rightGrasp, refBody, refFrame));
+                tasks.emplace_back(new TaskVelocity1D("Yd", graph, rightGrasp, refBody, refFrame));
+                tasks.emplace_back(new TaskVelocity1D("Zd", graph, rightGrasp, refBody, refFrame));
+                tasks.emplace_back(new TaskVelocity1D("Zd", graph, rightGrasp, refBody, refFrame));
+            }
+            
+            // Add the tasks
+            for (auto t : tasks) { amIK->addTask(t); }
+            
+            // Add the always active tasks
+            amIK->addAlwaysActiveTask(new TaskPosition1D("X", graph, rightGrasp, basket, basket));
+            
+            // Set the tasks' desired states
+            std::vector<PropertySource*> taskSpec = properties->getChildList("taskSpecIK");
+            amIK->setXdesFromTaskSpec(taskSpec);
+            
+            // Incorporate collision costs into IK
+            if (properties->getPropertyBool("collisionAvoidanceIK", true)) {
+                REXEC(4) {
+                    std::cout << "IK considers the provided collision model" << std::endl;
+                }
+                amIK->setupCollisionModel(collisionMdl);
+            }
+            
+            return amIK;
+        }
+        
+        else if (actionModelType == "ds_activation") {
+            // Initialize action model and tasks
+            std::unique_ptr<AMIKGeneric> innerAM(new AMIKGeneric(graph));
+            std::vector<std::unique_ptr<DynamicalSystem>> tasks;
+            
+            // Control effector positions and orientation
+            if (properties->getPropertyBool("positionTasks", false)) {
+                // Right
+                innerAM->addTask(new TaskPosition3D(graph, rightGrasp, basket, basket));
+                innerAM->addTask(new TaskEuler3D(graph, rightGrasp, basket, basket));
+                innerAM->addTask(TaskFactory::createTask(
+                    R"(<Task name="Hand R Joints" controlVariable="Joints" jnts="fing1-knuck1_R tip1-fing1_R fing2-knuck2_R tip2-fing2_R fing3-knuck3_R tip3-fing3_R knuck1-base_R" tmc="0.1" vmax="1000" active="untrue"/>)",
+                    graph)
+                );
+//                innerAM->addTask(TaskFactory::createTask(
+//                    R"(<Task name="Distance R" controlVariable="Distance" effector="tip2_R" refBdy="Box" gainDX="1." active="true"/>)",
+//                    graph)
+//                );
+                
+                // Obtain task data (depends on the order of the MPs coming from Pyrado)
+                // Right
+                unsigned int i = 0;
+                std::vector<unsigned int> taskDimsRight{
+                    3, 3, 3, 3, 7
+                };
+                std::vector<unsigned int> offsetsRight{
+                    0, 0, 3, 3, 6
+                };
+                auto& tsRight = properties->getChildList("tasksRight");
+                for (auto tsk : tsRight) {
+                    DynamicalSystem* ds = DynamicalSystem::create(tsk, taskDimsRight[i]);
+                    tasks.emplace_back(new DSSlice(ds, offsetsRight[i], taskDimsRight[i]));
+                    i++;
+                }
+            }
+            
+            // Control effector velocity and orientation
+            else {
+                // Right
+                innerAM->addTask(new TaskVelocity1D("Xd", graph, rightGrasp, refBody, refFrame));
+                innerAM->addTask(new TaskVelocity1D("Yd", graph, rightGrasp, refBody, refFrame));
+                innerAM->addTask(new TaskVelocity1D("Zd", graph, rightGrasp, refBody, refFrame));
+                innerAM->addTask(new TaskOmega1D("Ad", graph, rightGrasp, refBody, refFrame));
+                innerAM->addTask(new TaskOmega1D("Bd", graph, rightGrasp, refBody, refFrame));
+                innerAM->addTask(new TaskOmega1D("Cd", graph, rightGrasp, refBody, refFrame));
+                //        innerAM->addTask(new TaskJoint(graph, RcsGraph_getJointByName(graph, "fing1-knuck1_R")));
+                innerAM->addTask(TaskFactory::createTask(
+                    R"(<Task name="Hand R Joints" controlVariable="Joints" jnts="fing1-knuck1_R tip1-fing1_R fing2-knuck2_R tip2-fing2_R fing3-knuck3_R tip3-fing3_R knuck1-base_R" tmc="0.1" vmax="1000" active="untrue"/>)",
+                    graph)
+                );
+                
+                // Obtain task data (depends on the order of the MPs coming from Pyrado)
+                // Right
+                unsigned int i = 0;
+                std::vector<unsigned int> taskDimsRight{
+                    1, 1, 1, 1, 1, 1, 7
+                };
+                std::vector<unsigned int> offsetsRight{
+                    0, 1, 2, 3, 4, 5, 6
+                };
+                auto& tsRight = properties->getChildList("tasksRight");
+                for (auto tsk : tsRight) {
+                    DynamicalSystem* ds = DynamicalSystem::create(tsk, taskDimsRight[i]);
+                    tasks.emplace_back(new DSSlice(ds, offsetsRight[i], taskDimsRight[i]));
+                    i++;
+                }
+            }
+            
+            if (tasks.empty()) {
+                throw std::invalid_argument("No tasks specified!");
+            }
+            
+            // Incorporate collision costs into IK
+            if (properties->getPropertyBool("collisionAvoidanceIK", true)) {
+                REXEC(4) {
+                    std::cout << "IK considers the provided collision model" << std::endl;
+                }
+                innerAM->setupCollisionModel(collisionMdl);
+            }
+            
+            // Setup task-based action model
+            std::vector<DynamicalSystem*> taskRel;
+            for (auto& task : tasks) {
+                taskRel.push_back(task.release());
+            }
+            
+            return new AMDynamicalSystemActivation(innerAM.release(), taskRel, tcm);
+        }
+        
+        else {
+            std::ostringstream os;
+            os << "Unsupported action model type: " << actionModelType;
+            throw std::invalid_argument(os.str());
+        }
     }
     
     virtual ObservationModel* createObservationModel()
@@ -255,32 +263,32 @@ protected:
         // Observe effector positions (and velocities)
         std::unique_ptr<OMCombined> fullState(new OMCombined());
         
-        auto omLeftLin = new OMBodyStateLinear(graph, "PowerGrasp_L"); // in world coordinates
-        omLeftLin->setMinState({0., -1.6, 0.75});  // [m]
-        omLeftLin->setMaxState({1.6, 1.6, 1.5});  // [m]
-        omLeftLin->setMaxVelocity(3.); // [m/s]
-        fullState->addPart(omLeftLin);
-        
         auto omRightLin = new OMBodyStateLinear(graph, "PowerGrasp_R"); // in world coordinates
-        omRightLin->setMinState({0., -1.6, 0.75});  // [m]
-        omRightLin->setMaxState({1.6, 1.6, 1.5});  // [m]
+        omRightLin->setMinState({0.4, -0.8, 0.6});  // [m]
+        omRightLin->setMaxState({1.6, 0.8, 1.4});  // [m]
         omRightLin->setMaxVelocity(3.); // [m/s]
-        fullState->addPart(omRightLin);
+        fullState->addPart(OMPartial::fromMask(omRightLin, {false, true, true}));
         
         // Observe box positions (and velocities)
 //        auto omBoxLin = new OMBodyStateLinear(graph, "Box", "Table", "Table");  // in relative coordinates
 //        omBoxLin->setMinState({-0.6, -0.8, -0.1});  // [m]
 //        omBoxLin->setMaxState({0.6, 0.8, 1.});  // [m]
         auto omBoxLin = new OMBodyStateLinear(graph, "Box"); // in world coordinates
-        omBoxLin->setMinState({0.9, -0.8, 0.66});  // [m]
-        omBoxLin->setMaxState({2.1, 0.8, 1.26});  // [m]
-        omBoxLin->setMaxVelocity(5.); // [m/s]
-        fullState->addPart(omBoxLin);
+        omBoxLin->setMinState({0.4, -0.8, 0.6});  // [m]
+        omBoxLin->setMaxState({1.6, 0.8, 1.4});  // [m]
+        omBoxLin->setMaxVelocity(3.); // [m/s]
+        fullState->addPart(OMPartial::fromMask(omBoxLin, {false, true, true}));
         
-        // Observe box orientations (and velocities)
-        auto omBoxAng = new OMBodyStateAngular(graph, "Box"); // in world coordinates
-        omBoxAng->setMaxVelocity(RCS_DEG2RAD(720)); // [rad/s]
-        fullState->addPart(omBoxAng);
+        // Observe box orientation (and velocities)
+        if (properties->getPropertyBool("observeVelocities", false)) {
+            auto omBoxAng = new OMBodyStateAngular(graph, "Box"); // in world coordinates
+            omBoxAng->setMaxVelocity(RCS_DEG2RAD(720)); // [rad/s]
+            fullState->addPart(OMPartial::fromMask(omBoxAng, {true, false, false}));
+        }
+        else {
+            auto omBoxAng = new OMBodyStateAngularPositions(graph, "Box"); // in world coordinates
+            fullState->addPart(OMPartial::fromMask(omBoxAng, {true, false, false}));
+        }
         
         // Add goal distances
         if (properties->getPropertyBool("observeDynamicalSystemGoalDistance", false)) {
@@ -294,12 +302,12 @@ protected:
             RcsSensor* ftsL = RcsGraph_getSensorByName(graph, "WristLoadCellLBR_L");
             if (ftsL) {
                 auto omForceTorque = new OMForceTorque(graph, ftsL->name, 1200);
-                fullState->addPart(OMPartial::fromMask(omForceTorque, {true, true, true, false, false, false}));
+                fullState->addPart(OMPartial::fromMask(omForceTorque, {false, true, true, false, false, false}));
             }
             RcsSensor* ftsR = RcsGraph_getSensorByName(graph, "WristLoadCellLBR_R");
             if (ftsR) {
                 auto omForceTorque = new OMForceTorque(graph, ftsR->name, 1200);
-                fullState->addPart(OMPartial::fromMask(omForceTorque, {true, true, true, false, false, false}));
+                fullState->addPart(OMPartial::fromMask(omForceTorque, {false, true, true, false, false, false}));
             }
         }
         
@@ -343,10 +351,8 @@ protected:
         if (properties->getPropertyBool("observeTaskSpaceDiscrepancy", true)) {
             auto wamIK = actionModel->unwrap<ActionModelIK>();
             if (wamIK) {
-                auto omTSDescrL = new OMTaskSpaceDiscrepancy("PowerGrasp_L", graph, wamIK->getController()->getGraph());
-                fullState->addPart(omTSDescrL);
                 auto omTSDescrR = new OMTaskSpaceDiscrepancy("PowerGrasp_R", graph, wamIK->getController()->getGraph());
-                fullState->addPart(omTSDescrR);
+                fullState->addPart(OMPartial::fromMask(omTSDescrR, {false, true, true}));
             }
             else {
                 throw std::invalid_argument("The action model needs to be of type ActionModelIK!");
@@ -408,8 +414,8 @@ public:
             Vec3d_transformSelf(cameraLocation, table->A_BI);
             
             // Move the camera approx where the Kinect would be
-            cameraLocation[0] = railBot->A_BI->org[0] - 0.5;
-            cameraLocation[1] = railBot->A_BI->org[1];
+            cameraLocation[0] = railBot->A_BI->org[0] + 2.3 ;
+            cameraLocation[1] = 0;
             cameraLocation[2] = railBot->A_BI->org[2] + 1.5;
         }
         else {
@@ -460,40 +466,35 @@ public:
         
         unsigned int sd = observationModel->getStateDim();
         
-        auto omLeftLin = observationModel->findOffsets<OMBodyStateLinear>(); // there are two, we find the first
-        if (omLeftLin) {
-            linesOut.emplace_back(
-                string_format("left hand pg:  [% 1.3f,% 1.3f,% 1.3f] m   [% 1.3f,% 1.3f,% 1.3f] m/s",
-                              obs->ele[omLeftLin.pos], obs->ele[omLeftLin.pos + 1], obs->ele[omLeftLin.pos + 2],
-                              obs->ele[sd + omLeftLin.vel], obs->ele[sd + omLeftLin.vel + 1],
-                              obs->ele[sd + omLeftLin.vel + 2]));
+        auto omRightLin = observationModel->findOffsets<OMBodyStateLinear>(); // there are two, we find the first
+        if (omRightLin) {
             linesOut.emplace_back(
                 string_format("right hand pg: [% 1.3f,% 1.3f,% 1.3f] m   [% 1.3f,% 1.3f,% 1.3f] m/s",
-                              obs->ele[omLeftLin.pos + 3], obs->ele[omLeftLin.pos + 4], obs->ele[omLeftLin.pos + 5],
-                              obs->ele[sd + omLeftLin.vel + 3], obs->ele[sd + omLeftLin.vel + 4],
-                              obs->ele[sd + omLeftLin.vel + 5]));
+                              obs->ele[omRightLin.pos], obs->ele[omRightLin.pos + 1], obs->ele[omRightLin.pos + 2],
+                              obs->ele[sd + omRightLin.vel], obs->ele[sd + omRightLin.vel + 1],
+                              obs->ele[sd + omRightLin.vel + 2]));
         }
         
         auto omBoxAng = observationModel->findOffsets<OMBodyStateAngular>(); // assuming there is only the box one
-        if (omBoxAng && omLeftLin) {
+        if (omBoxAng && omRightLin) {
             linesOut.emplace_back(
                 string_format("box absolute:  [% 1.3f,% 1.3f,% 1.3f] m   [% 3.0f,% 3.0f,% 3.0f] deg",
-                              obs->ele[omLeftLin.pos + 6], obs->ele[omLeftLin.pos + 7], obs->ele[omLeftLin.pos + 8],
-                              obs->ele[omBoxAng.pos]*180/M_PI, obs->ele[omBoxAng.pos + 1]*180/M_PI,
-                              obs->ele[omBoxAng.pos + 2]*180/M_PI));
+                              obs->ele[omRightLin.pos + 3], obs->ele[omRightLin.pos + 4], obs->ele[omRightLin.pos + 5],
+                              RCS_RAD2DEG(obs->ele[omBoxAng.pos]), RCS_RAD2DEG(obs->ele[omBoxAng.pos + 1]),
+                              RCS_RAD2DEG(obs->ele[omBoxAng.pos + 2])));
         }
-        else if (omLeftLin) {
+        else if (omRightLin) {
             linesOut.emplace_back(
                 string_format("box absolute:  [% 1.3f,% 1.3f,% 1.3f] m",
-                              obs->ele[omLeftLin.pos + 6], obs->ele[omLeftLin.pos + 7], obs->ele[omLeftLin.pos + 8]));
+                              obs->ele[omRightLin.pos + 3], obs->ele[omRightLin.pos + 4],
+                              obs->ele[omRightLin.pos + 5]));
         }
         
         auto omFTS = observationModel->findOffsets<OMForceTorque>();
         if (omFTS) {
             linesOut.emplace_back(
-                string_format("forces left:   [% 3.1f, % 3.1f, % 3.1f] N     right: [% 3.1f, % 3.1f, % 3.1f] N",
-                              obs->ele[omFTS.pos], obs->ele[omFTS.pos + 1], obs->ele[omFTS.pos + 2],
-                              obs->ele[omFTS.pos + 3], obs->ele[omFTS.pos + 4], obs->ele[omFTS.pos + 5]));
+                string_format("forces right:  [% 3.1f, % 3.1f, % 3.1f] N",
+                              obs->ele[omFTS.pos], obs->ele[omFTS.pos + 1], obs->ele[omFTS.pos + 2]));
         }
         
         auto omColl = observationModel->findOffsets<OMCollisionCost>();

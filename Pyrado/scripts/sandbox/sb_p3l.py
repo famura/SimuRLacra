@@ -36,8 +36,11 @@ import torch as to
 import rcsenv
 import pyrado
 from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
-from pyrado.environments.rcspysim.planar_3_link import Planar3LinkJointCtrlSim, Planar3LinkIKActivationSim, \
-    Planar3LinkTASim
+from pyrado.environments.rcspysim.planar_3_link import (
+    Planar3LinkJointCtrlSim,
+    Planar3LinkIKActivationSim,
+    Planar3LinkTASim,
+)
 from pyrado.domain_randomization.utils import print_domain_params
 from pyrado.plotting.rollout_based import draw_potentials
 from pyrado.policies.recurrent.adn import ADNPolicy, pd_cubic
@@ -63,8 +66,11 @@ def create_joint_control_setup(dt, max_steps, max_dist_force, physics_engine):
 
     # Set up policy
     def policy_fcn(t: float):
-        return [10/180*math.pi, 10/180*math.pi,  # same as init config
-                10/180*math.pi + 45./180.*math.pi*math.sin(2.*math.pi*0.2*t)]  # oscillation in last link
+        return [
+            10 / 180 * math.pi,
+            10 / 180 * math.pi,  # same as init config
+            10 / 180 * math.pi + 45.0 / 180.0 * math.pi * math.sin(2.0 * math.pi * 0.2 * t),
+        ]  # oscillation in last link
 
     policy = TimePolicy(env.spec, policy_fcn, dt)
 
@@ -79,7 +85,7 @@ def create_ik_activation_setup(dt, max_steps, max_dist_force, physics_engine):
         dt=dt,
         max_steps=max_steps,
         max_dist_force=max_dist_force,
-        taskCombinationMethod='product',
+        taskCombinationMethod="product",
         positionTasks=True,
         checkJointLimits=False,
         collisionAvoidanceIK=True,
@@ -89,9 +95,7 @@ def create_ik_activation_setup(dt, max_steps, max_dist_force, physics_engine):
 
     # Set up policy
     def policy_fcn(t: float):
-        return [0.3 + 0.2*math.sin(2.*math.pi*0.2*t),
-                0,
-                1]
+        return [0.3 + 0.2 * math.sin(2.0 * math.pi * 0.2 * t), 0, 1]
 
     policy = TimePolicy(env.spec, policy_fcn, dt)
 
@@ -122,7 +126,7 @@ def create_ds_activation_setup(dt, max_steps, max_dist_force, physics_engine):
         elif t < 7:
             return [1, 0, 0]
         elif t < 10:
-            return [.5, 0.5, 0]
+            return [0.5, 0.5, 0]
         else:
             return [0, 0, 1]
 
@@ -140,14 +144,14 @@ def create_manual_activation_setup(dt, max_steps, max_dist_force, physics_engine
         max_steps=max_steps,
         max_dist_force=max_dist_force,
         positionTasks=True,
-        observeTaskSpaceDiscrepancy=True
+        observeTaskSpaceDiscrepancy=True,
     )
     print_domain_params(env.domain_param)
 
     # Set up policy
     def policy_fcn(t: float):
-        pot = np.fromstring(input("Enter potentials for next step: "), dtype=np.double, count=3, sep=' ')
-        return 1/(1 + np.exp(-pot))
+        pot = np.fromstring(input("Enter potentials for next step: "), dtype=np.double, count=3, sep=" ")
+        return 1 / (1 + np.exp(-pot))
 
     policy = TimePolicy(env.spec, policy_fcn, dt)
 
@@ -160,33 +164,33 @@ def create_adn_setup(dt, max_steps, max_dist_force, physics_engine, normalize_ob
 
     # Explicit normalization bounds
     elb = {
-        'EffectorLoadCell_Fx': -100.,
-        'EffectorLoadCell_Fz': -100.,
-        'Effector_Xd': -1,
-        'Effector_Zd': -1,
-        'GD_DS0d': -1,
-        'GD_DS1d': -1,
-        'GD_DS2d': -1,
+        "EffectorLoadCell_Fx": -100.0,
+        "EffectorLoadCell_Fz": -100.0,
+        "Effector_Xd": -1,
+        "Effector_Zd": -1,
+        "GD_DS0d": -1,
+        "GD_DS1d": -1,
+        "GD_DS2d": -1,
     }
     eub = {
-        'GD_DS0': 3.,
-        'GD_DS1': 3,
-        'GD_DS2': 3,
-        'EffectorLoadCell_Fx': 100.,
-        'EffectorLoadCell_Fz': 100.,
-        'Effector_Xd': .5,
-        'Effector_Zd': .5,
-        'GD_DS0d': .5,
-        'GD_DS1d': .5,
-        'GD_DS2d': .5,
-        'PredCollCost_h50': 1000.
+        "GD_DS0": 3.0,
+        "GD_DS1": 3,
+        "GD_DS2": 3,
+        "EffectorLoadCell_Fx": 100.0,
+        "EffectorLoadCell_Fz": 100.0,
+        "Effector_Xd": 0.5,
+        "Effector_Zd": 0.5,
+        "GD_DS0d": 0.5,
+        "GD_DS1d": 0.5,
+        "GD_DS2d": 0.5,
+        "PredCollCost_h50": 1000.0,
     }
 
     extra_kwargs = {}
     if normalize_obs and obsnorm_cpp:
-        extra_kwargs['normalizeObservations'] = True
-        extra_kwargs['obsNormOverrideLower'] = elb
-        extra_kwargs['obsNormOverrideUpper'] = eub
+        extra_kwargs["normalizeObservations"] = True
+        extra_kwargs["obsNormOverrideLower"] = elb
+        extra_kwargs["obsNormOverrideUpper"] = eub
 
     # Set up environment
     env = Planar3LinkTASim(
@@ -196,9 +200,9 @@ def create_adn_setup(dt, max_steps, max_dist_force, physics_engine, normalize_ob
         max_dist_force=max_dist_force,
         positionTasks=True,
         collisionAvoidanceIK=True,
-        taskCombinationMethod='sum',
+        taskCombinationMethod="sum",
         observeTaskSpaceDiscrepancy=True,
-        **extra_kwargs
+        **extra_kwargs,
     )
 
     if normalize_obs and not obsnorm_cpp:
@@ -206,12 +210,12 @@ def create_adn_setup(dt, max_steps, max_dist_force, physics_engine, normalize_ob
 
     # Set up random policy
     policy_hparam = dict(
-        tau_init=10.,
+        tau_init=10.0,
         activation_nonlin=to.sigmoid,
         potentials_dyn_fcn=pd_cubic,
     )
     policy = ADNPolicy(spec=env.spec, **policy_hparam)
-    print_cbt('Running ADNPolicy with random initialization', 'c', bright=True)
+    print_cbt("Running ADNPolicy with random initialization", "c", bright=True)
 
     # Simulate and plot potentials
     ro = rollout(env, policy, render_mode=RenderMode(video=True), stop_on_done=True)
@@ -220,26 +224,27 @@ def create_adn_setup(dt, max_steps, max_dist_force, physics_engine, normalize_ob
     return ro
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Choose setup
-    setup_type = 'joint'  # joint, ik_activation, activation, manual, adn
+    setup_type = "joint"  # joint, ik_activation, activation, manual, adn
     common_hparam = dict(
         dt=0.01,
         max_steps=1800,
         max_dist_force=None,
-        physics_engine='Bullet',  # Bullet or Vortex
+        physics_engine="Bullet",  # Bullet or Vortex
     )
 
-    if setup_type == 'joint':
+    if setup_type == "joint":
         ro = create_joint_control_setup(**common_hparam)
-    elif setup_type == 'ik_activation':
+    elif setup_type == "ik_activation":
         ro = create_ik_activation_setup(**common_hparam)
-    elif setup_type == 'ds_activation':
+    elif setup_type == "ds_activation":
         ro = create_ds_activation_setup(**common_hparam)
-    elif setup_type == 'manual':
+    elif setup_type == "manual":
         ro = create_manual_activation_setup(**common_hparam)
-    elif setup_type == 'adn':
+    elif setup_type == "adn":
         ro = create_adn_setup(**common_hparam, normalize_obs=True, obsnorm_cpp=False)
     else:
-        raise pyrado.ValueErr(given=setup_type,
-                              eq_constraint="'joint', 'ik_activation', 'ds_activation', 'manual', 'adn'")
+        raise pyrado.ValueErr(
+            given=setup_type, eq_constraint="'joint', 'ik_activation', 'ds_activation', 'manual', 'adn'"
+        )

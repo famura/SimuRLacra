@@ -28,8 +28,11 @@
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.environment_wrappers.adversarial import AdversarialDynamicsWrapper, AdversarialStateWrapper, \
-    AdversarialObservationWrapper
+from pyrado.environment_wrappers.adversarial import (
+    AdversarialDynamicsWrapper,
+    AdversarialStateWrapper,
+    AdversarialObservationWrapper,
+)
 from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
 from pyrado.environments.sim_base import SimEnv
 from pyrado.exploration.stochastic_action import StochasticActionExplStrat
@@ -48,30 +51,32 @@ class ARPL(Algorithm):
         Active Construction of Physically-Plausible Perturbations", IROS, 2017
     """
 
-    name: str = 'arpl'
+    name: str = "arpl"
 
-    def __init__(self,
-                 save_dir: str,
-                 env: [SimEnv, StateAugmentationWrapper],
-                 subrtn: Algorithm,
-                 policy: Policy,
-                 expl_strat: StochasticActionExplStrat,
-                 max_iter: int,
-                 num_rollouts: int = None,
-                 steps_num: int = None,
-                 apply_dynamics_noise: bool = False,
-                 dyn_eps: float = 0.01,
-                 dyn_phi: float = 0.1,
-                 halfspan: float = 0.25,
-                 apply_proccess_noise: bool = False,
-                 proc_eps: float = 0.01,
-                 proc_phi: float = 0.05,
-                 apply_observation_noise: bool = False,
-                 obs_eps: float = 0.01,
-                 obs_phi: float = 0.05,
-                 torch_observation: bool = True,
-                 num_workers: int = 4,
-                 logger: StepLogger = None):
+    def __init__(
+        self,
+        save_dir: str,
+        env: [SimEnv, StateAugmentationWrapper],
+        subrtn: Algorithm,
+        policy: Policy,
+        expl_strat: StochasticActionExplStrat,
+        max_iter: int,
+        num_rollouts: int = None,
+        steps_num: int = None,
+        apply_dynamics_noise: bool = False,
+        dyn_eps: float = 0.01,
+        dyn_phi: float = 0.1,
+        halfspan: float = 0.25,
+        apply_proccess_noise: bool = False,
+        proc_eps: float = 0.01,
+        proc_phi: float = 0.05,
+        apply_observation_noise: bool = False,
+        obs_eps: float = 0.01,
+        obs_phi: float = 0.05,
+        torch_observation: bool = True,
+        num_workers: int = 4,
+        logger: StepLogger = None,
+    ):
         """
         Constructor
 
@@ -122,7 +127,7 @@ class ARPL(Algorithm):
 
         # Subroutine
         self._subrtn = subrtn
-        self._subrtn.save_name = 'subrtn'
+        self._subrtn.save_name = "subrtn"
 
     @property
     def sample_count(self) -> int:
@@ -134,11 +139,11 @@ class ARPL(Algorithm):
         ret_avg = np.mean(rets)
         ret_med = np.median(rets)
         ret_std = np.std(rets)
-        self.logger.add_value('avg return', ret_avg)
-        self.logger.add_value('median return', ret_med)
-        self.logger.add_value('std return', ret_std)
-        self.logger.add_value('num total samples', self._cnt_samples)
-        self.logger.add_value('avg rollout len', np.mean([ro.length for ro in rollouts]))
+        self.logger.add_value("avg return", ret_avg)
+        self.logger.add_value("median return", ret_med)
+        self.logger.add_value("std return", ret_std)
+        self.logger.add_value("num total samples", self._cnt_samples)
+        self.logger.add_value("avg rollout len", np.mean([ro.length for ro in rollouts]))
 
         # Sub-routine
         self._subrtn.update(rollouts)
@@ -152,4 +157,4 @@ class ARPL(Algorithm):
             # This algorithm instance is not a subroutine of a meta-algorithm
             self._subrtn.save_snapshot(meta_info)
         else:
-            raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
+            raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subroutine!")

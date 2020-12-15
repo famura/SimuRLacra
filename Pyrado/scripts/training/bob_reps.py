@@ -42,18 +42,18 @@ from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.utils.argparser import get_argparser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(BallOnBeamSim.name, f'{REPS.name}_{LinearPolicy.name}')
+    ex_dir = setup_experiment(BallOnBeamSim.name, f"{REPS.name}_{LinearPolicy.name}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1/100., max_steps=500)
+    env_hparams = dict(dt=1 / 100.0, max_steps=500)
     env = BallOnBeamSim(**env_hparams)
     env = ActNormWrapper(env)
 
@@ -69,12 +69,12 @@ if __name__ == '__main__':
     algo_hparam = dict(
         max_iter=500,
         eps=0.2,
-        pop_size=10*policy.num_param,
+        pop_size=10 * policy.num_param,
         num_rollouts=10,
         expl_std_init=0.2,
         expl_std_min=0.02,
         num_epoch_dual=1000,
-        optim_mode='scipy',
+        optim_mode="scipy",
         lr_dual=1e-3,
         use_map=True,
         num_workers=8,
@@ -82,11 +82,13 @@ if __name__ == '__main__':
     algo = REPS(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha

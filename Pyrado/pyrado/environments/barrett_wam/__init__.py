@@ -32,18 +32,17 @@ from pyrado.spaces import BoxSpace
 
 
 # 4 DoF arm, 2 DoF actuated
-init_qpos_des_4dof = np.array([0., 0.6, 0., 1.25])
-act_min_wam_4dof = np.array([-1.985, -0.9, -10*np.pi, -10*np.pi])
-act_max_wam_4dof = np.array([1.985, np.pi, 10*np.pi, 10*np.pi])
-labels_4dof = ['q_1_des', 'q_3_des', 'q_dot_1_des', 'q_dot_3_des']
+init_qpos_des_4dof = np.array([0.0, 0.6, 0.0, 1.25])
+act_min_wam_4dof = np.array([-1.985, -0.9, -10 * np.pi, -10 * np.pi])
+act_max_wam_4dof = np.array([1.985, np.pi, 10 * np.pi, 10 * np.pi])
+labels_4dof = ["q_1_des", "q_3_des", "q_dot_1_des", "q_dot_3_des"]
 act_space_wam_4dof = BoxSpace(act_min_wam_4dof, act_max_wam_4dof, labels=labels_4dof)
 
 # 7 DoF arm, 3 DoF actuated
-init_qpos_des_7dof = np.array([0., 0.5876, 0., 1.36, 0., -0.321, -1.57])
-act_min_wam_7dof = np.array([-1.985, -0.9, -np.pi/2, -10*np.pi, -10*np.pi, -10*np.pi])
-act_max_wam_7dof = np.array([1.985, np.pi, np.pi/2, 10*np.pi, 10*np.pi, 10*np.pi])
-labels_7dof = ['q_1_des', 'q_3_des', 'q_5_des',
-               'q_dot_1_des', 'q_dot_3_des', 'q_dot_5_des']
+init_qpos_des_7dof = np.array([0.0, 0.5876, 0.0, 1.36, 0.0, -0.321, -1.57])
+act_min_wam_7dof = np.array([-1.985, -0.9, -np.pi / 2, -10 * np.pi, -10 * np.pi, -10 * np.pi])
+act_max_wam_7dof = np.array([1.985, np.pi, np.pi / 2, 10 * np.pi, 10 * np.pi, 10 * np.pi])
+labels_7dof = ["q_1_des", "q_3_des", "q_5_des", "q_dot_1_des", "q_dot_3_des", "q_dot_5_des"]
 act_space_wam_7dof = BoxSpace(act_min_wam_7dof, act_max_wam_7dof, labels=labels_7dof)
 
 # Default PD gains from robcom / SL

@@ -42,14 +42,16 @@ from pyrado.utils.data_types import EnvSpec
 class DomainDistrParamPolicy(Policy):
     """ A proxy to the Policy class in order to use the policy's parameters as domain distribution parameters """
 
-    name: str = 'ddp'
+    name: str = "ddp"
 
-    def __init__(self,
-                 mapping: Dict[int, Tuple[str, str]],
-                 trafo_mask: list,
-                 prior: DomainRandomizer = None,
-                 scale_params: bool = False,
-                 use_cuda: bool = False):
+    def __init__(
+        self,
+        mapping: Dict[int, Tuple[str, str]],
+        trafo_mask: list,
+        prior: DomainRandomizer = None,
+        scale_params: bool = False,
+        use_cuda: bool = False,
+    ):
         """
         Constructor
 
@@ -106,7 +108,7 @@ class DomainDistrParamPolicy(Policy):
             ddp.data[:, self.mask] = to.exp(ddp.data[:, self.mask])
 
         else:
-            raise pyrado.ShapeErr(msg='Inputs must not have more than 2 dimensions!')
+            raise pyrado.ShapeErr(msg="Inputs must not have more than 2 dimensions!")
 
         return ddp
 
@@ -115,29 +117,33 @@ class DomainDistrParamPolicy(Policy):
             # First check if there are some specific values to set
             self.param_values = init_values
 
-        elif kwargs.get('prior', None) is not None:
+        elif kwargs.get("prior", None) is not None:
             # Prior information is expected to be in form of a DomainRandomizer since it holds the distributions
-            if not isinstance(kwargs['prior'], DomainRandomizer):
-                raise pyrado.TypeErr(given=kwargs['prior'], expected_type=DomainRandomizer)
+            if not isinstance(kwargs["prior"], DomainRandomizer):
+                raise pyrado.TypeErr(given=kwargs["prior"], expected_type=DomainRandomizer)
 
             # For every domain distribution parameter in the mapping, check if there is prior information
             for idx, ddp in self.mapping.items():
-                for dp in kwargs['prior'].domain_params:
+                for dp in kwargs["prior"].domain_params:
                     if ddp[0] == dp.name and ddp[1] in dp.get_field_names():
                         # The domain parameter exists in the prior and in the mapping
-                        val = getattr(dp, f'{ddp[1]}')
+                        val = getattr(dp, f"{ddp[1]}")
                         if self.mask[idx]:
                             # Log-transform since it will later be exp-transformed
                             self.params[idx].data.fill_(to.log(to.tensor(val)))
                         else:
                             self.params[idx].data.fill_(to.tensor(val))
                         if to.any(to.isnan(self.params[idx].data)):
-                            raise pyrado.ValueErr(msg='DomainDistrParamPolicy parameter became NaN during'
-                                                      'initialization! Check the mask and negative mean values.')
+                            raise pyrado.ValueErr(
+                                msg="DomainDistrParamPolicy parameter became NaN during"
+                                "initialization! Check the mask and negative mean values."
+                            )
 
         else:
-            raise pyrado.ValueErr(msg='DomainDistrParamPolicy needs to be initialized! Either with a set of policy'
-                                      'parameters, or with a prior in form of a DomainRandomizer!')
+            raise pyrado.ValueErr(
+                msg="DomainDistrParamPolicy needs to be initialized! Either with a set of policy"
+                "parameters, or with a prior in form of a DomainRandomizer!"
+            )
 
         if self._scale_params:
             # After initializing, we have an estimate on the magnitude of the policy parameters. Usually, the

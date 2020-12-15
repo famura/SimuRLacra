@@ -67,7 +67,7 @@ class CompoundRewFcn(RewFcn):
         :param rew_fcns: sequence, e.g. list or tuple, of reward functions to combine
         """
         if not len(rew_fcns) >= 1:
-            raise pyrado.ShapeErr(msg='Provide at least one reward function object!')
+            raise pyrado.ShapeErr(msg="Provide at least one reward function object!")
         self._fcns = rew_fcns
 
     def __call__(self, err_s: np.ndarray, err_a: np.ndarray, remaining_steps: int = None) -> float:
@@ -88,7 +88,7 @@ class ZeroPerStepRewFcn(RewFcn):
 
     def __call__(self, err_s: np.ndarray = None, err_a: np.ndarray = None, remaining_steps: int = None) -> float:
         """ None of the inputs matter. """
-        return 0.
+        return 0.0
 
 
 class PlusOnePerStepRewFcn(RewFcn):
@@ -99,7 +99,7 @@ class PlusOnePerStepRewFcn(RewFcn):
 
     def __call__(self, err_s: np.ndarray = None, err_a: np.ndarray = None, remaining_steps: int = None) -> float:
         """ None of the inputs matter. """
-        return 1.
+        return 1.0
 
 
 class MinusOnePerStepRewFcn(RewFcn):
@@ -110,7 +110,7 @@ class MinusOnePerStepRewFcn(RewFcn):
 
     def __call__(self, err_s: np.ndarray = None, err_a: np.ndarray = None, remaining_steps: int = None) -> float:
         """ None of the inputs matter. """
-        return -1.
+        return -1.0
 
 
 class CosOfOneEleRewFcn(RewFcn):
@@ -141,7 +141,7 @@ class SSCosOfOneEleRewFcn(CosOfOneEleRewFcn):
         # Compute the cos-based reward
         rew_orig = super().__call__(err_s, err_a, remaining_steps)
         # Return the shifted and scaled reward
-        return 0.5*(rew_orig + 1)
+        return 0.5 * (rew_orig + 1)
 
 
 class AbsErrRewFcn(RewFcn):
@@ -206,8 +206,12 @@ class QuadrErrRewFcn(RewFcn):
         assert isinstance(err_s, np.ndarray) and isinstance(err_a, np.ndarray)
 
         # Adjust shapes (assuming vector shaped state and actions)
-        err_s = err_s.reshape(-1, )
-        err_a = err_a.reshape(-1, )
+        err_s = err_s.reshape(
+            -1,
+        )
+        err_a = err_a.reshape(
+            -1,
+        )
 
         # Calculate the reward
         cost = self._weighted_quadr_cost(err_s, err_a)  # rew in [-inf, 0]
@@ -239,12 +243,9 @@ class ExpQuadrErrRewFcn(QuadrErrRewFcn):
 class ScaledExpQuadrErrRewFcn(QuadrErrRewFcn):
     """ Reward function that returns the exp of the scaled weighted sum of squared errors """
 
-    def __init__(self,
-                 Q: [np.ndarray, list],
-                 R: [np.ndarray, list],
-                 state_space: Space,
-                 act_space: Space,
-                 min_rew: float = 1e-4):
+    def __init__(
+        self, Q: [np.ndarray, list], R: [np.ndarray, list], state_space: Space, act_space: Space, min_rew: float = 1e-4
+    ):
         """
         Constructor
         .. note:: This reward function type depends on environment specific parameters. Due to the domain randomization,
@@ -271,7 +272,7 @@ class ScaledExpQuadrErrRewFcn(QuadrErrRewFcn):
         quard_cost = super()._weighted_quadr_cost(err_s, err_a)
 
         # Calculate the scaled exponential
-        rew = np.exp(-self.c_max*quard_cost)  # c_max > 0, quard_cost >= 0
+        rew = np.exp(-self.c_max * quard_cost)  # c_max > 0, quard_cost >= 0
         return float(rew)
 
     def reset(self, state_space: Space, act_space: Space, min_rew=1e-4, **kwargs):
@@ -281,13 +282,17 @@ class ScaledExpQuadrErrRewFcn(QuadrErrRewFcn):
             raise pyrado.TypeErr(given=act_space, expected_type=Space)
 
         # Adjust shapes (assuming vector shaped state and actions)
-        obs_max = state_space.bound_abs_up.reshape(-1, )
-        act_max = act_space.bound_abs_up.reshape(-1, )
+        obs_max = state_space.bound_abs_up.reshape(
+            -1,
+        )
+        act_max = act_space.bound_abs_up.reshape(
+            -1,
+        )
 
         # Compute the maximum cost for the worst case state-action configuration
         max_cost = obs_max.dot(self.Q.dot(obs_max)) + act_max.dot(self.R.dot(act_max))
         # Compute a scaling factor that sets the current state and action in relation to the worst case
-        self.c_max = -1.0*np.log(min_rew)/max_cost
+        self.c_max = -1.0 * np.log(min_rew) / max_cost
 
 
 class UnderActuatedSwingUpRewFcn(RewFcn):
@@ -299,14 +304,16 @@ class UnderActuatedSwingUpRewFcn(RewFcn):
             Identification", RSS, 2017
     """
 
-    def __init__(self,
-                 c_pole: float = 1.0,
-                 c_cart: float = 0.2,
-                 c_act: float = 1e-3,
-                 c_theta_sq: float = 1.0,
-                 c_theta_log: float = 0.1,
-                 idx_x: int = 0,
-                 idx_th: int = 1):
+    def __init__(
+        self,
+        c_pole: float = 1.0,
+        c_cart: float = 0.2,
+        c_act: float = 1e-3,
+        c_theta_sq: float = 1.0,
+        c_theta_log: float = 0.1,
+        idx_x: int = 0,
+        idx_th: int = 1,
+    ):
         """
         Constructor
 
@@ -325,10 +332,10 @@ class UnderActuatedSwingUpRewFcn(RewFcn):
         self.idx_th = idx_th
 
     def __call__(self, err_s: np.ndarray, err_a: np.ndarray, remaining_steps: int = None) -> float:
-        cost_pole = self.c_theta_sq*err_s[self.idx_th]**2 + np.log(err_s[self.idx_th]**2 + self.c_theta_log)
+        cost_pole = self.c_theta_sq * err_s[self.idx_th] ** 2 + np.log(err_s[self.idx_th] ** 2 + self.c_theta_log)
         cost_cart = np.abs(err_s[self.idx_x])  # cart position = cart position error
-        cost_act = err_a**2
-        return float(-self.c_costs@np.hstack([cost_pole, cost_cart, cost_act]) + 10.)
+        cost_act = err_a ** 2
+        return float(-self.c_costs @ np.hstack([cost_pole, cost_cart, cost_act]) + 10.0)
 
 
 class StateBasedRewFcn:
@@ -357,7 +364,7 @@ class StateBasedRewFcn:
         :param state: state
         :return: scalar reward
         """
-        return -1**self._flip_sign*self._fcn(state)
+        return -(1 ** self._flip_sign) * self._fcn(state)
 
 
 class ForwardVelocityRewFcn(RewFcn):
@@ -397,8 +404,8 @@ class ForwardVelocityRewFcn(RewFcn):
 
     def __call__(self, state: np.ndarray, act: np.ndarray, remaining_steps: int = None) -> float:
         # Operate on the state and actions
-        fwd_vel_rew = self.fwd_rew_weight*(state[self._idx_x_pos] - self.last_x_pos)/self._dt
-        ctrl_cost = self.ctrl_cost_weight*np.sum(np.square(act))
+        fwd_vel_rew = self.fwd_rew_weight * (state[self._idx_x_pos] - self.last_x_pos) / self._dt
+        ctrl_cost = self.ctrl_cost_weight * np.sum(np.square(act))
 
         self.last_x_pos = state[self._idx_x_pos]
 

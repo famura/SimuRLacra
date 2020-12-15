@@ -32,8 +32,12 @@ This file is found by pytest and contains fixtures (i.e., common defaults) that 
 import pytest
 import multiprocessing as mp
 
-from pyrado.domain_randomization.domain_parameter import UniformDomainParam, NormalDomainParam, \
-    MultivariateNormalDomainParam, DomainParam
+from pyrado.domain_randomization.domain_parameter import (
+    UniformDomainParam,
+    NormalDomainParam,
+    MultivariateNormalDomainParam,
+    DomainParam,
+)
 from pyrado.environments.one_step.catapult import CatapultSim
 from pyrado.environments.one_step.rosenbrock import RosenSim
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim, BallOnBeamDiscSim
@@ -64,7 +68,7 @@ to.set_default_dtype(to.double)
 # Check if RcsPySim, Bullet, and Vortex are available
 try:
     import rcsenv
-    from pyrado.environments.rcspysim.ball_in_tube import BallInTubeIKActivationSim, BallInTubeVelDSSim
+    from pyrado.environments.rcspysim.ball_in_tube import BallInTubePosIKActivationSim, BallInTubeVelDSSim
     from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate2DSim, BallOnPlate5DSim
     from pyrado.environments.rcspysim.box_flipping import BoxFlippingVelDSSim, BoxFlippingIKActivationSim
     from pyrado.environments.rcspysim.box_lifting import BoxLiftingPosDSSim, BoxLiftingVelDSSim
@@ -76,17 +80,15 @@ try:
     from pyrado.environments.rcspysim.target_tracking import TargetTrackingSim
 
     m_needs_vortex = pytest.mark.skipif(
-        not rcsenv.supportsPhysicsEngine('Vortex'),
-        reason='Vortex physics engine is not supported in this setup.'
+        not rcsenv.supportsPhysicsEngine("Vortex"), reason="Vortex physics engine is not supported in this setup."
     )
     m_needs_bullet = pytest.mark.skipif(
-        not rcsenv.supportsPhysicsEngine('Bullet'),
-        reason='Bullet physics engine is not supported in this setup.'
+        not rcsenv.supportsPhysicsEngine("Bullet"), reason="Bullet physics engine is not supported in this setup."
     )
-    m_needs_rcs = pytest.mark.skipif(False, reason='rcsenv can be imported.')
+    m_needs_rcs = pytest.mark.skipif(False, reason="rcsenv can be imported.")
 
     m_needs_libtorch = pytest.mark.skipif(
-        'torch' not in rcsenv.ControlPolicy.types, reason='Requires RcsPySim compiled locally with libtorch!'
+        "torch" not in rcsenv.ControlPolicy.types, reason="Requires RcsPySim compiled locally with libtorch!"
     )
 
 except (ImportError, ModuleNotFoundError):
@@ -102,26 +104,27 @@ try:
     from pyrado.environments.mujoco.openai_hopper import HopperSim
     from pyrado.environments.mujoco.wam import WAMBallInCupSim
 
-    m_needs_mujoco = pytest.mark.skipif(False, reason='mujoco-py can be imported.')
+    m_needs_mujoco = pytest.mark.skipif(False, reason="mujoco-py can be imported.")
 
 except (ImportError, Exception):
-    m_needs_mujoco = pytest.mark.skip(reason='mujoco-py is not supported in this setup.')
+    m_needs_mujoco = pytest.mark.skip(reason="mujoco-py is not supported in this setup.")
 
 # Check if CUDA support is available
-m_needs_cuda = pytest.mark.skipif(not to.cuda.is_available(), reason='CUDA is not supported in this setup.')
+m_needs_cuda = pytest.mark.skipif(not to.cuda.is_available(), reason="CUDA is not supported in this setup.")
 
 # Set spawn method to spawn for parallelization
 if to.cuda.is_available():
-    mp.set_start_method('spawn', force=True)
+    mp.set_start_method("spawn", force=True)
 
 
 # --------------------
 # Environment fixtures
 # --------------------
 
-@pytest.fixture(scope='function')
+
+@pytest.fixture(scope="function")
 def env(request):
-    if hasattr(request, 'param'):
+    if hasattr(request, "param"):
         marker = request.param
     else:
         marker = request.node.get_closest_marker("env")
@@ -181,32 +184,32 @@ class DefaultEnvs:
     @staticmethod
     @m_needs_bullet
     def default_bop2d_bt():
-        return BallOnPlate2DSim(physicsEngine='Bullet', dt=0.01, max_steps=3000, checkJointLimits=True)
+        return BallOnPlate2DSim(physicsEngine="Bullet", dt=0.01, max_steps=3000, checkJointLimits=True)
 
     @staticmethod
     @m_needs_vortex
     def default_bop2d_vx():
-        return BallOnPlate2DSim(physicsEngine='Vortex', dt=0.01, max_steps=3000, checkJointLimits=True)
+        return BallOnPlate2DSim(physicsEngine="Vortex", dt=0.01, max_steps=3000, checkJointLimits=True)
 
     @staticmethod
     @m_needs_bullet
     def default_bop5d_bt():
-        return BallOnPlate5DSim(physicsEngine='Bullet', dt=0.01, max_steps=3000, checkJointLimits=True)
+        return BallOnPlate5DSim(physicsEngine="Bullet", dt=0.01, max_steps=3000, checkJointLimits=True)
 
     @staticmethod
     @m_needs_vortex
     def default_bop5d_vx():
-        return BallOnPlate5DSim(physicsEngine='Vortex', dt=0.01, max_steps=3000, checkJointLimits=True)
+        return BallOnPlate5DSim(physicsEngine="Vortex", dt=0.01, max_steps=3000, checkJointLimits=True)
 
     @staticmethod
     @m_needs_bullet
-    def default_p3l_ik_bt():
+    def default_p3l_ika_bt():
         return Planar3LinkIKActivationSim(
-            physicsEngine='Bullet',
-            dt=1/50.,
+            physicsEngine="Bullet",
+            dt=1 / 50.0,
             max_steps=1000,
             max_dist_force=None,
-            taskCombinationMethod='sum',
+            taskCombinationMethod="sum",
             checkJointLimits=True,
             collisionAvoidanceIK=True,
             observeVelocities=True,
@@ -220,13 +223,13 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_vortex
-    def default_p3l_ik_vx():
+    def default_p3l_ika_vx():
         return Planar3LinkIKActivationSim(
-            physicsEngine='Vortex',
-            dt=1/50.,
+            physicsEngine="Vortex",
+            dt=1 / 50.0,
             max_steps=1000,
             max_dist_force=None,
-            taskCombinationMethod='sum',
+            taskCombinationMethod="sum",
             checkJointLimits=True,
             collisionAvoidanceIK=True,
             observeVelocities=True,
@@ -242,12 +245,12 @@ class DefaultEnvs:
     @m_needs_bullet
     def default_p3l_ta_bt():
         return Planar3LinkTASim(
-            physicsEngine='Bullet',
-            dt=1/50.,
+            physicsEngine="Bullet",
+            dt=1 / 50.0,
             max_steps=1000,
             max_dist_force=None,
             positionTasks=True,
-            taskCombinationMethod='sum',
+            taskCombinationMethod="sum",
             checkJointLimits=True,
             collisionAvoidanceIK=True,
             observeVelocities=True,
@@ -265,12 +268,12 @@ class DefaultEnvs:
     @m_needs_vortex
     def default_p3l_ta_vx():
         return Planar3LinkTASim(
-            physicsEngine='Vortex',
-            dt=1/50.,
+            physicsEngine="Vortex",
+            dt=1 / 50.0,
             max_steps=1000,
             max_dist_force=None,
             positionTasks=True,
-            taskCombinationMethod='sum',
+            taskCombinationMethod="sum",
             checkJointLimits=True,
             collisionAvoidanceIK=True,
             observeVelocities=True,
@@ -286,14 +289,14 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_bullet
-    def default_pi_ik_5l_bt():
+    def default_pi_ika_5l_bt():
         return PlanarInsertIKActivationSim(
-            physicsEngine='Bullet',
-            graphFileName='gPlanarInsert5Link.xml',
-            dt=1/50.,
+            physicsEngine="Bullet",
+            graphFileName="gPlanarInsert5Link.xml",
+            dt=1 / 50.0,
             max_steps=500,
             max_dist_force=None,
-            taskCombinationMethod='sum',
+            taskCombinationMethod="sum",
             checkJointLimits=True,
             collisionAvoidanceIK=True,
             observeForceTorque=True,
@@ -307,14 +310,14 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_vortex
-    def default_pi_ik_6l_vx():
+    def default_pi_ika_6l_vx():
         return PlanarInsertIKActivationSim(
-            physicsEngine='Vortex',
-            graphFileName='gPlanarInsert6Link.xml',
-            dt=1/50.,
+            physicsEngine="Vortex",
+            graphFileName="gPlanarInsert6Link.xml",
+            dt=1 / 50.0,
             max_steps=500,
             max_dist_force=None,
-            taskCombinationMethod='sum',
+            taskCombinationMethod="sum",
             checkJointLimits=True,
             collisionAvoidanceIK=True,
             observeForceTorque=True,
@@ -330,12 +333,12 @@ class DefaultEnvs:
     @m_needs_bullet
     def default_pi_ta_6l_bt():
         return PlanarInsertTASim(
-            physicsEngine='Bullet',
-            graphFileName='gPlanarInsert6Link.xml',
-            dt=1/50.,
+            physicsEngine="Bullet",
+            graphFileName="gPlanarInsert6Link.xml",
+            dt=1 / 50.0,
             max_steps=500,
             max_dist_force=None,
-            taskCombinationMethod='sum',
+            taskCombinationMethod="sum",
             checkJointLimits=True,
             collisionAvoidanceIK=True,
             observeForceTorque=True,
@@ -351,12 +354,12 @@ class DefaultEnvs:
     @m_needs_vortex
     def default_pi_ta_5l_vx():
         return PlanarInsertTASim(
-            physicsEngine='Vortex',
-            graphFileName='gPlanarInsert5Link.xml',
-            dt=1/50.,
+            physicsEngine="Vortex",
+            graphFileName="gPlanarInsert5Link.xml",
+            dt=1 / 50.0,
             max_steps=500,
             max_dist_force=None,
-            taskCombinationMethod='sum',
+            taskCombinationMethod="sum",
             checkJointLimits=True,
             collisionAvoidanceIK=True,
             observeForceTorque=True,
@@ -370,15 +373,15 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_bullet
-    def default_bit_ik_bt():
-        return BallInTubeIKActivationSim(
-            physicsEngine='Bullet',
-            graphFileName='gBallInTube_trqCtrl.xml',
-            dt=1/100,
+    def default_bit_ika_pos_bt():
+        return BallInTubePosIKActivationSim(
+            physicsEngine="Bullet",
+            graphFileName="gBallInTube_trqCtrl.xml",
+            dt=1 / 100,
             max_steps=2000,
             fixed_init_state=True,
-            ref_frame='table',
-            taskCombinationMethod='sum',
+            ref_frame="table",
+            taskCombinationMethod="sum",
             checkJointLimits=True,
             collisionAvoidanceIK=True,
             observeVelocity=True,
@@ -387,23 +390,23 @@ class DefaultEnvs:
             observeManipulabilityIndex=True,
             observeCurrentManipulability=True,
             observeTaskSpaceDiscrepancy=True,
-            observeForceTorque=True
+            observeForceTorque=True,
         )
 
     @staticmethod
     @m_needs_bullet
-    def default_bit_vel_bt():
+    def default_bit_ds_vel_bt():
         return BallInTubeVelDSSim(
             usePhysicsNode=True,
-            physicsEngine='Bullet',
-            graphFileName='gBallInTube_trqCtrl.xml',
-            dt=1/100.,
+            physicsEngine="Bullet",
+            graphFileName="gBallInTube_trqCtrl.xml",
+            dt=1 / 100.0,
             max_steps=2000,
             fixed_init_state=True,
-            mps_left=None,  # use defaults
-            mps_right=None,  # use defaults
-            ref_frame='table',
-            taskCombinationMethod='sum',
+            tasks_left=None,  # use defaults
+            tasks_right=None,  # use defaults
+            ref_frame="table",
+            taskCombinationMethod="sum",
             checkJointLimits=True,
             collisionAvoidanceIK=True,
             observeVelocity=True,
@@ -419,17 +422,17 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_bullet
-    def default_bl_pos_bt():
+    def default_bl_ds_pos_bt():
         return BoxLiftingPosDSSim(
-            physicsEngine='Bullet',
-            graphFileName='gBoxLifting_posCtrl.xml',
+            physicsEngine="Bullet",
+            graphFileName="gBoxLifting_posCtrl.xml",
             dt=0.01,
             max_steps=1500,
-            mps_left=None,
-            mps_right=None,
-            ref_frame='basket',
-            collisionConfig={'file': 'collisionModel.xml'},
-            taskCombinationMethod='sum',
+            tasks_left=None,
+            tasks_right=None,
+            ref_frame="basket",
+            collisionConfig={"file": "collisionModel.xml"},
+            taskCombinationMethod="sum",
             checkJointLimits=True,
             collisionAvoidanceIK=True,
             observeVelocities=True,
@@ -444,17 +447,17 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_bullet
-    def default_bl_vel_bt():
+    def default_bl_ds_vel_bt():
         return BoxLiftingVelDSSim(
-            physicsEngine='Bullet',
-            graphFileName='gBoxLifting_trqCtrl.xml',
+            physicsEngine="Bullet",
+            graphFileName="gBoxLifting_trqCtrl.xml",
             dt=0.01,
             max_steps=1500,
-            mps_left=None,
-            mps_right=None,
-            ref_frame='basket',
-            collisionConfig={'file': 'collisionModel.xml'},
-            taskCombinationMethod='sum',
+            tasks_left=None,
+            tasks_right=None,
+            ref_frame="basket",
+            collisionConfig={"file": "collisionModel.xml"},
+            taskCombinationMethod="sum",
             checkJointLimits=True,
             collisionAvoidanceIK=True,
             observeVelocities=True,
@@ -469,17 +472,17 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_vortex
-    def default_bl_pos_vx():
+    def default_bl_ds_pos_vx():
         return BoxLiftingPosDSSim(
-            physicsEngine='Vortex',
-            graphFileName='gBoxLifting_posCtrl.xml',
+            physicsEngine="Vortex",
+            graphFileName="gBoxLifting_posCtrl.xml",
             dt=0.01,
             max_steps=1500,
-            mps_left=None,
-            mps_right=None,
-            ref_frame='basket',
-            collisionConfig={'file': 'collisionModel.xml'},
-            taskCombinationMethod='sum',
+            tasks_left=None,
+            tasks_right=None,
+            ref_frame="basket",
+            collisionConfig={"file": "collisionModel.xml"},
+            taskCombinationMethod="sum",
             checkJointLimits=True,
             collisionAvoidanceIK=True,
             observeVelocities=True,
@@ -494,18 +497,18 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_bullet
-    def default_bs_pos_bt():
+    def default_bs_ds_pos_bt():
         return BoxShelvingPosDSSim(
-            physicsEngine='Bullet',
-            graphFileName='gBoxShelving_posCtrl.xml',  # gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml
-            dt=1/100.,
+            physicsEngine="Bullet",
+            graphFileName="gBoxShelving_posCtrl.xml",  # gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml
+            dt=1 / 100.0,
             max_steps=2000,
             fix_init_state=True,
-            ref_frame='upperGoal',
-            mps_left=None,
-            mps_right=None,
-            collisionConfig={'file': 'collisionModel.xml'},
-            taskCombinationMethod='sum',
+            ref_frame="upperGoal",
+            tasks_left=None,
+            tasks_right=None,
+            collisionConfig={"file": "collisionModel.xml"},
+            taskCombinationMethod="sum",
             checkJointLimits=True,
             collisionAvoidanceIK=True,
             observeVelocities=True,
@@ -520,18 +523,18 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_vortex
-    def default_bs_pos_vx():
+    def default_bs_ds_pos_vx():
         return BoxShelvingPosDSSim(
-            physicsEngine='Vortex',
-            graphFileName='gBoxShelving_posCtrl.xml',  # gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml
-            dt=1/100.,
+            physicsEngine="Vortex",
+            graphFileName="gBoxShelving_posCtrl.xml",  # gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml
+            dt=1 / 100.0,
             max_steps=2000,
             fix_init_state=True,
-            ref_frame='upperGoal',
-            mps_left=None,
-            mps_right=None,
-            collisionConfig={'file': 'collisionModel.xml'},
-            taskCombinationMethod='sum',
+            ref_frame="upperGoal",
+            tasks_left=None,
+            tasks_right=None,
+            collisionConfig={"file": "collisionModel.xml"},
+            taskCombinationMethod="sum",
             checkJointLimits=True,
             collisionAvoidanceIK=True,
             observeVelocities=True,
@@ -546,18 +549,18 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_bullet
-    def default_bf_vel_bt():
+    def default_bf_ds_vel_bt():
         return BoxFlippingVelDSSim(
-            physicsEngine='Bullet',
-            graphFileName='gBoxFlipping_posCtrl.xml',  # gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml
-            dt=1/100.,
+            physicsEngine="Bullet",
+            graphFileName="gBoxFlipping_posCtrl.xml",  # gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml
+            dt=1 / 100.0,
             max_steps=2000,
             fix_init_state=True,
-            ref_frame='table',
-            mps_left=None,
-            mps_right=None,
-            collisionConfig={'file': 'collisionModel.xml'},
-            taskCombinationMethod='sum',
+            ref_frame="table",
+            tasks_left=None,
+            tasks_right=None,
+            collisionConfig={"file": "collisionModel.xml"},
+            taskCombinationMethod="sum",
             checkJointLimits=True,
             collisionAvoidanceIK=True,
             observeVelocities=True,
@@ -572,18 +575,18 @@ class DefaultEnvs:
 
     @staticmethod
     @m_needs_vortex
-    def default_bf_ik_bt():
+    def default_bf_ika_bt():
         return BoxFlippingIKActivationSim(
-            physicsEngine='Bullet',
-            graphFileName='gBoxFlipping_posCtrl.xml',  # gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml
-            dt=1/100.,
+            physicsEngine="Bullet",
+            graphFileName="gBoxFlipping_posCtrl.xml",  # gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml
+            dt=1 / 100.0,
             max_steps=2000,
             fix_init_state=True,
-            ref_frame='table',
-            mps_left=None,
-            mps_right=None,
-            collisionConfig={'file': 'collisionModel.xml'},
-            taskCombinationMethod='sum',
+            ref_frame="table",
+            tasks_left=None,
+            tasks_right=None,
+            collisionConfig={"file": "collisionModel.xml"},
+            taskCombinationMethod="sum",
             checkJointLimits=True,
             collisionAvoidanceIK=True,
             observeVelocities=True,
@@ -597,7 +600,7 @@ class DefaultEnvs:
     @staticmethod
     @m_needs_bullet
     def default_qqsurcs_bt():
-        return QQubeRcsSim(physicsEngine='Bullet', dt=1/250., max_steps=3000)
+        return QQubeRcsSim(physicsEngine="Bullet", dt=1 / 250.0, max_steps=3000)
 
     @staticmethod
     @m_needs_mujoco
@@ -617,22 +620,22 @@ class DefaultEnvs:
     @staticmethod
     @m_needs_bullet
     def default_qqbb_real():
-        return QBallBalancerReal(dt=1/500., max_steps=500)
+        return QBallBalancerReal(dt=1 / 500.0, max_steps=500)
 
     @staticmethod
     @m_needs_bullet
     def default_qcpst_real():
-        return QCartPoleStabReal(dt=1/500., max_steps=500)
+        return QCartPoleStabReal(dt=1 / 500.0, max_steps=500)
 
     @staticmethod
     @m_needs_bullet
     def default_qcpsu_real():
-        return QCartPoleSwingUpReal(dt=1/500., max_steps=500)
+        return QCartPoleSwingUpReal(dt=1 / 500.0, max_steps=500)
 
     @staticmethod
     @m_needs_bullet
     def default_qq_real():
-        return QQubeReal(dt=1/500., max_steps=500)
+        return QQubeReal(dt=1 / 500.0, max_steps=500)
 
 
 # ---------------
@@ -640,7 +643,7 @@ class DefaultEnvs:
 # ---------------
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def policy(request, env):
     selected_policy = request.param
     if selected_policy is None:
@@ -686,7 +689,7 @@ class DefaultPolicies:
 
     @staticmethod
     def rnn_policy(env):
-        return RNNPolicy(env.spec, hidden_size=8, num_recurrent_layers=2, hidden_nonlin='tanh')
+        return RNNPolicy(env.spec, hidden_size=8, num_recurrent_layers=2, hidden_nonlin="tanh")
 
     @staticmethod
     def lstm_policy(env):
@@ -698,13 +701,21 @@ class DefaultPolicies:
 
     @staticmethod
     def adn_policy(env):
-        return ADNPolicy(env.spec, activation_nonlin=to.sigmoid, potentials_dyn_fcn=pd_cubic,
-                         potential_init_learnable=False)
+        return ADNPolicy(
+            env.spec, activation_nonlin=to.sigmoid, potentials_dyn_fcn=pd_cubic, potential_init_learnable=False
+        )
 
     @staticmethod
     def nf_policy(env):
-        return NFPolicy(env.spec, hidden_size=5, mirrored_conv_weights=True, tau_learnable=True,
-                        init_param_kwargs=dict(bell=True), kappa_learnable=True, potential_init_learnable=True)
+        return NFPolicy(
+            env.spec,
+            hidden_size=5,
+            mirrored_conv_weights=True,
+            tau_learnable=True,
+            init_param_kwargs=dict(bell=True),
+            kappa_learnable=True,
+            potential_init_learnable=True,
+        )
 
     @staticmethod
     def thfnn_policy(env):
@@ -712,8 +723,9 @@ class DefaultPolicies:
 
     @staticmethod
     def thrnn_policy(env):
-        return TwoHeadedRNNPolicy(env.spec, shared_hidden_size=8, shared_num_recurrent_layers=1,
-                                  shared_hidden_nonlin='tanh')
+        return TwoHeadedRNNPolicy(
+            env.spec, shared_hidden_size=8, shared_num_recurrent_layers=1, shared_hidden_nonlin="tanh"
+        )
 
     @staticmethod
     def thgru_policy(env):
@@ -724,22 +736,22 @@ class DefaultPolicies:
         return TwoHeadedLSTMPolicy(env.spec, shared_hidden_size=8, shared_num_recurrent_layers=1)
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def default_randomizer():
     return DomainRandomizer(
-        NormalDomainParam(name='mass', mean=1.2, std=0.1, clip_lo=10, clip_up=100),
-        UniformDomainParam(name='special', mean=0, halfspan=42, clip_lo=-7.4, roundint=True),
-        NormalDomainParam(name='length', mean=4, std=0.6, clip_up=50.1),
-        UniformDomainParam(name='time_delay', mean=13, halfspan=6, clip_up=17, roundint=True),
-        MultivariateNormalDomainParam(name='multidim', mean=10*to.ones((2,)), cov=2*to.eye(2), clip_up=11)
+        NormalDomainParam(name="mass", mean=1.2, std=0.1, clip_lo=10, clip_up=100),
+        UniformDomainParam(name="special", mean=0, halfspan=42, clip_lo=-7.4, roundint=True),
+        NormalDomainParam(name="length", mean=4, std=0.6, clip_up=50.1),
+        UniformDomainParam(name="time_delay", mean=13, halfspan=6, clip_up=17, roundint=True),
+        MultivariateNormalDomainParam(name="multidim", mean=10 * to.ones((2,)), cov=2 * to.eye(2), clip_up=11),
     )
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def default_dummy_randomizer():
     return DomainRandomizer(
-        DomainParam(name='mass', mean=1.2),
-        DomainParam(name='special', mean=0),
-        DomainParam(name='length', mean=4),
-        DomainParam(name='time_delay', mean=13)
+        DomainParam(name="mass", mean=1.2),
+        DomainParam(name="special", mean=0),
+        DomainParam(name="length", mean=4),
+        DomainParam(name="time_delay", mean=13),
     )

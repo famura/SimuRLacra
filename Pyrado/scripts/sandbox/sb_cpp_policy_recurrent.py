@@ -41,14 +41,14 @@ from pyrado.policies.recurrent.base import StatefulRecurrentNetwork
 from rcsenv import ControlPolicy
 
 
-if __name__ == '__main__':
-    tmpfile = '/tmp/torchscriptsaved.pt'
+if __name__ == "__main__":
+    tmpfile = "/tmp/torchscriptsaved.pt"
     to.set_default_dtype(to.double)
 
     # Seclect the policy type
-    policy_type = 'RNN'
+    policy_type = "RNN"
 
-    if policy_type == 'RNN':
+    if policy_type == "RNN":
         net = RNNPolicy(
             EnvSpec(
                 BoxSpace(-1, 1, 4),
@@ -57,7 +57,7 @@ if __name__ == '__main__':
             hidden_size=10,
             num_recurrent_layers=2,
         )
-    elif policy_type == 'ADN':
+    elif policy_type == "ADN":
         net = ADNPolicy(
             EnvSpec(
                 BoxSpace(-1, 1, 4),
@@ -65,7 +65,7 @@ if __name__ == '__main__':
             ),
             dt=0.01,
             activation_nonlin=to.sigmoid,
-            potentials_dyn_fcn=pd_capacity_21
+            potentials_dyn_fcn=pd_capacity_21,
         )
     else:
         raise NotImplementedError
@@ -83,11 +83,11 @@ if __name__ == '__main__':
     stateful_net.save(tmpfile)
 
     # Load in c
-    cp = ControlPolicy('torch', tmpfile)
+    cp = ControlPolicy("torch", tmpfile)
 
     inputs = [
-        [1., 2., 3., 4.],
-        [3., 4., 5., 6.],
+        [1.0, 2.0, 3.0, 4.0],
+        [3.0, 4.0, 5.0, 6.0],
     ]
 
     hid_man = net.init_hidden()
@@ -99,7 +99,7 @@ if __name__ == '__main__':
         # Execute C++
         out_cp = cp(np.array(inp), 2)
 
-        print(f'{inp} =>')
-        print(f'manual: {out_man}')
-        print(f'script: {out_sc}')
-        print(f'cpp:    {out_cp}')
+        print(f"{inp} =>")
+        print(f"manual: {out_man}")
+        print(f"script: {out_sc}")
+        print(f"cpp:    {out_cp}")

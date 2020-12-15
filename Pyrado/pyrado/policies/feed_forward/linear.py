@@ -41,7 +41,7 @@ class LinearPolicy(Policy):
     A linear policy defined by the inner product of nonlinear features of the observations with the policy parameters
     """
 
-    name: str = 'lin'
+    name: str = "lin"
 
     def __init__(self, spec: EnvSpec, feats: FeatureStack, init_param_kwargs: dict = None, use_cuda: bool = False):
         """

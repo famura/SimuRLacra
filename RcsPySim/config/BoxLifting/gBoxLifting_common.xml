@@ -28,19 +28,19 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<Graph>
+<Graph xmlns:xi="http://www.w3.org/2003/XInclude" resourcePath="${HOME}/localdisk/Software/SimuRLacra/RcsPySim/config ${HOME}/Software/SimuRLacra/RcsPySim/config ${SIT}/Data/RobotMeshes/1.0/data">
 
   <Body name="GroundPlane" physics="kinematic">
-    <Shape type="BOX" graphics="true" physics="true" extents="5.0 5.0 0.01" transform="0 0 -0.005 0 0 0" color="PEWTER" textureFile="../textures/fMRT_brown_squares_2x2.png"/>
+    <Shape type="BOX" graphics="true" physics="true" extents="6.0 6.0 0.02" transform="0 0 -0.01 0 0 0" color="PEWTER" textureFile="textures/fMRT_brown_squares_2x2.png"/>
     <Shape type="FRAME" scale="1"/>
   </Body>
 
-  <Body name="Table" transform="1.5 0 0.76 0 0 0" physics="kinematic">
-    <Shape type="BOX" extents="1.2 1.6 0.04" graphics="true" physics="true" material="table_mat" textureFile="textures/white-hardwood-floor.jpg"/>
+  <Body name="Table" transform="1. 0 0.66 0 0 0" physics="kinematic">
+    <Shape type="BOX" extents="0.8 1.2 0.04" graphics="true" physics="true" material="table_mat" textureFile="textures/white-hardwood-floor.jpg"/>
     <Shape type="FRAME" scale="0.8"/>
   </Body>
 
-  <Body name="Basket" rigid_body_joints="1.25 0 0.78 0 0 0" physics="kinematic" mass="5.">
+  <Body name="Basket" rigid_body_joints="1. 0 0.68 0 0 0" physics="kinematic" mass="5.">
     <Shape type="BOX" extents="0.5 0.7 0.02" transform="0 0 0.01 0 0 0" graphics="true" physics="true" material="basket_mat" textureFile="textures/wood-ikea-birch.jpg"/>
     <Shape type="BOX" extents="0.02 0.7 0.1" transform="0.26 0 0.05 0 0 0" graphics="true" physics="true" material="basket_mat" textureFile="textures/wood-ikea-birch.jpg"/>
     <Shape type="BOX" extents="0.02 0.7 0.1" transform="-0.26 0 0.05 0 0 0" graphics="true" physics="true" material="basket_mat" textureFile="textures/wood-ikea-birch.jpg"/>
@@ -48,15 +48,9 @@
     <Shape type="BOX" extents="0.54 0.02 0.1" transform="0 -0.36 0.05 0 0 0" graphics="true" physics="true" material="basket_mat" textureFile="textures/wood-ikea-birch.jpg"/>
   </Body>
 
-  <Body name="Box" rigid_body_joints="1.25 0 0.83 0 0 0" physics="dynamic" mass="0.3" color="BLUE"> <!-- in hand -->
+  <Body name="Box" rigid_body_joints="1. 0 0.73 0 0 0" physics="dynamic" mass="0.3" color="BLUE"> <!-- in hand -->
     <Shape type="BOX" extents="0.14 0.18 0.06" graphics="true" physics="true" material="box_mat" textureFile="textures/fMRT_bavaria.jpg"/>
     <Shape type="FRAME" scale="0.20"/>
   </Body>
-
-  <model_state model="BoxLifting" time_stamp="0">
-    <joint_state joint="DofX" position="1.25"/>
-    <joint_state joint="DofY" position="0.3"/>
-    <joint_state joint="DofZ" position="1.0"/>
-  </model_state>
 
 </Graph>

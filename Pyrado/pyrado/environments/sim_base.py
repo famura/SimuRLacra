@@ -108,9 +108,9 @@ class SimEnv(Env, ABC, Serializable):
     def _get_state(self, state_dict: dict):
         super(SimEnv, self)._get_state(state_dict)
         # Add
-        state_dict['domain_param'] = self.domain_param
+        state_dict["domain_param"] = self.domain_param
 
     def _set_state(self, state_dict: dict, copying: bool = False):
         super(SimEnv, self)._set_state(state_dict, copying=copying)
         # Retrieve
-        self.domain_param = state_dict['domain_param']
+        self.domain_param = state_dict["domain_param"]

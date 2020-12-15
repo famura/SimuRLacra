@@ -78,7 +78,7 @@ class BaseErr(Exception):
 
         if name is None:
             # General purpose return
-            return 'the input'
+            return "the input"
 
         return name
 
@@ -86,11 +86,14 @@ class BaseErr(Exception):
 class TypeErr(BaseErr):
     """ Class for exceptions raised by passing wrong data types """
 
-    def __init__(self, *,
-                 given=None,
-                 given_name: Optional[str] = None,
-                 expected_type: Union[type, list, tuple] = None,
-                 msg: Optional[str] = None):
+    def __init__(
+        self,
+        *,
+        given=None,
+        given_name: Optional[str] = None,
+        expected_type: Union[type, list, tuple] = None,
+        msg: Optional[str] = None,
+    ):
         """
         Constructor
 
@@ -100,23 +103,25 @@ class TypeErr(BaseErr):
         :param msg: offers possibility to override the error message
         """
         if given is None and msg is None:
-            super().__init__("Either specify an input for the error message using the 'given' argument, or set a custom"
-                             "message via the 'msg' argument!")
+            super().__init__(
+                "Either specify an input for the error message using the 'given' argument, or set a custom"
+                "message via the 'msg' argument!"
+            )
         elif msg is None:
             self.given_name = given_name if given_name is not None else BaseErr.retrieve_var_name(given)
             self.given_type = type(given)
             self.expected_types = expected_type
             # Default error message
-            msg = f'Expected the type of {self.given_name} to be'
+            msg = f"Expected the type of {self.given_name} to be"
             if isinstance(expected_type, list):
                 for i, t in enumerate(expected_type):
                     if i == 0:
-                        msg += ' ' + t.__name__
+                        msg += " " + t.__name__
                     else:
-                        msg += ' or ' + t.__name__
+                        msg += " or " + t.__name__
             else:
-                msg += ' ' + expected_type.__name__
-            msg += f' but received {self.given_type.__name__}!'
+                msg += " " + expected_type.__name__
+            msg += f" but received {self.given_type.__name__}!"
 
         # Pass to Python Exception
         super().__init__(msg)
@@ -125,15 +130,18 @@ class TypeErr(BaseErr):
 class ValueErr(BaseErr):
     """ Class for exceptions raised by passing wrong values """
 
-    def __init__(self, *,
-                 given=None,
-                 given_name: Optional[str] = None,
-                 eq_constraint=None,
-                 l_constraint=None,
-                 le_constraint=None,
-                 g_constraint=None,
-                 ge_constraint=None,
-                 msg: Optional[str] = None):
+    def __init__(
+        self,
+        *,
+        given=None,
+        given_name: Optional[str] = None,
+        eq_constraint=None,
+        l_constraint=None,
+        le_constraint=None,
+        g_constraint=None,
+        ge_constraint=None,
+        msg: Optional[str] = None,
+    ):
         """
         Constructor
 
@@ -147,12 +155,19 @@ class ValueErr(BaseErr):
         :param msg: offers possibility to override the error message
         """
         if given is None and msg is None:
-            super().__init__("Either specify an input for the error message using the 'given' argument, or set a custom"
-                             "message via the 'msg' argument!")
+            super().__init__(
+                "Either specify an input for the error message using the 'given' argument, or set a custom"
+                "message via the 'msg' argument!"
+            )
         if msg is None:
             # If the default error message is used
-            assert not (eq_constraint is None and l_constraint is None and le_constraint is None and
-                        g_constraint is None and ge_constraint is None), 'Specify at least one constraint!'
+            assert not (
+                eq_constraint is None
+                and l_constraint is None
+                and le_constraint is None
+                and g_constraint is None
+                and ge_constraint is None
+            ), "Specify at least one constraint!"
         self.given_name = given_name if given_name is not None else BaseErr.retrieve_var_name(given)
         self.given_str = str(given)
         self.eq_constraint_str = str(eq_constraint)
@@ -162,18 +177,18 @@ class ValueErr(BaseErr):
         self.ge_constraint_str = str(ge_constraint)
         if msg is None:
             # Default error message
-            msg = f'The value of {self.given_name} should be '
+            msg = f"The value of {self.given_name} should be "
             if eq_constraint is not None:
-                msg += f'equal to {self.eq_constraint_str} '
+                msg += f"equal to {self.eq_constraint_str} "
             if l_constraint is not None:
-                msg += f'smaller than {self.l_constraint_str} '
+                msg += f"smaller than {self.l_constraint_str} "
             if le_constraint is not None:
-                msg += f'smaller or equal than {self.le_constraint_str} '
+                msg += f"smaller or equal than {self.le_constraint_str} "
             if g_constraint is not None:
-                msg += f'greater than {self.g_constraint_str} '
+                msg += f"greater than {self.g_constraint_str} "
             if ge_constraint is not None:
-                msg += f'greater or equal than {self.ge_constraint_str} '
-            msg += f'but it is {self.given_str}!'
+                msg += f"greater or equal than {self.ge_constraint_str} "
+            msg += f"but it is {self.given_str}!"
 
         # Pass to Python Exception
         super().__init__(msg)
@@ -190,15 +205,11 @@ class ShapeErr(BaseErr):
         shape = getattr(obj, "shape", None)
         if shape is not None:
             return shape, "shape"
-        elif hasattr(obj, '__len__'):
+        elif hasattr(obj, "__len__"):
             return len(obj), "length"
         raise AttributeError(f"{var} must have either a shape attribute or support len()!")
 
-    def __init__(self, *,
-                 given=None,
-                 given_name: Optional[str] = None,
-                 expected_match=None,
-                 msg: Optional[str] = None):
+    def __init__(self, *, given=None, given_name: Optional[str] = None, expected_match=None, msg: Optional[str] = None):
         """
         Constructor
 
@@ -208,8 +219,10 @@ class ShapeErr(BaseErr):
         :param msg: offers possibility to override the error message
         """
         if given is None and msg is None:
-            super().__init__("Either specify an input for the error message using the 'given' argument, or set a custom"
-                             "message via the 'msg' argument!")
+            super().__init__(
+                "Either specify an input for the error message using the 'given' argument, or set a custom"
+                "message via the 'msg' argument!"
+            )
         elif msg is None:
             self.given_name = given_name if given_name is not None else BaseErr.retrieve_var_name(given)
             self.given_shape, gsn = ShapeErr.get_shape_and_name(given, "given")
@@ -217,8 +230,10 @@ class ShapeErr(BaseErr):
             self.attributes = (gsn, esn)
 
             # Default error message
-            msg = f'The {self.attributes[0]} of {self.given_name} should match the {self.attributes[1]} ' \
-                  f'{self.expected_shape} but it is {self.given_shape}!'
+            msg = (
+                f"The {self.attributes[0]} of {self.given_name} should match the {self.attributes[1]} "
+                f"{self.expected_shape} but it is {self.given_shape}!"
+            )
 
         # Pass to Python Exception
         super().__init__(msg)
@@ -235,19 +250,21 @@ class PathErr(BaseErr):
         :param msg: offers possibility to override the error message
         """
         if given is None and msg is None:
-            super().__init__("Either specify an input for the error message using the 'given' argument, or set a custom"
-                             "message via the 'msg' argument!")
+            super().__init__(
+                "Either specify an input for the error message using the 'given' argument, or set a custom"
+                "message via the 'msg' argument!"
+            )
         elif msg is None:
             self.is_dir = osp.isdir(given)
             self.is_file = osp.isfile(given)
             # Default error message
-            msg = f'The given path {given} '
+            msg = f"The given path {given} "
             if not self.is_dir and not self.is_file:
-                msg += 'is neither a directory nor a file!'
+                msg += "is neither a directory nor a file!"
             if not self.is_dir and self.is_file:
-                msg += 'is not a directory but a file!'
+                msg += "is not a directory but a file!"
             if not self.is_dir and self.is_file:
-                msg += 'is a directory but not a file!'
+                msg += "is a directory but not a file!"
 
         # Pass to Python Exception
         super().__init__(msg)
@@ -256,10 +273,7 @@ class PathErr(BaseErr):
 class KeyErr(BaseErr):
     """ Class for exceptions raised asking for a keys in an object that does not exist """
 
-    def __init__(self, *,
-                 keys: Union[str, Sequence[str]] = None,
-                 container=None,
-                 msg: Optional[str] = None):
+    def __init__(self, *, keys: Union[str, Sequence[str]] = None, container=None, msg: Optional[str] = None):
         """
         Constructor
 
@@ -268,13 +282,15 @@ class KeyErr(BaseErr):
         :param msg: offers possibility to override the error message
         """
         if (keys is None or container is None) and msg is None:
-            super().__init__("Either specify an input for the error message using the 'keys' and the 'container'"
-                             "argument, or set a custom message via the 'msg' argument!")
+            super().__init__(
+                "Either specify an input for the error message using the 'keys' and the 'container'"
+                "argument, or set a custom message via the 'msg' argument!"
+            )
         elif msg is None:
             self.key = keys
             self.container = container
             # Default error message
-            msg = f'{self.container} does not have the keys(s) {self.key} but the keys {list(self.container.keys())}!'
+            msg = f"{self.container} does not have the keys(s) {self.key} but the keys {list(self.container.keys())}!"
 
         # Pass to Python Exception
         super().__init__(msg)

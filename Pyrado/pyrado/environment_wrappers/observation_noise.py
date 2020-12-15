@@ -37,10 +37,12 @@ from pyrado.environments.sim_base import SimEnv
 class GaussianObsNoiseWrapper(EnvWrapperObs, Serializable):
     """ Environment wrapper which adds normally distributed i.i.d. noise to all observations. """
 
-    def __init__(self,
-                 wrapped_env: SimEnv,
-                 noise_mean: Optional[Union[list, np.ndarray]] = None,
-                 noise_std: Optional[Union[list, np.ndarray]] = None):
+    def __init__(
+        self,
+        wrapped_env: SimEnv,
+        noise_mean: Optional[Union[list, np.ndarray]] = None,
+        noise_std: Optional[Union[list, np.ndarray]] = None,
+    ):
         """
         :param wrapped_env: environment to wrap
 
@@ -65,7 +67,7 @@ class GaussianObsNoiseWrapper(EnvWrapperObs, Serializable):
 
     def _process_obs(self, obs: np.ndarray) -> np.ndarray:
         # Generate gaussian noise sample
-        noise = np.random.randn(*self.obs_space.shape)*self._std + self._mean  # * to unsqueeze the tuple
+        noise = np.random.randn(*self.obs_space.shape) * self._std + self._mean  # * to unsqueeze the tuple
 
         # Add it to the observation
         return obs + noise
@@ -76,8 +78,8 @@ class GaussianObsNoiseWrapper(EnvWrapperObs, Serializable):
 
         :param domain_param: domain parameter dict
         """
-        domain_param['obs_noise_mean'] = self._mean
-        domain_param['obs_noise_std'] = self._std
+        domain_param["obs_noise_mean"] = self._mean
+        domain_param["obs_noise_std"] = self._std
 
     def _load_domain_param(self, domain_param: dict):
         """
@@ -85,9 +87,9 @@ class GaussianObsNoiseWrapper(EnvWrapperObs, Serializable):
 
         :param domain_param: domain parameter dict
         """
-        if 'obs_noise_mean' in domain_param:
-            self._mean = np.array(domain_param['obs_noise_mean'])
+        if "obs_noise_mean" in domain_param:
+            self._mean = np.array(domain_param["obs_noise_mean"])
             assert self._mean.shape == self.obs_space.shape
-        if 'obs_noise_std' in domain_param:
-            self._std = np.array(domain_param['obs_noise_std'])
+        if "obs_noise_std" in domain_param:
+            self._std = np.array(domain_param["obs_noise_std"])
             assert self._std.shape == self.obs_space.shape

@@ -140,9 +140,9 @@ class ReplayMemory:
         :return: average reward
         """
         if self._memory is None:
-            raise pyrado.TypeErr(msg='The replay memory is empty!')
+            raise pyrado.TypeErr(msg="The replay memory is empty!")
         else:
-            return sum(self._memory.rewards)/self._memory.length
+            return sum(self._memory.rewards) / self._memory.length
 
 
 def until_thold_exceeded(thold: float, max_iter: int = None):
@@ -173,17 +173,18 @@ def until_thold_exceeded(thold: float, max_iter: int = None):
 
                 # Break if done
                 if ret >= thold:
-                    print_cbt(f'The policy exceeded the threshold {thold}.', 'g', True)
+                    print_cbt(f"The policy exceeded the threshold {thold}.", "g", True)
                     break
 
                 # Break if max_iter is reached
                 if max_iter is not None and cnt_iter == max_iter:
-                    print_cbt(f'Exiting the training and evaluation loop after {max_iter} iterations.', 'y', True)
+                    print_cbt(f"Exiting the training and evaluation loop after {max_iter} iterations.", "y", True)
                     break
 
                 # Else repeat training
-                print_cbt(f'The policy did not exceed the threshold {thold}. Repeating training and evaluation ...',
-                          'w', True)
+                print_cbt(
+                    f"The policy did not exceed the threshold {thold}. Repeating training and evaluation ...", "w", True
+                )
             return ret
 
         return wrapper_trn_eval_fcn
@@ -191,9 +192,9 @@ def until_thold_exceeded(thold: float, max_iter: int = None):
     return actual_decorator
 
 
-def num_iter_from_rollouts(ros: [Sequence[StepSequence], None],
-                           concat_ros: [StepSequence, None],
-                           batch_size: int) -> int:
+def num_iter_from_rollouts(
+    ros: [Sequence[StepSequence], None], concat_ros: [StepSequence, None], batch_size: int
+) -> int:
     """
     Get the number of iterations from the given rollout data.
 
@@ -204,9 +205,9 @@ def num_iter_from_rollouts(ros: [Sequence[StepSequence], None],
     """
     if ros is None:
         assert concat_ros is not None
-        return (concat_ros.length + batch_size - 1)//batch_size
+        return (concat_ros.length + batch_size - 1) // batch_size
     else:
-        return (sum(ro.length for ro in ros) + batch_size - 1)//batch_size
+        return (sum(ro.length for ro in ros) + batch_size - 1) // batch_size
 
 
 def get_grad_via_torch(x_np: np.ndarray, fcn_to: Callable, *args_to, **kwargs_to) -> np.ndarray:

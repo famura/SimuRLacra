@@ -41,11 +41,9 @@ from pyrado.utils.input_output import print_cbt
 class SequentialTasks(Task):
     """ Task class for a sequence of tasks a.k.a. goals """
 
-    def __init__(self,
-                 tasks: Sequence[Task],
-                 start_idx: int = 0,
-                 hold_rew_when_done: bool = False,
-                 verbose: bool = False):
+    def __init__(
+        self, tasks: Sequence[Task], start_idx: int = 0, hold_rew_when_done: bool = False, verbose: bool = False
+    ):
         """
         Constructor
 
@@ -88,7 +86,7 @@ class SequentialTasks(Task):
     def idx_curr(self, idx: int):
         """ Set the index of the currently active task. """
         if not (0 <= idx < len(self)):
-            raise pyrado.ValueErr(given=idx, ge_constraint='0', le_constraint=f'{len(self) - 1}')
+            raise pyrado.ValueErr(given=idx, ge_constraint="0", le_constraint=f"{len(self) - 1}")
         self._idx_curr = idx
 
     @property
@@ -122,7 +120,7 @@ class SequentialTasks(Task):
 
     def step_rew(self, state: np.ndarray, act: np.ndarray, remaining_steps: int) -> float:
         """ Get the step reward from the current task. """
-        step_rew = 0.
+        step_rew = 0.0
         if self.hold_rew_when_done:
             for i in range(len(self)):
                 # Iterate over previous tasks
@@ -152,7 +150,7 @@ class SequentialTasks(Task):
         :param remaining_steps: number of time steps left in the episode
         :return: final reward of all sub-tasks
         """
-        sum_final_rew = 0.
+        sum_final_rew = 0.0
         for t in self._tasks:
             sum_final_rew += t.compute_final_rew(state, remaining_steps)
         return sum_final_rew
@@ -166,18 +164,16 @@ class SequentialTasks(Task):
         # Reset internal check list for done tasks
         self.succeeded_tasks = np.full(len(self), False, dtype=bool)
         self.failed_tasks = np.full(len(self), False, dtype=bool)
-        if 'start_idx' in kwargs:
-            self.succeeded_tasks[:kwargs['start_idx']] = True
+        if "start_idx" in kwargs:
+            self.succeeded_tasks[: kwargs["start_idx"]] = True
 
         # Reset the stored reward values for done tasks
         if self.hold_rew_when_done:
             self.held_rews = np.zeros(len(self))  # doesn't work with start_idx
 
-    def _is_curr_task_done(self,
-                           state: np.ndarray,
-                           act: np.ndarray,
-                           remaining_steps: int,
-                           verbose: bool = False) -> float:
+    def _is_curr_task_done(
+        self, state: np.ndarray, act: np.ndarray, remaining_steps: int, verbose: bool = False
+    ) -> float:
         """
         Check if the current task is done. If so, move to the next one and return the final reward of this task.
 
@@ -187,24 +183,27 @@ class SequentialTasks(Task):
         :param verbose: print messages on success or failure
         :return: final return of the current subtask
         """
-        if not self.succeeded_tasks[self._idx_curr] and not self.failed_tasks[self._idx_curr] and self._tasks[
-            self._idx_curr].is_done(state):
+        if (
+            not self.succeeded_tasks[self._idx_curr]
+            and not self.failed_tasks[self._idx_curr]
+            and self._tasks[self._idx_curr].is_done(state)
+        ):
             # Task has not been marked done yet, but is now done
 
             if self._tasks[self._idx_curr].has_succeeded(state):
                 # Check off successfully completed task
                 self.succeeded_tasks[self._idx_curr] = True
                 if verbose:
-                    print_cbt(f'task {self._idx_curr} has succeeded (is done) at state {state}', 'g')
+                    print_cbt(f"task {self._idx_curr} has succeeded (is done) at state {state}", "g")
 
             elif self._tasks[self._idx_curr].has_failed(state):
                 # Check off unsuccessfully completed task
                 self.failed_tasks[self._idx_curr] = True
                 if verbose:
-                    print_cbt(f'Task {self._idx_curr} has failed (is done) at state {state}', 'r')
+                    print_cbt(f"Task {self._idx_curr} has failed (is done) at state {state}", "r")
 
             else:
-                raise pyrado.ValueErr(msg=f'Task {self._idx_curr} neither succeeded or failed but is done!')
+                raise pyrado.ValueErr(msg=f"Task {self._idx_curr} neither succeeded or failed but is done!")
 
             # Memorize current reward
             if self.hold_rew_when_done:
@@ -214,10 +213,10 @@ class SequentialTasks(Task):
             task_final_rew = self._tasks[self._idx_curr].final_rew(state, remaining_steps)
 
             # Advance to the next task
-            self.idx_curr = (self._idx_curr + 1)%len(self)
+            self.idx_curr = (self._idx_curr + 1) % len(self)
 
         else:
-            task_final_rew = 0.
+            task_final_rew = 0.0
 
         return task_final_rew
 
@@ -230,5 +229,5 @@ class SequentialTasks(Task):
         """
         successful = np.all(self.succeeded_tasks)
         if successful and self.verbose:
-            print_cbt(f'All {len(self)} sequential sub-tasks are done successfully', 'g')
+            print_cbt(f"All {len(self)} sequential sub-tasks are done successfully", "g")
         return successful

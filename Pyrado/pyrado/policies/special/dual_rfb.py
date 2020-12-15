@@ -43,14 +43,11 @@ class DualRBFLinearPolicy(LinearPolicy):
     time get the velocity information from the features, i.e. the derivative of the normalized Gaussians.
     """
 
-    name: str = 'dualrbf'
+    name: str = "dualrbf"
 
-    def __init__(self,
-                 spec: EnvSpec,
-                 rbf_hparam: dict,
-                 dim_mask: int = 2,
-                 init_param_kwargs: dict = None,
-                 use_cuda: bool = False):
+    def __init__(
+        self, spec: EnvSpec, rbf_hparam: dict, dim_mask: int = 2, init_param_kwargs: dict = None, use_cuda: bool = False
+    ):
         """
         Constructor
 
@@ -62,16 +59,16 @@ class DualRBFLinearPolicy(LinearPolicy):
         :param init_param_kwargs: additional keyword arguments for the policy parameter initialization
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
-        if not spec.act_space.flat_dim%2 == 0:
+        if not spec.act_space.flat_dim % 2 == 0:
             raise pyrado.ShapeErr(
-                msg='DualRBFLinearPolicy only works with an even number of actions, since we are using the time '
-                    'derivative of the features to create the second half of the outputs. This is done to use '
-                    'forward() in order to obtain the joint position and the joint velocities. Check the action space '
-                    'of the environment if the second halt of the actions space are velocities!'
+                msg="DualRBFLinearPolicy only works with an even number of actions, since we are using the time "
+                "derivative of the features to create the second half of the outputs. This is done to use "
+                "forward() in order to obtain the joint position and the joint velocities. Check the action space "
+                "of the environment if the second halt of the actions space are velocities!"
             )
-        if not (0 <= dim_mask <= rbf_hparam['num_feat_per_dim']//2):
+        if not (0 <= dim_mask <= rbf_hparam["num_feat_per_dim"] // 2):
             raise pyrado.ValueErr(
-                given=dim_mask, ge_constraint='0', le_constraint=f"{rbf_hparam['num_feat_per_dim']//2}"
+                given=dim_mask, ge_constraint="0", le_constraint=f"{rbf_hparam['num_feat_per_dim']//2}"
             )
 
         # Construct the RBF features
@@ -84,16 +81,18 @@ class DualRBFLinearPolicy(LinearPolicy):
         self._feats = RBFFeat(**rbf_hparam)
         self.dim_mask = dim_mask
         if self.dim_mask > 0:
-            self.num_active_feat = self._feats.num_feat - 2*self.dim_mask*spec.obs_space.flat_dim
+            self.num_active_feat = self._feats.num_feat - 2 * self.dim_mask * spec.obs_space.flat_dim
         else:
             self.num_active_feat = self._feats.num_feat
-        self.net = nn.Linear(self.num_active_feat, self.env_spec.act_space.flat_dim//2, bias=False)
+        self.net = nn.Linear(self.num_active_feat, self.env_spec.act_space.flat_dim // 2, bias=False)
 
         # Create mask to deactivate first and last feature of every input dimension
         self.feats_mask = to.ones(self._feats.centers.shape, dtype=to.bool)
-        self.feats_mask[:self.dim_mask, :] = False
-        self.feats_mask[-self.dim_mask:, :] = False
-        self.feats_mask = self.feats_mask.t().reshape(-1, )  # reshape the same way as in RBFFeat
+        self.feats_mask[: self.dim_mask, :] = False
+        self.feats_mask[-self.dim_mask :, :] = False
+        self.feats_mask = self.feats_mask.t().reshape(
+            -1,
+        )  # reshape the same way as in RBFFeat
 
         # Call custom initialization function after PyTorch network parameter initialization
         init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()

@@ -50,7 +50,7 @@ def create_sequences(data: to.Tensor, len_seq: int) -> List[Tuple]:
     """
     list_inp_targ = []
     for idx in range(data.shape[0] - len_seq - 1):
-        inp = data[idx:(idx + len_seq)]
+        inp = data[idx : (idx + len_seq)]
         targ = data[idx + len_seq]
         list_inp_targ.append(TimeSeriesDataPair(inp, targ))
     return list_inp_targ
@@ -74,13 +74,15 @@ def create_shuffled_sequences(data: to.Tensor, len_seq: int) -> List[Tuple]:
 class TimeSeriesDataSet(Dataset):
     """ Class for storing time series data sets """
 
-    def __init__(self,
-                 data: to.Tensor,
-                 window_size: int,
-                 ratio_train: float,
-                 standardize_data: bool = False,
-                 scale_min_max_data: bool = False,
-                 name: str = 'Unnamed data set'):
+    def __init__(
+        self,
+        data: to.Tensor,
+        window_size: int,
+        ratio_train: float,
+        standardize_data: bool = False,
+        scale_min_max_data: bool = False,
+        name: str = "Unnamed data set",
+    ):
         r"""
         Constructor
 
@@ -96,13 +98,13 @@ class TimeSeriesDataSet(Dataset):
         if not isinstance(window_size, int):
             raise pyrado.TypeErr(given=window_size, expected_type=int)
         if window_size < 1:
-            raise pyrado.ValueErr(given=window_size, ge_constraint='1')
+            raise pyrado.ValueErr(given=window_size, ge_constraint="1")
         if not isinstance(ratio_train, float):
             raise pyrado.TypeErr(given=ratio_train, expected_type=float)
         if not (0 < ratio_train < 1):
-            raise pyrado.ValueErr(given=ratio_train, g_constraint='0', l_constraint='1')
+            raise pyrado.ValueErr(given=ratio_train, g_constraint="0", l_constraint="1")
         if standardize_data and scale_min_max_data:
-            raise pyrado.ValueErr(msg='Scaling and normalizing the data at the same time is not supported!')
+            raise pyrado.ValueErr(msg="Scaling and normalizing the data at the same time is not supported!")
 
         self.data_all_raw = atleast_2D(data).T if data.ndimension() == 1 else data  # samples along rows
         self._ratio_train = ratio_train
@@ -121,8 +123,8 @@ class TimeSeriesDataSet(Dataset):
             self.data_all = self.data_all_raw
 
         # Split the data into training and testing data
-        self.data_trn = self.data_all[:self.num_samples_trn]
-        self.data_tst = self.data_all[self.num_samples_trn:]
+        self.data_trn = self.data_all[: self.num_samples_trn]
+        self.data_tst = self.data_all[self.num_samples_trn :]
 
         # Targets are the next time steps
         self.data_all_inp = self.data_all[:-1, :]
@@ -138,7 +140,7 @@ class TimeSeriesDataSet(Dataset):
         self.data_trn_seqs = create_sequences(self.data_trn_ws, len_seq=self._window_size + 1)
         self.data_tst_seqs = create_sequences(self.data_tst_ws, len_seq=self._window_size + 1)
 
-        print_cbt(f'Created {str(self)}', 'w')
+        print_cbt(f"Created {str(self)}", "w")
 
     def __len__(self) -> int:
         """ Get the length of the complete data set (not split into sequences) after removing superfluous samples. """
@@ -157,11 +159,14 @@ class TimeSeriesDataSet(Dataset):
 
     def __str__(self):
         """ Get an information string. """
-        return f'TimeSeriesDataSet (id {id(self)})\n' + \
-               tabulate([['num all samples', len(self)],
-                         ['ratio trn samples', self.ratio_train],
-                         ['num training sequences', len(self.data_trn_seqs)],
-                         ['window size', self.window_size]])
+        return f"TimeSeriesDataSet (id {id(self)})\n" + tabulate(
+            [
+                ["num all samples", len(self)],
+                ["ratio trn samples", self.ratio_train],
+                ["num training sequences", len(self.data_trn_seqs)],
+                ["window size", self.window_size],
+            ]
+        )
 
     @property
     def ratio_train(self) -> float:
@@ -176,7 +181,7 @@ class TimeSeriesDataSet(Dataset):
     @property
     def num_samples_trn(self) -> int:
         """ Get the number of samples in the training subset. """
-        return int(len(self)*self._ratio_train)
+        return int(len(self) * self._ratio_train)
 
     @property
     def num_samples_tst(self) -> int:
@@ -195,7 +200,7 @@ class TimeSeriesDataSet(Dataset):
         if not isinstance(ws, int):
             raise pyrado.TypeErr(given=ws, expected_type=int)
 
-        num_cutoff_samples = data.shape[0]%(ws + 1)
+        num_cutoff_samples = data.shape[0] % (ws + 1)
         if num_cutoff_samples > 0:
             data = data[:-num_cutoff_samples]
         return data

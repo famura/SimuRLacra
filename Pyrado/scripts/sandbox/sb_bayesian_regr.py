@@ -59,19 +59,21 @@ def model(states, actions, observations, prior):
     :return:
     """
     # Priors (also defines the support)
-    m = pyro.sample('m', distr.Normal(prior['m'], prior['m']/6.))
-    k = pyro.sample('k', distr.Normal(prior['k'], prior['k']/6.))
-    d = pyro.sample('d', distr.Normal(prior['d'], prior['d']/4.))
-    sigma = pyro.sample('sigma', distr.Normal(5., 0.5))  # obs noise scale; these params seem to have no effect
+    m = pyro.sample("m", distr.Normal(prior["m"], prior["m"] / 6.0))
+    k = pyro.sample("k", distr.Normal(prior["k"], prior["k"] / 6.0))
+    d = pyro.sample("d", distr.Normal(prior["d"], prior["d"] / 4.0))
+    sigma = pyro.sample("sigma", distr.Normal(5.0, 0.5))  # obs noise scale; these params seem to have no effect
 
     # Create a model for learning the domain parameters
     omo_dyn = OneMassOscillatorDyn(dt=dt)
 
-    with pyro.plate('data_loop'):  # no len(observations) needed for vectorized pyro.plate
+    with pyro.plate("data_loop"):  # no len(observations) needed for vectorized pyro.plate
         # Likelihood conditioned on m, k, d (sampled outside the loop)
-        pyro.sample('obs', distr.Normal(omo_dyn(states, actions, dict(m=m, k=k, d=d)),
-                                        sigma.clamp_(min=to.tensor(1e-3))).to_event(1),
-                    obs=observations)
+        pyro.sample(
+            "obs",
+            distr.Normal(omo_dyn(states, actions, dict(m=m, k=k, d=d)), sigma.clamp_(min=to.tensor(1e-3))).to_event(1),
+            obs=observations,
+        )
 
 
 def guide(states, actions, observations, prior):
@@ -89,18 +91,18 @@ def guide(states, actions, observations, prior):
     :param observations:
     :param prior:
     """
-    m_loc = pyro.param('m_loc', to.tensor(prior['m']), constraint=constraints.positive)
-    m_scale = pyro.param('m_scale', to.tensor(prior['m']/6.), constraint=constraints.positive)
-    k_loc = pyro.param('k_loc', to.tensor(prior['k']), constraint=constraints.positive)
-    k_scale = pyro.param('k_scale', to.tensor(prior['k']/6.), constraint=constraints.positive)
-    d_loc = pyro.param('d_loc', to.tensor(prior['d']), constraint=constraints.positive)
-    d_scale = pyro.param('d_scale', to.tensor(prior['d']/6.), constraint=constraints.positive)
-    sigma_loc = pyro.param('sigma_loc', to.tensor(1.0), constraint=constraints.positive)
+    m_loc = pyro.param("m_loc", to.tensor(prior["m"]), constraint=constraints.positive)
+    m_scale = pyro.param("m_scale", to.tensor(prior["m"] / 6.0), constraint=constraints.positive)
+    k_loc = pyro.param("k_loc", to.tensor(prior["k"]), constraint=constraints.positive)
+    k_scale = pyro.param("k_scale", to.tensor(prior["k"] / 6.0), constraint=constraints.positive)
+    d_loc = pyro.param("d_loc", to.tensor(prior["d"]), constraint=constraints.positive)
+    d_scale = pyro.param("d_scale", to.tensor(prior["d"] / 6.0), constraint=constraints.positive)
+    sigma_loc = pyro.param("sigma_loc", to.tensor(1.0), constraint=constraints.positive)
 
-    pyro.sample('m', distr.Normal(m_loc, m_scale))
-    pyro.sample('k', distr.Normal(k_loc, k_scale))
-    pyro.sample('d', distr.Normal(d_loc, d_scale))
-    pyro.sample('sigma', distr.Normal(sigma_loc, to.tensor(0.001)))  # scale is a sensitive parameter; < 1e-3
+    pyro.sample("m", distr.Normal(m_loc, m_scale))
+    pyro.sample("k", distr.Normal(k_loc, k_scale))
+    pyro.sample("d", distr.Normal(d_loc, d_scale))
+    pyro.sample("sigma", distr.Normal(sigma_loc, to.tensor(0.001)))  # scale is a sensitive parameter; < 1e-3
 
 
 def train(svi, rollouts, prior, num_epoch=2000, print_iter=100):
@@ -120,59 +122,59 @@ def train(svi, rollouts, prior, num_epoch=2000, print_iter=100):
     sigma_hist = []
 
     # Train
-    for i in tqdm(range(num_epoch), total=num_epoch, desc='Training', unit='epoch', file=sys.stdout, leave=False):
+    for i in tqdm(range(num_epoch), total=num_epoch, desc="Training", unit="epoch", file=sys.stdout, leave=False):
         # The args of step are forwarded to the model and the guide
         elbo_hist.append(svi.step(states_cat, actions_cat, targets_cat, prior))
 
-        m_loc_hist.append(pyro.param('m_loc').item())
-        m_scale_hist.append(pyro.param('m_scale').item())
-        k_loc_hist.append(pyro.param('k_loc').item())
-        k_scale_hist.append(pyro.param('k_scale').item())
-        d_loc_hist.append(pyro.param('d_loc').item())
-        d_scale_hist.append(pyro.param('d_scale').item())
-        sigma_hist.append(pyro.param('sigma_loc').item())
+        m_loc_hist.append(pyro.param("m_loc").item())
+        m_scale_hist.append(pyro.param("m_scale").item())
+        k_loc_hist.append(pyro.param("k_loc").item())
+        k_scale_hist.append(pyro.param("k_scale").item())
+        d_loc_hist.append(pyro.param("d_loc").item())
+        d_scale_hist.append(pyro.param("d_scale").item())
+        sigma_hist.append(pyro.param("sigma_loc").item())
 
     for name, value in pyro.get_param_store().items():
-        print(f'param: {name} \t value: {pyro.param(name)}')
+        print(f"param: {name} \t value: {pyro.param(name)}")
 
     # Plot
     _, axs = plt.subplots(4, 2, figsize=(12, 8))
     axs[0, 0].plot(elbo_hist)
-    axs[0, 0].set_xlabel('step')
-    axs[0, 0].set_ylabel('ELBO loss')
+    axs[0, 0].set_xlabel("step")
+    axs[0, 0].set_ylabel("ELBO loss")
 
     axs[0, 1].plot(m_loc_hist)
-    axs[0, 1].plot([0, num_epoch], [dp_gt['m'], dp_gt['m']], c='k')
-    axs[0, 1].set_ylabel('m loc')
+    axs[0, 1].plot([0, num_epoch], [dp_gt["m"], dp_gt["m"]], c="k")
+    axs[0, 1].set_ylabel("m loc")
 
     axs[1, 0].plot(k_loc_hist)
-    axs[1, 0].plot([0, num_epoch], [dp_gt['k'], dp_gt['k']], c='k')
-    axs[1, 0].set_ylabel('k loc')
+    axs[1, 0].plot([0, num_epoch], [dp_gt["k"], dp_gt["k"]], c="k")
+    axs[1, 0].set_ylabel("k loc")
 
     axs[1, 1].plot(d_loc_hist)
-    axs[1, 1].plot([0, num_epoch], [dp_gt['d'], dp_gt['d']], c='k')
-    axs[1, 1].set_ylabel('d loc')
+    axs[1, 1].plot([0, num_epoch], [dp_gt["d"], dp_gt["d"]], c="k")
+    axs[1, 1].set_ylabel("d loc")
 
     axs[2, 0].plot(m_scale_hist)
-    axs[2, 0].set_ylabel('m scale')
+    axs[2, 0].set_ylabel("m scale")
 
     axs[2, 1].plot(k_scale_hist)
-    axs[2, 1].set_ylabel('k scale')
+    axs[2, 1].set_ylabel("k scale")
 
     axs[3, 0].plot(d_scale_hist)
-    axs[3, 0].set_ylabel('d scale')
+    axs[3, 0].set_ylabel("d scale")
 
     axs[3, 1].plot(sigma_hist)
-    axs[3, 1].set_ylabel('obs noise scale')
+    axs[3, 1].set_ylabel("obs noise scale")
 
     plt.show()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Set up environment
-    dp_gt = dict(m=2., k=20., d=0.8)  # ground truth
-    dp_init = dict(m=1.0, k=24., d=0.4)  # initial guess
-    dt = 1/50.
+    dp_gt = dict(m=2.0, k=20.0, d=0.8)  # ground truth
+    dp_init = dict(m=1.0, k=24.0, d=0.4)  # initial guess
+    dt = 1 / 50.0
     env = OneMassOscillatorSim(dt=dt, max_steps=400)
     env.reset(domain_param=dp_gt)
 
@@ -188,10 +190,13 @@ if __name__ == '__main__':
     pyro.enable_validation(True)
 
     train(
-        SVI(model=model,
+        SVI(
+            model=model,
             guide=guide,
-            optim=optim.Adam({'lr': 0.01}),
+            optim=optim.Adam({"lr": 0.01}),
             # optim=optim.SGD({'lr': 0.001, 'momentum': 0.1}),
-            loss=Trace_ELBO()),
-        rollouts=ros, prior=dp_init
+            loss=Trace_ELBO(),
+        ),
+        rollouts=ros,
+        prior=dp_init,
     )

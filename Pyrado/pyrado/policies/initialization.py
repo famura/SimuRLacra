@@ -37,11 +37,10 @@ from pyrado.utils.nn_layers import ScaleLayer, PositiveScaleLayer, IndiNonlinLay
 
 def _apply_weights_conf(m, ls, ks):
     dim_ch_out, dim_ch_in = m.weight.data.shape[0], m.weight.data.shape[1]
-    amp = to.rand(dim_ch_out*dim_ch_in)
+    amp = to.rand(dim_ch_out * dim_ch_in)
     for i in range(dim_ch_out):
         for j in range(dim_ch_in):
-            m.weight.data[i, j, :] = amp[i*dim_ch_in + j]*2*(
-                to.exp(-to.pow(ls, 2)/(ks/2)**2) - 0.5)
+            m.weight.data[i, j, :] = amp[i * dim_ch_in + j] * 2 * (to.exp(-to.pow(ls, 2) / (ks / 2) ** 2) - 0.5)
 
 
 def init_param(m, **kwargs):
@@ -61,28 +60,28 @@ def init_param(m, **kwargs):
 
     if isinstance(m, (nn.Linear, nn.RNN, nn.GRU, nn.GRUCell)):
         for name, param in m.named_parameters():
-            if 'weight' in name:
+            if "weight" in name:
                 if len(param.shape) >= 2:
                     # Most common case
                     init.orthogonal_(param.data)  # former: init.xavier_normal_(param.data)
                 else:
                     init.normal_(param.data)
-            elif 'bias' in name:
-                if kwargs.get('uniform_bias', False):
-                    init.uniform_(param.data, a=-1./sqrt(param.data.nelement()), b=1./sqrt(param.data.nelement()))
+            elif "bias" in name:
+                if kwargs.get("uniform_bias", False):
+                    init.uniform_(param.data, a=-1.0 / sqrt(param.data.nelement()), b=1.0 / sqrt(param.data.nelement()))
                 else:
                     # Default case
-                    init.normal_(param.data, std=1./sqrt(param.data.nelement()))
+                    init.normal_(param.data, std=1.0 / sqrt(param.data.nelement()))
             else:
-                raise pyrado.KeyErr(keys='weight or bias', container=param)
+                raise pyrado.KeyErr(keys="weight or bias", container=param)
 
     elif isinstance(m, (nn.LSTM, nn.LSTMCell)):
         for name, param in m.named_parameters():
-            if 'weight_ih' in name:
+            if "weight_ih" in name:
                 # Initialize the input to hidden weights orthogonally
                 # w_ii, w_if, w_ic, w_io
                 nn.init.orthogonal_(param.data)
-            elif 'weight_hh' in name:
+            elif "weight_hh" in name:
                 # Initialize the hidden to hidden weights separately as identity matrices and stack them afterwards
                 # w_ii, w_if, w_ic, w_io
                 weight_hh_ii = to.eye(m.hidden_size, m.hidden_size)
@@ -91,38 +90,40 @@ def init_param(m, **kwargs):
                 weight_hh_io = to.eye(m.hidden_size, m.hidden_size)
                 weight_hh_all = to.cat([weight_hh_ii, weight_hh_if, weight_hh_ic, weight_hh_io], dim=0)
                 param.data.copy_(weight_hh_all)
-            elif 'bias' in name:
+            elif "bias" in name:
                 # b_ii, b_if, b_ig, b_io
-                if 't_max' in kwargs:
-                    if not isinstance(kwargs['t_max'], (float, int, to.Tensor)):
-                        raise pyrado.TypeErr(given=kwargs['t_max'], expected_type=[float, int, to.Tensor])
+                if "t_max" in kwargs:
+                    if not isinstance(kwargs["t_max"], (float, int, to.Tensor)):
+                        raise pyrado.TypeErr(given=kwargs["t_max"], expected_type=[float, int, to.Tensor])
                     # Initialize all biases to 0, but the bias of the forget and input gate using the chrono init
                     nn.init.constant_(param.data, val=0)
-                    param.data[m.hidden_size:m.hidden_size*2] = to.log(nn.init.uniform_(  # forget gate
-                        param.data[m.hidden_size:m.hidden_size*2], 1, kwargs['t_max'] - 1
-                    ))
-                    param.data[0: m.hidden_size] = -param.data[m.hidden_size: 2*m.hidden_size]  # input gate
+                    param.data[m.hidden_size : m.hidden_size * 2] = to.log(
+                        nn.init.uniform_(  # forget gate
+                            param.data[m.hidden_size : m.hidden_size * 2], 1, kwargs["t_max"] - 1
+                        )
+                    )
+                    param.data[0 : m.hidden_size] = -param.data[m.hidden_size : 2 * m.hidden_size]  # input gate
                 else:
                     # Initialize all biases to 0, but the bias of the forget gate to 1
                     nn.init.constant_(param.data, val=0)
-                    param.data[m.hidden_size:m.hidden_size*2].fill_(1)
+                    param.data[m.hidden_size : m.hidden_size * 2].fill_(1)
 
     elif isinstance(m, nn.Conv1d):
-        if kwargs.get('bell', False):
+        if kwargs.get("bell", False):
             # Initialize the kernel weights with a shifted of shape exp(-x^2 / sigma^2).
             # The biases are left unchanged.
-            if m.weight.data.shape[2]%2 == 0:
-                ks_half = m.weight.data.shape[2]//2
+            if m.weight.data.shape[2] % 2 == 0:
+                ks_half = m.weight.data.shape[2] // 2
                 ls_half = to.linspace(ks_half, 0, ks_half)  # descending
                 ls = to.cat([ls_half, reversed(ls_half)])
             else:
-                ks_half = ceil(m.weight.data.shape[2]/2)
+                ks_half = ceil(m.weight.data.shape[2] / 2)
                 ls_half = to.linspace(ks_half, 0, ks_half)  # descending
                 ls = to.cat([ls_half, reversed(ls_half[:-1])])
             _apply_weights_conf(m, ls, ks_half)
 
     elif isinstance(m, MirrConv1d):
-        if kwargs.get('bell', False):
+        if kwargs.get("bell", False):
             # Initialize the kernel weights with a shifted of shape exp(-x^2 / sigma^2).
             # The biases are left unchanged (does not exist by default).
             ks = m.weight.data.shape[2]  # ks_mirr = ceil(ks_conv1d / 2)
@@ -131,18 +132,18 @@ def init_param(m, **kwargs):
 
     elif isinstance(m, ScaleLayer):
         # Initialize all weights to 1
-        m.weight.data.fill_(1.)
+        m.weight.data.fill_(1.0)
 
     elif isinstance(m, PositiveScaleLayer):
         # Initialize all weights to 1
-        m.log_weight.data.fill_(0.)
+        m.log_weight.data.fill_(0.0)
 
     elif isinstance(m, IndiNonlinLayer):
         # Initialize all weights to 1 and all biases to 0 (if they exist)
         if m.weight is not None:
-            init.normal_(m.weight, std=1./sqrt(m.weight.nelement()))
+            init.normal_(m.weight, std=1.0 / sqrt(m.weight.nelement()))
         if m.bias is not None:
-            init.normal_(m.bias, std=1./sqrt(m.bias.nelement()))
+            init.normal_(m.bias, std=1.0 / sqrt(m.bias.nelement()))
 
     else:
         pass

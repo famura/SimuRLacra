@@ -50,26 +50,27 @@ from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.experiments import wrap_like_other_env
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{BayRn.name}-{PPO.name}_{FNNPolicy.name}',
-                              'rand-Mp-Mr-Lp-Lr_lower-std')
+    ex_dir = setup_experiment(
+        QQubeSwingUpSim.name, f"{BayRn.name}-{PPO.name}_{FNNPolicy.name}", "rand-Mp-Mr-Lp-Lr_lower-std"
+    )
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_sim_hparams = dict(dt=1/100., max_steps=600)
+    env_sim_hparams = dict(dt=1 / 100.0, max_steps=600)
     env_sim = QQubeSwingUpSim(**env_sim_hparams)
     env_sim = ActNormWrapper(env_sim)
     env_sim = DomainRandWrapperLive(env_sim, create_zero_var_randomizer(env_sim))
     dp_map = get_default_domain_param_map_qq()
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
 
-    env_real_hparams = dict(dt=1/500., max_steps=3000)
+    env_real_hparams = dict(dt=1 / 500.0, max_steps=3000)
     env_real = QQubeReal(**env_real_hparams)
     env_real = wrap_like_other_env(env_real, env_sim)
 
@@ -87,9 +88,9 @@ if __name__ == '__main__':
         batch_size=500,
         standardize_adv=False,
         lr=7.058326426522811e-4,
-        max_grad_norm=6.,
+        max_grad_norm=6.0,
         lr_scheduler=lr_scheduler.ExponentialLR,
-        lr_scheduler_hparam=dict(gamma=0.999)
+        lr_scheduler_hparam=dict(gamma=0.999),
     )
     critic = GAE(vfcn, **critic_hparam)
 
@@ -97,25 +98,45 @@ if __name__ == '__main__':
     subrtn_hparam = dict(
         max_iter=200,
         eps_clip=0.12648736789309026,
-        min_steps=30*env_sim.max_steps,
+        min_steps=30 * env_sim.max_steps,
         num_epoch=7,
         batch_size=500,
         std_init=0.7573286998997557,
         lr=6.999956625305722e-04,
-        max_grad_norm=1.,
+        max_grad_norm=1.0,
         num_workers=8,
         lr_scheduler=lr_scheduler.ExponentialLR,
-        lr_scheduler_hparam=dict(gamma=0.999)
+        lr_scheduler_hparam=dict(gamma=0.999),
     )
     subrtn = PPO(ex_dir, env_sim, policy, critic, **subrtn_hparam)
 
     # Set the boundaries for the GP
     dp_nom = QQubeSwingUpSim.get_nominal_domain_param()
     ddp_space = BoxSpace(
-        bound_lo=np.array([0.8*dp_nom['Mp'], dp_nom['Mp']/5000, 0.8*dp_nom['Mr'], dp_nom['Mr']/5000,
-                           0.8*dp_nom['Lp'], dp_nom['Lp']/5000, 0.8*dp_nom['Lr'], dp_nom['Lr']/5000]),
-        bound_up=np.array([1.2*dp_nom['Mp'], dp_nom['Mp']/20, 1.2*dp_nom['Mr'], dp_nom['Mr']/20,
-                           1.2*dp_nom['Lp'], dp_nom['Lp']/20, 1.2*dp_nom['Lr'], dp_nom['Lr']/20])
+        bound_lo=np.array(
+            [
+                0.8 * dp_nom["Mp"],
+                dp_nom["Mp"] / 5000,
+                0.8 * dp_nom["Mr"],
+                dp_nom["Mr"] / 5000,
+                0.8 * dp_nom["Lp"],
+                dp_nom["Lp"] / 5000,
+                0.8 * dp_nom["Lr"],
+                dp_nom["Lr"] / 5000,
+            ]
+        ),
+        bound_up=np.array(
+            [
+                1.2 * dp_nom["Mp"],
+                dp_nom["Mp"] / 20,
+                1.2 * dp_nom["Mr"],
+                dp_nom["Mr"] / 20,
+                1.2 * dp_nom["Lp"],
+                dp_nom["Lp"] / 20,
+                1.2 * dp_nom["Lr"],
+                dp_nom["Lr"] / 20,
+            ]
+        ),
     )
 
     # policy_init = to.load(osp.join(pyrado.EXP_DIR, QQubeSwingUpSim.name, PPO.name, 'EXP_NAME', 'policy.pt'))
@@ -123,9 +144,9 @@ if __name__ == '__main__':
 
     # Algorithm
     bayrn_hparam = dict(
-        thold_succ=300.,
+        thold_succ=300.0,
         max_iter=15,
-        acq_fc='EI',
+        acq_fc="EI",
         # acq_param=dict(beta=0.2),
         acq_restarts=500,
         acq_samples=1000,
@@ -136,26 +157,32 @@ if __name__ == '__main__':
     )
 
     # Save the environments and the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(critic=critic_hparam, vfcn=vfcn_hparam),
-        dict(subrtn=subrtn_hparam, subrtn_name=PPO.name),
-        dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(critic=critic_hparam, vfcn=vfcn_hparam),
+            dict(subrtn=subrtn_hparam, subrtn_name=PPO.name),
+            dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map),
+        ],
+        ex_dir,
     )
 
     algo = BayRn(ex_dir, env_sim, env_real, subrtn, ddp_space=ddp_space, **bayrn_hparam)
 
     # Jeeeha
     algo.train(
-        snapshot_mode='latest',
+        snapshot_mode="latest",
         seed=args.seed,
     )
 
     # Train the policy on the most lucrative domain
     BayRn.train_argmax_policy(
-        ex_dir, env_sim, ppo, num_restarts=500, num_samples=1000,
+        ex_dir,
+        env_sim,
+        ppo,
+        num_restarts=500,
+        num_samples=1000,
         # policy_param_init=policy.param_values.data,
         # valuefcn_param_init=critic.vfcn.param_values.data
     )

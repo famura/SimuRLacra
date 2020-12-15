@@ -42,8 +42,14 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.environment_wrappers.utils import inner_env, typed_env
 from pyrado.plotting.curve import draw_dts
 from pyrado.plotting.policy_parameters import draw_policy_params
-from pyrado.plotting.rollout_based import draw_observations_actions_rewards, draw_actions, draw_observations, \
-    draw_rewards, draw_potentials, draw_features
+from pyrado.plotting.rollout_based import (
+    draw_observations_actions_rewards,
+    draw_actions,
+    draw_observations,
+    draw_rewards,
+    draw_potentials,
+    draw_features,
+)
 from pyrado.policies.base import Policy, TwoHeadedPolicy
 from pyrado.policies.recurrent.potential_based import PotentialBasedPolicy
 from pyrado.sampling.step_sequence import StepSequence
@@ -51,18 +57,20 @@ from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt, color_validity
 
 
-def rollout(env: Env,
-            policy: [nn.Module, Policy, Callable],
-            eval: bool = False,
-            max_steps: int = None,
-            reset_kwargs: dict = None,
-            render_mode: RenderMode = RenderMode(),
-            render_step: int = 1,
-            no_reset: bool = False,
-            no_close: bool = False,
-            record_dts: bool = False,
-            stop_on_done: bool = True,
-            seed: int = None) -> StepSequence:
+def rollout(
+    env: Env,
+    policy: [nn.Module, Policy, Callable],
+    eval: bool = False,
+    max_steps: int = None,
+    reset_kwargs: dict = None,
+    render_mode: RenderMode = RenderMode(),
+    render_step: int = 1,
+    no_reset: bool = False,
+    no_close: bool = False,
+    record_dts: bool = False,
+    stop_on_done: bool = True,
+    seed: int = None,
+) -> StepSequence:
     """
     Perform a rollout (i.e. sample a trajectory) in the given environment using given policy.
 
@@ -102,11 +110,11 @@ def rollout(env: Env,
         if policy.is_recurrent:
             hidden_hist = []
         # If an ExplStrat is passed use the policy property, if a Policy is passed use it directly
-        if isinstance(getattr(policy, 'policy', policy), PotentialBasedPolicy):
+        if isinstance(getattr(policy, "policy", policy), PotentialBasedPolicy):
             pot_hist = []
             stim_ext_hist = []
             stim_int_hist = []
-        elif isinstance(getattr(policy, 'policy', policy), TwoHeadedPolicy):
+        elif isinstance(getattr(policy, "policy", policy), TwoHeadedPolicy):
             head_2_hist = []
         if record_dts:
             dt_policy_hist = []
@@ -146,9 +154,9 @@ def rollout(env: Env,
 
     # Setup rollout information
     rollout_info = dict(env_spec=env.spec)
-    rollout_info['init_state'] = env.state.copy()
+    rollout_info["init_state"] = env.state.copy()
     if isinstance(inner_env(env), SimEnv):
-        rollout_info['domain_param'] = env.domain_param
+        rollout_info["domain_param"] = env.domain_param
 
     # Initialize animation
     env.render(render_mode, render_step=1)
@@ -174,9 +182,10 @@ def rollout(env: Env,
         if np.isnan(obs).any():
             env.render(render_mode, render_step=1)
             raise pyrado.ValueErr(
-                msg=f'At least one observation value is NaN!' +
-                    tabulate([list(env.obs_space.labels),
-                              [*color_validity(obs, np.invert(np.isnan(obs)))]], headers='firstrow')
+                msg=f"At least one observation value is NaN!"
+                + tabulate(
+                    [list(env.obs_space.labels), [*color_validity(obs, np.invert(np.isnan(obs)))]], headers="firstrow"
+                )
             )
 
         # Get the agent's action
@@ -184,12 +193,12 @@ def rollout(env: Env,
         with to.no_grad():
             if isinstance(policy, Policy):
                 if policy.is_recurrent:
-                    if isinstance(getattr(policy, 'policy', policy), TwoHeadedPolicy):
+                    if isinstance(getattr(policy, "policy", policy), TwoHeadedPolicy):
                         act_to, head_2_to, hidden_next = policy(obs_to, hidden)
                     else:
                         act_to, hidden_next = policy(obs_to, hidden)
                 else:
-                    if isinstance(getattr(policy, 'policy', policy), TwoHeadedPolicy):
+                    if isinstance(getattr(policy, "policy", policy), TwoHeadedPolicy):
                         act_to, head_2_to = policy(obs_to)
                     else:
                         act_to = policy(obs_to)
@@ -203,9 +212,10 @@ def rollout(env: Env,
         if np.isnan(act).any():
             env.render(render_mode, render_step=1)
             raise pyrado.ValueErr(
-                msg=f'At least one observation value is NaN!' +
-                    tabulate([list(env.act_space.labels),
-                              [*color_validity(act, np.invert(np.isnan(act)))]], headers='firstrow')
+                msg=f"At least one observation value is NaN!"
+                + tabulate(
+                    [list(env.act_space.labels), [*color_validity(act, np.invert(np.isnan(act)))]], headers="firstrow"
+                )
             )
 
         # Record time after the action was calculated
@@ -235,11 +245,11 @@ def rollout(env: Env,
                 hidden_hist.append(hidden)
                 hidden = hidden_next
             # If an ExplStrat is passed use the policy property, if a Policy is passed use it directly
-            if isinstance(getattr(policy, 'policy', policy), PotentialBasedPolicy):
+            if isinstance(getattr(policy, "policy", policy), PotentialBasedPolicy):
                 pot_hist.append(hidden)
-                stim_ext_hist.append(getattr(policy, 'policy', policy).stimuli_external.detach().cpu().numpy())
-                stim_int_hist.append(getattr(policy, 'policy', policy).stimuli_internal.detach().cpu().numpy())
-            elif isinstance(getattr(policy, 'policy', policy), TwoHeadedPolicy):
+                stim_ext_hist.append(getattr(policy, "policy", policy).stimuli_external.detach().cpu().numpy())
+                stim_int_hist.append(getattr(policy, "policy", policy).stimuli_internal.detach().cpu().numpy())
+            elif isinstance(getattr(policy, "policy", policy), TwoHeadedPolicy):
                 head_2_hist.append(head_2_to)
 
         # Store the observation for next step (if done, this is the final observation)
@@ -252,6 +262,7 @@ def rollout(env: Env,
             do_sleep = True
             if pyrado.mujoco_available:
                 from pyrado.environments.mujoco.base import MujocoSimEnv
+
                 if isinstance(env, MujocoSimEnv):
                     # MuJoCo environments seem to crash on time.sleep()
                     do_sleep = False
@@ -280,23 +291,23 @@ def rollout(env: Env,
         rewards=rew_hist,
         rollout_info=rollout_info,
         env_infos=env_info_hist,
-        complete=True  # the rollout function always returns complete paths
+        complete=True,  # the rollout function always returns complete paths
     )
 
     # Add special entries to the resulting rollout
     if isinstance(policy, Policy):
         if policy.is_recurrent:
-            res.add_data('hidden_states', hidden_hist)
-        if isinstance(getattr(policy, 'policy', policy), PotentialBasedPolicy):
-            res.add_data('potentials', pot_hist)
-            res.add_data('stimuli_external', stim_ext_hist)
-            res.add_data('stimuli_internal', stim_int_hist)
-        elif isinstance(getattr(policy, 'policy', policy), TwoHeadedPolicy):
-            res.add_data('head_2', head_2_hist)
+            res.add_data("hidden_states", hidden_hist)
+        if isinstance(getattr(policy, "policy", policy), PotentialBasedPolicy):
+            res.add_data("potentials", pot_hist)
+            res.add_data("stimuli_external", stim_ext_hist)
+            res.add_data("stimuli_internal", stim_int_hist)
+        elif isinstance(getattr(policy, "policy", policy), TwoHeadedPolicy):
+            res.add_data("head_2", head_2_hist)
     if record_dts:
-        res.add_data('dts_policy', dt_policy_hist)
-        res.add_data('dts_step', dt_step_hist)
-        res.add_data('dts_remainder', dt_remainder_hist)
+        res.add_data("dts_policy", dt_policy_hist)
+        res.add_data("dts_step", dt_step_hist)
+        res.add_data("dts_remainder", dt_remainder_hist)
 
     return res
 
@@ -312,38 +323,40 @@ def after_rollout_query(env: Env, policy: Policy, rollout: StepSequence) -> tupl
     """
     # Fist entry contains hotkey, second the info text
     options = [
-        ['C', 'continue simulation (with domain randomization)'],
-        ['N', 'set domain parameters to nominal values, and continue'],
-        ['F', 'fix the initial state'],
-        ['I', 'print information about environment (including randomizer), and policy'],
-        ['S', 'set a domain parameter explicitly'],
-        ['P', 'plot all observations, actions, and rewards'],
-        ['PA', 'plot actions'],
-        ['PR', 'plot rewards'],
-        ['PO', 'plot all observations'],
-        ['PO idcs', 'plot selected observations (integers separated by whitespaces)'],
-        ['PF', 'plot features (for linear policy)'],
-        ['PP', 'plot policy parameters (not suggested for many parameters)'],
-        ['PDT', 'plot time deltas (profiling of a real system)'],
-        ['PPOT', 'plot potentials, stimuli, and actions'],
-        ['E', 'exit']
+        ["C", "continue simulation (with domain randomization)"],
+        ["N", "set domain parameters to nominal values, and continue"],
+        ["F", "fix the initial state"],
+        ["I", "print information about environment (including randomizer), and policy"],
+        ["S", "set a domain parameter explicitly"],
+        ["P", "plot all observations, actions, and rewards"],
+        ["PA", "plot actions"],
+        ["PR", "plot rewards"],
+        ["PO", "plot all observations"],
+        ["PO idcs", "plot selected observations (integers separated by whitespaces)"],
+        ["PF", "plot features (for linear policy)"],
+        ["PP", "plot policy parameters (not suggested for many parameters)"],
+        ["PDT", "plot time deltas (profiling of a real system)"],
+        ["PPOT", "plot potentials, stimuli, and actions"],
+        ["E", "exit"],
     ]
 
     # Ask for user input
-    ans = input(tabulate(options, tablefmt='simple') + '\n').lower()
+    ans = input(tabulate(options, tablefmt="simple") + "\n").lower()
 
-    if ans == 'c' or ans == '':
+    if ans == "c" or ans == "":
         # We don't have to do anything here since the env will be reset at the beginning of the next rollout
         return False, None, None
 
-    elif ans == 'f':
+    elif ans == "f":
         try:
             if isinstance(inner_env(env), RealEnv):
                 raise pyrado.TypeErr(given=inner_env(env), expected_type=SimEnv)
             elif isinstance(inner_env(env), SimEnv):
                 # Get the user input
-                str = input(f'Enter the {env.obs_space.flat_dim}-dim initial state'
-                            f'(format: each dim separated by a whitespace):\n')
+                str = input(
+                    f"Enter the {env.obs_space.flat_dim}-dim initial state"
+                    f"(format: each dim separated by a whitespace):\n"
+                )
                 state = list(map(float, str.split()))
                 if isinstance(state, list):
                     state = np.array(state)
@@ -355,81 +368,81 @@ def after_rollout_query(env: Env, policy: Policy, rollout: StepSequence) -> tupl
         except (pyrado.TypeErr, pyrado.ShapeErr):
             return after_rollout_query(env, policy, rollout)
 
-    elif ans == 'n':
+    elif ans == "n":
         # Get nominal domain parameters
         if isinstance(inner_env(env), SimEnv):
             dp_nom = inner_env(env).get_nominal_domain_param()
             if typed_env(env, ActDelayWrapper) is not None:
                 # There is an ActDelayWrapper in the env chain
-                dp_nom['act_delay'] = 0
+                dp_nom["act_delay"] = 0
         else:
             dp_nom = None
         return False, None, dp_nom
 
-    elif ans == 'i':
+    elif ans == "i":
         # Print the information and return to the query
         print(env)
-        if hasattr(env, 'randomizer'):
+        if hasattr(env, "randomizer"):
             print(env.randomizer)
         print(policy)
         return after_rollout_query(env, policy, rollout)
 
-    elif ans == 'p':
+    elif ans == "p":
         draw_observations_actions_rewards(rollout)
         plt.plot()
         return after_rollout_query(env, policy, rollout)
 
-    elif ans == 'pa':
+    elif ans == "pa":
         draw_actions(rollout, env)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 
-    elif ans == 'po':
+    elif ans == "po":
         draw_observations(rollout)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 
-    elif 'po' in ans and any(char.isdigit() for char in ans):
+    elif "po" in ans and any(char.isdigit() for char in ans):
         idcs = [int(s) for s in ans.split() if s.isdigit()]
         draw_observations(rollout, idcs_sel=idcs)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 
-    elif ans == 'pf':
+    elif ans == "pf":
         draw_features(rollout, policy)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 
-    elif ans == 'pp':
+    elif ans == "pp":
         draw_policy_params(policy, env.spec, annotate=False)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 
-    elif ans == 'pr':
+    elif ans == "pr":
         draw_rewards(rollout)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 
-    elif ans == 'pdt':
+    elif ans == "pdt":
         draw_dts(rollout.dts_policy, rollout.dts_step, rollout.dts_remainder)
         plt.show()
-        return after_rollout_query(env, policy, rollout),
+        return (after_rollout_query(env, policy, rollout),)
 
-    elif ans == 'ppot':
+    elif ans == "ppot":
         draw_potentials(rollout)
         plt.show()
         return after_rollout_query(env, policy, rollout)
 
-    elif ans == 's':
+    elif ans == "s":
         if isinstance(env, SimEnv):
             dp = env.get_nominal_domain_param()
             for k, v in dp.items():
                 dp[k] = [v]  # cast float to list of one element to make it iterable for tabulate
-            print('These are the nominal domain parameters:')
-            print(tabulate(dp, headers="keys", tablefmt='simple'))
+            print("These are the nominal domain parameters:")
+            print(tabulate(dp, headers="keys", tablefmt="simple"))
 
         # Get the user input
-        strs = input('Enter one new domain parameter\n(format: key whitespace value):\n')
+        strs = input("Enter one new domain parameter\n(format: key whitespace value):\n")
         try:
             param = dict(str.split() for str in strs.splitlines())
             # Cast the values of the param dict from str to float
@@ -437,10 +450,10 @@ def after_rollout_query(env: Env, policy: Policy, rollout: StepSequence) -> tupl
                 param[k] = float(v)
             return False, None, param
         except (ValueError, KeyError):
-            print_cbt(f'Could not parse {strs} into a dict.', 'r')
+            print_cbt(f"Could not parse {strs} into a dict.", "r")
             after_rollout_query(env, policy, rollout)
 
-    elif ans == 'e':
+    elif ans == "e":
         env.close()
         return True, None, {}  # breaks the outer while loop
 

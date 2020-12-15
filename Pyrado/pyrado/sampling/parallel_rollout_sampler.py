@@ -85,22 +85,25 @@ def _ps_run_one_reset_kwargs(G, reset_kwargs: tuple, eval: bool):
         raise pyrado.TypeErr(given=reset_kwargs[0], expected_type=np.ndarray)
     if not isinstance(reset_kwargs[1], dict):
         raise pyrado.TypeErr(given=reset_kwargs[1], expected_type=dict)
-    return rollout(G.env, G.policy, eval=eval,
-                   reset_kwargs=dict(init_state=reset_kwargs[0], domain_param=reset_kwargs[1]))
+    return rollout(
+        G.env, G.policy, eval=eval, reset_kwargs=dict(init_state=reset_kwargs[0], domain_param=reset_kwargs[1])
+    )
 
 
 class ParallelRolloutSampler(SamplerBase, Serializable):
     """ Class for sampling from multiple environments in parallel """
 
-    def __init__(self,
-                 env,
-                 policy,
-                 num_workers: int,
-                 *,
-                 min_rollouts: int = None,
-                 min_steps: int = None,
-                 show_progress_bar: bool = True,
-                 seed: int = None):
+    def __init__(
+        self,
+        env,
+        policy,
+        num_workers: int,
+        *,
+        min_rollouts: int = None,
+        min_steps: int = None,
+        show_progress_bar: bool = True,
+        seed: int = None,
+    ):
         """
         Constructor
 
@@ -120,8 +123,8 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         self.show_progress_bar = show_progress_bar
 
         # Set method to spawn if using cuda
-        if self.policy.device == 'cuda':
-            mp.set_start_method('spawn', force=True)
+        if self.policy.device == "cuda":
+            mp.set_start_method("spawn", force=True)
 
         # Create parallel pool. We use one thread per env because it's easier.
         self.pool = SamplerPool(num_workers)
@@ -157,8 +160,9 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         # Always broadcast to workers
         self.pool.invoke_all(_ps_init, pickle.dumps(self.env), pickle.dumps(self.policy))
 
-    def sample(self, init_states: List[np.ndarray] = None, domain_params: List[np.ndarray] = None,
-               eval: bool = False) -> List[StepSequence]:
+    def sample(
+        self, init_states: List[np.ndarray] = None, domain_params: List[np.ndarray] = None, eval: bool = False
+    ) -> List[StepSequence]:
         """
         Do the sampling according to the previously given environment, policy, and number of steps/rollouts.
 
@@ -172,8 +176,13 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         self.pool.invoke_all(_ps_update_policy, self.policy.state_dict())
 
         # Collect samples
-        with tqdm(leave=False, file=sys.stdout, desc='Sampling', disable=(not self.show_progress_bar),
-                  unit='steps' if self.min_steps is not None else 'rollouts') as pb:
+        with tqdm(
+            leave=False,
+            file=sys.stdout,
+            desc="Sampling",
+            disable=(not self.show_progress_bar),
+            unit="steps" if self.min_steps is not None else "rollouts",
+        ) as pb:
 
             if self.min_steps is None:
                 if init_states is None and domain_params is None:
@@ -183,15 +192,15 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
                 elif init_states is not None and domain_params is None:
                     # Run every initial state so often that we at least get min_rollouts trajectories
                     func = partial(_ps_run_one_init_state, eval=eval)
-                    rep_factor = ceil(self.min_rollouts/len(init_states))
-                    arglist = rep_factor*init_states
+                    rep_factor = ceil(self.min_rollouts / len(init_states))
+                    arglist = rep_factor * init_states
                 elif init_states is not None and domain_params is not None:
                     # Run every combination of initial state and domain parameter so often that we at least get
                     # min_rollouts trajectories
                     func = partial(_ps_run_one_reset_kwargs, eval=eval)
                     allcombs = list(product(init_states, domain_params))
-                    rep_factor = ceil(self.min_rollouts/len(allcombs))
-                    arglist = rep_factor*allcombs
+                    rep_factor = ceil(self.min_rollouts / len(allcombs))
+                    arglist = rep_factor * allcombs
                 else:
                     raise NotImplementedError
 
@@ -205,7 +214,7 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
                         self.min_steps,
                         partial(_ps_sample_one, eval=eval),
                         collect_progressbar=pb,
-                        min_runs=self.min_rollouts
+                        min_runs=self.min_rollouts,
                     )[0]
                 else:
                     raise NotImplementedError

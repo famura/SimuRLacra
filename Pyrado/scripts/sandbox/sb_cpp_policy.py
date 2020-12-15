@@ -46,11 +46,7 @@ def create_nonrecurrent_policy():
             BoxSpace(-1, 1, 4),
             BoxSpace(-1, 1, 3),
         ),
-        FeatureStack([
-            const_feat,
-            identity_feat,
-            squared_feat
-        ])
+        FeatureStack([const_feat, identity_feat, squared_feat]),
     )
 
 
@@ -60,12 +56,14 @@ def create_recurrent_policy():
             BoxSpace(-1, 1, 4),
             BoxSpace(-1, 1, 3),
         ),
-        hidden_size=32, num_recurrent_layers=1, hidden_nonlin='tanh'
+        hidden_size=32,
+        num_recurrent_layers=1,
+        hidden_nonlin="tanh",
     )
 
 
-if __name__ == '__main__':
-    tmpfile = '/tmp/torchscriptsaved.pt'
+if __name__ == "__main__":
+    tmpfile = "/tmp/torchscriptsaved.pt"
     to.set_default_dtype(to.double)
 
     # Create a Pyrado policy
@@ -80,12 +78,12 @@ if __name__ == '__main__':
     traced_script_module.save(tmpfile)
 
     # Load in C++
-    cp = ControlPolicy('torch', tmpfile)
+    cp = ControlPolicy("torch", tmpfile)
 
     # Print more digits
     to.set_printoptions(precision=8, linewidth=200)
     np.set_printoptions(precision=8, linewidth=200)
 
-    print(f'manual: {model(to.tensor([1, 2, 3, 4], dtype=to.get_default_dtype()))}')
-    print(f'script: {traced_script_module(to.tensor([1, 2, 3, 4], dtype=to.get_default_dtype()))}')
-    print(f'cpp:    {cp(np.array([1, 2, 3, 4]), 3)}')
+    print(f"manual: {model(to.tensor([1, 2, 3, 4], dtype=to.get_default_dtype()))}")
+    print(f"script: {traced_script_module(to.tensor([1, 2, 3, 4], dtype=to.get_default_dtype()))}")
+    print(f"cpp:    {cp(np.array([1, 2, 3, 4]), 3)}")

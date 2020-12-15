@@ -46,18 +46,18 @@ from pyrado.utils.experiments import load_experiment
 from pyrado.utils.input_output import print_cbt
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Get the experiment's directory to load from if not given as command line argument
-    ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
+    ex_dir = ask_for_experiment() if args.dir is None else args.dir
 
     # Load the policy and the environment (for constructing the real-world counterpart)
     env, policy, _ = load_experiment(ex_dir, args)
     env = remove_all_dr_wrappers(env)
     env.domain_param = env.get_nominal_domain_param()
-    print_cbt(f'Set up the environment with dt={env.dt} max_steps={env.max_steps}.', 'c')
+    print_cbt(f"Set up the environment with dt={env.dt} max_steps={env.max_steps}.", "c")
     print_domain_params(env.domain_param)
 
     # Get the initial state from the command line, if given. Else, set None to delegate to the environment.
@@ -71,8 +71,11 @@ if __name__ == '__main__':
         elif len(init_qpos) == 3:
             np.put(init_state, [1, 3, 4], init_qpos)  # 4 DoF
         else:
-            raise pyrado.ValueErr(given=args.init_state, given_name='init_state',
-                                  msg='The passed init_state requires length 3 for 4dof and 5 for 7dof.')
+            raise pyrado.ValueErr(
+                given=args.init_state,
+                given_name="init_state",
+                msg="The passed init_state requires length 3 for 4dof and 5 for 7dof.",
+            )
     else:
         init_state = None
 
@@ -80,17 +83,18 @@ if __name__ == '__main__':
     pyrado.set_seed(args.seed)
 
     # Do the rollout
-    ro = rollout(env, policy, eval=True, render_mode=RenderMode(video=args.animation),
-                 reset_kwargs=dict(init_state=init_state))
+    ro = rollout(
+        env, policy, eval=True, render_mode=RenderMode(video=args.animation), reset_kwargs=dict(init_state=init_state)
+    )
 
     # Save the trajectories
-    if not hasattr(ro, 'env_infos'):
-        raise KeyError('Rollout does not have the field env_infos!')
-    t = ro.env_infos['t']
-    qpos, qvel = ro.env_infos['qpos'], ro.env_infos['qvel']
-    qpos_des, qvel_des = ro.env_infos['qpos_des'], ro.env_infos['qvel_des']
+    if not hasattr(ro, "env_infos"):
+        raise KeyError("Rollout does not have the field env_infos!")
+    t = ro.env_infos["t"]
+    qpos, qvel = ro.env_infos["qpos"], ro.env_infos["qvel"]
+    qpos_des, qvel_des = ro.env_infos["qpos_des"], ro.env_infos["qvel_des"]
 
-    np.save(osp.join(ex_dir, 'qpos_sim.npy'), qpos)
-    np.save(osp.join(ex_dir, 'qvel_sim.npy'), qvel)
-    np.save(osp.join(ex_dir, 'qpos_des.npy'), qpos_des)
-    np.save(osp.join(ex_dir, 'qvel_des.npy'), qvel_des)
+    np.save(osp.join(ex_dir, "qpos_sim.npy"), qpos)
+    np.save(osp.join(ex_dir, "qvel_sim.npy"), qvel)
+    np.save(osp.join(ex_dir, "qpos_des.npy"), qpos_des)
+    np.save(osp.join(ex_dir, "qvel_des.npy"), qvel_des)

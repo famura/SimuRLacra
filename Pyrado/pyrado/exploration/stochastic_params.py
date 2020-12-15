@@ -57,11 +57,10 @@ class StochasticParamExplStrat(ABC):
         """
         raise NotImplementedError
 
-    def sample_param_sets(self,
-                          nominal_params: to.Tensor,
-                          num_samples: int,
-                          include_nominal_params: bool = False) -> to.Tensor:
-        """ 
+    def sample_param_sets(
+        self, nominal_params: to.Tensor, num_samples: int, include_nominal_params: bool = False
+    ) -> to.Tensor:
+        """
         Sample multiple sets of policy parameters from the current distribution.
 
         :param nominal_params: parameter set (1-dim tensor) to sample around
@@ -94,23 +93,23 @@ class SymmParamExplStrat(StochasticParamExplStrat):
 
     def sample_param_set(self, nominal_params: to.Tensor) -> to.Tensor:
         # Should not be done, but fail gracefully
-        warn('Called sample_param_set on SymmParamExplStrat, which will still return only one param set', stacklevel=2)
+        warn("Called sample_param_set on SymmParamExplStrat, which will still return only one param set", stacklevel=2)
         return self.wrapped.sample_param_set(nominal_params)
 
-    def sample_param_sets(self, nominal_params: to.Tensor,
-                          num_samples: int,
-                          include_nominal_params: bool = False) -> to.Tensor:
+    def sample_param_sets(
+        self, nominal_params: to.Tensor, num_samples: int, include_nominal_params: bool = False
+    ) -> to.Tensor:
         # Adjust sample size to be even
-        if num_samples%2 != 0:
+        if num_samples % 2 != 0:
             num_samples += 1
 
         # Sample one half
-        pos_half = self.wrapped.sample_param_sets(nominal_params, num_samples//2)
+        pos_half = self.wrapped.sample_param_sets(nominal_params, num_samples // 2)
 
         # Mirror around nominal params for the other half
         # hp = nom + eps => eps = hp - nom
         # hn = nom - eps = nom - (hp - nom) = 2*nom - hp
-        neg_half = 2.*nominal_params - pos_half
+        neg_half = 2.0 * nominal_params - pos_half
         parts = [pos_half, neg_half]
 
         # Add nominal params if requested
@@ -135,12 +134,14 @@ class SymmParamExplStrat(StochasticParamExplStrat):
 class NormalParamNoise(StochasticParamExplStrat):
     """ Sample parameters from a normal distribution. """
 
-    def __init__(self,
-                 param_dim: int,
-                 full_cov: bool = False,
-                 std_init: float = 1.,
-                 std_min: [float, Sequence[float]] = 0.01,
-                 train_mean: bool = False):
+    def __init__(
+        self,
+        param_dim: int,
+        full_cov: bool = False,
+        std_init: float = 1.0,
+        std_min: [float, Sequence[float]] = 0.01,
+        train_mean: bool = False,
+    ):
         """
         Constructor
 
@@ -179,10 +180,9 @@ class NormalParamNoise(StochasticParamExplStrat):
     def sample_param_set(self, nominal_params: to.Tensor) -> to.Tensor:
         return self._noise(nominal_params).sample()
 
-    def sample_param_sets(self,
-                          nominal_params: to.Tensor,
-                          num_samples: int,
-                          include_nominal_params: bool = False) -> to.Tensor:
+    def sample_param_sets(
+        self, nominal_params: to.Tensor, num_samples: int, include_nominal_params: bool = False
+    ) -> to.Tensor:
         # Sample all exploring policy parameter at once
         ps = self._noise(nominal_params).sample((num_samples,))
         if include_nominal_params:
@@ -209,9 +209,7 @@ class NormalParamNoise(StochasticParamExplStrat):
 class HyperSphereParamNoise(StochasticParamExplStrat):
     """ Sample parameters from a normal distribution. """
 
-    def __init__(self,
-                 param_dim: int,
-                 expl_r_init: float = 1.0):
+    def __init__(self, param_dim: int, expl_r_init: float = 1.0):
         """
         Constructor
 
@@ -236,8 +234,8 @@ class HyperSphereParamNoise(StochasticParamExplStrat):
     def adapt(self, r: float):
         """ Set a new radius for the hyper sphere from which the policy parameters are sampled. """
         if not r > 0.0:
-            pyrado.ValueErr(given=r, g_constraint='0')
+            pyrado.ValueErr(given=r, g_constraint="0")
         self._r = r
 
     def sample_param_set(self, nominal_params: to.Tensor) -> to.Tensor:
-        return nominal_params + self._r*sample_from_hyper_sphere_surface(self.param_dim, 'normal')
+        return nominal_params + self._r * sample_from_hyper_sphere_surface(self.param_dim, "normal")

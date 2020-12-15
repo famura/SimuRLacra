@@ -51,12 +51,12 @@ from pyrado.utils.experiments import load_experiment
 from pyrado.utils.input_output import print_cbt
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
+    ex_dir = ask_for_experiment() if args.dir is None else args.dir
 
     # Load the policy (trained in simulation) and the environment
     env, policy, _ = load_experiment(ex_dir, args)
@@ -64,15 +64,15 @@ if __name__ == '__main__':
     # Create multi-dim evaluation grid
     param_spec = dict()
     if isinstance(inner_env(env), BallOnPlateSim):
-        param_spec['ball_radius'] = np.linspace(0.02, 0.08, num=2, endpoint=True)
-        param_spec['ball_rolling_friction_coefficient'] = np.linspace(0.0295, 0.9, num=2, endpoint=True)
+        param_spec["ball_radius"] = np.linspace(0.02, 0.08, num=2, endpoint=True)
+        param_spec["ball_rolling_friction_coefficient"] = np.linspace(0.0295, 0.9, num=2, endpoint=True)
 
     elif isinstance(inner_env(env), QBallBalancerSim):
         # param_spec['g'] = np.linspace(7.91, 11.91, num=11, endpoint=True)
         # param_spec['m_ball'] = np.linspace(0.003, 0.3, num=11, endpoint=True)
         # param_spec['r_ball'] = np.linspace(0.01, 0.1, num=11, endpoint=True)
-        param_spec['l_plate'] = np.linspace(0.275, 0.275, num=11, endpoint=True)
-        param_spec['r_arm'] = np.linspace(0.0254, 0.0254, num=11, endpoint=True)
+        param_spec["l_plate"] = np.linspace(0.275, 0.275, num=11, endpoint=True)
+        param_spec["r_arm"] = np.linspace(0.0254, 0.0254, num=11, endpoint=True)
         # param_spec['J_l'] = np.linspace(5.2822e-5*0.5, 5.2822e-5*1.5, num=11, endpoint=True)
         # param_spec['J_m'] = np.linspace(4.6063e-7*0.5, 4.6063e-7*1.5, num=11, endpoint=True)
         # param_spec['K_g'] = np.linspace(60, 80, num=11, endpoint=True)
@@ -97,7 +97,7 @@ if __name__ == '__main__':
         env = ActDelayWrapper(env)
     # param_spec['act_delay'] = np.linspace(0, 30, num=11, endpoint=True, dtype=int)
 
-    add_info = '-'.join(param_spec.keys())
+    add_info = "-".join(param_spec.keys())
 
     # Create multidimensional results grid and ensure right number of rollouts
     param_list = param_grid(param_spec)
@@ -110,9 +110,9 @@ if __name__ == '__main__':
     pool = SamplerPool(args.num_workers)
     if args.seed is not None:
         pool.set_seed(args.seed)
-        print_cbt(f"Set the random number generators' seed to {args.seed}.", 'w')
+        print_cbt(f"Set the random number generators' seed to {args.seed}.", "w")
     else:
-        print_cbt('No seed was set', 'y')
+        print_cbt("No seed was set", "y")
 
     # Sample rollouts
     ros = eval_domain_params(pool, env, policy, param_list, init_state)
@@ -120,37 +120,40 @@ if __name__ == '__main__':
     # Compute metrics
     lod = []
     for ro in ros:
-        d = dict(**ro.rollout_info['domain_param'], ret=ro.undiscounted_return(), len=ro.length)
+        d = dict(**ro.rollout_info["domain_param"], ret=ro.undiscounted_return(), len=ro.length)
         # TODO find a better solution than just removing the obsnoise
         try:
-            d.pop('obs_noise_mean')
-            d.pop('obs_noise_std')
+            d.pop("obs_noise_mean")
+            d.pop("obs_noise_std")
         except KeyError:
             pass
         lod.append(d)
 
     df = pd.DataFrame(lod)
     metrics = dict(
-        avg_len=df['len'].mean(),
-        avg_ret=df['ret'].mean(),
-        median_ret=df['ret'].median(),
-        min_ret=df['ret'].min(),
-        max_ret=df['ret'].max(),
-        std_ret=df['ret'].std()
+        avg_len=df["len"].mean(),
+        avg_ret=df["ret"].mean(),
+        median_ret=df["ret"].median(),
+        min_ret=df["ret"].min(),
+        max_ret=df["ret"].max(),
+        std_ret=df["ret"].std(),
     )
     pprint(metrics, indent=4)
 
     # Create subfolder and save
     timestamp = datetime.datetime.now()
-    add_info = timestamp.strftime(timestamp_format) + '--' + add_info
-    save_dir = osp.join(ex_dir, 'eval_domain_grid', add_info)
+    add_info = timestamp.strftime(timestamp_format) + "--" + add_info
+    save_dir = osp.join(ex_dir, "eval_domain_grid", add_info)
     os.makedirs(save_dir, exist_ok=True)
 
     save_list_of_dicts_to_yaml(
-        [{'ex_dir': str(ex_dir)},
-         {'varied_params': list(param_spec.keys())},
-         {'num_rpp': args.num_ro_per_config, 'seed': args.seed},
-         dict_arraylike_to_float(metrics)],
-        save_dir, file_name='summary'
+        [
+            {"ex_dir": str(ex_dir)},
+            {"varied_params": list(param_spec.keys())},
+            {"num_rpp": args.num_ro_per_config, "seed": args.seed},
+            dict_arraylike_to_float(metrics),
+        ],
+        save_dir,
+        file_name="summary",
     )
-    df.to_pickle(osp.join(save_dir, 'df_sp_grid_nd.pkl'))
+    df.to_pickle(osp.join(save_dir, "df_sp_grid_nd.pkl"))

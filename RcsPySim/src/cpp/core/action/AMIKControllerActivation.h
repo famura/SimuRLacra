@@ -56,7 +56,10 @@ public:
     
     // not copy- or movable - klocwork doesn't pick up the inherited ones. RCSPYSIM_NOCOPY_NOMOVE(AMControllerActivation)
     
-    //! Get the number of tasks multiplied by their individual dimension, owned by the action model
+    //! Add Rcs controller tasks that are wlways active. Do this after adding the regular tasks.
+    void addAlwaysActiveTask(Task* task);
+    
+    //! Get the number of tasks multiplied by their individual dimension, owned by the action model, except the always active tasks
     virtual unsigned int getDim() const;
     
     virtual void getMinMax(double* min, double* max) const;
@@ -75,7 +78,7 @@ public:
     
     void setXdes(const MatNd* x_des);
     
-    void setXdesFromTaskSpec(std::vector<PropertySource*>& taskSpec, std::vector<Task*>& tasks);
+    void setXdesFromTaskSpec(std::vector<PropertySource*>& taskSpec);
     
     static TaskCombinationMethod checkTaskCombinationMethod(std::string tcmName);
     
@@ -84,6 +87,8 @@ public:
 protected:
     //! The goal in task space
     MatNd* x_des;
+    //! Store the cumulative number of task dimensions which are always active
+    unsigned int dimAlwaysActiveTasks;
     //! The activation resulting from the action and the task combination method (used for logging)
     MatNd* activation;
     //! Way to combine the tasks' contribution

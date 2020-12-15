@@ -54,20 +54,22 @@ from pyrado.utils.math import UnitCubeProjector
 class SysIdViaEpisodicRL(Algorithm):
     """ Wrapper to frame black-box system identification as an episodic reinforcement learning problem """
 
-    name: str = 'sysiderl'
-    iteration_key: str = 'sysiderl_iteration'  # logger's iteration key
+    name: str = "sysiderl"
+    iteration_key: str = "sysiderl_iteration"  # logger's iteration key
 
-    def __init__(self,
-                 subrtn: ParameterExploring,
-                 behavior_policy: Policy,
-                 num_rollouts_per_distr: int,
-                 metric: Union[Callable[[np.ndarray], np.ndarray], None],
-                 obs_dim_weight: Union[list, np.ndarray],
-                 std_obs_filt: Optional[int] = 5,
-                 w_abs: float = 0.5,
-                 w_sq: float = 1.,
-                 num_workers: int = 4,
-                 base_seed: int = 1001):
+    def __init__(
+        self,
+        subrtn: ParameterExploring,
+        behavior_policy: Policy,
+        num_rollouts_per_distr: int,
+        metric: Union[Callable[[np.ndarray], np.ndarray], None],
+        obs_dim_weight: Union[list, np.ndarray],
+        std_obs_filt: Optional[int] = 5,
+        w_abs: float = 0.5,
+        w_sq: float = 1.0,
+        num_workers: int = 4,
+        base_seed: int = 1001,
+    ):
         """
         Constructor
 
@@ -91,13 +93,15 @@ class SysIdViaEpisodicRL(Algorithm):
         if not isinstance(behavior_policy, Policy):
             raise pyrado.TypeErr(given=behavior_policy, expected_type=Policy)
         if subrtn.policy.num_param != len(subrtn.env.mapping):
-            raise pyrado.ShapeErr(msg=f'Number of policy parameters {subrtn.policy.num_param} does not match the'
-                                      f'number of domain distribution parameters {len(subrtn.env.mapping)}!')
+            raise pyrado.ShapeErr(
+                msg=f"Number of policy parameters {subrtn.policy.num_param} does not match the"
+                f"number of domain distribution parameters {len(subrtn.env.mapping)}!"
+            )
         if subrtn.sampler.num_rollouts_per_param != 1:
             # Only sample one rollout in every domain. This is possible since we are synchronizing the init state.
-            raise pyrado.ValueErr(given=subrtn.sampler.num_rollouts_per_param, eq_constraint='1')
+            raise pyrado.ValueErr(given=subrtn.sampler.num_rollouts_per_param, eq_constraint="1")
         if num_rollouts_per_distr < 2:
-            raise pyrado.ValueErr(given=num_rollouts_per_distr, g_constraint='1')
+            raise pyrado.ValueErr(given=num_rollouts_per_distr, g_constraint="1")
         if len(obs_dim_weight) != subrtn.env.obs_space.flat_dim:
             raise pyrado.ShapeErr(given=obs_dim_weight, expected_match=subrtn.env.obs_space)
 
@@ -105,35 +109,27 @@ class SysIdViaEpisodicRL(Algorithm):
         super().__init__(subrtn.save_dir, subrtn.max_iter, subrtn.policy, subrtn.logger)
 
         self._subrtn = subrtn
-        self._subrtn.save_name = 'subrtn'
+        self._subrtn.save_name = "subrtn"
         self._behavior_policy = behavior_policy
         self.obs_dim_weight = np.diag(obs_dim_weight)  # weighting factor between the different observations
         self.std_obs_filt = std_obs_filt
-        if metric is None or metric == 'None':
+        if metric is None or metric == "None":
             self.metric = partial(self.default_metric, w_abs=w_abs, w_sq=w_sq, obs_dim_weight=self.obs_dim_weight)
         else:
             self.metric = metric
 
         elb = ObsNormWrapper.override_bounds(
-            subrtn.env.obs_space.bound_lo,
-            {'theta_dot': -20., 'alpha_dot': -20.},
-            subrtn.env.obs_space.labels
+            subrtn.env.obs_space.bound_lo, {"theta_dot": -20.0, "alpha_dot": -20.0}, subrtn.env.obs_space.labels
         )
         eub = ObsNormWrapper.override_bounds(
-            subrtn.env.obs_space.bound_up,
-            {'theta_dot': 20., 'alpha_dot': 20.},
-            subrtn.env.obs_space.labels
+            subrtn.env.obs_space.bound_up, {"theta_dot": 20.0, "alpha_dot": 20.0}, subrtn.env.obs_space.labels
         )
         self.obs_normalizer = UnitCubeProjector(bound_lo=elb, bound_up=eub)
 
         # Create the sampler used to execute the same policy as on the real system in the meta-randomized env
         self.base_seed = base_seed
         self.behavior_sampler = ParallelRolloutSampler(
-            self._subrtn.env,
-            self._behavior_policy,
-            num_workers=num_workers,
-            min_rollouts=1,
-            seed=base_seed
+            self._subrtn.env, self._behavior_policy, num_workers=num_workers, min_rollouts=1, seed=base_seed
         )
         self.num_rollouts_per_distr = num_rollouts_per_distr
 
@@ -152,20 +148,20 @@ class SysIdViaEpisodicRL(Algorithm):
         self._subrtn.reset(seed)
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
-        if 'rollouts_real' not in meta_info:
-            raise pyrado.KeyErr(keys='rollouts_real', container=meta_info)
-        if 'init_state' not in meta_info['rollouts_real'][0].rollout_info:  # checking the first element is sufficient
-            raise pyrado.KeyErr(keys='init_state', container=meta_info['rollouts_real'][0].rollout_info)
+        if "rollouts_real" not in meta_info:
+            raise pyrado.KeyErr(keys="rollouts_real", container=meta_info)
+        if "init_state" not in meta_info["rollouts_real"][0].rollout_info:  # checking the first element is sufficient
+            raise pyrado.KeyErr(keys="init_state", container=meta_info["rollouts_real"][0].rollout_info)
 
         # Extract the initial states from the real rollouts
-        rollouts_real = meta_info['rollouts_real']
-        init_states_real = [ro.rollout_info['init_state'] for ro in rollouts_real]
+        rollouts_real = meta_info["rollouts_real"]
+        init_states_real = [ro.rollout_info["init_state"] for ro in rollouts_real]
 
         # Sample new policy parameters a.k.a domain distribution parameters
         param_sets = self._subrtn.expl_strat.sample_param_sets(
             nominal_params=self._subrtn.policy.param_values,
             num_samples=self._subrtn.pop_size,
-            include_nominal_params=True
+            include_nominal_params=True,
         )
 
         # Iterate over every domain parameter distribution. We basically mimic the ParameterExplorationSampler here,
@@ -184,26 +180,34 @@ class SysIdViaEpisodicRL(Algorithm):
             rollouts_sim = self.behavior_sampler.sample(init_states_real, sampled_domain_params, eval=True)
 
             # Iterate over simulated rollout with the same initial state
-            for idx_real, idcs_sim in enumerate(gen_ordered_batch_idcs(self.num_rollouts_per_distr,
-                                                                       len(rollouts_sim), sorted=True)):
+            for idx_real, idcs_sim in enumerate(
+                gen_ordered_batch_idcs(self.num_rollouts_per_distr, len(rollouts_sim), sorted=True)
+            ):
                 # Clip the rollouts rollouts yielding two lists of pairwise equally long rollouts
-                ros_real_tr, ros_sim_tr = self.truncate_rollouts([rollouts_real[idx_real]],
-                                                                 rollouts_sim[slice(idcs_sim[0], idcs_sim[-1] + 1)])
+                ros_real_tr, ros_sim_tr = self.truncate_rollouts(
+                    [rollouts_real[idx_real]], rollouts_sim[slice(idcs_sim[0], idcs_sim[-1] + 1)]
+                )
 
                 # Check the validity of the initial states. The domain parameters will be different.
                 assert len(ros_real_tr) == len(ros_sim_tr) == len(idcs_sim)
-                assert check_all_equal([r.rollout_info['init_state'] for r in ros_real_tr])
-                assert check_all_equal([r.rollout_info['init_state'] for r in ros_sim_tr])
-                assert all([np.allclose(r.rollout_info['init_state'], s.rollout_info['init_state'])
-                            for r, s in zip(ros_real_tr, ros_sim_tr)])
+                assert check_all_equal([r.rollout_info["init_state"] for r in ros_real_tr])
+                assert check_all_equal([r.rollout_info["init_state"] for r in ros_sim_tr])
+                assert all(
+                    [
+                        np.allclose(r.rollout_info["init_state"], s.rollout_info["init_state"])
+                        for r, s in zip(ros_real_tr, ros_sim_tr)
+                    ]
+                )
 
                 # Compute the losses
                 losses = np.asarray([self.loss_fcn(ro_r, ro_s) for ro_r, ro_s in zip(ros_real_tr, ros_sim_tr)])
 
-                if np.all(losses == 0.):
-                    raise pyrado.ValueErr(msg='All SysIdViaEpisodicRL losses are equal to zero! Most likely the domain'
-                                              'randomization is too extreme, such that every trajectory is done after'
-                                              'one step. Check the exploration strategy.')
+                if np.all(losses == 0.0):
+                    raise pyrado.ValueErr(
+                        msg="All SysIdViaEpisodicRL losses are equal to zero! Most likely the domain"
+                        "randomization is too extreme, such that every trajectory is done after"
+                        "one step. Check the exploration strategy."
+                    )
 
                 # Handle zero losses by setting them to the maximum current loss
                 losses[losses == 0] = np.max(losses)
@@ -213,7 +217,7 @@ class SysIdViaEpisodicRL(Algorithm):
                 # length than the real-world rollouts as well as of different length than the original
                 # (non-truncated) simulated rollout. Thus, we simply write the loss value into the first step.
                 for i, l in zip(range(idcs_sim[0], idcs_sim[-1] + 1), losses):
-                    rollouts_sim[i].rewards[:] = 0.
+                    rollouts_sim[i].rewards[:] = 0.0
                     rollouts_sim[i].rewards[0] = -l
 
             # Collect the results
@@ -225,11 +229,11 @@ class SysIdViaEpisodicRL(Algorithm):
 
         # Log metrics computed from the old policy (before the update)
         loss_hist = np.asarray(loss_hist)
-        self.logger.add_value('min sysid loss', np.min(loss_hist), 6)
-        self.logger.add_value('median sysid loss', np.median(loss_hist), 6)
-        self.logger.add_value('avg sysid loss', np.mean(loss_hist), 6)
-        self.logger.add_value('max sysid loss', np.max(loss_hist), 6)
-        self.logger.add_value('std sysid loss', np.std(loss_hist), 6)
+        self.logger.add_value("min sysid loss", np.min(loss_hist), 6)
+        self.logger.add_value("median sysid loss", np.median(loss_hist), 6)
+        self.logger.add_value("avg sysid loss", np.mean(loss_hist), 6)
+        self.logger.add_value("max sysid loss", np.max(loss_hist), 6)
+        self.logger.add_value("std sysid loss", np.std(loss_hist), 6)
 
         # Extract the best policy parameter sample for saving it later
         self._subrtn.best_policy_param = param_samp_res.parameters[np.argmax(param_samp_res.mean_returns)].clone()
@@ -256,7 +260,7 @@ class SysIdViaEpisodicRL(Algorithm):
         :return: weighted linear combination of the error's MAE and MSE, averaged over time
         """
         err_w = np.matmul(err, obs_dim_weight)
-        return w_abs*np.mean(np.abs(err_w), axis=0) + w_sq*np.mean(np.power(err_w, 2), axis=0)
+        return w_abs * np.mean(np.abs(err_w), axis=0) + w_sq * np.mean(np.power(err_w, 2), axis=0)
 
     def loss_fcn(self, rollout_real: StepSequence, rollout_sim: StepSequence) -> float:
         """
@@ -271,8 +275,8 @@ class SysIdViaEpisodicRL(Algorithm):
             raise pyrado.ShapeErr(given=rollout_real, expected_match=rollout_sim)
 
         # Extract the observations
-        real_obs = rollout_real.get_data_values('observations', truncate_last=True)
-        sim_obs = rollout_sim.get_data_values('observations', truncate_last=True)
+        real_obs = rollout_real.get_data_values("observations", truncate_last=True)
+        sim_obs = rollout_sim.get_data_values("observations", truncate_last=True)
 
         # Filter the observations
         real_obs = gaussian_filter1d(real_obs, self.std_obs_filt, axis=0)
@@ -289,9 +293,9 @@ class SysIdViaEpisodicRL(Algorithm):
         return sum(loss_per_obs_dim)
 
     @staticmethod
-    def truncate_rollouts(rollouts_real: Sequence[StepSequence],
-                          rollouts_sim: Sequence[StepSequence],
-                          replicate: bool = True) -> Tuple[Sequence[StepSequence], Sequence[StepSequence]]:
+    def truncate_rollouts(
+        rollouts_real: Sequence[StepSequence], rollouts_sim: Sequence[StepSequence], replicate: bool = True
+    ) -> Tuple[Sequence[StepSequence], Sequence[StepSequence]]:
         """
         In case (some of the) rollouts failed or succeed in one domain, but not in the other, we truncate the longer
         observation sequence. When truncating, we compare every of the M real rollouts to every of the N simulated
@@ -311,7 +315,7 @@ class SysIdViaEpisodicRL(Algorithm):
         if not isinstance(rollouts_sim[0], Iterable):
             raise pyrado.TypeErr(given=rollouts_sim[0], expected_type=Iterable)
         if not replicate and len(rollouts_real) != len(rollouts_sim):
-            raise pyrado.ShapeErr(msg='In case of a one on one comparison, the number of rollouts needs to be equal!')
+            raise pyrado.ShapeErr(msg="In case of a one on one comparison, the number of rollouts needs to be equal!")
 
         # Choose the function for creating the comparison, the rollouts
         comp_fcn = product if replicate else zip
@@ -323,9 +327,9 @@ class SysIdViaEpisodicRL(Algorithm):
             # Handle rollouts of different length, assuming that they are staring at the same state
             if ro_r.length < ro_s.length:
                 rollouts_real_tr.append(ro_r)
-                rollouts_sim_tr.append(ro_s[:ro_r.length])
+                rollouts_sim_tr.append(ro_s[: ro_r.length])
             elif ro_r.length > ro_s.length:
-                rollouts_real_tr.append(ro_r[:ro_s.length])
+                rollouts_real_tr.append(ro_r[: ro_s.length])
                 rollouts_sim_tr.append(ro_s)
             else:
                 rollouts_real_tr.append(ro_r)
@@ -337,21 +341,21 @@ class SysIdViaEpisodicRL(Algorithm):
         super().save_snapshot(meta_info)
 
         # ParameterExploring subroutine saves the best policy (in this case a DomainDistrParamPolicy)
-        if 'prefix' in meta_info:
+        if "prefix" in meta_info:
             self._subrtn.save_snapshot(meta_info=dict(prefix=f"{meta_info['prefix']}_ddp"))  # save iter_X_ddp_policy.pt
-        self._subrtn.save_snapshot(meta_info=dict(prefix='ddp'))  # override ddp_policy.pt
+        self._subrtn.save_snapshot(meta_info=dict(prefix="ddp"))  # override ddp_policy.pt
 
         # Print the current search distribution's mean
         cpp = self._subrtn.policy.transform_to_ddp_space(self._subrtn.policy.param_values)
         self._subrtn.env.adapt_randomizer(domain_distr_param_values=cpp.detach().cpu().numpy())
-        print_cbt(f'Current policy domain parameter distribution\n{self._subrtn.env.randomizer}', 'g')
-        joblib.dump(self._subrtn.env, osp.join(self.save_dir, 'env_sim.pkl'))
+        print_cbt(f"Current policy domain parameter distribution\n{self._subrtn.env.randomizer}", "g")
+        joblib.dump(self._subrtn.env, osp.join(self.save_dir, "env_sim.pkl"))
 
         # Set the randomizer to best fitted domain distribution
         cbp = self._subrtn.policy.transform_to_ddp_space(self._subrtn.best_policy_param)
         self._subrtn.env.adapt_randomizer(domain_distr_param_values=cbp.detach().cpu().numpy())
-        print_cbt(f'Best fitted domain parameter distribution\n{self._subrtn.env.randomizer}', 'g')
+        print_cbt(f"Best fitted domain parameter distribution\n{self._subrtn.env.randomizer}", "g")
 
-        if 'rollouts_real' not in meta_info:
-            raise pyrado.KeyErr(keys='rollouts_real', container=meta_info)
-        pyrado.save(meta_info['rollouts_real'], 'rollouts_real', 'pkl', self.save_dir, meta_info)
+        if "rollouts_real" not in meta_info:
+            raise pyrado.KeyErr(keys="rollouts_real", container=meta_info)
+        pyrado.save(meta_info["rollouts_real"], "rollouts_real", "pkl", self.save_dir, meta_info)

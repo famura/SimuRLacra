@@ -42,12 +42,12 @@ from pyrado.utils.input_output import print_cbt
 from pyrado.utils.data_types import RenderMode
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
+    ex_dir = ask_for_experiment() if args.dir is None else args.dir
 
     # Load the environment and the policy
     env, policy, kwout = load_experiment(ex_dir, args)
@@ -57,8 +57,8 @@ if __name__ == '__main__':
         env.dt = args.dt
 
     if args.verbose:
-        print('Hyper-parameters of the experiment')
-        pprint(kwout.get('hparams', 'No hyper-parameters found!'))
+        print("Hyper-parameters of the experiment")
+        pprint(kwout.get("hparams", "No hyper-parameters found!"))
 
     if args.remove_dr_wrappers:
         env = remove_all_dr_wrappers(env, verbose=True)
@@ -69,10 +69,16 @@ if __name__ == '__main__':
     # Simulate
     done, state, param = False, None, None
     while not done:
-        ro = rollout(env, policy, render_mode=RenderMode(text=args.verbose, video=args.animation),
-                     eval=True, max_steps=max_steps, stop_on_done=not args.relentless,
-                     reset_kwargs=dict(domain_param=param, init_state=state))
+        ro = rollout(
+            env,
+            policy,
+            render_mode=RenderMode(text=args.verbose, video=args.animation),
+            eval=True,
+            max_steps=max_steps,
+            stop_on_done=not args.relentless,
+            reset_kwargs=dict(domain_param=param, init_state=state),
+        )
         print_domain_params(env.domain_param)
-        print_cbt(f'Return: {ro.undiscounted_return()}', 'g', bright=True)
+        print_cbt(f"Return: {ro.undiscounted_return()}", "g", bright=True)
         done, state, param = after_rollout_query(env, policy, ro)
     pyrado.close_vpython()

@@ -50,23 +50,23 @@ def compute_trajectory(weights, time, width):
     diffs = time - centers
 
     # Features
-    w = np.exp(- diffs**2/(2*width))
-    wd = - (diffs/width)*w
+    w = np.exp(-(diffs ** 2) / (2 * width))
+    wd = -(diffs / width) * w
 
     w_sum = np.sum(w, axis=1, keepdims=True)
     wd_sum = np.sum(wd, axis=1, keepdims=True)
 
     # Normalized features
-    pos_features = w/w_sum
-    vel_features = (wd*w_sum - w*wd_sum)/w_sum**2
+    pos_features = w / w_sum
+    vel_features = (wd * w_sum - w * wd_sum) / w_sum ** 2
 
     # Trajectory
-    q = pos_features@weights
-    qd = vel_features@weights
+    q = pos_features @ weights
+    qd = vel_features @ weights
 
     # Check gradient computation with finite difference approximation
     for i in range(q.shape[1]):
-        qd_approx = np.gradient(q[:, i], 1/len(time))
+        qd_approx = np.gradient(q[:, i], 1 / len(time))
         assert np.allclose(qd_approx, qd[:, i], rtol=1e-3, atol=1e-3)
 
     return q, qd
@@ -75,24 +75,22 @@ def compute_trajectory(weights, time, width):
 def compute_trajectory_pyrado(weights, time, width):
     weights = to.from_numpy(weights)
     time = to.tensor(time, requires_grad=True)
-    rbf = RBFFeat(num_feat_per_dim=weights.shape[0],
-                  bounds=(np.array([0.]), np.array([1.])),
-                  scale=1/(2*width))
+    rbf = RBFFeat(num_feat_per_dim=weights.shape[0], bounds=(np.array([0.0]), np.array([1.0])), scale=1 / (2 * width))
     pos_feat = rbf(time)
-    q = pos_feat@weights
+    q = pos_feat @ weights
 
     # Explicit
     vel_feat_E = rbf.derivative(time)
-    qd_E = vel_feat_E@weights
+    qd_E = vel_feat_E @ weights
 
     # Autograd
     q1, q2, q3 = q.t()
     q1.backward(to.ones((1750,)), retain_graph=True)
     q1d = time.grad.clone()
-    time.grad.fill_(0.)
+    time.grad.fill_(0.0)
     q2.backward(to.ones((1750,)), retain_graph=True)
     q2d = time.grad.clone()
-    time.grad.fill_(0.)
+    time.grad.fill_(0.0)
     q3.backward(to.ones((1750,)))
     q3d = time.grad.clone()
     qd = to.cat([q1d, q2d, q3d], dim=1)
@@ -120,17 +118,17 @@ def check_feat_equality():
 
     if not correct:
         _, axs = plt.subplots(2)
-        axs[0].set_title('positions - solid: pyrado, dashed: reference')
+        axs[0].set_title("positions - solid: pyrado, dashed: reference")
         axs[0].plot(q1.detach().cpu().numpy())
         axs[0].set_prop_cycle(None)
-        axs[0].plot(q2, ls='--')
-        axs[1].set_title('velocities - solid: pyrado, dashed: reference, dotted: finite difference')
+        axs[0].plot(q2, ls="--")
+        axs[1].set_title("velocities - solid: pyrado, dashed: reference, dotted: finite difference")
         axs[1].plot(qd1.detach().cpu().numpy())
         axs[1].set_prop_cycle(None)
-        axs[1].plot(qd2, ls='--')
+        axs[1].plot(qd2, ls="--")
         if is_q_equal:  # q1 and a2 are the same
-            finite_diff = np.diff(np.concatenate([np.zeros((1, 3)), q2], axis=0)*500., axis=0)  # init with 0, 500Hz
-            axs[1].plot(finite_diff, c='k', ls=':')
+            finite_diff = np.diff(np.concatenate([np.zeros((1, 3)), q2], axis=0) * 500.0, axis=0)  # init with 0, 500Hz
+            axs[1].plot(finite_diff, c="k", ls=":")
         plt.show()
 
     return correct
@@ -146,78 +144,74 @@ def eval_damping():
 
     data = []
     t = []
-    dampings = [0., 1e-2, 1e-1, 1e0]
-    print_cbt(f'Run policy for damping coefficients: {dampings}')
+    dampings = [0.0, 1e-2, 1e-1, 1e0]
+    print_cbt(f"Run policy for damping coefficients: {dampings}")
     for d in dampings:
         env.reset(domain_param=dict(joint_damping=d))
         ro = rollout(env, policy, render_mode=RenderMode(video=False), eval=True)
-        t.append(ro.env_infos['t'])
-        data.append(ro.env_infos['qpos'])
+        t.append(ro.env_infos["t"])
+        data.append(ro.env_infos["qpos"])
 
-    fig, ax = plt.subplots(3, sharex='all')
-    ls = ['k-', 'b--', 'g-.', 'r:']  # line style setting for better visibility
+    fig, ax = plt.subplots(3, sharex="all")
+    ls = ["k-", "b--", "g-.", "r:"]  # line style setting for better visibility
     for i, idx in enumerate([1, 3, 5]):
         for j in range(len(dampings)):
-            ax[i].plot(t[j], data[j][:, idx], ls[j], label=f'damping: {dampings[j]}')
+            ax[i].plot(t[j], data[j][:, idx], ls[j], label=f"damping: {dampings[j]}")
             if i == 0:
                 ax[i].legend()
-        ax[i].set_ylabel(f'joint {idx} pos [rad]')
-    ax[2].set_xlabel('time [s]')
-    plt.suptitle('Evaluation of joint damping coefficient')
+        ax[i].set_ylabel(f"joint {idx} pos [rad]")
+    ax[2].set_xlabel("time [s]")
+    plt.suptitle("Evaluation of joint damping coefficient")
     plt.show()
 
 
 def rollout_dummy_rbf_policy():
     # Environment
-    env = WAMBallInCupSim(
-        num_dof=7,
-        max_steps=1750,
-        task_args=dict(sparse_rew_fcn=True)
-    )
+    env = WAMBallInCupSim(num_dof=7, max_steps=1750, task_args=dict(sparse_rew_fcn=True))
 
     # Stabilize around initial position
-    env.reset(domain_param=dict(cup_scale=1., rope_length=0.3103, ball_mass=0.021))
+    env.reset(domain_param=dict(cup_scale=1.0, rope_length=0.3103, ball_mass=0.021))
     act = np.zeros((6,))  # desired deltas from the initial pose
     for i in range(500):
         env.step(act)
         env.render(mode=RenderMode(video=True))
 
     # Apply DualRBFLinearPolicy
-    rbf_hparam = dict(num_feat_per_dim=7, bounds=(np.array([0.]), np.array([1.])))
+    rbf_hparam = dict(num_feat_per_dim=7, bounds=(np.array([0.0]), np.array([1.0])))
     policy = DualRBFLinearPolicy(env.spec, rbf_hparam, dim_mask=1)
     done, param = False, None
     while not done:
         ro = rollout(env, policy, render_mode=RenderMode(video=True), eval=True, reset_kwargs=dict(domain_param=param))
-        print_cbt(f'Return: {ro.undiscounted_return()}', 'g', bright=True)
+        print_cbt(f"Return: {ro.undiscounted_return()}", "g", bright=True)
         done, _, param = after_rollout_query(env, policy, ro)
 
     # Retrieve infos from rollout
-    t = ro.env_infos['t']
-    des_pos_traj = ro.env_infos['qpos_des']  # (max_steps,7) ndarray
-    pos_traj = ro.env_infos['qpos']
-    des_vel_traj = ro.env_infos['qvel_des']  # (max_steps,7) ndarray
-    vel_traj = ro.env_infos['qvel']
-    ball_pos = ro.env_infos['ball_pos']
-    cup_pos = ro.env_infos['cup_pos']
+    t = ro.env_infos["t"]
+    des_pos_traj = ro.env_infos["qpos_des"]  # (max_steps,7) ndarray
+    pos_traj = ro.env_infos["qpos"]
+    des_vel_traj = ro.env_infos["qvel_des"]  # (max_steps,7) ndarray
+    vel_traj = ro.env_infos["qvel"]
+    ball_pos = ro.env_infos["ball_pos"]
+    cup_pos = ro.env_infos["cup_pos"]
 
     # Plot trajectories of the directly controlled joints and their corresponding desired trajectories
-    fig, ax = plt.subplots(3, sharex='all')
+    fig, ax = plt.subplots(3, sharex="all")
     for i, idx in enumerate([1, 3, 5]):
-        ax[i].plot(t, des_pos_traj[:, idx], label=f'qpos_des {idx}')
-        ax[i].plot(t, pos_traj[:, idx], label=f'qpos {idx}')
+        ax[i].plot(t, des_pos_traj[:, idx], label=f"qpos_des {idx}")
+        ax[i].plot(t, pos_traj[:, idx], label=f"qpos {idx}")
         ax[i].legend()
 
     fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    ax.plot(xs=ball_pos[:, 0], ys=ball_pos[:, 1], zs=ball_pos[:, 2], color='blue', label='Ball')
-    ax.scatter(xs=ball_pos[-1, 0], ys=ball_pos[-1, 1], zs=ball_pos[-1, 2], color='blue', label='Ball final')
-    ax.plot(xs=cup_pos[:, 0], ys=cup_pos[:, 1], zs=cup_pos[:, 2], color='red', label='Cup')
-    ax.scatter(xs=cup_pos[-1, 0], ys=cup_pos[-1, 1], zs=cup_pos[-1, 2], color='red', label='Cup final')
+    ax = fig.add_subplot(111, projection="3d")
+    ax.plot(xs=ball_pos[:, 0], ys=ball_pos[:, 1], zs=ball_pos[:, 2], color="blue", label="Ball")
+    ax.scatter(xs=ball_pos[-1, 0], ys=ball_pos[-1, 1], zs=ball_pos[-1, 2], color="blue", label="Ball final")
+    ax.plot(xs=cup_pos[:, 0], ys=cup_pos[:, 1], zs=cup_pos[:, 2], color="red", label="Cup")
+    ax.scatter(xs=cup_pos[-1, 0], ys=cup_pos[-1, 1], zs=cup_pos[-1, 2], color="red", label="Cup final")
     ax.legend()
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
-    ax.set_zlabel('z')
-    ax.view_init(elev=16., azim=-7.)
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_zlabel("z")
+    ax.view_init(elev=16.0, azim=-7.0)
     plt.show()
 
 
@@ -227,10 +221,7 @@ def rollout_dummy_rbf_policy_4dof():
         num_dof=4,
         max_steps=3000,
         # Note, when tuning the task args: the `R` matrices are now 4x4 for the 4 dof WAM
-        task_args=dict(
-            R=np.zeros((4, 4)),
-            R_dev=np.diag([0.2, 0.2, 1e-2, 1e-2])
-        ),
+        task_args=dict(R=np.zeros((4, 4)), R_dev=np.diag([0.2, 0.2, 1e-2, 1e-2])),
     )
 
     # Stabilize ball and print out the stable state
@@ -241,28 +232,28 @@ def rollout_dummy_rbf_policy_4dof():
         env.render(mode=RenderMode(video=True))
 
     # Printing out actual positions for 4-dof (..just needed to setup the hard-coded values in the class)
-    print('Ball pos:', env.sim.data.get_body_xpos('ball'))
-    print('Cup goal:', env.sim.data.get_site_xpos('cup_goal'))
-    print('Joint pos (incl. first rope angle):', env.sim.data.qpos[:5])
+    print("Ball pos:", env.sim.data.get_body_xpos("ball"))
+    print("Cup goal:", env.sim.data.get_site_xpos("cup_goal"))
+    print("Joint pos (incl. first rope angle):", env.sim.data.qpos[:5])
 
     # Apply DualRBFLinearPolicy and plot the joint states over the desired ones
-    rbf_hparam = dict(num_feat_per_dim=7, bounds=(np.array([0.]), np.array([1.])))
+    rbf_hparam = dict(num_feat_per_dim=7, bounds=(np.array([0.0]), np.array([1.0])))
     policy = DualRBFLinearPolicy(env.spec, rbf_hparam, dim_mask=2)
     done, param = False, None
     while not done:
         ro = rollout(env, policy, render_mode=RenderMode(video=True), eval=True, reset_kwargs=dict(domain_param=param))
-        print_cbt(f'Return: {ro.undiscounted_return()}', 'g', bright=True)
+        print_cbt(f"Return: {ro.undiscounted_return()}", "g", bright=True)
         done, _, param = after_rollout_query(env, policy, ro)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pyrado.set_seed(0)
 
     # Check for function equality
     if check_feat_equality():
-        print_cbt('The two methods to compute the trajectory yield equal results.', 'g')
+        print_cbt("The two methods to compute the trajectory yield equal results.", "g")
     else:
-        print_cbt('The two methods to compute the trajectory do not yield equal results.', 'r')
+        print_cbt("The two methods to compute the trajectory do not yield equal results.", "r")
 
     # Plot damping coefficient comparison
     # eval_damping()

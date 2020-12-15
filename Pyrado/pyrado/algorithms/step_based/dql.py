@@ -50,29 +50,31 @@ class DQL(ValueBased):
         [1] V. Mnih et.al., "Human-level control through deep reinforcement learning", Nature, 2015
     """
 
-    name: str = 'dql'
+    name: str = "dql"
 
-    def __init__(self,
-                 save_dir: str,
-                 env: Env,
-                 policy: DiscreteActQValPolicy,
-                 memory_size: int,
-                 eps_init: float,
-                 eps_schedule_gamma: float,
-                 gamma: float,
-                 max_iter: int,
-                 num_batch_updates: int,
-                 target_update_intvl: int = 5,
-                 num_init_memory_steps: int = None,
-                 min_rollouts: int = None,
-                 min_steps: int = None,
-                 batch_size: int = 256,
-                 num_workers: int = 4,
-                 max_grad_norm: float = 0.5,
-                 lr: float = 5e-4,
-                 lr_scheduler=None,
-                 lr_scheduler_hparam: [dict, None] = None,
-                 logger: StepLogger = None):
+    def __init__(
+        self,
+        save_dir: str,
+        env: Env,
+        policy: DiscreteActQValPolicy,
+        memory_size: int,
+        eps_init: float,
+        eps_schedule_gamma: float,
+        gamma: float,
+        max_iter: int,
+        num_batch_updates: int,
+        target_update_intvl: int = 5,
+        num_init_memory_steps: int = None,
+        min_rollouts: int = None,
+        min_steps: int = None,
+        batch_size: int = 256,
+        num_workers: int = 4,
+        max_grad_norm: float = 0.5,
+        lr: float = 5e-4,
+        lr_scheduler=None,
+        lr_scheduler_hparam: [dict, None] = None,
+        logger: StepLogger = None,
+    ):
         """
         Constructor
 
@@ -103,8 +105,23 @@ class DQL(ValueBased):
             raise pyrado.TypeErr(given=policy, expected_type=DiscreteActQValPolicy)
 
         # Call ValueBased's constructor
-        super().__init__(save_dir, env, policy, memory_size, gamma, max_iter, num_batch_updates, target_update_intvl,
-                         num_init_memory_steps, min_rollouts, min_steps, batch_size, num_workers, max_grad_norm, logger)
+        super().__init__(
+            save_dir,
+            env,
+            policy,
+            memory_size,
+            gamma,
+            max_iter,
+            num_batch_updates,
+            target_update_intvl,
+            num_init_memory_steps,
+            min_rollouts,
+            min_steps,
+            batch_size,
+            num_workers,
+            max_grad_norm,
+            logger,
+        )
 
         self.qfcn_targ = deepcopy(self._policy).eval()  # will not be trained using the optimizer
         self.eps = eps_init
@@ -112,14 +129,15 @@ class DQL(ValueBased):
         # Create sampler for exploration during training
         self._expl_strat = EpsGreedyExplStrat(self._policy, eps_init, eps_schedule_gamma)
         self.sampler_trn = ParallelRolloutSampler(
-            self._env, self._expl_strat,
+            self._env,
+            self._expl_strat,
             num_workers=num_workers if min_steps != 1 else 1,
             min_steps=min_steps,
-            min_rollouts=min_rollouts
+            min_rollouts=min_rollouts,
         )
 
         # Q-function optimizer
-        self.optim = to.optim.RMSprop([{'params': self._policy.parameters()}], lr=lr)
+        self.optim = to.optim.RMSprop([{"params": self._policy.parameters()}], lr=lr)
 
         # Learning rate scheduler
         self._lr_scheduler = lr_scheduler
@@ -143,8 +161,14 @@ class DQL(ValueBased):
         losses = to.zeros(self.num_batch_updates)
         policy_grad_norm = to.zeros(self.num_batch_updates)
 
-        for b in tqdm(range(self.num_batch_updates), total=self.num_batch_updates,
-                      desc=f'Updating', unit='batches', file=sys.stdout, leave=False):
+        for b in tqdm(
+            range(self.num_batch_updates),
+            total=self.num_batch_updates,
+            desc=f"Updating",
+            unit="batches",
+            file=sys.stdout,
+            leave=False,
+        ):
 
             # Sample steps and the associated next step from the replay memory
             steps, next_steps = self._memory.sample(self.batch_size)
@@ -152,7 +176,7 @@ class DQL(ValueBased):
             next_steps.torch(data_type=to.get_default_dtype())
 
             # Create masks for the non-final observations
-            not_done = to.tensor(1. - steps.done, dtype=to.get_default_dtype())
+            not_done = to.tensor(1.0 - steps.done, dtype=to.get_default_dtype())
 
             # Compute the state-action values Q(s,a) using the current DQN policy
             q_vals = self.expl_strat.policy.q_values_argmax(steps.observations)
@@ -160,7 +184,7 @@ class DQL(ValueBased):
             # Compute the second term of TD-error
             with to.no_grad():
                 next_v_vals = self.qfcn_targ.q_values_argmax(next_steps.observations)
-                expected_q_val = steps.rewards + not_done*self.gamma*next_v_vals
+                expected_q_val = steps.rewards + not_done * self.gamma * next_v_vals
 
             # Compute the loss, clip the gradients if desired, and do one optimization step
             loss = self.loss_fcn(q_vals, expected_q_val)
@@ -171,7 +195,7 @@ class DQL(ValueBased):
             self.optim.step()
 
             # Update the qfcn_targ network by copying all weights and biases from the DQN policy
-            if (self._curr_iter*self.num_batch_updates + b)%self.target_update_intvl == 0:
+            if (self._curr_iter * self.num_batch_updates + b) % self.target_update_intvl == 0:
                 self.qfcn_targ.load_state_dict(self.expl_strat.policy.state_dict())
 
         # Schedule the exploration parameter epsilon
@@ -183,11 +207,11 @@ class DQL(ValueBased):
 
         # Logging
         with to.no_grad():
-            self.logger.add_value('loss after', to.mean(losses), 4)
-        self.logger.add_value('expl strat eps', self.expl_strat.eps, 4)
-        self.logger.add_value('avg grad norm policy', to.mean(policy_grad_norm), 4)
+            self.logger.add_value("loss after", to.mean(losses), 4)
+        self.logger.add_value("expl strat eps", self.expl_strat.eps, 4)
+        self.logger.add_value("avg grad norm policy", to.mean(policy_grad_norm), 4)
         if self._lr_scheduler is not None:
-            self.logger.add_value('avg lr', np.mean(self._lr_scheduler.get_last_lr()), 6)
+            self.logger.add_value("avg lr", np.mean(self._lr_scheduler.get_last_lr()), 6)
 
     def reset(self, seed: int = None):
         # Reset samplers, replay memory, exploration strategy, internal variables and the random seeds
@@ -197,20 +221,21 @@ class DQL(ValueBased):
         if self._lr_scheduler is not None:
             self._lr_scheduler.last_epoch = -1
 
-    def init_modules(self, warmstart: bool, suffix: str = '', prefix: str = None, **kwargs):
+    def init_modules(self, warmstart: bool, suffix: str = "", prefix: str = None, **kwargs):
         # Initialize the policy
         super().init_modules(warmstart, suffix, prefix, **kwargs)
 
         if prefix is None:
-            prefix = f'iter_{self._curr_iter - 1}'
+            prefix = f"iter_{self._curr_iter - 1}"
 
-        tpi = kwargs.get('target_param_init', None)
+        tpi = kwargs.get("target_param_init", None)
 
         if warmstart and tpi is not None:
             self.qfcn_targ.init_param(tpi)
         elif warmstart and tpi is None and self._curr_iter > 0:
-            self.qfcn_targ = pyrado.load(self.qfcn_targ, 'qfcn_target', 'pt', self.save_dir,
-                                         meta_info=dict(prefix=prefix, suffix=suffix))
+            self.qfcn_targ = pyrado.load(
+                self.qfcn_targ, "qfcn_target", "pt", self.save_dir, meta_info=dict(prefix=prefix, suffix=suffix)
+            )
         else:
             # Reset the target Q-function
             self.qfcn_targ.init_param()
@@ -218,4 +243,4 @@ class DQL(ValueBased):
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
-        pyrado.save(self.qfcn_targ, 'qfcn_target', 'pt', self.save_dir, meta_info)
+        pyrado.save(self.qfcn_targ, "qfcn_target", "pt", self.save_dir, meta_info)

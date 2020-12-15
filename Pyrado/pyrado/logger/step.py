@@ -71,7 +71,7 @@ class StepLogger:
 
         # Prefix management
         self._prefix_stack = []
-        self._prefix_str = ''
+        self._prefix_str = ""
 
         # Internal interval and counter
         self.print_intvl = print_intvl
@@ -98,7 +98,7 @@ class StepLogger:
             self._value_keys.append(key)
         elif key not in self._value_keys:
             # Make sure the key was used during first step
-            raise pyrado.KeyErr(msg='New value keys may only be added before the first step is finished')
+            raise pyrado.KeyErr(msg="New value keys may only be added before the first step is finished")
 
         # Pre-process lists
         if isinstance(value, list):
@@ -117,7 +117,7 @@ class StepLogger:
                 if value.ndim == 1:  # vector
                     value = value.tolist()
                 else:
-                    raise pyrado.ShapeErr(msg='Logging 2-dim arrays or tensors is not supported.')
+                    raise pyrado.ShapeErr(msg="Logging 2-dim arrays or tensors is not supported.")
         # Pre-process floats
         elif isinstance(value, float):
             if round_digits is not None:
@@ -141,7 +141,7 @@ class StepLogger:
             values = self._current_values.copy()
 
             # Print only once every print_intvl calls
-            if self._counter%self.print_intvl == 0:
+            if self._counter % self.print_intvl == 0:
                 # Pass values to printers
                 for p in self.printers:
                     p.print_values(values, self._value_keys, self._first_step)
@@ -160,12 +160,12 @@ class StepLogger:
         :param pfx: prefix string
         """
         self._prefix_stack.append(pfx)
-        self._prefix_str = ''.join(self._prefix_stack)
+        self._prefix_str = "".join(self._prefix_stack)
 
     def pop_prefix(self):
         """ Remove the last string from the key prefix stack. """
         self._prefix_stack.pop()
-        self._prefix_str = ''.join(self._prefix_stack)
+        self._prefix_str = "".join(self._prefix_stack)
 
     @contextmanager
     def prefix(self, pfx: str):
@@ -179,7 +179,7 @@ class StepLogger:
         self.pop_prefix()
 
 
-def create_csv_step_logger(save_dir: str, file_name: str = 'progress.csv') -> StepLogger:
+def create_csv_step_logger(save_dir: str, file_name: str = "progress.csv") -> StepLogger:
     """
     Create a step-based logger which only safes to a csv-file.
 
@@ -213,9 +213,7 @@ class ConsolePrinter(StepLogPrinter):
 
     def print_values(self, values: dict, ordered_keys: list, first_step: bool):
         # One column with name, one column with value
-        tbl = tabulate(
-            [(k, values[k]) for k in ordered_keys], tablefmt='simple'
-        )
+        tbl = tabulate([(k, values[k]) for k in ordered_keys], tablefmt="simple")
         print(tbl)
 
 
@@ -236,7 +234,7 @@ class CSVPrinter(StepLogPrinter):
         # Open file descriptor
         self.file = file
 
-        self._fd = open(file, 'w')
+        self._fd = open(file, "w")
         self._writer = csv.writer(self._fd)
 
     def print_values(self, values: dict, ordered_keys: list, first_step: bool):
@@ -253,11 +251,11 @@ class CSVPrinter(StepLogPrinter):
     # Only serialize the machine-independent part of the file name
     def __getstate__(self):
         _, common_part = split_path_custom_common(self.file)
-        return {'file_common': common_part}
+        return {"file_common": common_part}
 
     # And reopen the file for append on reload
     def __setstate__(self, state):
-        common_part = state['file_common']
+        common_part = state["file_common"]
 
         # First, try if it has been split at pyrado.EXP_DIR
         self.file = osp.join(pyrado.EXP_DIR, common_part)
@@ -266,16 +264,17 @@ class CSVPrinter(StepLogPrinter):
             self.file = osp.join(pyrado.TEMP_DIR, common_part)
             if not osp.isfile(self.file):
                 # If that did not work, try if it has been split at the pytest's temporary path
-                self.file = osp.join('/tmp', common_part)
+                self.file = osp.join("/tmp", common_part)
                 if not osp.isfile(self.file):
                     raise pyrado.PathErr(given=self.file)
 
-        self._fd = open(self.file, 'a')
+        self._fd = open(self.file, "a")
         self._writer = csv.writer(self._fd)
 
 
 class TensorBoardPrinter(StepLogPrinter):
     """ Class for writing tensorboard logs """
+
     def __init__(self, dir):
         """
         Constructor
@@ -295,7 +294,7 @@ class TensorBoardPrinter(StepLogPrinter):
                     self.writer.add_scalar(k + str(i), scalar, self.step)
             elif isinstance(value, np.ndarray):
                 for i, scalar in enumerate(value.flat):
-                    self.writer.add_scalar(k + '/' + str(i), scalar, self.step)
+                    self.writer.add_scalar(k + "/" + str(i), scalar, self.step)
             else:
                 self.writer.add_scalar(k, values[k], self.step)
         self.step += 1
@@ -304,11 +303,11 @@ class TensorBoardPrinter(StepLogPrinter):
     # Only serialize machine-independent part of the directory, as well as the step
     def __getstate__(self):
         _, common_part = split_path_custom_common(self.dir)
-        return {'dir_common': common_part, 'step': self.step}
+        return {"dir_common": common_part, "step": self.step}
 
     # And reopen the writer on reload
     def __setstate__(self, state):
-        common_part = state['dir_common']
+        common_part = state["dir_common"]
 
         # First, try if it has been split at pyrado.EXP_DIR
         self.dir = osp.join(pyrado.EXP_DIR, common_part)
@@ -317,11 +316,11 @@ class TensorBoardPrinter(StepLogPrinter):
             self.dir = osp.join(pyrado.TEMP_DIR, common_part)
             if not osp.isdir(self.dir):
                 # If that did not work, try if it has been split at the pytest's temporary path
-                self.dir = osp.join('/tmp', common_part)
+                self.dir = osp.join("/tmp", common_part)
                 if not osp.isdir(self.dir):
                     raise pyrado.PathErr(given=self.dir)
 
-        self.step = state['step']
+        self.step = state["step"]
         self.writer = SummaryWriter(log_dir=self.dir)
 
 
@@ -343,7 +342,7 @@ class LoggerAware:
             pass
         else:
             # Try to delegate to parent
-            if hasattr(self, '_logger_parent'):
+            if hasattr(self, "_logger_parent"):
                 return self._logger_parent.logger
             # Create a new one
             self._logger = self._create_default_logger()
@@ -352,7 +351,7 @@ class LoggerAware:
     def __setattr__(self, key, value):
         if isinstance(value, LoggerAware):
             # Setup as child
-            value.__dict__['_logger_parent'] = self
+            value.__dict__["_logger_parent"] = self
 
         super().__setattr__(key, value)
 
@@ -361,12 +360,12 @@ class LoggerAware:
         logger = StepLogger()
         logger.printers.append(ConsolePrinter())
 
-        logfile = 'progress.csv'
+        logfile = "progress.csv"
         if self._save_dir is not None:
             logfile = osp.join(self._save_dir, logfile)
         logger.printers.append(CSVPrinter(logfile))
-        logger.printers.append(TensorBoardPrinter(osp.join(self._save_dir, 'tb')))
+        logger.printers.append(TensorBoardPrinter(osp.join(self._save_dir, "tb")))
         return logger
 
     def register_as_logger_parent(self, child):
-        child.__dict__['_logger_parent'] = self
+        child.__dict__["_logger_parent"] = self

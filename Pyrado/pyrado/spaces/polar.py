@@ -38,11 +38,13 @@ class Polar2DPosSpace(BoxSpace):
     Can also be a section of a 2-dim torus, i.e. not a full circle.
     """
 
-    def __init__(self,
-                 bound_lo: [float, list, np.ndarray],
-                 bound_up: [float, list, np.ndarray],
-                 shape: [tuple, int] = None,
-                 labels: Sequence[str] = None):
+    def __init__(
+        self,
+        bound_lo: [float, list, np.ndarray],
+        bound_up: [float, list, np.ndarray],
+        shape: [tuple, int] = None,
+        labels: Sequence[str] = None,
+    ):
         """
         Constructor
 
@@ -59,13 +61,15 @@ class Polar2DPosSpace(BoxSpace):
         # Get a random sample from the polar space
         sample = super().sample_uniform()
         # Transform the positions to the cartesian space
-        return np.array([sample[0]*np.cos(sample[1]), sample[0]*np.sin(sample[1])])
+        return np.array([sample[0] * np.cos(sample[1]), sample[0] * np.sin(sample[1])])
 
     def contains(self, cand: np.ndarray, verbose: bool = False) -> bool:
         assert cand.size == 2
         # Transform candidate to polar space
         x, y = cand[0], cand[1]
-        polar = np.array([np.sqrt(x**2 + y**2), np.arctan2(y, x)])  # arctan2 returns in range [-pi, pi] -> check bounds
+        polar = np.array(
+            [np.sqrt(x ** 2 + y ** 2), np.arctan2(y, x)]
+        )  # arctan2 returns in range [-pi, pi] -> check bounds
         # Query base
         return super().contains(polar, verbose=verbose)
 
@@ -76,11 +80,13 @@ class Polar2DPosVelSpace(BoxSpace):
     Can also be a section of a 2-dim torus, i.e. not a full circle.
     """
 
-    def __init__(self,
-                 bound_lo: [float, list, np.ndarray],
-                 bound_up: [float, list, np.ndarray],
-                 shape: [tuple, int] = None,
-                 labels: Sequence[str] = None):
+    def __init__(
+        self,
+        bound_lo: [float, list, np.ndarray],
+        bound_up: [float, list, np.ndarray],
+        shape: [tuple, int] = None,
+        labels: Sequence[str] = None,
+    ):
         """
         Constructor
 
@@ -97,13 +103,15 @@ class Polar2DPosVelSpace(BoxSpace):
         # Get a random sample from the half-polar / half-cartesian space
         sample = super().sample_uniform()
         # Transform the positions to the cartesian space
-        sample[:2] = np.array([sample[0]*np.cos(sample[1]), sample[0]*np.sin(sample[1])])
+        sample[:2] = np.array([sample[0] * np.cos(sample[1]), sample[0] * np.sin(sample[1])])
         return sample
 
     def contains(self, cand: np.ndarray, verbose: bool = False) -> bool:
         assert cand.size == 4
         # Transform candidate to polar space
         x, y = cand[0], cand[1]
-        polar = np.array([np.sqrt(x**2 + y**2), np.arctan2(y, x)])  # arctan2 returns in range [-pi, pi] -> check bounds
+        polar = np.array(
+            [np.sqrt(x ** 2 + y ** 2), np.arctan2(y, x)]
+        )  # arctan2 returns in range [-pi, pi] -> check bounds
         # Query base
         return super().contains(np.r_[polar, cand[2:]], verbose=verbose)

@@ -46,14 +46,14 @@ def rosenbrock(x: Union[to.Tensor, np.ndarray]) -> (to.Tensor, np.ndarray):
     :return: value of the Rosenbrock function at the input point, or array thereof
     """
     if isinstance(x, to.Tensor):
-        return to.sum(100.*to.pow(x[1:] - to.pow(x[:-1], 2), 2) + to.pow((1. - x[:-1]), 2), dim=0)
+        return to.sum(100.0 * to.pow(x[1:] - to.pow(x[:-1], 2), 2) + to.pow((1.0 - x[:-1]), 2), dim=0)
     elif isinstance(x, np.ndarray):
-        return np.sum(100.*np.power(x[1:] - np.power(x[:-1], 2), 2) + np.power((1. - x[:-1]), 2), axis=0)
+        return np.sum(100.0 * np.power(x[1:] - np.power(x[:-1], 2), 2) + np.power((1.0 - x[:-1]), 2), axis=0)
     else:
         raise pyrado.TypeErr(given=x, expected_type=[np.ndarray, to.Tensor])
 
 
-def noisy_nonlin_fcn(x: [to.Tensor, np.ndarray], f: float = 1., noise_std: float = 0.) -> [to.Tensor, np.ndarray]:
+def noisy_nonlin_fcn(x: [to.Tensor, np.ndarray], f: float = 1.0, noise_std: float = 0.0) -> [to.Tensor, np.ndarray]:
     """
     A 1-dim function (sinus superposed with polynomial), representing the black box function in Bayesian optimization
 
@@ -63,15 +63,16 @@ def noisy_nonlin_fcn(x: [to.Tensor, np.ndarray], f: float = 1., noise_std: float
     :return: function value
     """
     if isinstance(x, to.Tensor):
-        return -to.sin(2*np.pi*f*x) - to.pow(x, 2) + 0.7*x + noise_std*to.randn_like(x)
+        return -to.sin(2 * np.pi * f * x) - to.pow(x, 2) + 0.7 * x + noise_std * to.randn_like(x)
     elif isinstance(x, np.ndarray):
-        return -np.sin(2*np.pi*f*x) - np.power(x, 2) + 0.7*x + noise_std*np.random.randn(*x.shape)
+        return -np.sin(2 * np.pi * f * x) - np.power(x, 2) + 0.7 * x + noise_std * np.random.randn(*x.shape)
     else:
         raise pyrado.TypeErr(given=x, expected_type=[np.ndarray, to.Tensor])
 
 
-def skyline(dt: Union[int, float], t_end: Union[int, float], t_intvl_space: BoxSpace, val_space: BoxSpace
-            ) -> (np.ndarray, np.ndarray):
+def skyline(
+    dt: Union[int, float], t_end: Union[int, float], t_intvl_space: BoxSpace, val_space: BoxSpace
+) -> (np.ndarray, np.ndarray):
     """
     Step function that randomly samples a value from the given range, and then holds this value for a time interval
     which is also randomly sampled given a range of time intervals. This procedure is repeated until the sequence is
@@ -84,9 +85,9 @@ def skyline(dt: Union[int, float], t_end: Union[int, float], t_intvl_space: BoxS
     :return: array of time steps together with the associated array of values
     """
     if dt <= 0:
-        raise pyrado.ValueErr(given=dt, g_constraint='0')
+        raise pyrado.ValueErr(given=dt, g_constraint="0")
     if t_end < dt:
-        raise pyrado.ValueErr(given=t_end, ge_constraint=f'{dt}')
+        raise pyrado.ValueErr(given=t_end, ge_constraint=f"{dt}")
     if not isinstance(t_intvl_space, BoxSpace):
         raise pyrado.TypeErr(given=t_intvl_space, expected_type=BoxSpace)
     if not isinstance(val_space, BoxSpace):
@@ -102,14 +103,14 @@ def skyline(dt: Union[int, float], t_end: Union[int, float], t_intvl_space: BoxS
     # First iter
     t_itvl = t_intvl_space.sample_uniform()
     t_itvl = np.clip(t_itvl, dt, t_end + dt)
-    t = np.arange(start=0., stop=t_itvl, step=dt)
+    t = np.arange(start=0.0, stop=t_itvl, step=dt)
     vals = val_space.sample_uniform() * np.ones_like(t)
 
     # Iterate until the time is up
     while t[-1] < t_end:
         t_itvl = t_intvl_space.sample_uniform()
         t_itvl = np.clip(t_itvl, dt, t_end - t[-1] + dt)
-        t_new = np.arange(start=t[-1]+dt, stop=t[-1]+t_itvl, step=dt)
+        t_new = np.arange(start=t[-1] + dt, stop=t[-1] + t_itvl, step=dt)
         t = np.concatenate([t, t_new])
         val_new = val_space.sample_uniform() * np.ones_like(t_new)
         vals = np.concatenate([vals, val_new])

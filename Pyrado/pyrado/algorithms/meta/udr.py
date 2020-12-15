@@ -43,7 +43,7 @@ class UDR(Algorithm):
     This algorithm barely wraps another algorithm. The main purpose is to check if the domain randomizer is set up.
     """
 
-    name: str = 'udr'
+    name: str = "udr"
 
     def __init__(self, env: EnvWrapper, subrtn: Algorithm):
         """
@@ -61,10 +61,10 @@ class UDR(Algorithm):
         super().__init__(subrtn.save_dir, subrtn.max_iter, subrtn.policy, subrtn.logger)
 
         self._subrtn = subrtn
-        self._subrtn.save_name = 'subrtn'
+        self._subrtn.save_name = "subrtn"
 
         # Save initial randomizer
-        joblib.dump(env.randomizer, osp.join(self.save_dir, 'randomizer.pkl'))
+        joblib.dump(env.randomizer, osp.join(self.save_dir, "randomizer.pkl"))
 
     @property
     def subroutine(self) -> Algorithm:

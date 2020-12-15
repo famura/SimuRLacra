@@ -34,8 +34,13 @@ from torch.distributions.multivariate_normal import MultivariateNormal
 from torch.distributions.bernoulli import Bernoulli
 
 import pyrado
-from pyrado.domain_randomization.domain_parameter import DomainParam, NormalDomainParam, UniformDomainParam, \
-    BernoulliDomainParam, MultivariateNormalDomainParam
+from pyrado.domain_randomization.domain_parameter import (
+    DomainParam,
+    NormalDomainParam,
+    UniformDomainParam,
+    BernoulliDomainParam,
+    MultivariateNormalDomainParam,
+)
 
 
 class DomainRandomizer:
@@ -65,30 +70,30 @@ class DomainRandomizer:
                 dp.cov = dp.cov.numpy()
 
         # Manually order them. A set would reduce the duplicated, too but yield a random order.
-        headers_ordered = ['name', 'mean']
-        if 'std' in headers:
-            headers_ordered.append('std')
-        if 'cov' in headers:
-            headers_ordered.append('cov')
-        if 'halfspan' in headers:
-            headers_ordered.append('halfspan')
-        if 'val_0' in headers:
-            headers_ordered.append('val_0')
-        if 'val_1' in headers:
-            headers_ordered.append('val_1')
-        if 'prob_1' in headers:
-            headers_ordered.append('prob_1')
-        if 'clip_lo' in headers:
-            headers_ordered.append('clip_lo')
-        if 'clip_up' in headers:
-            headers_ordered.append('clip_up')
-        if 'roundint' in headers:
-            headers_ordered.append('roundint')
+        headers_ordered = ["name", "mean"]
+        if "std" in headers:
+            headers_ordered.append("std")
+        if "cov" in headers:
+            headers_ordered.append("cov")
+        if "halfspan" in headers:
+            headers_ordered.append("halfspan")
+        if "val_0" in headers:
+            headers_ordered.append("val_0")
+        if "val_1" in headers:
+            headers_ordered.append("val_1")
+        if "prob_1" in headers:
+            headers_ordered.append("prob_1")
+        if "clip_lo" in headers:
+            headers_ordered.append("clip_lo")
+        if "clip_up" in headers:
+            headers_ordered.append("clip_up")
+        if "roundint" in headers:
+            headers_ordered.append("roundint")
 
         # Create string
-        return tabulate([[getattr(dp, h, None) for h in headers_ordered]
-                         for dp in dps],
-                        headers=headers_ordered, tablefmt='simple')
+        return tabulate(
+            [[getattr(dp, h, None) for h in headers_ordered] for dp in dps], headers=headers_ordered, tablefmt="simple"
+        )
 
     def add_domain_params(self, *domain_params: DomainParam):
         """
@@ -121,7 +126,7 @@ class DomainRandomizer:
                 d[k] = v[i]
             self._params_pert_list.append(d)
 
-    def get_params(self, num_samples: int = -1, format: str = 'list', dtype: str = 'numpy') -> [list, dict]:
+    def get_params(self, num_samples: int = -1, format: str = "list", dtype: str = "numpy") -> [list, dict]:
         """
         Get the values in the data frame of the perturbed parameters.
 
@@ -131,24 +136,24 @@ class DomainRandomizer:
         :return: dict of num_samples perturbed values per specified param or one dict of one perturbed
         """
         assert isinstance(num_samples, int) and num_samples > -2 and num_samples != 0
-        assert format.lower() == 'list' or format.lower() == 'dict'
-        assert dtype.lower() == 'numpy' or dtype.lower() == 'torch'
+        assert format.lower() == "list" or format.lower() == "dict"
+        assert dtype.lower() == "numpy" or dtype.lower() == "torch"
 
         if num_samples == -1 and len(self._params_pert_list) > 1:
             # Return all samples that the randomizer holds
-            if format == 'list':
+            if format == "list":
                 # Return a list with all domain parameter sets
                 copy = deepcopy(self._params_pert_list)
-                if dtype == 'numpy':  # nothing to be done for torch
+                if dtype == "numpy":  # nothing to be done for torch
                     for i in range(len(copy)):
                         for k in copy[i].keys():
                             copy[i][k] = copy[i][k].numpy()
                 return copy
 
-            elif format == 'dict':
+            elif format == "dict":
                 # Returns a dict (as many entries as parameters) with lists as values (as many entries as samples)
                 copy = deepcopy(self._params_pert_dict)
-                if dtype == 'numpy':  # nothing to be done for torch
+                if dtype == "numpy":  # nothing to be done for torch
                     for key in copy.keys():
                         copy[key] = [samples.numpy() for samples in copy[key]]
                 return copy
@@ -156,38 +161,37 @@ class DomainRandomizer:
         elif num_samples == 1 or len(self._params_pert_list) == 1:
             # If only one sample is wanted or the internal list just contains 1 element
             copy = deepcopy(self._params_pert_list[0])
-            if dtype == 'numpy':  # nothing to be done for torch
+            if dtype == "numpy":  # nothing to be done for torch
                 for k in copy.keys():
                     copy[k] = copy[k].numpy()
-            if format == 'list':  # nothing to be done for dict
+            if format == "list":  # nothing to be done for dict
                 copy = [copy]
             return copy
 
         elif num_samples >= 1:
             # Return a subset of all samples that the randomizer holds
-            if format == 'list':
+            if format == "list":
                 copy = deepcopy(self._params_pert_list[:num_samples])
                 # Return a list with the fist num_samples domain parameter sets
-                if dtype == 'numpy':  # nothing to be done for torch
+                if dtype == "numpy":  # nothing to be done for torch
                     for i in range(num_samples):
                         for k in copy[i].keys():
                             copy[i][k] = copy[i][k].numpy()
                 return copy
 
-            elif format == 'dict':
+            elif format == "dict":
                 # Return a dict with as many keys as perturbed params and num_samples values for each of them
                 params_pert_subset = {}
                 for key in self._params_pert_dict:
                     # Only select the fist num_samples elements of the list
                     params_pert_subset[key] = self._params_pert_dict[key][:num_samples]
-                    if dtype == 'numpy':  # nothing to be done for torch
+                    if dtype == "numpy":  # nothing to be done for torch
                         params_pert_subset[key] = [p.numpy() for p in params_pert_subset[key]]
                 return params_pert_subset
 
-    def adapt_one_distr_param(self,
-                              domain_param_name: str,
-                              domain_distr_param: str,
-                              domain_distr_param_value: [float, int]):
+    def adapt_one_distr_param(
+        self, domain_param_name: str, domain_distr_param: str, domain_distr_param_value: [float, int]
+    ):
         """
         Update the randomizer's domain parameter distribution for one domain parameter.
 
@@ -203,8 +207,10 @@ class DomainRandomizer:
                         pyrado.TypeErr(given=domain_distr_param_value, expected_type=[int, float, bool])
                     dp.adapt(domain_distr_param, domain_distr_param_value)
                 else:
-                    raise KeyError(f'The domain parameter {dp.name} does not have a domain distribution parameter '
-                                   f'called {domain_distr_param}!')
+                    raise KeyError(
+                        f"The domain parameter {dp.name} does not have a domain distribution parameter "
+                        f"called {domain_distr_param}!"
+                    )
 
     def rescale_distr_param(self, param: str, scale: float):
         """
@@ -214,12 +220,12 @@ class DomainRandomizer:
         :param scale: scaling factor
         """
         if not scale >= 0:
-            raise pyrado.ValueErr(given=scale, ge_constraint='0')
+            raise pyrado.ValueErr(given=scale, ge_constraint="0")
 
         for dp in self.domain_params:
             if hasattr(dp, param):
                 # Scale the param attribute of the domain parameters object
-                setattr(dp, param, scale*getattr(dp, param))
+                setattr(dp, param, scale * getattr(dp, param))
 
             # Also scale the distribution (afterwards)
             if isinstance(dp, UniformDomainParam):

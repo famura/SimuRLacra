@@ -50,17 +50,19 @@ def _space_to_ps(gym_space) -> [BoxSpace, DiscreteSpace]:
     if isinstance(gym_space, gs.Box):
         return BoxSpace(gym_space.low, gym_space.high)
     if isinstance(gym_space, gs.Discrete):
-        warn('Guessing the conversion of discrete OpenAI gym space. This feature is not really supported.'
-             'Rather use their control environments with continuous action spaces.')
+        warn(
+            "Guessing the conversion of discrete OpenAI gym space. This feature is not really supported."
+            "Rather use their control environments with continuous action spaces."
+        )
         return DiscreteSpace(np.ones((gym_space.n, 1), dtype=np.float64))  # PyTorch policies operate on doubles
     else:
-        raise pyrado.TypeErr(msg=f'Unsupported space form gym {gym_space}')
+        raise pyrado.TypeErr(msg=f"Unsupported space form gym {gym_space}")
 
 
 class GymEnv(SimEnv, Serializable):
     """ A Wrapper to use the classical control environments of OpenAI Gym like Pyrado environments """
 
-    name: str = 'gym-cc'
+    name: str = "gym-cc"
 
     def __init__(self, env_name: str):
         """
@@ -76,27 +78,27 @@ class GymEnv(SimEnv, Serializable):
         Serializable._init(self, locals())
 
         # Initialize basic variables
-        if env_name == 'MountainCar-v0':
+        if env_name == "MountainCar-v0":
             dt = 0.02  # there is no dt in the source file
-        elif env_name == 'CartPole-v1':
+        elif env_name == "CartPole-v1":
             dt = 0.02
-        elif env_name == 'Acrobot-v1':
+        elif env_name == "Acrobot-v1":
             dt = 0.2
-        elif env_name == 'MountainCarContinuous-v0':
+        elif env_name == "MountainCarContinuous-v0":
             dt = 0.02  # there is no dt in the source file
-        elif env_name == 'Pendulum-v0':
+        elif env_name == "Pendulum-v0":
             dt = 0.05
-        elif env_name == 'LunarLander-v2':
+        elif env_name == "LunarLander-v2":
             dt = 0.02
         else:
-            raise NotImplementedError(f'GymEnv does not wrap the environment {env_name}.')
+            raise NotImplementedError(f"GymEnv does not wrap the environment {env_name}.")
         super().__init__(dt)
 
         # Create the gym environment
         self._gym_env = gym.envs.make(env_name)
 
         # Set the maximum number of time steps to 1000 if not given by the gym env
-        self.max_steps = getattr(self._gym_env.spec, 'max_episode_steps', 1000)
+        self.max_steps = getattr(self._gym_env.spec, "max_episode_steps", 1000)
 
         # Create spaces compatible to Pyrado
         self._obs_space = _space_to_ps(self._gym_env.observation_space)

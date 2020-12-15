@@ -46,22 +46,22 @@ from pyrado.plotting.gaussian_process import render_singletask_gp
 from pyrado.utils.argparser import get_argparser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     parser = get_argparser()
-    parser.add_argument('--render3D', action='store_true', default=False, help="render the GP in 3D")
+    parser.add_argument("--render3D", action="store_true", default=False, help="render the GP in 3D")
     args = parser.parse_args()
-    plt.rc('text', usetex=args.use_tex)
+    plt.rc("text", usetex=args.use_tex)
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
+    ex_dir = ask_for_experiment() if args.dir is None else args.dir
 
-    env_sim = joblib.load(osp.join(ex_dir, 'env_sim.pkl'))
+    env_sim = joblib.load(osp.join(ex_dir, "env_sim.pkl"))
     if not typed_env(env_sim, MetaDomainRandWrapper):
         raise pyrado.TypeErr(given_name=env_sim, expected_type=MetaDomainRandWrapper)
     labels_sel_dims = [env_sim.mapping[args.idcs[i]][0] for i in range(len(args.idcs))]
 
-    env_real = joblib.load(osp.join(ex_dir, 'env_real.pkl'))
+    env_real = joblib.load(osp.join(ex_dir, "env_real.pkl"))
     if isinstance(inner_env(env_real), SimEnv):
         # Use actual ground truth domain param if sim-2-sim setting
         domain_params = env_real.domain_param
@@ -77,19 +77,19 @@ if __name__ == '__main__':
         except Exception:
             gt_val_y = None
 
-    cands = pyrado.load(None, 'candidates', 'pt', ex_dir)
-    cands_values = pyrado.load(None, 'candidates_values', 'pt', ex_dir).unsqueeze(1)
-    ddp_space = pyrado.load(None, 'ddp_space', 'pkl', ex_dir)
+    cands = pyrado.load(None, "candidates", "pt", ex_dir)
+    cands_values = pyrado.load(None, "candidates_values", "pt", ex_dir).unsqueeze(1)
+    ddp_space = pyrado.load(None, "ddp_space", "pkl", ex_dir)
 
     dim_cand = cands.shape[1]  # number of domain distribution parameters
-    if dim_cand%2 != 0:
-        raise pyrado.ShapeErr(msg='The dimension of domain distribution parameters must be a multiple of 2!')
+    if dim_cand % 2 != 0:
+        raise pyrado.ShapeErr(msg="The dimension of domain distribution parameters must be a multiple of 2!")
 
     # Select dimensions to plot (ignored for 1D mode)
     if len(args.idcs) == 1:
         # Plot 1D
         x_label = labels_sel_dims[0]  # could override manually here
-        y_label = r'$\hat{J}^{\textrm{real}}$'
+        y_label = r"$\hat{J}^{\textrm{real}}$"
         fig, ax = plt.subplots(1, figsize=(6, 4), constrained_layout=True)
 
     elif len(args.idcs) == 2:
@@ -98,8 +98,14 @@ if __name__ == '__main__':
 
         if not args.render3D:
             # Plot 2D
-            hm_fig_size = (pyrado.figsize_IEEE_1col_square[0]*0.5, pyrado.figsize_IEEE_1col_square[0]*0.5)  # 1row2col
-            cb_fig_size = (pyrado.figsize_IEEE_1col_square[0]*0.33, pyrado.figsize_IEEE_1col_square[0]*0.12)  # 1row2col
+            hm_fig_size = (
+                pyrado.figsize_IEEE_1col_square[0] * 0.5,
+                pyrado.figsize_IEEE_1col_square[0] * 0.5,
+            )  # 1row2col
+            cb_fig_size = (
+                pyrado.figsize_IEEE_1col_square[0] * 0.33,
+                pyrado.figsize_IEEE_1col_square[0] * 0.12,
+            )  # 1row2col
 
             fig_hm_mean, ax_hm_mean = plt.subplots(1, figsize=hm_fig_size, constrained_layout=True)
             fig_cb_mean, ax_cb_mean = plt.subplots(1, figsize=cb_fig_size, constrained_layout=True)
@@ -113,40 +119,54 @@ if __name__ == '__main__':
             ax = Axes3D(fig)
 
     else:
-        raise pyrado.ValueErr(msg='Select exactly 1 or 2 indices!')
+        raise pyrado.ValueErr(msg="Select exactly 1 or 2 indices!")
 
     # Nice color map from seaborn
     hm_cmap = ListedColormap(sns.color_palette("YlGnBu", n_colors=100)[::-1])
-    scat_cmap = LinearSegmentedColormap.from_list('light_to_dark_gray', [(.95, .95, .95), (.05, .05, .05)], N=256)
+    scat_cmap = LinearSegmentedColormap.from_list("light_to_dark_gray", [(0.95, 0.95, 0.95), (0.05, 0.05, 0.05)], N=256)
 
     if len(args.idcs) == 1:
-        ax.axvline(gt_val_x, c='firebrick', ls='--', lw=1.5, label='gt')
+        ax.axvline(gt_val_x, c="firebrick", ls="--", lw=1.5, label="gt")
 
     render_singletask_gp(
-        ax, cands, cands_values, min_gp_obsnoise=1e-5,
-        data_x_min=ddp_space.bound_lo[args.idcs], data_x_max=ddp_space.bound_up[args.idcs],
-        idcs_sel=args.idcs, x_label=x_label, y_label=xy,
-        z_label=r'r$\hat{J}^{\textrm{real}}$',
-        heatmap_cmap=hm_cmap, num_stds=2, resolution=201, legend_data_cmap=scat_cmap, show_legend_data=args.verbose,
-        show_legend_posterior=True, show_legend_std=True, render3D=args.render3D,
+        ax,
+        cands,
+        cands_values,
+        min_gp_obsnoise=1e-5,
+        data_x_min=ddp_space.bound_lo[args.idcs],
+        data_x_max=ddp_space.bound_up[args.idcs],
+        idcs_sel=args.idcs,
+        x_label=x_label,
+        y_label=xy,
+        z_label=r"r$\hat{J}^{\textrm{real}}$",
+        heatmap_cmap=hm_cmap,
+        num_stds=2,
+        resolution=201,
+        legend_data_cmap=scat_cmap,
+        show_legend_data=args.verbose,
+        show_legend_posterior=True,
+        show_legend_std=True,
+        render3D=args.render3D,
     )
 
     if len(args.idcs) == 2 and not args.render3D:
         # Plot the ground truth domain parameter configuration
-        ax_hm_mean.scatter(gt_val_x, gt_val_y, c='firebrick', marker='*', s=60)  # forestgreen
-        ax_hm_std.scatter(gt_val_x, gt_val_y, c='firebrick', marker='*', s=60)  # forestgreen
+        ax_hm_mean.scatter(gt_val_x, gt_val_y, c="firebrick", marker="*", s=60)  # forestgreen
+        ax_hm_std.scatter(gt_val_x, gt_val_y, c="firebrick", marker="*", s=60)  # forestgreen
 
     if args.save_figures:
-        os.makedirs(osp.join(ex_dir, 'plots'), exist_ok=True)
-        for fmt in ['pdf', 'pgf', 'png']:
+        os.makedirs(osp.join(ex_dir, "plots"), exist_ok=True)
+        for fmt in ["pdf", "pgf", "png"]:
             if len(args.idcs) == 1 or args.render3D:
-                fig.savefig(osp.join(ex_dir, 'plots', f'gp_posterior_ret_mean.{fmt}'), dpi=500)
+                fig.savefig(osp.join(ex_dir, "plots", f"gp_posterior_ret_mean.{fmt}"), dpi=500)
             if len(args.idcs) == 2 and not args.render3D:
-                fig_hm_mean.savefig(osp.join(ex_dir, 'plots', f'gp_posterior_ret_mean_hm.{fmt}'), dpi=500,
-                                    backend='pgf')
-                fig_cb_mean.savefig(osp.join(ex_dir, 'plots', f'gp_posterior_ret_mean_cb.{fmt}'), dpi=500,
-                                    backend='pgf')
-                fig_hm_std.savefig(osp.join(ex_dir, 'plots', f'gp_posterior_ret_std_hm.{fmt}'), dpi=500, backend='pgf')
-                fig_cb_std.savefig(osp.join(ex_dir, 'plots', f'gp_posterior_ret_std_cb.{fmt}'), dpi=500, backend='pgf')
+                fig_hm_mean.savefig(
+                    osp.join(ex_dir, "plots", f"gp_posterior_ret_mean_hm.{fmt}"), dpi=500, backend="pgf"
+                )
+                fig_cb_mean.savefig(
+                    osp.join(ex_dir, "plots", f"gp_posterior_ret_mean_cb.{fmt}"), dpi=500, backend="pgf"
+                )
+                fig_hm_std.savefig(osp.join(ex_dir, "plots", f"gp_posterior_ret_std_hm.{fmt}"), dpi=500, backend="pgf")
+                fig_cb_std.savefig(osp.join(ex_dir, "plots", f"gp_posterior_ret_std_cb.{fmt}"), dpi=500, backend="pgf")
 
     plt.show()

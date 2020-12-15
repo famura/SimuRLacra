@@ -58,26 +58,28 @@ class PPO(ActorCritic):
         [2] D.P. Kingma, J. Ba, "Adam: A Method for Stochastic Optimization", ICLR, 2015
     """
 
-    name: str = 'ppo'
+    name: str = "ppo"
 
-    def __init__(self,
-                 save_dir: str,
-                 env: Env,
-                 policy: Policy,
-                 critic: GAE,
-                 max_iter: int,
-                 min_rollouts: int = None,
-                 min_steps: int = None,
-                 num_epoch: int = 3,
-                 eps_clip: float = 0.1,
-                 batch_size: int = 64,
-                 std_init: float = 1.0,
-                 num_workers: int = 4,
-                 max_grad_norm: float = None,
-                 lr: float = 5e-4,
-                 lr_scheduler=None,
-                 lr_scheduler_hparam: [dict, None] = None,
-                 logger: StepLogger = None):
+    def __init__(
+        self,
+        save_dir: str,
+        env: Env,
+        policy: Policy,
+        critic: GAE,
+        max_iter: int,
+        min_rollouts: int = None,
+        min_steps: int = None,
+        num_epoch: int = 3,
+        eps_clip: float = 0.1,
+        batch_size: int = 64,
+        std_init: float = 1.0,
+        num_workers: int = 4,
+        max_grad_norm: float = None,
+        lr: float = 5e-4,
+        lr_scheduler=None,
+        lr_scheduler_hparam: [dict, None] = None,
+        logger: StepLogger = None,
+    ):
         """
         Constructor
 
@@ -121,15 +123,12 @@ class PPO(ActorCritic):
         self.log_loss = True
         self._expl_strat = NormalActNoiseExplStrat(self._policy, std_init=std_init)
         self.sampler = ParallelRolloutSampler(
-            env, self._expl_strat,
-            num_workers=num_workers,
-            min_steps=min_steps,
-            min_rollouts=min_rollouts
+            env, self._expl_strat, num_workers=num_workers, min_steps=min_steps, min_rollouts=min_rollouts
         )
         self.optim = to.optim.Adam(
-            [{'params': self._expl_strat.policy.parameters()},
-             {'params': self._expl_strat.noise.parameters()}],
-            lr=lr, eps=1e-5
+            [{"params": self._expl_strat.policy.parameters()}, {"params": self._expl_strat.noise.parameters()}],
+            lr=lr,
+            eps=1e-5,
         )
         self._lr_scheduler = lr_scheduler
         self._lr_scheduler_hparam = lr_scheduler_hparam
@@ -151,7 +150,7 @@ class PPO(ActorCritic):
         """
         prob_ratio = to.exp(log_probs - log_probs_old)
         pr_clip = prob_ratio.clamp(1 - self.eps_clip, 1 + self.eps_clip)
-        return -to.mean(to.min(prob_ratio*adv.to(self.policy.device), pr_clip*adv.to(self.policy.device)))
+        return -to.mean(to.min(prob_ratio * adv.to(self.policy.device), pr_clip * adv.to(self.policy.device)))
 
     def update(self, rollouts: Sequence[StepSequence]):
         # Turn the batch of rollouts into a list of steps
@@ -168,8 +167,8 @@ class PPO(ActorCritic):
             act_distr_old = act_stats.act_distr
 
         # Attach advantages and old log probs to rollout
-        concat_ros.add_data('adv', adv)
-        concat_ros.add_data('log_probs_old', log_probs_old)
+        concat_ros.add_data("adv", adv)
+        concat_ros.add_data("log_probs_old", log_probs_old)
 
         # For logging the gradient norms
         policy_grad_norm = []
@@ -180,7 +179,11 @@ class PPO(ActorCritic):
             for batch in tqdm(
                 concat_ros.split_shuffled_batches(self.batch_size, complete_rollouts=self._policy.is_recurrent),
                 total=num_iter_from_rollouts(None, concat_ros, self.batch_size),
-                desc=f'Epoch {e}', unit='batches', file=sys.stdout, leave=False):
+                desc=f"Epoch {e}",
+                unit="batches",
+                file=sys.stdout,
+                leave=False,
+            ):
                 # Reset the gradients
                 self.optim.zero_grad()
 
@@ -188,7 +191,9 @@ class PPO(ActorCritic):
                 log_probs = compute_action_statistics(batch, self._expl_strat).log_probs.to(self.policy.device)
 
                 # Compute policy loss and backpropagate
-                loss = self.loss_fcn(log_probs, batch.log_probs_old.to(self.policy.device), batch.adv.to(self.policy.device))
+                loss = self.loss_fcn(
+                    log_probs, batch.log_probs_old.to(self.policy.device), batch.adv.to(self.policy.device)
+                )
                 loss.backward()
 
                 # Clip the gradients if desired
@@ -198,8 +203,10 @@ class PPO(ActorCritic):
                 self.optim.step()
 
                 if to.isnan(self._expl_strat.noise.std).any():
-                    raise RuntimeError(f'At least one exploration parameter became NaN! The exploration parameters are'
-                                       f'\n{self._expl_strat.std.detach().cpu().numpy()}')
+                    raise RuntimeError(
+                        f"At least one exploration parameter became NaN! The exploration parameters are"
+                        f"\n{self._expl_strat.std.detach().cpu().numpy()}"
+                    )
 
             # Update the learning rate if a scheduler has been specified
             if self._lr_scheduler is not None:
@@ -213,15 +220,15 @@ class PPO(ActorCritic):
                 act_distr_new = act_stats.act_distr
                 loss_after = self.loss_fcn(log_probs_new, log_probs_old, adv)
                 kl_avg = to.mean(kl_divergence(act_distr_old, act_distr_new))  # mean seeking a.k.a. inclusive KL
-                self.logger.add_value('loss after', loss_after, 4)
-                self.logger.add_value('KL(old_new)', kl_avg, 4)
+                self.logger.add_value("loss after", loss_after, 4)
+                self.logger.add_value("KL(old_new)", kl_avg, 4)
 
         # Logging
-        self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.noise.std), 4)
-        self.logger.add_value('expl strat entropy', self._expl_strat.noise.get_entropy(), 4)
-        self.logger.add_value('avg grad norm policy', np.mean(policy_grad_norm), 4)
+        self.logger.add_value("avg expl strat std", to.mean(self._expl_strat.noise.std), 4)
+        self.logger.add_value("expl strat entropy", self._expl_strat.noise.get_entropy(), 4)
+        self.logger.add_value("avg grad norm policy", np.mean(policy_grad_norm), 4)
         if self._lr_scheduler is not None:
-            self.logger.add_value('avg lr', np.mean(self._lr_scheduler.get_last_lr()), 6)
+            self.logger.add_value("avg lr", np.mean(self._lr_scheduler.get_last_lr()), 6)
 
 
 class PPO2(ActorCritic):
@@ -241,28 +248,30 @@ class PPO2(ActorCritic):
         [3] D.P. Kingma, J. Ba, "Adam: A Method for Stochastic Optimization", ICLR, 2015
     """
 
-    name: str = 'ppo2'
+    name: str = "ppo2"
 
-    def __init__(self,
-                 save_dir: str,
-                 env: Env,
-                 policy: Policy,
-                 critic: GAE,
-                 max_iter: int,
-                 min_rollouts: int = None,
-                 min_steps: int = None,
-                 num_epoch: int = 3,
-                 eps_clip: float = 0.1,
-                 vfcn_coeff: float = 0.5,
-                 entropy_coeff: float = 1e-3,
-                 batch_size: int = 32,
-                 std_init: float = 1.0,
-                 num_workers: int = 4,
-                 max_grad_norm: float = None,
-                 lr: float = 5e-4,
-                 lr_scheduler=None,
-                 lr_scheduler_hparam: [dict, None] = None,
-                 logger: StepLogger = None):
+    def __init__(
+        self,
+        save_dir: str,
+        env: Env,
+        policy: Policy,
+        critic: GAE,
+        max_iter: int,
+        min_rollouts: int = None,
+        min_steps: int = None,
+        num_epoch: int = 3,
+        eps_clip: float = 0.1,
+        vfcn_coeff: float = 0.5,
+        entropy_coeff: float = 1e-3,
+        batch_size: int = 32,
+        std_init: float = 1.0,
+        num_workers: int = 4,
+        max_grad_norm: float = None,
+        lr: float = 5e-4,
+        lr_scheduler=None,
+        lr_scheduler_hparam: [dict, None] = None,
+        logger: StepLogger = None,
+    ):
         """
         Constructor
 
@@ -310,16 +319,16 @@ class PPO2(ActorCritic):
         self.log_loss = True
         self._expl_strat = NormalActNoiseExplStrat(self._policy, std_init=std_init)
         self.sampler = ParallelRolloutSampler(
-            env, self._expl_strat,
-            num_workers=num_workers,
-            min_steps=min_steps,
-            min_rollouts=min_rollouts
+            env, self._expl_strat, num_workers=num_workers, min_steps=min_steps, min_rollouts=min_rollouts
         )
         self.optim = to.optim.Adam(
-            [{'params': self._expl_strat.policy.parameters()},
-             {'params': self._expl_strat.noise.parameters()},
-             {'params': self._critic.vfcn.parameters()}],
-            lr=lr, eps=1e-5
+            [
+                {"params": self._expl_strat.policy.parameters()},
+                {"params": self._expl_strat.noise.parameters()},
+                {"params": self._critic.vfcn.parameters()},
+            ],
+            lr=lr,
+            eps=1e-5,
         )
         self._lr_scheduler = lr_scheduler
         self._lr_scheduler_hparam = lr_scheduler_hparam
@@ -330,8 +339,15 @@ class PPO2(ActorCritic):
     def expl_strat(self) -> NormalActNoiseExplStrat:
         return self._expl_strat
 
-    def loss_fcn(self, log_probs: to.Tensor, log_probs_old: to.Tensor, adv: to.Tensor,
-                 v_pred: to.Tensor, v_pred_old: to.Tensor, v_targ: to.Tensor) -> to.Tensor:
+    def loss_fcn(
+        self,
+        log_probs: to.Tensor,
+        log_probs_old: to.Tensor,
+        adv: to.Tensor,
+        v_pred: to.Tensor,
+        v_pred_old: to.Tensor,
+        v_targ: to.Tensor,
+    ) -> to.Tensor:
         """
         PPO2 loss function
 
@@ -350,8 +366,8 @@ class PPO2(ActorCritic):
         prob_ratio = to.exp(log_probs - log_probs_old).to(self.policy.device)
         pr_clip = prob_ratio.clamp(1 - self.eps_clip, 1 + self.eps_clip)
         adv = adv.to(self.policy.device)
-        p_loss1 = -adv*prob_ratio
-        p_loss2 = -adv*pr_clip
+        p_loss1 = -adv * prob_ratio
+        p_loss2 = -adv * pr_clip
         policy_loss = to.mean(to.max(p_loss1, p_loss2))
 
         # Value function loss
@@ -359,13 +375,13 @@ class PPO2(ActorCritic):
         v_pred_clip = v_pred_old + v_pred_diffs.clamp(-self.eps_clip, self.eps_clip)
         v_loss1 = to.pow(v_targ - v_pred, 2)
         v_loss2 = to.pow(v_targ - v_pred_clip, 2)
-        vfcn_loss = 0.5*to.mean(to.max(v_loss1, v_loss2))
+        vfcn_loss = 0.5 * to.mean(to.max(v_loss1, v_loss2))
 
         # Current entropy of the exploration strategy (was constant over the rollout)
         entropy = self._expl_strat.noise.get_entropy()
 
         # Return the combined loss
-        return policy_loss + self.vfcn_coeff*vfcn_loss - self.entropy_coeff*entropy
+        return policy_loss + self.vfcn_coeff * vfcn_loss - self.entropy_coeff * entropy
 
     def update(self, rollouts: Sequence[StepSequence]):
         # Turn the batch of rollouts into a list of steps
@@ -382,8 +398,8 @@ class PPO2(ActorCritic):
             v_pred_old = self._critic.values(concat_ros)
 
         # Attach advantages and old log probs to rollout
-        concat_ros.add_data('log_probs_old', log_probs_old)
-        concat_ros.add_data('v_pred_old', v_pred_old)
+        concat_ros.add_data("log_probs_old", log_probs_old)
+        concat_ros.add_data("v_pred_old", v_pred_old)
 
         # For logging the gradient norms
         policy_grad_norm = []
@@ -392,17 +408,23 @@ class PPO2(ActorCritic):
         # Compute the value targets (empirical discounted returns) for all samples before fitting the V-fcn parameters
         adv = self._critic.gae(concat_ros)  # done with to.no_grad()
         v_targ = discounted_values(rollouts, self._critic.gamma).view(-1, 1)  # empirical discounted returns
-        concat_ros.add_data('adv', adv)
-        concat_ros.add_data('v_targ', v_targ)
+        concat_ros.add_data("adv", adv)
+        concat_ros.add_data("v_targ", v_targ)
 
         # Iterations over the whole data set
         for e in range(self.num_epoch):
 
-            for batch in tqdm(concat_ros.split_shuffled_batches(
-                self.batch_size,
-                complete_rollouts=self._policy.is_recurrent or isinstance(self._critic.vfcn, RecurrentPolicy)),
+            for batch in tqdm(
+                concat_ros.split_shuffled_batches(
+                    self.batch_size,
+                    complete_rollouts=self._policy.is_recurrent or isinstance(self._critic.vfcn, RecurrentPolicy),
+                ),
                 total=num_iter_from_rollouts(None, concat_ros, self.batch_size),
-                desc=f'Epoch {e}', unit='batches', file=sys.stdout, leave=False):
+                desc=f"Epoch {e}",
+                unit="batches",
+                file=sys.stdout,
+                leave=False,
+            ):
                 # Reset the gradients
                 self.optim.zero_grad()
 
@@ -424,8 +446,10 @@ class PPO2(ActorCritic):
                 self.optim.step()
 
                 if to.isnan(self._expl_strat.noise.std).any():
-                    raise RuntimeError(f'At least one exploration parameter became NaN! The exploration parameters are'
-                                       f'\n{self._expl_strat.std.detach().cpu().numpy()}')
+                    raise RuntimeError(
+                        f"At least one exploration parameter became NaN! The exploration parameters are"
+                        f"\n{self._expl_strat.std.detach().cpu().numpy()}"
+                    )
 
             # Update the learning rate if a scheduler has been specified
             if self._lr_scheduler is not None:
@@ -437,7 +461,8 @@ class PPO2(ActorCritic):
                 # Compute value predictions using the new (after the updates) value function approximator
                 v_pred = self._critic.values(concat_ros).to(self.policy.device)
                 v_loss_old = self._critic.loss_fcn(v_pred_old.to(self.policy.device), v_targ.to(self.policy.device)).to(
-                    self.policy.device)
+                    self.policy.device
+                )
                 v_loss_new = self._critic.loss_fcn(v_pred, v_targ).to(self.policy.device)
                 vfcn_loss_impr = v_loss_old - v_loss_new  # positive values are desired
 
@@ -449,15 +474,15 @@ class PPO2(ActorCritic):
                 kl_avg = to.mean(kl_divergence(act_distr_old, act_distr_new))  # mean seeking a.k.a. inclusive KL
 
                 # Compute explained variance (after the updates)
-                self.logger.add_value('explained var', explained_var(v_pred, v_targ), 4)
-                self.logger.add_value('loss improvement V-fcnovement', vfcn_loss_impr, 4)
-                self.logger.add_value('loss after', loss_after, 4)
-                self.logger.add_value('KL(old_new)', kl_avg, 4)
+                self.logger.add_value("explained var", explained_var(v_pred, v_targ), 4)
+                self.logger.add_value("loss improvement V-fcnovement", vfcn_loss_impr, 4)
+                self.logger.add_value("loss after", loss_after, 4)
+                self.logger.add_value("KL(old_new)", kl_avg, 4)
 
         # Logging
-        self.logger.add_value('avg expl strat std', to.mean(self._expl_strat.noise.std), 4)
-        self.logger.add_value('expl strat entropy', self._expl_strat.noise.get_entropy(), 4)
-        self.logger.add_value('avg grad norm policy', np.mean(policy_grad_norm), 4)
-        self.logger.add_value('avg grad norm V-fcn', np.mean(vfcn_grad_norm), 4)
+        self.logger.add_value("avg expl strat std", to.mean(self._expl_strat.noise.std), 4)
+        self.logger.add_value("expl strat entropy", self._expl_strat.noise.get_entropy(), 4)
+        self.logger.add_value("avg grad norm policy", np.mean(policy_grad_norm), 4)
+        self.logger.add_value("avg grad norm V-fcn", np.mean(vfcn_grad_norm), 4)
         if self._lr_scheduler is not None:
-            self.logger.add_value('avg lr', np.mean(self._lr_scheduler.get_last_lr()), 6)
+            self.logger.add_value("avg lr", np.mean(self._lr_scheduler.get_last_lr()), 6)

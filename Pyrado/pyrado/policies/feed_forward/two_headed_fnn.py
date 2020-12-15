@@ -39,19 +39,21 @@ from pyrado.policies.base import TwoHeadedPolicy
 class TwoHeadedFNNPolicy(TwoHeadedPolicy):
     """ Policy architecture which has a common body and two heads that have a separate last layer """
 
-    name: str = 'thfnn'
+    name: str = "thfnn"
 
-    def __init__(self,
-                 spec: EnvSpec,
-                 shared_hidden_sizes: Sequence[int],
-                 shared_hidden_nonlin: [Callable, Sequence[Callable]],
-                 head_1_size: int = None,
-                 head_2_size: int = None,
-                 head_1_output_nonlin: Callable = None,
-                 head_2_output_nonlin: Callable = None,
-                 shared_dropout: float = 0.,
-                 init_param_kwargs: dict = None,
-                 use_cuda: bool = False):
+    def __init__(
+        self,
+        spec: EnvSpec,
+        shared_hidden_sizes: Sequence[int],
+        shared_hidden_nonlin: [Callable, Sequence[Callable]],
+        head_1_size: int = None,
+        head_2_size: int = None,
+        head_1_output_nonlin: Callable = None,
+        head_2_output_nonlin: Callable = None,
+        shared_dropout: float = 0.0,
+        init_param_kwargs: dict = None,
+        use_cuda: bool = False,
+    ):
         """
         Constructor
 
@@ -75,7 +77,7 @@ class TwoHeadedFNNPolicy(TwoHeadedPolicy):
             hidden_sizes=shared_hidden_sizes,
             hidden_nonlin=shared_hidden_nonlin,
             dropout=shared_dropout,
-            output_nonlin=None
+            output_nonlin=None,
         )
 
         # Create output layer

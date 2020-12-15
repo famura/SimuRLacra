@@ -60,7 +60,7 @@ class ObsPartialWrapper(EnvWrapperObs, Serializable):
                 raise pyrado.ShapeErr(given=mask, expected_match=wrapped_env.obs_space)
         else:
             # Parse indices
-            assert idcs is not None, 'Either mask or indices must be specified'
+            assert idcs is not None, "Either mask or indices must be specified"
             mask = wrapped_env.obs_space.create_mask(idcs)
         # Invert if needed
         if keep_selected:

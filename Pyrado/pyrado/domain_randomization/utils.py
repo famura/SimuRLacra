@@ -66,8 +66,9 @@ def print_domain_params(domain_params: Union[dict, Sequence[dict]]):
             # Check the first element
             if isinstance(domain_params[0], dict):
                 # Assuming all dicts have identical keys
-                print(tabulate([dp.values() for dp in domain_params],
-                               headers=domain_params[0].keys(), tablefmt='simple'))
+                print(
+                    tabulate([dp.values() for dp in domain_params], headers=domain_params[0].keys(), tablefmt="simple")
+                )
             else:
                 raise pyrado.TypeErr(given=domain_params, expected_type=dict)
 
@@ -83,7 +84,7 @@ def print_domain_params(domain_params: Union[dict, Sequence[dict]]):
                     pass
                 else:
                     pyrado.TypeErr(given=v, expected_type=[int, float, bool, list])
-            print(tabulate(dp, headers="keys", tablefmt='simple'))
+            print(tabulate(dp, headers="keys", tablefmt="simple"))
 
         else:
             raise pyrado.TypeErr(given=domain_params, expected_type=[dict, list])

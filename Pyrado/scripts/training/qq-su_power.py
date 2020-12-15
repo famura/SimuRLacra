@@ -37,16 +37,16 @@ from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceC
 from pyrado.utils.argparser import get_argparser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
     # ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{PoWER.name}_{LinearPolicy.name}', 'actnorm')
-    ex_dir = setup_experiment(QQubeSwingUpSim.name, f'{PoWER.name}_{QQubeSwingUpAndBalanceCtrl.name}')
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{PoWER.name}_{QQubeSwingUpAndBalanceCtrl.name}")
 
     # Environment
-    env_hparams = dict(dt=1/250., max_steps=1500)
+    env_hparams = dict(dt=1 / 250.0, max_steps=1500)
     env = QQubeSwingUpSim(**env_hparams)
     env = ActNormWrapper(env)
 
@@ -74,12 +74,14 @@ if __name__ == '__main__':
     algo = PoWER(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha
-    algo.train(seed=args.seed, snapshot_mode='best')
+    algo.train(seed=args.seed, snapshot_mode="best")

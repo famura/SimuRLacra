@@ -39,6 +39,7 @@ from pyrado.utils.input_output import print_cbt
 
 class FinalRewMode(NamedTuple):
     """ The specification of how the final state should be rewarded or punished """
+
     state_dependent: bool = False
     time_dependent: bool = False
     always_positive: bool = False
@@ -47,18 +48,27 @@ class FinalRewMode(NamedTuple):
 
     def __str__(self):
         """ Get an information string. """
-        return Style.BRIGHT + f'{get_class_name(self)}' + Style.RESET_ALL + f' (id: {id(self)})\n' + \
-               tabulate(
-                   [['state_dependent', self.state_dependent], ['time_dependent', self.time_dependent],
-                    ['always_positive', self.always_positive], ['always_negative', self.always_negative],
-                    ['user_input', self.user_input]]
-               )
+        return (
+            Style.BRIGHT
+            + f"{get_class_name(self)}"
+            + Style.RESET_ALL
+            + f" (id: {id(self)})\n"
+            + tabulate(
+                [
+                    ["state_dependent", self.state_dependent],
+                    ["time_dependent", self.time_dependent],
+                    ["always_positive", self.always_positive],
+                    ["always_negative", self.always_negative],
+                    ["user_input", self.user_input],
+                ]
+            )
+        )
 
 
 class FinalRewTask(TaskWrapper):
     """
     Wrapper for tasks which yields a reward / cost on success / failure
-    
+
     :usage:
     .. code-block:: python
 
@@ -78,9 +88,10 @@ class FinalRewTask(TaskWrapper):
 
         if not isinstance(mode, FinalRewMode):
             raise pyrado.TypeErr(given=mode, expected_type=FinalRewMode)
-        if mode.user_input and (mode.always_positive or mode.always_negative or
-                                mode.state_dependent or mode.time_dependent):
-            print_cbt('If the user_input == True, then all other specifications in FinalRewMode are ignored.', 'w')
+        if mode.user_input and (
+            mode.always_positive or mode.always_negative or mode.state_dependent or mode.time_dependent
+        ):
+            print_cbt("If the user_input == True, then all other specifications in FinalRewMode are ignored.", "w")
 
         self.mode = mode
         self.factor = factor
@@ -115,123 +126,148 @@ class FinalRewTask(TaskWrapper):
 
         if self._yielded_final_rew:
             # Only yield the final reward once
-            return 0.
+            return 0.0
 
         else:
             self._yielded_final_rew = True
 
             if not self.mode.user_input:
                 # Default case
-                if mode_switch(off=(self.mode.always_positive, self.mode.always_negative,
-                                    self.mode.state_dependent, self.mode.time_dependent)):
+                if mode_switch(
+                    off=(
+                        self.mode.always_positive,
+                        self.mode.always_negative,
+                        self.mode.state_dependent,
+                        self.mode.time_dependent,
+                    )
+                ):
                     if self.has_failed(state):
-                        return -1. * np.abs(self.factor)
+                        return -1.0 * np.abs(self.factor)
                     elif self.has_succeeded(state):
                         return np.abs(self.factor)
                     else:
-                        return 0.
+                        return 0.0
 
-                elif mode_switch(on=(self.mode.always_positive,),
-                                 off=(self.mode.always_negative, self.mode.state_dependent, self.mode.time_dependent)):
+                elif mode_switch(
+                    on=(self.mode.always_positive,),
+                    off=(self.mode.always_negative, self.mode.state_dependent, self.mode.time_dependent),
+                ):
                     if self.has_failed(state):
-                        return 0.
+                        return 0.0
                     elif self.has_succeeded(state):
                         return np.abs(self.factor)
                     else:
-                        return 0.
+                        return 0.0
 
-                elif mode_switch(on=(self.mode.always_negative,),
-                                 off=(self.mode.always_positive, self.mode.state_dependent, self.mode.time_dependent)):
+                elif mode_switch(
+                    on=(self.mode.always_negative,),
+                    off=(self.mode.always_positive, self.mode.state_dependent, self.mode.time_dependent),
+                ):
                     if self.has_failed(state):
-                        return -1. * np.abs(self.factor)
+                        return -1.0 * np.abs(self.factor)
                     elif self.has_succeeded(state):
-                        return 0.
+                        return 0.0
                     else:
-                        return 0.
+                        return 0.0
 
-                elif mode_switch(on=(self.mode.always_positive, self.mode.state_dependent),
-                                 off=(self.mode.always_negative, self.mode.time_dependent)):
+                elif mode_switch(
+                    on=(self.mode.always_positive, self.mode.state_dependent),
+                    off=(self.mode.always_negative, self.mode.time_dependent),
+                ):
                     if self.has_failed(state):
-                        return 0.
+                        return 0.0
                     elif self.has_succeeded(state):
                         act = np.zeros(self.env_spec.act_space.shape)  # dummy
                         step_rew = self._wrapped_task.step_rew(state, act, remaining_steps)
                         return self.factor * abs(step_rew)
                     else:
-                        return 0.
+                        return 0.0
 
-                elif mode_switch(on=(self.mode.always_negative, self.mode.state_dependent),
-                                 off=(self.mode.always_positive, self.mode.time_dependent)):
+                elif mode_switch(
+                    on=(self.mode.always_negative, self.mode.state_dependent),
+                    off=(self.mode.always_positive, self.mode.time_dependent),
+                ):
                     if self.has_failed(state):
                         act = np.zeros(self.env_spec.act_space.shape)  # dummy
                         step_rew = self._wrapped_task.step_rew(state, act, remaining_steps)
-                        return -1. * self.factor * abs(step_rew)
+                        return -1.0 * self.factor * abs(step_rew)
                     elif self.has_succeeded(state):
-                        return 0.
+                        return 0.0
                     else:
-                        return 0.
+                        return 0.0
 
-                elif mode_switch(on=(self.mode.state_dependent,),
-                                 off=(self.mode.always_positive, self.mode.always_negative, self.mode.time_dependent)):
+                elif mode_switch(
+                    on=(self.mode.state_dependent,),
+                    off=(self.mode.always_positive, self.mode.always_negative, self.mode.time_dependent),
+                ):
                     act = np.zeros(self.env_spec.act_space.shape)  # dummy
                     step_rew = self._wrapped_task.step_rew(state, act, remaining_steps)
                     if self.has_failed(state):
-                        return -1. * self.factor * abs(step_rew)
+                        return -1.0 * self.factor * abs(step_rew)
                     elif self.has_succeeded(state):
                         return self.factor * abs(step_rew)
                     else:
-                        return 0.
+                        return 0.0
 
-                elif mode_switch(on=(self.mode.state_dependent, self.mode.time_dependent),
-                                 off=(self.mode.always_positive, self.mode.always_negative)):
+                elif mode_switch(
+                    on=(self.mode.state_dependent, self.mode.time_dependent),
+                    off=(self.mode.always_positive, self.mode.always_negative),
+                ):
                     act = np.zeros(self.env_spec.act_space.shape)  # dummy
                     step_rew = self._wrapped_task.step_rew(state, act, remaining_steps)
                     if self.has_failed(state):
-                        return -1. * remaining_steps * abs(step_rew)
+                        return -1.0 * remaining_steps * abs(step_rew)
                     elif self.has_succeeded(state):
                         return remaining_steps * abs(step_rew)
                     else:
-                        return 0.
+                        return 0.0
 
-                elif mode_switch(on=(self.mode.time_dependent,),
-                                 off=(self.mode.always_positive, self.mode.always_negative, self.mode.state_dependent)):
+                elif mode_switch(
+                    on=(self.mode.time_dependent,),
+                    off=(self.mode.always_positive, self.mode.always_negative, self.mode.state_dependent),
+                ):
                     if self.has_failed(state):
-                        return -1. * remaining_steps
+                        return -1.0 * remaining_steps
                     elif self.has_succeeded(state):
                         return remaining_steps
                     else:
-                        return 0.
+                        return 0.0
 
-                elif mode_switch(on=(self.mode.always_positive, self.mode.time_dependent),
-                                 off=(self.mode.always_negative, self.mode.state_dependent)):
+                elif mode_switch(
+                    on=(self.mode.always_positive, self.mode.time_dependent),
+                    off=(self.mode.always_negative, self.mode.state_dependent),
+                ):
                     if self.has_failed(state):
-                        return 0.
+                        return 0.0
                     elif self.has_succeeded(state):
                         return remaining_steps
                     else:
-                        return 0.
+                        return 0.0
 
-                elif mode_switch(on=(self.mode.always_negative, self.mode.time_dependent),
-                                 off=(self.mode.always_positive, self.mode.state_dependent)):
+                elif mode_switch(
+                    on=(self.mode.always_negative, self.mode.time_dependent),
+                    off=(self.mode.always_positive, self.mode.state_dependent),
+                ):
                     if self.has_failed(state):
-                        return -1. * remaining_steps
+                        return -1.0 * remaining_steps
                     elif self.has_succeeded(state):
-                        return 0.
+                        return 0.0
                     else:
-                        return 0.
+                        return 0.0
 
                 else:
-                    raise NotImplementedError(f'No matching configuration found for the given'
-                                              f'FinalRewMode:\n{self.mode}')
+                    raise NotImplementedError(
+                        f"No matching configuration found for the given" f"FinalRewMode:\n{self.mode}"
+                    )
 
             else:
                 user_rew = None
                 while user_rew is None:
-                    user_input = input('Please enter a final reward: ')
+                    user_input = input("Please enter a final reward: ")
                     try:
                         user_rew = float(user_input)
                     except ValueError:
-                        print_cbt('The received input could not be casted to a float. Try again: ', 'y')
+                        print_cbt("The received input could not be casted to a float. Try again: ", "y")
                         user_rew = None
                 return user_rew
 
@@ -242,7 +278,7 @@ class BestStateFinalRewTask(TaskWrapper):
     current trajectory that is scaled by the number of taken / remaining time steps.
     """
 
-    def __init__(self, wrapped_task: Task, max_steps: int, factor: float = 1.):
+    def __init__(self, wrapped_task: Task, max_steps: int, factor: float = 1.0):
         """
         Constructor
 
@@ -286,7 +322,7 @@ class BestStateFinalRewTask(TaskWrapper):
         """
         if self._yielded_final_rew:
             # Only yield the final reward once
-            return 0.
+            return 0.0
 
         else:
             self._yielded_final_rew = True

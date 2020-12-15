@@ -45,7 +45,7 @@ from pyrado.utils.data_types import RenderMode
 
 @pytest.mark.wrapper
 def test_combination():
-    env = QCartPoleSwingUpSim(dt=1/50., max_steps=20)
+    env = QCartPoleSwingUpSim(dt=1 / 50.0, max_steps=20)
 
     randomizer = create_default_randomizer(env)
     env_r = DomainRandWrapperBuffer(env, randomizer)
@@ -61,8 +61,8 @@ def test_combination():
     assert dp_after[0] == dp_after[3]
 
     env_rn = ActNormWrapper(env)
-    elb = {'x_dot': -213., 'theta_dot': -42.}
-    eub = {'x_dot': 213., 'theta_dot': 42., 'x': 0.123}
+    elb = {"x_dot": -213.0, "theta_dot": -42.0}
+    eub = {"x_dot": 213.0, "theta_dot": 42.0, "x": 0.123}
     env_rn = ObsNormWrapper(env_rn, explicit_lb=elb, explicit_ub=eub)
     alb, aub = env_rn.act_space.bounds
     assert all(alb == -1)
@@ -75,12 +75,12 @@ def test_combination():
     ro_rn = rollout(env_rn, DummyPolicy(env_rn.spec), eval=True, seed=0, render_mode=RenderMode())
     assert np.allclose(env_rn._process_obs(ro_r.observations), ro_rn.observations)
 
-    env_rnp = ObsPartialWrapper(env_rn, idcs=['x_dot', r'cos_theta'])
+    env_rnp = ObsPartialWrapper(env_rn, idcs=["x_dot", r"cos_theta"])
     ro_rnp = rollout(env_rnp, DummyPolicy(env_rnp.spec), eval=True, seed=0, render_mode=RenderMode())
 
-    env_rnpa = GaussianActNoiseWrapper(env_rnp,
-                                       noise_mean=0.5*np.ones(env_rnp.act_space.shape),
-                                       noise_std=0.1*np.ones(env_rnp.act_space.shape))
+    env_rnpa = GaussianActNoiseWrapper(
+        env_rnp, noise_mean=0.5 * np.ones(env_rnp.act_space.shape), noise_std=0.1 * np.ones(env_rnp.act_space.shape)
+    )
     ro_rnpa = rollout(env_rnpa, DummyPolicy(env_rnpa.spec), eval=True, seed=0, render_mode=RenderMode())
     assert np.allclose(ro_rnp.actions, ro_rnpa.actions)
     assert not np.allclose(ro_rnp.observations, ro_rnpa.observations)

@@ -44,9 +44,9 @@ def policy_fcn(t: float):
 
 
 # Set up environment
-dt = 1/500.
+dt = 1 / 500.0
 env = QBallBalancerSim(dt=dt, max_steps=10000)
-env.reset(domain_param=dict(offset_th_x=50./180*3.141592))
+env.reset(domain_param=dict(offset_th_x=50.0 / 180 * 3.141592))
 print_domain_params(env.domain_param)
 
 # Set up policy

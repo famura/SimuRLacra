@@ -43,12 +43,12 @@ from pyrado.utils.input_output import print_cbt
 from pyrado.utils.argparser import get_argparser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
+    ex_dir = ask_for_experiment() if args.dir is None else args.dir
 
     # Get the simulation environment
     env, policy, kwout = load_experiment(ex_dir, args)
@@ -61,19 +61,23 @@ if __name__ == '__main__':
         # Add default domain randomization wrapper with action delay
         randomizer = create_default_randomizer(env)
         env = ActDelayWrapper(env)
-        randomizer.add_domain_params(
-            UniformDomainParam(name='act_delay', mean=5, halfspan=5, clip_lo=0, roundint=True))
+        randomizer.add_domain_params(UniformDomainParam(name="act_delay", mean=5, halfspan=5, clip_lo=0, roundint=True))
         env = DomainRandWrapperLive(env, randomizer)
-        print_cbt('Using default randomizer with additional action delay.', 'c')
+        print_cbt("Using default randomizer with additional action delay.", "c")
     else:
-        print_cbt('Using loaded randomizer.', 'c')
+        print_cbt("Using loaded randomizer.", "c")
 
     # Simulate
     done, state, param = False, None, None
     while not done:
-        ro = rollout(env, policy, render_mode=RenderMode(text=args.verbose, video=True), eval=True,
-                     reset_kwargs=dict(domain_param=param, init_state=state))
+        ro = rollout(
+            env,
+            policy,
+            render_mode=RenderMode(text=args.verbose, video=True),
+            eval=True,
+            reset_kwargs=dict(domain_param=param, init_state=state),
+        )
         print_domain_params(env.domain_param)
-        print_cbt(f'Return: {ro.undiscounted_return()}', 'g', bright=True)
+        print_cbt(f"Return: {ro.undiscounted_return()}", "g", bright=True)
         done, state, param = after_rollout_query(env, policy, ro)
     pyrado.close_vpython()

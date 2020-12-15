@@ -44,36 +44,36 @@ from pyrado.utils.input_output import print_cbt
 from pyrado.utils.argparser import get_argparser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
+    ex_dir = ask_for_experiment() if args.dir is None else args.dir
 
     # Load the policy (trained in simulation) and the environment (for constructing the real-world counterpart)
     env_sim, policy, _ = load_experiment(ex_dir, args)
 
     # Detect the correct real-world counterpart and create it
-    if env_sim.name == 'wam-bic':  # use hard-coded name to avoid loading mujoco_py by loading WAMBallInCupSim
+    if env_sim.name == "wam-bic":  # use hard-coded name to avoid loading mujoco_py by loading WAMBallInCupSim
         # If `max_steps` (or `dt`) are not explicitly set using `args`, use the same as in the simulation
         max_steps = args.max_steps if args.max_steps < pyrado.inf else env_sim.max_steps
         dt = args.dt if args.dt is not None else env_sim.dt
-        mode = ''
-        while mode not in ['ep', 'sb']:
-            mode = input('Pass ep for episodic and sb for step-based control mode: ').lower()
-        if mode == 'sb':
+        mode = ""
+        while mode not in ["ep", "sb"]:
+            mode = input("Pass ep for episodic and sb for step-based control mode: ").lower()
+        if mode == "sb":
             env_real = WAMBallInCupRealStepBased(dt=dt, max_steps=max_steps, num_dof=inner_env(env_sim).num_dof)
         else:
             env_real = WAMBallInCupRealEpisodic(dt=dt, max_steps=max_steps, num_dof=inner_env(env_sim).num_dof)
     else:
-        raise pyrado.ValueErr(given=env_sim.name, eq_constraint='wam-bic')
+        raise pyrado.ValueErr(given=env_sim.name, eq_constraint="wam-bic")
 
     # Wrap the environment in the same as done during training
     env_real = wrap_like_other_env(env_real, env_sim)
 
     ex_ts = datetime.now().strftime(timestamp_format)
-    save_dir = osp.join(ex_dir, 'evaluation')
+    save_dir = osp.join(ex_dir, "evaluation")
     os.makedirs(save_dir, exist_ok=True)
 
     # Run the policy on the real system
@@ -81,4 +81,4 @@ if __name__ == '__main__':
     est_ret = BayRn.eval_policy(
         save_dir, env_real, policy, mc_estimator=True, prefix=ex_ts, num_rollouts=num_ro_per_config
     )
-    print_cbt(f'Estimated return: {est_ret.item()}', 'g')
+    print_cbt(f"Estimated return: {est_ret.item()}", "g")

@@ -55,8 +55,14 @@ from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.experiment import load_dict_from_yaml
-from pyrado.policies.recurrent.adn import pd_linear, pd_cubic, pd_capacity_21_abs, pd_capacity_21, pd_capacity_32, \
-    pd_capacity_32_abs
+from pyrado.policies.recurrent.adn import (
+    pd_linear,
+    pd_cubic,
+    pd_capacity_21_abs,
+    pd_capacity_21,
+    pd_capacity_32,
+    pd_capacity_32_abs,
+)
 from pyrado.policies.base import Policy
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.input_output import print_cbt
@@ -79,141 +85,141 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
         args = get_argparser().parse_args([])
 
     # Hyper-parameters
-    hparams_file_name = 'hyperparams.yaml'
+    hparams_file_name = "hyperparams.yaml"
     try:
         hparams = load_dict_from_yaml(osp.join(ex_dir, hparams_file_name))
-        extra['hparams'] = hparams
+        extra["hparams"] = hparams
     except (pyrado.PathErr, FileNotFoundError, KeyError):
-        print_cbt(f'Did not find {hparams_file_name} in {ex_dir} or could not crawl the loaded hyper-parameters.',
-                  'y', bright=True)
+        print_cbt(
+            f"Did not find {hparams_file_name} in {ex_dir} or could not crawl the loaded hyper-parameters.",
+            "y",
+            bright=True,
+        )
 
     # Algorithm specific
-    algo = Algorithm.load_snapshot(load_dir=ex_dir, load_name='algo')
+    algo = Algorithm.load_snapshot(load_dir=ex_dir, load_name="algo")
     if isinstance(algo, BayRn):
         # Environment
-        env = pyrado.load(None, 'env_sim', 'pkl', ex_dir, None)
-        print_cbt(f"Loaded {osp.join(ex_dir, 'env_sim.pkl')}.", 'g')
-        if hasattr(env, 'randomizer'):
-            last_cand = to.load(osp.join(ex_dir, 'candidates.pt'))[-1, :]
+        env = pyrado.load(None, "env_sim", "pkl", ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, 'env_sim.pkl')}.", "g")
+        if hasattr(env, "randomizer"):
+            last_cand = to.load(osp.join(ex_dir, "candidates.pt"))[-1, :]
             env.adapt_randomizer(last_cand.numpy())
-            print_cbt(f'Loaded the domain randomizer\n{env.randomizer}', 'w')
+            print_cbt(f"Loaded the domain randomizer\n{env.randomizer}", "w")
         else:
-            print_cbt('Loaded environment has no randomizer.', 'r')
+            print_cbt("Loaded environment has no randomizer.", "r")
         # Policy
-        policy = pyrado.load(algo.policy, f'{args.policy_name}', 'pt', ex_dir, None)
-        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", 'g')
+        policy = pyrado.load(algo.policy, f"{args.policy_name}", "pt", ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
         # Extra (value function)
         if isinstance(algo.subroutine, ActorCritic):
-            extra['vfcn'] = pyrado.load(
-                algo.subroutine.critic.vfcn, f'{args.vfcn_name}', 'pt', ex_dir, None)
-            print_cbt(f"Loaded {osp.join(ex_dir, f'{args.vfcn_name}.pt')}", 'g')
+            extra["vfcn"] = pyrado.load(algo.subroutine.critic.vfcn, f"{args.vfcn_name}", "pt", ex_dir, None)
+            print_cbt(f"Loaded {osp.join(ex_dir, f'{args.vfcn_name}.pt')}", "g")
 
     elif isinstance(algo, SPOTA):
         # Environment
-        env = pyrado.load(None, 'env', 'pkl', ex_dir, None)
-        print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')}.", 'g')
-        if hasattr(env, 'randomizer'):
+        env = pyrado.load(None, "env", "pkl", ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')}.", "g")
+        if hasattr(env, "randomizer"):
             if not isinstance(env.randomizer, DomainRandWrapperBuffer):
                 raise pyrado.TypeErr(given=env.randomizer, expected_type=DomainRandWrapperBuffer)
             typed_env(env, DomainRandWrapperBuffer).fill_buffer(100)
-            print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')} and filled it with 100 random instances.", 'g')
+            print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')} and filled it with 100 random instances.", "g")
         else:
-            print_cbt('Loaded environment has no randomizer.', 'r')
+            print_cbt("Loaded environment has no randomizer.", "r")
         # Policy
-        policy = pyrado.load(algo.subroutine_cand.policy, f'{args.policy_name}', 'pt', ex_dir, None)
-        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", 'g')
+        policy = pyrado.load(algo.subroutine_cand.policy, f"{args.policy_name}", "pt", ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
         # Extra (value function)
         if isinstance(algo.subroutine_cand, ActorCritic):
-            extra['vfcn'] = pyrado.load(
-                algo.subroutine_cand.critic.vfcn, f'{args.vfcn_name}', 'pt', ex_dir, None)
-            print_cbt(f"Loaded {osp.join(ex_dir, f'{args.vfcn_name}.pt')}", 'g')
+            extra["vfcn"] = pyrado.load(algo.subroutine_cand.critic.vfcn, f"{args.vfcn_name}", "pt", ex_dir, None)
+            print_cbt(f"Loaded {osp.join(ex_dir, f'{args.vfcn_name}.pt')}", "g")
 
     elif isinstance(algo, SimOpt):
         # Environment
-        env = pyrado.load(None, 'env_sim', 'pkl', ex_dir, None)
-        print_cbt(f"Loaded {osp.join(ex_dir, 'env_sim.pkl')}.", 'g')
-        if hasattr(env, 'randomizer'):
-            last_cand = to.load(osp.join(ex_dir, 'candidates.pt'))[-1, :]
+        env = pyrado.load(None, "env_sim", "pkl", ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, 'env_sim.pkl')}.", "g")
+        if hasattr(env, "randomizer"):
+            last_cand = to.load(osp.join(ex_dir, "candidates.pt"))[-1, :]
             env.adapt_randomizer(last_cand.numpy())
-            print_cbt(f'Loaded the domain randomizer\n{env.randomizer}', 'w')
+            print_cbt(f"Loaded the domain randomizer\n{env.randomizer}", "w")
         else:
-            print_cbt('Loaded environment has no randomizer.', 'r')
+            print_cbt("Loaded environment has no randomizer.", "r")
         # Policy
-        policy = pyrado.load(algo.subroutine_policy.policy, f'{args.policy_name}', 'pt', ex_dir, None)
-        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", 'g')
+        policy = pyrado.load(algo.subroutine_policy.policy, f"{args.policy_name}", "pt", ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
         # Extra (domain parameter distribution policy)
-        extra['ddp_policy'] = pyrado.load(algo.subroutine_distr.policy, 'ddp_policy', 'pt', ex_dir, None)
+        extra["ddp_policy"] = pyrado.load(algo.subroutine_distr.policy, "ddp_policy", "pt", ex_dir, None)
 
     elif isinstance(algo, (EPOpt, UDR)):
         # Environment
-        env = pyrado.load(None, 'env_sim', 'pkl', ex_dir, None)
-        if hasattr(env, 'randomizer'):
+        env = pyrado.load(None, "env_sim", "pkl", ex_dir, None)
+        if hasattr(env, "randomizer"):
             if not isinstance(env.randomizer, DomainRandWrapperLive):
                 raise pyrado.TypeErr(given=env.randomizer, expected_type=DomainRandWrapperLive)
-            print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')} with DomainRandWrapperLive randomizer.", 'g')
+            print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')} with DomainRandWrapperLive randomizer.", "g")
         else:
-            print_cbt('Loaded environment has no randomizer.', 'y')
+            print_cbt("Loaded environment has no randomizer.", "y")
         # Policy
-        policy = pyrado.load(algo.policy, f'{args.policy_name}', 'pt', ex_dir, None)
-        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", 'g')
+        policy = pyrado.load(algo.policy, f"{args.policy_name}", "pt", ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
         # Extra (value function)
         if isinstance(algo.subroutine, ActorCritic):
-            extra['vfcn'] = pyrado.load(
-                algo.subroutine.critic.vfcn, f'{args.vfcn_name}', 'pt', ex_dir, None)
-            print_cbt(f"Loaded {osp.join(ex_dir, f'{args.vfcn_name}.pt')}", 'g')
+            extra["vfcn"] = pyrado.load(algo.subroutine.critic.vfcn, f"{args.vfcn_name}", "pt", ex_dir, None)
+            print_cbt(f"Loaded {osp.join(ex_dir, f'{args.vfcn_name}.pt')}", "g")
 
     elif isinstance(algo, ActorCritic):
         # Environment
-        env = pyrado.load(None, 'env', 'pkl', ex_dir, None)
+        env = pyrado.load(None, "env", "pkl", ex_dir, None)
         # Policy
-        policy = pyrado.load(algo.policy, f'{args.policy_name}', 'pt', ex_dir, None)
-        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", 'g')
+        policy = pyrado.load(algo.policy, f"{args.policy_name}", "pt", ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
         # Extra (value function)
-        extra['vfcn'] = pyrado.load(algo.critic.vfcn, f'{args.vfcn_name}', 'pt', ex_dir, None)
-        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.vfcn_name}.pt')}", 'g')
+        extra["vfcn"] = pyrado.load(algo.critic.vfcn, f"{args.vfcn_name}", "pt", ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.vfcn_name}.pt')}", "g")
 
     elif isinstance(algo, ParameterExploring):
         # Environment
-        env = pyrado.load(None, 'env', 'pkl', ex_dir, None)
+        env = pyrado.load(None, "env", "pkl", ex_dir, None)
         # Policy
-        policy = pyrado.load(algo.policy, f'{args.policy_name}', 'pt', ex_dir, None)
-        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", 'g')
+        policy = pyrado.load(algo.policy, f"{args.policy_name}", "pt", ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
 
     elif isinstance(algo, ValueBased):
         # Environment
-        env = pyrado.load(None, 'env', 'pkl', ex_dir, None)
+        env = pyrado.load(None, "env", "pkl", ex_dir, None)
         # Policy
-        policy = pyrado.load(algo.policy, f'{args.policy_name}', 'pt', ex_dir, None)
-        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", 'g')
+        policy = pyrado.load(algo.policy, f"{args.policy_name}", "pt", ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
         # Target value functions
         if isinstance(algo, DQL):
-            extra['qfcn_target'] = pyrado.load(algo.qfcn_targ, 'qfcn_target', 'pt', ex_dir, None)
-            print_cbt(f"Loaded {osp.join(ex_dir, 'qfcn_target.pt')}", 'g')
+            extra["qfcn_target"] = pyrado.load(algo.qfcn_targ, "qfcn_target", "pt", ex_dir, None)
+            print_cbt(f"Loaded {osp.join(ex_dir, 'qfcn_target.pt')}", "g")
         elif isinstance(algo, SAC):
-            extra['qfcn_target1'] = pyrado.load(algo.qfcn_targ_1, 'qfcn_target1', 'pt', ex_dir, None)
-            extra['qfcn_target2'] = pyrado.load(algo.qfcn_targ_2, 'qfcn_target2', 'pt', ex_dir, None)
-            print_cbt(f"Loaded {osp.join(ex_dir, 'qfcn_target1.pt')} and {osp.join(ex_dir, 'qfcn_target2.pt')}", 'g')
+            extra["qfcn_target1"] = pyrado.load(algo.qfcn_targ_1, "qfcn_target1", "pt", ex_dir, None)
+            extra["qfcn_target2"] = pyrado.load(algo.qfcn_targ_2, "qfcn_target2", "pt", ex_dir, None)
+            print_cbt(f"Loaded {osp.join(ex_dir, 'qfcn_target1.pt')} and {osp.join(ex_dir, 'qfcn_target2.pt')}", "g")
         else:
             raise NotImplementedError
 
     elif isinstance(algo, SVPG):
         # Environment
-        env = pyrado.load(None, 'env', 'pkl', ex_dir, None)
+        env = pyrado.load(None, "env", "pkl", ex_dir, None)
         # Policy
-        policy = pyrado.load(algo.policy, f'{args.policy_name}', 'pt', ex_dir, None)
-        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", 'g')
+        policy = pyrado.load(algo.policy, f"{args.policy_name}", "pt", ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
         # Extra (particles)
         for idx, p in enumerate(algo.particles):
-            extra[f'particle{idx}'] = pyrado.load(algo.particles[idx], f'particle_{idx}', 'pt', ex_dir, None)
+            extra[f"particle{idx}"] = pyrado.load(algo.particles[idx], f"particle_{idx}", "pt", ex_dir, None)
 
     elif isinstance(algo, TSPred):
         # Dataset
-        extra['dataset'] = to.load(osp.join(ex_dir, 'dataset.pt'))
+        extra["dataset"] = to.load(osp.join(ex_dir, "dataset.pt"))
         # Policy
-        policy = pyrado.load(algo.policy, f'{args.policy_name}', 'pt', ex_dir, None)
+        policy = pyrado.load(algo.policy, f"{args.policy_name}", "pt", ex_dir, None)
 
     else:
-        raise pyrado.TypeErr(msg='No matching algorithm name found during loading the experiment!')
+        raise pyrado.TypeErr(msg="No matching algorithm name found during loading the experiment!")
 
     # Check if the return types are correct. They can be None, too.
     if env is not None and not isinstance(env, (SimEnv, EnvWrapper)):
@@ -226,8 +232,9 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
     return env, policy, extra
 
 
-def wrap_like_other_env(env_targ: Union[SimEnv, RealEnv], env_src: [SimEnv, EnvWrapper], use_downsampling: bool = False
-                        ) -> Union[SimEnv, RealEnv]:
+def wrap_like_other_env(
+    env_targ: Union[SimEnv, RealEnv], env_src: [SimEnv, EnvWrapper], use_downsampling: bool = False
+) -> Union[SimEnv, RealEnv]:
     """
     Wrap a given real environment like it's simulated counterpart (except the domain randomization of course).
 
@@ -238,40 +245,41 @@ def wrap_like_other_env(env_targ: Union[SimEnv, RealEnv], env_src: [SimEnv, EnvW
     """
     if use_downsampling and env_src.dt > env_targ.dt:
         if typed_env(env_targ, DownsamplingWrapper) is None:
-            ds_factor = int(env_src.dt/env_targ.dt)
+            ds_factor = int(env_src.dt / env_targ.dt)
             env_targ = DownsamplingWrapper(env_targ, ds_factor)
-            print_cbt(f'Wrapped the target environment with a DownsamplingWrapper of factor {ds_factor}.', 'y')
+            print_cbt(f"Wrapped the target environment with a DownsamplingWrapper of factor {ds_factor}.", "y")
         else:
-            print_cbt('The target environment was already wrapped with a DownsamplingWrapper.', 'y')
+            print_cbt("The target environment was already wrapped with a DownsamplingWrapper.", "y")
 
     if typed_env(env_src, ActNormWrapper) is not None:
         if typed_env(env_targ, ActNormWrapper) is None:
             env_targ = ActNormWrapper(env_targ)
-            print_cbt('Wrapped the target environment with an ActNormWrapper.', 'y')
+            print_cbt("Wrapped the target environment with an ActNormWrapper.", "y")
         else:
-            print_cbt('The target environment was already wrapped with an ActNormWrapper.', 'y')
+            print_cbt("The target environment was already wrapped with an ActNormWrapper.", "y")
 
     if typed_env(env_src, ObsNormWrapper) is not None:
         if typed_env(env_targ, ObsNormWrapper) is None:
             env_targ = ObsNormWrapper(env_targ)
-            print_cbt('Wrapped the target environment with an ObsNormWrapper.', 'y')
+            print_cbt("Wrapped the target environment with an ObsNormWrapper.", "y")
         else:
-            print_cbt('The target environment was already wrapped with an ObsNormWrapper.', 'y')
+            print_cbt("The target environment was already wrapped with an ObsNormWrapper.", "y")
 
     elif typed_env(env_src, ObsRunningNormWrapper) is not None:
         if typed_env(env_targ, ObsRunningNormWrapper) is None:
             env_targ = ObsRunningNormWrapper(env_targ)
-            print_cbt('Wrapped the target environment with an ObsRunningNormWrapper.', 'y')
+            print_cbt("Wrapped the target environment with an ObsRunningNormWrapper.", "y")
         else:
-            print_cbt('The target environment was already wrapped with an ObsRunningNormWrapper.', 'y')
+            print_cbt("The target environment was already wrapped with an ObsRunningNormWrapper.", "y")
 
     if typed_env(env_src, ObsPartialWrapper) is not None:
         if typed_env(env_targ, ObsPartialWrapper) is None:
             env_targ = ObsPartialWrapper(
-                env_targ, mask=typed_env(env_src, ObsPartialWrapper).keep_mask, keep_selected=True)
-            print_cbt('Wrapped the target environment with an ObsPartialWrapper.', 'y')
+                env_targ, mask=typed_env(env_src, ObsPartialWrapper).keep_mask, keep_selected=True
+            )
+            print_cbt("Wrapped the target environment with an ObsPartialWrapper.", "y")
         else:
-            print_cbt('The target environment was already wrapped with an ObsPartialWrapper.', 'y')
+            print_cbt("The target environment was already wrapped with an ObsPartialWrapper.", "y")
 
     return env_targ
 
@@ -284,23 +292,23 @@ def fcn_from_str(name: str) -> Callable:
     :param name: name of the function
     :return: the function
     """
-    if name == 'to_tanh':
+    if name == "to_tanh":
         return to.tanh
-    elif name == 'to_relu':
+    elif name == "to_relu":
         return to.relu
-    elif name == 'to_sigmoid':
+    elif name == "to_sigmoid":
         return to.sigmoid
-    elif name == 'pd_linear':
+    elif name == "pd_linear":
         return pd_linear
-    elif name == 'pd_cubic':
+    elif name == "pd_cubic":
         return pd_cubic
-    elif name == 'pd_capacity_21':
+    elif name == "pd_capacity_21":
         return pd_capacity_21
-    elif name == 'pd_capacity_21_abs':
+    elif name == "pd_capacity_21_abs":
         return pd_capacity_21_abs
-    elif name == 'pd_capacity_32':
+    elif name == "pd_capacity_32":
         return pd_capacity_32
-    elif name == 'pd_capacity_32_abs':
+    elif name == "pd_capacity_32_abs":
         return pd_capacity_32_abs
     else:
         raise pyrado.ValueErr(given=name, eq_constraint="'to_tanh', 'to_relu'")
@@ -314,10 +322,10 @@ def read_csv_w_replace(path: str) -> pd.DataFrame:
     :param path: path to the CSV file
     :return: Pandas `DataFrame` with replaced chars in columns
     """
-    df = pd.read_csv(path, index_col='iteration')
+    df = pd.read_csv(path, index_col="iteration")
     # Replace whitespaces in column names
-    df.columns = [c.replace(' ', '_') for c in df.columns]
-    df.columns = [c.replace('-', '_') for c in df.columns]
-    df.columns = [c.replace('(', '_') for c in df.columns]
-    df.columns = [c.replace(')', '_') for c in df.columns]
+    df.columns = [c.replace(" ", "_") for c in df.columns]
+    df.columns = [c.replace("-", "_") for c in df.columns]
+    df.columns = [c.replace("(", "_") for c in df.columns]
+    df.columns = [c.replace(")", "_") for c in df.columns]
     return df

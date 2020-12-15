@@ -51,23 +51,24 @@ from tests.conftest import m_needs_cuda, m_needs_bullet
 
 
 @pytest.mark.parametrize(
-    'arg', [
+    "arg",
+    [
         [1],
         [2, 3],
         [4, 6, 2, 88, 3, 45, 7, 21, 22, 23, 24, 44, 45, 56, 67, 78, 89],
-    ]
+    ],
 )
 def test_sampler_pool(arg):
     pool = SamplerPool(len(arg))
     result = pool.invoke_all_map(_cb_test_eachhandler, arg)
     pool.stop()
 
-    assert result == list(map(lambda x: x*2, arg))
+    assert result == list(map(lambda x: x * 2, arg))
 
 
 def _cb_test_eachhandler(G, arg):
     time.sleep(random.randint(1, 5))
-    return arg*2
+    return arg * 2
 
 
 def _cb_test_collecthandler(G):
@@ -75,12 +76,8 @@ def _cb_test_collecthandler(G):
     return nsample, nsample
 
 
-@pytest.mark.parametrize(
-    'num_threads', [1, 2, 4]
-)
-@pytest.mark.parametrize(
-    'min_samples', [10, 20, 40]
-)
+@pytest.mark.parametrize("num_threads", [1, 2, 4])
+@pytest.mark.parametrize("min_samples", [10, 20, 40])
 def test_sampler_collect(num_threads: int, min_samples: int):
     pool = SamplerPool(num_threads)
 
@@ -92,15 +89,9 @@ def test_sampler_collect(num_threads: int, min_samples: int):
     assert min_samples <= sum(cr)
 
 
-@pytest.mark.parametrize(
-    'num_threads', [1, 2, 4]
-)
-@pytest.mark.parametrize(
-    'min_samples', [10, 20, 40]
-)
-@pytest.mark.parametrize(
-    'min_runs', [10, 20, 40]
-)
+@pytest.mark.parametrize("num_threads", [1, 2, 4])
+@pytest.mark.parametrize("min_samples", [10, 20, 40])
+@pytest.mark.parametrize("min_runs", [10, 20, 40])
 def test_sampler_collect_minrun(num_threads: int, min_samples: int, min_runs: int):
     pool = SamplerPool(num_threads)
 
@@ -115,9 +106,11 @@ def test_sampler_collect_minrun(num_threads: int, min_samples: int, min_runs: in
 
 
 @pytest.mark.parametrize(
-    'data_type', [
-        (None, None), (to.int32, np.int32),
-    ]
+    "data_type",
+    [
+        (None, None),
+        (to.int32, np.int32),
+    ],
 )
 def test_to_format(data_type: tuple):
     # Create some tensors to convert
@@ -125,34 +118,36 @@ def test_to_format(data_type: tuple):
     tensor = to.rand(3, 2).type(dtype=to.float64)
 
     # Test the conversion and typing from numpy to PyTorch
-    converted_ndarray = to_format(ndarray, 'torch', data_type[0])
+    converted_ndarray = to_format(ndarray, "torch", data_type[0])
     assert isinstance(converted_ndarray, to.Tensor)
     new_type = to.float64 if data_type[0] is None else data_type[0]  # passing None must not change the type
     assert converted_ndarray.dtype == new_type
 
     # Test the conversion and typing from PyTorch to numpy
-    converted_tensor = to_format(tensor, 'numpy', data_type[1])
+    converted_tensor = to_format(tensor, "numpy", data_type[1])
     assert isinstance(converted_tensor, np.ndarray)
     new_type = np.float64 if data_type[1] is None else data_type[1]  # passing None must not change the type
     assert converted_tensor.dtype == new_type
 
 
 @pytest.mark.parametrize(
-    'epsilon', [
-        1, 0.5, 0.1,
-    ]
+    "epsilon",
+    [
+        1,
+        0.5,
+        0.1,
+    ],
 )
 @pytest.mark.parametrize(
-    'num_ro', [
-        10, 20,
-    ]
+    "num_ro",
+    [
+        10,
+        20,
+    ],
 )
 def test_select_cvar(epsilon: float, num_ro: int):
     # Create rollouts with known discounted rewards
-    rollouts = [
-        StepSequence(rewards=[i], observations=[i], actions=[i])
-        for i in range(num_ro)
-    ]
+    rollouts = [StepSequence(rewards=[i], observations=[i], actions=[i]) for i in range(num_ro)]
     # Shuffle data to put in
     ro_shuf = list(rollouts)
     random.shuffle(ro_shuf)
@@ -161,22 +156,29 @@ def test_select_cvar(epsilon: float, num_ro: int):
     ro_cv = select_cvar(ro_shuf, epsilon, 1)
 
     # Compute expected return of subselection
-    cv = sum(map(lambda ro: ro.discounted_return(1), ro_cv))/len(ro_cv)
+    cv = sum(map(lambda ro: ro.discounted_return(1), ro_cv)) / len(ro_cv)
 
     # This should be equal to the epsilon-quantile of the integer sequence
-    nq = int(num_ro*epsilon)
-    cv_expected = sum(range(nq))/nq
+    nq = int(num_ro * epsilon)
+    cv_expected = sum(range(nq)) / nq
 
     assert cv == cv_expected
 
 
 @pytest.mark.parametrize(
-    'num_dim, method', [
-        (1, 'uniform'), (1, 'uniform'),
-        (3, 'uniform'), (3, 'normal'), (3, 'Marsaglia'),
-        (4, 'uniform'), (4, 'normal'), (4, 'Marsaglia'),
-        (15, 'uniform'), (15, 'normal')
-    ]
+    "num_dim, method",
+    [
+        (1, "uniform"),
+        (1, "uniform"),
+        (3, "uniform"),
+        (3, "normal"),
+        (3, "Marsaglia"),
+        (4, "uniform"),
+        (4, "normal"),
+        (4, "Marsaglia"),
+        (15, "uniform"),
+        (15, "normal"),
+    ],
 )
 def test_sample_from_unit_sphere_surface(num_dim: int, method: str):
     s = sample_from_hyper_sphere_surface(num_dim, method)
@@ -184,31 +186,44 @@ def test_sample_from_unit_sphere_surface(num_dim: int, method: str):
 
 
 @pytest.mark.parametrize(
-    ['env', 'policy'], [
-        ('default_bob', 'idle_policy'),
-        ('default_bob', 'dummy_policy'),
-        ('default_bob', 'time_policy'),
-        ('default_bob', 'linear_policy'),
-        ('default_bob', 'fnn_policy'),
-        ('default_bob', 'rnn_policy'),
-        ('default_bob', 'lstm_policy'),
-        ('default_bob', 'gru_policy'),
-        ('default_bob', 'adn_policy'),
-        ('default_bob', 'nf_policy'),
-        ('default_bob', 'thfnn_policy'),
-        ('default_bob', 'thgru_policy'),
+    ["env", "policy"],
+    [
+        ("default_bob", "idle_policy"),
+        ("default_bob", "dummy_policy"),
+        ("default_bob", "time_policy"),
+        ("default_bob", "linear_policy"),
+        ("default_bob", "fnn_policy"),
+        ("default_bob", "rnn_policy"),
+        ("default_bob", "lstm_policy"),
+        ("default_bob", "gru_policy"),
+        ("default_bob", "adn_policy"),
+        ("default_bob", "nf_policy"),
+        ("default_bob", "thfnn_policy"),
+        ("default_bob", "thgru_policy"),
     ],
-    ids=['bob_idle', 'bob_dummy', 'bob_time', 'bob_lin', 'bob_fnn', 'bob_rnn', 'bob_lstm', 'bob_gru', 'bob_adn',
-         'bob_nf', 'bob_thfnn', 'bob_thgru'],
-    indirect=True)
+    ids=[
+        "bob_idle",
+        "bob_dummy",
+        "bob_time",
+        "bob_lin",
+        "bob_fnn",
+        "bob_rnn",
+        "bob_lstm",
+        "bob_gru",
+        "bob_adn",
+        "bob_nf",
+        "bob_thfnn",
+        "bob_thgru",
+    ],
+    indirect=True,
+)
 def test_rollout_wo_exploration(env: SimEnv, policy: Policy):
     ro = rollout(env, policy, render_mode=RenderMode())
     assert isinstance(ro, StepSequence)
     assert len(ro) <= env.max_steps
 
 
-@pytest.mark.parametrize('env', ['default_bob', 'default_qbb'],
-                         ids=['bob', 'qbb'], indirect=True)
+@pytest.mark.parametrize("env", ["default_bob", "default_qbb"], ids=["bob", "qbb"], indirect=True)
 def test_rollout_wo_policy(env: SimEnv):
     def policy(obs):
         # Callable must receive and return tensors
@@ -220,10 +235,11 @@ def test_rollout_wo_policy(env: SimEnv):
 
 
 @pytest.mark.parametrize(
-    'mean, cov', [
-        (to.tensor([5., 7.]), to.tensor([[2., 0.], [0., 2.]])),
+    "mean, cov",
+    [
+        (to.tensor([5.0, 7.0]), to.tensor([[2.0, 0.0], [0.0, 2.0]])),
     ],
-    ids=['2dim']
+    ids=["2dim"],
 )
 def test_reparametrization_trick(mean, cov):
     for seed in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
@@ -247,7 +263,8 @@ def test_reparametrization_trick(mean, cov):
 
 # @pytest.mark.visualization
 @pytest.mark.parametrize(
-    'sequence, x_init', [
+    "sequence, x_init",
+    [
         (sequence_const, np.array([2])),
         (sequence_plus_one, np.array([2])),
         (sequence_add_init, np.array([2])),
@@ -260,7 +277,7 @@ def test_reparametrization_trick(mean, cov):
         (sequence_rec_double, np.array([1, 2, 3])),
         (sequence_rec_sqrt, np.array([1, 2, 3])),
         (sequence_nlog2, np.array([1, 2, 3])),
-    ]
+    ],
 )
 def test_sequences(sequence: Callable, x_init: np.ndarray):
     # Get the full sequence
@@ -286,7 +303,7 @@ def test_bootsrapping():
     resampled = np.random.choice(sample, (sample.shape[0], 20), replace=True)
     means = np.apply_along_axis(np.mean, 0, resampled)
     print(np.sort(means))
-    ci_lo, ci_up = np.percentile(means, [100*0.05, 100*0.95])
+    ci_lo, ci_up = np.percentile(means, [100 * 0.05, 100 * 0.95])
     print(ci_lo, ci_up)
 
     x = np.random.normal(10, 1, 40)
@@ -297,39 +314,42 @@ def test_bootsrapping():
 
     np.random.seed(1)
     m, ci = bootstrap_ci(x, np.mean, num_reps=1000, alpha=0.05, ci_sides=2, studentized=False, bias_correction=False)
-    print('[use_t_for_ci=False] mean: ', m)
-    print('[use_t_for_ci=False] CI: ', ci)
+    print("[use_t_for_ci=False] mean: ", m)
+    print("[use_t_for_ci=False] CI: ", ci)
 
     np.random.seed(1)
     m, ci = bootstrap_ci(x, np.mean, num_reps=1000, alpha=0.05, ci_sides=2, studentized=False, bias_correction=True)
-    print('[bias_correction=True] mean: ', m)
+    print("[bias_correction=True] mean: ", m)
 
-    m, ci = bootstrap_ci(x, np.mean, num_reps=2*384, alpha=0.05, ci_sides=1, studentized=False)
-    print('[use_t_for_ci=False] mean: ', m)
-    print('[use_t_for_ci=False] CI: ', ci)
+    m, ci = bootstrap_ci(x, np.mean, num_reps=2 * 384, alpha=0.05, ci_sides=1, studentized=False)
+    print("[use_t_for_ci=False] mean: ", m)
+    print("[use_t_for_ci=False] CI: ", ci)
 
-    m, ci = bootstrap_ci(x, np.mean, num_reps=2*384, alpha=0.05, ci_sides=1, studentized=True)
-    print('[use_t_for_ci=True] mean: ', m)
-    print('[use_t_for_ci=True] CI: ', ci)
+    m, ci = bootstrap_ci(x, np.mean, num_reps=2 * 384, alpha=0.05, ci_sides=1, studentized=True)
+    print("[use_t_for_ci=True] mean: ", m)
+    print("[use_t_for_ci=True] CI: ", ci)
 
-    print('Matlab example:')
+    print("Matlab example:")
     # https://de.mathworks.com/help/stats/bootci.htmls
     x_matlab = np.random.normal(1, 1, 40)
 
     m, ci = bootstrap_ci(x_matlab, np.mean, num_reps=2000, alpha=0.05, ci_sides=2, studentized=False)
-    print('[use_t_for_ci=False] mean: ', m)
-    print('[use_t_for_ci=False] CI: ', ci)
+    print("[use_t_for_ci=False] mean: ", m)
+    print("[use_t_for_ci=False] CI: ", ci)
 
     m, ci = bootstrap_ci(x_matlab, np.mean, num_reps=2000, alpha=0.05, ci_sides=2, studentized=True)
-    print('[use_t_for_ci=True] mean: ', m)
-    print('[use_t_for_ci=True] CI: ', ci)
+    print("[use_t_for_ci=True] mean: ", m)
+    print("[use_t_for_ci=True] CI: ", ci)
 
 
 @pytest.mark.parametrize(
-    ['env', 'policy'], [
-        ('default_bob', 'fnn_policy'),
+    ["env", "policy"],
+    [
+        ("default_bob", "fnn_policy"),
     ],
-    ids=['bob_fnnpol'], indirect=True)
+    ids=["bob_fnnpol"],
+    indirect=True,
+)
 def test_param_expl_sampler(env: SimEnv, policy: Policy):
     # Add randomizer
     pert = create_default_randomizer(env)
@@ -360,7 +380,7 @@ def test_param_expl_sampler(env: SimEnv, policy: Policy):
             ro = ops.rollouts[ri]
 
             # Compare domain params
-            assert pivot.rollout_info['domain_param'] == ro.rollout_info['domain_param']
+            assert pivot.rollout_info["domain_param"] == ro.rollout_info["domain_param"]
             # Compare first observation a.k.a. init state
             assert pivot[0].observation == pytest.approx(ro[0].observation)
 
@@ -368,19 +388,21 @@ def test_param_expl_sampler(env: SimEnv, policy: Policy):
 @m_needs_cuda
 @pytest.mark.wrapper
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob',
-        'default_qbb',
+    "env",
+    [
+        "default_bob",
+        "default_qbb",
     ],
-    indirect=True
+    indirect=True,
 )
 @pytest.mark.parametrize(
-    'policy', [
-        'fnn_policy',
-        'lstm_policy',
+    "policy",
+    [
+        "fnn_policy",
+        "lstm_policy",
     ],
-    ids=['fnn', 'lstm'],
-    indirect=True
+    ids=["fnn", "lstm"],
+    indirect=True,
 )
 def test_cuda_sampling_w_dr(env: SimEnv, policy: Policy):
     randomizer = create_default_randomizer(env)
@@ -393,24 +415,18 @@ def test_cuda_sampling_w_dr(env: SimEnv, policy: Policy):
 
 
 @pytest.mark.parametrize(
-    'env', [
-        pytest.param('default_qqsurcs_bt', marks=m_needs_bullet),
-        pytest.param('default_bs_pos_bt', marks=m_needs_bullet),
-        pytest.param('default_bit_ik_bt', marks=m_needs_bullet),
+    "env",
+    [
+        pytest.param("default_qqsurcs_bt", marks=m_needs_bullet),
+        pytest.param("default_bs_ds_pos_bt", marks=m_needs_bullet),
+        pytest.param("default_bit_ika_pos_bt", marks=m_needs_bullet),
     ],
-    ids=['qqsurcs_bt', 'bs_pos_bt', 'bit_ik_bt'],
-    indirect=True
+    ids=["qqsurcs_bt", "bs_pos_bt", "bit_ik_bt"],
+    indirect=True,
 )
+@pytest.mark.parametrize("policy", ["idle_policy"], ids=["idle"], indirect=True)  # ad deterministic policy
 @pytest.mark.parametrize(
-    'policy', [
-        'idle_policy'  # ad deterministic policy
-    ],
-    ids=['idle'],
-    indirect=True
-)
-@pytest.mark.parametrize(
-    'num_simulations', [1, 4],  # must be lower than the number of cores on the machine
-    ids=['1sim', '4sims']
+    "num_simulations", [1, 4], ids=["1sim", "4sims"]  # must be lower than the number of cores on the machine
 )
 def test_sequential_equals_parallel(env: SimEnv, policy: Policy, num_simulations: int):
     # Do the rollouts explicitly sequentially without a sampler

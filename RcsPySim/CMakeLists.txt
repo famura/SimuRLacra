@@ -43,6 +43,29 @@ LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../Rcs/cmake)
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
+# Deep copy the config directories
+# This needs to go before including the sub directories, since they partially create links/copies inside the config directory
+SET(CFG_FROM ${CMAKE_CURRENT_SOURCE_DIR}/config)
+SET(CFG_TO ${PROJECT_BINARY_DIR}/config)
+IF (WIN32 AND (NOT IS_DIRECTORY "${CFG_TO}") AND (EXISTS "${CFG_TO}"))
+  MESSAGE(STATUS "Removing non-directory ${CFG_TO}")
+  FILE(REMOVE ${CFG_TO})
+ENDIF()
+IF(NOT EXISTS "${CFG_TO}")
+  IF(UNIX)
+    # Symlink for Linux
+    SET(CONFIGDIR_COPY_COMMAND create_symlink)
+    MESSAGE(STATUS "Linking config directory from ${CFG_FROM} to ${CFG_TO}")
+  ELSE()
+    # Deep copy of the config directory for windows
+    SET(CONFIGDIR_COPY_COMMAND copy_directory)
+    MESSAGE(STATUS "Copying config directory from ${CFG_FROM} to ${CFG_TO}")
+  ENDIF()
+  EXECUTE_PROCESS (COMMAND ${CMAKE_COMMAND} -E ${CONFIGDIR_COPY_COMMAND} ${CFG_FROM} ${CFG_TO})
+ELSE()
+  MESSAGE(STATUS "Config directory ${CFG_TO} already exists - skipping")
+ENDIF()
+
 # Use pybind11 default settings
 set(PYBIND11_CPP_STANDARD -std=c++14)
 add_subdirectory("${CMAKE_SOURCE_DIR}/../thirdParty/pybind11" "${CMAKE_BINARY_DIR}/pybind11")

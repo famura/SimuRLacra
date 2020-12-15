@@ -36,9 +36,11 @@ from typing import Union, Tuple
 import pyrado
 
 
-def scale_min_max(data: Union[np.ndarray, to.Tensor],
-                  bound_lo: Union[int, float, np.ndarray, to.Tensor],
-                  bound_up: Union[int, float, np.ndarray, to.Tensor]) -> Union[np.ndarray, to.Tensor]:
+def scale_min_max(
+    data: Union[np.ndarray, to.Tensor],
+    bound_lo: Union[int, float, np.ndarray, to.Tensor],
+    bound_up: Union[int, float, np.ndarray, to.Tensor],
+) -> Union[np.ndarray, to.Tensor]:
     r"""
     Transform the input data to to be in $[a, b]$.
 
@@ -49,9 +51,9 @@ def scale_min_max(data: Union[np.ndarray, to.Tensor],
     """
     # Lower bound
     if isinstance(bound_lo, (float, int)) and isinstance(data, np.ndarray):
-        bound_lo = bound_lo*np.ones_like(data, dtype=np.float64)
+        bound_lo = bound_lo * np.ones_like(data, dtype=np.float64)
     elif isinstance(bound_lo, (float, int)) and isinstance(data, to.Tensor):
-        bound_lo = bound_lo*to.ones_like(data, dtype=to.get_default_dtype())
+        bound_lo = bound_lo * to.ones_like(data, dtype=to.get_default_dtype())
     elif isinstance(bound_lo, np.ndarray) and isinstance(data, to.Tensor):
         bound_lo = to.from_numpy(bound_lo)
     elif isinstance(bound_lo, to.Tensor) and isinstance(data, np.ndarray):
@@ -59,25 +61,25 @@ def scale_min_max(data: Union[np.ndarray, to.Tensor],
 
     # Upper bound
     if isinstance(bound_up, (float, int)) and isinstance(data, np.ndarray):
-        bound_up = bound_up*np.ones_like(data, dtype=np.float64)
+        bound_up = bound_up * np.ones_like(data, dtype=np.float64)
     elif isinstance(bound_up, (float, int)) and isinstance(data, to.Tensor):
-        bound_up = bound_up*to.ones_like(data, dtype=to.get_default_dtype())
+        bound_up = bound_up * to.ones_like(data, dtype=to.get_default_dtype())
     elif isinstance(bound_up, np.ndarray) and isinstance(data, to.Tensor):
         bound_up = to.from_numpy(bound_up)
     elif isinstance(bound_up, to.Tensor) and isinstance(data, np.ndarray):
         bound_up = bound_up.numpy()
 
     if not (bound_lo < bound_up).all():
-        raise pyrado.ValueErr(given_name='lower bound', l_constraint='upper bound')
+        raise pyrado.ValueErr(given_name="lower bound", l_constraint="upper bound")
 
     if isinstance(data, np.ndarray):
-        data_ = (data - np.min(data))/(np.max(data) - np.min(data))
+        data_ = (data - np.min(data)) / (np.max(data) - np.min(data))
     elif isinstance(data, to.Tensor):
-        data_ = (data - to.min(data))/(to.max(data) - to.min(data))
+        data_ = (data - to.min(data)) / (to.max(data) - to.min(data))
     else:
         raise pyrado.TypeErr(given=data, expected_type=[np.ndarray, to.Tensor])
 
-    return data_*(bound_up - bound_lo) + bound_lo
+    return data_ * (bound_up - bound_lo) + bound_lo
 
 
 def standardize(data: Union[np.ndarray, to.Tensor], eps: float = 1e-8) -> Union[np.ndarray, to.Tensor]:
@@ -89,17 +91,16 @@ def standardize(data: Union[np.ndarray, to.Tensor], eps: float = 1e-8) -> Union[
     :return: standardized ndarray or Tensor
     """
     if isinstance(data, np.ndarray):
-        return (data - np.mean(data))/(np.std(data) + float(eps))
+        return (data - np.mean(data)) / (np.std(data) + float(eps))
     elif isinstance(data, to.Tensor):
-        return (data - to.mean(data))/(to.std(data) + float(eps))
+        return (data - to.mean(data)) / (to.std(data) + float(eps))
     else:
         raise pyrado.TypeErr(given=data, expected_type=[np.ndarray, to.Tensor])
 
 
-def normalize(x: Union[np.ndarray, to.Tensor],
-              axis: int = -1,
-              order: int = 1,
-              eps: float = 1e-8) -> Union[np.ndarray, to.Tensor]:
+def normalize(
+    x: Union[np.ndarray, to.Tensor], axis: int = -1, order: int = 1, eps: float = 1e-8
+) -> Union[np.ndarray, to.Tensor]:
     """
     Normalize a numpy `ndarray` or a PyTroch `Tensor` without changing the input.
     Choosing `axis=1` and `norm_order=1` makes all columns of sum to 1.
@@ -113,11 +114,11 @@ def normalize(x: Union[np.ndarray, to.Tensor],
     if isinstance(x, np.ndarray):
         norm_x = np.atleast_1d(np.linalg.norm(x, ord=order, axis=axis))  # calculate norm over axis
         norm_x = np.where(norm_x > eps, norm_x, np.ones_like(norm_x))  # avoid division by 0
-        return x/np.expand_dims(norm_x, axis)  # element wise division
+        return x / np.expand_dims(norm_x, axis)  # element wise division
     elif isinstance(x, to.Tensor):
         norm_x = to.norm(x, p=order, dim=axis)  # calculate norm over axis
         norm_x = to.where(norm_x > eps, norm_x, to.ones_like(norm_x))  # avoid division by 0
-        return x/norm_x.unsqueeze(axis)  # element wise division
+        return x / norm_x.unsqueeze(axis)  # element wise division
     else:
         raise pyrado.TypeErr(given=x, expected_type=[np.array, to.Tensor])
 
@@ -129,9 +130,7 @@ class Standardizer:
         self.mean = None
         self.std = None
 
-    def standardize(self,
-                    data: Union[np.ndarray, to.Tensor],
-                    eps: float = 1e-8) -> Union[np.ndarray, to.Tensor]:
+    def standardize(self, data: Union[np.ndarray, to.Tensor], eps: float = 1e-8) -> Union[np.ndarray, to.Tensor]:
         r"""
         Standardize the input data to make it $~ N(0, 1)$ and store the input's mean and standard deviation.
 
@@ -142,11 +141,11 @@ class Standardizer:
         if isinstance(data, np.ndarray):
             self.mean = np.mean(data)
             self.std = np.std(data)
-            return (data - self.mean)/(self.std + float(eps))
+            return (data - self.mean) / (self.std + float(eps))
         elif isinstance(data, to.Tensor):
             self.mean = to.mean(data)
             self.std = to.std(data)
-            return (data - self.mean)/(self.std + float(eps))
+            return (data - self.mean) / (self.std + float(eps))
         else:
             raise pyrado.TypeErr(given=data, expected_type=[np.ndarray, to.Tensor])
 
@@ -158,7 +157,7 @@ class Standardizer:
         :return: un-standardized ndarray or Tensor
         """
         if self.mean is None or self.std is None:
-            raise pyrado.ValueErr(msg='Use standardize before unstandardize!')
+            raise pyrado.ValueErr(msg="Use standardize before unstandardize!")
 
         # Input type must match stored type
         if isinstance(data, np.ndarray) and isinstance(self.mean, np.ndarray):
@@ -172,16 +171,16 @@ class Standardizer:
             self.mean = to.from_numpy(self.mean)
             self.std = to.from_numpy(self.std)
 
-        x_unstd = data*self.std + self.mean
+        x_unstd = data * self.std + self.mean
         return x_unstd
 
 
 class MinMaxScaler:
     """ A stateful min-max scaler that remembers the lower and upper bound for later un-unscaling """
 
-    def __init__(self,
-                 bound_lo: Union[int, float, np.ndarray, to.Tensor],
-                 bound_up: Union[int, float, np.ndarray, to.Tensor]):
+    def __init__(
+        self, bound_lo: Union[int, float, np.ndarray, to.Tensor], bound_up: Union[int, float, np.ndarray, to.Tensor]
+    ):
         """
         Constructor
 
@@ -196,8 +195,9 @@ class MinMaxScaler:
         self.data_min = None
         self.data_span = None
 
-    def _convert_bounds(self, data: Union[to.Tensor, np.ndarray]
-                        ) -> Union[Tuple[to.Tensor, to.Tensor], Tuple[np.ndarray, np.ndarray]]:
+    def _convert_bounds(
+        self, data: Union[to.Tensor, np.ndarray]
+    ) -> Union[Tuple[to.Tensor, to.Tensor], Tuple[np.ndarray, np.ndarray]]:
         """
         Convert the bounds into the right type
 
@@ -206,9 +206,9 @@ class MinMaxScaler:
         """
         # Lower bound
         if isinstance(self._bound_lo, (float, int)) and isinstance(data, np.ndarray):
-            bound_lo = self._bound_lo*np.ones_like(data, dtype=np.float64)
+            bound_lo = self._bound_lo * np.ones_like(data, dtype=np.float64)
         elif isinstance(self._bound_lo, (float, int)) and isinstance(data, to.Tensor):
-            bound_lo = self._bound_lo*to.ones_like(data, dtype=to.get_default_dtype())
+            bound_lo = self._bound_lo * to.ones_like(data, dtype=to.get_default_dtype())
         elif isinstance(self._bound_lo, np.ndarray) and isinstance(data, to.Tensor):
             bound_lo = to.from_numpy(self._bound_lo)
         elif isinstance(self._bound_lo, to.Tensor) and isinstance(data, np.ndarray):
@@ -218,9 +218,9 @@ class MinMaxScaler:
 
         # Upper bound
         if isinstance(self._bound_up, (float, int)) and isinstance(data, np.ndarray):
-            bound_up = self._bound_up*np.ones_like(data, dtype=np.float64)
+            bound_up = self._bound_up * np.ones_like(data, dtype=np.float64)
         elif isinstance(self._bound_up, (float, int)) and isinstance(data, to.Tensor):
-            bound_up = self._bound_up*to.ones_like(data, dtype=to.get_default_dtype())
+            bound_up = self._bound_up * to.ones_like(data, dtype=to.get_default_dtype())
         elif isinstance(self._bound_up, np.ndarray) and isinstance(data, to.Tensor):
             bound_up = to.from_numpy(self._bound_up)
         elif isinstance(self._bound_up, to.Tensor) and isinstance(data, np.ndarray):
@@ -241,7 +241,7 @@ class MinMaxScaler:
         bound_lo, bound_up = self._convert_bounds(data)
 
         if not (bound_lo < bound_up).all():
-            raise pyrado.ValueErr(given_name='lower bound', l_constraint='upper bound')
+            raise pyrado.ValueErr(given_name="lower bound", l_constraint="upper bound")
 
         if isinstance(data, np.ndarray):
             self._data_min = np.min(data)
@@ -252,8 +252,8 @@ class MinMaxScaler:
         else:
             raise pyrado.TypeErr(given=data, expected_type=[np.ndarray, to.Tensor])
 
-        data_ = (data - self._data_min)/self._data_span
-        return data_*(bound_up - bound_lo) + bound_lo
+        data_ = (data - self._data_min) / self._data_span
+        return data_ * (bound_up - bound_lo) + bound_lo
 
     def scale_back(self, data: Union[np.ndarray, to.Tensor]) -> Union[np.ndarray, to.Tensor]:
         r"""
@@ -263,7 +263,7 @@ class MinMaxScaler:
         :return: unscaled ndarray or Tensor
         """
         if self._data_min is None or self._data_span is None:
-            raise pyrado.ValueErr(msg='Call scale_to before scale_back!')
+            raise pyrado.ValueErr(msg="Call scale_to before scale_back!")
 
         if not (isinstance(data, np.ndarray) or isinstance(data, to.Tensor)):
             raise pyrado.TypeErr(given=data, expected_type=[np.ndarray, to.Tensor])
@@ -272,10 +272,10 @@ class MinMaxScaler:
         bound_lo, bound_up = self._convert_bounds(data)
 
         # Scale data to be in [0, 1]
-        data_ = (data - bound_lo)/(bound_up - bound_lo)
+        data_ = (data - bound_lo) / (bound_up - bound_lo)
 
         # Return data in original value range
-        return data_*self._data_span + self._data_min
+        return data_ * self._data_span + self._data_min
 
 
 class RunningStandardizer:
@@ -294,8 +294,10 @@ class RunningStandardizer:
         self.iter = 0
 
     def __repr__(self):
-        return f'RunningStandardizer ID: {id(self)}\n' \
-               f'mean: {self.mean}\nss_diffs: {self.sum_sq_diffs}\niter: {self.iter}'
+        return (
+            f"RunningStandardizer ID: {id(self)}\n"
+            f"mean: {self.mean}\nss_diffs: {self.sum_sq_diffs}\niter: {self.iter}"
+        )
 
     def __call__(self, data: Union[np.ndarray, to.Tensor], axis: int = 0):
         """
@@ -315,22 +317,22 @@ class RunningStandardizer:
             if self.iter <= 1:
                 # delta = x
                 self.mean = mean
-                self.sum_sq_diffs = mean*mean
+                self.sum_sq_diffs = mean * mean
                 return data
             else:
                 # Update mean
                 delta_prev = mean - self.mean
-                self.mean += delta_prev/self.iter
+                self.mean += delta_prev / self.iter
 
                 # Update sum of squares of differences from the current mean
                 delta_curr = mean - self.mean
-                self.sum_sq_diffs += delta_prev*delta_curr
+                self.sum_sq_diffs += delta_prev * delta_curr
 
                 # Calculate the unbiased sample variance
-                var_sample = self.sum_sq_diffs/(self.iter - 1)
+                var_sample = self.sum_sq_diffs / (self.iter - 1)
 
                 # Return normalized data
-                return (data - self.mean)/np.sqrt(var_sample)
+                return (data - self.mean) / np.sqrt(var_sample)
 
         elif isinstance(data, to.Tensor):
             # Process element wise (keeps dim) or average along one axis
@@ -342,22 +344,22 @@ class RunningStandardizer:
             if self.iter <= 1:
                 # delta = x
                 self.mean = mean
-                self.sum_sq_diffs = mean*mean
+                self.sum_sq_diffs = mean * mean
                 return data
             else:
                 # Update mean
                 delta_prev = mean - self.mean
-                self.mean += delta_prev/self.iter
+                self.mean += delta_prev / self.iter
 
                 # Update sum of squares of differences from the current mean
                 delta_curr = mean - self.mean
-                self.sum_sq_diffs += delta_prev*delta_curr
+                self.sum_sq_diffs += delta_prev * delta_curr
 
                 # Calculate the unbiased sample variance
-                var_sample = self.sum_sq_diffs/(self.iter - 1)
+                var_sample = self.sum_sq_diffs / (self.iter - 1)
 
                 # Return normalized data
-                return (data - self.mean)/to.sqrt(var_sample)
+                return (data - self.mean) / to.sqrt(var_sample)
 
         else:
             raise pyrado.TypeErr(given=data, expected_type=[np.ndarray, to.Tensor])
@@ -380,8 +382,10 @@ class RunningNormalizer:
         self.iter = 0
 
     def __repr__(self):
-        return f'RunningNormalizer ID: {id(self)}\n' \
-               f'bound_lo: {self.bound_lo}\nbound_up: {self.bound_up}\niter: {self.iter}'
+        return (
+            f"RunningNormalizer ID: {id(self)}\n"
+            f"bound_lo: {self.bound_lo}\nbound_up: {self.bound_up}\niter: {self.iter}"
+        )
 
     def __call__(self, data: Union[np.ndarray, to.Tensor]):
         """
@@ -410,8 +414,8 @@ class RunningNormalizer:
 
             # Make sure that the bounds do not collapse (e.g. for one sample)
             if np.linalg.norm(self.bound_up - self.bound_lo, ord=1) < self.eps:
-                self.bound_lo -= self.eps/2
-                self.bound_up += self.eps/2
+                self.bound_lo -= self.eps / 2
+                self.bound_up += self.eps / 2
 
         elif isinstance(data, to.Tensor):
             data_2d = data.view(-1, 1) if data.ndim < 2 else data
@@ -433,11 +437,11 @@ class RunningNormalizer:
 
             # Make sure that the bounds do not collapse (e.g. for one sample)
             if to.norm(self.bound_up - self.bound_lo, p=1) < self.eps:
-                self.bound_lo -= self.eps/2
-                self.bound_up += self.eps/2
+                self.bound_lo -= self.eps / 2
+                self.bound_up += self.eps / 2
 
         else:
             raise pyrado.TypeErr(given=data, expected_type=[np.ndarray, to.Tensor])
 
         # Return standardized data
-        return (data - self.bound_lo)/(self.bound_up - self.bound_lo)*2 - 1
+        return (data - self.bound_lo) / (self.bound_up - self.bound_lo) * 2 - 1

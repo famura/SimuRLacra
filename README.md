@@ -14,9 +14,10 @@ SimuRLacra (composed of the two modules Pyrado and RcsPySim) is a Python/C++ fra
 The focus is on robotics tasks with mostly continuous control.
 It features __randomizable simulations__ written __in standalone Python__ (no license required) as well as simulations driven by the physics engines __Bullet__ (no license required), __Vortex__ (license required), __or MuJoCo__ (license required).
 
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Maintainability](https://api.codeclimate.com/v1/badges/73ad23bdf05361b022b4/maintainability)](https://codeclimate.com/github/famura/SimuRLacra/maintainability)
 ![Documentation](https://github.com/famura/SimuRLacra/workflows/Documentation/badge.svg?branch=master)
-[![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-32CD32.svg)](https://github.com/psf/black)
 [![codecov](https://codecov.io/gh/famura/SimuRLacra/branch/master/graph/badge.svg)](https://codecov.io/gh/famura/SimuRLacra)
 
 __Pros__  
@@ -30,7 +31,7 @@ __Pros__
 
 __Cons__  
 * __No vision-based environments/tasks.__ In principle there is nothing stopping you from integrating computer vision into SimuRLacra. However, I assume there are better suited frameworks out there.
-* __Without bells and whistles.__ Most implementations (especially the algorithms) do not focus on performance. After all, this framework was created to understand and prototype things. 
+* __Without bells and whistles.__ The implementations (especially the algorithms) do not focus on performance. After all, this framework was created to understand and prototype things. However, improvement suggestions are always welcome.
 * __Hyper-parameters are not fully tuned.__ Sometimes the most important part of reinforcement learning is the time-consuming search for the right hyper-parameters. I only did this for the environment-algorithm combinations reported in my papers. But, for all the other cases there is [Optuna](https://optuna.org/) and some optuna-based example scripts that you can start from.
 * __Unfinished GPU-support.__ At the moment the porting of the policies is implemented but not fully tested. The GPU-enabled re-implementation of the simulation environments in the pysim folder (simple Python simulations) is at question. The environments based on [Rcs](https://github.com/HRI-EU/Rcs) which require the Bullet or Vortex physics engine will only be able to run on CPU.
 
@@ -75,9 +76,10 @@ Create an anaconda environment (without PyTorch)
 conda create -y -n pyrado python=3.7
 conda activate pyrado
 conda install -y blas cmake lapack libgcc-ng mkl patchelf pip pycairo setuptools -c conda-forge
-pip install argparse box2d colorama coverage cython glfw gym joblib prettyprinter matplotlib numpy optuna pandas pytest pytest-cov pytest-xdist pyyaml scipy seaborn sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tensorboard tqdm vpython git+https://github.com/Xfel/init-args-serializer.git@master
+pip install argparse black box2d colorama coverage cython glfw gym joblib prettyprinter matplotlib numpy optuna pandas pytest pytest-cov pytest-xdist pyyaml scipy seaborn sphinx sphinx-math-dollar sphinx_rtd_theme tabulate tensorboard tqdm vpython git+https://github.com/Xfel/init-args-serializer.git@master
 ```
 Any warnings from VPython can be safely ignored.
+
 
 ### What do you want to be installed?
 If you just want to have a look at SimuRLacra, or don't care about the Rcs-based robotics part, I recommend going for [Red Velvet](#option-red-velvet). However, if you for example want to export your learned controller to a C++ program runnning on a phsical robot, I recommend [Black Forest](#option-black-forest). Here is an overview of the options:
@@ -162,6 +164,19 @@ In case you are at IAS and want to use you SL and robcom, you can set them up (r
 python setup_deps.py robcom -j8
 ```
 After that you still need to install the robot-specific package in SL.
+
+### Python Code Formatting with Black (and pre-commit)
+We are following the Black code style for all Python files. The black package is already integrated to the `pyrado` anaconda environment, and configured by the `pyproject.toml` file.
+You can format your local code by running
+```
+cd TOP_LEVEL_DIR_FOR_REFORMAT
+black . --check  # remove --check to actually do the changes
+```
+Moreover, you can install the pre-commit framework via
+```
+python setup_deps.py pre_commit
+```
+which will reformat your code before every commit. Eventually the Black Github action will check with the code complies with the Black standard.
 
 <!--
 ### Docker Container (experimental)
@@ -414,3 +429,9 @@ conda remove scipy --force
 pip install scipy==1.5.2
 ```
 
+### ImageMagick error from moviepy
+Check for the ImageMagick policy file. ImageMagick does not have the proper permission set. You can edit the policy file (requires sudo rights)
+```
+sudo vi /etc/ImageMagick-6/policy.xml
+```
+by commenting out the line(s) containing `<policy domain="path" rights="none" pattern="@*" />`. Now try again.

@@ -52,7 +52,7 @@ class HopperSim(MujocoSimEnv, Serializable):
         [1] https://github.com/openai/gym/blob/master/gym/envs/mujoco/hopper_v3.py
     """
 
-    name: str = 'hop'
+    name: str = "hop"
 
     def __init__(self, frame_skip: int = 5, max_steps: int = 1000, task_args: Optional[dict] = None):
         """
@@ -64,44 +64,35 @@ class HopperSim(MujocoSimEnv, Serializable):
         :param task_args: arguments for the task construction, e.g `dict(fwd_rew_weight=1.)`
         """
         # Call MujocoSimEnv's constructor
-        model_path = osp.join(osp.dirname(__file__), 'assets', 'openai_hopper.xml')
+        model_path = osp.join(osp.dirname(__file__), "assets", "openai_hopper.xml")
         super().__init__(model_path, frame_skip, max_steps, task_args)
 
-        self.camera_config = dict(
-            trackbodyid=2,
-            distance=3.,
-            lookat=np.array((0.0, 0.0, 1.15)),
-            elevation=-20.0
-        )
+        self.camera_config = dict(trackbodyid=2, distance=3.0, lookat=np.array((0.0, 0.0, 1.15)), elevation=-20.0)
 
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
         return dict(
-            state_bound=100.,
-            z_lower_bound=0.7,
-            angle_bound=0.2,
-            foot_friction_coeff=2.,
-            reset_noise_halfspan=5e-3
+            state_bound=100.0, z_lower_bound=0.7, angle_bound=0.2, foot_friction_coeff=2.0, reset_noise_halfspan=5e-3
         )
 
     def _create_spaces(self):
         # Action
         act_bounds = self.model.actuator_ctrlrange.copy().T
-        self._act_space = BoxSpace(*act_bounds, labels=['thigh', 'leg', 'foot'])
+        self._act_space = BoxSpace(*act_bounds, labels=["thigh", "leg", "foot"])
 
         # State
         n = self.init_qpos.size + self.init_qvel.size
-        min_state = -self.domain_param['state_bound']*np.ones(n)
+        min_state = -self.domain_param["state_bound"] * np.ones(n)
         min_state[0] = -pyrado.inf  # ignore forward position
-        min_state[1] = self.domain_param['z_lower_bound']
-        min_state[2] = -self.domain_param['angle_bound']
-        max_state = self.domain_param['state_bound']*np.ones(n)
+        min_state[1] = self.domain_param["z_lower_bound"]
+        min_state[2] = -self.domain_param["angle_bound"]
+        max_state = self.domain_param["state_bound"] * np.ones(n)
         max_state[0] = +pyrado.inf  # ignore forward position
-        max_state[2] = self.domain_param['angle_bound']
+        max_state[2] = self.domain_param["angle_bound"]
         self._state_space = BoxSpace(min_state, max_state)
 
         # Initial state
-        noise_halfspan = self.domain_param['reset_noise_halfspan']
+        noise_halfspan = self.domain_param["reset_noise_halfspan"]
         min_init_qpos = self.init_qpos - np.full_like(self.init_qpos, noise_halfspan)
         max_init_qpos = self.init_qpos + np.full_like(self.init_qpos, noise_halfspan)
         min_init_qvel = self.init_qvel - np.full_like(self.init_qpos, noise_halfspan)
@@ -116,15 +107,17 @@ class HopperSim(MujocoSimEnv, Serializable):
         self._obs_space = BoxSpace(-max_obs, max_obs)
 
     def _create_task(self, task_args: dict) -> Task:
-        if 'fwd_rew_weight' not in task_args:
-            task_args['fwd_rew_weight'] = 1.
-        if 'ctrl_cost_weight' not in task_args:
-            task_args['ctrl_cost_weight'] = 1e-3
+        if "fwd_rew_weight" not in task_args:
+            task_args["fwd_rew_weight"] = 1.0
+        if "ctrl_cost_weight" not in task_args:
+            task_args["ctrl_cost_weight"] = 1e-3
 
-        rew_fcn = CompoundRewFcn([
-            ForwardVelocityRewFcn(self._dt, idx_fwd=0, **task_args),
-            PlusOnePerStepRewFcn()  # equivalent to the "healthy_reward" in [1]
-        ])
+        rew_fcn = CompoundRewFcn(
+            [
+                ForwardVelocityRewFcn(self._dt, idx_fwd=0, **task_args),
+                PlusOnePerStepRewFcn(),  # equivalent to the "healthy_reward" in [1]
+            ]
+        )
         return GoallessTask(self.spec, rew_fcn)
 
     def _mujoco_step(self, act: np.ndarray) -> dict:
@@ -139,8 +132,8 @@ class HopperSim(MujocoSimEnv, Serializable):
 
     def observe(self, state: np.ndarray) -> np.ndarray:
         # Clip velocity
-        pos = state[:self.model.nq]
-        vel = np.clip(state[self.model.nq:], -10., 10.)
+        pos = state[: self.model.nq]
+        vel = np.clip(state[self.model.nq :], -10.0, 10.0)
 
         # Ignore horizontal position to maintain translational invariance
         return np.concatenate([pos[1:], vel])

@@ -45,12 +45,12 @@ def draw_categorical(
     x_label: Optional[Union[str, Sequence[str]]],
     y_label: Optional[str],
     vline_level: float = None,
-    vline_label: str = 'approx. solved',
+    vline_label: str = "approx. solved",
     palette=None,
     title: str = None,
     show_legend: bool = True,
     legend_kwargs: dict = None,
-    plot_kwargs: dict = None
+    plot_kwargs: dict = None,
 ) -> plt.Figure:
     """
     Create a box or violin plot for a list of data arrays or a pandas DataFrame.
@@ -81,14 +81,14 @@ def draw_categorical(
     :return: handle to the resulting figure
     """
     plot_type = plot_type.lower()
-    if plot_type not in ['box', 'violin']:
-        raise pyrado.ValueErr(given=plot_type, eq_constraint='box or violin')
+    if plot_type not in ["box", "violin"]:
+        raise pyrado.ValueErr(given=plot_type, eq_constraint="box or violin")
     if not isinstance(data, (list, to.Tensor, np.ndarray, pd.DataFrame)):
         raise pyrado.TypeErr(given=data, expected_type=[list, to.Tensor, np.ndarray, pd.DataFrame])
 
     # Set defaults which can be overwritten
     plot_kwargs = merge_dicts([dict(alpha=1), plot_kwargs])  # by default no transparency
-    alpha = plot_kwargs.pop('alpha')  # can't pass the to the seaborn plotting functions
+    alpha = plot_kwargs.pop("alpha")  # can't pass the to the seaborn plotting functions
     legend_kwargs = dict() if legend_kwargs is None else legend_kwargs
     palette = sns.color_palette() if palette is None else palette
 
@@ -105,35 +105,35 @@ def draw_categorical(
         df = pd.DataFrame(data, columns=x_label)
 
     if data.shape[0] < data.shape[1]:
-        print_cbt(f'Less data samples {data.shape[0]} then data dimensions {data.shape[1]}', 'y', bright=True)
+        print_cbt(f"Less data samples {data.shape[0]} then data dimensions {data.shape[1]}", "y", bright=True)
 
     # Plot
-    if plot_type == 'box':
+    if plot_type == "box":
         ax = sns.boxplot(data=df, ax=ax, **plot_kwargs)
 
-    elif plot_type == 'violin':
-        plot_kwargs = merge_dicts([dict(alpha=0.3, scale='count', inner='box', bw=0.3, cut=0), plot_kwargs])
+    elif plot_type == "violin":
+        plot_kwargs = merge_dicts([dict(alpha=0.3, scale="count", inner="box", bw=0.3, cut=0), plot_kwargs])
         ax = sns.violinplot(data=df, ax=ax, palette=palette, **plot_kwargs)
 
         # Plot larger circles for medians (need to memorize the limits)
         medians = df.median().to_numpy()
         left, right = ax.get_xlim()
         locs = ax.get_xticks()
-        ax.scatter(locs, medians, marker='o', s=30, zorder=3, color='white', edgecolors='black')
+        ax.scatter(locs, medians, marker="o", s=30, zorder=3, color="white", edgecolors="black")
         ax.set_xlim((left, right))
 
     # Postprocess
-    if alpha < 1 and plot_type == 'box':
+    if alpha < 1 and plot_type == "box":
         for patch in ax.artists:
             r, g, b, a = patch.get_facecolor()
             patch.set_facecolor((r, g, b, alpha))
-    elif alpha < 1 and plot_type == 'violin':
+    elif alpha < 1 and plot_type == "violin":
         for violin in ax.collections[::2]:
             violin.set_alpha(alpha)
 
     if vline_level is not None:
         # Add dashed line to mark a threshold
-        ax.axhline(vline_level, c='k', ls='--', lw=1., label=vline_label)
+        ax.axhline(vline_level, c="k", ls="--", lw=1.0, label=vline_label)
 
     if x_label is None:
         ax.get_xaxis().set_ticks([])
