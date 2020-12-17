@@ -30,7 +30,7 @@ import time
 import numpy as np
 import robcom_python as robcom
 from abc import ABC, abstractmethod
-from init_args_serializer import Serializable
+from scipy.spatial.transform import Rotation
 
 import pyrado
 from pyrado.environments.barrett_wam import (
@@ -41,6 +41,8 @@ from pyrado.environments.barrett_wam import (
     wam_pgains,
     wam_dgains,
 )
+from pyrado.environments.barrett_wam.natnet_client import NatNetClient
+from pyrado.environments.barrett_wam.trackers import RigidBodyTracker
 from pyrado.environments.real_base import RealEnv
 from pyrado.spaces import BoxSpace
 from pyrado.spaces.base import Space
@@ -52,7 +54,7 @@ from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt, completion_context, print_cbt_once
 
 
-class WAMBallInCupReal(RealEnv, ABC, Serializable):
+class WAMBallInCupReal(RealEnv, ABC):
     """
     Abstract base class for the real Barrett WAM
 
@@ -65,7 +67,11 @@ class WAMBallInCupReal(RealEnv, ABC, Serializable):
     name: str = "wam-bic"
 
     def __init__(
-        self, dt: float = 1 / 500.0, max_steps: int = pyrado.inf, num_dof: int = 7, ip: [str, None] = "192.168.2.2"
+        self,
+        dt: float = 1 / 500.0,
+        max_steps: int = pyrado.inf,
+        num_dof: int = 7,
+        ip: [str, None] = "192.168.2.2",
     ):
         """
         Constructor
@@ -75,7 +81,6 @@ class WAMBallInCupReal(RealEnv, ABC, Serializable):
         :param num_dof: number of degrees of freedom (4 or 7), depending on which Barrett WAM setup being used
         :param ip: IP address of the PC controlling the Barrett WAM, pass `None` to skip connecting
         """
-        Serializable._init(self, locals())
 
         # Make sure max_steps is reachable
         if not max_steps < pyrado.inf:
@@ -141,7 +146,10 @@ class WAMBallInCupReal(RealEnv, ABC, Serializable):
 
     def _create_task(self, task_args: dict) -> Task:
         # The wrapped task acts as a dummy and carries the FinalRewTask
-        return FinalRewTask(GoallessTask(self.spec, ZeroPerStepRewFcn()), mode=FinalRewMode(user_input=True))
+        return FinalRewTask(
+            GoallessTask(self.spec, ZeroPerStepRewFcn()),
+            mode=FinalRewMode(user_input=True),
+        )
 
     @abstractmethod
     def _create_spaces(self):
@@ -219,7 +227,7 @@ class WAMBallInCupReal(RealEnv, ABC, Serializable):
         pass
 
 
-class WAMBallInCupRealEpisodic(WAMBallInCupReal, Serializable):
+class WAMBallInCupRealEpisodic(WAMBallInCupReal):
     """
     Class for the real Barrett WAM
 
@@ -327,7 +335,7 @@ class WAMBallInCupRealEpisodic(WAMBallInCupReal, Serializable):
         return False
 
 
-class WAMBallInCupRealStepBased(WAMBallInCupReal, Serializable):
+class WAMBallInCupRealStepBased(WAMBallInCupReal):
     """
     Class for the real Barrett WAM
 
@@ -336,10 +344,40 @@ class WAMBallInCupRealStepBased(WAMBallInCupReal, Serializable):
     executed on the real system simultaneous to the step function calls.
     """
 
+    def __init__(
+        self,
+        observe_ball: bool,
+        observe_cup: bool,
+        dt: float = 1 / 500.0,
+        max_steps: int = pyrado.inf,
+        num_dof: int = 7,
+        ip: [str, None] = "192.168.2.2",
+    ):
+        self.observe_ball = observe_ball
+        self.observe_cup = observe_cup
+
+        # Call WAMBallInCupReal's constructor
+        super().__init__(dt, max_steps, num_dof, ip)
+
+        # Create OptiTrack client
+        self.natnet_client = NatNetClient(ver=(3, 0, 0, 0), quiet=True)
+        self.rigid_body_tracker = RigidBodyTracker(
+            ["Cup", "Ball"],
+            rotation=Rotation.from_euler("xzy", [90.0, 0.0, 0.0], degrees=True),
+        )
+        self.natnet_client.rigidBodyListener = self.rigid_body_tracker
+
     def _create_spaces(self):
         # State space (joint positions and velocities)
         state_shape = (2 * self.num_dof,)
-        state_up, state_lo = np.full(state_shape, pyrado.inf), np.full(state_shape, -pyrado.inf)
+        state_lo, state_up = np.full(state_shape, -pyrado.inf), np.full(state_shape, pyrado.inf)
+        if self.observe_ball:
+            state_lo = np.r_[state_lo, np.full((3,), -3.0)]
+            state_up = np.r_[state_up, np.full((3,), 3.0)]
+        if self.observe_cup:
+            state_lo = np.r_[state_lo, np.full((3,), -3.0)]
+            state_up = np.r_[state_up, np.full((3,), 3.0)]
+
         self._state_space = BoxSpace(state_lo, state_up)
 
         # Action space (PD controller on joint positions and velocities)
@@ -348,8 +386,17 @@ class WAMBallInCupRealStepBased(WAMBallInCupReal, Serializable):
         elif self.num_dof == 7:
             self._act_space = act_space_wam_7dof
 
-        # Observation space (normalized time)
-        self._obs_space = BoxSpace(np.array([0.0]), np.array([1.0]), labels=["t"])
+        # Observation space (normalized time and optionally cup and ball position)
+        obs_lo, obs_up, labels = [0.0], [1.0], ["t"]
+        if self.observe_ball:
+            obs_lo.extend([-3.0, -3.0])
+            obs_up.extend([3.0, 3.0])
+            labels.extend(["ball_x", "ball_z"])
+        if self.observe_cup:
+            obs_lo.extend([-3.0, -3.0])
+            obs_up.extend([3.0, 3.0])
+            labels.extend(["cup_x", "cup_z"])
+        self._obs_space = BoxSpace(obs_lo, obs_up, labels=labels)
 
     def _reset(self):
         # Get the robot access manager, to control that synchronized data is received
@@ -361,6 +408,10 @@ class WAMBallInCupRealStepBased(WAMBallInCupReal, Serializable):
 
         # Create robcom direct-control process
         self._dc = self._client.create(robcom.DirectControl, self._robot_group_name, "")
+
+        # Start NatNet client only once
+        if self.natnet_client.dataSocket is None or self.natnet_client.commandSocket is None:
+            self.natnet_client.run()
 
         # Get current joint state
         self.state = np.concatenate(self._get_joint_state())
@@ -396,7 +447,7 @@ class WAMBallInCupRealStepBased(WAMBallInCupReal, Serializable):
         # Limit the action
         act = self.limit_act(act)
 
-        # The policy operates on specific indices `self.idcs_act`, i.e. joint 1 and 3 (and 5)
+        # The policy operates on specific indices self.idcs_act, i.e. joint 1 and 3 (and 5)
         self._qpos_des[self.idcs_act] = self.qpos_des_init[self.idcs_act] + act[: len(self.idcs_act)]
         self._qvel_des[self.idcs_act] = act[len(self.idcs_act) :]
 
@@ -418,6 +469,14 @@ class WAMBallInCupRealStepBased(WAMBallInCupReal, Serializable):
         self.qpos_real[self._curr_step] = qpos
         self.qvel_real[self._curr_step] = qvel
         self.state = np.concatenate([qpos, qvel])
+
+        # Get the OptiTrack
+        if self.observe_ball:
+            ball_pos, _ = self.rigid_body_tracker.get_current_estimate(["Ball"])
+            self.state = np.r_[self.state, ball_pos]
+        if self.observe_cup:
+            cup_pos, _ = self.rigid_body_tracker.get_current_estimate(["Cup"])
+            self.state = np.r_[self.state, cup_pos]
 
         # Update current step and state
         self._curr_step += 1
@@ -443,4 +502,18 @@ class WAMBallInCupRealStepBased(WAMBallInCupReal, Serializable):
         return self.observe(self.state), self._curr_rew, done, info
 
     def observe(self, state: np.ndarray) -> np.ndarray:
-        return np.array([self._curr_step / self.max_steps])
+        # Observe the normalized time
+        obs = np.array([self._curr_step / self.max_steps])
+
+        # Extract the (x, z) cartesian position of cup and ball (the robot operates in the x-z plane).
+        # Note: the cup_goal is the mujoco site object marking the goal position for the ball. It is not identical
+        # to the coordinate system origin of the rigid body object 'cup'
+        if self.observe_ball:
+            obs = np.r_[obs, state[-3], state[-1]]
+        if self.observe_cup:
+            obs = np.r_[obs, state[-6], state[-4]]
+
+        return obs
+
+    def close(self):
+        self.natnet_client.stop()

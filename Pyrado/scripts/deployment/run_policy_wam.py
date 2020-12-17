@@ -61,7 +61,13 @@ if __name__ == "__main__":
         while mode not in ["ep", "sb"]:
             mode = input("Pass ep for episodic and sb for step-based control mode: ").lower()
         if mode == "sb":
-            env_real = WAMBallInCupRealStepBased(dt=dt, max_steps=max_steps, num_dof=inner_env(env_sim).num_dof)
+            env_real = WAMBallInCupRealStepBased(
+                observe_ball=True,
+                observe_cup=False,
+                dt=dt,
+                max_steps=max_steps,
+                num_dof=inner_env(env_sim).num_dof,
+            )
         else:
             env_real = WAMBallInCupRealEpisodic(dt=dt, max_steps=max_steps, num_dof=inner_env(env_sim).num_dof)
     else:

@@ -71,7 +71,12 @@ class WAMSim(MujocoSimEnv, Serializable):
 
     name: str = "wam"
 
-    def __init__(self, frame_skip: int = 1, max_steps: int = pyrado.inf, task_args: [dict, None] = None):
+    def __init__(
+        self,
+        frame_skip: int,
+        max_steps: int = pyrado.inf,
+        task_args: [dict, None] = None,
+    ):
         """
         Constructor
 
@@ -143,6 +148,8 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         max_steps: int = pyrado.inf,
         fixed_init_state: bool = True,
         stop_on_collision: bool = True,
+        observe_ball: bool = False,
+        observe_cup: bool = False,
         task_args: [dict, None] = None,
     ):
         """
@@ -156,11 +163,15 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
                                   collides with something else than the desired parts of the cup. This causes the
                                   episode to end. Keep in mind that in case of a negative step reward and no final
                                   cost on failing, this might result in undesired behavior.
+        :param observe_ball: if `True`, include the 2-dim (x-z plane) cartesian ball position into the observation
+        :param observe_cup: if `True`, include the 2-dim (x-z plane) cartesian cup position into the observation
         :param task_args: arguments for the task construction
         """
         Serializable._init(self, locals())
 
         self.fixed_init_state = fixed_init_state
+        self.observe_ball = observe_ball
+        self.observe_cup = observe_cup
 
         # File name of the xml and desired joint position for the initial state
         self.num_dof = num_dof
@@ -272,8 +283,17 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         elif self.num_dof == 7:
             self._act_space = act_space_wam_7dof
 
-        # Observation space (normalized time)
-        self._obs_space = BoxSpace(np.array([0.0]), np.array([1.0]), labels=["t"])
+        # Observation space (normalized time and optionally cup and ball position)
+        obs_lo, obs_up, labels = [0.0], [1.0], ["t"]
+        if self.observe_ball:
+            obs_lo.extend([-3.0, -3.0])
+            obs_up.extend([3.0, 3.0])
+            labels.extend(["ball_x", "ball_z"])
+        if self.observe_cup:
+            obs_lo.extend([-3.0, -3.0])
+            obs_up.extend([3.0, 3.0])
+            labels.extend(["cup_x", "cup_z"])
+        self._obs_space = BoxSpace(obs_lo, obs_up, labels=labels)
 
     def _create_task(self, task_args: dict) -> Task:
         if task_args.get("sparse_rew_fcn", False):
@@ -288,7 +308,12 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
                 [
                     self._create_main_task(task_args),
                     self._create_deviation_task(task_args),
-                    self._create_main_task(dict(sparse_rew_fcn=True, success_bonus=task_args.get("success_bonus", 0))),
+                    self._create_main_task(
+                        dict(
+                            sparse_rew_fcn=True,
+                            success_bonus=task_args.get("success_bonus", 0),
+                        )
+                    ),
                 ]
             )
 
@@ -309,13 +334,19 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             factor = task_args.get("success_bonus", 1)
             # Binary final reward task
             main_task = FinalRewTask(
-                ConditionOnlyTask(spec, condition_fcn=self.check_ball_in_cup, is_success_condition=True),
+                ConditionOnlyTask(
+                    spec,
+                    condition_fcn=self.check_ball_in_cup,
+                    is_success_condition=True,
+                ),
                 mode=FinalRewMode(always_positive=True),
                 factor=factor,
             )
             # Yield -1 on fail after the main task ist done (successfully or not)
             dont_fail_after_succ_task = FinalRewTask(
-                GoallessTask(spec, ZeroPerStepRewFcn()), mode=FinalRewMode(always_negative=True), factor=factor
+                GoallessTask(spec, ZeroPerStepRewFcn()),
+                mode=FinalRewMode(always_negative=True),
+                factor=factor,
             )
 
             # Augment the binary task with an endless dummy task, to avoid early stopping
@@ -334,7 +365,9 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
 
             # Wrap the masked DesStateTask to add a bonus for the best state in the rollout
             return BestStateFinalRewTask(
-                MaskedTask(self.spec, task, idcs), max_steps=self.max_steps, factor=task_args.get("final_factor", 0.05)
+                MaskedTask(self.spec, task, idcs),
+                max_steps=self.max_steps,
+                factor=task_args.get("final_factor", 0.05),
             )
 
     def _create_deviation_task(self, task_args: dict) -> Task:
@@ -461,7 +494,10 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             )
             if c1 or c2:
                 if verbose:
-                    print_cbt(f"Undesired collision of {body1_name} and {body2_name} detected!", "y")
+                    print_cbt(
+                        f"Undesired collision of {body1_name} and {body2_name} detected!",
+                        "y",
+                    )
                 return True
 
         return False
@@ -496,5 +532,20 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         return False
 
     def observe(self, state: np.ndarray) -> np.ndarray:
-        # Only observe the normalized time
-        return np.array([self._curr_step / self.max_steps])
+        # TODO: Debug print-outs, should be removed in future...
+        # if self._curr_step == 0:
+        #     print_cbt(f'cup xpos: {self.sim.data.get_body_xpos("cup").copy()}', 'b')    # center of frame
+        #     print_cbt(f'cup xipos: {self.sim.data.get_body_xipos("cup").copy()}', 'b')  # center of mass
+
+        # Observe the normalized time
+        obs = [self._curr_step / self.max_steps]
+
+        # Extract the (x, z) cartesian position of cup and ball (the robot operates in the x-z plane).
+        # Note: the cup_goal is the mujoco site object marking the goal position for the ball. It is not identical
+        # to the coordinate system origin of the rigid body object 'cup'
+        if self.observe_ball:
+            obs.extend([state[-3], state[-1]])
+        if self.observe_cup:
+            obs.extend([state[-6], state[-4]])
+
+        return np.array(obs)
