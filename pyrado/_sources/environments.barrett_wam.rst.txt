@@ -5,6 +5,24 @@ barrett\_wam
 
 
 
+natnet\_client
+--------------
+
+.. automodule:: pyrado.environments.barrett_wam.natnet_client
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+trackers
+--------
+
+.. automodule:: pyrado.environments.barrett_wam.trackers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 wam
 ---
 

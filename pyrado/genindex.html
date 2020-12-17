@@ -307,6 +307,8 @@
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.domain_randomization.MetaDomainRandWrapper.adapt_randomizer">adapt_randomizer() (MetaDomainRandWrapper method)</a>
 </li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.LabeledMarkers.add">add() (LabeledMarkers method)</a>
+</li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.add_data">add_data() (StepSequence method)</a>
 </li>
       <li><a href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.add_domain_params">add_domain_params() (DomainRandomizer method)</a>
@@ -601,10 +603,10 @@
         <li><a href="spaces.html#pyrado.spaces.base.Space.contains">(Space method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.convert">convert() (StepSequence method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms.meta.html#pyrado.algorithms.meta.adr.convert_step_sequence">convert_step_sequence() (in module pyrado.algorithms.meta.adr)</a>
 </li>
       <li><a href="spaces.html#pyrado.spaces.base.Space.copy">copy() (Space method)</a>
@@ -676,6 +678,8 @@
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.planar_insert.create_insert_task">create_insert_task() (in module pyrado.environments.rcspysim.planar_insert)</a>
 </li>
       <li><a href="spaces.html#pyrado.spaces.base.Space.create_mask">create_mask() (Space method)</a>
+</li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.trackers.MarkerTracker.create_query">create_query() (MarkerTracker method)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.data_sets.create_sequences">create_sequences() (in module pyrado.utils.data_sets)</a>
 </li>
@@ -1129,9 +1133,13 @@
         <li><a href="tasks.html#pyrado.tasks.base.Task.final_rew">(Task method)</a>
 </li>
       </ul></li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.LabeledMarkers.finalize">finalize() (LabeledMarkers method)</a>
+</li>
       <li><a href="tasks.html#pyrado.tasks.final_reward.FinalRewMode">FinalRewMode (class in pyrado.tasks.final_reward)</a>
 </li>
       <li><a href="tasks.html#pyrado.tasks.final_reward.FinalRewTask">FinalRewTask (class in pyrado.tasks.final_reward)</a>
+</li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.LabeledMarkers.find">find() (LabeledMarkers method)</a>
 </li>
       <li><a href="spaces.html#pyrado.spaces.compound.CompoundSpace.flat_dim">flat_dim() (CompoundSpace property)</a>
 
@@ -1275,6 +1283,12 @@
 </li>
       <li><a href="utils.html#pyrado.utils.get_class_name">get_class_name() (in module pyrado.utils)</a>
 </li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.trackers.MarkerTracker.get_current_estimate">get_current_estimate() (MarkerTracker method)</a>
+
+      <ul>
+        <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.trackers.RigidBodyTracker.get_current_estimate">(RigidBodyTracker method)</a>
+</li>
+      </ul></li>
       <li><a href="sampling.html#pyrado.sampling.step_sequence.StepSequence.get_data_values">get_data_values() (StepSequence method)</a>
 </li>
       <li><a href="domain_randomization.html#pyrado.domain_randomization.default_randomizers.get_default_domain_param_map_bob">get_default_domain_param_map_bob() (in module pyrado.domain_randomization.default_randomizers)</a>
@@ -1317,12 +1331,14 @@
       </ul></li>
       <li><a href="algorithms.html#pyrado.algorithms.utils.get_grad_via_torch">get_grad_via_torch() (in module pyrado.algorithms.utils)</a>
 </li>
-      <li><a href="utils.html#pyrado.utils.order.get_immediate_subdirs">get_immediate_subdirs() (in module pyrado.utils.order)</a>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.LabeledMarkers.get_ids">get_ids() (LabeledMarkers method)</a>
 </li>
-      <li><a href="policies.special.html#pyrado.policies.special.environment_specific.get_lin_ctrl">get_lin_ctrl() (in module pyrado.policies.special.environment_specific)</a>
+      <li><a href="utils.html#pyrado.utils.order.get_immediate_subdirs">get_immediate_subdirs() (in module pyrado.utils.order)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="policies.special.html#pyrado.policies.special.environment_specific.get_lin_ctrl">get_lin_ctrl() (in module pyrado.policies.special.environment_specific)</a>
+</li>
       <li><a href="logger.html#pyrado.logger.get_log_prefix_dir">get_log_prefix_dir() (in module pyrado.logger)</a>
 </li>
       <li><a href="environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.BallInTubeSim.get_nominal_domain_param">get_nominal_domain_param() (BallInTubeSim class method)</a>
@@ -1565,8 +1581,6 @@
         <li><a href="policies.recurrent.html#pyrado.policies.recurrent.two_headed_rnn.TwoHeadedRNNPolicyBase.init_param">(TwoHeadedRNNPolicyBase method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="environments.one_step.html#pyrado.environments.one_step.catapult.CatapultSim.init_space">init_space() (CatapultSim property)</a>
 
       <ul>
@@ -1583,6 +1597,14 @@
         <li><a href="environments.html#pyrado.environments.sim_base.SimEnv.init_space">(SimEnv property)</a>
 </li>
         <li><a href="environments.pysim.html#pyrado.environments.pysim.base.SimPyEnv.init_space">(SimPyEnv property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.trackers.MarkerTracker.initialized">initialized() (MarkerTracker method)</a>
+
+      <ul>
+        <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.trackers.RigidBodyTracker.initialized">(RigidBodyTracker method)</a>
 </li>
       </ul></li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.utils.inner_env">inner_env() (in module pyrado.environment_wrappers.utils)</a>
@@ -1677,6 +1699,8 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.LabeledMarkers">LabeledMarkers (class in pyrado.environments.barrett_wam.natnet_client)</a>
+</li>
       <li><a href="spaces.html#pyrado.spaces.box.BoxSpace.labels">labels() (BoxSpace property)</a>
 
       <ul>
@@ -1744,6 +1768,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.make_snapshot">make_snapshot() (Algorithm method)</a>
+</li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.trackers.MarkerTracker">MarkerTracker (class in pyrado.environments.barrett_wam.trackers)</a>
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.state_augmentation.StateAugmentationWrapper.mask">mask() (StateAugmentationWrapper property)</a>
 </li>
@@ -1904,6 +1930,10 @@
         <li><a href="environments.html#module-pyrado.environments">pyrado.environments</a>
 </li>
         <li><a href="environments.barrett_wam.html#module-pyrado.environments.barrett_wam">pyrado.environments.barrett_wam</a>
+</li>
+        <li><a href="environments.barrett_wam.html#module-pyrado.environments.barrett_wam.natnet_client">pyrado.environments.barrett_wam.natnet_client</a>
+</li>
+        <li><a href="environments.barrett_wam.html#module-pyrado.environments.barrett_wam.trackers">pyrado.environments.barrett_wam.trackers</a>
 </li>
         <li><a href="environments.html#module-pyrado.environments.base">pyrado.environments.base</a>
 </li>
@@ -2411,6 +2441,30 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper.name">name() (EnvWrapper property)</a>
+</li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient.NAT_DISCONNECT">NAT_DISCONNECT (NatNetClient attribute)</a>
+</li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient.NAT_FRAMEOFDATA">NAT_FRAMEOFDATA (NatNetClient attribute)</a>
+</li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient.NAT_MESSAGESTRING">NAT_MESSAGESTRING (NatNetClient attribute)</a>
+</li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient.NAT_MODELDEF">NAT_MODELDEF (NatNetClient attribute)</a>
+</li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient.NAT_PING">NAT_PING (NatNetClient attribute)</a>
+</li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient.NAT_PINGRESPONSE">NAT_PINGRESPONSE (NatNetClient attribute)</a>
+</li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient.NAT_REQUEST">NAT_REQUEST (NatNetClient attribute)</a>
+</li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient.NAT_REQUEST_FRAMEOFDATA">NAT_REQUEST_FRAMEOFDATA (NatNetClient attribute)</a>
+</li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient.NAT_REQUEST_MODELDEF">NAT_REQUEST_MODELDEF (NatNetClient attribute)</a>
+</li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient.NAT_RESPONSE">NAT_RESPONSE (NatNetClient attribute)</a>
+</li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient.NAT_UNRECOGNIZED_REQUEST">NAT_UNRECOGNIZED_REQUEST (NatNetClient attribute)</a>
+</li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient">NatNetClient (class in pyrado.environments.barrett_wam.natnet_client)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.order.natural_sort">natural_sort() (in module pyrado.utils.order)</a>
 </li>
@@ -3089,6 +3143,20 @@
 </li>
       </ul></li>
       <li>
+    pyrado.environments.barrett_wam.natnet_client
+
+      <ul>
+        <li><a href="environments.barrett_wam.html#module-pyrado.environments.barrett_wam.natnet_client">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyrado.environments.barrett_wam.trackers
+
+      <ul>
+        <li><a href="environments.barrett_wam.html#module-pyrado.environments.barrett_wam.trackers">module</a>
+</li>
+      </ul></li>
+      <li>
     pyrado.environments.base
 
       <ul>
@@ -3221,6 +3289,8 @@
         <li><a href="environments.quanser.html#module-pyrado.environments.quanser.quanser_qube">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.rcspysim
 
@@ -3228,8 +3298,6 @@
         <li><a href="environments.rcspysim.html#module-pyrado.environments.rcspysim">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyrado.environments.rcspysim.ball_in_tube
 
@@ -4348,6 +4416,8 @@
 </li>
       <li><a href="tasks.html#pyrado.tasks.reward_functions.RewFcn">RewFcn (class in pyrado.tasks.reward_functions)</a>
 </li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.trackers.RigidBodyTracker">RigidBodyTracker (class in pyrado.environments.barrett_wam.trackers)</a>
+</li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.domain_randomization.DomainRandWrapperBuffer.ring_idx">ring_idx() (DomainRandWrapperBuffer property)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.math.rmse">rmse() (in module pyrado.utils.math)</a>
@@ -4377,6 +4447,8 @@
       <li><a href="utils.html#pyrado.utils.functions.rosenbrock">rosenbrock() (in module pyrado.utils.functions)</a>
 </li>
       <li><a href="environments.one_step.html#pyrado.environments.one_step.rosenbrock.RosenSim">RosenSim (class in pyrado.environments.one_step.rosenbrock)</a>
+</li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient.run">run() (NatNetClient method)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.sampler_pool.SamplerPool.run_collect">run_collect() (SamplerPool method)</a>
 </li>
@@ -4551,6 +4623,8 @@
       <li><a href="sampling.html#pyrado.sampling.cvar_sampler.select_cvar">select_cvar() (in module pyrado.sampling.cvar_sampler)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.input_output.select_query">select_query() (in module pyrado.utils.input_output)</a>
+</li>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient.sendCommand">sendCommand() (NatNetClient method)</a>
 </li>
       <li><a href="sampling.html#pyrado.sampling.sequences.sequence">sequence() (in module pyrado.sampling.sequences)</a>
 </li>
@@ -4860,8 +4934,12 @@
 </li>
       <li><a href="exploration.html#pyrado.exploration.stochastic_params.StochasticParamExplStrat">StochasticParamExplStrat (class in pyrado.exploration.stochastic_params)</a>
 </li>
-      <li><a href="sampling.html#pyrado.sampling.sampler_pool.SamplerPool.stop">stop() (SamplerPool method)</a>
+      <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient.stop">stop() (NatNetClient method)</a>
+
+      <ul>
+        <li><a href="sampling.html#pyrado.sampling.sampler_pool.SamplerPool.stop">(SamplerPool method)</a>
 </li>
+      </ul></li>
       <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.stopping_criterion_met">stopping_criterion_met() (Algorithm method)</a>
 
       <ul>
