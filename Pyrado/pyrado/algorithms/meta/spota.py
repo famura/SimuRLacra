@@ -411,16 +411,18 @@ class SPOTA(InterruptableAlgorithm):
 
         if ratio_neg_diffs == 1:
             # All diffs are negative
-            ci_bs = [0, float("inf")]  # such that the UCBOG comparison in stopping_criterion_met() does not break
+            ci_bs_lo, ci_bs_up = np.zeros(1), np.array(
+                [pyrado.inf]
+            )  # such that the UCBOG comparison in stopping_criterion_met() does not break
             log_dict = {"Gn_est": np.NaN, "UCBOG": np.NaN, "ratio_neg_diffs": np.NaN}
         else:
             # Apply bootstrapping
-            m_bs, ci_bs = bootstrap_ci(
+            m_bs, ci_bs_lo, ci_bs_up = bootstrap_ci(
                 np.ravel(self.Gn_diffs), np.mean, self.num_bs_reps, self.alpha, 1, self.studentized_ci
             )
-            print(f"m_bs: {m_bs}, ci_bs: {ci_bs}")
-            print_cbt(f"\nOG (point estimate): {Gn_est} \nUCBOG: {ci_bs[1]}\n", "y", bright=True)
-            log_dict = {"Gn_est": Gn_est, "UCBOG": ci_bs[1], "ratio_neg_diffs": ratio_neg_diffs}
+            print(f"m_bs: {m_bs}, ci_bs: {ci_bs_lo, ci_bs_up}")
+            print_cbt(f"\nOG (point estimate): {Gn_est} \nUCBOG: {ci_bs_up}\n", "y", bright=True)
+            log_dict = {"Gn_est": Gn_est, "UCBOG": ci_bs_up, "ratio_neg_diffs": ratio_neg_diffs}
 
         # Log the optimality gap data
         mode = "w" if self.curr_iter == 0 else "a"
@@ -432,7 +434,7 @@ class SPOTA(InterruptableAlgorithm):
             writer.writerow(log_dict)
 
         # Store the current UCBOG estimated from all samples
-        self.ucbog = ci_bs[1]
+        self.ucbog = ci_bs_up
 
     def _handle_neg_samples(self, cand_rets: np.ndarray, refs_rets: np.ndarray, k: int, i: int) -> np.ndarray:
         """

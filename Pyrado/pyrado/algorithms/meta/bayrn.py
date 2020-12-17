@@ -365,9 +365,10 @@ class BayRn(InterruptableAlgorithm):
         if mc_estimator:
             return to.mean(rets_real)
         else:
-            return to.from_numpy(
-                bootstrap_ci(rets_real.numpy(), np.mean, num_reps=1000, alpha=0.05, ci_sides=1, studentized=False)[1]
+            _, ci_lo, _ = bootstrap_ci(
+                rets_real.numpy(), np.mean, num_reps=1000, alpha=0.05, ci_sides=1, studentized=False
             )
+            return to.from_numpy(ci_lo)
 
     def step(self, snapshot_mode: str = "latest", meta_info: dict = None):
         # Save snapshot to save the correct iteration count

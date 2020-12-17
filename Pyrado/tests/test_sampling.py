@@ -31,6 +31,7 @@ import random
 import time
 from torch.distributions.multivariate_normal import MultivariateNormal
 
+import pyrado
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environments.sim_base import SimEnv
@@ -291,55 +292,54 @@ def test_sequences(sequence: Callable, x_init: np.ndarray):
     # plt.show()
 
 
-def test_bootsrapping():
-    # Why you should operate on the deltas and not directly on the statistic from the resampled data
-    sample = np.array([30, 37, 36, 43, 42, 43, 43, 46, 41, 42])
-    mean = np.mean(sample)
-    print(mean)
-    m, ci = bootstrap_ci(sample, np.mean, num_reps=20, alpha=0.1, ci_sides=2, seed=123)
-    print(m, ci)
+@pytest.mark.parametrize("sample", [np.array([30, 37, 36, 43, 42, 43, 43, 46, 41, 42])])
+@pytest.mark.parametrize("seed", [1, 12, 123], ids=["seed1", "seed1", "seed123"])
+def test_boostrap_methods(sample, seed):
+    # Emperical bootstrap
+    m_bs, ci_bs_lo, ci_bs_up = bootstrap_ci(sample, np.mean, num_reps=20, alpha=0.1, ci_sides=2, seed=seed)
 
-    np.random.seed(123)
+    # Percentile bootstrap
+    pyrado.set_seed(seed)
     resampled = np.random.choice(sample, (sample.shape[0], 20), replace=True)
     means = np.apply_along_axis(np.mean, 0, resampled)
-    print(np.sort(means))
-    ci_lo, ci_up = np.percentile(means, [100 * 0.05, 100 * 0.95])
-    print(ci_lo, ci_up)
+    ci_lo, ci_up = np.percentile(means, [5, 95])
 
-    x = np.random.normal(10, 1, 40)
-    # x = np.random.uniform(5, 15, 20)
-    # x = np.random.poisson(5, 30)
-    np.random.seed(1)
-    # print(bs.bootstrap(x, stat_func=bs_stats.mean))
+    # You should operate on the deltas (emperical bootsrap) and not directly on the statistic from the resampled data
+    # (percentile bootsrap)
+    assert ci_lo != ci_bs_lo
+    assert ci_up != ci_bs_up
 
-    np.random.seed(1)
-    m, ci = bootstrap_ci(x, np.mean, num_reps=1000, alpha=0.05, ci_sides=2, studentized=False, bias_correction=False)
-    print("[use_t_for_ci=False] mean: ", m)
-    print("[use_t_for_ci=False] CI: ", ci)
 
-    np.random.seed(1)
-    m, ci = bootstrap_ci(x, np.mean, num_reps=1000, alpha=0.05, ci_sides=2, studentized=False, bias_correction=True)
-    print("[bias_correction=True] mean: ", m)
+@pytest.mark.parametrize(
+    "data",
+    [np.random.normal(10, 1, (40,)), np.random.normal((1, 7, 13), (1, 1, 1), (40, 3))],
+    ids=["1dim-data", "3dim-data"],
+)
+@pytest.mark.parametrize("num_reps", [100, 1000, 10000], ids=["100reps", "1000reps", "10000reps"])
+@pytest.mark.parametrize("seed", [1, 12, 123], ids=["seed1", "seed12", "seed123"])
+def test_bootsrapping(data, num_reps, seed):
+    # Fully-fledged example
+    bootstrap_ci(data, np.mean, num_reps, alpha=0.05, ci_sides=2, studentized=True, bias_correction=True, seed=seed)
 
-    m, ci = bootstrap_ci(x, np.mean, num_reps=2 * 384, alpha=0.05, ci_sides=1, studentized=False)
-    print("[use_t_for_ci=False] mean: ", m)
-    print("[use_t_for_ci=False] CI: ", ci)
+    m, ci_lo, ci_up = bootstrap_ci(
+        data, np.mean, num_reps, alpha=0.05, ci_sides=2, studentized=False, bias_correction=False, seed=seed
+    )
+    assert np.all(m >= ci_lo)
+    assert np.all(m <= ci_up)
 
-    m, ci = bootstrap_ci(x, np.mean, num_reps=2 * 384, alpha=0.05, ci_sides=1, studentized=True)
-    print("[use_t_for_ci=True] mean: ", m)
-    print("[use_t_for_ci=True] CI: ", ci)
+    m_bc, ci_lo, ci_up = bootstrap_ci(
+        data, np.mean, num_reps, alpha=0.05, ci_sides=2, studentized=False, bias_correction=True, seed=seed
+    )
+    assert np.all(m_bc != m)
 
-    print("Matlab example:")
-    # https://de.mathworks.com/help/stats/bootci.htmls
-    x_matlab = np.random.normal(1, 1, 40)
-
-    m, ci = bootstrap_ci(x_matlab, np.mean, num_reps=2000, alpha=0.05, ci_sides=2, studentized=False)
-    print("[use_t_for_ci=False] mean: ", m)
-    print("[use_t_for_ci=False] CI: ", ci)
-
-    m, ci = bootstrap_ci(x_matlab, np.mean, num_reps=2000, alpha=0.05, ci_sides=2, studentized=True)
-    print("[use_t_for_ci=True] mean: ", m)
-    print("[use_t_for_ci=True] CI: ", ci)
+    m, ci_lo, ci_up = bootstrap_ci(data, np.mean, num_reps, alpha=0.05, ci_sides=1, studentized=False, seed=seed)
+    m_t, ci_lo_t, ci_up_t = bootstrap_ci(data, np.mean, num_reps, alpha=0.05, ci_sides=1, studentized=True, seed=seed)
+    assert m == pytest.approx(m_t)
+    assert np.all(m_t >= ci_lo_t)
+    assert np.all(m_t <= ci_up_t)
+    # Bounds are different (not generally wider) when assuming a t-distribution
+    assert np.all(ci_lo != ci_lo_t)
+    assert np.all(ci_up != ci_up_t)
 
 
 @pytest.mark.parametrize(
