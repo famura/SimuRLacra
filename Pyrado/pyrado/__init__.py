@@ -47,23 +47,10 @@ TEMP_DIR = osp.join(osp.dirname(__file__), "..", "data", "temp")
 MUJOCO_ASSETS_DIR = osp.join(osp.dirname(__file__), "environments", "mujoco", "assets")
 ISAAC_ASSETS_DIR = osp.join(osp.dirname(__file__), "..", "..", "thirdParty", "isaac_gym", "assets")
 
-# Check if the interfaces to the physics engines are available
-try:
-    import rcsenv
-except ImportError:
-    rcsenv_available = False
-else:
-    rcsenv_available = True
-
-try:
-    import mujoco_py
-except (ImportError, Exception):
-    # The ImportError is raised if mujoco-py is simply not installed
-    # The Exception catches the case that you have everything installed properly but your IDE does not set the
-    # LD_LIBRARY_PATH correctly (happens for PyCharm & CLion). To check this, try to run your script from the terminal.
-    mujoco_available = False
-else:
-    mujoco_available = True
+# Set the availability of the physics-engine based simulations to False. These are set to True in the respective
+# top-level __init__.py files, if they can be imported successfully
+rcsenv_loaded = False
+mujoco_loaded = False
 
 # Set default data type for PyTorch
 to.set_default_dtype(to.double)
@@ -116,8 +103,8 @@ __all__ = [
     "EVAL_DIR",
     "EXP_DIR",
     "HPARAM_DIR",
-    "rcsenv_available",
-    "mujoco_available",
+    "rcsenv_loaded",
+    "mujoco_loaded",
     "use_pgf",
     "inf",
     "nan",

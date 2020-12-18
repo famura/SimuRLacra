@@ -260,7 +260,7 @@ def rollout(
 
         if render_mode.video:
             do_sleep = True
-            if pyrado.mujoco_available:
+            if pyrado.mujoco_loaded:
                 from pyrado.environments.mujoco.base import MujocoSimEnv
 
                 if isinstance(env, MujocoSimEnv):
