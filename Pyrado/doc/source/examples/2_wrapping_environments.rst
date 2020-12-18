@@ -1,7 +1,7 @@
 How to wrap an environment
 --------------------------
 
-Lets first create the basic simulator without any wrappers
+Let's first create the basic simulator without any wrappers
 
 .. code-block:: python
 
@@ -27,8 +27,7 @@ Lets first create the basic simulator without any wrappers
           f'dim act: {env.act_space.flat_dim}\n')
 
 The print reveals that we have a 4-dimensional sate space, a 5-dimensional observation space, and a 1-dimensional
-action space, all of type `BoxSpace` which is a straightforward continuous space in $R^n$
-
+action space, all of type `BoxSpace` which is a straightforward continuous space in $R^n$.
 Since we are probably here to do some domain randomization, we will start with that.
 There are different types of randomizers. The `DomainRandWrapperLive` sets a new set of domain parameters on every
 reset of the environment. The `DomainRandWrapperBuffer` maintains a buffer of domain parameter set which we have to
@@ -42,7 +41,7 @@ adapts the randomizer, i.e. changes the distribution according to which the doma
     env_r = DomainRandWrapperBuffer(env, randomizer)
     env_r.fill_buffer(num_domains=3)
 
-Lets have a look at the randomized simulation. Due to the synchronized random seed we have the same initial state as
+Let's have a look at the randomized simulation. Due to the synchronized random seed we have the same initial state as
 well as the same random action. However, the trajectory id not the same since the domains evolve differently.
 Note that the very first action and reward are only different for logging.
 
