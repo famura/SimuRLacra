@@ -240,23 +240,10 @@
 <span class="n">MUJOCO_ASSETS_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;environments&quot;</span><span class="p">,</span> <span class="s2">&quot;mujoco&quot;</span><span class="p">,</span> <span class="s2">&quot;assets&quot;</span><span class="p">)</span>
 <span class="n">ISAAC_ASSETS_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;thirdParty&quot;</span><span class="p">,</span> <span class="s2">&quot;isaac_gym&quot;</span><span class="p">,</span> <span class="s2">&quot;assets&quot;</span><span class="p">)</span>
 
-<span class="c1"># Check if the interfaces to the physics engines are available</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">rcsenv</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">rcsenv_available</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="n">rcsenv_available</span> <span class="o">=</span> <span class="kc">True</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">mujoco_py</span>
-<span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
-    <span class="c1"># The ImportError is raised if mujoco-py is simply not installed</span>
-    <span class="c1"># The Exception catches the case that you have everything installed properly but your IDE does not set the</span>
-    <span class="c1"># LD_LIBRARY_PATH correctly (happens for PyCharm &amp; CLion). To check this, try to run your script from the terminal.</span>
-    <span class="n">mujoco_available</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="n">mujoco_available</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="c1"># Set the availability of the physics-engine based simulations to False. These are set to True in the respective</span>
+<span class="c1"># top-level __init__.py files, if they can be imported successfully</span>
+<span class="n">rcsenv_loaded</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">mujoco_loaded</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="c1"># Set default data type for PyTorch</span>
 <span class="n">to</span><span class="o">.</span><span class="n">set_default_dtype</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
@@ -309,8 +296,8 @@
     <span class="s2">&quot;EVAL_DIR&quot;</span><span class="p">,</span>
     <span class="s2">&quot;EXP_DIR&quot;</span><span class="p">,</span>
     <span class="s2">&quot;HPARAM_DIR&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;rcsenv_available&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;mujoco_available&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;rcsenv_loaded&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mujoco_loaded&quot;</span><span class="p">,</span>
     <span class="s2">&quot;use_pgf&quot;</span><span class="p">,</span>
     <span class="s2">&quot;inf&quot;</span><span class="p">,</span>
     <span class="s2">&quot;nan&quot;</span><span class="p">,</span>

@@ -455,7 +455,7 @@
 
         <span class="k">if</span> <span class="n">render_mode</span><span class="o">.</span><span class="n">video</span><span class="p">:</span>
             <span class="n">do_sleep</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">if</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">mujoco_available</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">mujoco_loaded</span><span class="p">:</span>
                 <span class="kn">from</span> <span class="nn">pyrado.environments.mujoco.base</span> <span class="kn">import</span> <span class="n">MujocoSimEnv</span>
 
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">MujocoSimEnv</span><span class="p">):</span>
