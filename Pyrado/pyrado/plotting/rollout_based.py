@@ -77,23 +77,24 @@ def draw_observations_actions_rewards(ro: StepSequence):
         t = ro.env_infos.get("t", np.arange(0, ro.length)) if hasattr(ro, "env_infos") else np.arange(0, ro.length)
 
         fig, axs = plt.subplots(dim_obs + dim_act + 1, 1, figsize=(8, 12))
-        fig.suptitle("Observations, Actions, and Reward over Time")
+        fig.canvas.set_window_title("Observations, Actions, and Reward over Time")
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_obs if dim_obs > dim_act else dim_act))
 
         # Observations (without the last time step)
         for i in range(dim_obs):
-            axs[i].plot(t, ro.observations[:-1, i], label=_get_obs_label(ro, i), c=colors[i])
-            axs[i].legend()
+            axs[i].plot(t, ro.observations[:-1, i], c=colors[i])
+            axs[i].set_ylabel(_get_obs_label(ro, i))
 
         # Actions
         for i in range(dim_act):
-            axs[i + dim_obs].plot(t, ro.actions[:, i], label=_get_act_label(ro, i), c=colors[i])
-            axs[i + dim_obs].legend()
+            axs[i + dim_obs].plot(t, ro.actions[:, i], c=colors[i])
+            axs[i + dim_obs].set_ylabel(_get_act_label(ro, i))
         # action_labels = env.unwrapped.action_space.labels; label=action_labels[0]
 
         # Rewards
-        axs[-1].plot(t, ro.rewards, label="reward", c="k")
-        axs[-1].legend()
+        axs[-1].plot(t, ro.rewards, c="k")
+        axs[-1].set_ylabel("reward")
+        axs[-1].set_xlabel("time")
         plt.subplots_adjust(hspace=0.5)
 
 
@@ -125,7 +126,7 @@ def draw_observations(ro: StepSequence, idcs_sel: Sequence[int] = None):
             num_cols,
             figsize=(num_cols * 5, num_rows * 3),
         )
-        fig.suptitle("Observations over Time")
+        fig.canvas.set_window_title("Observations over Time")
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, len(dim_obs)))
 
         if len(dim_obs) == 1:
@@ -140,13 +141,11 @@ def draw_observations(ro: StepSequence, idcs_sel: Sequence[int] = None):
                             t,
                             ro.observations[:-1, j + i * num_cols],
                             c=colors[j + i * num_cols],
-                            label=_get_obs_label(ro, j + i * num_cols),
                         )
-                        axs[i, j].legend()
+                        axs[i, j].set_ylabel(_get_obs_label(ro, j + i * num_cols))
                     else:
                         # We might create more subplots than there are observations
-                        pass
-        plt.subplots_adjust(hspace=0.2)
+                        axs[i, j].remove()
 
 
 def draw_features(ro: StepSequence, policy: Policy):
@@ -157,7 +156,7 @@ def draw_features(ro: StepSequence, policy: Policy):
     :param ro: input rollout
     """
     if not isinstance(policy, LinearPolicy):
-        print_cbt("Plotting of the feature values is only supports linear policies!", "y")
+        print_cbt("Plotting of the feature values is only supports linear policies!", "r")
         return
 
     if hasattr(ro, "observations"):
@@ -177,7 +176,7 @@ def draw_features(ro: StepSequence, policy: Policy):
         num_rows = int(np.ceil(len(dim_feat) / num_cols))
 
         fig, axs = plt.subplots(num_rows, num_cols, figsize=(num_cols * 5, num_rows * 3), constrained_layout=True)
-        fig.suptitle("Feature values over Time")
+        fig.canvas.set_window_title("Feature Values over Time")
         plt.subplots_adjust(hspace=0.5)
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, len(dim_feat)))
 
@@ -192,13 +191,12 @@ def draw_features(ro: StepSequence, policy: Policy):
                         axs[i, j].plot(
                             t,
                             feat_vals[:-1, j + i * num_cols],
-                            label=rf"$\phi_{j + i*num_cols}$",
                             c=colors[j + i * num_cols],
                         )
-                        axs[i, j].legend()
+                        axs[i, j].set_ylabel(rf"$\phi_{j + i*num_cols}$")
                     else:
                         # We might create more subplots than there are observations
-                        pass
+                        axs[i, j].remove()
 
 
 def draw_actions(ro: StepSequence, env: Env):
@@ -217,32 +215,34 @@ def draw_actions(ro: StepSequence, env: Env):
         t = ro.env_infos.get("t", np.arange(0, ro.length)) if hasattr(ro, "env_infos") else np.arange(0, ro.length)
 
         fig, axs = plt.subplots(dim_act, figsize=(8, 12))
-        fig.suptitle("Actions over Time")
+        fig.canvas.set_window_title("Actions over Time")
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_act))
 
         act_norm_wrapper = typed_env(env, ActNormWrapper)
         if act_norm_wrapper is not None:
             lb, ub = inner_env(env).act_space.bounds
-            act_denorm = lb + (ro.actions[:] + 1.0) * (ub - lb) / 2
+            act_denorm = lb + (ro.actions + 1.0) * (ub - lb) / 2
             act_clipped = np.array([inner_env(env).limit_act(a) for a in act_denorm])
         else:
             act_denorm = ro.actions
-            act_clipped = np.array([env.limit_act(a) for a in ro.actions[:]])
+            act_clipped = np.array([env.limit_act(a) for a in ro.actions])
 
         if dim_act == 1:
-            axs.plot(t, act_denorm, label=_get_act_label(ro, 0) + " (to env)")
-            axs.plot(t, act_clipped, label=_get_act_label(ro, 0) + " (clipped)", c="k", ls="--")
-            axs.legend(bbox_to_anchor=(0, 1.0, 1, -0.1), loc="lower left", mode="expand", ncol=2)
+            axs.plot(t, act_denorm, label="to env")
+            axs.plot(t, act_clipped, label="clipped", c="k", ls="--")
+            axs.legend(ncol=2)
+            axs.set_ylabel(_get_act_label(ro, 0))
         else:
             for i in range(dim_act):
-                axs[i].plot(t, act_denorm[:, i], label=_get_act_label(ro, i) + " (to env)", c=colors[i])
-                axs[i].plot(t, act_clipped[:, i], label=_get_act_label(ro, i) + " (clipped)", c="k", ls="--")
-                axs[i].legend(bbox_to_anchor=(0, 1.0, 1, -0.1), loc="lower left", mode="expand", ncol=2)
+                axs[i].plot(t, act_denorm[:, i], label="to env", c=colors[i])
+                axs[i].plot(t, act_clipped[:, i], label="clipped", c="k", ls="--")
+                axs[i].legend(ncol=2)
+                axs[i].set_ylabel(_get_act_label(ro, i))
 
         # Put legends to the right of the plot
         if dim_act < 8:  # otherwise it gets too cluttered
             for a in fig.get_axes():
-                a.legend(loc="center left", bbox_to_anchor=(1, 0.5))
+                a.legend(ncol=2)
 
         plt.subplots_adjust(hspace=0.2)
 
@@ -258,8 +258,10 @@ def draw_rewards(ro: StepSequence):
         t = ro.env_infos.get("t", np.arange(0, ro.length)) if hasattr(ro, "env_infos") else np.arange(0, ro.length)
 
         fig, ax = plt.subplots(1)
-        fig.suptitle("Reward over Time")
+        fig.canvas.set_window_title("Reward over Time")
         ax.plot(t, ro.rewards, c="k")
+        ax.set_ylabel("reward")
+        ax.set_xlabel("time")
 
 
 def draw_potentials(ro: StepSequence, layout: str = "joint"):
@@ -322,7 +324,6 @@ def draw_potentials(ro: StepSequence, layout: str = "joint"):
             axs[3].set_title(f"{ro.actions.shape[1]} Actions over time")
 
             plt.subplots_adjust(wspace=0.8)
-            # plt.subplots_adjust(right=0.1)
 
         else:
             raise pyrado.ValueErr(given=layout, eq_constraint="joint or separate")
