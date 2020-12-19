@@ -39,7 +39,8 @@ from pyrado.environments.barrett_wam import (
     act_space_wam_7dof,
     wam_pgains,
     wam_dgains,
-)
+    qpos_up,
+    qpos_lo)
 from pyrado.environments.mujoco.base import MujocoSimEnv
 from pyrado.spaces.base import Space
 from pyrado.spaces.singular import SingularStateSpace
@@ -263,14 +264,11 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
 
         # State space
         state_shape = init_state.shape
-        state_up, state_lo = np.full(state_shape, pyrado.inf), np.full(state_shape, -pyrado.inf)
+        state_lo, state_up = np.full(state_shape, -pyrado.inf), np.full(state_shape, pyrado.inf)
         # Ensure that joint limits of the arm are not reached (5 deg safety margin)
-        state_up[: self.num_dof] = (
-            np.array([2.6, 1.985, 2.8, 3.14159, 1.25, 1.5707, 2.7])[: self.num_dof] - 5 * np.pi / 180
-        )
-        state_lo[: self.num_dof] = (
-            np.array([-2.6, -1.985, -2.8, -0.9, -4.55, -1.5707, -2.7])[: self.num_dof] + 5 * np.pi / 180
-        )
+        state_lo[: self.num_dof] = qpos_lo[: self.num_dof]
+        state_up[: self.num_dof] = qpos_up[: self.num_dof]
+
         self._state_space = BoxSpace(state_lo, state_up)
 
         # Torque space

@@ -48,3 +48,7 @@ act_space_wam_7dof = BoxSpace(act_min_wam_7dof, act_max_wam_7dof, labels=labels_
 # Default PD gains from robcom / SL
 wam_pgains = np.array([200.0, 300.0, 100.0, 100.0, 10.0, 10.0, 2.5])
 wam_dgains = np.array([7.0, 15.0, 5.0, 2.5, 0.3, 0.3, 0.05])
+
+# Joint limits (with 5 degree safety margin)
+qpos_lo = np.array([-2.6, -1.985, -2.8, -0.9, -4.55, -1.5707, -2.7]) + 5 * np.pi / 180
+qpos_up = np.array([2.6, 1.985, 2.8, 3.14159, 1.25, 1.5707, 2.7]) - 5 * np.pi / 180
