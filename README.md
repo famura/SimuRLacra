@@ -16,9 +16,9 @@ It features __randomizable simulations__ written __in standalone Python__ (no li
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Maintainability](https://api.codeclimate.com/v1/badges/73ad23bdf05361b022b4/maintainability)](https://codeclimate.com/github/famura/SimuRLacra/maintainability)
-![Documentation](https://github.com/famura/SimuRLacra/workflows/Documentation/badge.svg?branch=master)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-32CD32.svg)](https://github.com/psf/black)
+[![Documentation](https://github.com/famura/SimuRLacra/workflows/Documentation/badge.svg?branch=master)](https://famura.github.io/SimuRLacra/)
 [![codecov](https://codecov.io/gh/famura/SimuRLacra/branch/master/graph/badge.svg)](https://codecov.io/gh/famura/SimuRLacra)
+[![codestyle](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 __Pros__  
 * __Exceptionally modular treatment of environments via wrappers.__ The key idea behind this was to be able to quickly modify and randomize all available simulation environments. Moreover, SimuRLacra contains unique environments that either run completely in Python or allow you to switch between the Bullet or Vortex (requires license) physics engine.
@@ -38,15 +38,10 @@ __Cons__
 SimuRLacra was tested on Ubuntu 16.04 (deprecated), 18.04 (recommended), and 20.04, with PyTorch 1.4 (deprecated) and 1.7.
 The part without C++ dependencies, called Pyrado, also works under Windows 10 (not supported).
 
-__Not the right framework for you?__
-* If you are looking for even more modular code or simply want to see how much you can do with Python decorators, check out [vel](https://github.com/MillionIntegrals/vel/tree/master/vel). It is a beautiful framework that includes more than reinforcement learning.
-* If you need code optimized for performance, check out [stable baselines](https://github.com/hill-a/stable-baselines). I know, that was captain obvious.
-* If you are missing value-based algorithms will bells and whistles, check out [MushroomRL](https://github.com/MushroomRL/mushroom-rl). The main contributor is good at every sport. Sorry Carlo, but the world has to know it.
-
 
 ## Citing
 
-If you use code or ideas from this project for your research, please cite SimuRLacra.
+If you use code or ideas from SimuRLacra for your projects or research, please cite it.
 ```
 @misc{Muratore_SimuRLacra,
   author = {Fabio Muratore},
