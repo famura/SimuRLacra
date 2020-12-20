@@ -40,6 +40,8 @@ from pyrado.environments.barrett_wam import (
     act_space_wam_4dof,
     wam_pgains,
     wam_dgains,
+    qpos_lo,
+    qpos_up,
 )
 from pyrado.environments.barrett_wam.natnet_client import NatNetClient
 from pyrado.environments.barrett_wam.trackers import RigidBodyTracker
@@ -341,7 +343,8 @@ class WAMBallInCupRealStepBased(WAMBallInCupReal):
 
     Uses robcom 2.0 and specifically robcom's ClosedLoopDirectControl process to execute a trajectory
     given by desired joint positions. The control process is running in a separate thread and
-    executed on the real system simultaneous to the step function calls.
+    executed on the real system simultaneous to the step function calls. Includes the option to observe ball and cup
+    using OptiTrack.
     """
 
     def __init__(
@@ -353,6 +356,17 @@ class WAMBallInCupRealStepBased(WAMBallInCupReal):
         num_dof: int = 7,
         ip: [str, None] = "192.168.2.2",
     ):
+        """
+        Constructor
+
+        :param observe_ball: if `True`, include the 2-dim (x-z plane) cartesian ball position into the observation
+        :param observe_cup: if `True`, include the 2-dim (x-z plane) cartesian cup position into the observation
+        :param dt: sampling time interval
+        :param max_steps: maximum number of time steps
+        :param num_dof: number of degrees of freedom (4 or 7), depending on which Barrett WAM setup being used
+        :param ip: IP address of the PC controlling the Barrett WAM, pass `None` to skip connecting
+        """
+
         self.observe_ball = observe_ball
         self.observe_cup = observe_cup
 
@@ -371,6 +385,12 @@ class WAMBallInCupRealStepBased(WAMBallInCupReal):
         # State space (joint positions and velocities)
         state_shape = (2 * self.num_dof,)
         state_lo, state_up = np.full(state_shape, -pyrado.inf), np.full(state_shape, pyrado.inf)
+
+        # Joint position limits (with 5 degree safety margin)
+        state_lo[: self.num_dof] = qpos_lo[: self.num_dof]
+        state_up[: self.num_dof] = qpos_up[: self.num_dof]
+
+        # Ball and cup (x,y,z)-space
         if self.observe_ball:
             state_lo = np.r_[state_lo, np.full((3,), -3.0)]
             state_up = np.r_[state_up, np.full((3,), 3.0)]
