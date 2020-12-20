@@ -319,7 +319,9 @@ class RBFFeat:
             elif isinstance(b, (list, tuple)):
                 bounds_to[i] = to.tensor(b, dtype=to.get_default_dtype())
             elif isinstance(b, (int, float)):
-                bounds_to[i] = to.tensor(b, dtype=to.get_default_dtype()).view(1,)
+                bounds_to[i] = to.tensor(b, dtype=to.get_default_dtype()).view(
+                    1,
+                )
             else:
                 raise pyrado.TypeErr(given=b, expected_type=[np.ndarray, to.Tensor, list, tuple, int, float])
         if any([any(np.isinf(b)) for b in bounds_to]):
@@ -365,10 +367,22 @@ class RBFFeat:
         for i, sample in enumerate(exp_sq_dist):
             if self._state_wise_norm:
                 # Normalize the features such that the activation for every state dimension sums up to one
-                feat_val[i, :] = normalize(sample, axis=0, order=1).t().reshape(-1,)
+                feat_val[i, :] = (
+                    normalize(sample, axis=0, order=1)
+                    .t()
+                    .reshape(
+                        -1,
+                    )
+                )
             else:
                 # Turn the features into a vector and normalize over all of them
-                feat_val[i, :] = normalize(sample.t().reshape(-1,), axis=-1, order=1)
+                feat_val[i, :] = normalize(
+                    sample.t().reshape(
+                        -1,
+                    ),
+                    axis=-1,
+                    order=1,
+                )
         return feat_val
 
     def derivative(self, inp: to.Tensor) -> to.Tensor:
@@ -396,13 +410,24 @@ class RBFFeat:
         for i, (sample, sample_d) in enumerate(zip(exp_sq_dist, exp_sq_dist_d)):
             if self._state_wise_norm:
                 # Normalize the features such that the activation for every state dimension sums up to one
-                feat_val[i, :] = normalize(sample, axis=0, order=1).reshape(-1,)
+                feat_val[i, :] = normalize(sample, axis=0, order=1).reshape(
+                    -1,
+                )
             else:
                 # Turn the features into a vector and normalize over all of them
-                feat_val[i, :] = normalize(sample.t().reshape(-1,), axis=-1, order=1)
+                feat_val[i, :] = normalize(
+                    sample.t().reshape(
+                        -1,
+                    ),
+                    axis=-1,
+                    order=1,
+                )
 
             feat_val_dot[i, :] = sample_d.reshape(-1,) * feat_val[i, :] - feat_val[i, :] * sum(
-                sample_d.reshape(-1,) * feat_val[i, :]
+                sample_d.reshape(
+                    -1,
+                )
+                * feat_val[i, :]
             )
 
         return feat_val_dot
