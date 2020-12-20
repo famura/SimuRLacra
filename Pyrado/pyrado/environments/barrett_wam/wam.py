@@ -40,7 +40,9 @@ from pyrado.environments.barrett_wam import (
     act_space_wam_4dof,
     wam_pgains,
     wam_dgains,
-    qpos_lo, qpos_up)
+    qpos_lo,
+    qpos_up,
+)
 from pyrado.environments.barrett_wam.natnet_client import NatNetClient
 from pyrado.environments.barrett_wam.trackers import RigidBodyTracker
 from pyrado.environments.real_base import RealEnv

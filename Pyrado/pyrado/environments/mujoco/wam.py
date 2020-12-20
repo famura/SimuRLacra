@@ -40,7 +40,8 @@ from pyrado.environments.barrett_wam import (
     wam_pgains,
     wam_dgains,
     qpos_up,
-    qpos_lo)
+    qpos_lo,
+)
 from pyrado.environments.mujoco.base import MujocoSimEnv
 from pyrado.spaces.base import Space
 from pyrado.spaces.singular import SingularStateSpace
