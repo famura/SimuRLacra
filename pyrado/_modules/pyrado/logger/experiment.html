@@ -526,14 +526,15 @@
     <span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">_process_list_for_saving</span><span class="p">(</span><span class="n">l</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_process_list_for_saving</span><span class="p">(</span><span class="n">l</span><span class="p">:</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The yaml.dump function can&#39;t save Tensors, ndarrays, or callables, so we cast them to types it can save.</span>
 
-<span class="sd">    :param l: list containing parameters to save</span>
-<span class="sd">    :return: list with values processable by yaml.dump</span>
+<span class="sd">    :param l: list or tuple containing parameters to save</span>
+<span class="sd">    :return: list or tuple with values processable by yaml.dump</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">copy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>  <span class="c1"># do not mutate the input</span>
+    <span class="c1"># Do not mutate the input. Convert tuple to list to make elements mutable</span>
+    <span class="n">copy</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">copy</span><span class="p">):</span>
         <span class="c1"># Check the values of the list</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
@@ -554,12 +555,13 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="c1"># If the value is another dict, recursively go through this one</span>
             <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">_process_dict_for_saving</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="c1"># If the value is a list, recursively go through this one</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="c1"># If the value is a list or tuple, recursively go through this one</span>
             <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">_process_list_for_saving</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;None&quot;</span>
-    <span class="k">return</span> <span class="n">copy</span>
+    <span class="c1"># The returned object should be of the same type as the input</span>
+    <span class="k">return</span> <span class="n">copy</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">copy</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_process_dict_for_saving</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
@@ -593,7 +595,7 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="c1"># If the value is another dict, recursively go through this one</span>
             <span class="n">copy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">_process_dict_for_saving</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
             <span class="c1"># If the value is a list, recursively go through this one</span>
             <span class="n">copy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">_process_list_for_saving</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
