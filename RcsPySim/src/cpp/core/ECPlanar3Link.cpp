@@ -83,12 +83,7 @@ protected:
     {
         std::string actionModelType = "unspecified";
         properties->getProperty(actionModelType, "actionModelType");
-    
-        // Get the method how to combine the movement primitives / tasks given their activation (not used in every case)
-        std::string taskCombinationMethod = "unspecified";
-        properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
-        TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(taskCombinationMethod);
-    
+        
         // Common for the action models
         RcsBody* effector = RcsGraph_getBodyByName(graph, "Effector");
         RCHECK(effector);
@@ -121,6 +116,11 @@ protected:
         }
 
         else if (actionModelType == "ik_activation") {
+            // Get the method how to combine the movement primitives / tasks given their activation (not used in every case)
+            std::string taskCombinationMethod = "unspecified";
+            properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
+            TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(taskCombinationMethod);
+            
             // Create the action model
             auto amIK = new AMIKControllerActivation(graph, tcm);
             std::vector<Task*> tasks;
@@ -218,6 +218,11 @@ protected:
                 taskRel.push_back(task.release());
             }
             
+            // Get the method how to combine the movement primitives / tasks given their activation (not used in every case)
+            std::string taskCombinationMethod = "unspecified";
+            properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
+            TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(taskCombinationMethod);
+    
             // Create the action model
             return new AMDynamicalSystemActivation(innerAM.release(), taskRel, tcm);
         }
