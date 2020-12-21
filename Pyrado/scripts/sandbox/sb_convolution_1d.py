@@ -33,6 +33,7 @@ Play around with PyTorch's 1-dim concolution class (in the context of using it f
     # https://towardsdatascience.com/a-basic-introduction-to-separable-convolutions-b99ec3102728
     # https://github.com/jayleicn/TVQAplus/blob/master/model/cnn.py
 """
+import numpy as np
 import torch as to
 import torch.nn as nn
 from matplotlib import pyplot as plt
@@ -143,8 +144,8 @@ if __name__ == "__main__":
 
     # Plot signals
     _, axs = plt.subplots(nrows=3, ncols=1, figsize=(8, 12))
-    colors_in = plt.get_cmap("inferno")(to.linspace(0, 1, in_channels).numpy())
-    colors_out = plt.get_cmap("inferno")(to.linspace(0, 1, out_channels).numpy())
+    colors_in = plt.get_cmap("inferno")(np.linspace(0, 1, in_channels))
+    colors_out = plt.get_cmap("inferno")(np.linspace(0, 1, out_channels))
 
     for b in range(batch_size):
         for j in range(in_channels):

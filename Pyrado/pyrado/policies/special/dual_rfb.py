@@ -104,7 +104,7 @@ class DualRBFLinearPolicy(LinearPolicy):
         :param obs: observations from the environment
         :return: actions
         """
-        obs = obs.to(self.device)
+        obs = obs.to(device=self.device, dtype=to.get_default_dtype())
         batched = obs.ndimension() == 2  # number of dim is 1 if unbatched, dim > 2 is caught by features
         feats_val = self._feats(obs)
         feats_dot = self._feats.derivative(obs)

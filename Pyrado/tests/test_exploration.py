@@ -30,7 +30,9 @@ import pytest
 
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
+from pyrado.environments.sim_base import SimEnv
 from pyrado.exploration.stochastic_params import NormalParamNoise
+from pyrado.policies.base import Policy
 from pyrado.policies.features import *
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 
@@ -44,7 +46,7 @@ from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
     ids=["bob", "qbb"],
 )
 @pytest.mark.parametrize("policy", ["linear_policy", "fnn_policy"], ids=["lin", "fnn"], indirect=True)
-def test_noise_on_act(env, policy):
+def test_noise_on_act(env: SimEnv, policy: Policy):
     for _ in range(100):
         # Init the exploration strategy
         act_noise_strat = NormalActNoiseExplStrat(policy, std_init=0.5, train_mean=True)
@@ -74,11 +76,16 @@ def test_noise_on_act(env, policy):
     ids=["bob", "qbb"],
 )
 @pytest.mark.parametrize("policy", ["linear_policy", "fnn_policy"], ids=["lin", "fnn"], indirect=True)
-def test_noise_on_param(env, policy):
+def test_noise_on_param(env: SimEnv, policy: Policy):
     for _ in range(5):
         # Init the exploration strategy
         param_noise_strat = NormalParamNoise(
-            policy.num_param, full_cov=True, std_init=1.0, std_min=0.01, train_mean=True
+            policy.num_param,
+            full_cov=True,
+            std_init=1.0,
+            std_min=0.01,
+            train_mean=True,
+            use_cuda=policy.device != "cpu",
         )
 
         # Set new parameters for the exploration noise

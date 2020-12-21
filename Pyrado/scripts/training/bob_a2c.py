@@ -64,11 +64,11 @@ if __name__ == "__main__":
         # feats=FeatureStack([RandFourierFeat(env.obs_space.flat_dim, num_feat=100, bandwidth=env.obs_space.bound_up)])
         feats=FeatureStack([identity_feat, sin_feat])
     )
-    policy = LinearPolicy(spec=env.spec, **policy_hparam)
+    policy = LinearPolicy(spec=env.spec, **policy_hparam, use_cuda=True)
 
     # Critic
     vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)
-    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
+    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam, use_cuda=True)
     critic_hparam = dict(
         gamma=0.99,
         lamda=0.95,
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=500,
         min_steps=10000,
-        num_workers=4,
+        num_workers=1,
         vfcn_coeff=0.7,
         entropy_coeff=4e-5,
         batch_size=100,

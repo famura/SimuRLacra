@@ -100,6 +100,7 @@ class NES(ParameterExploring):
             self._policy.num_param,
             std_init=expl_std_init,
             std_min=expl_std_min,
+            use_cuda=self._policy.device != "cpu",
         )
         if symm_sampling:
             # Exploration strategy based on symmetrical normally distributed noise

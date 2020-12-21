@@ -52,12 +52,33 @@ ISAAC_ASSETS_DIR = osp.join(osp.dirname(__file__), "..", "..", "thirdParty", "is
 rcsenv_loaded = False
 mujoco_loaded = False
 
-# Set default data type for PyTorch
-to.set_default_dtype(to.double)
+# Set default data type for PyTorch to float32. Sadly this is not possible for numpy.
+to.set_default_dtype(to.float32)
 
-# Convenient math variables
+# Reset the colorama style after each print
+init(autoreset=True)
+
+# Set a uniform printing style
+to.set_printoptions(precision=4, linewidth=200)
+np.set_printoptions(precision=4, sign=" ", linewidth=200)
+
+# Public API variables
 inf = float("inf")
 nan = float("nan")
+sym_success = "\u2714"
+sym_failure = "\u2716"
+
+# Include error classes
+from pyrado.utils.exceptions import BaseErr, KeyErr, PathErr, ShapeErr, TypeErr, ValueErr
+
+# Include saving and loading functions
+from pyrado.utils.saving_loading import save, load
+
+
+# Set style for printing and plotting
+use_pgf = False
+from pyrado import plotting
+
 
 # Figure sizes (width, height) [inch]; measures are taken w.r.t. the document's line length
 figsize_thesis_1percol_18to10 = (5.8, 5.8 / 18 * 10)
@@ -70,30 +91,6 @@ figsize_IEEE_2col_18to10 = (7.16, 7.16 / 18 * 10)
 figsize_IEEE_1col_square = (3.5, 3.5)
 figsize_IEEE_2col_square = (7.16, 7.16)
 figsize_JMLR_warpfig = (2.5, 2.4)
-
-# Set style for printing and plotting
-use_pgf = False
-from pyrado import plotting
-
-
-# Reset the colorama style after each print
-init(autoreset=True)
-
-# Set a uniform printing style for PyTorch
-to.set_printoptions(precision=4, linewidth=200)
-
-# Set a uniform printing style for numpy
-np.set_printoptions(precision=4, sign=" ", linewidth=200)  # suppress=True
-
-sym_success = "\u2714"
-sym_failure = "\u2716"
-
-# Include error classes
-from pyrado.utils.exceptions import BaseErr, KeyErr, PathErr, ShapeErr, TypeErr, ValueErr
-
-# Include saving and loading functions
-from pyrado.utils.saving_loading import save, load
-
 
 # Set the public API
 __all__ = [
@@ -110,6 +107,7 @@ __all__ = [
     "nan",
     "sym_success",
     "sym_failure",
+    "close_vpython",
     "set_seed",
 ]
 

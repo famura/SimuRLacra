@@ -63,7 +63,7 @@ from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedGRUPolicy, TwoHead
 
 
 # Set default torch dtype globally to avoid inconsistent errors depending on the test run order
-to.set_default_dtype(to.double)
+to.set_default_dtype(to.float32)
 
 # Check if RcsPySim, Bullet, and Vortex are available
 try:

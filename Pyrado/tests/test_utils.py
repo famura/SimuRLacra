@@ -368,10 +368,12 @@ def test_running_mem_average(data_seq, capacity):
     rma = RunningMemoryAverage(capacity)
     for i, data in enumerate(data_seq):
         z = rma(data)
+        if isinstance(z, np.ndarray):
+            z = z.astype(dtype=np.float32)
         if i <= 2:
-            to.testing.assert_allclose(z, to.tensor([1.0, 1, 2]))  # works with PyTorch Tensors and numpy arrays
+            assert z == pytest.approx(to.tensor([1.0, 1, 2]))
         elif i == 3:
-            to.testing.assert_allclose(z, to.tensor([0.0, 0, 0]))  # works with PyTorch Tensors and numpy arrays
+            assert z == pytest.approx(to.tensor([0.0, 0, 0]))
     rma.reset(capacity=5)
     assert rma.capacity == 5 and rma.memory is None
 
@@ -410,8 +412,8 @@ def test_stateful_standardizer(x):
     if isinstance(x, to.Tensor):
         x_stdized = ss.standardize(x)
         assert x_stdized.shape == x.shape
-        assert to.allclose(x_stdized.mean(), to.zeros(1))
-        assert to.allclose(x_stdized.std(), to.ones(1))
+        assert to.allclose(x_stdized.mean(), to.zeros(1), atol=1e-6)
+        assert to.allclose(x_stdized.std(), to.ones(1), atol=1e-6)
 
         x_restrd = ss.unstandardize(x_stdized)
         assert x_restrd.shape == x.shape

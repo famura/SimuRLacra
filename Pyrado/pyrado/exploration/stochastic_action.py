@@ -50,7 +50,7 @@ class StochasticActionExplStrat(Policy, ABC):
 
         :param policy: wrapped policy
         """
-        super().__init__(policy.env_spec, use_cuda=policy.device == "cuda")
+        super().__init__(policy.env_spec, use_cuda=policy.device != "cpu")
         self.policy = policy
 
     @property
@@ -82,7 +82,7 @@ class StochasticActionExplStrat(Policy, ABC):
         # Compute exploration (use rsample to apply the reparametrization trick  if needed)
         act_expl = self.action_dist_at(act).rsample()  # act is the mean if train_mean=False
 
-        # Return the exploratove actions and optionally the other policy outputs
+        # Return the explorative actions and optionally the other policy outputs
         if self.policy.is_recurrent:
             if isinstance(self.policy, TwoHeadedPolicy):
                 return act_expl, other, hidden
@@ -142,12 +142,12 @@ class NormalActNoiseExplStrat(StochasticActionExplStrat):
         super().__init__(policy)
 
         self._noise = DiagNormalNoise(
-            use_cuda=policy.device == "cuda",
             noise_dim=policy.env_spec.act_space.flat_dim,
             std_init=std_init,
             std_min=std_min,
             train_mean=train_mean,
             learnable=learnable,
+            use_cuda=policy.device != "cpu",
         )
 
     def reset_expl_params(self, *args, **kwargs):
@@ -204,7 +204,7 @@ class UniformActNoiseExplStrat(StochasticActionExplStrat):
         super().__init__(policy)
 
         self._noise = UniformNoise(
-            use_cuda=policy.device == "cuda",
+            use_cuda=policy.device != "cpu",
             noise_dim=policy.env_spec.act_space.flat_dim,
             halfspan_init=halfspan_init,
             halfspan_min=halfspan_min,
@@ -219,8 +219,6 @@ class UniformActNoiseExplStrat(StochasticActionExplStrat):
 
     def action_dist_at(self, policy_output: to.Tensor) -> Distribution:
         return self._noise(policy_output)
-
-    # Make NormalActNoiseExplStrat appear as if it would have the following functions / properties
 
     def reset_expl_params(self, *args, **kwargs):
         return self._noise.reset_expl_params(*args, **kwargs)
@@ -259,16 +257,16 @@ class SACExplStrat(StochasticActionExplStrat):
 
         # Do not need to learn the exploration noise via an optimizer, since it is handled by the policy in this case
         self._noise = DiagNormalNoise(
-            use_cuda=policy.device == "cuda",
             noise_dim=policy.env_spec.act_space.flat_dim,
             std_init=1.0,  # std_init will be overwritten by 2nd policy head
             std_min=0.0,  # ignore since we are explicitly clipping in log space later
             train_mean=False,
             learnable=False,
+            use_cuda=policy.device != "cpu",
         )
 
-        self._log_std_min = to.tensor(-20.0)  # approx 2.061e-10
-        self._log_std_max = to.tensor(2.0)  # approx 7.389
+        self._log_std_min = to.tensor(-20.0, device=self._noise.device)  # approx 2.061e-10
+        self._log_std_max = to.tensor(2.0, device=self._noise.device)  # approx 7.389
 
     @property
     def noise(self) -> DiagNormalNoise:

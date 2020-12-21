@@ -78,6 +78,7 @@ class TwoHeadedFNNPolicy(TwoHeadedPolicy):
             hidden_nonlin=shared_hidden_nonlin,
             dropout=shared_dropout,
             output_nonlin=None,
+            use_cuda=use_cuda,
         )
 
         # Create output layer
@@ -102,7 +103,7 @@ class TwoHeadedFNNPolicy(TwoHeadedPolicy):
             self.param_values = init_values
 
     def forward(self, obs: to.Tensor) -> Tuple[to.Tensor, to.Tensor]:
-        obs = obs.to(self.device)
+        obs = obs.to(device=self.device, dtype=to.get_default_dtype())
 
         # Get the output of the last shared layer and pass this to the two headers separately
         x = self.shared(obs)

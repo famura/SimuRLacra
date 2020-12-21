@@ -176,7 +176,7 @@ class DQL(ValueBased):
             next_steps.torch(data_type=to.get_default_dtype())
 
             # Create masks for the non-final observations
-            not_done = to.tensor(1.0 - steps.done, dtype=to.get_default_dtype())
+            not_done = to.from_numpy(1.0 - steps.done).to(device=self.policy.device, dtype=to.get_default_dtype())
 
             # Compute the state-action values Q(s,a) using the current DQN policy
             q_vals = self.expl_strat.policy.q_values_argmax(steps.observations)
@@ -184,7 +184,7 @@ class DQL(ValueBased):
             # Compute the second term of TD-error
             with to.no_grad():
                 next_v_vals = self.qfcn_targ.q_values_argmax(next_steps.observations)
-                expected_q_val = steps.rewards + not_done * self.gamma * next_v_vals
+                expected_q_val = steps.rewards.to(self.policy.device) + not_done * self.gamma * next_v_vals
 
             # Compute the loss, clip the gradients if desired, and do one optimization step
             loss = self.loss_fcn(q_vals, expected_q_val)

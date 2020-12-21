@@ -308,7 +308,7 @@ class ADNPolicy(PotentialBasedPolicy):
             self.param_values = init_values
 
     def forward(self, obs: to.Tensor, hidden: to.Tensor = None) -> (to.Tensor, to.Tensor):
-        obs = obs.to(self.device)
+        obs = obs.to(device=self.device, dtype=to.get_default_dtype())
 
         # We assume flattened observations, if they are 2d, they're batched.
         if len(obs.shape) == 1:

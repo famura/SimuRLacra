@@ -242,9 +242,10 @@ class SAC(ValueBased):
 
             # Standardize and optionally scale the rewards
             if self.standardize_rew:
-                rewards = standardize(steps.rewards).unsqueeze(1)
+                rewards = standardize(steps.rewards)
             else:
-                rewards = steps.rewards.unsqueeze(1)
+                rewards = steps.rewards
+            rewards = rewards.to(self.policy.device)
             rewards *= self.rew_scale
 
             # Explore and compute the current log probs (later used for policy update)
@@ -264,7 +265,7 @@ class SAC(ValueBased):
 
             with to.no_grad():
                 # Create masks for the non-final observations
-                not_done = to.tensor(1.0 - steps.done, dtype=to.get_default_dtype()).unsqueeze(1)
+                not_done = to.from_numpy(1.0 - steps.done).to(device=self.policy.device, dtype=to.get_default_dtype())
 
                 # Compute the (next)state-(next)action values Q(s',a') from the target networks
                 if self.policy.is_recurrent:
@@ -273,17 +274,19 @@ class SAC(ValueBased):
                     )
                 else:
                     next_act_expl, next_log_probs = self._expl_strat(next_steps.observations)
-                next_q_val_target_1 = self.qfcn_targ_1(to.cat([next_steps.observations, next_act_expl], dim=1))
-                next_q_val_target_2 = self.qfcn_targ_2(to.cat([next_steps.observations, next_act_expl], dim=1))
+                next_obs_act = to.cat([next_steps.observations.to(self.policy.device), next_act_expl], dim=1)
+                next_q_val_target_1 = self.qfcn_targ_1(next_obs_act)
+                next_q_val_target_2 = self.qfcn_targ_2(next_obs_act)
                 next_q_val_target_min = to.min(next_q_val_target_1, next_q_val_target_2)
                 next_q_val_target_min -= self.ent_coeff * next_log_probs  # add entropy term
                 # TD error (including entropy term)
-                next_q_val = rewards + not_done * self.gamma * next_q_val_target_min  # [4] does not use the reward here
+                next_q_val = rewards.view(-1, 1) + not_done.view(-1, 1) * self.gamma * next_q_val_target_min
 
             # Compute the (current)state-(current)action values Q(s,a) from the two Q-networks
             # E_{(s_t, a_t) ~ D} [1/2 * (Q_i(s_t, a_t) - r_t - gamma * E_{s_{t+1} ~ p} [V(s_{t+1})] )^2]
-            q_val_1 = self.qfcn_1(to.cat([steps.observations, steps.actions], dim=1))
-            q_val_2 = self.qfcn_2(to.cat([steps.observations, steps.actions], dim=1))
+            curr_obs_act = to.cat([steps.observations, steps.actions], dim=1).to(self.policy.device)
+            q_val_1 = self.qfcn_1(curr_obs_act)
+            q_val_2 = self.qfcn_2(curr_obs_act)
             q_1_loss = nn.functional.mse_loss(q_val_1, next_q_val)
             q_2_loss = nn.functional.mse_loss(q_val_2, next_q_val)
             q_loss = (q_1_loss + q_2_loss) / 2.0  # averaging the Q-functions is taken from [3]
@@ -299,8 +302,9 @@ class SAC(ValueBased):
 
             # Compute the policy loss
             # E_{s_t ~ D, eps_t ~ N} [log( pi( f(eps_t; s_t) ) ) - Q(s_t, f(eps_t; s_t))]
-            q_1_val_expl = self.qfcn_1(to.cat([steps.observations, act_expl], dim=1))
-            q_2_val_expl = self.qfcn_2(to.cat([steps.observations, act_expl], dim=1))
+            curr_obs_act_expl = to.cat([steps.observations.to(self.policy.device), act_expl], dim=1)
+            q_1_val_expl = self.qfcn_1(curr_obs_act_expl)
+            q_2_val_expl = self.qfcn_2(curr_obs_act_expl)
             min_q_val_expl = to.min(q_1_val_expl, q_2_val_expl)
             policy_loss = to.mean(self.ent_coeff * log_probs_expl - min_q_val_expl)  # self.ent_coeff is detached
             policy_losses[b] = policy_loss.data

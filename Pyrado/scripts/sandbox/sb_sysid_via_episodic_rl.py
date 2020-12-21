@@ -63,9 +63,9 @@ def create_bob_setup():
 
     env_sim = BallOnBeamSim(**env_hparams)
     randomizer = DomainRandomizer(
-        # NormalDomainParam(name='l_beam', mean=0, std=1e-12, clip_lo=1.5, clip_up=3.5),
-        # UniformDomainParam(name='ang_offset', mean=0, halfspan=1e-12),
-        NormalDomainParam(name="g", mean=0, std=1e-12),
+        # NormalDomainParam(name='l_beam', mean=0, std=1e-6, clip_lo=1.5, clip_up=3.5),
+        # UniformDomainParam(name='ang_offset', mean=0, halfspan=1e-6),
+        NormalDomainParam(name="g", mean=0, std=1e-6),
     )
     env_sim = DomainRandWrapperLive(env_sim, randomizer)
     dp_map = {

@@ -55,7 +55,7 @@ def scale_min_max(
     elif isinstance(bound_lo, (float, int)) and isinstance(data, to.Tensor):
         bound_lo = bound_lo * to.ones_like(data, dtype=to.get_default_dtype())
     elif isinstance(bound_lo, np.ndarray) and isinstance(data, to.Tensor):
-        bound_lo = to.from_numpy(bound_lo)
+        bound_lo = to.from_numpy(bound_lo).to(to.get_default_dtype())
     elif isinstance(bound_lo, to.Tensor) and isinstance(data, np.ndarray):
         bound_lo = bound_lo.numpy()
 
@@ -65,7 +65,7 @@ def scale_min_max(
     elif isinstance(bound_up, (float, int)) and isinstance(data, to.Tensor):
         bound_up = bound_up * to.ones_like(data, dtype=to.get_default_dtype())
     elif isinstance(bound_up, np.ndarray) and isinstance(data, to.Tensor):
-        bound_up = to.from_numpy(bound_up)
+        bound_up = to.from_numpy(bound_up).to(to.get_default_dtype())
     elif isinstance(bound_up, to.Tensor) and isinstance(data, np.ndarray):
         bound_up = bound_up.numpy()
 
@@ -168,8 +168,8 @@ class Standardizer:
             self.mean = self.mean.numpy()
             self.std = self.std.numpy()
         elif isinstance(data, to.Tensor) and isinstance(self.mean, np.ndarray):
-            self.mean = to.from_numpy(self.mean)
-            self.std = to.from_numpy(self.std)
+            self.mean = to.from_numpy(self.mean).to(to.get_default_dtype())
+            self.std = to.from_numpy(self.std).to(to.get_default_dtype())
 
         x_unstd = data * self.std + self.mean
         return x_unstd
@@ -210,7 +210,7 @@ class MinMaxScaler:
         elif isinstance(self._bound_lo, (float, int)) and isinstance(data, to.Tensor):
             bound_lo = self._bound_lo * to.ones_like(data, dtype=to.get_default_dtype())
         elif isinstance(self._bound_lo, np.ndarray) and isinstance(data, to.Tensor):
-            bound_lo = to.from_numpy(self._bound_lo)
+            bound_lo = to.from_numpy(self._bound_lo).to(to.get_default_dtype())
         elif isinstance(self._bound_lo, to.Tensor) and isinstance(data, np.ndarray):
             bound_lo = self._bound_lo.numpy()
         else:
@@ -222,7 +222,7 @@ class MinMaxScaler:
         elif isinstance(self._bound_up, (float, int)) and isinstance(data, to.Tensor):
             bound_up = self._bound_up * to.ones_like(data, dtype=to.get_default_dtype())
         elif isinstance(self._bound_up, np.ndarray) and isinstance(data, to.Tensor):
-            bound_up = to.from_numpy(self._bound_up)
+            bound_up = to.from_numpy(self._bound_up).to(to.get_default_dtype())
         elif isinstance(self._bound_up, to.Tensor) and isinstance(data, np.ndarray):
             bound_up = self._bound_up.numpy()
         else:

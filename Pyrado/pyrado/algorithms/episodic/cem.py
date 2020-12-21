@@ -123,6 +123,7 @@ class CEM(ParameterExploring):
             full_cov=full_cov,
             std_init=expl_std_init,
             std_min=expl_std_min,
+            use_cuda=self._policy.device != "cpu",
         )
         if symm_sampling:
             # Exploration strategy based on symmetrical normally distributed noise
@@ -139,14 +140,15 @@ class CEM(ParameterExploring):
             self.extra_expl_std_init = to.eye(self._policy.num_param) * extra_expl_std_init
         else:
             raise pyrado.TypeErr(
-                msg="Additional exploration entropy is only implemented for Gaussian distributions,"
+                msg="Additional exploration entropy is only implemented for Gaussian distributions, "
                 "i.e. DiagNormalNoise and FullNormalNoise"
             )
+        self.extra_expl_std_init = self.extra_expl_std_init.to(device=self.policy.device)
 
     @to.no_grad()
     def update(self, param_results: ParameterSamplingResult, ret_avg_curr: float = None):
         # Average the return values over the rollouts
-        rets_avg_ros = to.tensor(param_results.mean_returns)
+        rets_avg_ros = to.from_numpy(param_results.mean_returns).to(to.get_default_dtype())
 
         # Descending sort according to return values and the importance samples a.k.a. elites (see [1, p.12])
         idcs_dcs = to.argsort(rets_avg_ros, descending=True)

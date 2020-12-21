@@ -101,7 +101,7 @@ def create_conservative_randomizer(env: [SimEnv, EnvWrapper]) -> DomainRandomize
     return randomizer
 
 
-def create_zero_var_randomizer(env: [SimEnv, EnvWrapper], eps: float = 1e-18) -> DomainRandomizer:
+def create_zero_var_randomizer(env: [SimEnv, EnvWrapper], eps: float = 1e-8) -> DomainRandomizer:
     """
     Create the randomizer which always returns the nominal domain parameter values.
 

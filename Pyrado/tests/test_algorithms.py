@@ -548,7 +548,7 @@ def test_sysidasrl(ex_dir, env: SimEnv, num_eval_rollouts):
 
     env_sim = deepcopy(env)
     randomizer = DomainRandomizer(
-        UniformDomainParam(name="ang_offset", mean=0, halfspan=1e-12),
+        UniformDomainParam(name="ang_offset", mean=0, halfspan=1e-6),
     )
     env_sim = DomainRandWrapperLive(env_sim, randomizer)
     dp_map = {0: ("ang_offset", "mean"), 1: ("ang_offset", "halfspan")}

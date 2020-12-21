@@ -106,6 +106,7 @@ class PoWER(ParameterExploring):
             full_cov=True,
             std_init=expl_std_init,
             std_min=expl_std_min,
+            use_cuda=policy.device != "cpu",
         )
         if symm_sampling:
             # Exploration strategy based on symmetrical normally distributed noise
@@ -136,7 +137,7 @@ class PoWER(ParameterExploring):
     @to.no_grad()
     def update(self, param_results: ParameterSamplingResult, ret_avg_curr: float = None):
         # Average the return values over the rollouts
-        rets_avg_ros = to.tensor(param_results.mean_returns)
+        rets_avg_ros = to.from_numpy(param_results.mean_returns).to(to.get_default_dtype())
         if any(rets_avg_ros < 0):
             rets_avg_ros[rets_avg_ros < 0] = 1e-3
             print_cbt("PoWER is must use positive reward functions (improper probability distribution)!", "r")

@@ -136,11 +136,11 @@ class FNN(nn.Module):
         else:
             self.param_values = init_values
 
-    def forward(self, input: to.Tensor) -> to.Tensor:
-        input = input.to(self.device)
-        # Pass input through hidden layers
-        next_input = input
+    def forward(self, obs: to.Tensor) -> to.Tensor:
+        obs = obs.to(device=self.device, dtype=to.get_default_dtype())
 
+        # Pass input through hidden layers
+        next_input = obs
         for i, layer in enumerate(self.hidden_layers):
             next_input = layer(next_input)
             # Apply non-linearity if any
@@ -240,12 +240,16 @@ class DiscreteActQValPolicy(Policy):
         # Call Policy's constructor
         super().__init__(spec, use_cuda)
 
-        # Make sure the net runs on the correct device
-        self.net = net.to(self.device)
+        # Store the feed-forward neural network
+        self.net = net
 
         # Call custom initialization function after PyTorch network parameter initialization
         init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()
         self.init_param(None, **init_param_kwargs)
+
+        # Make sure the net runs on the correct device
+        self.to(self.device)
+        self.net._device = self.device
 
     @staticmethod
     def get_qfcn_input_size(spec: EnvSpec) -> int:
@@ -260,7 +264,7 @@ class DiscreteActQValPolicy(Policy):
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         if init_values is None:
             if isinstance(self.net, FNN):
-                # Forward to the nets's custom initialization function (handles dropout)
+                # Forward to the net's custom initialization function (handles dropout)
                 self.net.init_param(init_values, **kwargs)
             else:
                 # Initialize the using default initialization
@@ -290,7 +294,8 @@ class DiscreteActQValPolicy(Policy):
         columns_act = to.tensor(self.env_spec.act_space.eles).repeat(obs.shape[0], 1)
 
         # Batch process via PyTorch Module class
-        q_vals = self.net(to.cat([columns_obs, columns_act], dim=1))
+        table = to.cat([columns_obs.to(self.device), columns_act.to(self.device)], dim=1)
+        q_vals = self.net(table)
 
         # Reshaped (different actions are over columns)
         q_vals = q_vals.reshape(-1, self.env_spec.act_space.flat_dim)
@@ -317,11 +322,14 @@ class DiscreteActQValPolicy(Policy):
         return q_vals_argamx.squeeze(1) if batch_size == 1 else q_vals_argamx
 
     def forward(self, obs: to.Tensor) -> to.Tensor:
+        obs = obs.to(device=self.device, dtype=to.get_default_dtype())
+
         # Get the Q-values from the owned net
         q_vals, argmax_act_idcs, batch_size = self._build_q_table(obs)
 
         # Select the actions with the highest Q-value
-        possible_acts = to.tensor(self.env_spec.act_space.eles).view(1, -1)  # could be affected by domain randomization
+        possible_acts = to.from_numpy(self.env_spec.act_space.eles)  # could be affected by domain randomization
+        possible_acts = possible_acts.view(1, -1).to(self.device)
         acts = possible_acts.repeat(batch_size, 1)
         act = acts.gather(dim=1, index=argmax_act_idcs.view(-1, 1))  # select column-wise
 
