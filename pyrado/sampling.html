@@ -89,9 +89,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="examples/1_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/2_environment_wrappers.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul class="current">
@@ -215,9 +215,10 @@
 <span id="bootstrapping"></span><h2>bootstrapping<a class="headerlink" href="#module-pyrado.sampling.bootstrapping" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.sampling.bootstrapping.bootstrap_ci">
-<code class="sig-name descname">bootstrap_ci</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">stat_fcn</span></em>, <em class="sig-param"><span class="n">num_reps</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">ci_sides</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">bias_correction</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">studentized</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">seed</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/bootstrapping.html#bootstrap_ci"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.bootstrapping.bootstrap_ci" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">bootstrap_ci</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">stat_fcn</span><span class="p">:</span> <span class="n">Callable</span></em>, <em class="sig-param"><span class="n">num_reps</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">ci_sides</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">bias_correction</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">studentized</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">seed</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/bootstrapping.html#bootstrap_ci"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.bootstrapping.bootstrap_ci" title="Permalink to this definition">¶</a></dt>
 <dd><p>Re-sampling input data using the nonparametric bootstrap method, computing bootstrap replications using stat_fcn and
-computing a confidence interval on the statistic of interest given by stat_fcn.</p>
+computing a confidence interval on the statistic of interest given by <cite>stat_fcn</cite> which needs to expect the argument
+<cite>axis</cite> (like numpy functions do).</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p>[1] <a class="reference external" href="https://projecteuclid.org/download/pdf_1/euclid.ss/1032280214">https://projecteuclid.org/download/pdf_1/euclid.ss/1032280214</a>
@@ -236,14 +237,20 @@ computing a confidence interval on the statistic of interest given by stat_fcn.<
 <li><p><strong>num_reps</strong> – number of samples in every bootstrap sample</p></li>
 <li><p><strong>alpha</strong> – determines the confidence level <span class="math notranslate nohighlight">\(1 - \alpha \in [0, 1]\)</span></p></li>
 <li><p><strong>ci_sides</strong> – one or two-sided confidence interval</p></li>
+<li><p><strong>axis</strong> – axis to compute along in case of 2-dim data</p></li>
 <li><p><strong>bias_correction</strong> – bool to decide if the bias should be subtracted (see [2]). However, the confidence intervals
-are constructed independent of the bias-correction (see [5, p.7])</p></li>
+are constructed independent of the bias-correction (see [5, p.7]).
+The bias-correction can be dangerous in practice. Even though T_bc(D) is less biased than
+T(D), the bias-corrected estimator may have substantially larger variance. This is due to a
+possibly higher variability in the estimate of the bias, particularly when computed from
+small data sets.
+Other estimates of the bias-correction factor than stat_emp possible, see [4].</p></li>
 <li><p><strong>studentized</strong> – flag to determine if the method based on the t-distribution is used (leads to a wider ci)</p></li>
-<li><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p></li>
+<li><p><strong>seed</strong> – value for the random number generators’ seeds, pass <cite>None</cite> to skip seeding</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>mean of the bootstrap replications and the confidence interval</p>
+<dd class="field-even"><p>mean of the bootstrap replications, and the confidence interval</p>
 </dd>
 </dl>
 </dd></dl>

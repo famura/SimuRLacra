@@ -87,9 +87,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../examples/1_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples/3_algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -239,30 +239,38 @@
 <span class="n">MUJOCO_ASSETS_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;environments&quot;</span><span class="p">,</span> <span class="s2">&quot;mujoco&quot;</span><span class="p">,</span> <span class="s2">&quot;assets&quot;</span><span class="p">)</span>
 <span class="n">ISAAC_ASSETS_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;thirdParty&quot;</span><span class="p">,</span> <span class="s2">&quot;isaac_gym&quot;</span><span class="p">,</span> <span class="s2">&quot;assets&quot;</span><span class="p">)</span>
 
-<span class="c1"># Check if the interfaces to the physics engines are available</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">rcsenv</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">rcsenv_available</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="n">rcsenv_available</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="c1"># Set the availability of the physics-engine based simulations to False. These are set to True in the respective</span>
+<span class="c1"># top-level __init__.py files, if they can be imported successfully</span>
+<span class="n">rcsenv_loaded</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">mujoco_loaded</span> <span class="o">=</span> <span class="kc">False</span>
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">mujoco_py</span>
-<span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
-    <span class="c1"># The ImportError is raised if mujoco-py is simply not installed</span>
-    <span class="c1"># The Exception catches the case that you have everything installed properly but your IDE does not set the</span>
-    <span class="c1"># LD_LIBRARY_PATH correctly (happens for PyCharm &amp; CLion). To check this, try to run your script from the terminal.</span>
-    <span class="n">mujoco_available</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="n">mujoco_available</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="c1"># Set default data type for PyTorch to float32. Sadly this is not possible for numpy.</span>
+<span class="n">to</span><span class="o">.</span><span class="n">set_default_dtype</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 
-<span class="c1"># Set default data type for PyTorch</span>
-<span class="n">to</span><span class="o">.</span><span class="n">set_default_dtype</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="c1"># Reset the colorama style after each print</span>
+<span class="n">init</span><span class="p">(</span><span class="n">autoreset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="c1"># Convenient math variables</span>
+<span class="c1"># Set a uniform printing style</span>
+<span class="n">to</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sign</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+
+<span class="c1"># Public API variables</span>
 <span class="n">inf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
 <span class="n">nan</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+<span class="n">sym_success</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\u2714</span><span class="s2">&quot;</span>
+<span class="n">sym_failure</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\u2716</span><span class="s2">&quot;</span>
+
+<span class="c1"># Include error classes</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.exceptions</span> <span class="kn">import</span> <span class="n">BaseErr</span><span class="p">,</span> <span class="n">KeyErr</span><span class="p">,</span> <span class="n">PathErr</span><span class="p">,</span> <span class="n">ShapeErr</span><span class="p">,</span> <span class="n">TypeErr</span><span class="p">,</span> <span class="n">ValueErr</span>
+
+<span class="c1"># Include saving and loading functions</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.saving_loading</span> <span class="kn">import</span> <span class="n">save</span><span class="p">,</span> <span class="n">load</span>
+
+
+<span class="c1"># Set style for printing and plotting</span>
+<span class="n">use_pgf</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="kn">from</span> <span class="nn">pyrado</span> <span class="kn">import</span> <span class="n">plotting</span>
+
 
 <span class="c1"># Figure sizes (width, height) [inch]; measures are taken w.r.t. the document&#39;s line length</span>
 <span class="n">figsize_thesis_1percol_18to10</span> <span class="o">=</span> <span class="p">(</span><span class="mf">5.8</span><span class="p">,</span> <span class="mf">5.8</span> <span class="o">/</span> <span class="mi">18</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
@@ -276,30 +284,6 @@
 <span class="n">figsize_IEEE_2col_square</span> <span class="o">=</span> <span class="p">(</span><span class="mf">7.16</span><span class="p">,</span> <span class="mf">7.16</span><span class="p">)</span>
 <span class="n">figsize_JMLR_warpfig</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">2.4</span><span class="p">)</span>
 
-<span class="c1"># Set style for printing and plotting</span>
-<span class="n">use_pgf</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="kn">from</span> <span class="nn">pyrado</span> <span class="kn">import</span> <span class="n">plotting</span>
-
-
-<span class="c1"># Reset the colorama style after each print</span>
-<span class="n">init</span><span class="p">(</span><span class="n">autoreset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="c1"># Set a uniform printing style for PyTorch</span>
-<span class="n">to</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
-
-<span class="c1"># Set a uniform printing style for numpy</span>
-<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sign</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>  <span class="c1"># suppress=True</span>
-
-<span class="n">sym_success</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\u2714</span><span class="s2">&quot;</span>
-<span class="n">sym_failure</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\u2716</span><span class="s2">&quot;</span>
-
-<span class="c1"># Include error classes</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.exceptions</span> <span class="kn">import</span> <span class="n">BaseErr</span><span class="p">,</span> <span class="n">KeyErr</span><span class="p">,</span> <span class="n">PathErr</span><span class="p">,</span> <span class="n">ShapeErr</span><span class="p">,</span> <span class="n">TypeErr</span><span class="p">,</span> <span class="n">ValueErr</span>
-
-<span class="c1"># Include saving and loading functions</span>
-<span class="kn">from</span> <span class="nn">pyrado.utils.saving_loading</span> <span class="kn">import</span> <span class="n">save</span><span class="p">,</span> <span class="n">load</span>
-
-
 <span class="c1"># Set the public API</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;VERSION&quot;</span><span class="p">,</span>
@@ -308,20 +292,21 @@
     <span class="s2">&quot;EVAL_DIR&quot;</span><span class="p">,</span>
     <span class="s2">&quot;EXP_DIR&quot;</span><span class="p">,</span>
     <span class="s2">&quot;HPARAM_DIR&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;rcsenv_available&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;mujoco_available&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;rcsenv_loaded&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;mujoco_loaded&quot;</span><span class="p">,</span>
     <span class="s2">&quot;use_pgf&quot;</span><span class="p">,</span>
     <span class="s2">&quot;inf&quot;</span><span class="p">,</span>
     <span class="s2">&quot;nan&quot;</span><span class="p">,</span>
     <span class="s2">&quot;sym_success&quot;</span><span class="p">,</span>
     <span class="s2">&quot;sym_failure&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;close_vpython&quot;</span><span class="p">,</span>
     <span class="s2">&quot;set_seed&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">close_vpython</span><span class="p">():</span>
+<div class="viewcode-block" id="close_vpython"><a class="viewcode-back" href="../pyrado.html#pyrado.close_vpython">[docs]</a><span class="k">def</span> <span class="nf">close_vpython</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot; Forcefully close the connection to the current VPython animation &quot;&quot;&quot;</span>
-    <span class="n">_exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">_exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="set_seed"><a class="viewcode-back" href="../pyrado.html#pyrado.set_seed">[docs]</a><span class="k">def</span> <span class="nf">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>

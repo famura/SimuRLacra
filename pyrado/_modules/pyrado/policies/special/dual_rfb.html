@@ -87,9 +87,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -284,9 +284,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">feats_mask</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_feats</span><span class="o">.</span><span class="n">centers</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">feats_mask</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim_mask</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">feats_mask</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">dim_mask</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">feats_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feats_mask</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
-            <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-        <span class="p">)</span>  <span class="c1"># reshape the same way as in RBFFeat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feats_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feats_mask</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># reshape the same way as in RBFFeat</span>
 
         <span class="c1"># Call custom initialization function after PyTorch network parameter initialization</span>
         <span class="n">init_param_kwargs</span> <span class="o">=</span> <span class="n">init_param_kwargs</span> <span class="k">if</span> <span class="n">init_param_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">dict</span><span class="p">()</span>
@@ -300,7 +298,7 @@
 <span class="sd">        :param obs: observations from the environment</span>
 <span class="sd">        :return: actions</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">obs</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
         <span class="n">batched</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">ndimension</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span>  <span class="c1"># number of dim is 1 if unbatched, dim &gt; 2 is caught by features</span>
         <span class="n">feats_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feats</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
         <span class="n">feats_dot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feats</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>

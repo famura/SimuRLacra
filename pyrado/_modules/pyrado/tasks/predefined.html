@@ -87,9 +87,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -221,14 +221,17 @@
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
 <span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.spaces.empty</span> <span class="kn">import</span> <span class="n">EmptySpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.desired_state</span> <span class="kn">import</span> <span class="n">DesStateTask</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.endless_flipping</span> <span class="kn">import</span> <span class="n">EndlessFlippingTask</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.final_reward</span> <span class="kn">import</span> <span class="n">FinalRewTask</span><span class="p">,</span> <span class="n">FinalRewMode</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.masked</span> <span class="kn">import</span> <span class="n">MaskedTask</span>
-<span class="kn">from</span> <span class="nn">pyrado.tasks.reward_functions</span> <span class="kn">import</span> <span class="n">RewFcn</span><span class="p">,</span> <span class="n">ZeroPerStepRewFcn</span><span class="p">,</span> <span class="n">AbsErrRewFcn</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.reward_functions</span> <span class="kn">import</span> <span class="n">RewFcn</span><span class="p">,</span> <span class="n">ZeroPerStepRewFcn</span><span class="p">,</span> <span class="n">AbsErrRewFcn</span><span class="p">,</span> <span class="n">CosOfOneEleRewFcn</span><span class="p">,</span> <span class="n">CompoundRewFcn</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.utils</span> <span class="kn">import</span> <span class="n">proximity_succeeded</span><span class="p">,</span> <span class="n">never_succeeded</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
 
@@ -338,6 +341,35 @@
 
     <span class="c1"># Mask selected collision cost observation</span>
     <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">idcs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_flipping_task"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.predefined.create_flipping_task">[docs]</a><span class="k">def</span> <span class="nf">create_flipping_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">body_names</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a task for lifting an object upright</span>
+
+<span class="sd">    :param env_spec: environment specification</span>
+<span class="sd">    :param body_names: indices for selection, e.g. [&#39;Box_A&#39;]. This needs to match the observations&#39; names in RcsPySim</span>
+<span class="sd">    :return: masked task</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get the masked environment specification</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span>
+        <span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span>
+        <span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span>
+        <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">body_names</span><span class="p">)),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Create a desired state task</span>
+    <span class="c1"># state_des = np.array([0.3])  # box position is measured relative to the table</span>
+    <span class="c1"># state_des = np.array([-np.pi/2])  # box position is measured world coordinates</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">])</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="mf">1e-6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)</span>
+    <span class="n">rew_fcn_act</span> <span class="o">=</span> <span class="n">AbsErrRewFcn</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+    <span class="n">rew_fcn_box</span> <span class="o">=</span> <span class="n">CosOfOneEleRewFcn</span><span class="p">(</span><span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">rew_fcn</span> <span class="o">=</span> <span class="n">CompoundRewFcn</span><span class="p">([</span><span class="n">rew_fcn_act</span><span class="p">,</span> <span class="n">rew_fcn_box</span><span class="p">])</span>
+    <span class="n">ef_task</span> <span class="o">=</span> <span class="n">EndlessFlippingTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">,</span> <span class="n">init_angle</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="c1"># Return the masked tasks</span>
+    <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">ef_task</span><span class="p">,</span> <span class="n">body_names</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

@@ -1,14 +1,13 @@
 <map id="src/cpp/core/util/string_format.h" name="src/cpp/core/util/string_format.h">
-<area shape="rect" id="node2" href="$ECBallInTube_8cpp.html" title="src/cpp/core/ECBallInTube.cpp" alt="" coords="5,102,209,129"/>
-<area shape="rect" id="node3" href="$ECBallOnPlate_8cpp.html" title="src/cpp/core/ECBallOnPlate.cpp" alt="" coords="234,102,445,129"/>
-<area shape="rect" id="node4" href="$ECBoxFlipping_8cpp.html" title="src/cpp/core/ECBoxFlipping.cpp" alt="" coords="469,102,679,129"/>
-<area shape="rect" id="node5" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="703,102,903,129"/>
-<area shape="rect" id="node6" href="$ECBoxLiftingSimple_8cpp.html" title="src/cpp/core/ECBoxLifting\lSimple.cpp" alt="" coords="928,95,1103,136"/>
-<area shape="rect" id="node7" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="1127,102,1341,129"/>
-<area shape="rect" id="node8" href="$ECMPBlending_8cpp.html" title="src/cpp/core/ECMPBlending.cpp" alt="" coords="1365,102,1577,129"/>
-<area shape="rect" id="node9" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="1601,102,1811,129"/>
-<area shape="rect" id="node10" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="1835,102,2047,129"/>
-<area shape="rect" id="node11" href="$ECQuanserQube_8cpp.html" title="src/cpp/core/ECQuanserQube.cpp" alt="" coords="2071,102,2293,129"/>
-<area shape="rect" id="node12" href="$ECTargetTracking_8cpp.html" title="src/cpp/core/ECTargetTracking.cpp" alt="" coords="2318,102,2547,129"/>
-<area shape="rect" id="node13" href="$PolicyComponent_8cpp.html" title="src/cpp/hardware/PolicyComponent.cpp" alt="" coords="2572,102,2827,129"/>
+<area shape="rect" id="node2" href="$ECBallInTube_8cpp.html" title="src/cpp/core/ECBallInTube.cpp" alt="" coords="5,95,209,121"/>
+<area shape="rect" id="node3" href="$ECBallOnPlate_8cpp.html" title="src/cpp/core/ECBallOnPlate.cpp" alt="" coords="234,95,445,121"/>
+<area shape="rect" id="node4" href="$ECBoxFlipping_8cpp.html" title="src/cpp/core/ECBoxFlipping.cpp" alt="" coords="469,95,679,121"/>
+<area shape="rect" id="node5" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="703,95,903,121"/>
+<area shape="rect" id="node6" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="928,95,1143,121"/>
+<area shape="rect" id="node7" href="$ECMPBlending_8cpp.html" title="src/cpp/core/ECMPBlending.cpp" alt="" coords="1167,95,1379,121"/>
+<area shape="rect" id="node8" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="1402,95,1613,121"/>
+<area shape="rect" id="node9" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="1636,95,1848,121"/>
+<area shape="rect" id="node10" href="$ECQuanserQube_8cpp.html" title="src/cpp/core/ECQuanserQube.cpp" alt="" coords="1872,95,2095,121"/>
+<area shape="rect" id="node11" href="$ECTargetTracking_8cpp.html" title="src/cpp/core/ECTargetTracking.cpp" alt="" coords="2119,95,2349,121"/>
+<area shape="rect" id="node12" href="$PolicyComponent_8cpp.html" title="src/cpp/hardware/PolicyComponent.cpp" alt="" coords="2373,95,2628,121"/>
 </map>

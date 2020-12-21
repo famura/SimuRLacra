@@ -89,9 +89,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="examples/1_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/2_environment_wrappers.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -383,7 +383,7 @@
 
 <dl class="py function">
 <dt id="pyrado.domain_randomization.default_randomizers.create_zero_var_randomizer">
-<code class="sig-name descname">create_zero_var_randomizer</code><span class="sig-paren">(</span><em class="sig-param">env: [&lt;class 'pyrado.environments.sim_base.SimEnv'&gt;, &lt;class 'pyrado.environment_wrappers.base.EnvWrapper'&gt;], eps: float = 1e-18</em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_zero_var_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_zero_var_randomizer" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">create_zero_var_randomizer</code><span class="sig-paren">(</span><em class="sig-param">env: [&lt;class 'pyrado.environments.sim_base.SimEnv'&gt;, &lt;class 'pyrado.environment_wrappers.base.EnvWrapper'&gt;], eps: float = 1e-08</em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_zero_var_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_zero_var_randomizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create the randomizer which always returns the nominal domain parameter values.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>

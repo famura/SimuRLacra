@@ -87,9 +87,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/1_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/3_algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -321,7 +321,7 @@
     <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;dataframe&quot;</span><span class="p">,</span> <span class="s2">&quot;array&quot;</span><span class="p">,</span> <span class="s2">&quot;list&quot;</span><span class="p">],</span>
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_render_curve</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">x_grid</span><span class="p">):</span>
-    <span class="n">fix</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">fix</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">draw_curve_from_data</span><span class="p">(</span>
         <span class="s2">&quot;mean_std&quot;</span><span class="p">,</span>
         <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
@@ -376,6 +376,32 @@
         <span class="n">show_legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">area_label</span><span class="o">=</span><span class="s2">&quot;a&quot;</span><span class="p">,</span>
         <span class="n">plot_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">draw_curve_from_data</span><span class="p">(</span>
+        <span class="s2">&quot;ci_on_mean&quot;</span><span class="p">,</span>
+        <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">x_grid</span><span class="p">,</span>
+        <span class="n">ax_calc</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">show_legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">curve_label</span><span class="o">=</span><span class="s2">&quot;100 reps&quot;</span><span class="p">,</span>
+        <span class="n">area_label</span><span class="o">=</span><span class="s2">&quot;ci&quot;</span><span class="p">,</span>
+        <span class="n">cmp_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">num_reps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">confidence_level</span><span class="o">=</span><span class="mf">0.5</span><span class="p">),</span>
+        <span class="n">plot_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">draw_curve_from_data</span><span class="p">(</span>
+        <span class="s2">&quot;ci_on_mean&quot;</span><span class="p">,</span>
+        <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">x_grid</span><span class="p">,</span>
+        <span class="n">ax_calc</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">show_legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">curve_label</span><span class="o">=</span><span class="s2">&quot;10000 reps&quot;</span><span class="p">,</span>
+        <span class="n">area_label</span><span class="o">=</span><span class="s2">&quot;ci&quot;</span><span class="p">,</span>
+        <span class="n">cmp_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">num_reps</span><span class="o">=</span><span class="mi">10000</span><span class="p">),</span>
+        <span class="n">plot_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">),</span>
     <span class="p">)</span></div>
 
 

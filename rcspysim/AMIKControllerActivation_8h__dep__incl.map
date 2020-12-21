@@ -2,7 +2,8 @@
 <area shape="rect" id="node2" href="$AMIKControllerActivation_8cpp.html" title="src/cpp/core/action\l/AMIKControllerActivation.cpp" alt="" coords="5,95,204,136"/>
 <area shape="rect" id="node3" href="$ECBallInTube_8cpp.html" title="src/cpp/core/ECBallInTube.cpp" alt="" coords="228,102,432,129"/>
 <area shape="rect" id="node4" href="$ECBoxFlipping_8cpp.html" title="src/cpp/core/ECBoxFlipping.cpp" alt="" coords="457,102,667,129"/>
-<area shape="rect" id="node5" href="$ECMPBlending_8cpp.html" title="src/cpp/core/ECMPBlending.cpp" alt="" coords="691,102,903,129"/>
-<area shape="rect" id="node6" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="926,102,1137,129"/>
-<area shape="rect" id="node7" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="1160,102,1372,129"/>
+<area shape="rect" id="node5" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="691,102,891,129"/>
+<area shape="rect" id="node6" href="$ECMPBlending_8cpp.html" title="src/cpp/core/ECMPBlending.cpp" alt="" coords="915,102,1127,129"/>
+<area shape="rect" id="node7" href="$ECPlanar3Link_8cpp.html" title="src/cpp/core/ECPlanar3Link.cpp" alt="" coords="1150,102,1361,129"/>
+<area shape="rect" id="node8" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="1384,102,1596,129"/>
 </map>
