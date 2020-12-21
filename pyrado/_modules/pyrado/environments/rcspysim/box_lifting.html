@@ -238,32 +238,14 @@
     <span class="n">create_check_all_boundaries_task</span><span class="p">,</span>
     <span class="n">create_task_space_discrepancy_task</span><span class="p">,</span>
     <span class="n">create_collision_task</span><span class="p">,</span>
+    <span class="n">create_lifting_task</span><span class="p">,</span>
+    <span class="n">create_forcemin_task</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
 
 
 <span class="n">rcsenv</span><span class="o">.</span><span class="n">addResourcePath</span><span class="p">(</span><span class="n">rcsenv</span><span class="o">.</span><span class="n">RCSPYSIM_CONFIG_PATH</span><span class="p">)</span>
 <span class="n">rcsenv</span><span class="o">.</span><span class="n">addResourcePath</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rcsenv</span><span class="o">.</span><span class="n">RCSPYSIM_CONFIG_PATH</span><span class="p">,</span> <span class="s2">&quot;BoxLifting&quot;</span><span class="p">))</span>
-
-
-<div class="viewcode-block" id="create_box_lift_task"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.create_box_lift_task">[docs]</a><span class="k">def</span> <span class="nf">create_box_lift_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">succ_thold</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-    <span class="c1"># Define the indices for selection. This needs to match the observations&#39; names in RcsPySim.</span>
-    <span class="n">idcs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Box_Z&quot;</span><span class="p">]</span>
-
-    <span class="c1"># Get the masked environment specification</span>
-    <span class="n">spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span>
-        <span class="n">env_spec</span><span class="o">.</span><span class="n">obs_space</span><span class="p">,</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">create_mask</span><span class="p">(</span><span class="n">idcs</span><span class="p">))</span>
-    <span class="p">)</span>
-
-    <span class="c1"># Create a desired state task</span>
-    <span class="n">state_des</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.79</span><span class="p">])</span>  <span class="c1"># box position is measured world coordinates</span>
-    <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">5e2</span><span class="p">])</span>
-    <span class="n">R</span> <span class="o">=</span> <span class="mf">1e-1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)</span>
-    <span class="n">rew_fcn</span> <span class="o">=</span> <span class="n">ExpQuadrErrRewFcn</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
-    <span class="n">dst</span> <span class="o">=</span> <span class="n">DesStateTask</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">state_des</span><span class="p">,</span> <span class="n">rew_fcn</span><span class="p">)</span>
-
-    <span class="c1"># Return the masked tasks</span>
-    <span class="k">return</span> <span class="n">MaskedTask</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">idcs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="BoxLiftingSim"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.box_lifting.BoxLiftingSim">[docs]</a><span class="k">class</span> <span class="nc">BoxLiftingSim</span><span class="p">(</span><span class="n">RcsSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
@@ -308,8 +290,11 @@
 
     <span class="k">def</span> <span class="nf">_create_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Task</span><span class="p">:</span>
         <span class="c1"># Create the tasks</span>
-        <span class="n">task_box</span> <span class="o">=</span> <span class="n">create_box_lift_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">succ_thold</span><span class="o">=</span><span class="mf">0.03</span><span class="p">)</span>
+        <span class="n">task_box</span> <span class="o">=</span> <span class="n">create_lifting_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Box_Z&quot;</span><span class="p">],</span> <span class="n">des_height</span><span class="o">=</span><span class="mf">0.78</span><span class="p">)</span>
         <span class="n">task_check_bounds</span> <span class="o">=</span> <span class="n">create_check_all_boundaries_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">penalty</span><span class="o">=</span><span class="mf">1e3</span><span class="p">)</span>
+        <span class="n">task_force</span> <span class="o">=</span> <span class="n">create_forcemin_task</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;WristLoadCellLBR_R_Fy&quot;</span><span class="p">,</span> <span class="s2">&quot;WristLoadCellLBR_R_Fz&quot;</span><span class="p">],</span> <span class="n">Q</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">1e-4</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">])</span>
+        <span class="p">)</span>
         <span class="c1"># task_collision = create_collision_task(self.spec, factor=1.0)</span>
         <span class="c1"># task_ts_discrepancy = create_task_space_discrepancy_task(</span>
         <span class="c1">#     self.spec, AbsErrRewFcn(q=0.5 * np.ones(2), r=np.zeros(self.act_space.shape))</span>
@@ -319,6 +304,7 @@
             <span class="p">[</span>
                 <span class="n">task_box</span><span class="p">,</span>
                 <span class="n">task_check_bounds</span><span class="p">,</span>
+                <span class="c1"># task_force,</span>
                 <span class="c1"># task_collision,</span>
                 <span class="c1"># task_ts_discrepancy</span>
             <span class="p">],</span>

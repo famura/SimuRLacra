@@ -796,7 +796,7 @@ In contrast to DesStateTask, a subset of the state is radially symmetric, e.g. a
 <span id="endless-flipping"></span><h2>endless_flipping<a class="headerlink" href="#module-pyrado.tasks.endless_flipping" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.tasks.endless_flipping.EndlessFlippingTask">
-<em class="property">class </em><code class="sig-name descname">EndlessFlippingTask</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">rew_fcn</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.tasks.reward_functions.RewFcn" title="pyrado.tasks.reward_functions.RewFcn">pyrado.tasks.reward_functions.RewFcn</a></span></em>, <em class="sig-param"><span class="n">init_angle</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">des_angle_delta</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.5707963267948966</span></em>, <em class="sig-param"><span class="n">angle_tol</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.017453292519943295</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/endless_flipping.html#EndlessFlippingTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.endless_flipping.EndlessFlippingTask" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">EndlessFlippingTask</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">rew_fcn</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.tasks.reward_functions.RewFcn" title="pyrado.tasks.reward_functions.RewFcn">pyrado.tasks.reward_functions.RewFcn</a></span></em>, <em class="sig-param"><span class="n">init_angle</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">des_angle_delta</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">angle_tol</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.017453292519943295</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/endless_flipping.html#EndlessFlippingTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.endless_flipping.EndlessFlippingTask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.tasks.base.Task" title="pyrado.tasks.base.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.tasks.base.Task</span></code></a></p>
 <p>Task class for flipping an object around one axis about a desired angle. Once the new angle is equal to the
 old angle plus/minus a given angle delta, the new angle becomes the old one and the flipping continues.</p>
@@ -1399,13 +1399,34 @@ immediate sub-tasks.</p>
 <dl class="py function">
 <dt id="pyrado.tasks.predefined.create_check_all_boundaries_task">
 <code class="sig-name descname">create_check_all_boundaries_task</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">penalty</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.tasks.final_reward.FinalRewTask" title="pyrado.tasks.final_reward.FinalRewTask">pyrado.tasks.final_reward.FinalRewTask</a><a class="reference internal" href="_modules/pyrado/tasks/predefined.html#create_check_all_boundaries_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.predefined.create_check_all_boundaries_task" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Create a task that is checking if any of the state space bounds is violated.
+This checks every limit and not just of a subspace of the state state as it could happen when using a <cite>MaskedTask</cite>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_spec</strong> – environment specification</p></li>
+<li><p><strong>penalty</strong> – scalar cost (positive values) for violating the bounds</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>masked task</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="pyrado.tasks.predefined.create_collision_task">
 <code class="sig-name descname">create_collision_task</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">factor</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.tasks.masked.MaskedTask" title="pyrado.tasks.masked.MaskedTask">pyrado.tasks.masked.MaskedTask</a><a class="reference internal" href="_modules/pyrado/tasks/predefined.html#create_collision_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.predefined.create_collision_task" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a task which punishes collision costs given a collision model with pairs of bodies.
 This task only looks at the instantaneous collision cost.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.</p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1421,13 +1442,41 @@ This task only looks at the instantaneous collision cost.</p>
 
 <dl class="py function">
 <dt id="pyrado.tasks.predefined.create_flipping_task">
-<code class="sig-name descname">create_flipping_task</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">body_names</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/tasks/predefined.html#create_flipping_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.predefined.create_flipping_task" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a task for lifting an object upright</p>
+<code class="sig-name descname">create_flipping_task</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">obs_labels</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">des_angle_delta</span><span class="o">=</span><span class="default_value">1.5707963267948966</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.tasks.masked.MaskedTask" title="pyrado.tasks.masked.MaskedTask">pyrado.tasks.masked.MaskedTask</a><a class="reference internal" href="_modules/pyrado/tasks/predefined.html#create_flipping_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.predefined.create_flipping_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a task for rotating an object.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.</p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env_spec</strong> – environment specification</p></li>
-<li><p><strong>body_names</strong> – indices for selection, e.g. [‘Box_A’]. This needs to match the observations’ names in RcsPySim</p></li>
+<li><p><strong>obs_labels</strong> – labels for selection, e.g. [‘Box_A’]. This needs to match the observations’ names in RcsPySim</p></li>
+<li><p><strong>des_angle_delta</strong> – desired angle to rotate. If reached, the task is reset, and rotating continues.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>masked task</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.tasks.predefined.create_forcemin_task">
+<code class="sig-name descname">create_forcemin_task</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">obs_labels</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">Q</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.tasks.masked.MaskedTask" title="pyrado.tasks.masked.MaskedTask">pyrado.tasks.masked.MaskedTask</a><a class="reference internal" href="_modules/pyrado/tasks/predefined.html#create_forcemin_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.predefined.create_forcemin_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a task which punishes the amount of used force.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_spec</strong> – environment specification</p></li>
+<li><p><strong>obs_labels</strong> – labels for selection, e.g. [‘WristLoadCellLBR_R_Fy’]. This needs to match the observations’
+names in RcsPySim</p></li>
+<li><p><strong>Q</strong> – weight matrix of dim NxN with N=num_forces for the quadratic force costs</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1447,11 +1496,37 @@ This task only looks at the instantaneous collision cost.</p>
 <dd></dd></dl>
 
 <dl class="py function">
+<dt id="pyrado.tasks.predefined.create_lifting_task">
+<code class="sig-name descname">create_lifting_task</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">obs_labels</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">des_height</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>float<span class="p">, </span>numpy.ndarray<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.tasks.masked.MaskedTask" title="pyrado.tasks.masked.MaskedTask">pyrado.tasks.masked.MaskedTask</a><a class="reference internal" href="_modules/pyrado/tasks/predefined.html#create_lifting_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.predefined.create_lifting_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a task for lifting an object.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_spec</strong> – environment specification</p></li>
+<li><p><strong>obs_labels</strong> – labels for selection, e.g. [‘Box_Z’]. This needs to match the observations’ names in RcsPySim</p></li>
+<li><p><strong>des_height</strong> – desired height of the object (depends of the coordinate system). If reached, the task is over.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>masked task</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="pyrado.tasks.predefined.create_task_space_discrepancy_task">
 <code class="sig-name descname">create_task_space_discrepancy_task</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">rew_fcn</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.tasks.reward_functions.RewFcn" title="pyrado.tasks.reward_functions.RewFcn">pyrado.tasks.reward_functions.RewFcn</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.tasks.masked.MaskedTask" title="pyrado.tasks.masked.MaskedTask">pyrado.tasks.masked.MaskedTask</a><a class="reference internal" href="_modules/pyrado/tasks/predefined.html#create_task_space_discrepancy_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.tasks.predefined.create_task_space_discrepancy_task" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a task which punishes the discrepancy between the actual and the commanded state of the observed body.
 The observed body is specified in in the associated experiment configuration file in RcsPySim.
 This task only looks at the X and Z coordinates.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This task was designed with an RcsPySim environment in mind, but is not restricted to these environments.</p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
