@@ -30,8 +30,9 @@
 Storage for default a.k.a. nominal domain parameter values and default randomizers
 """
 import numpy as np
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Union
 
+import pyrado
 from pyrado.domain_randomization.domain_parameter import BernoulliDomainParam, NormalDomainParam, UniformDomainParam
 from pyrado.environments.sim_base import SimEnv
 from pyrado.environment_wrappers.base import EnvWrapper
@@ -66,7 +67,7 @@ def default_randomizer(env_module, env_class):
     return register
 
 
-def create_default_randomizer(env: [SimEnv, EnvWrapper]) -> DomainRandomizer:
+def create_default_randomizer(env: Union[SimEnv, EnvWrapper]) -> DomainRandomizer:
     """
     Create the default randomizer depending on the passed environment.
 
@@ -84,10 +85,10 @@ def create_default_randomizer(env: [SimEnv, EnvWrapper]) -> DomainRandomizer:
         if dp:
             return dp()
     else:
-        raise ValueError(f"No default randomizer settings for env of type {env_type}!")
+        raise pyrado.ValueErr(msg=f"No default randomizer settings for env of type {env_type}!")
 
 
-def create_conservative_randomizer(env: [SimEnv, EnvWrapper]) -> DomainRandomizer:
+def create_conservative_randomizer(env: Union[SimEnv, EnvWrapper]) -> DomainRandomizer:
     """
     Create the default conservative randomizer depending on the passed environment.
 
@@ -101,7 +102,7 @@ def create_conservative_randomizer(env: [SimEnv, EnvWrapper]) -> DomainRandomize
     return randomizer
 
 
-def create_zero_var_randomizer(env: [SimEnv, EnvWrapper], eps: float = 1e-8) -> DomainRandomizer:
+def create_zero_var_randomizer(env: Union[SimEnv, EnvWrapper], eps: float = 1e-8) -> DomainRandomizer:
     """
     Create the randomizer which always returns the nominal domain parameter values.
 
@@ -324,7 +325,7 @@ def get_uniform_masses_lengths_randomizer_qq(frac_halfspan: float):
     )
 
 
-@default_randomizer("pyrado.environments.sim_rcs.ball_on_plate", "BallOnPlateSim")
+@default_randomizer("pyrado.environments.rcspysim.ball_on_plate", "BallOnPlateSim")
 def create_default_randomizer_bop() -> DomainRandomizer:
     """
     Create the default randomizer for the `BallOnPlateSim`.
@@ -361,7 +362,7 @@ def create_default_randomizer_bop() -> DomainRandomizer:
     )
 
 
-@default_randomizer("pyrado.environments.sim_rcs.planar_insert", "PlanarInsertSim")
+@default_randomizer("pyrado.environments.rcspysim.planar_insert", "PlanarInsertSim")
 def create_default_randomizer_pi() -> DomainRandomizer:
     """
     Create the default randomizer for the `PlanarInsertSim`.
@@ -381,8 +382,8 @@ def create_default_randomizer_pi() -> DomainRandomizer:
     )
 
 
-@default_randomizer("pyrado.environments.sim_rcs.box_shelving", "BoxShelvingPosDSSim")
-@default_randomizer("pyrado.environments.sim_rcs.box_shelving", "BoxShelvingVelDSSim")
+@default_randomizer("pyrado.environments.rcspysim.box_shelving", "BoxShelvingPosDSSim")
+@default_randomizer("pyrado.environments.rcspysim.box_shelving", "BoxShelvingVelDSSim")
 def create_default_randomizer_bs() -> DomainRandomizer:
     """
     Create the default randomizer for the `BoxShelvingSim`.
@@ -405,17 +406,19 @@ def create_default_randomizer_bs() -> DomainRandomizer:
     )
 
 
-@default_randomizer("pyrado.environments.sim_rcs.box_lifting", "BoxLiftingPosDSSim")
-@default_randomizer("pyrado.environments.sim_rcs.box_lifting", "BoxLiftingVelDSSim")
+@default_randomizer("pyrado.environments.rcspysim.box_lifting", "BoxLiftingPosIKActivationSim")
+@default_randomizer("pyrado.environments.rcspysim.box_lifting", "BoxLiftingVelIKActivationSim")
+@default_randomizer("pyrado.environments.rcspysim.box_lifting", "BoxLiftingPosDSSim")
+@default_randomizer("pyrado.environments.rcspysim.box_lifting", "BoxLiftingVelDSSim")
 def create_default_randomizer_bl() -> DomainRandomizer:
     """
     Create the default randomizer for the `BoxLifting`.
 
     :return: randomizer based on the nominal domain parameter values
     """
-    from pyrado.environments.rcspysim.box_shelving import BoxShelvingSim
+    from pyrado.environments.rcspysim.box_lifting import BoxLiftingSim
 
-    dp_nom = BoxShelvingSim.get_nominal_domain_param()
+    dp_nom = BoxLiftingSim.get_nominal_domain_param()
     return DomainRandomizer(
         NormalDomainParam(name="box_length", mean=dp_nom["box_length"], std=dp_nom["box_length"] / 10),
         NormalDomainParam(name="box_width", mean=dp_nom["box_width"], std=dp_nom["box_width"] / 10),

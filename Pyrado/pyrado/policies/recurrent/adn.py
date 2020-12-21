@@ -265,7 +265,7 @@ class ADNPolicy(PotentialBasedPolicy):
         self.to(self.device)
 
     def extra_repr(self) -> str:
-        return super().extra_repr().join(f", capacity_learnable={self.capacity_learnable}")
+        return super().extra_repr() + f", capacity_learnable={self.capacity_learnable}"
 
     @property
     def capacity(self) -> [None, to.Tensor]:

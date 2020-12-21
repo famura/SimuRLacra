@@ -29,7 +29,6 @@
 *******************************************************************************/
 
 #include "ExperimentConfig.h"
-#include "action/ActionModel.h"
 #include "action/AMNormalized.h"
 #include "observation/ObservationModel.h"
 #include "observation/OMNormalized.h"
@@ -52,9 +51,9 @@ namespace Rcs
 
 // Utilities for collision model
 static inline void
-copy_prop_to_xml_attr(xmlNodePtr node, PropertySource* source, const char* name, const char* xmlName = NULL)
+copy_prop_to_xml_attr(xmlNodePtr node, PropertySource* source, const char* name, const char* xmlName = nullptr)
 {
-    if (xmlName == NULL) {
+    if (xmlName == nullptr) {
         xmlName = name;
     }
     // Get string value from source. Falls back to xmlName to allow direct copies. Some of the names are just atrocious.
@@ -84,7 +83,7 @@ RcsCollisionMdl* RcsCollisionModel_createFromConfig(RcsGraph* graph, PropertySou
         }
         
         // Load from xml file
-        xmlDocPtr doc = NULL;
+        xmlDocPtr doc = nullptr;
         xmlNodePtr node = parseXMLFile(txt, "CollisionModel", &doc);
         if (!node) {
             throw std::invalid_argument("Error parsing collision model XML.");
@@ -103,8 +102,8 @@ RcsCollisionMdl* RcsCollisionModel_createFromConfig(RcsGraph* graph, PropertySou
     
     // Convert collision config to XML.
     // While this is kind of unnecessary if config is backed by XML, we cannot do this generically for python.
-    xmlDocPtr doc = xmlNewDoc(NULL);
-    xmlNodePtr cmNode = xmlNewDocNode(doc, NULL, BAD_CAST "CollisionModel", NULL);
+    xmlDocPtr doc = xmlNewDoc(nullptr);
+    xmlNodePtr cmNode = xmlNewDocNode(doc, nullptr, BAD_CAST "CollisionModel", nullptr);
     xmlDocSetRootElement(doc, cmNode);
     
     copy_prop_to_xml_attr(cmNode, config, "threshold");
@@ -118,7 +117,7 @@ RcsCollisionMdl* RcsCollisionModel_createFromConfig(RcsGraph* graph, PropertySou
         pairs = &config->getChildList("CollisionPair");
     }
     for (auto child : *pairs) {
-        xmlNodePtr pairNode = xmlNewDocNode(doc, NULL, BAD_CAST "CollisionPair", NULL);
+        xmlNodePtr pairNode = xmlNewDocNode(doc, nullptr, BAD_CAST "CollisionPair", nullptr);
         xmlAddChild(cmNode, pairNode);
         
         copy_prop_to_xml_attr(pairNode, child, "body1");
@@ -168,21 +167,22 @@ ExperimentConfig* ExperimentConfig::create(PropertySource* properties)
             throw std::invalid_argument(os.str());
         }
         
-        // create instance
+        // Create instance
         result = iter->second();
+        
     } catch (...) {
-        // up to here, this method owns properties, so we must delete them on error
+        // Up to here, this method owns properties, so we must delete them on error
         delete properties;
-        // the last part that could throw is the creation of result, so we don't need to delete it
+        // The last part that could throw is the creation of result, so we don't need to delete it
         throw;
     }
     
-    // load transfers ownership of properties to result
+    // Load transfers ownership of properties to result
     try {
         result->load(properties);
         return result;
     } catch (...) {
-        // error, make sure to delete result (will also delete properties)
+        // Error, make sure to delete result (will also delete properties)
         delete result;
         throw;
     }
@@ -190,9 +190,9 @@ ExperimentConfig* ExperimentConfig::create(PropertySource* properties)
 
 ExperimentConfig::ExperimentConfig()
 {
-    properties = NULL;
-    actionModel = NULL;
-    observationModel = NULL;
+    properties = nullptr;
+    actionModel = nullptr;
+    observationModel = nullptr;
     dt = 0.01;
 }
 
@@ -228,7 +228,7 @@ void ExperimentConfig::load(PropertySource* properties)
         Rcs_addResourcePath(extraConfigDir.c_str());
     }
     
-    // Init graph (this is not the graph form the physics simulation)
+    // Init graph (this is NOT the graph form the physics simulation)
     std::string graphFileName = "gScenario.xml";
     properties->getProperty(graphFileName, "graphFileName");
     graph = RcsGraph_create(graphFileName.c_str());
@@ -242,7 +242,7 @@ void ExperimentConfig::load(PropertySource* properties)
         collisionMdl = RcsCollisionModel_createFromConfig(graph, collCfg);
     }
     else {
-        collisionMdl = NULL;
+        collisionMdl = nullptr;
     }
     
     // Load models
@@ -269,7 +269,7 @@ void ExperimentConfig::load(PropertySource* properties)
         observationModel = new OMNormalized(inner, minOverride, maxOverride);
     }
 
-    // Add partial obbservation if desired
+    // Make observation partial if desired
     auto partialObs = properties->getChild("partialObservation");
     if (partialObs) {
         bool exclude = partialObs->getPropertyBool("exclude");
@@ -288,20 +288,20 @@ void ExperimentConfig::load(PropertySource* properties)
 
 ObservationModel* ExperimentConfig::createObservationModel()
 {
-    // Return null by default to use state model
-    return NULL;
+    // Return nullptr by default to use state model
+    return nullptr;
 }
 
 InitStateSetter* ExperimentConfig::createInitStateSetter()
 {
-    // Return null by default to use graph state from xml
-    return NULL;
+    // Return nullptr by default to use graph state from xml
+    return nullptr;
 }
 
 ForceDisturber* ExperimentConfig::createForceDisturber()
 {
-    // Return null by default to skip
-    return NULL;
+    // Return nullptr by default to skip
+    return nullptr;
 }
 
 PhysicsParameterManager* ExperimentConfig::createPhysicsParameterManager()
@@ -313,9 +313,8 @@ PhysicsParameterManager* ExperimentConfig::createPhysicsParameterManager()
     properties->getProperty(physicsEngine, "physicsEngine");
     properties->getProperty(physicsConfigFile, "physicsConfigFile");
     
-    // Create manager
+    // Create manager and populate it
     PhysicsParameterManager* manager = new PhysicsParameterManager(graph, physicsEngine, physicsConfigFile);
-    // Populate it
     populatePhysicsParameters(manager);
     
     // Try to create simulator to catch config errors eagerly
@@ -337,12 +336,12 @@ PhysicsParameterManager* ExperimentConfig::createPhysicsParameterManager()
 
 void ExperimentConfig::initViewer(Rcs::Viewer* viewer)
 {
-    // do nothing by default
+    // Do nothing by default
 }
 
 void ExperimentConfig::populatePhysicsParameters(PhysicsParameterManager* manager)
 {
-    // do nothing by default
+    // Do nothing by default
 }
 
 void ExperimentConfig::getHUDText(
@@ -353,7 +352,7 @@ void ExperimentConfig::getHUDText(
 {
     // Obtain simulator name
     const char* simname = "None";
-    if (simulator != NULL) {
+    if (simulator != nullptr) {
         simname = simulator->getClassName();
     }
     
