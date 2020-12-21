@@ -15,7 +15,7 @@ var searchData=
   ['contains',['contains',['../classRcs_1_1BoxSpace.html#af0afdd72ced06c7314d6e4599305293b',1,'Rcs::BoxSpace']]],
   ['controlpolicy',['ControlPolicy',['../classRcs_1_1ControlPolicy.html#a6ea4b909a26f4ee5196fdffc6b7b257f',1,'Rcs::ControlPolicy']]],
   ['controlpolicyregistration',['ControlPolicyRegistration',['../classRcs_1_1ControlPolicyRegistration.html#a4f919f9a3e01f98a0e78a6ab3a906639',1,'Rcs::ControlPolicyRegistration']]],
-  ['copy_5fprop_5fto_5fxml_5fattr',['copy_prop_to_xml_attr',['../namespaceRcs.html#aac0c08fbbf0e34d34777c4ccb68a6e43',1,'Rcs']]],
+  ['copy_5fprop_5fto_5fxml_5fattr',['copy_prop_to_xml_attr',['../namespaceRcs.html#a9b3665f8f03983d495ecac0d52b8b8ba',1,'Rcs']]],
   ['copyeigen2matnd',['copyEigen2MatNd',['../namespaceRcs.html#a96380cb3d1916ac913574fb5b641728f',1,'Rcs']]],
   ['copymatnd2eigen',['copyMatNd2Eigen',['../namespaceRcs.html#a6c380614d8d91ce4e75010ee3e53829c',1,'Rcs']]],
   ['create',['create',['../classRcs_1_1DynamicalSystem.html#aef3df34c9675d456f9c08a8a99fdab5c',1,'Rcs::DynamicalSystem::create()'],['../classRcs_1_1ControlPolicy.html#a3b78651cdbbca84458aa926be7d2fbd8',1,'Rcs::ControlPolicy::create(const char *name, const char *dataFile)'],['../classRcs_1_1ControlPolicy.html#a76e727cab6db2ba0ece80f016993a07d',1,'Rcs::ControlPolicy::create(PropertySource *config)'],['../classRcs_1_1ControlPolicyRegistration.html#af53ced0114d57d0f7d7422c537f55408',1,'Rcs::ControlPolicyRegistration::create()'],['../classRcs_1_1ExperimentConfig.html#ac76160bde40ee4a75c6d937f84ed2151',1,'Rcs::ExperimentConfig::create()'],['../classRcs_1_1ExperimentConfigRegistration.html#aebc43ec100ce16ef60b84c5398f8e891',1,'Rcs::ExperimentConfigRegistration::create()']]],
