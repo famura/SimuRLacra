@@ -367,19 +367,11 @@ class RBFFeat:
         for i, sample in enumerate(exp_sq_dist):
             if self._state_wise_norm:
                 # Normalize the features such that the activation for every state dimension sums up to one
-                feat_val[i, :] = (
-                    normalize(sample, axis=0, order=1)
-                    .t()
-                    .reshape(
-                        -1,
-                    )
-                )
+                feat_val[i, :] = normalize(sample, axis=0, order=1).t().reshape(-1)
             else:
                 # Turn the features into a vector and normalize over all of them
                 feat_val[i, :] = normalize(
-                    sample.t().reshape(
-                        -1,
-                    ),
+                    sample.t().reshape(-1),
                     axis=-1,
                     order=1,
                 )
@@ -410,15 +402,11 @@ class RBFFeat:
         for i, (sample, sample_d) in enumerate(zip(exp_sq_dist, exp_sq_dist_d)):
             if self._state_wise_norm:
                 # Normalize the features such that the activation for every state dimension sums up to one
-                feat_val[i, :] = normalize(sample, axis=0, order=1).reshape(
-                    -1,
-                )
+                feat_val[i, :] = normalize(sample, axis=0, order=1).reshape(-1)
             else:
                 # Turn the features into a vector and normalize over all of them
                 feat_val[i, :] = normalize(
-                    sample.t().reshape(
-                        -1,
-                    ),
+                    sample.t().reshape(-1),
                     axis=-1,
                     order=1,
                 )

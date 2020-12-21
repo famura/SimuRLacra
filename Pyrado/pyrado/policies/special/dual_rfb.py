@@ -90,9 +90,7 @@ class DualRBFLinearPolicy(LinearPolicy):
         self.feats_mask = to.ones(self._feats.centers.shape, dtype=to.bool)
         self.feats_mask[: self.dim_mask, :] = False
         self.feats_mask[-self.dim_mask :, :] = False
-        self.feats_mask = self.feats_mask.t().reshape(
-            -1,
-        )  # reshape the same way as in RBFFeat
+        self.feats_mask = self.feats_mask.t().reshape(-1)  # reshape the same way as in RBFFeat
 
         # Call custom initialization function after PyTorch network parameter initialization
         init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()

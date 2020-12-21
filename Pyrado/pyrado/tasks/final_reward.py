@@ -81,7 +81,8 @@ class FinalRewTask(TaskWrapper):
 
         :param wrapped_task: task to wrap
         :param mode: mode for calculating the final reward
-        :param factor: value to scale the final reward, does not matter if `mode.time_dependent is True`
+        :param factor: (positive) value to scale the final reward.
+                       The `factor` is ignored if `mode.time_dependent is True`
         """
         # Call TaskWrapper's constructor
         super().__init__(wrapped_task)
@@ -94,7 +95,7 @@ class FinalRewTask(TaskWrapper):
             print_cbt("If the user_input == True, then all other specifications in FinalRewMode are ignored.", "w")
 
         self.mode = mode
-        self.factor = factor
+        self.factor = abs(factor)
         self._yielded_final_rew = False
 
     @property
@@ -117,9 +118,10 @@ class FinalRewTask(TaskWrapper):
 
         def mode_switch(on=(), off=()):
             """
-            Helper function to avoid complex logical expressions
-            :param on: all values that have to be trudey
-            :param off: all values that have to be falsy
+            Helper function to avoid complex logical expressions.
+
+            :param on: all values that have to be true
+            :param off: all values that have to be false
             :return: result
             """
             return all(on) and not any(off)
@@ -142,9 +144,9 @@ class FinalRewTask(TaskWrapper):
                     )
                 ):
                     if self.has_failed(state):
-                        return -1.0 * np.abs(self.factor)
+                        return -1.0 * self.factor
                     elif self.has_succeeded(state):
-                        return np.abs(self.factor)
+                        return self.factor
                     else:
                         return 0.0
 
@@ -155,7 +157,7 @@ class FinalRewTask(TaskWrapper):
                     if self.has_failed(state):
                         return 0.0
                     elif self.has_succeeded(state):
-                        return np.abs(self.factor)
+                        return self.factor
                     else:
                         return 0.0
 
@@ -164,7 +166,7 @@ class FinalRewTask(TaskWrapper):
                     off=(self.mode.always_positive, self.mode.state_dependent, self.mode.time_dependent),
                 ):
                     if self.has_failed(state):
-                        return -1.0 * np.abs(self.factor)
+                        return -1.0 * self.factor
                     elif self.has_succeeded(state):
                         return 0.0
                     else:

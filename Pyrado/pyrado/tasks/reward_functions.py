@@ -154,10 +154,14 @@ class AbsErrRewFcn(RewFcn):
         :param q: weight vector for the state errors
         :param r: weight vector for the action errors
         """
-        assert isinstance(q, np.ndarray) and q.ndim == 1
-        assert isinstance(r, np.ndarray) and r.ndim == 1
-        assert np.all(q >= 0)
-        assert np.all(r >= 0)
+        if not isinstance(q, np.ndarray) and q.ndim == 1:
+            raise pyrado.TypeErr(msg=f"The weights q must be an 1-dim ndarray!")
+        if not isinstance(r, np.ndarray) and r.ndim == 1:
+            raise pyrado.TypeErr(msg=f"The weights r must be an 1-dim ndarray!")
+        if not np.all(q >= 0):
+            raise pyrado.ValueErr(given=q, ge_constraint="0")
+        if not np.all(r >= 0):
+            raise pyrado.ValueErr(given=r, ge_constraint="0")
 
         self.q = q
         self.r = r
@@ -186,8 +190,10 @@ class QuadrErrRewFcn(RewFcn):
                 raise pyrado.TypeErr(given=Q, expected_type=[np.ndarray, list])
         eig_Q, _ = np.linalg.eig(Q)
         eig_R, _ = np.linalg.eig(R)
-        assert (eig_Q >= 0).all()
-        assert (eig_R >= 0).all()  # in theory strictly > 0
+        if not (eig_Q >= 0).all():
+            raise pyrado.ValueErr(msg=f"The weight matrix Q must not have negative eigenvalues!")
+        if not (eig_R >= 0).all():  # in theory strictly > 0
+            raise pyrado.ValueErr(msg=f"The weight matrix R must not have negative eigenvalues!")
 
         self.Q = Q
         self.R = R
@@ -206,12 +212,8 @@ class QuadrErrRewFcn(RewFcn):
         assert isinstance(err_s, np.ndarray) and isinstance(err_a, np.ndarray)
 
         # Adjust shapes (assuming vector shaped state and actions)
-        err_s = err_s.reshape(
-            -1,
-        )
-        err_a = err_a.reshape(
-            -1,
-        )
+        err_s = err_s.reshape(-1)
+        err_a = err_a.reshape(-1)
 
         # Calculate the reward
         cost = self._weighted_quadr_cost(err_s, err_a)  # rew in [-inf, 0]
@@ -282,12 +284,8 @@ class ScaledExpQuadrErrRewFcn(QuadrErrRewFcn):
             raise pyrado.TypeErr(given=act_space, expected_type=Space)
 
         # Adjust shapes (assuming vector shaped state and actions)
-        obs_max = state_space.bound_abs_up.reshape(
-            -1,
-        )
-        act_max = act_space.bound_abs_up.reshape(
-            -1,
-        )
+        obs_max = state_space.bound_abs_up.reshape(-1)
+        act_max = act_space.bound_abs_up.reshape(-1)
 
         # Compute the maximum cost for the worst case state-action configuration
         max_cost = obs_max.dot(self.Q.dot(obs_max)) + act_max.dot(self.R.dot(act_max))
