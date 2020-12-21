@@ -30,7 +30,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
@@ -90,9 +89,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -466,7 +465,7 @@ The base version (re-)opens the socket and resets the task.</p>
 
 <dl class="py class">
 <dt id="pyrado.environments.quanser.quanser_common.VelocityFilter">
-<em class="property">class </em><code class="sig-name descname">VelocityFilter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x_len</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num</span><span class="p">:</span> <span class="n">tuple</span> <span class="o">=</span> <span class="default_value">(50, 0)</span></em>, <em class="sig-param"><span class="n">den</span><span class="p">:</span> <span class="n">tuple</span> <span class="o">=</span> <span class="default_value">(1, 50)</span></em>, <em class="sig-param"><span class="n">dt</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.002</span></em>, <em class="sig-param"><span class="n">x_init</span><span class="p">:</span> <span class="n">numpy.ndarray</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_common.html#VelocityFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_common.VelocityFilter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">VelocityFilter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x_len</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num</span><span class="p">:</span> <span class="n">tuple</span> <span class="o">=</span> <span class="default_value">(50, 0)</span></em>, <em class="sig-param"><span class="n">den</span><span class="p">:</span> <span class="n">tuple</span> <span class="o">=</span> <span class="default_value">(1, 50)</span></em>, <em class="sig-param"><span class="n">dt</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.002</span></em>, <em class="sig-param"><span class="n">x_init</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>numpy.ndarray<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/quanser/quanser_common.html#VelocityFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.quanser.quanser_common.VelocityFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Discrete velocity filter derived from a continuous one</p>
 <div class="admonition note">

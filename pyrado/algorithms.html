@@ -30,7 +30,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
@@ -39,7 +38,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="episodic" href="algorithms.episodic.html" />
-    <link rel="prev" title="How to create an algorithm" href="examples/3_algorithm_skeleton.html" /> 
+    <link rel="prev" title="How to create an algorithm" href="examples/3_algorithm.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -90,9 +89,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul class="current">
@@ -247,7 +246,7 @@ Algorithms specify the way how the policy is updated as well as the exploration 
 
 <dl class="py method">
 <dt id="pyrado.algorithms.base.Algorithm.init_modules">
-<code class="sig-name descname">init_modules</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">warmstart</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">suffix</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.init_modules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.init_modules" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">init_modules</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">warmstart</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">suffix</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.init_modules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.init_modules" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the algorithm’s learnable modules, e.g. a policy or value function.
 Overwrite this method if the algorithm uses a learnable module aside the policy, e.g. a value function.</p>
 <dl class="field-list simple">
@@ -284,7 +283,7 @@ fixed parameter vector, or the results of the previous iteration</p></li>
 
 <dl class="py method">
 <dt id="pyrado.algorithms.base.Algorithm.make_snapshot">
-<code class="sig-name descname">make_snapshot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snapshot_mode</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">curr_avg_ret</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.make_snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.make_snapshot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">make_snapshot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snapshot_mode</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">curr_avg_ret</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>float<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.make_snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.make_snapshot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a snapshot of the training progress.
 This method is called from the subclasses and delegates to the custom method <cite>save_snapshot()</cite>.</p>
 <dl class="field-list simple">
@@ -318,7 +317,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 
 <dl class="py method">
 <dt id="pyrado.algorithms.base.Algorithm.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset the algorithm to it’s initial state. This should NOT reset learned policy parameters.
 By default, this resets the iteration count and the exploration strategy.
 Be sure to call this function if you override it.</p>
@@ -349,7 +348,7 @@ Be sure to call this function if you override it.</p>
 
 <dl class="py method">
 <dt id="pyrado.algorithms.base.Algorithm.save_snapshot">
-<code class="sig-name descname">save_snapshot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.save_snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.save_snapshot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">save_snapshot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.save_snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.save_snapshot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save the algorithm information (e.g., environment, policy, ect.).
 Subclasses should call the base method to save the policy.</p>
 <dl class="field-list simple">
@@ -362,7 +361,7 @@ contains a <cite>dict</cite> of information about the current iteration of the m
 
 <dl class="py method">
 <dt id="pyrado.algorithms.base.Algorithm.step">
-<em class="property">abstract </em><code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snapshot_mode</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.step" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snapshot_mode</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
 adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
 <dl class="field-list simple">
@@ -393,7 +392,7 @@ contains a dict of information about the current iteration of the meta-algorithm
 
 <dl class="py method">
 <dt id="pyrado.algorithms.base.Algorithm.train">
-<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snapshot_mode</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'latest'</span></em>, <em class="sig-param"><span class="n">seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.train" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snapshot_mode</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'latest'</span></em>, <em class="sig-param"><span class="n">seed</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#Algorithm.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.base.Algorithm.train" title="Permalink to this definition">¶</a></dt>
 <dd><p>Train one/multiple policy/policies in a given environment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -429,7 +428,7 @@ and counts until (including) <cite>num_checkpoints</cite>, and is then reset to 
 
 <dl class="py method">
 <dt id="pyrado.algorithms.base.InterruptableAlgorithm.reached_checkpoint">
-<code class="sig-name descname">reached_checkpoint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#InterruptableAlgorithm.reached_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.base.InterruptableAlgorithm.reached_checkpoint" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reached_checkpoint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#InterruptableAlgorithm.reached_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.base.InterruptableAlgorithm.reached_checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Increase the cyclic counter by 1. When the counter reached the maximum number of checkpoints, defined in the
 constructor, it is automatically reset to zero.
 This method also saves the algorithm instance using <cite>save_snapshot()</cite>, otherwise increasing the checkpoint
@@ -443,7 +442,7 @@ counter can have no effect.</p>
 
 <dl class="py method">
 <dt id="pyrado.algorithms.base.InterruptableAlgorithm.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#InterruptableAlgorithm.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.base.InterruptableAlgorithm.reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/base.html#InterruptableAlgorithm.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.base.InterruptableAlgorithm.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset the algorithm to it’s initial state. This should NOT reset learned policy parameters.
 By default, this resets the iteration count and the exploration strategy.
 Be sure to call this function if you override it.</p>
@@ -472,7 +471,7 @@ Be sure to call this function if you override it.</p>
 <span id="timeseries-prediction"></span><h2>timeseries_prediction<a class="headerlink" href="#module-pyrado.algorithms.timeseries_prediction" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.algorithms.timeseries_prediction.TSPred">
-<em class="property">class </em><code class="sig-name descname">TSPred</code><span class="sig-paren">(</span><em class="sig-param">save_dir: str</em>, <em class="sig-param">dataset: pyrado.utils.data_sets.TimeSeriesDataSet</em>, <em class="sig-param">policy: pyrado.policies.base.Policy</em>, <em class="sig-param">max_iter: int</em>, <em class="sig-param">windowed: bool = False</em>, <em class="sig-param">cascaded: bool = False</em>, <em class="sig-param">optim_class=&lt;class 'torch.optim.adam.Adam'&gt;</em>, <em class="sig-param">optim_hparam: dict = None</em>, <em class="sig-param">loss_fcn=MSELoss()</em>, <em class="sig-param">lr_scheduler=None</em>, <em class="sig-param">lr_scheduler_hparam: Optional[dict] = None</em>, <em class="sig-param">num_workers: int = 1</em>, <em class="sig-param">logger: pyrado.logger.step.StepLogger = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/timeseries_prediction.html#TSPred"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.timeseries_prediction.TSPred" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">TSPred</code><span class="sig-paren">(</span><em class="sig-param">save_dir: str</em>, <em class="sig-param">dataset: pyrado.utils.data_sets.TimeSeriesDataSet</em>, <em class="sig-param">policy: pyrado.policies.base.Policy</em>, <em class="sig-param">max_iter: int</em>, <em class="sig-param">windowed: bool = False</em>, <em class="sig-param">cascaded: bool = False</em>, <em class="sig-param">optim_class=&lt;class 'torch.optim.adam.Adam'&gt;</em>, <em class="sig-param">optim_hparam: Optional[dict] = None</em>, <em class="sig-param">loss_fcn=MSELoss()</em>, <em class="sig-param">lr_scheduler=None</em>, <em class="sig-param">lr_scheduler_hparam: Optional[dict] = None</em>, <em class="sig-param">num_workers: int = 1</em>, <em class="sig-param">logger: Optional[pyrado.logger.step.StepLogger] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/timeseries_prediction.html#TSPred"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.timeseries_prediction.TSPred" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a></p>
 <p>Train a policy to predict a time series of data.</p>
 <dl class="py method">
@@ -509,7 +508,7 @@ predicts an sequence of samples of equal length</p></li>
 
 <dl class="py method">
 <dt id="pyrado.algorithms.timeseries_prediction.TSPred.save_snapshot">
-<code class="sig-name descname">save_snapshot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/timeseries_prediction.html#TSPred.save_snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.timeseries_prediction.TSPred.save_snapshot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">save_snapshot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/timeseries_prediction.html#TSPred.save_snapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.timeseries_prediction.TSPred.save_snapshot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save the algorithm information (e.g., environment, policy, ect.).
 Subclasses should call the base method to save the policy.</p>
 <dl class="field-list simple">
@@ -522,7 +521,7 @@ contains a <cite>dict</cite> of information about the current iteration of the m
 
 <dl class="py method">
 <dt id="pyrado.algorithms.timeseries_prediction.TSPred.step">
-<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snapshot_mode</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/timeseries_prediction.html#TSPred.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.timeseries_prediction.TSPred.step" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snapshot_mode</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">meta_info</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/timeseries_prediction.html#TSPred.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.timeseries_prediction.TSPred.step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform a single iteration of the algorithm. This includes collecting the data, updating the parameters, and
 adding the metrics of interest to the logger. Does not update the <cite>curr_iter</cite> attribute.</p>
 <dl class="field-list simple">
@@ -693,7 +692,7 @@ resulting gradient to PyTorch.</p>
 
 <dl class="py function">
 <dt id="pyrado.algorithms.utils.until_thold_exceeded">
-<code class="sig-name descname">until_thold_exceeded</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">thold</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">max_iter</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#until_thold_exceeded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.utils.until_thold_exceeded" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">until_thold_exceeded</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">thold</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">max_iter</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/utils.html#until_thold_exceeded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.utils.until_thold_exceeded" title="Permalink to this definition">¶</a></dt>
 <dd><p>Designed to wrap a function and repeat it until the return value exceeds a threshold.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -725,7 +724,7 @@ resulting gradient to PyTorch.</p>
         <a href="algorithms.episodic.html" class="btn btn-neutral float-right" title="episodic" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="examples/3_algorithm_skeleton.html" class="btn btn-neutral float-left" title="How to create an algorithm" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="examples/3_algorithm.html" class="btn btn-neutral float-left" title="How to create an algorithm" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

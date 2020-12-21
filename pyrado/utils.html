@@ -30,7 +30,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
@@ -90,9 +89,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -235,7 +234,7 @@
 <p>Implementation of an exponentially decaying average estimator</p>
 <dl class="py method">
 <dt id="pyrado.utils.averaging.RunningExpDecayingAverage.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/averaging.html#RunningExpDecayingAverage.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.averaging.RunningExpDecayingAverage.reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>float<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/averaging.html#RunningExpDecayingAverage.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.averaging.RunningExpDecayingAverage.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset internal variables.</p>
 </dd></dl>
 
@@ -253,7 +252,7 @@
 
 <dl class="py method">
 <dt id="pyrado.utils.averaging.RunningMemoryAverage.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">capacity</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/averaging.html#RunningMemoryAverage.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.averaging.RunningMemoryAverage.reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">capacity</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>float<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/averaging.html#RunningMemoryAverage.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.averaging.RunningMemoryAverage.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset internal variables.</p>
 </dd></dl>
 
@@ -529,7 +528,7 @@ Choosing <cite>axis=1</cite> and <cite>norm_order=1</cite> makes all columns of 
 <dl class="py class">
 <dt id="pyrado.utils.data_sets.TimeSeriesDataSet">
 <em class="property">class </em><code class="sig-name descname">TimeSeriesDataSet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">window_size</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">ratio_train</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">standardize_data</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">scale_min_max_data</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'Unnamed data set'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/data_sets.html#TimeSeriesDataSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.data_sets.TimeSeriesDataSet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.utils.data.dataset.T_co</span></code>]</p>
 <p>Class for storing time series data sets</p>
 <dl class="py method">
 <dt id="pyrado.utils.data_sets.TimeSeriesDataSet.cut_to_window_size">
@@ -795,14 +794,14 @@ Convert a scalar to a float.
 
 <dl class="py exception">
 <dt id="pyrado.utils.exceptions.KeyErr">
-<em class="property">exception </em><code class="sig-name descname">KeyErr</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">keys</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">container</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">msg</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/exceptions.html#KeyErr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.exceptions.KeyErr" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="sig-name descname">KeyErr</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">keys</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Union<span class="p">[</span>str<span class="p">, </span>Sequence<span class="p">[</span>str<span class="p">]</span><span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">container</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">msg</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/exceptions.html#KeyErr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.exceptions.KeyErr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.utils.exceptions.BaseErr" title="pyrado.utils.exceptions.BaseErr"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.utils.exceptions.BaseErr</span></code></a></p>
 <p>Class for exceptions raised asking for a keys in an object that does not exist</p>
 </dd></dl>
 
 <dl class="py exception">
 <dt id="pyrado.utils.exceptions.PathErr">
-<em class="property">exception </em><code class="sig-name descname">PathErr</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">given</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">msg</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/exceptions.html#PathErr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.exceptions.PathErr" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="sig-name descname">PathErr</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">given</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">msg</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/exceptions.html#PathErr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.exceptions.PathErr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.utils.exceptions.BaseErr" title="pyrado.utils.exceptions.BaseErr"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.utils.exceptions.BaseErr</span></code></a></p>
 <p>Class for exceptions raised by passing wrong paths to folders or files</p>
 </dd></dl>
@@ -821,7 +820,7 @@ Convert a scalar to a float.
 
 <dl class="py exception">
 <dt id="pyrado.utils.exceptions.TypeErr">
-<em class="property">exception </em><code class="sig-name descname">TypeErr</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">given</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">given_name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">expected_type</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>type<span class="p">, </span>list<span class="p">, </span>tuple<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">msg</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/exceptions.html#TypeErr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.exceptions.TypeErr" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="sig-name descname">TypeErr</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">given</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">given_name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">expected_type</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Union<span class="p">[</span>type<span class="p">, </span>list<span class="p">, </span>tuple<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">msg</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/exceptions.html#TypeErr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.exceptions.TypeErr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.utils.exceptions.BaseErr" title="pyrado.utils.exceptions.BaseErr"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.utils.exceptions.BaseErr</span></code></a></p>
 <p>Class for exceptions raised by passing wrong data types</p>
 </dd></dl>
@@ -853,7 +852,7 @@ not pass functions directly, we pass a sting.</p>
 
 <dl class="py function">
 <dt id="pyrado.utils.experiments.load_experiment">
-<code class="sig-name descname">load_experiment</code><span class="sig-paren">(</span><em class="sig-param">ex_dir: str, args: Any = None) -&gt; (typing.Union[pyrado.environments.sim_base.SimEnv, pyrado.environment_wrappers.base.EnvWrapper], &lt;class 'pyrado.policies.base.Policy'&gt;, &lt;class 'dict'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#load_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.load_experiment" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_experiment</code><span class="sig-paren">(</span><em class="sig-param">ex_dir: str, args: Optional[Any] = None) -&gt; (typing.Union[pyrado.environments.sim_base.SimEnv, pyrado.environment_wrappers.base.EnvWrapper], &lt;class 'pyrado.policies.base.Policy'&gt;, &lt;class 'dict'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#load_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.load_experiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load the (training) environment and the policy.
 This helper function first tries to read the hyper-parameters yaml-file in the experiment’s directory to infer
 why entities should be loaded. If no file was found, we fall back to some heuristic and hope for the best.</p>
@@ -1012,7 +1011,7 @@ exception is raised).</p>
 
 <dl class="py function">
 <dt id="pyrado.utils.input_output.input_timeout">
-<code class="sig-name descname">input_timeout</code><span class="sig-paren">(</span><em class="sig-param">prompt: str</em>, <em class="sig-param">t_timeout: [&lt;class 'float'&gt;</em>, <em class="sig-param">&lt;class 'int'&gt;] = 30</em>, <em class="sig-param">default: str = None</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pyrado/utils/input_output.html#input_timeout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.input_timeout" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">input_timeout</code><span class="sig-paren">(</span><em class="sig-param">prompt: str</em>, <em class="sig-param">t_timeout: [&lt;class 'float'&gt;</em>, <em class="sig-param">&lt;class 'int'&gt;] = 30</em>, <em class="sig-param">default: Optional[str] = None</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/pyrado/utils/input_output.html#input_timeout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.input_timeout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ask the user for an input and quit with a runtime error if no input was given</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1070,7 +1069,7 @@ exception is raised).</p>
 
 <dl class="py function">
 <dt id="pyrado.utils.input_output.select_query">
-<code class="sig-name descname">select_query</code><span class="sig-paren">(</span><em class="sig-param">items: Sequence, max_display: int = 10, fallback: Callable = None, item_formatter: Callable[[Any], str] = &lt;class 'str'&gt;, header: str = 'Available options:', footer: str = 'Please enter the number of the option to use.'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/input_output.html#select_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.select_query" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">select_query</code><span class="sig-paren">(</span><em class="sig-param">items: Sequence, max_display: int = 10, fallback: Optional[Callable] = None, item_formatter: Callable[[Any], str] = &lt;class 'str'&gt;, header: str = 'Available options:', footer: str = 'Please enter the number of the option to use.'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/utils/input_output.html#select_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.input_output.select_query" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ask the user to select an item out of the given list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

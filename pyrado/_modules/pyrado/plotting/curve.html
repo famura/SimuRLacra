@@ -30,7 +30,6 @@
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
@@ -88,9 +87,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -230,7 +229,6 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
-<span class="kn">from</span> <span class="nn">pyrado.sampling.bootstrapping</span> <span class="kn">import</span> <span class="n">bootstrap_ci</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">merge_dicts</span>
 
 
@@ -284,9 +282,8 @@
     <span class="n">vline_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;approx. solved&quot;</span><span class="p">,</span>
     <span class="n">title</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">show_legend</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">cmp_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">plot_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">legend_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">plot_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a box or violin plot for a list of data arrays or a pandas DataFrame.</span>
@@ -314,21 +311,15 @@
 <span class="sd">    :param vline_label: label for the vertical line</span>
 <span class="sd">    :param show_legend: if `True` the legend is shown, useful when handling multiple subplots</span>
 <span class="sd">    :param title: title displayed above the figure, set to None to suppress the title</span>
-<span class="sd">    :param cmp_kwargs: keyword arguments forwarded to functions computing the statistics of interest</span>
-<span class="sd">    :param plot_kwargs: keyword arguments forwarded to the plotting` functions</span>
 <span class="sd">    :param legend_kwargs: keyword arguments forwarded to pyplot&#39;s `legend()` function, e.g. `loc=&#39;best&#39;`</span>
+<span class="sd">    :param plot_kwargs: keyword arguments forwarded to seaborn&#39;s `boxplot()` or `violinplot()` function</span>
 <span class="sd">    :return: handle to the resulting figure</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">plot_type</span> <span class="o">=</span> <span class="n">plot_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">plot_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mean_std&quot;</span><span class="p">,</span> <span class="s2">&quot;min_mean_max&quot;</span><span class="p">,</span> <span class="s2">&quot;ci_on_mean&quot;</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">plot_type</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;mean_std, min_mean_max, ci_on_mean&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">plot_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mean_std&quot;</span><span class="p">,</span> <span class="s2">&quot;min_mean_max&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">plot_type</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;mean_std or min_mean_max&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)):</span>
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">])</span>
-
-    <span class="c1"># Set defaults which can be overwritten by passing plot_kwargs</span>
-    <span class="n">cmp_kwargs</span> <span class="o">=</span> <span class="n">merge_dicts</span><span class="p">(</span>
-        <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">num_reps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">confidence_level</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">bias_correction</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">studentized</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">cmp_kwargs</span><span class="p">]</span>
-    <span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
@@ -351,22 +342,8 @@
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="n">data_min</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="nb">max</span><span class="o">=</span><span class="n">data_max</span><span class="p">)</span>
 
-    <span class="k">elif</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;ci_on_mean&quot;</span><span class="p">:</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">data_lo</span><span class="p">,</span> <span class="n">data_up</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">T</span> <span class="k">if</span> <span class="n">ax_calc</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">data</span><span class="p">,</span>
-            <span class="n">stat_fcn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span>
-            <span class="n">num_reps</span><span class="o">=</span><span class="n">cmp_kwargs</span><span class="p">[</span><span class="s2">&quot;num_reps&quot;</span><span class="p">],</span>
-            <span class="n">alpha</span><span class="o">=</span><span class="n">cmp_kwargs</span><span class="p">[</span><span class="s2">&quot;confidence_level&quot;</span><span class="p">],</span>
-            <span class="n">ci_sides</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-            <span class="n">bias_correction</span><span class="o">=</span><span class="n">cmp_kwargs</span><span class="p">[</span><span class="s2">&quot;bias_correction&quot;</span><span class="p">],</span>
-            <span class="n">studentized</span><span class="o">=</span><span class="n">cmp_kwargs</span><span class="p">[</span><span class="s2">&quot;studentized&quot;</span><span class="p">],</span>
-            <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">ci_lo</span><span class="o">=</span><span class="n">data_lo</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">ci_up</span><span class="o">=</span><span class="n">data_up</span><span class="p">)</span>
-
     <span class="c1"># Forward the actual plotting</span>
-    <span class="k">return</span> <span class="n">draw_curve</span><span class="p">(</span>
+    <span class="n">draw_curve</span><span class="p">(</span>
         <span class="n">plot_type</span><span class="p">,</span>
         <span class="n">ax</span><span class="p">,</span>
         <span class="n">df</span><span class="p">,</span>
@@ -379,8 +356,8 @@
         <span class="n">vline_label</span><span class="p">,</span>
         <span class="n">title</span><span class="p">,</span>
         <span class="n">show_legend</span><span class="p">,</span>
-        <span class="n">plot_kwargs</span><span class="p">,</span>
         <span class="n">legend_kwargs</span><span class="p">,</span>
+        <span class="n">plot_kwargs</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -397,8 +374,8 @@
     <span class="n">vline_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;approx. solved&quot;</span><span class="p">,</span>
     <span class="n">title</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">show_legend</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">plot_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">legend_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">plot_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a box or violin plot for a list of data arrays or a pandas DataFrame.</span>
@@ -425,13 +402,13 @@
 <span class="sd">    :param vline_label: label for the vertical line</span>
 <span class="sd">    :param show_legend: if `True` the legend is shown, useful when handling multiple subplots</span>
 <span class="sd">    :param title: title displayed above the figure, set to None to suppress the title</span>
-<span class="sd">    :param plot_kwargs: keyword arguments forwarded to the plotting` functions</span>
 <span class="sd">    :param legend_kwargs: keyword arguments forwarded to pyplot&#39;s `legend()` function, e.g. `loc=&#39;best&#39;`</span>
+<span class="sd">    :param plot_kwargs: keyword arguments forwarded to seaborn&#39;s `boxplot()` or `violinplot()` function</span>
 <span class="sd">    :return: handle to the resulting figure</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">plot_type</span> <span class="o">=</span> <span class="n">plot_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">plot_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mean_std&quot;</span><span class="p">,</span> <span class="s2">&quot;min_mean_max&quot;</span><span class="p">,</span> <span class="s2">&quot;ci_on_mean&quot;</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">plot_type</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;mean_std, min_mean_max, or ci_on_mean&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">plot_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mean_std&quot;</span><span class="p">,</span> <span class="s2">&quot;min_mean_max&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">plot_type</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;mean_std or min_mean_max&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">x_label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x_label</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -440,8 +417,7 @@
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">y_label</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
 
     <span class="c1"># Set defaults which can be overwritten by passing plot_kwargs</span>
-    <span class="n">plot_kwargs</span> <span class="o">=</span> <span class="n">merge_dicts</span><span class="p">([</span><span class="nb">dict</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">num_stds</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">plot_kwargs</span><span class="p">])</span>
-    <span class="n">num_stds</span> <span class="o">=</span> <span class="n">plot_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;num_stds&quot;</span><span class="p">)</span>  <span class="c1"># pop here since some plotting functions do not expect num_stds</span>
+    <span class="n">plot_kwargs</span> <span class="o">=</span> <span class="n">merge_dicts</span><span class="p">([</span><span class="nb">dict</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">),</span> <span class="n">plot_kwargs</span><span class="p">])</span>
     <span class="n">legend_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span> <span class="k">if</span> <span class="n">legend_kwargs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">legend_kwargs</span>
     <span class="c1"># palette = sns.color_palette() if palette is None else palette</span>
 
@@ -455,6 +431,7 @@
     <span class="k">if</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;mean_std&quot;</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="s2">&quot;mean&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="s2">&quot;std&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">KeyErr</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="s2">&quot;&#39;mean&#39; and &#39;std&#39;&quot;</span><span class="p">,</span> <span class="n">container</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">num_stds</span> <span class="o">=</span> <span class="mi">2</span>
         <span class="k">if</span> <span class="n">area_label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">area_label</span> <span class="o">=</span> <span class="sa">rf</span><span class="s2">&quot;$\pm </span><span class="si">{</span><span class="n">num_stds</span><span class="si">}</span><span class="s2">$ std&quot;</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
@@ -471,13 +448,6 @@
         <span class="k">if</span> <span class="n">area_label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">area_label</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;min \&amp; max&quot;</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">x_grid</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">area_label</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_kwargs</span><span class="p">)</span>
-
-    <span class="k">elif</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;ci_on_mean&quot;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="s2">&quot;mean&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="s2">&quot;ci_lo&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="s2">&quot;ci_up&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">KeyErr</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="s2">&quot;&#39;mean&#39; and &#39;ci_lo&#39; and &#39;ci_up&#39;&quot;</span><span class="p">,</span> <span class="n">container</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">area_label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">area_label</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;conf. intvl.&quot;</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">x_grid</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;ci_lo&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;ci_up&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">area_label</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_kwargs</span><span class="p">)</span>
 
     <span class="c1"># plot mean last for proper z-ordering</span>
     <span class="n">plot_kwargs</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>

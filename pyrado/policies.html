@@ -30,7 +30,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
@@ -90,9 +89,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -258,7 +257,7 @@ Defaults to ‘hidden_states’. Change for value functions.</p></li>
 
 <dl class="py method">
 <dt id="pyrado.policies.base.Policy.init_hidden">
-<code class="sig-name descname">init_hidden</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.init_hidden"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.Policy.init_hidden" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">init_hidden</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.init_hidden"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.Policy.init_hidden" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provide initial values for the hidden parameters. This should usually be a zero tensor.
 The default implementation will raise an error, to enforce override this function for recurrent policies.</p>
 <dl class="field-list simple">
@@ -273,7 +272,7 @@ The default implementation will raise an error, to enforce override this functio
 
 <dl class="py method">
 <dt id="pyrado.policies.base.Policy.init_param">
-<em class="property">abstract </em><code class="sig-name descname">init_param</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">init_values</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.init_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.Policy.init_param" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">init_param</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">init_values</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>torch.Tensor<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.init_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.Policy.init_param" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -389,7 +388,7 @@ registered hooks while the latter silently ignores them.</p>
 
 <dl class="py method">
 <dt id="pyrado.policies.base.TwoHeadedPolicy.init_param">
-<em class="property">abstract </em><code class="sig-name descname">init_param</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">init_values</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#TwoHeadedPolicy.init_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.TwoHeadedPolicy.init_param" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">init_param</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">init_values</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>torch.Tensor<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/base.html#TwoHeadedPolicy.init_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.TwoHeadedPolicy.init_param" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -400,6 +399,11 @@ registered hooks while the latter silently ignores them.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py attribute">
+<dt id="pyrado.policies.base.TwoHeadedPolicy.training">
+<code class="sig-name descname">training</code><em class="property">: bool</em><a class="headerlink" href="#pyrado.policies.base.TwoHeadedPolicy.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -444,7 +448,7 @@ registered hooks while the latter silently ignores them.</p>
 
 <dl class="py class">
 <dt id="pyrado.policies.features.RBFFeat">
-<em class="property">class </em><code class="sig-name descname">RBFFeat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_feat_per_dim</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="p">:</span> <span class="n"><span class="p">[</span>typing.Sequence<span class="p">[</span>list<span class="p">]</span><span class="p">, </span>typing.Sequence<span class="p">[</span>tuple<span class="p">]</span><span class="p">, </span>typing.Sequence<span class="p">[</span>numpy.ndarray<span class="p">]</span><span class="p">, </span>typing.Sequence<span class="p">[</span>torch.Tensor<span class="p">]</span><span class="p">, </span>typing.Sequence<span class="p">[</span>float<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">scale</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">state_wise_norm</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#RBFFeat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.RBFFeat" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">RBFFeat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_feat_per_dim</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="p">:</span> <span class="n"><span class="p">[</span>typing.Sequence<span class="p">[</span>numpy.ndarray<span class="p">]</span><span class="p">, </span>typing.Sequence<span class="p">[</span>torch.Tensor<span class="p">]</span><span class="p">, </span>typing.Sequence<span class="p">[</span>float<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">scale</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>float<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">state_wise_norm</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/features.html#RBFFeat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.features.RBFFeat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Normalized Gaussian radial basis function features</p>
 <dl class="py method">

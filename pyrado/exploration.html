@@ -30,7 +30,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
@@ -90,9 +89,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul class="current">
@@ -212,7 +211,7 @@
 <p>Module for learnable additive Gaussian noise with a diagonal covariance matrix</p>
 <dl class="py method">
 <dt id="pyrado.exploration.normal_noise.DiagNormalNoise.adapt">
-<code class="sig-name descname">adapt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mean</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">std</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>torch.Tensor<span class="p">, </span>float<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/normal_noise.html#DiagNormalNoise.adapt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.normal_noise.DiagNormalNoise.adapt" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">adapt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mean</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>torch.Tensor<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">std</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Union<span class="p">[</span>torch.Tensor<span class="p">, </span>float<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/normal_noise.html#DiagNormalNoise.adapt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.normal_noise.DiagNormalNoise.adapt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adapt the mean and the variance of the noise on the action or parameters.
 Use <cite>None</cite> to leave one of the parameters at their current value.</p>
 <dl class="field-list simple">
@@ -283,7 +282,7 @@ The entropy of a normal distribution is independent of the mean.</p>
 <p>Module for learnable additive Gaussian noise with a full covariance matrix</p>
 <dl class="py method">
 <dt id="pyrado.exploration.normal_noise.FullNormalNoise.adapt">
-<code class="sig-name descname">adapt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mean</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cov</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>torch.Tensor<span class="p">, </span>float<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/normal_noise.html#FullNormalNoise.adapt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.normal_noise.FullNormalNoise.adapt" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">adapt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mean</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>torch.Tensor<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cov</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Union<span class="p">[</span>torch.Tensor<span class="p">, </span>float<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/normal_noise.html#FullNormalNoise.adapt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.normal_noise.FullNormalNoise.adapt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adapt the mean and the variance of the noise on the action or parameters.
 Use <cite>None</cite> to leave one of the parameters at their current value.</p>
 <dl class="field-list simple">
@@ -592,7 +591,7 @@ Use this method to get gradient data on the action distribution.</p>
 
 <dl class="py method">
 <dt id="pyrado.exploration.stochastic_action.StochasticActionExplStrat.init_hidden">
-<code class="sig-name descname">init_hidden</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#StochasticActionExplStrat.init_hidden"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat.init_hidden" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">init_hidden</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#StochasticActionExplStrat.init_hidden"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat.init_hidden" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provide initial values for the hidden parameters. This should usually be a zero tensor.
 The default implementation will raise an error, to enforce override this function for recurrent policies.</p>
 <dl class="field-list simple">
@@ -607,7 +606,7 @@ The default implementation will raise an error, to enforce override this functio
 
 <dl class="py method">
 <dt id="pyrado.exploration.stochastic_action.StochasticActionExplStrat.init_param">
-<code class="sig-name descname">init_param</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">init_values</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#StochasticActionExplStrat.init_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat.init_param" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">init_param</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">init_values</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>torch.Tensor<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/stochastic_action.html#StochasticActionExplStrat.init_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.stochastic_action.StochasticActionExplStrat.init_param" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the policy’s parameters. By default the parameters are initialized randomly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -882,7 +881,7 @@ policy parameters</p>
 <p>Module for learnable additive uniform noise</p>
 <dl class="py method">
 <dt id="pyrado.exploration.uniform_noise.UniformNoise.adapt">
-<code class="sig-name descname">adapt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mean</span><span class="p">:</span> <span class="n">torch.Tensor</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">halfspan</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>torch.Tensor<span class="p">, </span>float<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/uniform_noise.html#UniformNoise.adapt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.uniform_noise.UniformNoise.adapt" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">adapt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mean</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>torch.Tensor<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">halfspan</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Union<span class="p">[</span>torch.Tensor<span class="p">, </span>float<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/exploration/uniform_noise.html#UniformNoise.adapt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.exploration.uniform_noise.UniformNoise.adapt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adapt the mean and the half interval span of the noise on the action or parameters.
 Use <cite>None</cite> to leave one of the parameters at their current value.</p>
 <dl class="field-list simple">

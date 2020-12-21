@@ -8,6 +8,8 @@ var searchData=
   ['ecboxflipping_2ecpp',['ECBoxFlipping.cpp',['../ECBoxFlipping_8cpp.html',1,'']]],
   ['ecboxlifting',['ECBoxLifting',['../classRcs_1_1ECBoxLifting.html',1,'Rcs']]],
   ['ecboxlifting_2ecpp',['ECBoxLifting.cpp',['../ECBoxLifting_8cpp.html',1,'']]],
+  ['ecboxliftingsimple',['ECBoxLiftingSimple',['../classRcs_1_1ECBoxLiftingSimple.html',1,'Rcs']]],
+  ['ecboxliftingsimple_2ecpp',['ECBoxLiftingSimple.cpp',['../ECBoxLiftingSimple_8cpp.html',1,'']]],
   ['ecboxshelving',['ECBoxShelving',['../classRcs_1_1ECBoxShelving.html',1,'Rcs']]],
   ['ecboxshelving_2ecpp',['ECBoxShelving.cpp',['../ECBoxShelving_8cpp.html',1,'']]],
   ['ecmpblending',['ECMPblending',['../classRcs_1_1ECMPblending.html',1,'Rcs']]],
