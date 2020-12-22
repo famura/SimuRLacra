@@ -43,19 +43,29 @@ from pyrado.tasks.reward_functions import QuadrErrRewFcn, UnderActuatedSwingUpRe
 class QCartPoleSim(SimPyEnv, Serializable):
     """ Base Environment for the Quanser Cart-Pole swing-up and stabilization task """
 
-    def __init__(self, dt: float, max_steps: int = pyrado.inf, task_args: [dict, None] = None, long: bool = False):
-        """
+    def __init__(
+        self,
+        dt: float,
+        max_steps: int = pyrado.inf,
+        task_args: [dict, None] = None,
+        long: bool = False,
+        wild_init: bool = False,
+    ):
+        r"""
         Constructor
 
         :param dt: simulation step size [s]
         :param max_steps: maximum number of simulation steps
         :param task_args: arguments for the task construction
-        :param long: long (`True`) or short (`False`) pole
+        :param long: set to `True` if using the long pole, else `False`
+        :param wild_init: if `True` the init state space is increased drastically, e.g. the initial pendulum angle
+                          can be in $[-\pi, +\pi]$. Only applicable to `QCartPoleSwingUpSim`.
         """
         Serializable._init(self, locals())
 
         self._obs_space = None
         self._long = long
+        self._wild_init = wild_init
         self.x_buffer = 0.05  # [m]
 
         # Call SimPyEnv's constructor
@@ -270,21 +280,21 @@ class QCartPoleStabSim(QCartPoleSim, Serializable):
 
     name: str = "qcp-st"
 
-    def __init__(self, dt: float, max_steps: int = pyrado.inf, task_args: [dict, None] = None, long: bool = False):
+    def __init__(self, dt: float, max_steps: int = pyrado.inf, task_args: [dict, None] = None, long: bool = True):
         """
         Constructor
 
         :param dt: simulation step size [s]
         :param max_steps: maximum number of simulation steps
         :param task_args: arguments for the task construction
-        :param long: long (`True`) or short (`False`) pole
+        :param long: set to `True` if using the long pole, else `False`
         """
         Serializable._init(self, locals())
 
         self.stab_thold = 15 / 180.0 * np.pi  # threshold angle for the stabilization task to be a failure [rad]
         self.max_init_th_offset = 8 / 180.0 * np.pi  # [rad]
 
-        super().__init__(dt, max_steps, task_args, long)
+        super().__init__(dt, max_steps, task_args, long, wild_init=False)
 
     def _create_spaces(self):
         super()._create_spaces()
@@ -327,26 +337,39 @@ class QCartPoleSwingUpSim(QCartPoleSim, Serializable):
 
     name: str = "qcp-su"
 
-    def __init__(self, dt: float, max_steps: int = pyrado.inf, task_args: [dict, None] = None, long: bool = False):
-        """
+    def __init__(
+        self,
+        dt: float,
+        max_steps: int = pyrado.inf,
+        task_args: [dict, None] = None,
+        long: bool = False,
+        wild_init: bool = True,
+    ):
+        r"""
         Constructor
 
         :param dt: simulation step size [s]
         :param max_steps: maximum number of simulation steps
         :param task_args: arguments for the task construction
-        :param long: long (`True`) or short (`False`) pole
+        :param long: set to `True` if using the long pole, else `False`
+        :param wild_init: if `True` the init state space is increased drastically, e.g. the initial pendulum angle
+                          can be in $[-\pi, +\pi]$
         """
         Serializable._init(self, locals())
-        super().__init__(dt, max_steps, task_args, long)
+
+        super().__init__(dt, max_steps, task_args, long, wild_init)
 
     def _create_spaces(self):
         super()._create_spaces()
-        l_rail = self.domain_param["l_rail"]
 
         # Define the spaces
+        l_rail = self.domain_param["l_rail"]
         max_state = np.array([+l_rail / 2.0 - self.x_buffer, +4 * np.pi, np.inf, np.inf])  # [m, rad, m/s, rad/s]
         min_state = np.array([-l_rail / 2.0 + self.x_buffer, -4 * np.pi, -np.inf, -np.inf])  # [m, rad, m/s, rad/s]
-        max_init_state = np.array([0.03, 1 / 180.0 * np.pi, 0.005, 2 / 180.0 * np.pi])  # [m, rad, m/s, rad/s]
+        if self._wild_init:
+            max_init_state = np.array([0.05, np.pi, 0.01, 5 / 180.0 * np.pi])  # [m, rad, m/s, rad/s]
+        else:
+            max_init_state = np.array([0.02, 2 / 180.0 * np.pi, 0.005, 2 / 180.0 * np.pi])  # [m, rad, m/s, rad/s]
 
         self._state_space = BoxSpace(min_state, max_state, labels=["x", "theta", "x_dot", "theta_dot"])
         self._init_space = BoxSpace(-max_init_state, max_init_state, labels=["x", "theta", "x_dot", "theta_dot"])
