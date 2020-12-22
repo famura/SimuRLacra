@@ -40,7 +40,7 @@ from pyrado.spaces.discrete import DiscreteSpace
 from pyrado.utils.data_types import RenderMode
 
 
-def _space_to_ps(gym_space) -> [BoxSpace, DiscreteSpace]:
+def _to_pyrado_space(gym_space) -> [BoxSpace, DiscreteSpace]:
     """
     Convert a space from OpenAIGym to Pyrado.
 
@@ -51,10 +51,10 @@ def _space_to_ps(gym_space) -> [BoxSpace, DiscreteSpace]:
         return BoxSpace(gym_space.low, gym_space.high)
     if isinstance(gym_space, gs.Discrete):
         warn(
-            "Guessing the conversion of discrete OpenAI gym space. This feature is not really supported."
+            "Guessing the conversion of a discrete OpenAI gym space. This feature is not tested. "
             "Rather use their control environments with continuous action spaces."
         )
-        return DiscreteSpace(np.ones((gym_space.n, 1), dtype=np.float64))  # PyTorch policies operate on doubles
+        return DiscreteSpace(np.ones((gym_space.n, 1)))
     else:
         raise pyrado.TypeErr(msg=f"Unsupported space form gym {gym_space}")
 
@@ -101,8 +101,8 @@ class GymEnv(SimEnv, Serializable):
         self.max_steps = getattr(self._gym_env.spec, "max_episode_steps", 1000)
 
         # Create spaces compatible to Pyrado
-        self._obs_space = _space_to_ps(self._gym_env.observation_space)
-        self._act_space = _space_to_ps(self._gym_env.action_space)
+        self._obs_space = _to_pyrado_space(self._gym_env.observation_space)
+        self._act_space = _to_pyrado_space(self._gym_env.action_space)
 
     @property
     def state_space(self) -> Space:
