@@ -110,7 +110,7 @@ class StepLogger:
         if isinstance(value, np.ndarray):
             if round_digits is not None:
                 value = np.round(value, round_digits)
-            if value.ndim == 0:  # scalar
+            if value.ndim == 0 or value.size == 1:  # scalar
                 value = value.item()
             else:
                 value = value.flatten()

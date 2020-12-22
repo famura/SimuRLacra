@@ -248,6 +248,4 @@ if __name__ == "__main__":
     elif setup_type == "adn":
         ro = create_adn_setup(**common_hparam, normalize_obs=True, obsnorm_cpp=False)
     else:
-        raise pyrado.ValueErr(
-            given=setup_type, eq_constraint="'joint', 'ika', 'ds', 'manual', 'adn'"
-        )
+        raise pyrado.ValueErr(given=setup_type, eq_constraint="'joint', 'ika', 'ds', 'manual', 'adn'")
