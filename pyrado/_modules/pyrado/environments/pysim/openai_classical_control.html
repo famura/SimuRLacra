@@ -234,7 +234,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="n">RenderMode</span>
 
 
-<span class="k">def</span> <span class="nf">_space_to_ps</span><span class="p">(</span><span class="n">gym_space</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">BoxSpace</span><span class="p">,</span> <span class="n">DiscreteSpace</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">_to_pyrado_space</span><span class="p">(</span><span class="n">gym_space</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">BoxSpace</span><span class="p">,</span> <span class="n">DiscreteSpace</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert a space from OpenAIGym to Pyrado.</span>
 
@@ -245,10 +245,10 @@
         <span class="k">return</span> <span class="n">BoxSpace</span><span class="p">(</span><span class="n">gym_space</span><span class="o">.</span><span class="n">low</span><span class="p">,</span> <span class="n">gym_space</span><span class="o">.</span><span class="n">high</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gym_space</span><span class="p">,</span> <span class="n">gs</span><span class="o">.</span><span class="n">Discrete</span><span class="p">):</span>
         <span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;Guessing the conversion of discrete OpenAI gym space. This feature is not really supported.&quot;</span>
+            <span class="s2">&quot;Guessing the conversion of a discrete OpenAI gym space. This feature is not tested. &quot;</span>
             <span class="s2">&quot;Rather use their control environments with continuous action spaces.&quot;</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">DiscreteSpace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">gym_space</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">))</span>  <span class="c1"># PyTorch policies operate on doubles</span>
+        <span class="k">return</span> <span class="n">DiscreteSpace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">gym_space</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Unsupported space form gym </span><span class="si">{</span><span class="n">gym_space</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -295,8 +295,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gym_env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="s2">&quot;max_episode_steps&quot;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
 
         <span class="c1"># Create spaces compatible to Pyrado</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_obs_space</span> <span class="o">=</span> <span class="n">_space_to_ps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gym_env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_act_space</span> <span class="o">=</span> <span class="n">_space_to_ps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gym_env</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obs_space</span> <span class="o">=</span> <span class="n">_to_pyrado_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gym_env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_act_space</span> <span class="o">=</span> <span class="n">_to_pyrado_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gym_env</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">state_space</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Space</span><span class="p">:</span>

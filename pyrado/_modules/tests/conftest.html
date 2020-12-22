@@ -576,7 +576,7 @@
             <span class="n">taskCombinationMethod</span><span class="o">=</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span>
             <span class="n">checkJointLimits</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">collisionAvoidanceIK</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">observeVelocity</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">observeVelocity</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">observeCollisionCost</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">observePredictedCollisionCost</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># True causes a crash</span>
             <span class="n">observeManipulabilityIndex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -620,6 +620,7 @@
             <span class="n">graphFileName</span><span class="o">=</span><span class="s2">&quot;gBoxLifting_posCtrl.xml&quot;</span><span class="p">,</span>
             <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
             <span class="n">max_steps</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span>
+            <span class="n">fixed_init_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">tasks_left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">tasks_right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">ref_frame</span><span class="o">=</span><span class="s2">&quot;basket&quot;</span><span class="p">,</span>
@@ -645,6 +646,7 @@
             <span class="n">graphFileName</span><span class="o">=</span><span class="s2">&quot;gBoxLifting_trqCtrl.xml&quot;</span><span class="p">,</span>
             <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
             <span class="n">max_steps</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span>
+            <span class="n">fixed_init_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">tasks_left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">tasks_right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">ref_frame</span><span class="o">=</span><span class="s2">&quot;basket&quot;</span><span class="p">,</span>
@@ -670,6 +672,7 @@
             <span class="n">graphFileName</span><span class="o">=</span><span class="s2">&quot;gBoxLifting_posCtrl.xml&quot;</span><span class="p">,</span>
             <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
             <span class="n">max_steps</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span>
+            <span class="n">fixed_init_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">tasks_left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">tasks_right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">ref_frame</span><span class="o">=</span><span class="s2">&quot;basket&quot;</span><span class="p">,</span>
@@ -695,7 +698,7 @@
             <span class="n">graphFileName</span><span class="o">=</span><span class="s2">&quot;gBoxShelving_posCtrl.xml&quot;</span><span class="p">,</span>  <span class="c1"># gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml</span>
             <span class="n">dt</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">,</span>
             <span class="n">max_steps</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
-            <span class="n">fix_init_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">fixed_init_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">ref_frame</span><span class="o">=</span><span class="s2">&quot;upperGoal&quot;</span><span class="p">,</span>
             <span class="n">tasks_left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">tasks_right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -721,7 +724,7 @@
             <span class="n">graphFileName</span><span class="o">=</span><span class="s2">&quot;gBoxShelving_posCtrl.xml&quot;</span><span class="p">,</span>  <span class="c1"># gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml</span>
             <span class="n">dt</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">,</span>
             <span class="n">max_steps</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
-            <span class="n">fix_init_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">fixed_init_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">ref_frame</span><span class="o">=</span><span class="s2">&quot;upperGoal&quot;</span><span class="p">,</span>
             <span class="n">tasks_left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">tasks_right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -747,7 +750,7 @@
             <span class="n">graphFileName</span><span class="o">=</span><span class="s2">&quot;gBoxFlipping_posCtrl.xml&quot;</span><span class="p">,</span>  <span class="c1"># gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml</span>
             <span class="n">dt</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">,</span>
             <span class="n">max_steps</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
-            <span class="n">fix_init_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">fixed_init_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">ref_frame</span><span class="o">=</span><span class="s2">&quot;table&quot;</span><span class="p">,</span>
             <span class="n">tasks_left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">tasks_right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -773,7 +776,7 @@
             <span class="n">graphFileName</span><span class="o">=</span><span class="s2">&quot;gBoxFlipping_posCtrl.xml&quot;</span><span class="p">,</span>  <span class="c1"># gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml</span>
             <span class="n">dt</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">,</span>
             <span class="n">max_steps</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
-            <span class="n">fix_init_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">fixed_init_state</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">ref_frame</span><span class="o">=</span><span class="s2">&quot;table&quot;</span><span class="p">,</span>
             <span class="n">tasks_left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">tasks_right</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
