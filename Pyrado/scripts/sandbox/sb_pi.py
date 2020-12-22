@@ -52,6 +52,7 @@ def create_ik_aktivation_setup(dt, max_steps, max_dist_force, physics_engine, gr
         dt=dt,
         max_steps=max_steps,
         max_dist_force=max_dist_force,
+        taskCombinationMethod="sum",  # 'sum', 'mean',  'product', or 'softmax'
         checkJointLimits=False,
         collisionAvoidanceIK=True,
         observeForceTorque=True,
@@ -109,7 +110,7 @@ def create_ds_aktivation_setup(dt, max_steps, max_dist_force, physics_engine, gr
 
 if __name__ == "__main__":
     # Choose setup
-    setup_type = "ds_activation"  # ik_activation, or activation
+    setup_type = "ika"  # ika, or ds
     common_hparam = dict(
         dt=0.01,
         max_steps=1200,
@@ -118,10 +119,10 @@ if __name__ == "__main__":
         graph_file_name="gPlanarInsert6Link.xml",  # gPlanarInsert6Link.xml or gPlanarInsert5Link.xml
     )
 
-    if setup_type == "ik_activation":
+    if setup_type == "ika":
         ro = create_ik_aktivation_setup(**common_hparam)
-    elif setup_type == "ds_activation":
+    elif setup_type == "ds":
         ro = create_ds_aktivation_setup(**common_hparam)
         draw_potentials(ro)
     else:
-        raise pyrado.ValueErr(given_name=setup_type, eq_constraint="ik_activation or ds_activation")
+        raise pyrado.ValueErr(given_name=setup_type, eq_constraint="ika or ds")

@@ -37,7 +37,6 @@
 #include "observation/OMBodyStateLinear.h"
 #include "observation/OMBodyStateAngular.h"
 #include "observation/OMCombined.h"
-#include "observation/OMJointState.h"
 #include "observation/OMPartial.h"
 #include "observation/OMDynamicalSystemGoalDistance.h"
 #include "observation/OMForceTorque.h"

@@ -27,12 +27,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Planar-3-Link task using Activation Dynamics Networks and Hill Climbing.
+Train an agent to solve the box-lifting task using Activation Dynamics Networks and Hill Climbing.
 """
 import torch as to
 
 import pyrado
 from pyrado.algorithms.episodic.hc import HCNormal
+from pyrado.domain_randomization.default_randomizers import create_default_randomizer
+from pyrado.domain_randomization.domain_parameter import NormalDomainParam, UniformDomainParam
+from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environments.rcspysim.box_lifting import BoxLiftingVelIKActivationSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.recurrent.adn import pd_cubic, ADNPolicy
@@ -54,13 +58,13 @@ if __name__ == "__main__":
         physicsEngine="Bullet",
         graphFileName="gBoxLifting_posCtrl.xml",
         dt=0.01,
-        max_steps=1400,
+        max_steps=1200,
         ref_frame="basket",
         collisionConfig={"file": "collisionModel.xml"},
         fixedInitState=True,
         checkJointLimits=True,
         taskCombinationMethod="sum",
-        collisionAvoidanceIK=True,
+        collisionAvoidanceIK=False,
         observeVelocity=True,
         observeCollisionCost=False,
         observePredictedCollisionCost=False,
@@ -72,13 +76,34 @@ if __name__ == "__main__":
         observeDynamicalSystemGoalDistance=False,
     )
     env = BoxLiftingVelIKActivationSim(**env_hparams)
-    print(env)
+
+    # randomizer = create_default_randomizer(env)
+    dp_nom = env.get_nominal_domain_param()
+    randomizer = DomainRandomizer(
+        NormalDomainParam(name="box_length", mean=dp_nom["box_length"], std=dp_nom["box_length"], clip_lo=5e-2),
+        NormalDomainParam(name="box_width", mean=dp_nom["box_width"], std=dp_nom["box_width"], clip_lo=5e-2),
+        NormalDomainParam(name="box_mass", mean=dp_nom["box_mass"], std=dp_nom["box_mass"] / 5),
+        UniformDomainParam(
+            name="box_friction_coefficient",
+            mean=dp_nom["box_friction_coefficient"],
+            halfspan=dp_nom["box_friction_coefficient"] / 5,
+            clip_lo=1e-5,
+        ),
+        NormalDomainParam(name="basket_mass", mean=dp_nom["basket_mass"], std=dp_nom["basket_mass"] / 5),
+        UniformDomainParam(
+            name="basket_friction_coefficient",
+            mean=dp_nom["basket_friction_coefficient"],
+            halfspan=dp_nom["basket_friction_coefficient"] / 5,
+            clip_lo=1e-5,
+        ),
+    )
+    env = DomainRandWrapperLive(env, randomizer)
 
     # Policy
     policy_hparam = dict(
-        tau_init=10.0,
-        tau_learnable=False,
-        kappa_init=1e-2,
+        tau_init=50.0,
+        tau_learnable=True,
+        kappa_init=1e-3,
         kappa_learnable=True,
         activation_nonlin=to.sigmoid,
         potentials_dyn_fcn=pd_cubic,
@@ -93,7 +118,7 @@ if __name__ == "__main__":
         num_rollouts=1,
         expl_factor=1.05,
         expl_std_init=1.0,
-        num_workers=4,
+        num_workers=6,
     )
     algo = HCNormal(ex_dir, env, policy, **algo_hparam)
 

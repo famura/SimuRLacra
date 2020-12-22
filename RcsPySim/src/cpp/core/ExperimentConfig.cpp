@@ -245,7 +245,7 @@ void ExperimentConfig::load(PropertySource* properties)
         collisionMdl = nullptr;
     }
     
-    // Load models
+    // Create action model (the graph is specified in the associated experiment config file)
     actionModel = createActionModel();
     RCHECK(actionModel);
     

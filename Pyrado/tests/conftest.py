@@ -384,7 +384,7 @@ class DefaultEnvs:
             taskCombinationMethod="sum",
             checkJointLimits=True,
             collisionAvoidanceIK=True,
-            observeVelocity=True,
+            observeVelocity=False,
             observeCollisionCost=True,
             observePredictedCollisionCost=False,  # True causes a crash
             observeManipulabilityIndex=True,
@@ -428,6 +428,7 @@ class DefaultEnvs:
             graphFileName="gBoxLifting_posCtrl.xml",
             dt=0.01,
             max_steps=1500,
+            fixed_init_state=True,
             tasks_left=None,
             tasks_right=None,
             ref_frame="basket",
@@ -453,6 +454,7 @@ class DefaultEnvs:
             graphFileName="gBoxLifting_trqCtrl.xml",
             dt=0.01,
             max_steps=1500,
+            fixed_init_state=True,
             tasks_left=None,
             tasks_right=None,
             ref_frame="basket",
@@ -478,6 +480,7 @@ class DefaultEnvs:
             graphFileName="gBoxLifting_posCtrl.xml",
             dt=0.01,
             max_steps=1500,
+            fixed_init_state=True,
             tasks_left=None,
             tasks_right=None,
             ref_frame="basket",
@@ -503,7 +506,7 @@ class DefaultEnvs:
             graphFileName="gBoxShelving_posCtrl.xml",  # gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml
             dt=1 / 100.0,
             max_steps=2000,
-            fix_init_state=True,
+            fixed_init_state=True,
             ref_frame="upperGoal",
             tasks_left=None,
             tasks_right=None,
@@ -529,7 +532,7 @@ class DefaultEnvs:
             graphFileName="gBoxShelving_posCtrl.xml",  # gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml
             dt=1 / 100.0,
             max_steps=2000,
-            fix_init_state=True,
+            fixed_init_state=True,
             ref_frame="upperGoal",
             tasks_left=None,
             tasks_right=None,
@@ -555,7 +558,7 @@ class DefaultEnvs:
             graphFileName="gBoxFlipping_posCtrl.xml",  # gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml
             dt=1 / 100.0,
             max_steps=2000,
-            fix_init_state=True,
+            fixed_init_state=True,
             ref_frame="table",
             tasks_left=None,
             tasks_right=None,
@@ -581,7 +584,7 @@ class DefaultEnvs:
             graphFileName="gBoxFlipping_posCtrl.xml",  # gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml
             dt=1 / 100.0,
             max_steps=2000,
-            fix_init_state=True,
+            fixed_init_state=True,
             ref_frame="table",
             tasks_left=None,
             tasks_right=None,

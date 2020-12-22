@@ -60,6 +60,7 @@ def create_joint_control_setup(dt, max_steps, max_dist_force, physics_engine):
         dt=dt,
         max_steps=max_steps,
         max_dist_force=max_dist_force,
+        taskCombinationMethod="sum",
         checkJointLimits=True,
     )
     print_domain_params(env.domain_param)
@@ -78,7 +79,7 @@ def create_joint_control_setup(dt, max_steps, max_dist_force, physics_engine):
     return rollout(env, policy, render_mode=RenderMode(video=True), stop_on_done=True)
 
 
-def create_ik_activation_setup(dt, max_steps, max_dist_force, physics_engine):
+def create_ika_setup(dt, max_steps, max_dist_force, physics_engine):
     # Set up environment
     env = Planar3LinkIKActivationSim(
         physicsEngine=physics_engine,
@@ -103,13 +104,14 @@ def create_ik_activation_setup(dt, max_steps, max_dist_force, physics_engine):
     return rollout(env, policy, render_mode=RenderMode(video=True), stop_on_done=True)
 
 
-def create_ds_activation_setup(dt, max_steps, max_dist_force, physics_engine):
+def create_ds_setup(dt, max_steps, max_dist_force, physics_engine):
     # Set up environment
     env = Planar3LinkTASim(
         physicsEngine=physics_engine,
         dt=dt,
         max_steps=max_steps,
         max_dist_force=max_dist_force,
+        taskCombinationMethod="sum",
         positionTasks=True,
         checkJointLimits=False,
         collisionAvoidanceIK=True,
@@ -143,6 +145,7 @@ def create_manual_activation_setup(dt, max_steps, max_dist_force, physics_engine
         dt=dt,
         max_steps=max_steps,
         max_dist_force=max_dist_force,
+        taskCombinationMethod="sum",
         positionTasks=True,
         observeTaskSpaceDiscrepancy=True,
     )
@@ -226,7 +229,7 @@ def create_adn_setup(dt, max_steps, max_dist_force, physics_engine, normalize_ob
 
 if __name__ == "__main__":
     # Choose setup
-    setup_type = "ik_activation"  # joint, ik_activation, activation, manual, adn
+    setup_type = "adn"  # joint, ika, ds, manual, adn
     common_hparam = dict(
         dt=0.01,
         max_steps=1800,
@@ -236,15 +239,15 @@ if __name__ == "__main__":
 
     if setup_type == "joint":
         ro = create_joint_control_setup(**common_hparam)
-    elif setup_type == "ik_activation":
-        ro = create_ik_activation_setup(**common_hparam)
-    elif setup_type == "ds_activation":
-        ro = create_ds_activation_setup(**common_hparam)
+    elif setup_type == "ika":
+        ro = create_ika_setup(**common_hparam)
+    elif setup_type == "ds":
+        ro = create_ds_setup(**common_hparam)
     elif setup_type == "manual":
         ro = create_manual_activation_setup(**common_hparam)
     elif setup_type == "adn":
         ro = create_adn_setup(**common_hparam, normalize_obs=True, obsnorm_cpp=False)
     else:
         raise pyrado.ValueErr(
-            given=setup_type, eq_constraint="'joint', 'ik_activation', 'ds_activation', 'manual', 'adn'"
+            given=setup_type, eq_constraint="'joint', 'ika', 'ds', 'manual', 'adn'"
         )

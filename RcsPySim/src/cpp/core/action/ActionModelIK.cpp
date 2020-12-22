@@ -104,7 +104,7 @@ static void RcsGraph_jointLimitBorderGradient3(const RcsGraph* self, MatNd* dH, 
             }
             
             // Coupled joints don't contribute. Limit avoidance is the master joint's job
-            if (JNT->coupledTo != NULL)
+            if (JNT->coupledTo != nullptr)
             {
                 continue;
             }
@@ -131,11 +131,11 @@ ActionModelIK::ActionModelIK(RcsGraph* graph) : ActionModel(graph), alpha(1e-4),
     dH = MatNd_create(1, graph->nJ);
     
     // Since the subclass must initialize the dynamicalSystems first, we defer creation of these to the first reset call.
-    solver = NULL;
-    dx_des = NULL;
+    solver = nullptr;
+    dx_des = nullptr;
     
     // Must be set manually
-    collisionMdl = NULL;
+    collisionMdl = nullptr;
 }
 
 ActionModelIK::ActionModelIK(RcsGraph* graph, std::vector<Task*> tasks) : ActionModelIK(graph)
@@ -171,12 +171,16 @@ void ActionModelIK::addTask(Task* task)
 
 void ActionModelIK::reset()
 {
-    if (solver == NULL) {
+    if (solver == nullptr) {
         // Init solver now that the dynamicalSystems are created
         solver = new IkSolverRMR(controller);
         // Init temp storage
         dx_des = MatNd_create(controller->getTaskDim(), 1);
     }
+    
+    // Updated the controller's graph with the potentially randomized shapes
+    RcsGraph_copyResizeableShapes(desiredGraph, graph, 1);
+    
     // Copy init state to desired state graph
     RcsGraph_setState(desiredGraph, graph->q, graph->q_dot);
 }
@@ -193,7 +197,6 @@ void ActionModelIK::computeIK(MatNd* q_des, MatNd* q_dot_des, MatNd* T_des, cons
 void ActionModelIK::computeIKVel(MatNd* q_des, MatNd* q_dot_des, MatNd* T_des, const MatNd* x_dot_des, double dt)
 {
     // Compute dx from x_dot_des. dx is the distance we want to move during this step
-    // TODO Discuss with Michael why no controller is used
     MatNd_constMul(dx_des, x_dot_des, dt);
     
     // Compute IK from dx_des
@@ -208,24 +211,24 @@ void ActionModelIK::ikFromDX(MatNd* q_des, MatNd* q_dot_des, double dt) const
         MatNd_printComment("dx_des (from controller->computeDX)", dx_des);
     }
     
-    // Compute null space gradients
+    // Compute nullptr space gradients
     RcsGraph_jointLimitGradient(desiredGraph, dH, RcsStateIK);  // more robust choice
 //    RcsGraph_jointLimitBorderGradient3(desiredGraph, dH, RCS_DEG2RAD(90.0), 1.0);  // sensitive to range value
     
     // Add collision cost if available
-    if (collisionMdl != NULL) {
+    if (collisionMdl != nullptr) {
         MatNd* dH_ca = MatNd_create(1, controller->getGraph()->nJ);
         // Compute the collision gradient
         RcsCollisionModel_compute(collisionMdl);
         RcsCollisionMdl_gradient(collisionMdl, dH_ca);
-        // Add it to nullspace
+        // Add it to nullptrspace
         MatNd_addSelf(dH, dH_ca);
         MatNd_destroy(dH_ca);
     }
     
     // Compute joint space position error with IK
     MatNd_constMulSelf(dH, alpha);
-    solver->solveRightInverse(dq_ref, dx_des, dH, NULL, lambda); // tries to solve everything exactly
+    solver->solveRightInverse(dq_ref, dx_des, dH, nullptr, lambda); // tries to solve everything exactly
 
 //        MatNd* dq_ref_ts = MatNd_create(graph->dof, 1);
 //        MatNd* dq_ref_ns = MatNd_create(graph->dof, 1);
@@ -261,11 +264,11 @@ RcsGraph* ActionModelIK::getDesiredGraph() const
 void ActionModelIK::setupCollisionModel(const RcsCollisionMdl* modelToCopy)
 {
     // Copy collision model for desired graph
-    if (modelToCopy != NULL) {
+    if (modelToCopy != nullptr) {
         collisionMdl = RcsCollisionModel_clone(modelToCopy, desiredGraph);
     }
     else {
-        collisionMdl = NULL;
+        collisionMdl = nullptr;
     }
 }
 
@@ -307,7 +310,7 @@ std::vector<std::string> AMIKGeneric::getNames() const
 void AMIKGeneric::computeCommand(MatNd* q_des, MatNd* q_dot_des, MatNd* T_des, const MatNd* action, double dt)
 {
     // Copy the ExperimentConfig graph which has been updated by the physics simulation into the desired graph
-    RcsGraph_copyRigidBodyDofs(desiredGraph->q, graph, NULL);
+    RcsGraph_copyRigidBodyDofs(desiredGraph->q, graph, nullptr);
     
     computeIK(q_des, q_dot_des, T_des, action, dt);
 }
