@@ -281,8 +281,9 @@
 <span class="sd">        :param mapping: mapping from index of the numpy array (coming from the algorithm) to domain parameter name</span>
 <span class="sd">                        (e.g. mass, length) and the domain distribution parameter (e.g. mean, std)</span>
 
-<span class="sd">        .. note::</span>
-<span class="sd">            For the `mapping` arg use the this dict constructor:</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            # For the mapping arg use the this dict constructor</span>
 <span class="sd">            ```</span>
 <span class="sd">            m = {0: (&#39;name1&#39;, &#39;parameter_type1&#39;), 1: (&#39;name2&#39;, &#39;parameter_type2&#39;)}</span>
 <span class="sd">            ```</span>
@@ -336,7 +337,7 @@
         <span class="k">if</span> <span class="n">domain_param</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># No explicit specification of domain parameters, so randomizer is called to draw a parameter dict</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_randomizer</span><span class="o">.</span><span class="n">randomize</span><span class="p">(</span><span class="n">num_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">domain_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+            <span class="n">domain_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
 
         <span class="c1"># Set the new domain parameters (and the initial sate) by calling the reset method of the wrapped env</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">)</span></div></div>
@@ -380,7 +381,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_domains</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_domains</span> <span class="o">&gt;=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_randomizer</span><span class="o">.</span><span class="n">randomize</span><span class="p">(</span><span class="n">num_domains</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ring_idx</span> <span class="o">=</span> <span class="mi">0</span></div>
 
     <span class="nd">@property</span>

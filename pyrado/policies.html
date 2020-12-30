@@ -243,14 +243,17 @@ Defaults to ‘hidden_states’. Change for value functions.</p></li>
 
 <dl class="py method">
 <dt id="pyrado.policies.base.Policy.forward">
-<em class="property">abstract </em><code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘torch.Tensor’&gt;, (&lt;class ‘torch.Tensor’&gt;, &lt;class ‘torch.Tensor’&gt;)]<a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.Policy.forward" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘torch.Tensor’&gt;, (&lt;class ‘torch.Tensor’&gt;, &lt;class ‘torch.Tensor’&gt;)]<a class="reference internal" href="_modules/pyrado/policies/base.html#Policy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.base.Policy.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the action according to the policy and the observations (forward pass).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>obs</strong> – observation from the environment</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
+<li><p><strong>kwargs</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return act</dt>
-<dd class="field-even"><p>action to be taken</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>outputs, e.g. an action or an action and a hidden state</p>
 </dd>
 </dl>
 </dd></dl>
@@ -378,10 +381,13 @@ registered hooks while the latter silently ignores them.</p>
 <dd><p>Get the action according to the policy and the observations (forward pass).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>obs</strong> – observation from the environment</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
+<li><p><strong>kwargs</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return act</dt>
-<dd class="field-even"><p>action to be taken</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>outputs, e.g. an action or an action and a hidden state</p>
 </dd>
 </dl>
 </dd></dl>

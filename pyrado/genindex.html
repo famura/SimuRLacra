@@ -730,6 +730,8 @@
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.adversarial.AdversarialWrapper.decide_apply">decide_apply() (AdversarialWrapper method)</a>
 </li>
+      <li><a href="utils.html#pyrado.utils.tensor.deepcopy_or_clone">deepcopy_or_clone() (in module pyrado.utils.tensor)</a>
+</li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bf_ds_vel_bt">default_bf_ds_vel_bt() (DefaultEnvs static method)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_bf_ika_bt">default_bf_ika_bt() (DefaultEnvs static method)</a>
@@ -764,13 +766,9 @@
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_cth">default_cth() (DefaultEnvs static method)</a>
 </li>
-      <li><a href="tests.html#tests.conftest.default_dummy_randomizer">default_dummy_randomizer() (in module tests.conftest)</a>
-</li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.default_fs">default_fs() (DefaultPolicies static method)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_hop">default_hop() (DefaultEnvs static method)</a>
-</li>
-      <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.default_metric">default_metric() (SysIdViaEpisodicRL static method)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultEnvs.default_omo">default_omo() (DefaultEnvs static method)</a>
 </li>
@@ -1772,6 +1770,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="algorithms.html#pyrado.algorithms.base.Algorithm.make_snapshot">make_snapshot() (Algorithm method)</a>
 </li>
+      <li><a href="policies.special.html#pyrado.policies.special.domain_distribution.DomainDistrParamPolicy.mapping">mapping() (DomainDistrParamPolicy property)</a>
+</li>
       <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.trackers.MarkerTracker">MarkerTracker (class in pyrado.environments.barrett_wam.trackers)</a>
 </li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.state_augmentation.StateAugmentationWrapper.mask">mask() (StateAugmentationWrapper property)</a>
@@ -2224,8 +2224,6 @@
 </li>
         <li><a href="tests.html#module-tests.test_algorithms">tests.test_algorithms</a>
 </li>
-        <li><a href="tests.html#module-tests.test_domain_randomization">tests.test_domain_randomization</a>
-</li>
         <li><a href="tests.html#module-tests.test_environments">tests.test_environments</a>
 </li>
         <li><a href="tests.html#module-tests.test_exploration">tests.test_exploration</a>
@@ -2614,6 +2612,8 @@
 </li>
       </ul></li>
       <li><a href="environment_wrappers.html#pyrado.environment_wrappers.observation_normalization.ObsNormWrapper.override_bounds">override_bounds() (ObsNormWrapper static method)</a>
+</li>
+      <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.override_obs_bounds">override_obs_bounds() (SysIdViaEpisodicRL static method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -5139,8 +5139,6 @@
       <ul>
         <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_action_downsampling.test_domain_param">(in module tests.environment_wrappers.test_action_downsampling)</a>
 </li>
-        <li><a href="tests.html#tests.test_domain_randomization.test_domain_param">(in module tests.test_domain_randomization)</a>
-</li>
       </ul></li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_live_bob">test_dr_wrapper_live_bob() (in module tests.environment_wrappers.test_domain_randomization)</a>
 </li>
@@ -5228,8 +5226,6 @@
 </li>
       <li><a href="tests.html#tests.test_sampling.test_param_expl_sampler">test_param_expl_sampler() (in module tests.test_sampling)</a>
 </li>
-      <li><a href="tests.html#tests.test_domain_randomization.test_param_grid">test_param_grid() (in module tests.test_domain_randomization)</a>
-</li>
       <li><a href="tests.html#tests.test_policies.test_parameterized_policies_init_param">test_parameterized_policies_init_param() (in module tests.test_policies)</a>
 </li>
       <li><a href="tests.html#tests.test_rollout_result.test_pickle">test_pickle() (in module tests.test_rollout_result)</a>
@@ -5247,10 +5243,6 @@
       <li><a href="tests.html#tests.test_environments.test_qbb_kin">test_qbb_kin() (in module tests.test_environments)</a>
 </li>
       <li><a href="tests.html#tests.test_environments.test_quanser_real_wo_connecting">test_quanser_real_wo_connecting() (in module tests.test_environments)</a>
-</li>
-      <li><a href="tests.html#tests.test_domain_randomization.test_randomizer">test_randomizer() (in module tests.test_domain_randomization)</a>
-</li>
-      <li><a href="tests.html#tests.test_domain_randomization.test_randomizer_dummy">test_randomizer_dummy() (in module tests.test_domain_randomization)</a>
 </li>
       <li><a href="tests.html#tests.test_policies.test_rbf_feat_batched">test_rbf_feat_batched() (in module tests.test_policies)</a>
 </li>
@@ -5271,8 +5263,6 @@
       <li><a href="tests.html#tests.test_sampling.test_reparametrization_trick">test_reparametrization_trick() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_rollout_result.test_replay_memory">test_replay_memory() (in module tests.test_rollout_result)</a>
-</li>
-      <li><a href="tests.html#tests.test_domain_randomization.test_rescaling">test_rescaling() (in module tests.test_domain_randomization)</a>
 </li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_action_delay.test_reset">test_reset() (in module tests.environment_wrappers.test_action_delay)</a>
 
@@ -5320,10 +5310,10 @@
 </li>
       <li><a href="tests.html#tests.test_sampling.test_sample_from_unit_sphere_surface">test_sample_from_unit_sphere_surface() (in module tests.test_sampling)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.test_sampling.test_sampler_collect">test_sampler_collect() (in module tests.test_sampling)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tests.html#tests.test_sampling.test_sampler_collect_minrun">test_sampler_collect_minrun() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_sampling.test_sampler_pool">test_sampler_pool() (in module tests.test_sampling)</a>
@@ -5347,8 +5337,6 @@
       <li><a href="tests.html#tests.test_tasks.test_sequential_task_function">test_sequential_task_function() (in module tests.test_tasks)</a>
 </li>
       <li><a href="tests.html#tests.test_tasks.test_set_goals_fo_composite_tasks">test_set_goals_fo_composite_tasks() (in module tests.test_tasks)</a>
-</li>
-      <li><a href="tests.html#tests.test_domain_randomization.test_setting_dp_vals">test_setting_dp_vals() (in module tests.test_domain_randomization)</a>
 </li>
       <li><a href="tests.html#tests.test_policies.test_simple_feature_stack">test_simple_feature_stack() (in module tests.test_policies)</a>
 </li>
@@ -5512,13 +5500,6 @@
 
       <ul>
         <li><a href="tests.html#module-tests.test_algorithms">module</a>
-</li>
-      </ul></li>
-      <li>
-    tests.test_domain_randomization
-
-      <ul>
-        <li><a href="tests.html#module-tests.test_domain_randomization">module</a>
 </li>
       </ul></li>
       <li>
@@ -5818,6 +5799,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="utils.html#pyrado.utils.nn_layers.MirrConv1d.weight">weight (MirrConv1d attribute)</a>
+</li>
+      <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.weighted_l1_l2_metric">weighted_l1_l2_metric() (SysIdViaEpisodicRL static method)</a>
 </li>
       <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.reps.REPS.weights">weights() (REPS method)</a>
 </li>

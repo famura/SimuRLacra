@@ -363,7 +363,7 @@ JMLR, 2014</p>
 <span id="parameter-exploring"></span><h2>parameter_exploring<a class="headerlink" href="#module-pyrado.algorithms.episodic.parameter_exploring" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.algorithms.episodic.parameter_exploring.ParameterExploring">
-<em class="property">class </em><code class="sig-name descname">ParameterExploring</code><span class="sig-paren">(</span><em class="sig-param">save_dir: str</em>, <em class="sig-param">env: pyrado.environments.base.Env</em>, <em class="sig-param">policy: pyrado.policies.base.Policy</em>, <em class="sig-param">max_iter: int</em>, <em class="sig-param">num_rollouts: int</em>, <em class="sig-param">pop_size: [&lt;class 'int'&gt;</em>, <em class="sig-param">None] = None</em>, <em class="sig-param">num_workers: int = 4</em>, <em class="sig-param">logger: pyrado.logger.step.StepLogger = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/parameter_exploring.html#ParameterExploring"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">ParameterExploring</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">max_iter</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num_rollouts</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">pop_size</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_workers</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">4</span></em>, <em class="sig-param"><span class="n">logger</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="logger.html#pyrado.logger.step.StepLogger" title="pyrado.logger.step.StepLogger">pyrado.logger.step.StepLogger</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/parameter_exploring.html#ParameterExploring"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a></p>
 <p>Base for all algorithms that explore directly in the policy parameter space</p>
 <dl class="py method">
@@ -751,30 +751,10 @@ As stated in [2, sec 4.1], we could calculate weights using any rank preserving 
 <em class="property">class </em><code class="sig-name descname">SysIdViaEpisodicRL</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">subrtn</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.algorithms.episodic.parameter_exploring.ParameterExploring" title="pyrado.algorithms.episodic.parameter_exploring.ParameterExploring">pyrado.algorithms.episodic.parameter_exploring.ParameterExploring</a></span></em>, <em class="sig-param"><span class="n">behavior_policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">num_rollouts_per_distr</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">metric</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Callable<span class="p">[</span><span class="p">[</span>numpy.ndarray<span class="p">]</span><span class="p">, </span>numpy.ndarray<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">obs_dim_weight</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>list<span class="p">, </span>numpy.ndarray<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">std_obs_filt</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">5</span></em>, <em class="sig-param"><span class="n">w_abs</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">w_sq</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">num_workers</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">4</span></em>, <em class="sig-param"><span class="n">base_seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1001</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/sysid_via_episodic_rl.html#SysIdViaEpisodicRL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="algorithms.html#pyrado.algorithms.base.Algorithm" title="pyrado.algorithms.base.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.algorithms.base.Algorithm</span></code></a></p>
 <p>Wrapper to frame black-box system identification as an episodic reinforcement learning problem</p>
-<dl class="py method">
-<dt id="pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.default_metric">
-<em class="property">static </em><code class="sig-name descname">default_metric</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">err</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">w_abs</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">w_sq</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">obs_dim_weight</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/sysid_via_episodic_rl.html#SysIdViaEpisodicRL.default_metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.default_metric" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the weighted linear combination of the observation error’s MAE and MSE, averaged over time</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>In contrast to [1], we are using the mean absolute error and the mean squared error instead of the L1 and
-the L2 norm. The reason for this is that longer time series would be punished otherwise.</p>
+<p>This algorithm was designed as a subroutine of SimOpt. However, it could also be used independently.</p>
 </div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>err</strong> – error signal with time steps along the first dimension</p></li>
-<li><p><strong>w_abs</strong> – weight for the mean absolute errors</p></li>
-<li><p><strong>w_sq</strong> – weight for the mean squared errors</p></li>
-<li><p><strong>obs_dim_weight</strong> – (diagonal) weight matrix for the different observation dimensions</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>weighted linear combination of the error’s MAE and MSE, averaged over time</p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py attribute">
 <dt id="pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.iteration_key">
 <code class="sig-name descname">iteration_key</code><em class="property">: str</em><em class="property"> = 'sysiderl_iteration'</em><a class="headerlink" href="#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.iteration_key" title="Permalink to this definition">¶</a></dt>
@@ -802,6 +782,25 @@ Be sure to align and truncate the rollouts beforehand.</p>
 <dt id="pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.name">
 <code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'sysiderl'</em><a class="headerlink" href="#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.override_obs_bounds">
+<em class="property">static </em><code class="sig-name descname">override_obs_bounds</code><span class="sig-paren">(</span><em class="sig-param">bound_lo: numpy.ndarray</em>, <em class="sig-param">bound_up: numpy.ndarray</em>, <em class="sig-param">labels: numpy.ndarray) -&gt; (&lt;class 'numpy.ndarray'&gt;</em>, <em class="sig-param">&lt;class 'numpy.ndarray'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/sysid_via_episodic_rl.html#SysIdViaEpisodicRL.override_obs_bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.override_obs_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default overriding method for the bounds of an observation space. This is necessary when the observations
+are scaled with their range, e.g. to compare a deviation over different kinds of abservations like position and
+annular velocity. Thus, infinite bounds are not feasible.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bound_lo</strong> – lower bound of the observation space</p></li>
+<li><p><strong>bound_up</strong> – upper bound of the observation space</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>clipped lower and upper bound</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.reset">
@@ -871,6 +870,30 @@ rollouts of different length</p></li>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>MxN real-world rollouts and MxN simulated rollouts of equal length if <cite>replicate = True</cite>, else
 K real-world rollouts and K simulated rollouts of equal length</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.weighted_l1_l2_metric">
+<em class="property">static </em><code class="sig-name descname">weighted_l1_l2_metric</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">err</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">w_abs</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">w_sq</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">obs_dim_weight</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/algorithms/episodic/sysid_via_episodic_rl.html#SysIdViaEpisodicRL.weighted_l1_l2_metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.weighted_l1_l2_metric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the weighted linear combination of the observation error’s MAE and MSE, averaged over time</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In contrast to [1], we are using the mean absolute error and the mean squared error instead of the L1 and
+the L2 norm. The reason for this is that longer time series would be punished otherwise.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>err</strong> – error signal with time steps along the first dimension</p></li>
+<li><p><strong>w_abs</strong> – weight for the mean absolute errors</p></li>
+<li><p><strong>w_sq</strong> – weight for the mean squared errors</p></li>
+<li><p><strong>obs_dim_weight</strong> – (diagonal) weight matrix for the different observation dimensions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>weighted linear combination of the error’s MAE and MSE, averaged over time</p>
 </dd>
 </dl>
 </dd></dl>
