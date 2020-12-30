@@ -262,3 +262,115 @@ class DomainRandomizer:
                 dp.distr = MultivariateNormal(dp.mean, dp.cov)
             if isinstance(dp, BernoulliDomainParam):
                 dp.distr = Bernoulli(dp.prob_1)
+
+
+class DistributionFreeDomainRandomizer(DomainRandomizer):
+    """
+    Class which operated on `DomainParam` directly, i.e. assumes no distribution, and uses a callable to do
+    generate new domain parameters
+    """
+
+    def __init__(
+        self,
+        *domain_params: DomainParam,
+        rand_engine: Callable[[int], to.Tensor],
+        mapping: Optional[Mapping[int, str]] = None,
+    ):
+        """
+        Constructor
+
+        :param domain_params: list or tuple of `DomainParam` instances, but not subclasses of them
+        :param rand_engine: callable which samples a given number domain parameter sets
+        :param mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass, length).
+                        This only sets the same and is intended to be used to guarantee the right number and order of
+                        domain parameters in the randomizer.
+        """
+        if not callable(rand_engine):
+            raise pyrado.TypeErr(given=rand_engine, expected_type=Callable)
+
+        super().__init__(*domain_params)
+        self.add_domain_params(mapping=mapping)  # optional additional addition of domain parameters
+        self._rand_engine = rand_engine
+
+    @property
+    def rand_engine(self) -> Callable[[int], to.Tensor]:
+        """ Get the callable which samples a given number domain parameter sets. """
+        return self._rand_engine
+
+    def __str__(self):
+        """ Create a string that yields a table-like result for print. """
+        # Collect all keys a.k.a. headers
+        headers = []
+        dps = deepcopy(self.domain_params)
+        for dp in dps:
+            headers.extend(dp.get_field_names())
+
+        # Manually order them. A set would reduce the duplicated, too but yield a random order.
+        headers_ordered = ["name"]
+        if "clip_lo" in headers:
+            headers_ordered.append("clip_lo")
+        if "clip_up" in headers:
+            headers_ordered.append("clip_up")
+        if "roundint" in headers:
+            headers_ordered.append("roundint")
+
+        # Create string
+        return tabulate(
+            [[getattr(dp, h, None) for h in headers_ordered] for dp in dps], headers=headers_ordered, tablefmt="simple"
+        )
+
+    @to.no_grad()
+    def summary_statistics(self, num_samples: int) -> dict:
+        """
+        Estimate means, standard deviations, and medians from generated samples.
+
+        :param num_samples: number of samples to estimate the summary statistics from
+        :return: domain parameter names with associated means, medians, standard deviations, etc.
+        """
+        if not isinstance(num_samples, int):
+            raise pyrado.TypeErr(given=num_samples, expected_type=int)
+        if num_samples <= 0:
+            raise pyrado.ValueErr(given=num_samples, g_constraint="0")
+
+        # Generate domain parameter samples
+        names = [dp.name for dp in self.domain_params]
+        values = self._rand_engine(num_samples)
+
+        # Compute some summary statistics
+        means = to.mean(values, dim=0).numpy()
+        medians = to.median(values, dim=0)[0].numpy()
+        stds = to.std(values, dim=0).numpy()
+        mins = to.min(values, dim=0)[0].numpy()
+        maxs = to.max(values, dim=0)[0].numpy()
+
+        return dict(name=names, mean=means, median=medians, std=stds, min=mins, max=maxs)
+
+    def randomize(self, num_samples: int):
+        if not isinstance(num_samples, int):
+            raise pyrado.TypeErr(given=num_samples, expected_type=int)
+        if num_samples <= 0:
+            raise pyrado.ValueErr(given=num_samples, g_constraint="0")
+
+        # Generate domain parameter samples
+        keys = [dp.name for dp in self.domain_params]
+        values = self._rand_engine(num_samples)
+        values = to.transpose(values, 0, 1)  # for zipping with keys we later need the samples along the columns
+        if not values.shape == (len(keys), num_samples):
+            raise pyrado.ShapeErr(given=values, expected_match=(len(keys), num_samples))
+
+        # Fill the internal storage containers
+        self._params_pert_dict = dict(zip(keys, values))
+        self._params_pert_list = []
+        for i in range(num_samples):
+            d = dict()
+            for k, v in zip(keys, values):
+                d[k] = v[i]
+            self._params_pert_list.append(d)
+
+    def adapt_one_distr_param(
+        self, domain_param_name: str, domain_distr_param: str, domain_distr_param_value: [float, int]
+    ):
+        raise RuntimeError("The method rescale_distr_param is invalid for DistributionFreeDomainRandomizer!")
+
+    def rescale_distr_param(self, param: str, scale: float):
+        raise RuntimeError("The method rescale_distr_param is invalid for DistributionFreeDomainRandomizer!")

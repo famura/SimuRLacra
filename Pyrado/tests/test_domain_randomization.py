@@ -175,3 +175,46 @@ def test_setting_dp_vals(env: SimEnv):
                 rand_val = nominal_val + nominal_val * np.random.rand() / 10
                 env.reset(domain_param={dp_key: rand_val})
                 assert env.domain_param[dp_key] == pytest.approx(rand_val, abs=5e-4)  # rolling friction is imprecise
+
+
+@pytest.mark.parametrize(
+    "env",
+    [
+        "default_omo",
+    ],
+    ids=["omo"],
+    indirect=True,
+)
+def test_distr_free_domain_randomizer(env: SimEnv):
+    from nflows.distributions import StandardNormal
+    from nflows.flows import Flow
+    from nflows.transforms import ReversePermutation, MaskedAffineAutoregressiveTransform, CompositeTransform
+    from pyrado.policies.feed_forward.nflow import NFlowPolicy
+
+    pyrado.set_seed(1001)
+    mapping = {0: "k", 1: "d"}
+
+    base_dist = StandardNormal(shape=[len(mapping)])
+    transforms = []
+    for _ in range(3):
+        transforms.append(ReversePermutation(features=len(mapping)))
+        transforms.append(MaskedAffineAutoregressiveTransform(features=len(mapping), hidden_features=4))
+    transform = CompositeTransform(transforms)
+
+    flow = Flow(transform, base_dist)
+    trafo_mask = [True, True]
+    policy = NFlowPolicy(flow, mapping, trafo_mask)
+
+    randomizer = DistributionFreeDomainRandomizer(
+        mapping=mapping,
+        rand_engine=policy,
+    )
+    print(randomizer)
+    randomizer.randomize(num_samples=7)
+
+    randomizer.summary_statistics(num_samples=200)
+
+    wenv = DomainRandWrapperLive(env, randomizer)
+    print(wenv.domain_param)
+    wenv.reset()
+    print(wenv.domain_param)
