@@ -350,39 +350,57 @@ def test_bootsrapping(data, num_reps, seed):
     ids=["bob_fnnpol"],
     indirect=True,
 )
-def test_param_expl_sampler(env: SimEnv, policy: Policy):
+@pytest.mark.parametrize(
+    ["num_rollouts_per_param", "fixed_init_state"],
+    [
+        (1, False),
+        (1, True),
+        (9, False),
+        (9, True),
+    ],
+    ids=["1rops-randinit", "1rops-fixedinit", "9rops-randinit", "9rops-fixedinit"],
+)
+def test_param_expl_sampler(env: SimEnv, policy: Policy, num_rollouts_per_param: int, fixed_init_state: bool):
     # Add randomizer
     pert = create_default_randomizer(env)
     env = DomainRandWrapperLive(env, pert)
 
     # Create the sampler
-    num_rollouts_per_param = 12
-    sampler = ParameterExplorationSampler(env, policy, num_workers=1, num_rollouts_per_param=num_rollouts_per_param)
+    sampler = ParameterExplorationSampler(env, policy, num_rollouts_per_param, num_workers=1)
 
     # Use some random parameters
-    num_ps = 12
+    num_ps = 7
     params = to.rand(num_ps, policy.num_param)
 
-    # Do the sampling
-    samples = sampler.sample(params)
+    if fixed_init_state:
+        # Sample a custom init state
+        init_states = [env.init_space.sample_uniform()] * num_rollouts_per_param
+    else:
+        # Let the sampler forward to the env to randomly sample an init state
+        init_states = None
 
+    # Do the sampling
+    samples = sampler.sample(param_sets=params, init_states=init_states)
+
+    # Check if the correct number of rollouts has been sampled
     assert num_ps == len(samples)
+    assert num_ps * num_rollouts_per_param == samples.num_rollouts
     for ps in samples:
         assert len(ps.rollouts) == num_rollouts_per_param
 
     # Compare rollouts that should be matching
-    for ri in range(num_rollouts_per_param):
-        # Use the first paramset as pivot
+    for idx in range(num_rollouts_per_param):
+        # Use the first parameter set as pivot
         piter = iter(samples)
-        pivot = next(piter).rollouts[ri]
+        pivot = next(piter).rollouts[idx]
+
         # Iterate through others
         for ops in piter:
-            ro = ops.rollouts[ri]
-
+            other_ro = ops.rollouts[idx]
             # Compare domain params
-            assert pivot.rollout_info["domain_param"] == ro.rollout_info["domain_param"]
+            assert pivot.rollout_info["domain_param"] == other_ro.rollout_info["domain_param"]
             # Compare first observation a.k.a. init state
-            assert pivot[0].observation == pytest.approx(ro[0].observation)
+            assert pivot[0].observation == pytest.approx(other_ro[0].observation)
 
 
 @m_needs_cuda
