@@ -163,12 +163,13 @@ class Policy(nn.Module, ABC):
         pass  # this is used in rollout() even though your IDE might not link it
 
     @abstractmethod
-    def forward(self, obs: to.Tensor) -> [to.Tensor, (to.Tensor, to.Tensor)]:
+    def forward(self, *args, **kwargs) -> [to.Tensor, (to.Tensor, to.Tensor)]:
         """
         Get the action according to the policy and the observations (forward pass).
 
-        :param obs: observation from the environment
-        :return act: action to be taken
+        :param args: inputs, e.g. an observation from the environment or an observation and a hidden state
+        :param kwargs: inputs, e.g. an observation from the environment or an observation and a hidden state
+        :return: outputs, e.g. an action or an action and a hidden state
         """
         raise NotImplementedError
 

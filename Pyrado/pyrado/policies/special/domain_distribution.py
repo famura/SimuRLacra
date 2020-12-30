@@ -28,7 +28,7 @@
 
 import torch as to
 from torch import nn as nn
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Union
 
 import pyrado
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
@@ -47,7 +47,7 @@ class DomainDistrParamPolicy(Policy):
     def __init__(
         self,
         mapping: Dict[int, Tuple[str, str]],
-        trafo_mask: list,
+        trafo_mask: Union[list, to.Tensor],
         prior: DomainRandomizer = None,
         scale_params: bool = False,
         use_cuda: bool = False,
@@ -55,12 +55,15 @@ class DomainDistrParamPolicy(Policy):
         """
         Constructor
 
-        :param mapping: mapping from index of the numpy array (coming from the algorithm) to domain parameter name
-                        (e.g. mass, length) and the domain distribution parameter (e.g. mean, std)
-        :param trafo_mask: every domain distribution parameter that is set to `True` in this mask will be exponentially
-                           transformed. This is useful to avoid setting negative variance.
+        :param mapping: mapping from subsequent integers to domain distribution parameters, where the first string of
+                        the value tuple is the name of the domain parameter (e.g. mass, length) and the second string is
+                        the name of the distribution parameter (e.g. mean, std).  The integers are indices of the numpy
+                        array which come from the algorithm.
+        :param trafo_mask: every domain parameter that is set to `True` in this mask will be learned via a 'virtual'
+                           parameter, i.e. in sqrt-space, and then finally squared to retrieve the domain parameter.
+                           This transformation is useful to avoid setting a negative variance.
         :param prior: prior believe about the distribution parameters in from of a `DomainRandomizer`
-        :param scale_params: if `True`, the log-transformed policy parameters are scaled in the range of $[-0.5, 0.5]$.
+        :param scale_params: if `True`, the sqrt-transformed policy parameters are scaled in the range of $[-0.5, 0.5]$.
                              The advantage of this is to make the parameter-based exploration easier.
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
@@ -69,7 +72,7 @@ class DomainDistrParamPolicy(Policy):
         if not len(trafo_mask) == len(mapping):
             raise pyrado.ShapeErr(given=trafo_mask, expected_match=mapping)
 
-        self.mapping = mapping
+        self._mapping = mapping
         self.mask = to.tensor(trafo_mask, dtype=to.bool)
         self.prior = prior
         self._scale_params = scale_params
@@ -85,11 +88,20 @@ class DomainDistrParamPolicy(Policy):
             self.param_scaler = None  # initialized during init_param()
         self.init_param(prior=prior)
 
+    @property
+    def mapping(self) -> Dict[int, Tuple[str, str]]:
+        """
+        Get the mapping from subsequent integers to domain distribution parameters, where the first string of the value
+        tuple is the name of the domain parameter and the second string is the name of the distribution parameter.
+        """
+        return self._mapping
+
     def transform_to_ddp_space(self, params: to.Tensor) -> to.Tensor:
         """
-        Get the transformed domain distribution parameters. The policy's parameters are in log space.
+        Get the transformed domain distribution parameters. Where ever the mask is `True`, the corresponding policy
+        parameter is learned in sqrt space. Moreover, the policy parameters can be scaled.
 
-        :param params: policy parameters (can be the log of the actual domain distribution parameter value)
+        :param params: policy parameters (can be the sqrt of the actual domain distribution parameter value)
         :return: policy parameters transformed according to the mask
         """
         ddp = params.clone()
@@ -98,17 +110,17 @@ class DomainDistrParamPolicy(Policy):
             # Only one set of domain distribution parameters
             if self._scale_params:
                 ddp.data = self.param_scaler.scale_back(ddp.data)
-            ddp.data[self.mask] = to.exp(ddp.data[self.mask])
+            ddp.data[self.mask] = to.pow(ddp.data[self.mask], 2)
 
         elif ddp.ndimension() == 2:
             # Multiple sets of domain distribution parameters along the first axis
             if self._scale_params:
                 for i in range(ddp.shape[0]):
                     ddp[i].data = self.param_scaler.scale_back(ddp[i].data)
-            ddp.data[:, self.mask] = to.exp(ddp.data[:, self.mask])
+            ddp.data[:, self.mask] = to.pow(ddp.data[:, self.mask], 2)
 
         else:
-            raise pyrado.ShapeErr(msg="Inputs must not have more than 2 dimensions!")
+            raise pyrado.ShapeErr(msg="The input must not have more than 2 dimensions!")
 
         return ddp
 
@@ -123,14 +135,14 @@ class DomainDistrParamPolicy(Policy):
                 raise pyrado.TypeErr(given=kwargs["prior"], expected_type=DomainRandomizer)
 
             # For every domain distribution parameter in the mapping, check if there is prior information
-            for idx, ddp in self.mapping.items():
+            for idx, ddp in self._mapping.items():
                 for dp in kwargs["prior"].domain_params:
                     if ddp[0] == dp.name and ddp[1] in dp.get_field_names():
                         # The domain parameter exists in the prior and in the mapping
                         val = getattr(dp, f"{ddp[1]}")
                         if self.mask[idx]:
-                            # Log-transform since it will later be exp-transformed
-                            self.params[idx].data.fill_(to.log(to.tensor(val)))
+                            # Sqrt-transform since it will later be squared
+                            self.params[idx].data.fill_(to.sqrt(to.tensor(val)))
                         else:
                             self.params[idx].data.fill_(to.tensor(val))
                         if to.any(to.isnan(self.params[idx].data)):
@@ -141,7 +153,7 @@ class DomainDistrParamPolicy(Policy):
 
         else:
             raise pyrado.ValueErr(
-                msg="DomainDistrParamPolicy needs to be initialized! Either with a set of policy"
+                msg="DomainDistrParamPolicy needs to be initialized! Either with a set of policy "
                 "parameters, or with a prior in form of a DomainRandomizer!"
             )
 

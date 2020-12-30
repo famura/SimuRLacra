@@ -27,6 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import torch as to
+from copy import deepcopy
+from typing import Union
 
 import pyrado
 
@@ -126,3 +128,35 @@ def insert_tensor_col(x: to.Tensor, idx: int, col: to.Tensor) -> to.Tensor:
     else:
         # idx == -1 or idx == shape[1]
         return to.cat((x, col), dim=1)
+
+
+def deepcopy_or_clone(copy_from: Union[dict, list]) -> Union[dict, list]:
+    """
+    Unfortunately, deepcopy() only works for leave tensors right now. Thus, we need to iterate throught the input and
+    clone the PyTorch tensors where possible.
+
+    :param copy_from: list or dict to copy
+    :return: copy of the input where every tensor was cloned, and every other data type was deepcopied
+    """
+    if isinstance(copy_from, dict):
+        copy = dict()
+        for key, value in copy_from.items():
+            if isinstance(value, to.Tensor):
+                copy[key] = value.clone()
+            else:
+                copy[key] = deepcopy(value)
+
+    elif isinstance(copy_from, list):
+        copy = []
+        for item in copy_from:
+            if isinstance(item, (dict, list)):
+                copy.append(deepcopy_or_clone(item))
+            elif isinstance(item, to.Tensor):
+                copy.append(item.clone())
+            else:
+                copy.append(deepcopy(item))
+
+    else:
+        raise pyrado.TypeErr(given=copy_from, expected_type=[dict, list])
+
+    return copy

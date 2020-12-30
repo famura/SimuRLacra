@@ -52,7 +52,12 @@ from pyrado.utils.math import UnitCubeProjector
 
 
 class SysIdViaEpisodicRL(Algorithm):
-    """ Wrapper to frame black-box system identification as an episodic reinforcement learning problem """
+    """
+    Wrapper to frame black-box system identification as an episodic reinforcement learning problem
+
+    .. note::
+        This algorithm was designed as a subroutine of SimOpt. However, it could also be used independently.
+    """
 
     name: str = "sysiderl"
     iteration_key: str = "sysiderl_iteration"  # logger's iteration key
@@ -114,16 +119,15 @@ class SysIdViaEpisodicRL(Algorithm):
         self.obs_dim_weight = np.diag(obs_dim_weight)  # weighting factor between the different observations
         self.std_obs_filt = std_obs_filt
         if metric is None or metric == "None":
-            self.metric = partial(self.default_metric, w_abs=w_abs, w_sq=w_sq, obs_dim_weight=self.obs_dim_weight)
+            self.metric = partial(
+                self.weighted_l1_l2_metric, w_abs=w_abs, w_sq=w_sq, obs_dim_weight=self.obs_dim_weight
+            )
         else:
             self.metric = metric
 
-        elb = ObsNormWrapper.override_bounds(
-            subrtn.env.obs_space.bound_lo, {"theta_dot": -20.0, "alpha_dot": -20.0}, subrtn.env.obs_space.labels
-        )
-        eub = ObsNormWrapper.override_bounds(
-            subrtn.env.obs_space.bound_up, {"theta_dot": 20.0, "alpha_dot": 20.0}, subrtn.env.obs_space.labels
-        )
+        # Get and optionally clip the observation bounds of the environment
+        elb, eub = subrtn.env.obs_space.bound_lo, subrtn.env.obs_space.bound_up
+        elb, eub = self.override_obs_bounds(elb, eub, subrtn.env.obs_space.labels)
         self.obs_normalizer = UnitCubeProjector(bound_lo=elb, bound_up=eub)
 
         # Create the sampler used to execute the same policy as on the real system in the meta-randomized env
@@ -245,7 +249,22 @@ class SysIdViaEpisodicRL(Algorithm):
         self.make_snapshot(snapshot_mode, float(np.max(param_samp_res.mean_returns)), meta_info)
 
     @staticmethod
-    def default_metric(err: np.ndarray, w_abs: float, w_sq: float, obs_dim_weight: np.ndarray):
+    def override_obs_bounds(bound_lo: np.ndarray, bound_up: np.ndarray, labels: np.ndarray) -> (np.ndarray, np.ndarray):
+        """
+        Default overriding method for the bounds of an observation space. This is necessary when the observations
+        are scaled with their range, e.g. to compare a deviation over different kinds of abservations like position and
+        annular velocity. Thus, infinite bounds are not feasible.
+
+        :param bound_lo: lower bound of the observation space
+        :param bound_up: upper bound of the observation space
+        :return: clipped lower and upper bound
+        """
+        bound_lo = ObsNormWrapper.override_bounds(bound_lo, {"theta_dot": -20.0, "alpha_dot": -20.0}, labels)
+        bound_up = ObsNormWrapper.override_bounds(bound_up, {"theta_dot": 20.0, "alpha_dot": 20.0}, labels)
+        return bound_lo, bound_up
+
+    @staticmethod
+    def weighted_l1_l2_metric(err: np.ndarray, w_abs: float, w_sq: float, obs_dim_weight: np.ndarray):
         """
         Compute the weighted linear combination of the observation error's MAE and MSE, averaged over time
 
@@ -345,11 +364,12 @@ class SysIdViaEpisodicRL(Algorithm):
             self._subrtn.save_snapshot(meta_info=dict(prefix=f"{meta_info['prefix']}_ddp"))  # save iter_X_ddp_policy.pt
         self._subrtn.save_snapshot(meta_info=dict(prefix="ddp"))  # override ddp_policy.pt
 
+        joblib.dump(self._subrtn.env, osp.join(self.save_dir, "env_sim.pkl"))
+
         # Print the current search distribution's mean
         cpp = self._subrtn.policy.transform_to_ddp_space(self._subrtn.policy.param_values)
         self._subrtn.env.adapt_randomizer(domain_distr_param_values=cpp.detach().cpu().numpy())
         print_cbt(f"Current policy domain parameter distribution\n{self._subrtn.env.randomizer}", "g")
-        joblib.dump(self._subrtn.env, osp.join(self.save_dir, "env_sim.pkl"))
 
         # Set the randomizer to best fitted domain distribution
         cbp = self._subrtn.policy.transform_to_ddp_space(self._subrtn.best_policy_param)

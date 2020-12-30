@@ -113,7 +113,7 @@ class TypeErr(BaseErr):
             self.expected_types = expected_type
             # Default error message
             msg = f"Expected the type of {self.given_name} to be"
-            if isinstance(expected_type, list):
+            if isinstance(expected_type, (list, tuple)):
                 for i, t in enumerate(expected_type):
                     if i == 0:
                         msg += " " + t.__name__

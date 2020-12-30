@@ -128,7 +128,7 @@ def test_adr_reward_generator(env):
     policy = FNNPolicy(reference_env.spec, hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
     dr = create_default_randomizer_omo()
     dr.randomize(num_samples=1)
-    random_env.domain_param = dr.get_params(format="dict", dtype="numpy")
+    random_env.domain_param = dr.get_params(fmt="dict", dtype="numpy")
     reference_sampler = ParallelRolloutSampler(reference_env, policy, num_workers=1, min_steps=1000)
     random_sampler = ParallelRolloutSampler(random_env, policy, num_workers=1, min_steps=1000)
 

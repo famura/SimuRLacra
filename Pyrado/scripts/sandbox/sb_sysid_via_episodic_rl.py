@@ -63,14 +63,14 @@ def create_bob_setup():
 
     env_sim = BallOnBeamSim(**env_hparams)
     randomizer = DomainRandomizer(
-        # NormalDomainParam(name='l_beam', mean=0, std=1e-6, clip_lo=1.5, clip_up=3.5),
-        # UniformDomainParam(name='ang_offset', mean=0, halfspan=1e-6),
+        # NormalDomainParam(name="l_beam", mean=0, std=1e-6, clip_lo=1.5, clip_up=3.5),
+        # UniformDomainParam(name="ang_offset", mean=0, halfspan=1e-6),
         NormalDomainParam(name="g", mean=0, std=1e-6),
     )
     env_sim = DomainRandWrapperLive(env_sim, randomizer)
     dp_map = {
-        # 0: ('l_beam', 'mean'), 1: ('l_beam', 'std'),
-        # 2: ('ang_offset', 'mean'), 3: ('ang_offset', 'halfspan')
+        # 0: ("l_beam", "mean"), 1: ("l_beam", "std"),
+        # 2: ("ang_offset", "mean"), 3: ("ang_offset", "halfspan")
         0: ("g", "mean"),
         1: ("g", "std"),
     }
@@ -80,8 +80,8 @@ def create_bob_setup():
     behavior_policy = LinearPolicy(env_sim.spec, feats=FeatureStack([identity_feat, sin_feat]))
     behavior_policy.param_values = to.tensor([3.8090, -3.8036, -1.0786, -2.4510, -0.9875, -1.3252, 3.1503, 1.4443])
     prior = DomainRandomizer(
-        # NormalDomainParam(name='l_beam', mean=2.05, std=2.05/10),
-        # UniformDomainParam(name='ang_offset', mean=0.03, halfspan=0.03/10),
+        # NormalDomainParam(name="l_beam", mean=2.05, std=2.05/10),
+        # UniformDomainParam(name="ang_offset", mean=0.03, halfspan=0.03/10),
         NormalDomainParam(name="g", mean=8.81, std=8.81 / 10),
     )
     # trafo_mask = [False, True, False, True]
@@ -212,7 +212,7 @@ if __name__ == "__main__":
     algo_hparam = dict(
         metric=None,
         std_obs_filt=5,
-        obs_dim_weight=[1, 1, 1, 1, 10, 10.0],
+        obs_dim_weight=[1, 1, 1, 1, 10, 10],
         num_rollouts_per_distr=len(dp_map) * 10,  # former 50
         num_workers=subrtn_hparam["num_workers"],
     )
@@ -233,7 +233,7 @@ if __name__ == "__main__":
     while algo.curr_iter < algo.max_iter and not algo.stopping_criterion_met():
         algo.logger.add_value(algo.iteration_key, algo.curr_iter)
 
-        # Creat fake real-world data
+        # Create fake real-world data
         ro_real = []
         for _ in range(num_eval_rollouts):
             ro_real.append(rollout(env_real, behavior_policy, eval=True))

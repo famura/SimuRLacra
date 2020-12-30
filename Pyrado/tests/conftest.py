@@ -748,13 +748,3 @@ def default_randomizer():
         UniformDomainParam(name="time_delay", mean=13, halfspan=6, clip_up=17, roundint=True),
         MultivariateNormalDomainParam(name="multidim", mean=10 * to.ones((2,)), cov=2 * to.eye(2), clip_up=11),
     )
-
-
-@pytest.fixture(scope="function")
-def default_dummy_randomizer():
-    return DomainRandomizer(
-        DomainParam(name="mass", mean=1.2),
-        DomainParam(name="special", mean=0),
-        DomainParam(name="length", mean=4),
-        DomainParam(name="time_delay", mean=13),
-    )
