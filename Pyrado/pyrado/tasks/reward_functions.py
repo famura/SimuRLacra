@@ -284,11 +284,11 @@ class ScaledExpQuadrErrRewFcn(QuadrErrRewFcn):
             raise pyrado.TypeErr(given=act_space, expected_type=Space)
 
         # Adjust shapes (assuming vector shaped state and actions)
-        obs_max = state_space.bound_abs_up.reshape(-1)
+        state_max = state_space.bound_abs_up.reshape(-1)
         act_max = act_space.bound_abs_up.reshape(-1)
 
         # Compute the maximum cost for the worst case state-action configuration
-        max_cost = obs_max.dot(self.Q.dot(obs_max)) + act_max.dot(self.R.dot(act_max))
+        max_cost = state_max.dot(self.Q.dot(state_max)) + act_max.dot(self.R.dot(act_max))
         # Compute a scaling factor that sets the current state and action in relation to the worst case
         self.c_max = -1.0 * np.log(min_rew) / max_cost
 

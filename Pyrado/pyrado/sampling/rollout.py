@@ -212,7 +212,7 @@ def rollout(
         if np.isnan(act).any():
             env.render(render_mode, render_step=1)
             raise pyrado.ValueErr(
-                msg=f"At least one observation value is NaN!"
+                msg=f"At least one action value is NaN!"
                 + tabulate(
                     [list(env.act_space.labels), [*color_validity(act, np.invert(np.isnan(act)))]], headers="firstrow"
                 )

@@ -30,10 +30,10 @@ import os
 import os.path as osp
 import numpy as np
 import torch as to
+from typing import Optional
 from init_args_serializer.serializable import Serializable
 
 import pyrado
-from matplotlib import pyplot as plt
 from pyrado.environments.pysim.base import SimPyEnv
 from pyrado.environments.quanser import max_act_qbb
 from pyrado.spaces.box import BoxSpace
@@ -64,8 +64,8 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         self,
         dt: float,
         max_steps: int = pyrado.inf,
-        task_args: [dict, None] = None,
-        simplified_dyn: bool = False,
+        task_args: Optional[dict] = None,
+        simple_dynamics: bool = False,
         load_experimental_tholds: bool = True,
     ):
         """
@@ -74,18 +74,18 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         :param dt: simulation step size [s]
         :param max_steps: maximum number of simulation steps
         :param task_args: arguments for the task construction
-        :param simplified_dyn: use a dynamics model without Coriolis forces and without friction
+        :param simple_dynamics: if `True, use a dynamics model without Coriolis forces and without friction effects
         :param load_experimental_tholds: use the voltage thresholds determined from experiments
         """
         Serializable._init(self, locals())
 
-        self._simplified_dyn = simplified_dyn
-        self.plate_angs = np.zeros(2)  # plate's angles alpha and beta [rad] (unused for simplified_dyn = True)
+        self._simple_dynamics = simple_dynamics
+        self.plate_angs = np.zeros(2)  # plate's angles alpha and beta [rad] (unused for simple_dynamics = True)
 
         # Call SimPyEnv's constructor
         super().__init__(dt, max_steps, task_args)
 
-        if not simplified_dyn:
+        if not simple_dynamics:
             self._kin = QBallBalancerKin(self)
 
     def _create_spaces(self):
@@ -222,7 +222,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         obs = super().reset(init_state=init_state, domain_param=domain_param)
 
         # Reset the plate angles
-        if self._simplified_dyn:
+        if self._simple_dynamics:
             self.plate_angs = np.zeros(2)  # actually not necessary since not used
         else:
             offset_th_x = self.domain_param["offset_th_x"]
@@ -246,7 +246,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         offset_th_x = self.domain_param["offset_th_x"]
         offset_th_y = self.domain_param["offset_th_y"]
 
-        if not self._simplified_dyn:
+        if not self._simple_dynamics:
             # Apply a voltage dead zone (i.e. below a certain amplitude the system does not move). This is a very
             # simple model of static friction. Experimentally evaluated the voltage required to get the plate moving.
             if V_thold_x_neg <= act[0] <= V_thold_x_pos:
@@ -269,7 +269,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
 
         """
         THIS IS TIME INTENSIVE
-        if not self._simplified_dyn:
+        if not self._simple_dynamics:
             # Get the plate angles from inverse kinematics
             self.plate_angs[0] = self._kin(self.state[0] + self.offset_th_x)
             self.plate_angs[1] = self._kin(self.state[1] + self.offset_th_y)
@@ -281,7 +281,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         b = self.plate_angs[1]  # plate's angle around the x axis (beta)
         a_dot = self.c_kin * th_x_dot * np.cos(th_x) / np.cos(a)  # plate's angular velocity around the y axis (alpha)
         b_dot = self.c_kin * -th_y_dot * np.cos(-th_y) / np.cos(b)  # plate's angular velocity around the x axis (beta)
-        # Plate's angular accelerations (unused for simplified_dyn = True)
+        # Plate's angular accelerations (unused for simple_dynamics = True)
         a_ddot = (
             1.0
             / np.cos(a)
@@ -294,7 +294,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         )
 
         # kinematics: sin(a) = self.c_kin * sin(th_x)
-        if self._simplified_dyn:
+        if self._simple_dynamics:
             # Ball dynamic without friction and Coriolis forces
             x_ddot = self.c_kin * m_ball * g * r_ball ** 2 * np.sin(th_x) / self.zeta  # symm inertia
             y_ddot = self.c_kin * m_ball * g * r_ball ** 2 * np.sin(th_y) / self.zeta  # symm inertia
@@ -442,6 +442,8 @@ class QBallBalancerKin(Serializable):
         :param num_opt_iter: number of optimizer iterations for the IK
         :param mode: the render mode: a for animating (pyplot), or `` for no animation
         """
+        from matplotlib import pyplot as plt
+
         Serializable._init(self, locals())
 
         self._qbb = qbb
@@ -469,6 +471,8 @@ class QBallBalancerKin(Serializable):
         :param th: angle of the servo (x or y axis)
         :return: plate angle al pha or beta
         """
+        from matplotlib import pyplot as plt
+
         if not isinstance(th, to.Tensor):
             th = to.tensor(th, dtype=to.get_default_dtype(), requires_grad=False)
 

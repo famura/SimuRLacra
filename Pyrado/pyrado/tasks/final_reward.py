@@ -82,7 +82,7 @@ class FinalRewTask(TaskWrapper):
         :param wrapped_task: task to wrap
         :param mode: mode for calculating the final reward
         :param factor: (positive) value to scale the final reward.
-                       The `factor` is ignored if `mode.time_dependent is True`
+                       The `factor` is ignored if `mode.time_dependent` is `True`
         """
         # Call TaskWrapper's constructor
         super().__init__(wrapped_task)
@@ -259,7 +259,7 @@ class FinalRewTask(TaskWrapper):
 
                 else:
                     raise NotImplementedError(
-                        f"No matching configuration found for the given" f"FinalRewMode:\n{self.mode}"
+                        f"No matching configuration found for the given FinalRewMode:\n{self.mode}"
                     )
 
             else:

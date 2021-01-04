@@ -140,7 +140,7 @@ class DiagNormalNoise(nn.Module):
         if not (isinstance(mean, to.Tensor) or mean is None):
             raise pyrado.TypeErr(given=mean, expected_type=to.Tensor)
         if not (isinstance(std, to.Tensor) and (std >= 0).all() or std is None):
-            raise pyrado.TypeErr(msg="The std must be a Tensor with all elements > 0 or None!")
+            raise pyrado.TypeErr(msg=f"The std must be a Tensor with all elements > 0 or None, but it is {std}!")
 
         if mean is not None:
             assert self.mean is not None, "Can not change fixed zero mean!"
