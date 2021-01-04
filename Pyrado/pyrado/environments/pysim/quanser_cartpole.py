@@ -29,6 +29,7 @@
 import numpy as np
 from abc import abstractmethod
 from init_args_serializer.serializable import Serializable
+from typing import Optional
 
 import pyrado
 from pyrado.environments.pysim.base import SimPyEnv
@@ -37,7 +38,7 @@ from pyrado.spaces.box import BoxSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.final_reward import FinalRewTask, FinalRewMode
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
-from pyrado.tasks.reward_functions import QuadrErrRewFcn, UnderActuatedSwingUpRewFcn
+from pyrado.tasks.reward_functions import QuadrErrRewFcn
 
 
 class QCartPoleSim(SimPyEnv, Serializable):
@@ -46,10 +47,11 @@ class QCartPoleSim(SimPyEnv, Serializable):
     def __init__(
         self,
         dt: float,
-        max_steps: int = pyrado.inf,
-        task_args: [dict, None] = None,
-        long: bool = False,
-        wild_init: bool = False,
+        max_steps: int,
+        task_args: Optional[dict],
+        long: bool,
+        simple_dynamics: bool,
+        wild_init: bool,
     ):
         r"""
         Constructor
@@ -58,11 +60,15 @@ class QCartPoleSim(SimPyEnv, Serializable):
         :param max_steps: maximum number of simulation steps
         :param task_args: arguments for the task construction
         :param long: set to `True` if using the long pole, else `False`
+        :param simple_dynamics: if `True, use the simpler dynamics model from Quanser. If `False`, use a dynamics model
+                                which includes friction
         :param wild_init: if `True` the init state space is increased drastically, e.g. the initial pendulum angle
                           can be in $[-\pi, +\pi]$. Only applicable to `QCartPoleSwingUpSim`.
         """
         Serializable._init(self, locals())
 
+        self._simple_dynamics = simple_dynamics
+        self._th_ddot = None  # internal memory necessary for computing the friction force
         self._obs_space = None
         self._long = long
         self._wild_init = wild_init
@@ -86,6 +92,12 @@ class QCartPoleSim(SimPyEnv, Serializable):
     @abstractmethod
     def _create_task(self, task_args: dict) -> Task:
         raise NotImplementedError
+
+    def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
+        # Set the initial angular acceleration to zero
+        self._th_ddot = 0.0
+
+        return super().reset(init_state, domain_param)
 
     def observe(self, state):
         return np.array([state[0], np.sin(state[1]), np.cos(state[1]), state[2], state[3]])
@@ -114,6 +126,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
             B_eq=5.4,  # equivalent Viscous damping coefficient [N*s/m]
             m_pole=m_pole,  # mass of the pole [kg]
             l_pole=l_pole,  # half pole length [m]
+            mu_cart=0.02,  # Coulomb friction coefficient cart-rail [-]
         )
 
     def _calc_constants(self):
@@ -130,8 +143,9 @@ class QCartPoleSim(SimPyEnv, Serializable):
 
     def _step_dynamics(self, act: np.ndarray):
         g = self.domain_param["g"]
-        l_pole = self.domain_param["l_pole"]
-        m_pole = self.domain_param["m_pole"]
+        l_p = self.domain_param["l_pole"]
+        m_p = self.domain_param["m_pole"]
+        m_c = self.domain_param["m_cart"]
         eta_m = self.domain_param["eta_m"]
         eta_g = self.domain_param["eta_g"]
         K_g = self.domain_param["K_g"]
@@ -139,32 +153,48 @@ class QCartPoleSim(SimPyEnv, Serializable):
         k_m = self.domain_param["k_m"]
         r_mp = self.domain_param["r_mp"]
         B_eq = self.domain_param["B_eq"]
-        B_pole = self.domain_param["B_pole"]
+        B_p = self.domain_param["B_pole"]
+        mu_c = self.domain_param["mu_cart"]
 
         x, th, x_dot, th_dot = self.state
+        sin_th = np.sin(th)
+        cos_th = np.cos(th)
+        m_tot = m_c + m_p
 
-        # Force acting on the cart
-        force = (eta_g * K_g * eta_m * k_m) / (R_m * r_mp) * (eta_m * float(act) - K_g * k_m * x_dot / r_mp)
+        # Actuation force coming from the carts motor torque
+        f_act = (eta_g * K_g * eta_m * k_m) / (R_m * r_mp) * (eta_m * act - K_g * k_m * x_dot / r_mp)
+
+        if self._simple_dynamics:
+            f_tot = float(f_act)
+
+        else:
+            # Force normal to the rail causing the Coulomb friction
+            f_normal = m_tot * g - m_p * l_p / 2 * (sin_th * self._th_ddot + cos_th * th_dot ** 2)
+            if f_normal < 0:
+                # The normal force on the cart is negative, i.e. it is lifted up. This can be cause by a very high
+                # angular momentum of the pole
+                f_c = 0.0
+            else:
+                f_c = mu_c * f_normal * np.sign(f_normal * x_dot)
+            f_tot = float(f_act - f_c)
 
         A = np.array(
             [
-                [m_pole + self.J_eq, m_pole * l_pole * np.cos(th)],
-                [m_pole * l_pole * np.cos(th), self.J_pole + m_pole * l_pole ** 2],
+                [m_p + self.J_eq, m_p * l_p * cos_th],
+                [m_p * l_p * cos_th, self.J_pole + m_p * l_p ** 2],
             ]
         )
-
         b = np.array(
             [
-                force - B_eq * x_dot - m_pole * l_pole * np.sin(th) * th_dot ** 2,
-                -B_pole * th_dot - m_pole * l_pole * g * np.sin(th),
+                f_tot - B_eq * x_dot - m_p * l_p * sin_th * th_dot ** 2,
+                -B_p * th_dot - m_p * l_p * g * sin_th,
             ]
         )
-
-        # Compute acceleration from linear system of equations
-        x_ddot, theta_ddot = np.linalg.solve(A, b)
+        # Compute acceleration from linear system of equations: A * x = b
+        x_ddot, self._th_ddot = np.linalg.solve(A, b)
 
         # Integration step (symplectic Euler)
-        self.state[2:] += np.array([x_ddot, theta_ddot]) * self._dt  # next velocity
+        self.state[2:] += np.array([float(x_ddot), float(self._th_ddot)]) * self._dt  # next velocity
         self.state[:2] += self.state[2:] * self._dt  # next position
 
     def _init_anim(self):
@@ -280,7 +310,14 @@ class QCartPoleStabSim(QCartPoleSim, Serializable):
 
     name: str = "qcp-st"
 
-    def __init__(self, dt: float, max_steps: int = pyrado.inf, task_args: [dict, None] = None, long: bool = True):
+    def __init__(
+        self,
+        dt: float,
+        max_steps: int = pyrado.inf,
+        task_args: Optional[dict] = None,
+        long: bool = True,
+        simple_dynamics: bool = True,
+    ):
         """
         Constructor
 
@@ -288,13 +325,15 @@ class QCartPoleStabSim(QCartPoleSim, Serializable):
         :param max_steps: maximum number of simulation steps
         :param task_args: arguments for the task construction
         :param long: set to `True` if using the long pole, else `False`
+        :param simple_dynamics: if `True, use the simpler dynamics model from Quanser. If `False`, use a dynamics model
+                                which includes friction
         """
         Serializable._init(self, locals())
 
         self.stab_thold = 15 / 180.0 * np.pi  # threshold angle for the stabilization task to be a failure [rad]
         self.max_init_th_offset = 8 / 180.0 * np.pi  # [rad]
 
-        super().__init__(dt, max_steps, task_args, long, wild_init=False)
+        super().__init__(dt, max_steps, task_args, long, simple_dynamics, wild_init=False)
 
     def _create_spaces(self):
         super()._create_spaces()
@@ -308,10 +347,10 @@ class QCartPoleStabSim(QCartPoleSim, Serializable):
         )  # [m, rad, m/s, rad/s]
 
         max_init_state = np.array(
-            [+0.05, np.pi + self.max_init_th_offset, +0.05, +8 / 180 * np.pi]
+            [+0.02, np.pi + self.max_init_th_offset, +0.02, +5 / 180 * np.pi]
         )  # [m, rad, m/s, rad/s]
         min_init_state = np.array(
-            [-0.05, np.pi - self.max_init_th_offset, -0.05, -8 / 180 * np.pi]
+            [-0.02, np.pi - self.max_init_th_offset, -0.02, -5 / 180 * np.pi]
         )  # [m, rad, m/s, rad/s]
 
         self._state_space = BoxSpace(min_state, max_state, labels=["x", "theta", "x_dot", "theta_dot"])
@@ -341,8 +380,9 @@ class QCartPoleSwingUpSim(QCartPoleSim, Serializable):
         self,
         dt: float,
         max_steps: int = pyrado.inf,
-        task_args: [dict, None] = None,
+        task_args: Optional[dict] = None,
         long: bool = False,
+        simple_dynamics: bool = False,
         wild_init: bool = True,
     ):
         r"""
@@ -352,35 +392,42 @@ class QCartPoleSwingUpSim(QCartPoleSim, Serializable):
         :param max_steps: maximum number of simulation steps
         :param task_args: arguments for the task construction
         :param long: set to `True` if using the long pole, else `False`
+        :param simple_dynamics: if `True, use the simpler dynamics model from Quanser. If `False`, use a dynamics model
+                                which includes friction
         :param wild_init: if `True` the init state space is increased drastically, e.g. the initial pendulum angle
                           can be in $[-\pi, +\pi]$
         """
         Serializable._init(self, locals())
 
-        super().__init__(dt, max_steps, task_args, long, wild_init)
+        super().__init__(dt, max_steps, task_args, long, simple_dynamics, wild_init)
 
     def _create_spaces(self):
         super()._create_spaces()
 
         # Define the spaces
         l_rail = self.domain_param["l_rail"]
-        max_state = np.array([+l_rail / 2.0 - self.x_buffer, +4 * np.pi, np.inf, np.inf])  # [m, rad, m/s, rad/s]
-        min_state = np.array([-l_rail / 2.0 + self.x_buffer, -4 * np.pi, -np.inf, -np.inf])  # [m, rad, m/s, rad/s]
+        max_state = np.array(
+            [+l_rail / 2.0 - self.x_buffer, +5 * np.pi, 2 * l_rail, 20 * np.pi]
+        )  # [m, rad, m/s, rad/s]
+        min_state = np.array(
+            [-l_rail / 2.0 + self.x_buffer, -5 * np.pi, -2 * l_rail, -20 * np.pi]
+        )  # [m, rad, m/s, rad/s]
         if self._wild_init:
-            max_init_state = np.array([0.05, np.pi, 0.01, 5 / 180.0 * np.pi])  # [m, rad, m/s, rad/s]
+            max_init_state = np.array([0.05, np.pi, 0.02, 2 / 180.0 * np.pi])  # [m, rad, m/s, rad/s]
         else:
-            max_init_state = np.array([0.02, 2 / 180.0 * np.pi, 0.005, 2 / 180.0 * np.pi])  # [m, rad, m/s, rad/s]
+            max_init_state = np.array([0.02, 2 / 180.0 * np.pi, 0.0, 1 / 180.0 * np.pi])  # [m, rad, m/s, rad/s]
 
         self._state_space = BoxSpace(min_state, max_state, labels=["x", "theta", "x_dot", "theta_dot"])
         self._init_space = BoxSpace(-max_init_state, max_init_state, labels=["x", "theta", "x_dot", "theta_dot"])
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
-        state_des = task_args.get("state_des", None)
-        if state_des is None:
-            state_des = np.array([0.0, np.pi, 0.0, 0.0])
+        state_des = task_args.get("state_des", np.array([0.0, np.pi, 0.0, 0.0]))
+        Q = task_args.get("Q", np.diag([2e-2, 5e-1, 5e-3, 1e-3]))
+        R = task_args.get("R", np.diag([1e-3]))
+        rew_fcn = QuadrErrRewFcn(Q, R)
 
         return FinalRewTask(
-            RadiallySymmDesStateTask(self.spec, state_des, UnderActuatedSwingUpRewFcn(c_act=1e-2), idcs=[1]),
-            mode=FinalRewMode(always_negative=True),
+            RadiallySymmDesStateTask(self.spec, state_des, rew_fcn, idcs=[1]),
+            mode=FinalRewMode(time_dependent=True, state_dependent=True),
         )

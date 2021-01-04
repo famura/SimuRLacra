@@ -279,6 +279,7 @@ def create_default_randomizer_qcp() -> DomainRandomizer:
         NormalDomainParam(name="k_m", mean=dp_nom["k_m"], std=dp_nom["k_m"] / 4, clip_lo=1e-4),
         UniformDomainParam(name="B_eq", mean=dp_nom["B_eq"], halfspan=dp_nom["B_eq"] / 4, clip_lo=1e-4),
         UniformDomainParam(name="B_pole", mean=dp_nom["B_pole"], halfspan=dp_nom["B_pole"] / 4, clip_lo=1e-4),
+        UniformDomainParam(name="mu_cart", mean=dp_nom["mu_cart"], halfspan=dp_nom["mu_cart"] / 2, clip_lo=0),
     )
 
 

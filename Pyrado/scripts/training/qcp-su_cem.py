@@ -27,54 +27,61 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Test predefined energy-based controller to make the Quanser Cart-Pole swing up or balancing task.
+Train an agent to solve the Ball-on-Beam environment using Cross-Entropy Method .
 """
 import pyrado
-from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim, QCartPoleStabSim
+from pyrado.algorithms.episodic.cem import CEM
+from pyrado.environment_wrappers.action_normalization import ActNormWrapper
+from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
+from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.special.environment_specific import QCartPoleSwingUpAndBalanceCtrl
-from pyrado.sampling.rollout import rollout, after_rollout_query
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.data_types import RenderMode
-from pyrado.utils.input_output import print_cbt
 
 
 if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    # Set up environment and policy (swing-up works reliably if is sampling frequency is >= 400 Hz)
-    if args.env_name == "qcp-su":
-        env = QCartPoleSwingUpSim(
-            dt=args.dt,
-            max_steps=int(12 / args.dt),
-            long=False,
-            simple_dynamics=True,
-            wild_init=False,
-        )
-        policy = QCartPoleSwingUpAndBalanceCtrl(env.spec)
+    # Experiment (set seed before creating the modules)
+    ex_dir = setup_experiment(QCartPoleSwingUpSim.name, f"{CEM.name}_{QCartPoleSwingUpAndBalanceCtrl.name}")
 
-    elif args.env_name == "qcp-st":
-        env = QCartPoleStabSim(
-            dt=args.dt,
-            max_steps=int(4 / args.dt),
-            long=False,
-            simple_dynamics=True,
-        )
-        policy = QCartPoleSwingUpAndBalanceCtrl(env.spec)
+    # Set seed if desired
+    pyrado.set_seed(args.seed, verbose=True)
 
-    else:
-        raise pyrado.ValueErr(given=args.env_name, eq_constraint="'qcp-su' or 'qcp-st'")
+    # Environment
+    env_hparams = dict(dt=1 / 250.0, max_steps=12 * 250, simple_dynamics=True, long=False, wild_init=False)
+    env = QCartPoleSwingUpSim(**env_hparams)
+    env = ActNormWrapper(env)
 
-    # Simulate
-    done, param, state = False, None, None
-    while not done:
-        ro = rollout(
-            env,
-            policy,
-            render_mode=RenderMode(text=False, video=True),
-            eval=True,
-            reset_kwargs=dict(domain_param=param, init_state=state),
-        )
-        # print_domain_params(env.domain_param)
-        print_cbt(f"Return: {ro.undiscounted_return()}", "g", bright=True)
-        done, state, param = after_rollout_query(env, policy, ro)
+    # Policy
+    policy_hparam = dict()
+    policy = QCartPoleSwingUpAndBalanceCtrl(env.spec, **policy_hparam)
+
+    # Algorithm
+    algo_hparam = dict(
+        max_iter=50,
+        pop_size=200,
+        num_rollouts=6,
+        num_is_samples=20,
+        expl_std_init=0.3,
+        expl_std_min=1e-2,
+        extra_expl_std_init=0.1,
+        extra_expl_decay_iter=30,
+        full_cov=False,
+        symm_sampling=False,
+        num_workers=10,
+    )
+    algo = CEM(ex_dir, env, policy, **algo_hparam)
+
+    # Save the hyper-parameters
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
+    )
+
+    # Jeeeha
+    algo.train(seed=args.seed, snapshot_mode="best")

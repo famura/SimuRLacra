@@ -142,38 +142,60 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
 
     name: str = "qcp-sub"
 
-    def __init__(
-        self, env_spec: EnvSpec, u_max: float = 18.0, v_max: float = 12.0, long: bool = False, use_cuda: bool = False
-    ):
+    def __init__(self, env_spec: EnvSpec, long: bool = False, use_cuda: bool = False):
         """
         Constructor
 
         :param env_spec: environment specification
-        :param u_max: maximum energy gain
-        :param v_max: maximum voltage the control signal will be clipped to
         :param long: flag for long or short pole
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
         super().__init__(env_spec, use_cuda)
 
-        # Store inputs
-        self.u_max = u_max
-        self.v_max = v_max
+        self.long = long
         self.pd_control = False
         self.pd_activated = False
-        self.long = long
         self.dp_nom = QCartPoleSim.get_nominal_domain_param(self.long)
 
+        self._log_u_max = nn.Parameter(to.log(to.tensor(18.0)), requires_grad=True)  # maximum energy gain
         if long:
-            self.K_pd = to.tensor([-41.833, 189.8393, -47.8483, 28.0941])
+            self._log_K_pd = nn.Parameter(
+                to.log(to.tensor([41.833, 189.8393, 47.8483, 28.0941])), requires_grad=True
+            )  # former: [-41.833, 189.8393, -47.8483, 28.0941]
         else:
-            self.k_p = to.tensor(8.5)  # former: 8.5
-            self.k_d = to.tensor(0.0)  # former: 0.
-            self.k_e = to.tensor(24.5)  # former: 19.5 (frequency dependent)
-            self.K_pd = to.tensor([41.0, -200.0, 55.0, -16.0])  # former: [+41.8, -173.4, +46.1, -16.2]
+            self._log_k_e = nn.Parameter(to.log(to.tensor(24.5)), requires_grad=True)  # former: 19.5 (freq dependent)
+            self._log_k_p = nn.Parameter(to.log(to.tensor(8.5)), requires_grad=True)  # former: 8.5
+            self._log_k_d = nn.Parameter(to.log(to.tensor(1e-8)), requires_grad=True)  # former: 0.
+            self._log_K_pd = nn.Parameter(
+                to.log(to.tensor([41.0, 200.0, 55.0, 16.0])), requires_grad=True
+            )  # former: [+41.8, -173.4, +46.1, -16.2]
+
+    @property
+    def u_max(self):
+        return to.exp(self._log_u_max)
+
+    @property
+    def k_e(self):
+        return to.exp(self._log_k_e)
+
+    @property
+    def k_p(self):
+        return to.exp(self._log_k_p)
+
+    @property
+    def k_d(self):
+        return to.exp(self._log_k_d)
+
+    @property
+    def K_pd(self):
+        if self.long:
+            return to.exp(self._log_K_pd) * to.tensor([-1, 1, -1, 1])
+        else:
+            return to.exp(self._log_K_pd) * to.tensor([1, -1, 1, -1])  # the gains related to theta need to be negative
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
-        pass
+        if init_values is not None:
+            self.param_values = init_values
 
     def forward(self, obs: to.Tensor) -> to.Tensor:
         """
@@ -192,11 +214,9 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
             + (self.dp_nom["eta_g"] * self.dp_nom["K_g"] ** 2 * self.dp_nom["J_m"]) / self.dp_nom["r_mp"] ** 2
         )
 
-        # Energy terms
+        # Energy terms: E_pot(0) = 0; E_pot(pi) = E_pot(-pi) = 2 mgl
         E_kin = J_pole / 2.0 * theta_dot ** 2
-        E_pot = (
-            self.dp_nom["m_pole"] * self.dp_nom["g"] * self.dp_nom["l_pole"] * (1 - cos_th)
-        )  # E(0) = 0., E(pi) = E(-pi) = 2 mgl
+        E_pot = self.dp_nom["m_pole"] * self.dp_nom["g"] * self.dp_nom["l_pole"] * (1 - cos_th)
         E_ref = 2.0 * self.dp_nom["m_pole"] * self.dp_nom["g"] * self.dp_nom["l_pole"]
 
         if to.abs(alpha) < 0.1745 or self.pd_control:
@@ -210,7 +230,7 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
                 + self.k_p * (0.0 - x)
                 + self.k_d * (0.0 - x_dot)
             )
-            u = u.clamp(-self.u_max, self.u_max)
+            u = clamp_symm(u, self.u_max)
 
             if self.pd_activated:
                 self.pd_activated = False
@@ -220,7 +240,6 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
         ) + self.dp_nom["K_g"] * self.dp_nom["k_m"] * x_dot / self.dp_nom["r_mp"]
 
         # Return the clipped action
-        act = act.clamp(-self.v_max, self.v_max)
         return act.view(1)  # such that when act is later converted to numpy it does not become a float
 
 
@@ -280,7 +299,8 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
         return bool(to.abs(1.0 + cos_al) < cos_al_delta)
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
-        pass
+        if init_values is not None:
+            self.param_values = init_values
 
     def forward(self, obs: to.tensor):
         # Reconstruct the sate for the error-based controller
@@ -344,7 +364,8 @@ class QQubeEnergyCtrl(Policy):
         self._log_E_gain = to.log(new_mu)
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
-        pass
+        if init_values is not None:
+            self.param_values = init_values
 
     def forward(self, obs: to.Tensor) -> to.Tensor:
         """
@@ -404,7 +425,8 @@ class QQubePDCtrl(Policy):
         self.done = False
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
-        pass
+        if init_values is not None:
+            self.param_values = init_values
 
     def forward(self, meas: to.Tensor) -> to.Tensor:
         # Unpack the raw measurement (is not an observation)
