@@ -51,7 +51,6 @@ if __name__ == "__main__":
     # Environment
     env_hparams = dict(dt=1 / 250.0, max_steps=12 * 250, simple_dynamics=True, long=False, wild_init=False)
     env = QCartPoleSwingUpSim(**env_hparams)
-    env = ActNormWrapper(env)
 
     # Policy
     policy_hparam = dict()
@@ -61,9 +60,9 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=50,
         pop_size=200,
-        num_rollouts=6,
+        num_rollouts=8,
         num_is_samples=20,
-        expl_std_init=0.3,
+        expl_std_init=0.4,
         expl_std_min=1e-2,
         extra_expl_std_init=0.1,
         extra_expl_decay_iter=30,

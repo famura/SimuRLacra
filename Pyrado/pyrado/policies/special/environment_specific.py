@@ -157,17 +157,16 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
         self.pd_activated = False
         self.dp_nom = QCartPoleSim.get_nominal_domain_param(self.long)
 
-        self._log_u_max = nn.Parameter(to.log(to.tensor(18.0)), requires_grad=True)  # maximum energy gain
+        self._log_u_max = nn.Parameter(to.log(to.tensor(59.5)), requires_grad=True)  # former: 18
         if long:
             self._log_K_pd = nn.Parameter(
                 to.log(to.tensor([41.833, 189.8393, 47.8483, 28.0941])), requires_grad=True
             )  # former: [-41.833, 189.8393, -47.8483, 28.0941]
         else:
-            self._log_k_e = nn.Parameter(to.log(to.tensor(24.5)), requires_grad=True)  # former: 19.5 (freq dependent)
-            self._log_k_p = nn.Parameter(to.log(to.tensor(8.5)), requires_grad=True)  # former: 8.5
-            self._log_k_d = nn.Parameter(to.log(to.tensor(1e-8)), requires_grad=True)  # former: 0.
+            self._log_k_e = nn.Parameter(to.log(to.tensor(36.5)), requires_grad=True)  # former: 24.5
+            self._log_k_p = nn.Parameter(to.log(to.tensor(2.25)), requires_grad=True)  # former: 8.5
             self._log_K_pd = nn.Parameter(
-                to.log(to.tensor([41.0, 200.0, 55.0, 16.0])), requires_grad=True
+                to.log(to.tensor([34.1, 118.0, 43.4, 18.1])), requires_grad=True
             )  # former: [+41.8, -173.4, +46.1, -16.2]
 
     @property
@@ -181,10 +180,6 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
     @property
     def k_p(self):
         return to.exp(self._log_k_p)
-
-    @property
-    def k_d(self):
-        return to.exp(self._log_k_d)
 
     @property
     def K_pd(self):
@@ -225,11 +220,7 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
             u = self.K_pd.dot(to.tensor([x, alpha, x_dot, theta_dot]))
         else:
             # Swing up
-            u = (
-                self.k_e * (E_kin + E_pot - E_ref) * to.sign(theta_dot * cos_th)
-                + self.k_p * (0.0 - x)
-                + self.k_d * (0.0 - x_dot)
-            )
+            u = self.k_e * (E_kin + E_pot - E_ref) * to.sign(theta_dot * cos_th) + self.k_p * (0.0 - x)
             u = clamp_symm(u, self.u_max)
 
             if self.pd_activated:

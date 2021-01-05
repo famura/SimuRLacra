@@ -72,7 +72,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
         self._obs_space = None
         self._long = long
         self._wild_init = wild_init
-        self.x_buffer = 0.05  # [m]
+        self._x_buffer = 0.05  # [m]
 
         # Call SimPyEnv's constructor
         super().__init__(dt, max_steps, task_args)
@@ -340,10 +340,10 @@ class QCartPoleStabSim(QCartPoleSim, Serializable):
         l_rail = self.domain_param["l_rail"]
 
         min_state = np.array(
-            [-l_rail / 2.0 + self.x_buffer, np.pi - self.stab_thold, -l_rail, -2 * np.pi]
+            [-l_rail / 2.0 + self._x_buffer, np.pi - self.stab_thold, -l_rail, -2 * np.pi]
         )  # [m, rad, m/s, rad/s]
         max_state = np.array(
-            [+l_rail / 2.0 - self.x_buffer, np.pi + self.stab_thold, +l_rail, +2 * np.pi]
+            [+l_rail / 2.0 - self._x_buffer, np.pi + self.stab_thold, +l_rail, +2 * np.pi]
         )  # [m, rad, m/s, rad/s]
 
         max_init_state = np.array(
@@ -407,10 +407,10 @@ class QCartPoleSwingUpSim(QCartPoleSim, Serializable):
         # Define the spaces
         l_rail = self.domain_param["l_rail"]
         max_state = np.array(
-            [+l_rail / 2.0 - self.x_buffer, +5 * np.pi, 2 * l_rail, 20 * np.pi]
+            [+l_rail / 2.0 - self._x_buffer, +4 * np.pi, 2 * l_rail, 20 * np.pi]
         )  # [m, rad, m/s, rad/s]
         min_state = np.array(
-            [-l_rail / 2.0 + self.x_buffer, -5 * np.pi, -2 * l_rail, -20 * np.pi]
+            [-l_rail / 2.0 + self._x_buffer, -4 * np.pi, -2 * l_rail, -20 * np.pi]
         )  # [m, rad, m/s, rad/s]
         if self._wild_init:
             max_init_state = np.array([0.05, np.pi, 0.02, 2 / 180.0 * np.pi])  # [m, rad, m/s, rad/s]
@@ -423,11 +423,12 @@ class QCartPoleSwingUpSim(QCartPoleSim, Serializable):
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
         state_des = task_args.get("state_des", np.array([0.0, np.pi, 0.0, 0.0]))
-        Q = task_args.get("Q", np.diag([2e-2, 5e-1, 5e-3, 1e-3]))
+        Q = task_args.get("Q", np.diag([3e-1, 5e-1, 5e-3, 1e-3]))
         R = task_args.get("R", np.diag([1e-3]))
         rew_fcn = QuadrErrRewFcn(Q, R)
 
         return FinalRewTask(
             RadiallySymmDesStateTask(self.spec, state_des, rew_fcn, idcs=[1]),
-            mode=FinalRewMode(time_dependent=True, state_dependent=True),
+            mode=FinalRewMode(always_negative=True),
+            factor=1e4,
         )
