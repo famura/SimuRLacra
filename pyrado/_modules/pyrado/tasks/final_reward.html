@@ -276,7 +276,7 @@
 <span class="sd">        :param wrapped_task: task to wrap</span>
 <span class="sd">        :param mode: mode for calculating the final reward</span>
 <span class="sd">        :param factor: (positive) value to scale the final reward.</span>
-<span class="sd">                       The `factor` is ignored if `mode.time_dependent is True`</span>
+<span class="sd">                       The `factor` is ignored if `mode.time_dependent` is `True`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Call TaskWrapper&#39;s constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wrapped_task</span><span class="p">)</span>
@@ -453,7 +453,7 @@
 
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;No matching configuration found for the given&quot;</span> <span class="sa">f</span><span class="s2">&quot;FinalRewMode:</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;No matching configuration found for the given FinalRewMode:</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>

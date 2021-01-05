@@ -528,9 +528,14 @@ The only but significant difference of this controller to the other PD controlle
 
 <dl class="py class">
 <dt id="pyrado.policies.special.environment_specific.QCartPoleSwingUpAndBalanceCtrl">
-<em class="property">class </em><code class="sig-name descname">QCartPoleSwingUpAndBalanceCtrl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">u_max</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">18.0</span></em>, <em class="sig-param"><span class="n">v_max</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">12.0</span></em>, <em class="sig-param"><span class="n">long</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QCartPoleSwingUpAndBalanceCtrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QCartPoleSwingUpAndBalanceCtrl" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">QCartPoleSwingUpAndBalanceCtrl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_spec</span><span class="p">:</span> <span class="n"><a class="reference internal" href="utils.html#pyrado.utils.data_types.EnvSpec" title="pyrado.utils.data_types.EnvSpec">pyrado.utils.data_types.EnvSpec</a></span></em>, <em class="sig-param"><span class="n">long</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_cuda</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QCartPoleSwingUpAndBalanceCtrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QCartPoleSwingUpAndBalanceCtrl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.policies.base.Policy</span></code></a></p>
 <p>Swing-up and balancing controller for the Quanser Cart-Pole</p>
+<dl class="py method">
+<dt id="pyrado.policies.special.environment_specific.QCartPoleSwingUpAndBalanceCtrl.K_pd">
+<em class="property">property </em><code class="sig-name descname">K_pd</code><a class="headerlink" href="#pyrado.policies.special.environment_specific.QCartPoleSwingUpAndBalanceCtrl.K_pd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt id="pyrado.policies.special.environment_specific.QCartPoleSwingUpAndBalanceCtrl.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/special/environment_specific.html#QCartPoleSwingUpAndBalanceCtrl.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.special.environment_specific.QCartPoleSwingUpAndBalanceCtrl.forward" title="Permalink to this definition">¶</a></dt>
@@ -559,9 +564,24 @@ The only but significant difference of this controller to the other PD controlle
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt id="pyrado.policies.special.environment_specific.QCartPoleSwingUpAndBalanceCtrl.k_e">
+<em class="property">property </em><code class="sig-name descname">k_e</code><a class="headerlink" href="#pyrado.policies.special.environment_specific.QCartPoleSwingUpAndBalanceCtrl.k_e" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.policies.special.environment_specific.QCartPoleSwingUpAndBalanceCtrl.k_p">
+<em class="property">property </em><code class="sig-name descname">k_p</code><a class="headerlink" href="#pyrado.policies.special.environment_specific.QCartPoleSwingUpAndBalanceCtrl.k_p" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="py attribute">
 <dt id="pyrado.policies.special.environment_specific.QCartPoleSwingUpAndBalanceCtrl.name">
 <code class="sig-name descname">name</code><em class="property">: str</em><em class="property"> = 'qcp-sub'</em><a class="headerlink" href="#pyrado.policies.special.environment_specific.QCartPoleSwingUpAndBalanceCtrl.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.policies.special.environment_specific.QCartPoleSwingUpAndBalanceCtrl.u_max">
+<em class="property">property </em><code class="sig-name descname">u_max</code><a class="headerlink" href="#pyrado.policies.special.environment_specific.QCartPoleSwingUpAndBalanceCtrl.u_max" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
