@@ -31,6 +31,7 @@ import numpy as np
 import pyrado
 import torch as to
 from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.step_based.actor_critic import ActorCritic
 from pyrado.domain_randomization.domain_parameter import SelfPacedLearnerParameter
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
@@ -101,10 +102,11 @@ class SPRL(Algorithm):
     def __init__(
         self,
         env: DomainRandWrapper,
-        subroutine: Algorithm,
+        subroutine: ActorCritic,
         kl_constraints_ub,
         alpha_function_offset,
         alpha_function_percentage,
+        discount_factor: float,
     ):
         """
         Constructor
@@ -118,6 +120,8 @@ class SPRL(Algorithm):
             raise pyrado.TypeErr(given=subroutine, expected_type=Algorithm)
         if not typed_env(env, DomainRandWrapper):
             raise pyrado.TypeErr(given=env, expected_type=DomainRandWrapper)
+        if not isinstance(subroutine, ActorCritic):
+            raise pyrado.TypeErr(given=subroutine, expected_type=ActorCritic)
 
         # Call Algorithm's constructor with the subroutine's properties
         super().__init__(subroutine.save_dir, subroutine.max_iter, subroutine.policy, subroutine.logger)
@@ -130,6 +134,7 @@ class SPRL(Algorithm):
         self._kl_constraints_ub = kl_constraints_ub
         self._alpha_function_offset = alpha_function_offset
         self._alpha_function_percentage = alpha_function_percentage
+        self._discount_factor = discount_factor
 
         spl_parameters = [
             param for param in env.randomizer.domain_params if isinstance(param, SelfPacedLearnerParameter)
@@ -153,6 +158,8 @@ class SPRL(Algorithm):
         super().train(snapshot_mode, seed, meta_info)
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
+        self.logger.add_value(f"cur context mean for {self._parameter.name}", self._parameter.context_mean.item())
+        self.logger.add_value(f"cur context cov for {self._parameter.name}", self._parameter.context_cov.item())
         dim = self._parameter.dim
         # First, train with the initial context distribution
         self._subroutine.train(snapshot_mode, self._seed, meta_info)
@@ -161,11 +168,18 @@ class SPRL(Algorithm):
         previous_distribution = MultivariateNormalWrapper(
             self._parameter.context_mean, self._parameter.context_cov_chol_flat
         )
-        context_values = to.stack(self._parameter._sample_buffer)
-        old_context_log_prob = self._parameter.context_distribution.log_prob(context_values)
+        contexts = self._parameter.sample_buffer
+        print(f"Parameter ID: {id(self._parameter)}")
+        print(contexts)
+        contexts_old_log_prob = self._parameter.context_distribution.log_prob(contexts)
         kl_divergence = to.distributions.kl_divergence(
             self._parameter.context_distribution, self._parameter.target_distribution
         )
+        rollouts = self._subroutine.rollouts
+        average_reward = np.mean(
+            [ro.discounted_return(gamma=self._discount_factor) for ros in rollouts for ro in ros]
+        ).item()
+        values = np.asarray([ro.undiscounted_return() for ros in rollouts for ro in ros])
 
         def kl_constraint_fn(x):
             distribution = MultivariateNormalWrapper.from_stacked(dim, x)
@@ -185,9 +199,7 @@ class SPRL(Algorithm):
         def objective(x):
             distribution = MultivariateNormalWrapper.from_stacked(dim, x)
             alphas = self._calculate_alpha(self.curr_iter, average_reward, kl_divergence)
-            val = self._compute_context_loss(
-                distribution.distribution, context_values, old_context_log_prob, values, alphas
-            )
+            val = self._compute_context_loss(distribution.distribution, contexts, contexts_old_log_prob, values, alphas)
             mean_grad, cov_chol_flat_grad = to.autograd.grad(val, distribution.parameters())
 
             return (
@@ -250,7 +262,7 @@ class SPRL(Algorithm):
             alpha = to.clamp(self._alpha_function_percentage * average_reward / kl_divergence, max=1e5)
         return alpha
 
-    def _compute_context_loss(self, distribution, context_values, old_context_log_prob, values, alpha):
-        part1 = (to.exp(distribution.log_prob(context_values) - old_context_log_prob) * values).mean()
+    def _compute_context_loss(self, distribution, contexts, contexts_old_log_prob, values, alpha):
+        part1 = (to.exp(distribution.log_prob(contexts) - contexts_old_log_prob) * values).mean()
         part2 = alpha * to.distributions.kl_divergence(distribution, self._parameter.target_distribution)
         return part1 - part2

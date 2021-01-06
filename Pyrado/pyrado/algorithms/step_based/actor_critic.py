@@ -28,7 +28,7 @@
 
 import numpy as np
 from abc import ABC, abstractmethod
-from typing import Sequence
+from typing import Sequence, List
 
 import pyrado
 from pyrado.algorithms.step_based.gae import GAE
@@ -74,6 +74,7 @@ class ActorCritic(Algorithm, ABC):
         self.sampler = None
         self._lr_scheduler = None
         self._lr_scheduler_hparam = None
+        self._ros = []
 
     @property
     def critic(self) -> GAE:
@@ -91,11 +92,18 @@ class ActorCritic(Algorithm, ABC):
     def expl_strat(self) -> NormalActNoiseExplStrat:
         return self._expl_strat
 
+    @property
+    def rollouts(self) -> List[List[StepSequence]]:
+        if not self._ros:
+            raise pyrado.ValueErr(msg="No rollout sampled so far!")
+        return self._ros
+
     def step(self, snapshot_mode: str, meta_info: dict = None):
         # Sample rollouts
-        ros = self.sampler.sample()
+        self._ros.append(self.sampler.sample())
 
         # Log metrics computed from the old policy (before the update)
+        ros = self._ros[-1]
         all_lengths = np.array([ro.length for ro in ros])
         self._cnt_samples += int(np.sum(all_lengths))
         rets = [ro.undiscounted_return() for ro in ros]
@@ -131,6 +139,9 @@ class ActorCritic(Algorithm, ABC):
 
         # Reset the critic (also resets its learning rate scheduler)
         self.critic.reset()
+
+        # Reset the memory for SPRL.
+        self._ros = []
 
         # Reset the learning rate scheduler
         if self._lr_scheduler is not None:

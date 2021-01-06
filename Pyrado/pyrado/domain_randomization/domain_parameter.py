@@ -341,7 +341,7 @@ class SelfPacedLearnerParameter(DomainParam):
         self._target_distribution = MultivariateNormal(self.target_mean, self.target_cov, validate_args=True)
         self._context_distribution = MultivariateNormal(self.context_mean, self.context_cov, validate_args=True)
 
-        self._sample_buffer = []
+        self._sample_buffer = None
 
     @staticmethod
     def get_field_names() -> Sequence[str]:
@@ -362,6 +362,10 @@ class SelfPacedLearnerParameter(DomainParam):
     @property
     def context_cov(self):
         return to.diag(self.context_cov_chol_flat ** 2)
+
+    @property
+    def sample_buffer(self):
+        return self._sample_buffer
 
     def adapt(self, domain_distr_param: str, domain_distr_param_value: to.Tensor):
         # Set the attributes
@@ -388,10 +392,16 @@ class SelfPacedLearnerParameter(DomainParam):
                 raise err
 
     def sample(self, num_samples: int = 1) -> list:
+        print(f"Sample ID: {id(self)}")
         assert isinstance(num_samples, int) and num_samples > 0
-        samples = list(self._context_distribution.sample_n(n=num_samples))
-        self._sample_buffer += samples
-        return samples
+        samples = self._context_distribution.sample((num_samples,))
+        if len(samples.shape) == 1:
+            samples = samples.reshape((-1, 1))
+        if self._sample_buffer is None:
+            self._sample_buffer = samples
+        else:
+            self._sample_buffer = to.vstack([self._sample_buffer, samples])
+        return list(samples)
 
     def reset(self):
-        self._sample_buffer = []
+        self._sample_buffer = None
