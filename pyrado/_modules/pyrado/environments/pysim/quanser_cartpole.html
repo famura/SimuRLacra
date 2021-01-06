@@ -372,20 +372,20 @@
                 <span class="n">f_c</span> <span class="o">=</span> <span class="n">mu_c</span> <span class="o">*</span> <span class="n">f_normal</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">f_normal</span> <span class="o">*</span> <span class="n">x_dot</span><span class="p">)</span>
             <span class="n">f_tot</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">f_act</span> <span class="o">-</span> <span class="n">f_c</span><span class="p">)</span>
 
-        <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="p">[</span><span class="n">m_p</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">J_eq</span><span class="p">,</span> <span class="n">m_p</span> <span class="o">*</span> <span class="n">l_p</span> <span class="o">*</span> <span class="n">cos_th</span><span class="p">],</span>
                 <span class="p">[</span><span class="n">m_p</span> <span class="o">*</span> <span class="n">l_p</span> <span class="o">*</span> <span class="n">cos_th</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">J_pole</span> <span class="o">+</span> <span class="n">m_p</span> <span class="o">*</span> <span class="n">l_p</span> <span class="o">**</span> <span class="mi">2</span><span class="p">],</span>
             <span class="p">]</span>
         <span class="p">)</span>
-        <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="n">rhs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="n">f_tot</span> <span class="o">-</span> <span class="n">B_eq</span> <span class="o">*</span> <span class="n">x_dot</span> <span class="o">-</span> <span class="n">m_p</span> <span class="o">*</span> <span class="n">l_p</span> <span class="o">*</span> <span class="n">sin_th</span> <span class="o">*</span> <span class="n">th_dot</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span>
                 <span class="o">-</span><span class="n">B_p</span> <span class="o">*</span> <span class="n">th_dot</span> <span class="o">-</span> <span class="n">m_p</span> <span class="o">*</span> <span class="n">l_p</span> <span class="o">*</span> <span class="n">g</span> <span class="o">*</span> <span class="n">sin_th</span><span class="p">,</span>
             <span class="p">]</span>
         <span class="p">)</span>
-        <span class="c1"># Compute acceleration from linear system of equations: A * x = b</span>
-        <span class="n">x_ddot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_th_ddot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+        <span class="c1"># Compute acceleration from linear system of equations: M * x_ddot = rhs</span>
+        <span class="n">x_ddot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_th_ddot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span>
 
         <span class="c1"># Integration step (symplectic Euler)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">x_ddot</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_th_ddot</span><span class="p">)])</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span>  <span class="c1"># next velocity</span>
