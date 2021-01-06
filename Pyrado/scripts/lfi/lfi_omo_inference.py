@@ -9,6 +9,7 @@ from pyrado.algorithms.inference.lfi import LFI, EnvSimulator
 from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.utils.argparser import get_argparser
 from scripts.lfi.plot_thetas import plot_2d_thetas
+from scripts.lfi.normalizing_flows import train_nflows
 
 from sbi.inference import SNPE
 import sbi.utils as utils
@@ -96,25 +97,13 @@ if __name__ == "__main__":
             obs_traj=ro_real, num_samples=num_samples, compute_quantity={"sample_params": True}
         )
 
-    # sample from marginal posterior
-    def sample_from_marginal(proposals, s_num=100):
-        # https://projecteuclid.org/download/pdfview_1/euclid.ba/1459772735
-        m_sample = None
-
-        # Arithmetic Mean Estimator
-        def AME(prop):
-            return to.mean(prop, 0)
-
-        # Harmonic Mean Estimator
-        def HME(prop):
-            return 1 / ((1 / prop.shape[0]) * to.sum(1 / prop, 0))
-
-        method = HME  # select a method for marginalization
-
-        return to.stack([method(proposals[:, s, :]) for s in range(s_num)], dim=0)
+    # estimate prior with normalizing flows
+    nflows_iter=5000
+    prior = train_nflows(to.cat([obs for obs in sample_params], 0), num_iter=nflows_iter)
+    marginals = prior.sample(num_samples).detach()
 
     # plot useful statistics
     plot_2d_thetas(
-        sample_params, obs_thetas=real_params, marginal_samples=sample_from_marginal(sample_params, s_num=num_samples)
+        sample_params, obs_thetas=real_params, marginal_samples=marginals
     )
     # plot_trajectories(trajectories, n_parameter=2, observation_data=x_o)
