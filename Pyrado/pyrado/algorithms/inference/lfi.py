@@ -119,6 +119,8 @@ class LFI(LoggerAware):
         if rollouts_real.dim() > 2:
             raise pyrado.ShapeErr(given=rollouts_real)
 
+        n_batches = rollouts_real.shape[0]
+
         n_sim = 0
         if logging:
             log_probs = []
@@ -130,7 +132,7 @@ class LFI(LoggerAware):
         # first iteration
         if self._curr_iter == 0:
             theta, x = simulate_for_sbi(
-                self.batch_simulator, proposal_prior, num_simulations=self._num_sim, simulation_batch_size=1
+                self.batch_simulator, proposal_prior, num_simulations=self._num_sim * n_batches, simulation_batch_size=1
             )
             _ = self.inference.append_simulations(theta, x).train()
             self.posterior = self.inference.build_posterior()

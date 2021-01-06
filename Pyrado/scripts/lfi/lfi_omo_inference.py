@@ -82,9 +82,6 @@ if __name__ == "__main__":
     if not args.eval:
         # train the LFI algorithm
         inference.step(snapshot_mode="latest", meta_info=dict(rollouts_real=ro_real))
-        sample_params, _, _ = inference.evaluate(
-            obs_traj=ro_real, num_samples=num_samples, compute_quantity={"sample_params": True}
-        )
     else:
         # load a saved posterior for inference instead of training it
         posterior = pyrado.load(None, "posterior", "pt", ex_dir)
@@ -92,10 +89,9 @@ if __name__ == "__main__":
         # update posterior in inference
         inference.set_posterior(posterior)
 
-        # generate parameters
-        sample_params, _, _ = inference.evaluate(
-            obs_traj=ro_real, num_samples=num_samples, compute_quantity={"sample_params": True}
-        )
+    sample_params, _, _ = inference.evaluate(
+        rollouts_real=ro_real, num_samples=num_samples, compute_quantity={"sample_params": True}
+    )
 
     # estimate prior with normalizing flows
     nflows_iter=5000
