@@ -227,6 +227,7 @@
 
 <span class="kn">from</span> <span class="nn">pyrado.spaces</span> <span class="kn">import</span> <span class="n">BoxSpace</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.utils</span> <span class="kn">import</span> <span class="n">gen_batch_idcs</span><span class="p">,</span> <span class="n">gen_ordered_batch_idcs</span><span class="p">,</span> <span class="n">gen_ordered_batches</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.checks</span> <span class="kn">import</span> <span class="n">is_iterator</span><span class="p">,</span> <span class="n">check_all_types_equal</span><span class="p">,</span> <span class="n">check_all_lengths_equal</span><span class="p">,</span> <span class="n">check_all_shapes_equal</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.data_types</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.functions</span> <span class="kn">import</span> <span class="n">noisy_nonlin_fcn</span><span class="p">,</span> <span class="n">skyline</span>
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">completion_context</span><span class="p">,</span> <span class="n">print_cbt_once</span>
@@ -848,6 +849,75 @@
     <span class="n">coeffs</span><span class="p">,</span> <span class="n">order</span> <span class="o">=</span> <span class="n">diff_coeffs</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">sum</span><span class="p">(</span><span class="n">coeffs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
     <span class="k">assert</span> <span class="n">order</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="test_is_iterator"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_is_iterator">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;x, b&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">[</span><span class="nb">iter</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[</span><span class="nb">iter</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[</span><span class="nb">iter</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">)),</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="kc">False</span><span class="p">],</span>
+        <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="kc">False</span><span class="p">],</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_is_iterator</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">is_iterator</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="n">b</span></div>
+
+
+<div class="viewcode-block" id="test_is_sequence"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_is_sequence">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;x, b&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_is_sequence</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="n">b</span></div>
+
+
+<div class="viewcode-block" id="test_check_all_types_equal"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_check_all_types_equal">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;x, b&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">),</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">),</span> <span class="kc">False</span><span class="p">],</span>
+        <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="kc">False</span><span class="p">],</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_check_all_types_equal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">check_all_types_equal</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="n">b</span></div>
+
+
+<div class="viewcode-block" id="test_check_all_lengths_equal"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_check_all_lengths_equal">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;x, b&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">[([</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="kc">False</span><span class="p">],</span>
+        <span class="p">[(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">])),</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">])),</span> <span class="kc">False</span><span class="p">],</span>
+        <span class="p">[(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">2</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">3</span><span class="p">])),</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">2</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">3</span><span class="p">])),</span> <span class="kc">False</span><span class="p">],</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_check_all_lengths_equal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">check_all_lengths_equal</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="n">b</span></div>
+
+
+<div class="viewcode-block" id="test_check_all_shapes_equal"><a class="viewcode-back" href="../../tests.html#tests.test_utils.test_check_all_shapes_equal">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s2">&quot;x, b&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">[(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">])),</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">])),</span> <span class="kc">False</span><span class="p">],</span>
+        <span class="p">[(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">2</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">3</span><span class="p">])),</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">2</span><span class="p">]),</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">3</span><span class="p">])),</span> <span class="kc">False</span><span class="p">],</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_check_all_shapes_equal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">check_all_shapes_equal</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="n">b</span></div>
 </pre></div>
 
            </div>

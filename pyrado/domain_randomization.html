@@ -803,6 +803,24 @@ Internally stores a dict with parameter names as dict-keys and the new parameter
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt id="pyrado.domain_randomization.utils.wrap_like_other_env">
+<code class="sig-name descname">wrap_like_other_env</code><span class="sig-paren">(</span><em class="sig-param">env_targ: Union[pyrado.environments.sim_base.SimEnv, pyrado.environments.real_base.RealEnv], env_src: [&lt;class 'pyrado.environments.sim_base.SimEnv'&gt;, &lt;class 'pyrado.environment_wrappers.base.EnvWrapper'&gt;], use_downsampling: bool = False</em><span class="sig-paren">)</span> &#x2192; Union<span class="p">[</span><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a><span class="p">, </span><a class="reference internal" href="environments.html#pyrado.environments.real_base.RealEnv" title="pyrado.environments.real_base.RealEnv">pyrado.environments.real_base.RealEnv</a><span class="p">]</span><a class="reference internal" href="_modules/pyrado/domain_randomization/utils.html#wrap_like_other_env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.utils.wrap_like_other_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrap a given real environment like it’s simulated counterpart (except the domain randomization of course).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_targ</strong> – target environment e.g. environment representing the physical device</p></li>
+<li><p><strong>env_src</strong> – source environment e.g. simulation environment used for training</p></li>
+<li><p><strong>use_downsampling</strong> – apply a wrapper that downsamples the actions if the sampling frequencies don’t match</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>target environment</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyrado.domain_randomization">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyrado.domain_randomization" title="Permalink to this headline">¶</a></h2>
