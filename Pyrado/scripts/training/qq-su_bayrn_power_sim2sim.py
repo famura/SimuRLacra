@@ -41,7 +41,7 @@ from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yam
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.experiments import wrap_like_other_env
+from pyrado.domain_randomization.utils import wrap_like_other_env
 
 
 if __name__ == "__main__":
