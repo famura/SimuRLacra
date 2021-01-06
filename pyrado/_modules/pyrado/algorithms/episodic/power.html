@@ -333,7 +333,7 @@
         <span class="c1"># Average the return values over the rollouts</span>
         <span class="n">rets_avg_ros</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">param_results</span><span class="o">.</span><span class="n">mean_returns</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
         <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">rets_avg_ros</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="n">rets_avg_ros</span><span class="p">[</span><span class="n">rets_avg_ros</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-3</span>
+            <span class="n">rets_avg_ros</span><span class="p">[</span><span class="n">rets_avg_ros</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-6</span>
             <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;PoWER is must use positive reward functions (improper probability distribution)!&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
 
         <span class="c1"># We do the simplification from the original implementation, which is only valid for the return-based variant</span>
