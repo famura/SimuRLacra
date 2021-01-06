@@ -408,3 +408,20 @@ class ForwardVelocityRewFcn(RewFcn):
         self.last_x_pos = state[self._idx_x_pos]
 
         return float(fwd_vel_rew - ctrl_cost)
+
+
+class QCartPoleSwingUpCustomRewFcn(RewFcn):
+    """ Custom reward function for QCartPoleSwingUpSim. """
+
+    def __init__(self, factor=0.9):
+        """
+        Constructor
+        :param factor: weighting factor of rotation error to position error
+        """
+        self.factor = factor
+
+    def __call__(self, err_s: np.ndarray, err_a: np.ndarray, remaining_steps: int = None) -> float:
+        assert isinstance(err_s, np.ndarray) and isinstance(err_a, np.ndarray)
+
+        # Reward should be roughly between [0, 1]
+        return self.factor*(1-np.abs(err_s[1]/np.pi)**2) + (1-self.factor)*(np.abs(err_s[0])) 
