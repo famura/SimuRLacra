@@ -178,20 +178,20 @@ class QCartPoleSim(SimPyEnv, Serializable):
                 f_c = mu_c * f_normal * np.sign(f_normal * x_dot)
             f_tot = float(f_act - f_c)
 
-        A = np.array(
+        M = np.array(
             [
                 [m_p + self.J_eq, m_p * l_p * cos_th],
                 [m_p * l_p * cos_th, self.J_pole + m_p * l_p ** 2],
             ]
         )
-        b = np.array(
+        rhs = np.array(
             [
                 f_tot - B_eq * x_dot - m_p * l_p * sin_th * th_dot ** 2,
                 -B_p * th_dot - m_p * l_p * g * sin_th,
             ]
         )
-        # Compute acceleration from linear system of equations: A * x = b
-        x_ddot, self._th_ddot = np.linalg.solve(A, b)
+        # Compute acceleration from linear system of equations: M * x_ddot = rhs
+        x_ddot, self._th_ddot = np.linalg.solve(M, rhs)
 
         # Integration step (symplectic Euler)
         self.state[2:] += np.array([float(x_ddot), float(self._th_ddot)]) * self._dt  # next velocity

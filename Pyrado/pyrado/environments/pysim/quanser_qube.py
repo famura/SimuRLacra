@@ -65,23 +65,16 @@ class QQubeSim(SimPyEnv, Serializable):
         )  # pendulum link viscous damping [N*m*s/rad], original: 0.0005, identified: 1e-6
 
     def _calc_constants(self):
-        Mr = self.domain_param["Mr"]
-        Mp = self.domain_param["Mp"]
-        Lr = self.domain_param["Lr"]
-        Lp = self.domain_param["Lp"]
-        g = self.domain_param["g"]
+        m_r = self.domain_param["Mr"]
+        m_p = self.domain_param["Mp"]
+        l_r = self.domain_param["Lr"]
+        l_p = self.domain_param["Lp"]
 
         # Moments of inertia
-        Jr = Mr * Lr ** 2 / 12  # inertia about COM of the rotary pole [kg*m^2]
-        Jp = Mp * Lp ** 2 / 12  # inertia about COM of the pendulum pole [kg*m^2]
-
-        # Constants for equations of motion
-        self._c = np.zeros(5)
-        self._c[0] = Jr + Mp * Lr ** 2
-        self._c[1] = 0.25 * Mp * Lp ** 2
-        self._c[2] = 0.5 * Mp * Lp * Lr
-        self._c[3] = Jp + self._c[1]
-        self._c[4] = 0.5 * Mp * Lp * g
+        self._J_r = m_r * l_r ** 2 / 12  # inertia about COM of the rotary pole [kg*m^2]
+        self._J_p = m_p * l_p ** 2 / 12  # inertia about COM of the pendulum pole [kg*m^2]
+        self._J_p2 = m_p * l_p ** 2 / 4  # Steiner term of the pendulum pole [kg*m^2]
+        self._J_pr = m_p * l_p * l_r / 2  # coupled inertia term [kg*m^2]
 
     def _dyn(self, t, x, u):
         r"""
@@ -92,30 +85,39 @@ class QQubeSim(SimPyEnv, Serializable):
         :param u: control command
         :return: time derivative of the state
         """
-        km = self.domain_param["km"]
-        Rm = self.domain_param["Rm"]
-        Dr = self.domain_param["Dr"]
-        Dp = self.domain_param["Dp"]
+        k_m = self.domain_param["km"]
+        R_m = self.domain_param["Rm"]
+        d_r = self.domain_param["Dr"]
+        d_p = self.domain_param["Dp"]
+        m_p = self.domain_param["Mp"]
+        l_r = self.domain_param["Lr"]
+        l_p = self.domain_param["Lp"]
+        g = self.domain_param["g"]
 
         # Decompose state
         th, al, thd, ald = x
-
-        # Define mass matrix M = [[a, b], [b, c]]
-        a = self._c[0] + self._c[1] * np.sin(al) ** 2
-        b = self._c[2] * np.cos(al)
-        c = self._c[3]
-        det = a * c - b * b
+        sin_al = np.sin(al)
+        cos_al = np.cos(al)
 
         # Calculate vector [x, y] = tau - C(q, qd)
-        trq = km * (u - km * thd) / Rm
-        c0 = self._c[1] * np.sin(2 * al) * thd * ald - self._c[2] * np.sin(al) * ald * ald
-        c1 = -0.5 * self._c[1] * np.sin(2 * al) * thd * thd + self._c[4] * np.sin(al)
-        x = trq - Dr * thd - c0
-        y = -Dp * ald - c1
+        trq_motor = float(k_m * (u - k_m * thd) / R_m)
+        trq_rhs_th = self._J_p2 * np.sin(2 * al) * thd * ald - self._J_pr * sin_al * ald ** 2
+        trq_rhs_al = -0.5 * self._J_p2 * np.sin(2 * al) * thd ** 2 + 0.5 * m_p * l_p * g * sin_al
 
-        # Compute M^{-1} @ [x, y]
-        thdd = (c * x - b * y) / det
-        aldd = (a * y - b * x) / det
+        # Compute acceleration from linear system of equations: M * x_ddot = rhs
+        M = np.array(
+            [
+                [self._J_r + m_p * l_r ** 2 + self._J_p2 * sin_al ** 2, self._J_pr * cos_al],
+                [self._J_pr * cos_al, self._J_p + 0.25 * m_p * l_p ** 2],
+            ]
+        )
+        rhs = np.array(
+            [
+                trq_motor - d_r * thd - trq_rhs_th,
+                -d_p * ald - trq_rhs_al,
+            ]
+        )
+        thdd, aldd = np.linalg.solve(M, rhs)
 
         return np.array([thd, ald, thdd, aldd], dtype=np.float64)
 
