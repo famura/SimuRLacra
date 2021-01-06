@@ -51,7 +51,7 @@ class SAC(ValueBased):
 
     .. seealso::
         [1] T. Haarnoja, A. Zhou, P. Abbeel, S. Levine, "Soft Actor-Critic: Off-Policy Maximum Entropy Deep
-        Reinforcement Learning with a Stochastic Actor", ICML, 2018
+            Reinforcement Learning with a Stochastic Actor", ICML, 2018
         [2] This implementation was inspired by https://github.com/pranz24/pytorch-soft-actor-critic
             which is seems to be based on https://github.com/vitchyr/rlkit
         [3] This implementation also borrows (at least a bit) from
