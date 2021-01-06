@@ -46,9 +46,8 @@ slide_duration = 4  # seconds
 slide_duration_long = 7  # seconds
 
 title_txt = """
-Bayesian Domain Randomization (BayRn)
-for Sim-to-Real Transfer
-
+Data-efficient Domain Randomization
+with Bayesian Optimization
 
 Fabio Muratore (1, 2),
 Christian Eilers (1, 2),
