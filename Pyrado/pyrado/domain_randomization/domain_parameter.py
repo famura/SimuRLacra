@@ -392,7 +392,6 @@ class SelfPacedLearnerParameter(DomainParam):
                 raise err
 
     def sample(self, num_samples: int = 1) -> list:
-        print(f"Sample ID: {id(self)}")
         assert isinstance(num_samples, int) and num_samples > 0
         samples = self._context_distribution.sample((num_samples,))
         if len(samples.shape) == 1:
