@@ -33,7 +33,7 @@ from sbi.inference.base import simulate_for_sbi
 from sbi.user_input.user_input_checks import prepare_for_sbi
 from torch.distributions import Distribution
 from torch.utils.tensorboard import SummaryWriter
-from typing import Optional, Callable, Type, Union, List
+from typing import Optional, Callable, Type, Union, List, Mapping
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
@@ -44,7 +44,6 @@ from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.checks import check_all_lengths_equal
 from pyrado.utils.input_output import print_cbt
@@ -62,11 +61,11 @@ class EnvSimulator(Callable):
         self,
         env: Env,
         policy: Policy,
-        param_names: list,
+        dp_mapping: Mapping[int, str],
     ):
         self.env = env
         self.policy = policy
-        self.param_names = param_names
+        self.param_names = dp_mapping.values()
 
     def __call__(self, params):
         ro = rollout(
@@ -82,7 +81,7 @@ class EnvSimulator(Callable):
 
 class EnvSimulatorReal(Callable):
     """
-    Dirty shit. Bah this is ugly.
+    TODO Dirty shit. Bah this is ugly.
     """
 
     def __init__(
@@ -121,7 +120,7 @@ class LFI(Algorithm):
         env_sim: SimEnv,
         env_real: Union[RealEnv, EnvWrapper],
         behavior_policy: Policy,
-        params_names,
+        dp_mapping: Mapping[int, str],
         prior: Distribution,
         flow: Callable[[], DirectPosterior],
         inference: Type[PosteriorEstimator],
@@ -137,10 +136,10 @@ class LFI(Algorithm):
 
         self._env_sim = env_sim
         self._env_real = env_real
-        self.simulator = EnvSimulator(self._env_sim, self._policy, params_names)
+        self.simulator = EnvSimulator(self._env_sim, self._policy, dp_mapping)
+        self.dp_mapping = dp_mapping
         self._posterior = posterior
         self.prior = prior
-        self.params_names = params_names
         self.num_sim = num_sim
         self.num_real_rollouts = num_real_rollouts
         self.num_samples = num_samples
@@ -344,28 +343,20 @@ class LFI(Algorithm):
         :param num_parallel_envs: number of environments for the parallel sampler (only used for SimEnv)
         :return: 2-dim tensor of observations extracted from the rollouts
         """
-        if not (isinstance(env, RealEnv) or isinstance(env, SimEnv)):
+        if not (isinstance(inner_env(env), RealEnv) or isinstance(inner_env(env), SimEnv)):
             raise pyrado.TypeErr(given=inner_env(env), expected_type=[RealEnv, SimEnv])
 
         if save_dir is not None:
             print_cbt(f"Executing {prefix}_policy ...", "c", bright=True)
 
-        rollout_worker = EnvSimulatorReal(env, policy)
-        ros_real = []
-
         # Evaluate sequentially when conducting a sim-to-real experiment
+        rollout_worker = EnvSimulatorReal(env, policy)
+        obs_real = []
         for i in range(num_rollouts):
-            ros_real.append(rollout_worker())
+            obs_real.append(rollout_worker())
 
-        # Extract observations from rollouts
-        # TODO implement different ways to extract the observations, e.g. summary statistics, RNN hidden state
-        obs_real = []  # a.k.a. x_o
-        for ro in ros_real:
-            obs_real.append(to.tensor(ro.observations).view(-1, 1).squeeze())
-
+        # Optionally save the data
         if save_dir is not None:
-            # Save all data
-            pyrado.save(ros_real, f"{prefix}_rollouts_real", "pkl", save_dir)
             pyrado.save(obs_real, f"{prefix}_observations_real", "pkl", save_dir)
 
         return obs_real

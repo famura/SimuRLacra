@@ -27,10 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Ball-on-Plate environment using Soft Actor-Critic.
-
-.. note::
-    The hyper-parameters are not tuned at all!
+Sim-to-sim experiment on the One-Mass-Oscillator environment using likelihood-free inference
 """
 from copy import deepcopy
 
@@ -39,7 +36,6 @@ import torch as to
 import torch.nn as nn
 from sbi.inference import SNPE
 from sbi import utils
-from torch.distributions import MultivariateNormal
 
 import pyrado
 from pyrado.algorithms.inference.lfi2 import LFI
@@ -48,7 +44,6 @@ from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.feed_forward.two_headed_fnn import TwoHeadedFNNPolicy
 from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.utils.argparser import get_argparser
 
@@ -76,8 +71,7 @@ if __name__ == "__main__":
     )
     env_real = DomainRandWrapperBuffer(env_real, randomizer)
     env_real.fill_buffer(num_real_obs)
-
-    params_names = ["k", "d"]  # TODO replace
+    dp_mapping = {0: "k", 1: "d"}
 
     # Policy
     behavior_policy = IdlePolicy(env_sim.spec)
@@ -97,7 +91,7 @@ if __name__ == "__main__":
         env_sim,
         env_real,
         behavior_policy,
-        params_names,
+        dp_mapping,
         prior,
         flow,
         SNPE,
