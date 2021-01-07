@@ -87,7 +87,7 @@ if __name__ == "__main__":
 
     # Subroutine
     algo_hparam = dict(
-        max_iter=1,
+        max_iter=100,
         eps_clip=0.12648736789309026,
         min_steps=30 * env.max_steps,
         num_epoch=7,
@@ -118,6 +118,7 @@ if __name__ == "__main__":
         alpha_function_offset=1.6,
         alpha_function_percentage=70,
         discount_factor=0.95,
+        max_iter=50
     )
 
     # Save the hyper-parameters
