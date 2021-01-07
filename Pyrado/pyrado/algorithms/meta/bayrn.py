@@ -38,7 +38,7 @@ from botorch.optim import optimize_acqf
 from gpytorch.constraints import GreaterThan
 from gpytorch.mlls import ExactMarginalLogLikelihood
 from tabulate import tabulate
-from typing import Optional
+from typing import Optional, Union
 
 import pyrado
 from pyrado.algorithms.base import Algorithm, InterruptableAlgorithm
@@ -80,7 +80,7 @@ class BayRn(InterruptableAlgorithm):
         self,
         save_dir: str,
         env_sim: MetaDomainRandWrapper,
-        env_real: [RealEnv, EnvWrapper],
+        env_real: Union[RealEnv, EnvWrapper],
         subrtn: Algorithm,
         ddp_space: BoxSpace,
         max_iter: int,
@@ -301,7 +301,7 @@ class BayRn(InterruptableAlgorithm):
 
     @staticmethod
     def eval_policy(
-        save_dir: [str, None],
+        save_dir: Optional[str],
         env: [RealEnv, SimEnv, MetaDomainRandWrapper],
         policy: Policy,
         mc_estimator: bool,

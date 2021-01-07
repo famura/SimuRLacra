@@ -59,7 +59,7 @@ if __name__ == "__main__":
     env_sim = joblib.load(osp.join(ex_dir, "env_sim.pkl"))
     if not typed_env(env_sim, MetaDomainRandWrapper):
         raise pyrado.TypeErr(given_name=env_sim, expected_type=MetaDomainRandWrapper)
-    labels_sel_dims = [env_sim.mapping[args.idcs[i]][0] for i in range(len(args.idcs))]
+    labels_sel_dims = [env_sim.dp_mapping[args.idcs[i]][0] for i in range(len(args.idcs))]
 
     env_real = joblib.load(osp.join(ex_dir, "env_real.pkl"))
     if isinstance(inner_env(env_real), SimEnv):

@@ -27,24 +27,25 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the One-Mass-Oscillator environment using Soft Actor-Critic.
-
-.. note::
-    The hyper-parameters are not tuned at all!
+Sim-to-sim experiment on the One-Mass-Oscillator environment using likelihood-free inference
 """
+from copy import deepcopy
+
 import numpy as np
 import torch as to
+import torch.nn as nn
+from sbi.inference import SNPE
+from sbi import utils
 
 import pyrado
-from pyrado.algorithms.step_based.sac import SAC
-from pyrado.environment_wrappers.action_normalization import ActNormWrapper
+from pyrado.algorithms.inference.lfi2 import LFI
+from pyrado.domain_randomization.domain_parameter import NormalDomainParam
+from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.feed_forward.fnn import FNNPolicy
-from pyrado.policies.feed_forward.two_headed_fnn import TwoHeadedFNNPolicy
-from pyrado.spaces import ValueFunctionSpace, BoxSpace
+from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.data_types import EnvSpec
 
 
 if __name__ == "__main__":
@@ -52,53 +53,56 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(OneMassOscillatorSim.name, f"{SAC.name}_{TwoHeadedFNNPolicy.name}")
+    ex_dir = setup_experiment(OneMassOscillatorSim.name, f"{LFI.name}_nflow")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
-    # Environment
+    # Environments
     env_hparams = dict(dt=1 / 50.0, max_steps=200)
-    env = OneMassOscillatorSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
-    env = ActNormWrapper(env)
+    env_sim = OneMassOscillatorSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
+
+    # Create a fake 'ground truth' target domain
+    num_real_obs = 5
+    env_real = deepcopy(env_sim)
+    randomizer = DomainRandomizer(
+        NormalDomainParam(name="k", mean=30.0, std=0.3),
+        NormalDomainParam(name="d", mean=0.1, std=0.001),
+    )
+    env_real = DomainRandWrapperBuffer(env_real, randomizer)
+    env_real.fill_buffer(num_real_obs)
+    dp_mapping = {0: "k", 1: "d"}
 
     # Policy
-    policy_hparam = dict(
-        shared_hidden_sizes=[32, 32],
-        shared_hidden_nonlin=to.relu,
-    )
-    policy = TwoHeadedFNNPolicy(spec=env.spec, **policy_hparam, use_cuda=True)
+    behavior_policy = IdlePolicy(env_sim.spec)
 
-    # Critic
-    qfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.relu)
-    obsact_space = BoxSpace.cat([env.obs_space, env.act_space])
-    qfcn_1 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **qfcn_hparam, use_cuda=True)
-    qfcn_2 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **qfcn_hparam, use_cuda=True)
+    # Define a prior
+    prior = utils.BoxUniform(low=to.tensor([27.0, 0.05]), high=to.tensor([33, 0.15]))
+
+    # Normalizing flow
+    embedding_net = nn.Identity()
+    flow_hparam = dict(hidden_features=10, num_transforms=2)
+    flow = utils.posterior_nn(model="maf", embedding_net=embedding_net, **flow_hparam)
 
     # Algorithm
-    algo_hparam = dict(
-        max_iter=1000 * env.max_steps,
-        memory_size=100 * env.max_steps,
-        gamma=0.995,
-        num_batch_updates=1,
-        tau=0.995,
-        ent_coeff_init=0.2,
-        learn_ent_coeff=True,
-        target_update_intvl=5,
-        standardize_rew=False,
-        min_steps=1,
-        batch_size=256,
-        num_workers=1,
-        lr=3e-4,
+    algo_hparam = dict(max_iter=5, num_sim=10, num_real_rollouts=num_real_obs)
+    algo = LFI(
+        ex_dir,
+        env_sim,
+        env_real,
+        behavior_policy,
+        dp_mapping,
+        prior,
+        flow,
+        SNPE,
+        **algo_hparam,
     )
-    algo = SAC(ex_dir, env, policy, qfcn_1, qfcn_2, **algo_hparam)
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml(
         [
             dict(env=env_hparams, seed=args.seed),
-            dict(policy=policy_hparam),
-            dict(qfcn=qfcn_hparam),
+            dict(flow=flow_hparam),
             dict(algo=algo_hparam, algo_name=algo.name),
         ],
         ex_dir,
@@ -106,3 +110,7 @@ if __name__ == "__main__":
 
     # Jeeeha
     algo.train(seed=args.seed)
+
+    # sample_params, _, _ = algo.evaluate(
+    #     rollouts_real=ro_real, num_samples=num_samples, compute_quantity={"sample_params": True}
+    # )

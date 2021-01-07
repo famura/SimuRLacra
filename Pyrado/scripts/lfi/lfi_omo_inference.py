@@ -2,19 +2,17 @@ import pyrado
 import torch as to
 import torch.nn as nn
 
+from sbi.inference import SNPE
+import sbi.utils as utils
+
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.logger.experiment import setup_experiment, ask_for_experiment
-from pyrado.algorithms.inference.lfi import LFI
-from pyrado.algorithms.inference.simulator import EnvSimulator
+from pyrado.algorithms.inference.lfi2 import LFI, EnvSimulator
 from pyrado.algorithms.inference.normalizing_flows import NormalizingFlow
 from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.utils.argparser import get_argparser
 from scripts.lfi.plot_thetas import plot_2d_thetas
-
-
-from sbi.inference import SNPE
-import sbi.utils as utils
 
 
 def create_omo_setup():
@@ -23,7 +21,7 @@ def create_omo_setup():
     behavior_policy = IdlePolicy(env_sim.spec)
     # parameter which LFI trains for
     params_names = ["k", "d"]
-    simulator = EnvSimulator(env_sim, behavior_policy, params_names, "states")
+    simulator = EnvSimulator(env_sim, behavior_policy, params_names)
 
     # define prior and true parameter distributions
     prior = utils.BoxUniform(low=to.tensor([27.0, 0.05]), high=to.tensor([33, 0.15]))
@@ -56,7 +54,7 @@ if __name__ == "__main__":
     num_real_obs = 5
     real_params = real_param_dist.sample((num_real_obs,))
     ro_real = [simulator(param) for param in real_params]
-    # ro_real = to.stack(ro_real)
+    ro_real = to.stack(ro_real)
 
     num_samples = 100
 
@@ -77,6 +75,7 @@ if __name__ == "__main__":
         flow=flow,
         inference=SNPE,
         prior=prior,
+        params_names=params_names,
         **inference_hparam,
     )
 
@@ -91,7 +90,7 @@ if __name__ == "__main__":
         inference.set_posterior(posterior)
 
     sample_params, _, _ = inference.evaluate(
-        meta_info=dict(rollouts_real=ro_real), num_samples=num_samples, compute_quantity={"sample_params": True}
+        rollouts_real=ro_real, num_samples=num_samples, compute_quantity={"sample_params": True}
     )
 
     # estimate prior with normalizing flows
@@ -113,7 +112,5 @@ if __name__ == "__main__":
     marginals = prior.sample(num_samples).detach()
 
     # plot useful statistics
-    plot_2d_thetas(
-        sample_params, obs_thetas=real_params, marginal_samples=marginals
-    )
+    plot_2d_thetas(sample_params, obs_thetas=real_params, marginal_samples=marginals)
     # plot_trajectories(trajectories, n_parameter=2, observation_data=x_o)

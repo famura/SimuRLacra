@@ -32,8 +32,9 @@ def train_lfi(
             for _ in range(num_rounds - 1):
                 for obs in x_o:
                     proposal_prior.set_default_x(obs)
-                    theta, x = simulate_for_sbi(simulator, proposal_prior, num_simulations=num_sim,
-                                                simulation_batch_size=1)
+                    theta, x = simulate_for_sbi(
+                        simulator, proposal_prior, num_simulations=num_sim, simulation_batch_size=1
+                    )
                     _ = inference.append_simulations(theta, x)
                 _ = inference.train()
                 proposal_prior = inference.build_posterior()
@@ -43,8 +44,14 @@ def train_lfi(
     return posterior
 
 
-def evaluate_lfi(simulator: Callable, posterior: DirectPosterior, observations,
-                 num_samples: int = 1000, comp_log_prob=False, comp_trajectory=False):
+def evaluate_lfi(
+    simulator: Callable,
+    posterior: DirectPosterior,
+    observations,
+    num_samples: int = 1000,
+    comp_log_prob=False,
+    comp_trajectory=False,
+):
     """
         INPUT:
     ...

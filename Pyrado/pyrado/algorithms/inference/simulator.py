@@ -16,10 +16,7 @@ class Simulator(Callable, ABC):
     Defines a simulator which maps a parameter-set to an observation
     """
 
-    def __init__(
-            self,
-            strategy="states"
-    ):
+    def __init__(self, strategy="states"):
         self.strategy = strategy
         self._transformed_representation = False
 
@@ -82,18 +79,15 @@ class EnvSimulator(Simulator):
     """
     Mapping from the environment system parameters to a trajectory-based rollout using a control-policy.
     """
-    def __init__(
-            self,
-            env: Env,
-            policy: Policy,
-            param_names: list,
-            strategy="states"
-    ):
+
+    def __init__(self, env: Env, policy: Policy, param_names: list, strategy="states"):
         self.name = env.name
         self.env = env
         self.policy = policy
         self.param_names = param_names
-        super().__init__(strategy=strategy, )
+        super().__init__(
+            strategy=strategy,
+        )
 
     def __call__(self, params) -> Union[StepSequence, to.Tensor]:
         ro = rollout(
