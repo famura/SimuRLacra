@@ -41,10 +41,9 @@ from nflows.flows.base import Flow
 from nflows.distributions.normal import StandardNormal
 from nflows.transforms.base import CompositeTransform
 from nflows.transforms.autoregressive import MaskedAffineAutoregressiveTransform
-from nflows.transforms import RandomPermutation
 from nflows.transforms.permutations import ReversePermutation
 
-from pyrado.policies.feed_forward.nflow import NFlowPolicy
+from pyrado.policies.special.nflow import NFlowPolicy
 
 
 if __name__ == "__main__":
