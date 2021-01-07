@@ -73,7 +73,7 @@ def compute_trajectory(weights, time, width):
 
 
 def compute_trajectory_pyrado(weights, time, width):
-    weights = to.from_numpy(weights)
+    weights = to.from_numpy(weights).to(dtype=to.get_default_dtype())
     time = to.tensor(time, requires_grad=True)
     rbf = RBFFeat(num_feat_per_dim=weights.shape[0], bounds=(np.array([0.0]), np.array([1.0])), scale=1 / (2 * width))
     pos_feat = rbf(time)

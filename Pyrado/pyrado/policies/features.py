@@ -297,6 +297,8 @@ class RandFourierFeat:
         :param inp: input i.e. observations in the RL setting
         :return: 1-dim vector of all feature values given the observations
         """
+        inp = inp.to(device=self._device, dtype=to.get_default_dtype())
+
         if inp.ndimension() > 2:
             raise pyrado.ShapeErr(msg="RBF class can only handle 1-dim or 2-dim input!")
         inp = atleast_2D(inp)  # first dim is the batch size, the second dim it the actual input dimension
@@ -403,6 +405,8 @@ class RBFFeat:
         :param inp: input i.e. observations in the RL setting
         :return: 1-dim vector of all feature values given the observations
         """
+        inp = inp.to(device=self._device, dtype=to.get_default_dtype())
+
         if inp.ndimension() > 2:
             raise pyrado.ShapeErr(msg="RBF class can only handle 1-dim or 2-dim input!")
         inp = atleast_2D(inp)  # first dim is the batch size, the second dim it the actual input dimension
