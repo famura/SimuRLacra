@@ -41,8 +41,9 @@ from torch.distributions import MultivariateNormal
 
 class MultivariateNormalWrapper:
     def __init__(self, mean: to.Tensor, cov_chol_flat: to.Tensor):
-        self._mean = mean
-        self._cov_chol_flat = cov_chol_flat
+        self._mean = mean.clone().detach().requires_grad_(True)
+        self._cov_chol_flat = cov_chol_flat.clone().detach().requires_grad_(True)
+        self.distribution = MultivariateNormal(self.mean, self.cov)
 
     @staticmethod
     def from_stacked(dim: int, stacked: np.ndarray) -> "MultivariateNormalWrapper":
@@ -107,6 +108,7 @@ class SPRL(Algorithm):
         alpha_function_offset,
         alpha_function_percentage,
         discount_factor: float,
+        max_iter: int,
     ):
         """
         Constructor
@@ -124,7 +126,7 @@ class SPRL(Algorithm):
             raise pyrado.TypeErr(given=subroutine, expected_type=ActorCritic)
 
         # Call Algorithm's constructor with the subroutine's properties
-        super().__init__(subroutine.save_dir, subroutine.max_iter, subroutine.policy, subroutine.logger)
+        super().__init__(subroutine.save_dir, max_iter, subroutine.policy, subroutine.logger)
 
         self._subroutine = subroutine
         self._subroutine.save_name = "sub_algorithm"
@@ -158,6 +160,8 @@ class SPRL(Algorithm):
         super().train(snapshot_mode, seed, meta_info)
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
+        self.save_snapshot()
+
         self.logger.add_value(f"cur context mean for {self._parameter.name}", self._parameter.context_mean.item())
         self.logger.add_value(f"cur context cov for {self._parameter.name}", self._parameter.context_cov.item())
         dim = self._parameter.dim
@@ -168,25 +172,26 @@ class SPRL(Algorithm):
         previous_distribution = MultivariateNormalWrapper(
             self._parameter.context_mean, self._parameter.context_cov_chol_flat
         )
-        contexts = self._parameter.sample_buffer
-        print(f"Parameter ID: {id(self._parameter)}")
-        print(contexts)
+        rollouts = self._subroutine.rollouts
+        contexts = to.tensor([stepseq.rollout_info['domain_param'][self._parameter.name] for rollout in rollouts for stepseq in rollout], requires_grad=True)
+
+        print(f'Current mean of sampled domain param {self._parameter.name}: {contexts.mean()}')
+
         contexts_old_log_prob = self._parameter.context_distribution.log_prob(contexts)
         kl_divergence = to.distributions.kl_divergence(
             self._parameter.context_distribution, self._parameter.target_distribution
         )
-        rollouts = self._subroutine.rollouts
         average_reward = np.mean(
             [ro.discounted_return(gamma=self._discount_factor) for ros in rollouts for ro in ros]
         ).item()
-        values = np.asarray([ro.undiscounted_return() for ros in rollouts for ro in ros])
+        values = to.tensor([ro.undiscounted_return() for ros in rollouts for ro in ros])
 
         def kl_constraint_fn(x):
             distribution = MultivariateNormalWrapper.from_stacked(dim, x)
             kl_divergence = to.distributions.kl_divergence(
                 distribution.distribution, self._parameter.context_distribution
             )
-            return kl_divergence
+            return kl_divergence.detach().numpy()
 
         def kl_constraint_fn_prime(x):
             distribution = MultivariateNormalWrapper.from_stacked(dim, x)
@@ -194,7 +199,7 @@ class SPRL(Algorithm):
                 distribution.distribution, self._parameter.context_distribution
             )
             mean_grad, cov_chol_grad = to.autograd.grad(kl_divergence, distribution.parameters())
-            return np.concantenate([mean_grad.detach().numpy(), cov_chol_grad.detach().numpy()])
+            return np.concatenate([mean_grad.detach().numpy(), cov_chol_grad.detach().numpy()])
 
         def objective(x):
             distribution = MultivariateNormalWrapper.from_stacked(dim, x)
@@ -204,7 +209,7 @@ class SPRL(Algorithm):
 
             return (
                 -val.detach().numpy(),
-                -np.concatenate([mean_grad.detach.numpy(), cov_chol_flat_grad.detach.numpy()]).astype(np.float64),
+                -np.concatenate([mean_grad.detach().numpy(), cov_chol_flat_grad.detach().numpy()]).astype(np.float64),
             )
 
         constraints = [
@@ -228,13 +233,13 @@ class SPRL(Algorithm):
         )
 
         if result.success:
-            self._parameter.adapt("context_mean", result[0])
-            self._parameter.adapt("context_cov_chol_flat", result[1])
+            self._parameter.adapt("context_mean", to.tensor([result.x[0]]))
+            self._parameter.adapt("context_cov_chol_flat", to.tensor([result.x[1]]))
         else:
             old_f = objective(previous_distribution.get_stacked())[0]
             if kl_constraint_fn(result.x) <= self._kl_constraints_ub and result.fun < old_f:
-                self._parameter.adapt("context_mean", result[0])
-                self._parameter.adapt("context_cov_chol_flat", result[1])
+                self._parameter.adapt("context_mean", to.tensor([result.x[0]]))
+                self._parameter.adapt("context_cov_chol_flat", to.tensor([result.x[1]]))
             else:
                 raise pyrado.BaseErr("Sad… :/")
 
