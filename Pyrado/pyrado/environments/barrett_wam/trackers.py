@@ -29,7 +29,7 @@
 import numpy as np
 from threading import Lock
 from scipy.spatial.transform import Rotation
-from typing import Sequence, Tuple, List
+from typing import Sequence, Tuple, List, Union
 
 
 class RigidBodyTracker:
@@ -38,15 +38,17 @@ class RigidBodyTracker:
     This code is based on work from Pascal Klink.
     """
 
-    def __init__(self, names: Sequence[str], rotation=None):
+    def __init__(self, names: Sequence[str], rotation=None, offset: Union[np.ndarray, list] = np.zeros(3)):
         """
         Constructor
 
         :param names: list of rigid body names, e.g. ["cup", "ball"]
         :param rotation: `Rotation` instance of scipy.spatial.transform
+        :param offset: [x, y, z] offset from the OptiTrack coordinate system to the one used in simulation
         """
         self.names = names
         self.rotation = rotation
+        self.offset = np.asarray(offset)
         self.names_map = {}
         self.ts = {}
         self.lock = Lock()
@@ -74,6 +76,10 @@ class RigidBodyTracker:
         # Save data as tuple, OptiTrack streams in xyzw (quaternion)
         self.ts[name] = (pos, Rotation.from_quat(rot))
 
+    def reset_offset(self):
+        """ Reset the Cartesian offset, e.g. before calibrating. """
+        self.offset = np.zeros(3)
+
     def initialized(self):
         """ Check if all rigid bodies have been seen at least once. """
         return len(self.names) == len(self.names_map)
@@ -94,9 +100,9 @@ class RigidBodyTracker:
 
             t = self.ts[name]
 
-            # Apply rotation if given
+            # Apply rotation (e.g. to MuJoCo frame) if given, then shift the offset
             if self.rotation is not None:
-                copied_ts.append((self.rotation.apply(t[0]), self.rotation * t[1]))
+                copied_ts.append((self.rotation.apply(t[0]) - self.offset, self.rotation * t[1]))
             else:
                 copied_ts.append((t[0], t[1]))
 

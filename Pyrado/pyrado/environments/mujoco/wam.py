@@ -368,7 +368,7 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             # Wrap the masked DesStateTask to add a bonus for the best state in the rollout
             return BestStateFinalRewTask(
                 MaskedTask(self.spec, task, idcs),
-                factor=task_args.get("final_factor", 0.05*self.max_steps),
+                factor=task_args.get("final_factor", 0.05 * self.max_steps),
             )
 
     def _create_deviation_task(self, task_args: dict) -> Task:

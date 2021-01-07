@@ -52,3 +52,7 @@ wam_dgains = np.array([7.0, 15.0, 5.0, 2.5, 0.3, 0.3, 0.05])
 # Joint limits (with 5 degree safety margin)
 qpos_lo = np.array([-2.6, -1.985, -2.8, -0.9, -4.55, -1.5707, -2.7]) + 5 * np.pi / 180
 qpos_up = np.array([2.6, 1.985, 2.8, 3.14159, 1.25, 1.5707, 2.7]) - 5 * np.pi / 180
+
+# Cartesian cup position when 4dof WAM is in init state
+cup_pos_init_sim_4dof = np.array([0.80607, 0.0, 1.4562])
+cup_pos_init_sim_7dof = None  # TODO
