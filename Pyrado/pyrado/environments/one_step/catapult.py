@@ -98,9 +98,7 @@ class CatapultSim(SimEnv, Serializable):
 
     def _create_task(self, task_args: dict) -> DesStateTask:
         # Define the task including the reward function
-        state_des = task_args.get("state_des", None)
-        if state_des is None:
-            state_des = np.zeros(self._state_space.shape)
+        state_des = task_args.get("state_des", np.zeros(self._state_space.shape))
         return DesStateTask(self.spec, state_des, rew_fcn=AbsErrRewFcn(q=np.array([1.0]), r=np.array([0.0])))
 
     @property

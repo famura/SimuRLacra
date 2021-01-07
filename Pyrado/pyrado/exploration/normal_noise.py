@@ -42,22 +42,22 @@ class DiagNormalNoise(nn.Module):
 
     def __init__(
         self,
-        use_cuda: bool,
         noise_dim: [int, tuple],
         std_init: [float, int, to.Tensor],
         std_min: [float, to.Tensor] = 1e-3,
         train_mean: bool = False,
         learnable: bool = True,
+        use_cuda: bool = False,
     ):
         """
         Constructor
 
-        :param use_cuda: `True` to move the module to the GPU, `False` (default) to use the CPU
         :param noise_dim: number of dimension
         :param std_init: initial standard deviation for the exploration noise
         :param std_min: minimal standard deviation for the exploration noise
         :param train_mean: `True` if the noise should have an adaptive nonzero mean, `False` otherwise
         :param learnable: `True` if the parameters should be tuneable (default), `False` for shallow use (just sampling)
+        :param use_cuda: `True` to move the module to the GPU, `False` (default) to use the CPU
         """
         if not isinstance(std_init, (float, int, to.Tensor)):
             raise pyrado.TypeErr(given=std_init, expected_type=[float, int, to.Tensor])
@@ -94,6 +94,8 @@ class DiagNormalNoise(nn.Module):
         self.std_min = (
             to.tensor(std_min, dtype=to.get_default_dtype()) if isinstance(std_min, (float, int)) else std_min
         )
+        self.log_std_init = self.log_std_init.to(device=self.device)
+        self.std_min = self.std_min.to(device=self.device)
         if not isinstance(self.log_std_init, to.Tensor):
             raise pyrado.TypeErr(given=self.log_std_init, expected_type=to.Tensor)
         if not isinstance(self.std_min, to.Tensor):
@@ -138,7 +140,7 @@ class DiagNormalNoise(nn.Module):
         if not (isinstance(mean, to.Tensor) or mean is None):
             raise pyrado.TypeErr(given=mean, expected_type=to.Tensor)
         if not (isinstance(std, to.Tensor) and (std >= 0).all() or std is None):
-            raise pyrado.TypeErr(msg="The std must be a Tensor with all elements > 0 or None!")
+            raise pyrado.TypeErr(msg=f"The std must be a Tensor with all elements > 0 or None, but it is {std}!")
 
         if mean is not None:
             assert self.mean is not None, "Can not change fixed zero mean!"
@@ -175,22 +177,22 @@ class FullNormalNoise(nn.Module):
 
     def __init__(
         self,
-        use_cuda: bool,
         noise_dim: [int, tuple],
         std_init: [float, int, to.Tensor],
         std_min: [float, to.Tensor] = 1e-3,
         train_mean: bool = False,
         learnable: bool = True,
+        use_cuda: bool = False,
     ):
         """
         Constructor
 
-        :param use_cuda: `True` to move the module to the GPU, `False` (default) to use the CPU
         :param noise_dim: number of dimension
         :param std_init: initial standard deviation for the exploration noise
         :param std_min: minimal standard deviation for the exploration noise
         :param train_mean: `True` if the noise should have an adaptive nonzero mean, `False` otherwise
         :param learnable: `True` if the parameters should be tuneable (default), `False` for shallow use (just sampling)
+        :param use_cuda: `True` to move the module to the GPU, `False` (default) to use the CPU
         """
         if not isinstance(std_init, (float, int, to.Tensor)):
             raise pyrado.TypeErr(given=std_init, expected_type=[float, int, to.Tensor])
@@ -227,6 +229,7 @@ class FullNormalNoise(nn.Module):
             std_init ** 2 * to.eye(noise_dim) if isinstance(std_init, float) else to.diag(to.pow(std_init, 2))
         )
         self.std_min = to.tensor(std_min) if isinstance(std_min, float) else std_min
+        self.std_min = self.std_min.to(device=self.device)
         if not isinstance(self.cov_init, to.Tensor):
             raise pyrado.TypeErr(given=self.cov_init, expected_type=to.Tensor)
         if not isinstance(self.std_min, to.Tensor):

@@ -31,7 +31,7 @@ import sys
 import torch as to
 from torch.distributions.kl import kl_divergence
 from tqdm import tqdm
-from typing import Sequence
+from typing import Sequence, Optional
 
 import pyrado
 from pyrado.algorithms.step_based.actor_critic import ActorCritic
@@ -53,8 +53,7 @@ class PPO(ActorCritic):
 
     .. seealso::
         [1] J. Schulmann,  F. Wolski, P. Dhariwal, A. Radford, O. Klimov, "Proximal Policy Optimization Algorithms",
-        arXiv, 2017
-
+            arXiv, 2017
         [2] D.P. Kingma, J. Ba, "Adam: A Method for Stochastic Optimization", ICLR, 2015
     """
 
@@ -74,7 +73,7 @@ class PPO(ActorCritic):
         batch_size: int = 64,
         std_init: float = 1.0,
         num_workers: int = 4,
-        max_grad_norm: float = None,
+        max_grad_norm: Optional[float] = None,
         lr: float = 5e-4,
         lr_scheduler=None,
         lr_scheduler_hparam: [dict, None] = None,
@@ -166,7 +165,7 @@ class PPO(ActorCritic):
             log_probs_old = act_stats.log_probs
             act_distr_old = act_stats.act_distr
 
-        # Attach advantages and old log probs to rollout
+        # Attach advantages and old log probabilities to rollout
         concat_ros.add_data("adv", adv)
         concat_ros.add_data("log_probs_old", log_probs_old)
 
@@ -241,10 +240,8 @@ class PPO2(ActorCritic):
 
     .. seealso::
         [1] OpenAI Stable Baselines Documentation, https://stable-baselines.readthedocs.io/en/master/modules/ppo2.html
-
         [2] J. Schulmann,  F. Wolski, P. Dhariwal, A. Radford, O. Klimov, "Proximal Policy Optimization Algorithms",
-        arXiv, 2017
-
+            arXiv, 2017
         [3] D.P. Kingma, J. Ba, "Adam: A Method for Stochastic Optimization", ICLR, 2015
     """
 
@@ -266,7 +263,7 @@ class PPO2(ActorCritic):
         batch_size: int = 32,
         std_init: float = 1.0,
         num_workers: int = 4,
-        max_grad_norm: float = None,
+        max_grad_norm: Optional[float] = None,
         lr: float = 5e-4,
         lr_scheduler=None,
         lr_scheduler_hparam: [dict, None] = None,
@@ -397,7 +394,7 @@ class PPO2(ActorCritic):
             # Compute value predictions using the old old (before update) value function
             v_pred_old = self._critic.values(concat_ros)
 
-        # Attach advantages and old log probs to rollout
+        # Attach advantages and old log probabilities to rollout
         concat_ros.add_data("log_probs_old", log_probs_old)
         concat_ros.add_data("v_pred_old", v_pred_old)
 

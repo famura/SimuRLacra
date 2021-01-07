@@ -31,7 +31,7 @@ import sys
 import torch as to
 import torch.nn as nn
 from tqdm import tqdm
-from typing import Sequence, Union
+from typing import Sequence, Union, Optional
 from contextlib import ExitStack
 
 import pyrado
@@ -63,11 +63,11 @@ class GAE(LoggerAware, nn.Module):
         num_epoch: int = 10,
         batch_size: int = 64,
         standardize_adv: bool = True,
-        standardizer: [None, RunningStandardizer] = None,
-        max_grad_norm: float = None,
+        standardizer: Optional[RunningStandardizer] = None,
+        max_grad_norm: Optional[float] = None,
         lr: float = 5e-4,
         lr_scheduler=None,
-        lr_scheduler_hparam: [dict, None] = None,
+        lr_scheduler_hparam: Optional[dict] = None,
     ):
         r"""
         Constructor
@@ -133,7 +133,9 @@ class GAE(LoggerAware, nn.Module):
         if self._lr_scheduler is not None:
             self._lr_scheduler.last_epoch = -1
 
-    def gae(self, concat_ros: StepSequence, v_pred: to.Tensor = None, requires_grad: bool = False) -> to.Tensor:
+    def gae(
+        self, concat_ros: StepSequence, v_pred: Optional[to.Tensor] = None, requires_grad: bool = False
+    ) -> to.Tensor:
         """
         Compute the generalized advantage estimation as described in [1].
 

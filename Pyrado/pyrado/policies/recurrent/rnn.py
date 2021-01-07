@@ -91,7 +91,6 @@ class RNNPolicyBase(RecurrentPolicy):
         # Call custom initialization function after PyTorch network parameter initialization
         init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()
         self.init_param(None, **init_param_kwargs)
-
         self.to(self.device)
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
@@ -107,7 +106,7 @@ class RNNPolicyBase(RecurrentPolicy):
         return self.num_recurrent_layers * self._hidden_size
 
     def forward(self, obs: to.Tensor, hidden: to.Tensor = None) -> (to.Tensor, to.Tensor):
-        obs = obs.to(self.device)
+        obs = obs.to(device=self.device, dtype=to.get_default_dtype())
 
         # Adjust the input's shape to be compatible with PyTorch's RNN implementation
         batch_size = None
@@ -168,7 +167,8 @@ class RNNPolicyBase(RecurrentPolicy):
                 hidden = None
 
             # Reshape observations to match PyTorch's RNN sequence protocol
-            obs = ro.get_data_values("observations", True).unsqueeze(1).to(self.device)
+            obs = ro.get_data_values("observations", True).unsqueeze(1)
+            obs = obs.to(device=self.device, dtype=to.get_default_dtype())
 
             # Pass the input through hidden RNN layers
             out, _ = self.rnn_layers(obs, hidden)

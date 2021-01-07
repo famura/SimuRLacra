@@ -87,9 +87,9 @@ def render_distr_evo(
 
     # Plot the data
     for i, d in enumerate(distributions):
-        probs = to.exp(d.log_prob(x_gird))
-        ax.plot(x_gird.numpy(), probs.detach().numpy(), label=distr_labels[i])
-        ax.fill_between(x_gird.detach().numpy(), np.zeros(probs.size()), probs.detach().numpy(), alpha=alpha)
+        probs = to.exp(d.log_prob(x_gird)).detach().cpu().numpy()
+        ax.plot(x_gird.numpy(), probs, label=distr_labels[i])
+        ax.fill_between(x_gird.detach().cpu().numpy(), np.zeros_like(probs), probs, alpha=alpha)
 
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)

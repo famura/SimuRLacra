@@ -67,13 +67,13 @@ if __name__ == "__main__":
         shared_hidden_sizes=[32, 32],
         shared_hidden_nonlin=to.relu,
     )
-    policy = TwoHeadedFNNPolicy(spec=env.spec, **policy_hparam)
+    policy = TwoHeadedFNNPolicy(spec=env.spec, **policy_hparam, use_cuda=True)
 
     # Critic
     qfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.relu)
     obsact_space = BoxSpace.cat([env.obs_space, env.act_space])
-    qfcn_1 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **qfcn_hparam)
-    qfcn_2 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **qfcn_hparam)
+    qfcn_1 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **qfcn_hparam, use_cuda=True)
+    qfcn_2 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **qfcn_hparam, use_cuda=True)
 
     # Algorithm
     algo_hparam = dict(
@@ -88,7 +88,7 @@ if __name__ == "__main__":
         standardize_rew=False,
         min_steps=1,
         batch_size=256,
-        num_workers=4,
+        num_workers=1,
         lr=3e-4,
     )
     algo = SAC(ex_dir, env, policy, qfcn_1, qfcn_2, **algo_hparam)

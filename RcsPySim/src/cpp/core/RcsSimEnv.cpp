@@ -73,7 +73,7 @@ Rcs::RcsSimEnv::RcsSimEnv(PropertySource* propertySource)
         }
     allJointsPosCtrl = config->graph->nJ == numPosCtrlJoints;
     
-    // Load physics parameter manager from config
+    // Load physics parameter manager from config. Creates a pointer to config->graph
     physicsManager = config->createPhysicsParameterManager();
     // Physics simulator instance is nullptr at the start. It will only be created once reset is called.
     physicsSim = nullptr;

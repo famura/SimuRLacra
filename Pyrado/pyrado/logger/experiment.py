@@ -329,14 +329,15 @@ def ask_for_experiment(latest_only: bool = False):
     )
 
 
-def _process_list_for_saving(l: list) -> list:
+def _process_list_for_saving(l: [list, tuple]) -> [list, tuple]:
     """
     The yaml.dump function can't save Tensors, ndarrays, or callables, so we cast them to types it can save.
 
-    :param l: list containing parameters to save
-    :return: list with values processable by yaml.dump
+    :param l: list or tuple containing parameters to save
+    :return: list or tuple with values processable by yaml.dump
     """
-    copy = deepcopy(l)  # do not mutate the input
+    # Do not mutate the input. Convert tuple to list to make elements mutable
+    copy = list(deepcopy(l))
     for i, item in enumerate(copy):
         # Check the values of the list
         if isinstance(item, (to.Tensor, np.ndarray)):
@@ -357,12 +358,13 @@ def _process_list_for_saving(l: list) -> list:
         elif isinstance(item, dict):
             # If the value is another dict, recursively go through this one
             copy[i] = _process_dict_for_saving(item)
-        elif isinstance(item, list):
-            # If the value is a list, recursively go through this one
+        elif isinstance(item, (list, tuple)):
+            # If the value is a list or tuple, recursively go through this one
             copy[i] = _process_list_for_saving(item)
         elif item is None:
             copy[i] = "None"
-    return copy
+    # The returned object should be of the same type as the input
+    return copy if isinstance(l, list) else tuple(copy)
 
 
 def _process_dict_for_saving(d: dict) -> dict:
@@ -396,7 +398,7 @@ def _process_dict_for_saving(d: dict) -> dict:
         elif isinstance(v, dict):
             # If the value is another dict, recursively go through this one
             copy[k] = _process_dict_for_saving(v)
-        elif isinstance(v, list):
+        elif isinstance(v, (list, tuple)):
             # If the value is a list, recursively go through this one
             copy[k] = _process_list_for_saving(v)
         elif v is None:

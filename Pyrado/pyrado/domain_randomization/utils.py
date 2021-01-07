@@ -32,6 +32,15 @@ from typing import Sequence, Union
 from tabulate import tabulate
 
 import pyrado
+from pyrado.environment_wrappers.action_normalization import ActNormWrapper
+from pyrado.environment_wrappers.base import EnvWrapper
+from pyrado.environment_wrappers.downsampling import DownsamplingWrapper
+from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper, ObsRunningNormWrapper
+from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
+from pyrado.environment_wrappers.utils import typed_env
+from pyrado.environments.real_base import RealEnv
+from pyrado.environments.sim_base import SimEnv
+from pyrado.utils.input_output import print_cbt
 
 
 def param_grid(param_values: dict) -> list:
@@ -88,3 +97,55 @@ def print_domain_params(domain_params: Union[dict, Sequence[dict]]):
 
         else:
             raise pyrado.TypeErr(given=domain_params, expected_type=[dict, list])
+
+
+def wrap_like_other_env(
+    env_targ: Union[SimEnv, RealEnv], env_src: [SimEnv, EnvWrapper], use_downsampling: bool = False
+) -> Union[SimEnv, RealEnv]:
+    """
+    Wrap a given real environment like it's simulated counterpart (except the domain randomization of course).
+
+    :param env_targ: target environment e.g. environment representing the physical device
+    :param env_src: source environment e.g. simulation environment used for training
+    :param use_downsampling: apply a wrapper that downsamples the actions if the sampling frequencies don't match
+    :return: target environment
+    """
+    if use_downsampling and env_src.dt > env_targ.dt:
+        if typed_env(env_targ, DownsamplingWrapper) is None:
+            ds_factor = int(env_src.dt / env_targ.dt)
+            env_targ = DownsamplingWrapper(env_targ, ds_factor)
+            print_cbt(f"Wrapped the target environment with a DownsamplingWrapper of factor {ds_factor}.", "y")
+        else:
+            print_cbt("The target environment was already wrapped with a DownsamplingWrapper.", "y")
+
+    if typed_env(env_src, ActNormWrapper) is not None:
+        if typed_env(env_targ, ActNormWrapper) is None:
+            env_targ = ActNormWrapper(env_targ)
+            print_cbt("Wrapped the target environment with an ActNormWrapper.", "y")
+        else:
+            print_cbt("The target environment was already wrapped with an ActNormWrapper.", "y")
+
+    if typed_env(env_src, ObsNormWrapper) is not None:
+        if typed_env(env_targ, ObsNormWrapper) is None:
+            env_targ = ObsNormWrapper(env_targ)
+            print_cbt("Wrapped the target environment with an ObsNormWrapper.", "y")
+        else:
+            print_cbt("The target environment was already wrapped with an ObsNormWrapper.", "y")
+
+    if typed_env(env_src, ObsRunningNormWrapper) is not None:
+        if typed_env(env_targ, ObsRunningNormWrapper) is None:
+            env_targ = ObsRunningNormWrapper(env_targ)
+            print_cbt("Wrapped the target environment with an ObsRunningNormWrapper.", "y")
+        else:
+            print_cbt("The target environment was already wrapped with an ObsRunningNormWrapper.", "y")
+
+    if typed_env(env_src, ObsPartialWrapper) is not None:
+        if typed_env(env_targ, ObsPartialWrapper) is None:
+            env_targ = ObsPartialWrapper(
+                env_targ, mask=typed_env(env_src, ObsPartialWrapper).keep_mask, keep_selected=True
+            )
+            print_cbt("Wrapped the target environment with an ObsPartialWrapper.", "y")
+        else:
+            print_cbt("The target environment was already wrapped with an ObsPartialWrapper.", "y")
+
+    return env_targ

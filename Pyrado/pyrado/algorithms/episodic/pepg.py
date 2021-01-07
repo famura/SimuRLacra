@@ -128,6 +128,7 @@ class PEPG(ParameterExploring):
                 self._policy.num_param,
                 std_init=expl_std_init,
                 std_min=expl_std_min,
+                use_cuda=self._policy.device != "cpu",
             )
         )
 

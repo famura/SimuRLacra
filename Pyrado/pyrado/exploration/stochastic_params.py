@@ -141,6 +141,7 @@ class NormalParamNoise(StochasticParamExplStrat):
         std_init: float = 1.0,
         std_min: [float, Sequence[float]] = 0.01,
         train_mean: bool = False,
+        use_cuda: bool = False,
     ):
         """
         Constructor
@@ -150,17 +151,18 @@ class NormalParamNoise(StochasticParamExplStrat):
         :param std_init: initial standard deviation for the noise distribution
         :param std_min: minimal standard deviation for the exploration noise
         :param train_mean: set `True` if the noise should have an adaptive nonzero mean, `False` otherwise
+        :param use_cuda: `True` to move the module to the GPU, `False` (default) to use the CPU
         """
         # Call the StochasticParamExplStrat's constructor
         super().__init__(param_dim)
 
         if full_cov:
             self._noise = FullNormalNoise(
-                use_cuda=False, noise_dim=param_dim, std_init=std_init, std_min=std_min, train_mean=train_mean
+                noise_dim=param_dim, std_init=std_init, std_min=std_min, train_mean=train_mean, use_cuda=use_cuda
             )
         else:
             self._noise = DiagNormalNoise(
-                use_cuda=False, noise_dim=param_dim, std_init=std_init, std_min=std_min, train_mean=train_mean
+                noise_dim=param_dim, std_init=std_init, std_min=std_min, train_mean=train_mean, use_cuda=use_cuda
             )
 
     def reset_expl_params(self, *args, **kwargs):
@@ -174,7 +176,7 @@ class NormalParamNoise(StochasticParamExplStrat):
 
     @property
     def noise(self) -> [FullNormalNoise, DiagNormalNoise]:
-        """ Get the exploation noise. """
+        """ Get the exploration noise. """
         return self._noise
 
     def sample_param_set(self, nominal_params: to.Tensor) -> to.Tensor:

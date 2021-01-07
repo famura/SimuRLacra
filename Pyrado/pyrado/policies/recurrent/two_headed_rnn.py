@@ -104,7 +104,6 @@ class TwoHeadedRNNPolicyBase(TwoHeadedPolicy, RecurrentPolicy):
         # Call custom initialization function after PyTorch network parameter initialization
         init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()
         self.init_param(None, **init_param_kwargs)
-
         self.to(self.device)
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
@@ -122,7 +121,7 @@ class TwoHeadedRNNPolicyBase(TwoHeadedPolicy, RecurrentPolicy):
         return self._hidden_size * self.num_recurrent_layers
 
     def forward(self, obs: to.Tensor, hidden: to.Tensor = None) -> Tuple[to.Tensor, to.Tensor, to.Tensor]:
-        obs = obs.to(self.device)
+        obs = obs.to(device=self.device, dtype=to.get_default_dtype())
 
         # Adjust the input's shape to be compatible with PyTorch's RNN implementation
         batch_size = None

@@ -41,15 +41,15 @@
   </Body>
 
   <Body name="Basket" rigid_body_joints="1. 0 0.68 0 0 0" physics="kinematic" mass="5.">
-    <Shape type="BOX" extents="0.5 0.7 0.02" transform="0 0 0.01 0 0 0" graphics="true" physics="true" material="basket_mat" textureFile="textures/wood-ikea-birch.jpg"/>
-    <Shape type="BOX" extents="0.02 0.7 0.1" transform="0.26 0 0.05 0 0 0" graphics="true" physics="true" material="basket_mat" textureFile="textures/wood-ikea-birch.jpg"/>
-    <Shape type="BOX" extents="0.02 0.7 0.1" transform="-0.26 0 0.05 0 0 0" graphics="true" physics="true" material="basket_mat" textureFile="textures/wood-ikea-birch.jpg"/>
-    <Shape type="BOX" extents="0.54 0.02 0.1" transform="0 0.36 0.05 0 0 0" graphics="true" physics="true" material="basket_mat" textureFile="textures/wood-ikea-birch.jpg"/>
-    <Shape type="BOX" extents="0.54 0.02 0.1" transform="0 -0.36 0.05 0 0 0" graphics="true" physics="true" material="basket_mat" textureFile="textures/wood-ikea-birch.jpg"/>
+    <Shape type="BOX" resizeable="true" extents="0.5 0.7 0.02" transform="0 0 0.01 0 0 0" graphics="true" physics="true" material="basket_mat" textureFile="textures/wood-ikea-birch.jpg"/>
+    <Shape type="BOX" resizeable="true" extents="0.02 0.7 0.1" transform="0.26 0 0.05 0 0 0" graphics="true" physics="true" material="basket_mat" textureFile="textures/wood-ikea-birch.jpg"/>
+    <Shape type="BOX" resizeable="true" extents="0.02 0.7 0.1" transform="-0.26 0 0.05 0 0 0" graphics="true" physics="true" material="basket_mat" textureFile="textures/wood-ikea-birch.jpg"/>
+    <Shape type="BOX" resizeable="true" extents="0.54 0.02 0.1" transform="0 0.36 0.05 0 0 0" graphics="true" physics="true" material="basket_mat" textureFile="textures/wood-ikea-birch.jpg"/>
+    <Shape type="BOX" resizeable="true" extents="0.54 0.02 0.1" transform="0 -0.36 0.05 0 0 0" graphics="true" physics="true" material="basket_mat" textureFile="textures/wood-ikea-birch.jpg"/>
   </Body>
 
   <Body name="Box" rigid_body_joints="1. 0 0.73 0 0 0" physics="dynamic" mass="0.3" color="BLUE"> <!-- in hand -->
-    <Shape type="BOX" extents="0.14 0.18 0.06" graphics="true" physics="true" material="box_mat" textureFile="textures/fMRT_bavaria.jpg"/>
+    <Shape type="BOX" resizeable="true" extents="0.14 0.18 0.06" graphics="true" physics="true" material="box_mat" textureFile="textures/fMRT_bavaria.jpg"/>
     <Shape type="FRAME" scale="0.20"/>
   </Body>
 

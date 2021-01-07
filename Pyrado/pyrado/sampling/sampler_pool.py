@@ -182,8 +182,19 @@ class _WorkerInfo:
         # Send stop signal
         self._to_slave.put(_CMD_STOP)
 
-        # Wait for the process to die
-        self._process.join()
+        # Wait a bit for the process to die
+        self._process.join(2)
+        # Check if stopped
+        if self._process.is_alive():
+            # send SIGTERM in case there was a problem with the graceful stop
+            self._process.terminate()
+            # Wait for the process to die from the SIGTERM
+            self._process.join(2)
+
+            # Check if stopped
+            if self._process.is_alive():
+                # Sigterm didn't work, so break out the big guns with SIGKILL
+                self._process.kill()
 
 
 def _run_set_seed(G, seed):

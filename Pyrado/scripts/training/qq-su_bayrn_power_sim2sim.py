@@ -41,7 +41,7 @@ from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yam
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.experiments import wrap_like_other_env
+from pyrado.domain_randomization.utils import wrap_like_other_env
 
 
 if __name__ == "__main__":
@@ -137,8 +137,8 @@ if __name__ == "__main__":
     # Set the boundaries for the GP
     dp_nom = QQubeSwingUpSim.get_nominal_domain_param()
     ddp_space = BoxSpace(
-        bound_lo=np.array([0.8 * dp_nom["Mp"], 1e-12, 0.8 * dp_nom["Mr"], 1e-12]),
-        bound_up=np.array([1.2 * dp_nom["Mp"], 1e-11, 1.2 * dp_nom["Mr"], 1e-11]),
+        bound_lo=np.array([0.8 * dp_nom["Mp"], 1e-8, 0.8 * dp_nom["Mr"], 1e-8]),
+        bound_up=np.array([1.2 * dp_nom["Mp"], 1e-7, 1.2 * dp_nom["Mr"], 1e-7]),
     )
 
     # Algorithm

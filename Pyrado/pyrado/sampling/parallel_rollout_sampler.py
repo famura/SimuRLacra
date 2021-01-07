@@ -123,7 +123,7 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         self.show_progress_bar = show_progress_bar
 
         # Set method to spawn if using cuda
-        if self.policy.device == "cuda":
+        if self.policy.device != "cpu":
             mp.set_start_method("spawn", force=True)
 
         # Create parallel pool. We use one thread per env because it's easier.

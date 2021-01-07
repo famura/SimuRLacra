@@ -64,7 +64,7 @@ def create_recurrent_policy():
 
 if __name__ == "__main__":
     tmpfile = "/tmp/torchscriptsaved.pt"
-    to.set_default_dtype(to.double)
+    to.set_default_dtype(to.float32)  # former double
 
     # Create a Pyrado policy
     model = create_nonrecurrent_policy()

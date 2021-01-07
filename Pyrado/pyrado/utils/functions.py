@@ -101,16 +101,16 @@ def skyline(
     t_end = np.asarray(t_end, dtype=np.float32)
 
     # First iter
-    t_itvl = t_intvl_space.sample_uniform()
-    t_itvl = np.clip(t_itvl, dt, t_end + dt)
-    t = np.arange(start=0.0, stop=t_itvl, step=dt)
+    t_intvl = t_intvl_space.sample_uniform()
+    t_intvl = np.clip(t_intvl, dt, t_end + dt)
+    t = np.arange(start=0.0, stop=t_intvl, step=dt)
     vals = val_space.sample_uniform() * np.ones_like(t)
 
     # Iterate until the time is up
     while t[-1] < t_end:
-        t_itvl = t_intvl_space.sample_uniform()
-        t_itvl = np.clip(t_itvl, dt, t_end - t[-1] + dt)
-        t_new = np.arange(start=t[-1] + dt, stop=t[-1] + t_itvl, step=dt)
+        t_intvl = t_intvl_space.sample_uniform()
+        t_intvl = np.clip(t_intvl, dt, t_end - t[-1] + dt)
+        t_new = np.arange(start=t[-1] + dt, stop=t[-1] + t_intvl, step=dt)
         t = np.concatenate([t, t_new])
         val_new = val_space.sample_uniform() * np.ones_like(t_new)
         vals = np.concatenate([vals, val_new])

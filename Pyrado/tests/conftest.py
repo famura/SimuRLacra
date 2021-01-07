@@ -63,7 +63,7 @@ from pyrado.policies.recurrent.two_headed_rnn import TwoHeadedGRUPolicy, TwoHead
 
 
 # Set default torch dtype globally to avoid inconsistent errors depending on the test run order
-to.set_default_dtype(to.double)
+to.set_default_dtype(to.float32)
 
 # Check if RcsPySim, Bullet, and Vortex are available
 try:
@@ -384,7 +384,7 @@ class DefaultEnvs:
             taskCombinationMethod="sum",
             checkJointLimits=True,
             collisionAvoidanceIK=True,
-            observeVelocity=True,
+            observeVelocity=False,
             observeCollisionCost=True,
             observePredictedCollisionCost=False,  # True causes a crash
             observeManipulabilityIndex=True,
@@ -428,6 +428,7 @@ class DefaultEnvs:
             graphFileName="gBoxLifting_posCtrl.xml",
             dt=0.01,
             max_steps=1500,
+            fixed_init_state=True,
             tasks_left=None,
             tasks_right=None,
             ref_frame="basket",
@@ -453,6 +454,7 @@ class DefaultEnvs:
             graphFileName="gBoxLifting_trqCtrl.xml",
             dt=0.01,
             max_steps=1500,
+            fixed_init_state=True,
             tasks_left=None,
             tasks_right=None,
             ref_frame="basket",
@@ -478,6 +480,7 @@ class DefaultEnvs:
             graphFileName="gBoxLifting_posCtrl.xml",
             dt=0.01,
             max_steps=1500,
+            fixed_init_state=True,
             tasks_left=None,
             tasks_right=None,
             ref_frame="basket",
@@ -503,7 +506,7 @@ class DefaultEnvs:
             graphFileName="gBoxShelving_posCtrl.xml",  # gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml
             dt=1 / 100.0,
             max_steps=2000,
-            fix_init_state=True,
+            fixed_init_state=True,
             ref_frame="upperGoal",
             tasks_left=None,
             tasks_right=None,
@@ -529,7 +532,7 @@ class DefaultEnvs:
             graphFileName="gBoxShelving_posCtrl.xml",  # gBoxShelving_posCtrl.xml or gBoxShelving_trqCtrl.xml
             dt=1 / 100.0,
             max_steps=2000,
-            fix_init_state=True,
+            fixed_init_state=True,
             ref_frame="upperGoal",
             tasks_left=None,
             tasks_right=None,
@@ -555,7 +558,7 @@ class DefaultEnvs:
             graphFileName="gBoxFlipping_posCtrl.xml",  # gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml
             dt=1 / 100.0,
             max_steps=2000,
-            fix_init_state=True,
+            fixed_init_state=True,
             ref_frame="table",
             tasks_left=None,
             tasks_right=None,
@@ -581,7 +584,7 @@ class DefaultEnvs:
             graphFileName="gBoxFlipping_posCtrl.xml",  # gBoxFlipping_posCtrl.xml or gBoxFlipping_trqCtrl.xml
             dt=1 / 100.0,
             max_steps=2000,
-            fix_init_state=True,
+            fixed_init_state=True,
             ref_frame="table",
             tasks_left=None,
             tasks_right=None,
@@ -744,14 +747,4 @@ def default_randomizer():
         NormalDomainParam(name="length", mean=4, std=0.6, clip_up=50.1),
         UniformDomainParam(name="time_delay", mean=13, halfspan=6, clip_up=17, roundint=True),
         MultivariateNormalDomainParam(name="multidim", mean=10 * to.ones((2,)), cov=2 * to.eye(2), clip_up=11),
-    )
-
-
-@pytest.fixture(scope="function")
-def default_dummy_randomizer():
-    return DomainRandomizer(
-        DomainParam(name="mass", mean=1.2),
-        DomainParam(name="special", mean=0),
-        DomainParam(name="length", mean=4),
-        DomainParam(name="time_delay", mean=13),
     )

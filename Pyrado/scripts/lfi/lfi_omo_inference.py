@@ -6,10 +6,11 @@ from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.logger.experiment import setup_experiment, ask_for_experiment
 from pyrado.algorithms.inference.lfi import LFI, EnvSimulator
+from pyrado.algorithms.inference.normalizing_flows import NormalizingFlow
 from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.utils.argparser import get_argparser
 from scripts.lfi.plot_thetas import plot_2d_thetas
-from scripts.lfi.normalizing_flows import train_nflows
+
 
 from sbi.inference import SNPE
 import sbi.utils as utils
@@ -94,8 +95,21 @@ if __name__ == "__main__":
     )
 
     # estimate prior with normalizing flows
-    nflows_iter=5000
-    prior = train_nflows(to.cat([obs for obs in sample_params], 0), num_iter=nflows_iter)
+    # create an experiment
+    algo_name = "NFLOWS"
+    if not args.eval:
+        ex_dir = setup_experiment(simulator.name, f"{algo_name}")
+    else:
+        ex_dir = ask_for_experiment() if args.dir is None else args.dir
+
+    n_flows = NormalizingFlow(save_dir=ex_dir)
+
+    if not args.eval:
+        samples = to.cat([obs for obs in sample_params], 0)
+        prior = n_flows.train(samples, snapshot_mode="latest")
+    else:
+        prior = pyrado.load(None, "normalizing_flow", "pt", ex_dir)
+
     marginals = prior.sample(num_samples).detach()
 
     # plot useful statistics

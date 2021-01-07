@@ -114,7 +114,7 @@ class ResultContainer:
                             rets.append(np.load(osp.join(eval_dir, f)))
                             num_samples.append(len(rets))
                         elif f.endswith(".pt"):
-                            rets.append(to.load(osp.join(eval_dir, f)).numpy())
+                            rets.append(to.load(osp.join(eval_dir, f)).cpu().numpy())
                         else:
                             raise FileNotFoundError
 

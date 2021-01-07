@@ -55,6 +55,7 @@ AMIKControllerActivation::AMIKControllerActivation(RcsGraph* graph, TaskCombinat
 {
     this->x_des = MatNd_clone(dx_des); // dx_des comes from AMIKGeneric
     activation = MatNd_create((unsigned int) getController()->getNumberOfTasks(), 1);
+    dimAlwaysActiveTasks = 0;
 }
 
 AMIKControllerActivation::~AMIKControllerActivation()

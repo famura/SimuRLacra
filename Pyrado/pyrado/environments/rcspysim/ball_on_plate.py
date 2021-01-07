@@ -159,14 +159,11 @@ class BallOnPlate2DSim(BallOnPlateSim, Serializable):
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
-        state_des = task_args.get("state_des", None)
-        if state_des is None:
-            state_des = np.zeros(self.obs_space.flat_dim)
+        state_des = task_args.get("state_des", np.zeros(self.obs_space.flat_dim))
 
-        Q = np.diag(
-            [1e-1, 1e-1, 1e1, 1e1, 0, 1e-3, 1e-3, 1e-2, 1e-2, 0]  # Pa, Pb, Bx, By, Bz,
-        )  # Pad, Pbd, Bxd, Byd, Bzd
+        Q = np.diag([1e-1, 1e-1, 1e1, 1e1, 0, 1e-3, 1e-3, 1e-2, 1e-2, 0])  # Pa, Pb, Bx, By, Bz, Pad, Pbd, Bxd, Byd, Bzd
         R = np.diag([1e-3, 1e-3])  # Padd, Pbdd
+
         return DesStateTask(
             self.spec, state_des, ScaledExpQuadrErrRewFcn(Q, R, self.state_space, self.act_space, min_rew=1e-4)
         )
@@ -194,29 +191,11 @@ class BallOnPlate5DSim(BallOnPlateSim, Serializable):
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
-        state_des = task_args.get("state_des", None)
-        if state_des is None:
-            state_des = np.zeros(self.obs_space.flat_dim)
+        state_des = task_args.get("state_des", np.zeros(self.obs_space.flat_dim))
+
         Q = np.diag(
-            [
-                1e-0,
-                1e-0,
-                1e-0,
-                1e-0,
-                1e-0,
-                1e3,
-                1e3,
-                1e3,  # Px, Py, Pz, Pa, Pb, Bx, By, Bz,
-                1e-2,
-                1e-2,
-                1e-2,
-                1e-2,
-                1e-2,
-                1e-0,
-                1e-0,
-                1e-0,
-            ]
-        )  # Pxd, Pyd, Pzd, Pad, Pbd, Bxd, Byd, Bzd
+            [1e-0, 1e-0, 1e-0, 1e-0, 1e-0, 1e3, 1e3, 1e3, 1e-2, 1e-2, 1e-2, 1e-2, 1e-2, 1e-0, 1e-0, 1e-0]
+        )  # Px, Py, Pz, Pa, Pb, Bx, By, Bz, Pxd, Pyd, Pzd, Pad, Pbd, Bxd, Byd, Bzd
         R = np.diag([1e-2, 1e-2, 1e-2, 1e-3, 1e-3])  # Pxdd, Pydd, Pzdd, Padd, Pbdd
         return DesStateTask(
             self.spec, state_des, ScaledExpQuadrErrRewFcn(Q, R, self.state_space, self.act_space, min_rew=1e-4)

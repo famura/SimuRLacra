@@ -35,9 +35,10 @@ from torch.distributions.normal import Normal
 from pyrado.algorithms.meta.adr import RewardGenerator
 from pyrado.algorithms.utils import compute_action_statistics, until_thold_exceeded, get_grad_via_torch
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer_omo
+from pyrado.environments.sim_base import SimEnv
 from pyrado.exploration.stochastic_action import NormalActNoiseExplStrat
 from pyrado.policies.feed_forward.fnn import FNNPolicy
-from pyrado.policies.base import TwoHeadedPolicy
+from pyrado.policies.base import TwoHeadedPolicy, Policy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
@@ -66,7 +67,7 @@ from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
     ids=["lin", "fnn", "rnn", "lstm", "gru", "adn", "thfnn", "thgru"],
     indirect=True,
 )
-def test_action_statistics(env, policy):
+def test_action_statistics(env: SimEnv, policy: Policy):
     sigma = 1.0  # with lower values like 0.1 we can observe violations of the tolerances
 
     # Create an action-based exploration strategy
@@ -127,7 +128,7 @@ def test_adr_reward_generator(env):
     policy = FNNPolicy(reference_env.spec, hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
     dr = create_default_randomizer_omo()
     dr.randomize(num_samples=1)
-    random_env.domain_param = dr.get_params(format="dict", dtype="numpy")
+    random_env.domain_param = dr.get_params(fmt="dict", dtype="numpy")
     reference_sampler = ParallelRolloutSampler(reference_env, policy, num_workers=1, min_steps=1000)
     random_sampler = ParallelRolloutSampler(random_env, policy, num_workers=1, min_steps=1000)
 

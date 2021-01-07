@@ -33,6 +33,7 @@ from matplotlib import pyplot as plt
 from typing import Union, Sequence, Optional
 
 import pyrado
+from pyrado.sampling.bootstrapping import bootstrap_ci
 from pyrado.utils.data_types import merge_dicts
 
 
@@ -86,8 +87,9 @@ def draw_curve_from_data(
     vline_label: str = "approx. solved",
     title: Optional[str] = None,
     show_legend: bool = True,
-    legend_kwargs: dict = None,
+    cmp_kwargs: dict = None,
     plot_kwargs: dict = None,
+    legend_kwargs: dict = None,
 ) -> plt.Figure:
     """
     Create a box or violin plot for a list of data arrays or a pandas DataFrame.
@@ -115,15 +117,21 @@ def draw_curve_from_data(
     :param vline_label: label for the vertical line
     :param show_legend: if `True` the legend is shown, useful when handling multiple subplots
     :param title: title displayed above the figure, set to None to suppress the title
+    :param cmp_kwargs: keyword arguments forwarded to functions computing the statistics of interest
+    :param plot_kwargs: keyword arguments forwarded to the plotting` functions
     :param legend_kwargs: keyword arguments forwarded to pyplot's `legend()` function, e.g. `loc='best'`
-    :param plot_kwargs: keyword arguments forwarded to seaborn's `boxplot()` or `violinplot()` function
     :return: handle to the resulting figure
     """
     plot_type = plot_type.lower()
-    if plot_type not in ["mean_std", "min_mean_max"]:
-        raise pyrado.ValueErr(given=plot_type, eq_constraint="mean_std or min_mean_max")
+    if plot_type not in ["mean_std", "min_mean_max", "ci_on_mean"]:
+        raise pyrado.ValueErr(given=plot_type, eq_constraint="mean_std, min_mean_max, ci_on_mean")
     if not isinstance(data, (list, to.Tensor, np.ndarray, pd.DataFrame)):
         raise pyrado.TypeErr(given=data, expected_type=[list, to.Tensor, np.ndarray, pd.DataFrame])
+
+    # Set defaults which can be overwritten by passing plot_kwargs
+    cmp_kwargs = merge_dicts(
+        [dict(num_reps=1000, confidence_level=0.9, bias_correction=False, studentized=False), cmp_kwargs]
+    )
 
     if isinstance(data, pd.DataFrame):
         data = data.to_numpy()
@@ -146,8 +154,22 @@ def draw_curve_from_data(
         df = df.assign(min=data_min)
         df = df.assign(max=data_max)
 
+    elif plot_type == "ci_on_mean":
+        _, data_lo, data_up = bootstrap_ci(
+            data.T if ax_calc == 1 else data,
+            stat_fcn=np.mean,
+            num_reps=cmp_kwargs["num_reps"],
+            alpha=cmp_kwargs["confidence_level"],
+            ci_sides=2,
+            bias_correction=cmp_kwargs["bias_correction"],
+            studentized=cmp_kwargs["studentized"],
+            seed=0,
+        )
+        df = df.assign(ci_lo=data_lo)
+        df = df.assign(ci_up=data_up)
+
     # Forward the actual plotting
-    draw_curve(
+    return draw_curve(
         plot_type,
         ax,
         df,
@@ -160,8 +182,8 @@ def draw_curve_from_data(
         vline_label,
         title,
         show_legend,
-        legend_kwargs,
         plot_kwargs,
+        legend_kwargs,
     )
 
 
@@ -178,8 +200,8 @@ def draw_curve(
     vline_label: str = "approx. solved",
     title: Optional[str] = None,
     show_legend: bool = True,
-    legend_kwargs: dict = None,
     plot_kwargs: dict = None,
+    legend_kwargs: dict = None,
 ) -> plt.Figure:
     """
     Create a box or violin plot for a list of data arrays or a pandas DataFrame.
@@ -206,13 +228,13 @@ def draw_curve(
     :param vline_label: label for the vertical line
     :param show_legend: if `True` the legend is shown, useful when handling multiple subplots
     :param title: title displayed above the figure, set to None to suppress the title
+    :param plot_kwargs: keyword arguments forwarded to the plotting` functions
     :param legend_kwargs: keyword arguments forwarded to pyplot's `legend()` function, e.g. `loc='best'`
-    :param plot_kwargs: keyword arguments forwarded to seaborn's `boxplot()` or `violinplot()` function
     :return: handle to the resulting figure
     """
     plot_type = plot_type.lower()
-    if plot_type not in ["mean_std", "min_mean_max"]:
-        raise pyrado.ValueErr(given=plot_type, eq_constraint="mean_std or min_mean_max")
+    if plot_type not in ["mean_std", "min_mean_max", "ci_on_mean"]:
+        raise pyrado.ValueErr(given=plot_type, eq_constraint="mean_std, min_mean_max, or ci_on_mean")
     if not isinstance(data, pd.DataFrame):
         raise pyrado.TypeErr(given=data, expected_type=pd.DataFrame)
     if x_label is not None and not isinstance(x_label, str):
@@ -221,7 +243,8 @@ def draw_curve(
         raise pyrado.TypeErr(given=y_label, expected_type=str)
 
     # Set defaults which can be overwritten by passing plot_kwargs
-    plot_kwargs = merge_dicts([dict(alpha=0.3), plot_kwargs])
+    plot_kwargs = merge_dicts([dict(alpha=0.3, num_stds=2), plot_kwargs])
+    num_stds = plot_kwargs.pop("num_stds")  # pop here since some plotting functions do not expect num_stds
     legend_kwargs = dict() if legend_kwargs is None else legend_kwargs
     # palette = sns.color_palette() if palette is None else palette
 
@@ -235,7 +258,6 @@ def draw_curve(
     if plot_type == "mean_std":
         if not ("mean" in data.columns and "std" in data.columns):
             raise pyrado.KeyErr(keys="'mean' and 'std'", container=data)
-        num_stds = 2
         if area_label is None:
             area_label = rf"$\pm {num_stds}$ std"
         ax.fill_between(
@@ -252,6 +274,13 @@ def draw_curve(
         if area_label is None:
             area_label = r"min \& max"
         ax.fill_between(x_grid, data["min"], data["max"], label=area_label, **plot_kwargs)
+
+    elif plot_type == "ci_on_mean":
+        if not ("mean" in data.columns and "ci_lo" in data.columns and "ci_up" in data.columns):
+            raise pyrado.KeyErr(keys="'mean' and 'ci_lo' and 'ci_up'", container=data)
+        if area_label is None:
+            area_label = r"conf. intvl."
+        ax.fill_between(x_grid, data["ci_lo"], data["ci_up"], label=area_label, **plot_kwargs)
 
     # plot mean last for proper z-ordering
     plot_kwargs["alpha"] = 1

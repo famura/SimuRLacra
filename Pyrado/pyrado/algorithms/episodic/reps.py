@@ -128,6 +128,7 @@ class REPS(ParameterExploring):
             full_cov=True,
             std_init=expl_std_init,
             std_min=expl_std_min,
+            use_cuda=self._policy.device != "cpu",
         )
         if symm_sampling:
             # Exploration strategy based on symmetrical normally distributed noise
@@ -207,7 +208,7 @@ class REPS(ParameterExploring):
             if self.optim_mode == "scipy" and not isinstance(eta, to.Tensor):
                 # We can arrive there during the 'normal' REPS routine, but also when computing the gradient (jac) for
                 # the scipy optimizer. In the latter case, eta is already a tensor.
-                eta = to.from_numpy(eta)
+                eta = to.from_numpy(eta).to(to.get_default_dtype())
             self.wml(eta, param_samples, w)
 
             distr_new = MultivariateNormal(self._policy.param_values, self._expl_strat.cov.data)
@@ -254,8 +255,8 @@ class REPS(ParameterExploring):
             else:
                 raise pyrado.TypeErr(msg="Received an improper loss function in REPS.minimize()!")
 
-            eta = res["x"]
-            self._log_eta = to.log(to.from_numpy(eta))
+            eta = to.from_numpy(res["x"]).to(to.get_default_dtype())
+            self._log_eta = to.log(eta)
 
         else:
             for _ in tqdm(
@@ -322,7 +323,7 @@ class REPS(ParameterExploring):
     def update(self, param_results: ParameterSamplingResult, ret_avg_curr: float = None):
         # Average the return values over the rollouts
         rets_avg_ros = param_results.mean_returns
-        rets_avg_ros = to.from_numpy(rets_avg_ros)
+        rets_avg_ros = to.from_numpy(rets_avg_ros).to(to.get_default_dtype())
 
         with to.no_grad():
             distr_old = MultivariateNormal(self._policy.param_values, self._expl_strat.cov.data)

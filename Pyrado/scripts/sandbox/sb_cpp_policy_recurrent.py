@@ -43,7 +43,7 @@ from rcsenv import ControlPolicy
 
 if __name__ == "__main__":
     tmpfile = "/tmp/torchscriptsaved.pt"
-    to.set_default_dtype(to.double)
+    to.set_default_dtype(to.float32)  # former double
 
     # Seclect the policy type
     policy_type = "RNN"

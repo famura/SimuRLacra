@@ -30,6 +30,7 @@ import torch as to
 import numpy as np
 from abc import abstractmethod
 from copy import deepcopy
+from typing import Optional
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
@@ -51,7 +52,7 @@ class ParameterExploring(Algorithm):
         policy: Policy,
         max_iter: int,
         num_rollouts: int,
-        pop_size: [int, None] = None,
+        pop_size: Optional[int] = None,
         num_workers: int = 4,
         logger: StepLogger = None,
     ):
@@ -92,8 +93,8 @@ class ParameterExploring(Algorithm):
         self.sampler = ParameterExplorationSampler(
             env,
             policy,
-            num_workers=num_workers,
             num_rollouts_per_param=num_rollouts,
+            num_workers=num_workers,
         )
 
         # Stopping criterion
@@ -129,7 +130,7 @@ class ParameterExploring(Algorithm):
         # Reset the exploration strategy, internal variables and the random seeds
         super().reset(seed)
 
-    def step(self, snapshot_mode: str, meta_info: dict = None):
+    def step(self, snapshot_mode: str, meta_info: Optional[dict] = None):
         # Sample new policy parameters
         param_sets = self._expl_strat.sample_param_sets(
             self._policy.param_values,
@@ -189,7 +190,7 @@ class ParameterExploring(Algorithm):
         """
         raise NotImplementedError
 
-    def save_snapshot(self, meta_info: dict = None):
+    def save_snapshot(self, meta_info: Optional[dict] = None):
         super().save_snapshot(meta_info)
 
         # Save the best element of the current population

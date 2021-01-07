@@ -37,7 +37,6 @@
 #include "observation/OMBodyStateLinear.h"
 #include "observation/OMBodyStateAngular.h"
 #include "observation/OMCombined.h"
-#include "observation/OMJointState.h"
 #include "observation/OMPartial.h"
 #include "observation/OMDynamicalSystemGoalDistance.h"
 #include "observation/OMForceTorque.h"
@@ -84,16 +83,16 @@ protected:
         std::string actionModelType = "unspecified";
         properties->getProperty(actionModelType, "actionModelType");
         
+        // Get the method how to combine the movement primitives / tasks given their activation
+        std::string taskCombinationMethod = "unspecified";
+        properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
+        TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(taskCombinationMethod);
+        
         // Common for the action models
         RcsBody* effector = RcsGraph_getBodyByName(graph, "Effector");
         RCHECK(effector);
         
         if (actionModelType == "ik_activation") {
-            // Get the method how to combine the movement primitives / tasks given their activation
-            std::string taskCombinationMethod = "unspecified";
-            properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
-            TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(taskCombinationMethod);
-            
             // Create the action model
             auto amIK = new AMIKControllerActivation(graph, tcm);
             std::vector<Task*> tasks;
@@ -163,11 +162,6 @@ protected:
             for (auto& task : tasks) {
                 taskRel.push_back(task.release());
             }
-            
-            // Get the method how to combine the movement primitives / tasks given their activation
-            std::string taskCombinationMethod = "unspecified";
-            properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
-            TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(taskCombinationMethod);
             
             // Create the action model
             return new AMDynamicalSystemActivation(innerAM.release(), taskRel, tcm);

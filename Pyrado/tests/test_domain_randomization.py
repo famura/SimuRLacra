@@ -31,13 +31,18 @@ import torch as to
 import numpy as np
 from copy import deepcopy
 
+import pyrado
+from pyrado.domain_randomization.domain_randomizer import DistributionFreeDomainRandomizer
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
+from pyrado.environments.sim_base import SimEnv
+from tests.conftest import m_needs_bullet, m_needs_mujoco
+
 from pyrado.domain_randomization.domain_parameter import (
     NormalDomainParam,
     MultivariateNormalDomainParam,
     BernoulliDomainParam,
 )
 from pyrado.domain_randomization.utils import param_grid
-from tests.conftest import m_needs_bullet, m_needs_mujoco
 
 
 @pytest.mark.parametrize(
@@ -57,64 +62,56 @@ def test_domain_param(dp):
         assert len(s) == num_samples
 
 
-def test_randomizer_dummy(default_dummy_randomizer):
-    default_dummy_randomizer.randomize(10)
-    samples = default_dummy_randomizer.get_params()
-    for i in range(10):
-        # The dummy randomizer should always return the nominal parameter values
-        assert samples[i] == samples[0]  # only works if none of the values is an array
-
-
 def test_randomizer(default_randomizer):
     print(default_randomizer)
     # Generate 7 samples
     default_randomizer.randomize(7)
 
     # Test all variations of the getter function's parameters format and dtype
-    pp_3_to_dict = default_randomizer.get_params(3, format="dict", dtype="torch")
+    pp_3_to_dict = default_randomizer.get_params(3, fmt="dict", dtype="torch")
     assert isinstance(pp_3_to_dict, dict)
     assert isinstance(pp_3_to_dict["mass"], list)
     assert len(pp_3_to_dict["mass"]) == 3
     assert isinstance(pp_3_to_dict["mass"][0], to.Tensor)
     assert isinstance(pp_3_to_dict["multidim"][0], to.Tensor) and pp_3_to_dict["multidim"][0].shape[0] == 2
-    pp_3_to_list = default_randomizer.get_params(3, format="list", dtype="torch")
+    pp_3_to_list = default_randomizer.get_params(3, fmt="list", dtype="torch")
     assert isinstance(pp_3_to_list, list)
     assert len(pp_3_to_list) == 3
     assert isinstance(pp_3_to_list[0], dict)
     assert isinstance(pp_3_to_list[0]["mass"], to.Tensor)
     assert isinstance(pp_3_to_list[0]["multidim"], to.Tensor) and pp_3_to_list[0]["multidim"].shape[0] == 2
-    pp_3_np_dict = default_randomizer.get_params(3, format="dict", dtype="numpy")
+    pp_3_np_dict = default_randomizer.get_params(3, fmt="dict", dtype="numpy")
     assert isinstance(pp_3_np_dict, dict)
     assert isinstance(pp_3_np_dict["mass"], list)
     assert len(pp_3_np_dict["mass"]) == 3
     assert isinstance(pp_3_np_dict["mass"][0], np.ndarray)
     assert isinstance(pp_3_np_dict["multidim"][0], np.ndarray) and pp_3_np_dict["multidim"][0].size == 2
-    pp_3_np_list = default_randomizer.get_params(3, format="list", dtype="numpy")
+    pp_3_np_list = default_randomizer.get_params(3, fmt="list", dtype="numpy")
     assert isinstance(pp_3_np_list, list)
     assert len(pp_3_np_list) == 3
     assert isinstance(pp_3_np_list[0], dict)
     assert isinstance(pp_3_np_list[0]["mass"], np.ndarray)
     assert isinstance(pp_3_np_list[0]["multidim"], np.ndarray) and pp_3_np_list[0]["multidim"].size == 2
 
-    pp_all_to_dict = default_randomizer.get_params(-1, format="dict", dtype="torch")
+    pp_all_to_dict = default_randomizer.get_params(-1, fmt="dict", dtype="torch")
     assert isinstance(pp_all_to_dict, dict)
     assert isinstance(pp_all_to_dict["mass"], list)
     assert len(pp_all_to_dict["mass"]) == 7
     assert isinstance(pp_all_to_dict["mass"][0], to.Tensor)
     assert isinstance(pp_all_to_dict["multidim"][0], to.Tensor) and pp_all_to_dict["multidim"][0].shape[0] == 2
-    pp_all_to_list = default_randomizer.get_params(-1, format="list", dtype="torch")
+    pp_all_to_list = default_randomizer.get_params(-1, fmt="list", dtype="torch")
     assert isinstance(pp_all_to_list, list)
     assert len(pp_all_to_list) == 7
     assert isinstance(pp_all_to_list[0], dict)
     assert isinstance(pp_all_to_list[0]["mass"], to.Tensor)
     assert isinstance(pp_all_to_list[0]["multidim"], to.Tensor) and pp_all_to_list[0]["multidim"].shape[0] == 2
-    pp_all_np_dict = default_randomizer.get_params(-1, format="dict", dtype="numpy")
+    pp_all_np_dict = default_randomizer.get_params(-1, fmt="dict", dtype="numpy")
     assert isinstance(pp_all_np_dict, dict)
     assert isinstance(pp_all_np_dict["mass"], list)
     assert len(pp_all_np_dict["mass"]) == 7
     assert isinstance(pp_all_np_dict["mass"][0], np.ndarray)
     assert isinstance(pp_all_np_dict["multidim"][0], np.ndarray) and pp_all_np_dict["multidim"][0].size == 2
-    pp_all_np_list = default_randomizer.get_params(-1, format="list", dtype="numpy")
+    pp_all_np_list = default_randomizer.get_params(-1, fmt="list", dtype="numpy")
     assert isinstance(pp_all_np_list, list)
     assert len(pp_all_to_list) == 7
     assert isinstance(pp_all_np_list[0], dict)
@@ -123,7 +120,7 @@ def test_randomizer(default_randomizer):
 
 
 def test_rescaling(default_randomizer):
-    # This test relies on a fixed structure of the default_randomizer ('mass' is ele 0, and 'length is ele 2 in the list).
+    # This test relies on a fixed structure of the default_randomizer (mass is ele 0, and length is ele 2 in the list)
     randomizer = deepcopy(default_randomizer)
     randomizer.rescale_distr_param("std", 12.5)
     # Check if the right parameter of the distribution changed
@@ -160,13 +157,13 @@ def test_param_grid():
         pytest.param("default_bop2d_bt", marks=m_needs_bullet),
         pytest.param("default_bop5d_bt", marks=m_needs_bullet),
         pytest.param("default_cth", marks=m_needs_mujoco),
-        # pytest.param('default_hop', marks=m_needs_mujoco),
+        pytest.param("default_hop", marks=m_needs_mujoco),
         pytest.param("default_wambic", marks=m_needs_mujoco),
     ],
-    # ids=['bob', 'omo', 'pend', 'qbb', 'qcp-st', 'qcp-su', 'bop2d', 'bop5d', 'cth', 'hop', 'wam-bic'],
+    ids=["bob", "omo", "pend", "qbb", "qcp-st", "qcp-su", "bop2d", "bop5d", "cth", "hop", "wam-bic"],
     indirect=True,
 )
-def test_setting_dp_vals(env):
+def test_setting_dp_vals(env: SimEnv):
     # Loop over all possible domain parameters and set them to a random value
     for _ in range(5):
         for dp_key in env.supported_domain_param:

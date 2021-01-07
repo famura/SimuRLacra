@@ -110,7 +110,7 @@ if __name__ == "__main__":
             preds = preds_trn_list[idx] if i == 0 else preds_tst_list[idx]
             axs_pred[i].plot(
                 np.arange(num_init_samples, targs.shape[0]),
-                preds.detach().numpy(),
+                preds.detach().cpu().numpy(),
                 label=f"{policy.name} loss: {losses[idx].item():.2e}",
             )
         axs_pred[i].set_xlabel("samples")

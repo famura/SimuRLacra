@@ -289,9 +289,7 @@ class QCartPoleSwingUpReal(QCartPoleReal):
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
-        state_des = task_args.get("state_des", None)
-        if state_des is None:
-            state_des = np.array([0.0, np.pi, 0.0, 0.0])
+        state_des = task_args.get("state_des", np.array([0.0, np.pi, 0.0, 0.0]))
 
         return FinalRewTask(
             RadiallySymmDesStateTask(self.spec, state_des, UnderActuatedSwingUpRewFcn(), idcs=[1]),

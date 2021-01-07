@@ -212,7 +212,7 @@ def rollout(
         if np.isnan(act).any():
             env.render(render_mode, render_step=1)
             raise pyrado.ValueErr(
-                msg=f"At least one observation value is NaN!"
+                msg=f"At least one action value is NaN!"
                 + tabulate(
                     [list(env.act_space.labels), [*color_validity(act, np.invert(np.isnan(act)))]], headers="firstrow"
                 )
@@ -260,7 +260,7 @@ def rollout(
 
         if render_mode.video:
             do_sleep = True
-            if pyrado.mujoco_available:
+            if pyrado.mujoco_loaded:
                 from pyrado.environments.mujoco.base import MujocoSimEnv
 
                 if isinstance(env, MujocoSimEnv):
@@ -329,14 +329,12 @@ def after_rollout_query(env: Env, policy: Policy, rollout: StepSequence) -> tupl
         ["I", "print information about environment (including randomizer), and policy"],
         ["S", "set a domain parameter explicitly"],
         ["P", "plot all observations, actions, and rewards"],
+        ["PO [indices]", "plot all observations, or selected ones by passing separated integers"],
         ["PA", "plot actions"],
         ["PR", "plot rewards"],
-        ["PO", "plot all observations"],
-        ["PO idcs", "plot selected observations (integers separated by whitespaces)"],
         ["PF", "plot features (for linear policy)"],
-        ["PP", "plot policy parameters (not suggested for many parameters)"],
+        ["PPOT", "plot potentials, stimuli, and actions (for potential-based policies)"],
         ["PDT", "plot time deltas (profiling of a real system)"],
-        ["PPOT", "plot potentials, stimuli, and actions"],
         ["E", "exit"],
     ]
 
@@ -353,11 +351,11 @@ def after_rollout_query(env: Env, policy: Policy, rollout: StepSequence) -> tupl
                 raise pyrado.TypeErr(given=inner_env(env), expected_type=SimEnv)
             elif isinstance(inner_env(env), SimEnv):
                 # Get the user input
-                str = input(
+                usr_inp = input(
                     f"Enter the {env.obs_space.flat_dim}-dim initial state"
                     f"(format: each dim separated by a whitespace):\n"
                 )
-                state = list(map(float, str.split()))
+                state = list(map(float, usr_inp.split()))
                 if isinstance(state, list):
                     state = np.array(state)
                     if state.shape != env.obs_space.shape:
@@ -389,7 +387,7 @@ def after_rollout_query(env: Env, policy: Policy, rollout: StepSequence) -> tupl
 
     elif ans == "p":
         draw_observations_actions_rewards(rollout)
-        plt.plot()
+        plt.show()
         return after_rollout_query(env, policy, rollout)
 
     elif ans == "pa":

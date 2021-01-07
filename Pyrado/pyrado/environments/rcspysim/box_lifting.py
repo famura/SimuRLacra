@@ -44,32 +44,14 @@ from pyrado.tasks.predefined import (
     create_check_all_boundaries_task,
     create_task_space_discrepancy_task,
     create_collision_task,
+    create_lifting_task,
+    create_forcemin_task,
 )
 from pyrado.utils.data_types import EnvSpec
 
 
 rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)
 rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "BoxLifting"))
-
-
-def create_box_lift_task(env_spec: EnvSpec, succ_thold: float):
-    # Define the indices for selection. This needs to match the observations' names in RcsPySim.
-    idcs = ["Box_Z"]
-
-    # Get the masked environment specification
-    spec = EnvSpec(
-        env_spec.obs_space, env_spec.act_space, env_spec.state_space.subspace(env_spec.state_space.create_mask(idcs))
-    )
-
-    # Create a desired state task
-    state_des = np.array([0.79])  # box position is measured world coordinates
-    Q = np.diag([5e2])
-    R = 1e-1 * np.eye(spec.act_space.flat_dim)
-    rew_fcn = ExpQuadrErrRewFcn(Q, R)
-    dst = DesStateTask(spec, state_des, rew_fcn)
-
-    # Return the masked tasks
-    return MaskedTask(env_spec, dst, idcs)
 
 
 class BoxLiftingSim(RcsSim, Serializable):
@@ -114,8 +96,11 @@ class BoxLiftingSim(RcsSim, Serializable):
 
     def _create_task(self, task_args: dict) -> Task:
         # Create the tasks
-        task_box = create_box_lift_task(self.spec, succ_thold=0.03)
+        task_box = create_lifting_task(self.spec, ["Box_Z"], des_height=0.78)
         task_check_bounds = create_check_all_boundaries_task(self.spec, penalty=1e3)
+        task_force = create_forcemin_task(
+            self.spec, ["WristLoadCellLBR_R_Fy", "WristLoadCellLBR_R_Fz"], Q=np.diag([1e-4, 1e-4])
+        )
         # task_collision = create_collision_task(self.spec, factor=1.0)
         # task_ts_discrepancy = create_task_space_discrepancy_task(
         #     self.spec, AbsErrRewFcn(q=0.5 * np.ones(2), r=np.zeros(self.act_space.shape))
@@ -125,6 +110,7 @@ class BoxLiftingSim(RcsSim, Serializable):
             [
                 task_box,
                 task_check_bounds,
+                # task_force,
                 # task_collision,
                 # task_ts_discrepancy
             ],

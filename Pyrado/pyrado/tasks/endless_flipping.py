@@ -46,7 +46,7 @@ class EndlessFlippingTask(Task):
         env_spec: EnvSpec,
         rew_fcn: RewFcn,
         init_angle: float,
-        des_angle_delta: float = np.pi / 2.0,
+        des_angle_delta: float,
         angle_tol: float = 1 / 180.0 * np.pi,
     ):
         """

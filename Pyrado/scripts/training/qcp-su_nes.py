@@ -48,8 +48,8 @@ if __name__ == "__main__":
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
-    # Environments
-    env_hparams = dict(dt=1 / 100.0, max_steps=1300, long=False)
+    # Environment
+    env_hparams = dict(dt=1 / 250.0, max_steps=12 * 250, long=False)
     env = QCartPoleSwingUpSim(**env_hparams)
     env = ActNormWrapper(env)
 

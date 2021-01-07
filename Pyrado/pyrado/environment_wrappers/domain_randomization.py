@@ -87,8 +87,9 @@ class MetaDomainRandWrapper(DomainRandWrapper, Serializable):
         :param mapping: mapping from index of the numpy array (coming from the algorithm) to domain parameter name
                         (e.g. mass, length) and the domain distribution parameter (e.g. mean, std)
 
-        .. note::
-            For the `mapping` arg use the this dict constructor:
+        .. code-block:: python
+
+            # For the mapping arg use the this dict constructor
             ```
             m = {0: ('name1', 'parameter_type1'), 1: ('name2', 'parameter_type2')}
             ```
@@ -142,7 +143,7 @@ class DomainRandWrapperLive(DomainRandWrapper, Serializable):
         if domain_param is None:
             # No explicit specification of domain parameters, so randomizer is called to draw a parameter dict
             self._randomizer.randomize(num_samples=1)
-            domain_param = self._randomizer.get_params(format="dict", dtype="numpy")
+            domain_param = self._randomizer.get_params(fmt="dict", dtype="numpy")
 
         # Set the new domain parameters (and the initial sate) by calling the reset method of the wrapped env
         return self._wrapped_env.reset(init_state, domain_param)
@@ -186,7 +187,7 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
         """
         assert isinstance(num_domains, int) and num_domains >= 0
         self._randomizer.randomize(num_domains)
-        self._buffer = self._randomizer.get_params(-1, format="list", dtype="numpy")
+        self._buffer = self._randomizer.get_params(-1, fmt="list", dtype="numpy")
         self._ring_idx = 0
 
     @property

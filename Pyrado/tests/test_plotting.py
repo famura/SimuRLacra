@@ -129,7 +129,7 @@ def test_render_categorical(data):
     ids=["dataframe", "array", "list"],
 )
 def test_render_curve(data, x_grid):
-    fix, axs = plt.subplots(nrows=2, ncols=2)
+    fix, axs = plt.subplots(nrows=3, ncols=2)
     draw_curve_from_data(
         "mean_std",
         axs[0, 0],
@@ -184,6 +184,32 @@ def test_render_curve(data, x_grid):
         show_legend=True,
         area_label="a",
         plot_kwargs=dict(alpha=0.1, color="r"),
+    )
+    draw_curve_from_data(
+        "ci_on_mean",
+        axs[2, 0],
+        data,
+        x_grid,
+        ax_calc=1,
+        title=None,
+        show_legend=True,
+        curve_label="100 reps",
+        area_label="ci",
+        cmp_kwargs=dict(num_reps=100, confidence_level=0.5),
+        plot_kwargs=dict(color="c"),
+    )
+    draw_curve_from_data(
+        "ci_on_mean",
+        axs[2, 1],
+        data,
+        x_grid,
+        ax_calc=1,
+        title=None,
+        show_legend=True,
+        curve_label="10000 reps",
+        area_label="ci",
+        cmp_kwargs=dict(num_reps=10000),
+        plot_kwargs=dict(alpha=0.4, color="c"),
     )
 
 

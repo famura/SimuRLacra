@@ -41,7 +41,8 @@ from pyrado.logger.experiment import ask_for_experiment, save_list_of_dicts_to_y
 from pyrado.sampling.rollout import rollout
 from pyrado.spaces.polar import Polar2DPosSpace
 from pyrado.utils.data_types import RenderMode
-from pyrado.utils.experiments import wrap_like_other_env, load_experiment
+from pyrado.utils.experiments import load_experiment
+from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.utils.input_output import print_cbt
 from pyrado.utils.argparser import get_argparser
 

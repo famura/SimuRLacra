@@ -27,39 +27,39 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import torch as to
-from abc import ABC
 from torch.distributions.uniform import Uniform
 from torch.distributions.normal import Normal
 from torch.distributions.multivariate_normal import MultivariateNormal
 from torch.distributions.bernoulli import Bernoulli
-from typing import Sequence, Union
+from typing import Union, List, Optional
 
 import pyrado
 from pyrado.utils.input_output import print_cbt
 
 
-class DomainParam(ABC):
+class DomainParam:
     """ Class to store and manage a (single) domain parameter a.k.a. physics parameter a.k.a. simulator parameter """
 
     def __init__(
         self,
         name: str,
-        mean: [int, float, to.Tensor],
-        clip_lo: [int, float] = -pyrado.inf,
-        clip_up: [int, float] = pyrado.inf,
-        roundint=False,
+        clip_lo: Optional[Union[int, float]] = -pyrado.inf,
+        clip_up: Optional[Union[int, float]] = pyrado.inf,
+        roundint: bool = False,
     ):
         """
         Constructor, also see the constructor of DomainRandomizer.
 
         :param name: name of the parameter
-        :param mean: nominal parameter value
         :param clip_lo: lower value for clipping
         :param clip_up: upper value for clipping
         :param roundint: flags if the parameters should be rounded and converted to an integer
         """
+        if not isinstance(name, str):
+            raise pyrado.TypeErr(given=name, expected_type=str)
+
         self.name = name
-        self.mean = mean
+        self.mean = None  # to be set by subclass
         self.clip_lo = clip_lo
         self.clip_up = clip_up
         self.roundint = roundint
@@ -76,9 +76,9 @@ class DomainParam(ABC):
         return True
 
     @staticmethod
-    def get_field_names() -> Sequence[str]:
+    def get_field_names() -> List[str]:
         """ Get union of all hyper-parameters of all domain parameter distributions. """
-        raise NotImplementedError
+        return ["name", "clip_lo", "clip_up", "roundint"]
 
     def adapt(self, domain_distr_param: str, domain_distr_param_value: Union[float, int]):
         """
@@ -91,56 +91,60 @@ class DomainParam(ABC):
         :param domain_distr_param_value: new value of the distribution parameter
         """
         if domain_distr_param not in self.get_field_names():
-            raise KeyError(
-                f"The domain parameter {self.name} does not have a domain distribution parameter "
+            raise pyrado.KeyErr(
+                msg=f"The domain parameter {self.name} does not have a domain distribution parameter "
                 f"called {domain_distr_param}!"
             )
         setattr(self, domain_distr_param, domain_distr_param_value)
 
-    def sample(self, num_samples: int = 1) -> list:
+    def sample(self, num_samples: int = 1) -> List[to.Tensor]:
         """
         Generate new domain parameter values.
 
         :param num_samples: number of samples (sets of new parameter values)
-        :return: list of Tensors containing the new parameter values
+        :return: list of tensors containing the new parameter values
         """
-        assert isinstance(num_samples, int) and num_samples > 0
+        if not isinstance(num_samples, int):
+            raise pyrado.TypeErr(given=num_samples, expected_type=int)
+        if num_samples <= 0:
+            raise pyrado.ValueErr(given=num_samples, g_constraint="0")
 
         if self.distr is None:
-            # Return nominal values multiple times
-            return list(to.ones(num_samples) * self.mean)
-        else:
-            # Draw num_samples samples (rsample is not implemented for Bernoulli)
-            sample_tensor = self.distr.sample(sample_shape=to.Size([num_samples]))
+            raise RuntimeError("Trying to sample a domain parameter without a specified distribution!")
 
-            # Clip the values
-            sample_tensor = to.clamp(sample_tensor, self.clip_lo, self.clip_up)
+        # Draw num_samples samples (rsample is not implemented for Bernoulli)
+        sample_tensor = self.distr.sample(sample_shape=to.Size([num_samples]))
 
-            # Round values to integers if desired
-            if self.roundint:
-                sample_tensor = to.round(sample_tensor).type(to.int)
+        # Clip the values
+        sample_tensor = to.clamp(sample_tensor, self.clip_lo, self.clip_up)
 
-            # Convert the large tensor into a list of small tensors
-            return list(sample_tensor)
+        # Round values to integers if desired
+        if self.roundint:
+            sample_tensor = to.round(sample_tensor).to(to.int32)
+
+        # Convert the large tensor into a list of small tensors
+        return list(sample_tensor)
 
 
 class UniformDomainParam(DomainParam):
     """ Domain parameter sampled from a normal distribution """
 
-    def __init__(self, halfspan: float, **kwargs):
+    def __init__(self, mean: Union[int, float, to.Tensor], halfspan: Union[int, float, to.Tensor], **kwargs):
         """
         Constructor
 
-        :param halfspan: half interval (mean is already mandatory for super-class `DomainParam`)
+        :param mean: nominal parameter value
+        :param halfspan: half interval
         :param kwargs: forwarded to `DomainParam` constructor
         """
         super().__init__(**kwargs)
 
+        self.mean = mean
         self.halfspan = halfspan
         self.distr = Uniform(self.mean - self.halfspan, self.mean + self.halfspan, validate_args=True)
 
     @staticmethod
-    def get_field_names() -> Sequence[str]:
+    def get_field_names() -> List[str]:
         return ["name", "mean", "halfspan", "clip_lo", "clip_up", "roundint"]
 
     def adapt(self, domain_distr_param: str, domain_distr_param_value: Union[float, int]):
@@ -162,20 +166,22 @@ class UniformDomainParam(DomainParam):
 class NormalDomainParam(DomainParam):
     """ Domain parameter sampled from a normal distribution """
 
-    def __init__(self, std: Union[float, to.Tensor], **kwargs):
+    def __init__(self, mean: Union[int, float, to.Tensor], std: Union[int, float, to.Tensor], **kwargs):
         """
         Constructor
 
-        :param std: standard deviation (mean is already mandatory for super-class `DomainParam`)
+        :param mean: nominal parameter value
+        :param std: standard deviation
         :param kwargs: forwarded to `DomainParam` constructor
         """
         super().__init__(**kwargs)
 
+        self.mean = mean
         self.std = std
         self.distr = Normal(self.mean, self.std, validate_args=True)
 
     @staticmethod
-    def get_field_names() -> Sequence[str]:
+    def get_field_names() -> List[str]:
         return ["name", "mean", "std", "clip_lo", "clip_up", "roundint"]
 
     def adapt(self, domain_distr_param: str, domain_distr_param_value: Union[float, int]):
@@ -196,24 +202,23 @@ class NormalDomainParam(DomainParam):
 class MultivariateNormalDomainParam(DomainParam):
     """ Domain parameter sampled from a normal distribution """
 
-    def __init__(self, cov: to.Tensor, **kwargs):
+    def __init__(self, mean: Union[int, float, to.Tensor], cov: to.Tensor, **kwargs):
         """
         Constructor
 
-        :param cov: covariance (mean is already mandatory for super-class `DomainParam`)
+        :param mean: nominal parameter value
+        :param cov: covariance
         :param kwargs: forwarded to `DomainParam` constructor
         """
         assert len(cov.shape) == 2, "Covariance needs to be given as a matrix"
         super().__init__(**kwargs)
 
-        self.mean = self.mean.view(
-            -1,
-        )
+        self.mean = to.tensor(mean).view(-1)
         self.cov = cov
         self.distr = MultivariateNormal(self.mean, self.cov, validate_args=True)
 
     @staticmethod
-    def get_field_names() -> Sequence[str]:
+    def get_field_names() -> List[str]:
         return ["name", "mean", "cov", "clip_lo", "clip_up", "roundint"]
 
     def adapt(self, domain_distr_param: str, domain_distr_param_value: to.Tensor):
@@ -246,17 +251,16 @@ class BernoulliDomainParam(DomainParam):
         :param prob_1: probability of event 1, equals 1 - probability of event 0
         :param kwargs: forwarded to `DomainParam` constructor
         """
-        if "mean" not in kwargs:
-            kwargs["mean"] = None
         super().__init__(**kwargs)
 
         self.val_0 = val_0
         self.val_1 = val_1
         self.prob_1 = prob_1
+        self.mean = val_0 * (1 - prob_1) + val_1 * prob_1
         self.distr = Bernoulli(self.prob_1, validate_args=True)
 
     @staticmethod
-    def get_field_names() -> Sequence[str]:
+    def get_field_names() -> List[str]:
         return ["name", "mean", "val_0", "val_1", "prob_1", "clip_lo", "clip_up", "roundint"]
 
     def adapt(self, domain_distr_param: str, domain_distr_param_value: Union[float, int]):
@@ -273,31 +277,33 @@ class BernoulliDomainParam(DomainParam):
             )
             raise err
 
-    def sample(self, num_samples: int = 1) -> list:
+    def sample(self, num_samples: int = 1) -> List[to.Tensor]:
         """
         Generate new domain parameter values.
 
         :param num_samples: number of samples (sets of new parameter values)
-        :return: list of Tensors containing the new parameter values
+        :return: list of tensors containing the new parameter values
         """
-        assert isinstance(num_samples, int) and num_samples > 0
+        if not isinstance(num_samples, int):
+            raise pyrado.TypeErr(given=num_samples, expected_type=int)
+        if num_samples <= 0:
+            raise pyrado.ValueErr(given=num_samples, g_constraint="0")
 
         if self.distr is None:
-            # Return nominal values multiple times
-            return list(to.ones(num_samples) * self.mean)
-        else:
-            # Draw num_samples samples (rsample is not implemented for Bernoulli)
-            sample_tensor = self.distr.sample(sample_shape=to.Size([num_samples]))
+            raise RuntimeError("Trying to sample a domain parameter without a specified distribution!")
 
-            # Sample_tensor contains either 0 or 1
-            sample_tensor = (to.ones_like(sample_tensor) - sample_tensor) * self.val_0 + sample_tensor * self.val_1
+        # Draw num_samples samples (rsample is not implemented for Bernoulli)
+        sample_tensor = self.distr.sample(sample_shape=to.Size([num_samples]))
 
-            # Clip the values
-            sample_tensor = to.clamp(sample_tensor, self.clip_lo, self.clip_up)
+        # Sample_tensor contains either 0 or 1
+        sample_tensor = (to.ones_like(sample_tensor) - sample_tensor) * self.val_0 + sample_tensor * self.val_1
 
-            # Round values to integers if desired
-            if self.roundint:
-                sample_tensor = to.round(sample_tensor).type(to.int)
+        # Clip the values
+        sample_tensor = to.clamp(sample_tensor, self.clip_lo, self.clip_up)
 
-            # Convert the large tensor into a list of small tensors
-            return list(sample_tensor)
+        # Round values to integers if desired
+        if self.roundint:
+            sample_tensor = to.round(sample_tensor).to(to.int32)
+
+        # Convert the large tensor into a list of small tensors
+        return list(sample_tensor)

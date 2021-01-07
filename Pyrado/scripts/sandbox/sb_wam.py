@@ -51,7 +51,7 @@ if __name__ == "__main__":
     c_2 = 3 * diff / n ** 2
 
     # Environment
-    env = WAMSim()
+    env = WAMSim(frame_skip=4)
     env.reset(init_state=np.concatenate((init_pos, zero_vel)).ravel())
     env.render(mode=RenderMode(video=True))
     env.viewer._run_speed = 0.5

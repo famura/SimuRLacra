@@ -31,7 +31,7 @@ import numpy as np
 import torch as to
 from torch.distributions.kl import kl_divergence
 from tqdm import tqdm
-from typing import Sequence
+from typing import Sequence, Optional
 
 from pyrado.algorithms.step_based.actor_critic import ActorCritic
 from pyrado.algorithms.step_based.gae import GAE
@@ -64,11 +64,11 @@ class A2C(ActorCritic):
         entropy_coeff: float = 1e-3,
         batch_size: int = 32,
         std_init: float = 1.0,
-        max_grad_norm: float = None,
+        max_grad_norm: Optional[float] = None,
         num_workers: int = 4,
         lr: float = 5e-4,
         lr_scheduler=None,
-        lr_scheduler_hparam: [dict, None] = None,
+        lr_scheduler_hparam: Optional[dict] = None,
         logger: StepLogger = None,
     ):
         r"""

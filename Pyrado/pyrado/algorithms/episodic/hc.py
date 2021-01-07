@@ -138,6 +138,7 @@ class HCNormal(HC):
             param_dim=self._policy.num_param,
             std_init=expl_std_init,
             std_min=expl_std_min,
+            use_cuda=self._policy.device != "cpu",
         )
 
     def update_expl_strat(self, rets_avg_ros: np.ndarray, ret_avg_curr: float):

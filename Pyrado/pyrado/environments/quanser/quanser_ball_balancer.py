@@ -67,17 +67,8 @@ class QBallBalancerReal(QuanserReal, Serializable):
     def _create_spaces(self):
         # Define the spaces
         max_state = np.array(
-            [
-                np.pi / 4.0,
-                np.pi / 4.0,
-                0.275 / 2.0,
-                0.275 / 2.0,  # [rad, rad, m, m, rad/s, ...
-                5 * np.pi,
-                5 * np.pi,
-                0.5,
-                0.5,
-            ]
-        )  # ... rad/s, rad/s, m/s, m/s]
+            [np.pi / 4.0, np.pi / 4.0, 0.275 / 2.0, 0.275 / 2.0, 5 * np.pi, 5 * np.pi, 0.5, 0.5]
+        )  # [rad, rad, m, m, rad/s, rad/s, rad/s, m/s, m/s]
         self._state_space = BoxSpace(
             -max_state,
             max_state,
