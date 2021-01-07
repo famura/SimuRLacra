@@ -16,6 +16,7 @@ from nflows.transforms.base import CompositeTransform
 from nflows.transforms.autoregressive import MaskedAffineAutoregressiveTransform
 from nflows.transforms.permutations import ReversePermutation
 
+
 class NormalizingFlow(LoggerAware):
     """
     SBI-Wrapper.
@@ -52,18 +53,16 @@ class NormalizingFlow(LoggerAware):
         transforms = []
         for _ in range(num_layers):
             transforms.append(ReversePermutation(features=num_features))
-            transforms.append(MaskedAffineAutoregressiveTransform(features=num_features,
-                                                                  hidden_features=4))
+            transforms.append(MaskedAffineAutoregressiveTransform(features=num_features, hidden_features=4))
         transform = CompositeTransform(transforms)
         self.flow = Flow(transform, base_dist)
         self._optimizer = optimizer(self.flow.parameters())
-
 
     def train(self, samples, snapshot_mode: str, meta_info: dict = None, num_iter=100):
         print()
         for i in range(num_iter):
             loss = self.step(samples, snapshot_mode, meta_info)
-            print("\r[NFLOWS] Iteration ({}|{}); Loss: {}".format(i, num_iter, loss), end='')
+            print("\r[NFLOWS] Iteration ({}|{}); Loss: {}".format(i, num_iter, loss), end="")
         print("\n[NFLOWS] Training ended")
         return self.flow
 
@@ -79,7 +78,6 @@ class NormalizingFlow(LoggerAware):
         self._optimizer.step()
         self.make_snapshot(snapshot_mode=snapshot_mode, meta_info=meta_info)
         return loss
-
 
     def evaluate(
         self,

@@ -2,18 +2,17 @@ import pyrado
 import torch as to
 import torch.nn as nn
 
+from sbi.inference import SNPE
+import sbi.utils as utils
+
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.logger.experiment import setup_experiment, ask_for_experiment
-from pyrado.algorithms.inference.lfi import LFI, EnvSimulator
+from pyrado.algorithms.inference.lfi2 import LFI, EnvSimulator
 from pyrado.algorithms.inference.normalizing_flows import NormalizingFlow
 from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.utils.argparser import get_argparser
 from scripts.lfi.plot_thetas import plot_2d_thetas
-
-
-from sbi.inference import SNPE
-import sbi.utils as utils
 
 
 def create_omo_setup():
@@ -113,7 +112,5 @@ if __name__ == "__main__":
     marginals = prior.sample(num_samples).detach()
 
     # plot useful statistics
-    plot_2d_thetas(
-        sample_params, obs_thetas=real_params, marginal_samples=marginals
-    )
+    plot_2d_thetas(sample_params, obs_thetas=real_params, marginal_samples=marginals)
     # plot_trajectories(trajectories, n_parameter=2, observation_data=x_o)

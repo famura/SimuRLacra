@@ -29,7 +29,6 @@ if __name__ == "__main__":
     x_o = [simulator(param) for param in obs_theta]
     x_o = to.stack(x_o)
 
-
     # x_o = x_o.unsqueeze(0)  # add a second dim for stacking
     # for i in range(n_observations - 1):
     #     test_prior = utils.BoxUniform(low=to.tensor([15.0, 0.0]), high=to.tensor([55.0, 1.0]))
@@ -52,12 +51,12 @@ if __name__ == "__main__":
     posterior = train_lfi(simulator, inference, prior, x_o, num_sim=num_sim, num_rounds=num_rounds)
 
     # generate more observations
-    '''
+    """
     x_o = x_o.unsqueeze(0)  # add a second dim for stacking
     for i in range(n_observations - 1):
         test_prior = utils.BoxUniform(low=to.tensor([15.0, 0.0]), high=to.tensor([55.0, 1.0]))
         x_o = to.cat([x_o, simulator(test_prior.sample().unsqueeze(0))], dim=0)
-    '''
+    """
 
     # generate examples from the posterior
     proposals, log_prob, trajectories = evaluate_lfi(
@@ -87,11 +86,12 @@ if __name__ == "__main__":
         # Arithmetic Mean Estimator
         def AME(prop):
             return to.mean(prop, 0)
+
         # Harmonic Mean Estimator
         def HME(prop):
             return 1 / ((1 / prop.shape[0]) * to.sum(1 / prop, 0))
 
-        method = HME # select a method for marginalization
+        method = HME  # select a method for marginalization
 
         return to.stack([method(proposals[:, s, :]) for s in range(s_num)], dim=0)
 

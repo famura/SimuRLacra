@@ -34,7 +34,7 @@ if __name__ == "__main__":
     # circle shape
     def circle_dist(n):
         theta_1 = to.rand(n) * 10 + 25  # values between 25 and 35
-        theta_2 = (5**2 - (theta_1 - 30)**2)**(1/2) * 0.01 + 0.2
+        theta_2 = (5 ** 2 - (theta_1 - 30) ** 2) ** (1 / 2) * 0.01 + 0.2
         return to.stack([theta_1, theta_2], 1)
 
     obs_theta = circle_dist(n_observations)
@@ -69,12 +69,12 @@ if __name__ == "__main__":
     posterior = train_lfi(simulator, inference, prior, x_o, num_sim=num_sim, num_rounds=num_rounds)
 
     # generate more observations
-    '''
+    """
     x_o = x_o.unsqueeze(0)  # add a second dim for stacking
     for i in range(n_observations - 1):
         test_prior = utils.BoxUniform(low=to.tensor([15.0, 0.0]), high=to.tensor([55.0, 1.0]))
         x_o = to.cat([x_o, simulator(test_prior.sample().unsqueeze(0))], dim=0)
-    '''
+    """
 
     # generate examples from the posterior
     proposals, log_prob, trajectories = evaluate_lfi(
@@ -104,14 +104,14 @@ if __name__ == "__main__":
         # Arithmetic Mean Estimator
         def AME(prop):
             return to.mean(prop, 0)
+
         # Harmonic Mean Estimator
         def HME(prop):
             return 1 / ((1 / prop.shape[0]) * to.sum(1 / prop, 0))
 
-        method = HME # select a method for marginalization
+        method = HME  # select a method for marginalization
 
         return to.stack([method(proposals[:, s, :]) for s in range(s_num)], dim=0)
-
 
     # marginals = sample_from_marginal(proposals, s_num=num_samples)
     marginals = None

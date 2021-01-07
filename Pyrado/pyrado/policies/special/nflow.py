@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import torch as to
+import torch.nn as nn
 from nflows.flows import Flow
 from typing import Optional, Union, Dict
 
@@ -45,7 +46,7 @@ class NFlowPolicy(Policy):
 
     def __init__(
         self,
-        flow: Flow,
+        flow: nn.Module,
         mapping: Dict[int, str],
         trafo_mask: Union[list, to.Tensor],
         init_param_kwargs: dict = None,
@@ -54,7 +55,7 @@ class NFlowPolicy(Policy):
         """
         Constructor
 
-        :param flow: normalizing flow from nflows module
+        :param flow: normalizing flow from the sbi module
         :param mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass, length).
                         The integers are indices of the numpy array which come from the algorithm.
         :param trafo_mask: every domain parameter that is set to `True` in this mask will be learned via a 'virtual'
@@ -67,8 +68,8 @@ class NFlowPolicy(Policy):
             raise pyrado.TypeErr(given=mapping, expected_type=dict)
         if not len(trafo_mask) == len(mapping):
             raise pyrado.ShapeErr(given=trafo_mask, expected_match=mapping)
-        if not isinstance(flow, Flow):
-            raise pyrado.TypeErr(given=flow, expected_type=Flow)
+        if not isinstance(flow, nn.Module):
+            raise pyrado.TypeErr(given=flow, expected_type=nn.Module)
 
         # Define the parameter space by using the Policy.env_spec.act_space
         param_spec = EnvSpec(

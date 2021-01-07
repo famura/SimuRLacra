@@ -6,7 +6,7 @@ from torch.distributions.uniform import Uniform
 from torch.distributions.multivariate_normal import MultivariateNormal
 
 from pyrado.logger.experiment import setup_experiment, ask_for_experiment
-from pyrado.algorithms.inference.lfi import LFI
+from pyrado.algorithms.inference.lfi2 import LFI
 from pyrado.utils.argparser import get_argparser
 
 from sbi.inference import SNPE
@@ -129,17 +129,15 @@ if __name__ == "__main__":
 
     fig, ax = plt.subplots()
     colors = list(mcolors.TABLEAU_COLORS)  # list of color keys
-    legend_elements = [Line2D([0], [0], marker='o', color='black', label='Sampled Observations', markersize=10)]
+    legend_elements = [Line2D([0], [0], marker="o", color="black", label="Sampled Observations", markersize=10)]
 
     # plot samples from proposals
     for cnt, ro in enumerate(sim_rollouts):
         for sample in sample_params:
-            ax.scatter(sample[:, 0], sample[:, 1],
-                       c=colors[cnt], label="Samples", alpha=0.3)
+            ax.scatter(sample[:, 0], sample[:, 1], c=colors[cnt], label="Samples", alpha=0.3)
 
     for cnt, ro in enumerate(ro_real):
         for sample in ro:
-            ax.scatter(sample[0], sample[1], facecolors=colors[cnt],
-                       marker='X', edgecolors='black', s=200)
+            ax.scatter(sample[0], sample[1], facecolors=colors[cnt], marker="X", edgecolors="black", s=200)
 
     plt.show()

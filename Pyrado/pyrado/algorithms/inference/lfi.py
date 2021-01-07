@@ -23,10 +23,10 @@ class EnvSimulator(Callable):
     """
 
     def __init__(
-            self,
-            env: Env,
-            policy: Policy,
-            param_names: list,
+        self,
+        env: Env,
+        policy: Policy,
+        param_names: list,
     ):
         self.name = env.name
         self.env = env
@@ -52,19 +52,19 @@ class LFI(LoggerAware):
     """
 
     def __init__(
-            self,
-            save_dir: str,
-            simulator: Callable,
-            params_names,
-            prior: Distribution,
-            inference: Type[PosteriorEstimator] = None,
-            flow: Callable[[], DirectPosterior] = None,
-            posterior: DirectPosterior = None,
-            max_iter: int = 5,
-            num_sim: int = 5,
-            num_samples=25,
-            logger: Optional[StepLogger] = None,
-            save_name: str = "algo",
+        self,
+        save_dir: str,
+        simulator: Callable,
+        params_names,
+        prior: Distribution,
+        inference: Type[PosteriorEstimator] = None,
+        flow: Callable[[], DirectPosterior] = None,
+        posterior: DirectPosterior = None,
+        max_iter: int = 5,
+        num_sim: int = 5,
+        num_samples=25,
+        logger: Optional[StepLogger] = None,
+        save_name: str = "algo",
     ):
         self._save_dir = save_dir
         self.posterior = posterior
@@ -138,9 +138,9 @@ class LFI(LoggerAware):
             self.posterior = self.inference.build_posterior()
 
             if logging:
-                _, log_prob, _ = self.evaluate(rollouts_real=rollouts_real,
-                                               num_samples=self._num_samples,
-                                               compute_quantity={"log_prob": True})
+                _, log_prob, _ = self.evaluate(
+                    rollouts_real=rollouts_real, num_samples=self._num_samples, compute_quantity={"log_prob": True}
+                )
                 log_prob = log_prob.mean().squeeze()
                 n_sim += self._num_sim
                 n_simulations.append(n_sim)
@@ -167,28 +167,29 @@ class LFI(LoggerAware):
             self.posterior = self.inference.build_posterior()
 
             if logging:
-                _, log_prob, _ = self.evaluate(rollouts_real=rollouts_real,
-                                               num_samples=self._num_samples,
-                                               compute_quantity={"log_prob": True})
+                _, log_prob, _ = self.evaluate(
+                    rollouts_real=rollouts_real, num_samples=self._num_samples, compute_quantity={"log_prob": True}
+                )
                 log_prob = log_prob.mean().squeeze()
                 log_probs.append(log_prob)
                 n_simulations.append(n_sim)
                 self.logger.add_value("Mean Log Probability", log_prob)
                 self.logger.add_value("Number of Simulations", to.tensor(n_sim))
 
-                meta_info = {**meta_info,
-                             **dict(zip(["log_probs", "n_simulations"], [to.stack(log_probs),
-                                                                         to.tensor(n_simulations)]))}
+                meta_info = {
+                    **meta_info,
+                    **dict(zip(["log_probs", "n_simulations"], [to.stack(log_probs), to.tensor(n_simulations)])),
+                }
 
             self._curr_iter += 1
             self.logger.add_value("Current Iteration", self._curr_iter)
             self.make_snapshot(snapshot_mode=snapshot_mode, meta_info=meta_info)
 
     def evaluate(
-            self,
-            rollouts_real: to.Tensor,
-            num_samples: int = 1000,
-            compute_quantity: dict = None,
+        self,
+        rollouts_real: to.Tensor,
+        num_samples: int = 1000,
+        compute_quantity: dict = None,
     ):
         """
         Evaluates the posterior by calculating parameter samples given observed data, its log probability
