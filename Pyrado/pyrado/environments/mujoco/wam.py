@@ -355,18 +355,20 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
 
         else:
             state_des = self.sim.data.get_site_xpos("cup_goal")  # this is a reference
+            # state_des_ball = self.sim.data.get_site_xpos("cup_goal")  # this is a reference
+            # state_des_cup = np.array([0.82521, 0, 1.4469]) if self.num_dof == 7 else np.array([0.758, 0, 1.5])
+            # state_des = np.concatenate([state_des_ball, state_des_cup])
             R_default = np.diag([0, 0, 1, 1e-2, 1e-2, 1e-1]) if self.num_dof == 7 else np.diag([0, 0, 1e-2, 1e-2])
             rew_fcn = ExpQuadrErrRewFcn(
                 Q=task_args.get("Q", np.diag([2e1, 1e-4, 2e1])),  # distance ball - cup; shouldn't move in y-direction
-                R=task_args.get("R", R_default),  # last joint is really unreliable
+                R=task_args.get("R", R_default),  # last joint is really unreliable for 7 dof, thus punish more
             )
             task = DesStateTask(spec, state_des, rew_fcn)
 
             # Wrap the masked DesStateTask to add a bonus for the best state in the rollout
             return BestStateFinalRewTask(
                 MaskedTask(self.spec, task, idcs),
-                max_steps=self.max_steps,
-                factor=task_args.get("final_factor", 0.05),
+                factor=task_args.get("final_factor", 0.05*self.max_steps),
             )
 
     def _create_deviation_task(self, task_args: dict) -> Task:
@@ -379,8 +381,10 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         # init cup goal position
         state_des = np.array([0.82521, 0, 1.4469]) if self.num_dof == 7 else np.array([0.758, 0, 1.5])
         rew_fcn = QuadrErrRewFcn(
-            Q=task_args.get("Q_dev", np.diag([2e-1, 1e-4, 5e0])),  # Cartesian distance from init position
-            R=task_args.get("R_dev", np.zeros((self._act_space.shape[0], self._act_space.shape[0]))),
+            Q=task_args.get("Q_dev", np.diag([2e-1, 1e-6, 5e0])),  # Cartesian distance from init cup position
+            R=task_args.get(
+                "R_dev", np.zeros((self._act_space.shape[0], self._act_space.shape[0]))
+            ),  # interferes with R_default from _create_main_task
         )
         task = DesStateTask(spec, state_des, rew_fcn)
 
