@@ -1,34 +1,40 @@
 import pyrado
 import torch as to
 import torch.nn as nn
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 
-from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
-from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.logger.experiment import setup_experiment, ask_for_experiment
 from pyrado.algorithms.inference.lfi import LFI
 from pyrado.algorithms.inference.simulator import EnvSimulator
-from pyrado.algorithms.inference.normalizing_flows import NormalizingFlow
-from pyrado.policies.special.dummy import IdlePolicy
+from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
+from pyrado.sampling.rollout import rollout
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.data_types import RenderMode
 from scripts.lfi.plot_thetas import plot_2d_thetas
-
+from scripts.lfi.normalizing_flows import train_nflows
 
 from sbi.inference import SNPE
 import sbi.utils as utils
 
 
-def create_omo_setup():
-    env_hparams = dict(dt=1 / 100.0, max_steps=200)
-    env_sim = OneMassOscillatorSim(**env_hparams)
-    behavior_policy = IdlePolicy(env_sim.spec)
+def render_sim(env, policy):
+    rollout(env, policy, eval=True, render_mode=RenderMode(video=True))
+
+
+def create_qq_setup():
+    env_hparams = dict(dt=1 / 100.0, max_steps=3500)
+    env_sim = QQubeSwingUpSim(**env_hparams)
+    behavior_policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec)
+    # render_sim(env_sim, behavior_policy)
+
     # parameter which LFI trains for
-    params_names = ["k", "d"]
-    simulator = EnvSimulator(env_sim, behavior_policy, params_names, "states")
+    params_names = list(env_sim.get_nominal_domain_param().keys())
+    simulator = EnvSimulator(env_sim, behavior_policy, params_names, "summary")
 
     # define prior and true parameter distributions
-    prior = utils.BoxUniform(low=to.tensor([27.0, 0.05]), high=to.tensor([33, 0.15]))
-    real_param_dist = to.distributions.MultivariateNormal(to.tensor([30, 0.1]), to.tensor([30, 0.1]) / 100 * to.eye(2))
-    return simulator, prior, real_param_dist, params_names
+    real_params = to.tensor(list(env_sim.get_nominal_domain_param().values()), dtype=to.float32)
+    prior = utils.BoxUniform(low=0.9 * real_params, high=1.1 * real_params)
+    return simulator, prior, real_params
 
 
 def create_sbi_algo():
@@ -50,13 +56,11 @@ if __name__ == "__main__":
     pyrado.set_seed(1001, verbose=True)
 
     # define Simulator
-    simulator, prior, real_param_dist, params_names = create_omo_setup()
+    simulator, prior, real_params = create_qq_setup()
 
     # sample from true parameter distribution and generate observations with it
-    num_real_obs = 5
-    real_params = real_param_dist.sample((num_real_obs,))
-    ro_real = [simulator(param) for param in real_params]
-    # ro_real = to.stack(ro_real)
+    num_obs = 1
+    ro_real = [simulator(real_params) for _ in range(num_obs)]
 
     num_samples = 100
 
@@ -94,26 +98,4 @@ if __name__ == "__main__":
         meta_info=dict(rollouts_real=ro_real), num_samples=num_samples, compute_quantity={"sample_params": True}
     )
 
-    # estimate prior with normalizing flows
-    # create an experiment
-    algo_name = "NFLOWS"
-    if not args.eval:
-        ex_dir = setup_experiment(simulator.name, f"{algo_name}")
-    else:
-        ex_dir = ask_for_experiment() if args.dir is None else args.dir
-
-    n_flows = NormalizingFlow(save_dir=ex_dir)
-
-    if not args.eval:
-        samples = to.cat([obs for obs in sample_params], 0)
-        prior = n_flows.train(samples, snapshot_mode="latest")
-    else:
-        prior = pyrado.load(None, "normalizing_flow", "pt", ex_dir)
-
-    marginals = prior.sample(num_samples).detach()
-
-    # plot useful statistics
-    plot_2d_thetas(
-        sample_params, obs_thetas=real_params, marginal_samples=marginals
-    )
-    # plot_trajectories(trajectories, n_parameter=2, observation_data=x_o)
+    print(sample_params[0].shape)
