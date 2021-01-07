@@ -313,7 +313,7 @@ class RBFFeat:
         self,
         num_feat_per_dim: int,
         bounds: [Sequence[list], Sequence[tuple], Sequence[np.ndarray], Sequence[to.Tensor], Sequence[float]],
-        scale: float = None,
+        scale: Union[float, to.Tensor] = None,
         state_wise_norm: bool = True,
         use_cuda: bool = False,
     ):
@@ -364,7 +364,7 @@ class RBFFeat:
             delta_center = self.centers[1, :] - self.centers[0, :]
             self.scale = -to.log(to.tensor(0.2)) / to.pow(delta_center, 2)
         else:
-            self.scale = scale
+            self.scale = to.as_tensor(scale, dtype=to.get_default_dtype())
 
         self._state_wise_norm = state_wise_norm
 
