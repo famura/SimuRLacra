@@ -5,7 +5,7 @@ from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 
 from pyrado.logger.experiment import setup_experiment, ask_for_experiment
 from pyrado.algorithms.inference.lfi import LFI
-from pyrado.algorithms.inference.rolloutsamplerforsbibase import EnvSimulator
+from pyrado.algorithms.inference.sbi_rollout_sampler import EnvSimulator
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.argparser import get_argparser
