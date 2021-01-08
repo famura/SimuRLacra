@@ -5,8 +5,7 @@ import pyrado
 import torch as to
 import os.path as osp
 
-from pyrado.algorithms.episodic.sysid_via_episodic_rl import SysIdViaEpisodicRL
-from pyrado.algorithms.inference.rolloutsamplerforsbibase import RolloutSamplerForSBIBase
+from pyrado.algorithms.inference.sbi_rollout_sampler import RolloutSamplerForSBIBase
 from pyrado.environments.base import Env
 from pyrado.logger.step import StepLogger, TensorBoardPrinter, LoggerAware
 from pyrado.policies.base import Policy
