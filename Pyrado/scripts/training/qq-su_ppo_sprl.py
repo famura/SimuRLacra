@@ -111,14 +111,18 @@ if __name__ == "__main__":
             )
         ),
     )
-    algo = SPRL(
-        env,
-        PPO(ex_dir, env, policy, critic, **algo_hparam),
+
+    sprl_hparam = dict(
         kl_constraints_ub=0.01,
         alpha_function_offset=1.6,
         alpha_function_percentage=70,
         discount_factor=0.95,
         max_iter=50
+    )
+    algo = SPRL(
+        env,
+        PPO(ex_dir, env, policy, critic, **algo_hparam),
+        **sprl_hparam
     )
 
     # Save the hyper-parameters
@@ -127,7 +131,8 @@ if __name__ == "__main__":
             dict(env=env_hparams, seed=args.seed),
             dict(policy=policy_hparam),
             dict(critic=critic_hparam, vfcn=vfcn_hparam),
-            dict(algo=algo_hparam, algo_name=algo.name),
+            dict(subrtn=algo_hparam, subrtn_name=PPO.name),
+            dict(algo=sprl_hparam, algo_name=algo.name),
         ],
         ex_dir,
     )
