@@ -41,7 +41,9 @@ class GaussianActNoiseWrapper(EnvWrapperAct, Serializable):
     This noise is independent for the potentially applied action-based exploration strategy.
     """
 
-    def __init__(self, wrapped_env: Env, noise_mean: Union[float, np.ndarray] = None, noise_std: Union[float, np.ndarray] = None):
+    def __init__(
+        self, wrapped_env: Env, noise_mean: Union[float, np.ndarray] = None, noise_std: Union[float, np.ndarray] = None
+    ):
         """
         Constructor
 
@@ -70,7 +72,7 @@ class GaussianActNoiseWrapper(EnvWrapperAct, Serializable):
 
     def _process_act(self, act: np.ndarray) -> np.ndarray:
         # Generate gaussian noise values
-        noise = np.random.randn(*self.act_space.shape)*self._std + self._mean  # * to unsqueeze the tuple
+        noise = np.random.randn(*self.act_space.shape) * self._std + self._mean  # * to unsqueeze the tuple
 
         # Add it to the action
         return act + noise
@@ -81,8 +83,8 @@ class GaussianActNoiseWrapper(EnvWrapperAct, Serializable):
 
         :param domain_param: domain parameter dict
         """
-        domain_param['act_noise_mean'] = self._mean
-        domain_param['act_noise_std'] = self._std
+        domain_param["act_noise_mean"] = self._mean
+        domain_param["act_noise_std"] = self._std
 
     def _load_domain_param(self, domain_param: dict):
         """
@@ -90,11 +92,11 @@ class GaussianActNoiseWrapper(EnvWrapperAct, Serializable):
 
         :param domain_param: domain parameter dict
         """
-        if 'act_noise_mean' in domain_param:
-            self._noise_mean = np.array(domain_param['act_noise_mean'])
+        if "act_noise_mean" in domain_param:
+            self._noise_mean = np.array(domain_param["act_noise_mean"])
             if not self._noise_mean.shape == self.act_space.shape:
                 raise pyrado.ShapeErr(given=self._noise_mean, expected_match=self.act_space)
-        if 'act_noise_std' in domain_param:
-            self._noise_std = np.array(domain_param['act_noise_std'])
+        if "act_noise_std" in domain_param:
+            self._noise_std = np.array(domain_param["act_noise_std"])
             if not self._noise_std.shape == self.act_space.shape:
                 raise pyrado.ShapeErr(given=self._noise_std, expected_match=self.act_space)

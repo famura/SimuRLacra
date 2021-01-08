@@ -42,15 +42,17 @@ from pyrado.utils.tensor import atleast_2D
 class FNN(nn.Module):
     """ Feed-forward neural network """
 
-    def __init__(self,
-                 input_size: int,
-                 output_size: int,
-                 hidden_sizes: Sequence[int],
-                 hidden_nonlin: [Callable, Sequence[Callable]],
-                 dropout: float = 0.,
-                 output_nonlin: Callable = None,
-                 init_param_kwargs: dict = None,
-                 use_cuda: bool = False):
+    def __init__(
+        self,
+        input_size: int,
+        output_size: int,
+        hidden_sizes: Sequence[int],
+        hidden_nonlin: [Callable, Sequence[Callable]],
+        dropout: float = 0.0,
+        output_nonlin: Callable = None,
+        init_param_kwargs: dict = None,
+        use_cuda: bool = False,
+    ):
         """
         Constructor
 
@@ -63,13 +65,15 @@ class FNN(nn.Module):
         :param init_param_kwargs: additional keyword arguments for the policy parameter initialization
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
-        self._device = 'cuda' if use_cuda and to.cuda.is_available() else 'cpu'
+        self._device = "cuda" if use_cuda and to.cuda.is_available() else "cpu"
 
         super().__init__()  # init nn.Module
 
         # Store settings
         # TODO One day replace legacy above with below
-        self.hidden_nonlin = hidden_nonlin if isinstance(hidden_nonlin, Iterable) else len(hidden_sizes)*[hidden_nonlin]
+        self.hidden_nonlin = (
+            hidden_nonlin if isinstance(hidden_nonlin, Iterable) else len(hidden_sizes) * [hidden_nonlin]
+        )
         self.dropout = dropout
         self.output_nonlin = output_nonlin
 
@@ -122,7 +126,7 @@ class FNN(nn.Module):
                 if self.dropout == 0:
                     # If there is no dropout, initialize weights and biases for every layer
                     init_param(layer, **kwargs)
-                elif self.dropout > 0 and i%2 == 0:
+                elif self.dropout > 0 and i % 2 == 0:
                     # If there is dropout, omit the initialization for the dropout layers
                     init_param(layer, **kwargs)
 
@@ -132,11 +136,11 @@ class FNN(nn.Module):
         else:
             self.param_values = init_values
 
-    def forward(self, input: to.Tensor) -> to.Tensor:
-        input = input.to(self.device)
-        # Pass input through hidden layers
-        next_input = input
+    def forward(self, obs: to.Tensor) -> to.Tensor:
+        obs = obs.to(device=self.device, dtype=to.get_default_dtype())
 
+        # Pass input through hidden layers
+        next_input = obs
         for i, layer in enumerate(self.hidden_layers):
             next_input = layer(next_input)
             # Apply non-linearity if any
@@ -144,10 +148,10 @@ class FNN(nn.Module):
                 # If there is no dropout, apply the nonlinearity to every layer
                 if self.hidden_nonlin[i] is not None:
                     next_input = self.hidden_nonlin[i](next_input)
-            elif self.dropout > 0 and i%2 == 0:
+            elif self.dropout > 0 and i % 2 == 0:
                 # If there is dropout, only apply the nonlinearity to every second layer
-                if self.hidden_nonlin[i//2] is not None:
-                    next_input = self.hidden_nonlin[i//2](next_input)
+                if self.hidden_nonlin[i // 2] is not None:
+                    next_input = self.hidden_nonlin[i // 2](next_input)
 
         # And through the output layer
         output = self.output_layer(next_input)
@@ -160,16 +164,18 @@ class FNN(nn.Module):
 class FNNPolicy(Policy):
     """ Feed-forward neural network policy """
 
-    name: str = 'fnn'
+    name: str = "fnn"
 
-    def __init__(self,
-                 spec: EnvSpec,
-                 hidden_sizes: Sequence[int],
-                 hidden_nonlin: [Callable, Sequence[Callable]],
-                 dropout: float = 0.,
-                 output_nonlin: Callable = None,
-                 init_param_kwargs: dict = None,
-                 use_cuda: bool = False):
+    def __init__(
+        self,
+        spec: EnvSpec,
+        hidden_sizes: Sequence[int],
+        hidden_nonlin: [Callable, Sequence[Callable]],
+        dropout: float = 0.0,
+        output_nonlin: Callable = None,
+        init_param_kwargs: dict = None,
+        use_cuda: bool = False,
+    ):
         """
         Constructor
 
@@ -191,7 +197,8 @@ class FNNPolicy(Policy):
             hidden_nonlin=hidden_nonlin,
             dropout=dropout,
             output_nonlin=output_nonlin,
-            use_cuda=use_cuda)
+            use_cuda=use_cuda,
+        )
 
         # Call custom initialization function after PyTorch network parameter initialization
         init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()
@@ -212,13 +219,9 @@ class FNNPolicy(Policy):
 class DiscreteActQValPolicy(Policy):
     """ State-action value (Q-value) feed-forward neural network policy for discrete actions """
 
-    name: str = 'discrqval'
+    name: str = "discrqval"
 
-    def __init__(self,
-                 spec: EnvSpec,
-                 net: nn.Module,
-                 init_param_kwargs: dict = None,
-                 use_cuda: bool = False):
+    def __init__(self, spec: EnvSpec, net: nn.Module, init_param_kwargs: dict = None, use_cuda: bool = False):
         """
         Constructor
 
@@ -237,12 +240,16 @@ class DiscreteActQValPolicy(Policy):
         # Call Policy's constructor
         super().__init__(spec, use_cuda)
 
-        # Make sure the net runs on the correct device
-        self.net = net.to(self.device)
+        # Store the feed-forward neural network
+        self.net = net
 
         # Call custom initialization function after PyTorch network parameter initialization
         init_param_kwargs = init_param_kwargs if init_param_kwargs is not None else dict()
         self.init_param(None, **init_param_kwargs)
+
+        # Make sure the net runs on the correct device
+        self.to(self.device)
+        self.net._device = self.device
 
     @staticmethod
     def get_qfcn_input_size(spec: EnvSpec) -> int:
@@ -257,7 +264,7 @@ class DiscreteActQValPolicy(Policy):
     def init_param(self, init_values: to.Tensor = None, **kwargs):
         if init_values is None:
             if isinstance(self.net, FNN):
-                # Forward to the nets's custom initialization function (handles dropout)
+                # Forward to the net's custom initialization function (handles dropout)
                 self.net.init_param(init_values, **kwargs)
             else:
                 # Initialize the using default initialization
@@ -287,7 +294,8 @@ class DiscreteActQValPolicy(Policy):
         columns_act = to.tensor(self.env_spec.act_space.eles).repeat(obs.shape[0], 1)
 
         # Batch process via PyTorch Module class
-        q_vals = self.net(to.cat([columns_obs, columns_act], dim=1))
+        table = to.cat([columns_obs.to(self.device), columns_act.to(self.device)], dim=1)
+        q_vals = self.net(table)
 
         # Reshaped (different actions are over columns)
         q_vals = q_vals.reshape(-1, self.env_spec.act_space.flat_dim)
@@ -314,11 +322,14 @@ class DiscreteActQValPolicy(Policy):
         return q_vals_argamx.squeeze(1) if batch_size == 1 else q_vals_argamx
 
     def forward(self, obs: to.Tensor) -> to.Tensor:
+        obs = obs.to(device=self.device, dtype=to.get_default_dtype())
+
         # Get the Q-values from the owned net
         q_vals, argmax_act_idcs, batch_size = self._build_q_table(obs)
 
         # Select the actions with the highest Q-value
-        possible_acts = to.tensor(self.env_spec.act_space.eles).view(1, -1)  # could be affected by domain randomization
+        possible_acts = to.from_numpy(self.env_spec.act_space.eles)  # could be affected by domain randomization
+        possible_acts = possible_acts.view(1, -1).to(self.device)
         acts = possible_acts.repeat(batch_size, 1)
         act = acts.gather(dim=1, index=argmax_act_idcs.view(-1, 1))  # select column-wise
 

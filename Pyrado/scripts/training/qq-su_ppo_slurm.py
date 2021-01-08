@@ -47,19 +47,21 @@ from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.utils.argparser import get_argparser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Directory of reference (BayRn) experiment
-    ref_ex_name = '2020-10-02_19-39-39--rand-Mp-Mr-Lp-Lr_lower-std'
+    ref_ex_name = "2020-10-02_19-39-39--rand-Mp-Mr-Lp-Lr_lower-std"
     ref_ex_dir = osp.join(
-        pyrado.EXP_DIR, QQubeSwingUpSim.name, f'{BayRn.name}-{PPO.name}_{FNNPolicy.name}', ref_ex_name
+        pyrado.EXP_DIR, QQubeSwingUpSim.name, f"{BayRn.name}-{PPO.name}_{FNNPolicy.name}", ref_ex_name
     )
 
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(
-        QQubeSwingUpSim.name, f'{PPO.name}_{FNNPolicy.name}', f'ref_{ref_ex_name}_argmax_seed-{args.seed}'
+        QQubeSwingUpSim.name,
+        f"{PPO.name}_{FNNPolicy.name}",
+        f"ref_{ref_ex_name}_argmax_seed-{args.seed}"
         # QQubeSwingUpSim.name, f'{UDR.name}-{PPO.name}_{FNNPolicy.name}', f'ref_{ref_ex_name}_seed-{args.seed}'
         # QQubeSwingUpSim.name, f'{PPO.name}_{FNNPolicy.name}', f'ref_{ref_ex_name}_nominal_seed-{args.seed}'
     )
@@ -68,10 +70,10 @@ if __name__ == '__main__':
     pyrado.set_seed(args.seed, verbose=True)
 
     # Hyperparameters of reference experiment
-    hparams = load_dict_from_yaml(osp.join(ref_ex_dir, 'hyperparams.yaml'))
+    hparams = load_dict_from_yaml(osp.join(ref_ex_dir, "hyperparams.yaml"))
 
     # Environment
-    env_hparams = hparams['env_sim']
+    env_hparams = hparams["env_sim"]
     env = QQubeSwingUpSim(**env_hparams)
     env = ActNormWrapper(env)
 
@@ -83,38 +85,40 @@ if __name__ == '__main__':
         # UniformDomainParam(name='Lp', mean=0.129, halfspan=0.0258),
         # UniformDomainParam(name='Lr', mean=0.085, halfspan=0.0170),
         # #
-        NormalDomainParam(name='Mp', mean=0.0227, std=0.0009),
-        NormalDomainParam(name='Mr', mean=0.0899, std=0.0039),
-        NormalDomainParam(name='Lp', mean=0.1474, std=0.0046),
-        NormalDomainParam(name='Lr', mean=0.0777, std=0.003),
+        NormalDomainParam(name="Mp", mean=0.0227, std=0.0009),
+        NormalDomainParam(name="Mr", mean=0.0899, std=0.0039),
+        NormalDomainParam(name="Lp", mean=0.1474, std=0.0046),
+        NormalDomainParam(name="Lr", mean=0.0777, std=0.003),
     )
     env = DomainRandWrapperLive(env, randomizer)
 
     # Policy
-    policy = to.load(osp.join(ref_ex_dir, 'policy.pt'))
+    policy = to.load(osp.join(ref_ex_dir, "policy.pt"))
     policy.init_param()
 
     # Critic
-    vfcn = to.load(osp.join(ref_ex_dir, 'valuefcn.pt'))
+    vfcn = to.load(osp.join(ref_ex_dir, "valuefcn.pt"))
     vfcn.init_param()
-    critic = GAE(vfcn, **hparams['critic'])
+    critic = GAE(vfcn, **hparams["critic"])
 
     # Algorithm
-    algo_hparam = hparams['subrtn']
-    algo_hparam.update({'num_workers': 1})  # should be equivalent to the number of cores per job
+    algo_hparam = hparams["subrtn"]
+    algo_hparam.update({"num_workers": 1})  # should be equivalent to the number of cores per job
     # algo_hparam.update({'max_iter': 300})
     # algo_hparam.update({'max_iter': 600})
     # algo_hparam.update({'min_steps': 3*algo_hparam['min_steps']})
     algo = PPO(ex_dir, env, policy, critic, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
-        dict(policy=hparams['policy']),
-        dict(critic=hparams['critic']),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(policy=hparams["policy"]),
+            dict(critic=hparams["critic"]),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha
-    algo.train(seed=args.seed, snapshot_mode='latest')
+    algo.train(seed=args.seed, snapshot_mode="latest")

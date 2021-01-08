@@ -49,83 +49,100 @@ from tests.conftest import m_needs_bullet, m_needs_mujoco, m_needs_rcs, m_needs_
 from tests.environment_wrappers.mock_env import MockEnv
 
 
-@pytest.fixture(scope='function',
-                params=[
-                    (skyline(0.02, 20., BoxSpace(0.5, 3, shape=(1,)), BoxSpace(-2., 3., shape=(1,)))[1],
-                     0.7, 50, False, True),
-                ],
-                ids=['skyline_0.8_50_notstdized_scaled'])
+@pytest.fixture(
+    scope="function",
+    params=[
+        (skyline(0.02, 20.0, BoxSpace(0.5, 3, shape=(1,)), BoxSpace(-2.0, 3.0, shape=(1,)))[1], 0.7, 50, False, True),
+    ],
+    ids=["skyline_0.8_50_notstdized_scaled"],
+)
 def tsdataset(request):
     return TimeSeriesDataSet(
         data=to.from_numpy(request.param[0]),
         ratio_train=request.param[1],
         window_size=request.param[2],
         standardize_data=request.param[3],
-        scale_min_max_data=request.param[4]
+        scale_min_max_data=request.param[4],
     )
 
 
 @pytest.mark.features
 @pytest.mark.parametrize(
-    'feat_list', [
+    "feat_list",
+    [
         [const_feat],
         [identity_feat],
-        [const_feat, identity_feat, abs_feat, sign_feat, squared_feat, sin_feat, cos_feat, sinsin_feat, sincos_feat,
-         sig_feat, bell_feat],
+        [
+            const_feat,
+            identity_feat,
+            abs_feat,
+            sign_feat,
+            squared_feat,
+            sin_feat,
+            cos_feat,
+            sinsin_feat,
+            sincos_feat,
+            sig_feat,
+            bell_feat,
+        ],
     ],
-    ids=['const_only', 'ident_only', 'all_simple_feats']
+    ids=["const_only", "ident_only", "all_simple_feats"],
 )
 def test_simple_feature_stack(feat_list):
     fs = FeatureStack(feat_list)
-    obs = to.randn(1, )
+    obs = to.randn(
+        1,
+    )
     feats_val = fs(obs)
     assert feats_val is not None
 
 
 @pytest.mark.features
-@pytest.mark.parametrize(
-    'obs_dim, idcs', [
-        (2, [0, 1]),
-        (3, [2, 0]),
-        (10, [0, 1, 5, 6])
-    ],
-    ids=['2_2', '3_2', '10_4']
-)
+@pytest.mark.parametrize("obs_dim, idcs", [(2, [0, 1]), (3, [2, 0]), (10, [0, 1, 5, 6])], ids=["2_2", "3_2", "10_4"])
 def test_mul_feat(obs_dim, idcs):
     mf = MultFeat(idcs=idcs)
     fs = FeatureStack([identity_feat, mf])
-    obs = to.randn(obs_dim, )
+    obs = to.randn(
+        obs_dim,
+    )
     feats_val = fs(obs)
     assert len(feats_val) == obs_dim + 1
 
 
 @pytest.mark.features
 @pytest.mark.parametrize(
-    'obs_dim, num_feat_per_dim', [
-        (1, 1), (2, 1), (1, 4), (2, 4), (10, 100)
-    ],
-    ids=['1_1', '2_1', '1_4', '2_4', '10_100']
+    "obs_dim, num_feat_per_dim", [(1, 1), (2, 1), (1, 4), (2, 4), (10, 100)], ids=["1_1", "2_1", "1_4", "2_4", "10_100"]
 )
 def test_rff_feat_serial(obs_dim, num_feat_per_dim):
-    rff = RandFourierFeat(inp_dim=obs_dim, num_feat_per_dim=num_feat_per_dim, bandwidth=np.ones(obs_dim, ))
+    rff = RandFourierFeat(
+        inp_dim=obs_dim,
+        num_feat_per_dim=num_feat_per_dim,
+        bandwidth=np.ones(
+            obs_dim,
+        ),
+    )
     fs = FeatureStack([rff])
     for _ in range(10):
-        obs = to.randn(obs_dim, )
+        obs = to.randn(
+            obs_dim,
+        )
         feats_val = fs(obs)
         assert feats_val.shape == (1, num_feat_per_dim)
 
 
 @pytest.mark.features
-@pytest.mark.parametrize('batch_size', [1, 2, 100],
-                         ids=['1', '2', '100'])
+@pytest.mark.parametrize("batch_size", [1, 2, 100], ids=["1", "2", "100"])
 @pytest.mark.parametrize(
-    'obs_dim, num_feat_per_dim', [
-        (1, 1), (2, 1), (1, 4), (2, 4), (10, 100)
-    ],
-    ids=['1_1', '2_1', '1_4', '2_4', '10_100']
+    "obs_dim, num_feat_per_dim", [(1, 1), (2, 1), (1, 4), (2, 4), (10, 100)], ids=["1_1", "2_1", "1_4", "2_4", "10_100"]
 )
 def test_rff_feat_batched(batch_size, obs_dim, num_feat_per_dim):
-    rff = RandFourierFeat(inp_dim=obs_dim, num_feat_per_dim=num_feat_per_dim, bandwidth=np.ones(obs_dim, ))
+    rff = RandFourierFeat(
+        inp_dim=obs_dim,
+        num_feat_per_dim=num_feat_per_dim,
+        bandwidth=np.ones(
+            obs_dim,
+        ),
+    )
     fs = FeatureStack([rff])
     for _ in range(10):
         obs = to.randn(batch_size, obs_dim)
@@ -135,34 +152,37 @@ def test_rff_feat_batched(batch_size, obs_dim, num_feat_per_dim):
 
 @pytest.mark.features
 @pytest.mark.parametrize(
-    'obs_dim, num_feat_per_dim, bounds', [
-        (1, 4, (to.tensor([-3.]), to.tensor([3.]))),
-        (1, 4, (np.array([-3.]), np.array([3.]))),
-        (2, 4, (to.tensor([-3., -4.]), to.tensor([3., 4.]))),
-        (10, 100, (to.tensor([-3.]*10), to.tensor([3.]*10)))
+    "obs_dim, num_feat_per_dim, bounds",
+    [
+        (1, 4, (to.tensor([-3.0]), to.tensor([3.0]))),
+        (1, 4, (np.array([-3.0]), np.array([3.0]))),
+        (2, 4, (to.tensor([-3.0, -4.0]), to.tensor([3.0, 4.0]))),
+        (10, 100, (to.tensor([-3.0] * 10), to.tensor([3.0] * 10))),
     ],
-    ids=['1_4_to', '1_4_np', '2_4', '10_100']
+    ids=["1_4_to", "1_4_np", "2_4", "10_100"],
 )
 def test_rbf_serial(obs_dim, num_feat_per_dim, bounds):
     rbf = RBFFeat(num_feat_per_dim=num_feat_per_dim, bounds=bounds)
     fs = FeatureStack([rbf])
     for _ in range(10):
-        obs = to.randn(obs_dim, )  # 1-dim obs vector
+        obs = to.randn(
+            obs_dim,
+        )  # 1-dim obs vector
         feats_val = fs(obs)
-        assert feats_val.shape == (1, obs_dim*num_feat_per_dim)
+        assert feats_val.shape == (1, obs_dim * num_feat_per_dim)
 
 
 @pytest.mark.features
-@pytest.mark.parametrize('batch_size', [1, 2, 100],
-                         ids=['1', '2', '100'])
+@pytest.mark.parametrize("batch_size", [1, 2, 100], ids=["1", "2", "100"])
 @pytest.mark.parametrize(
-    'obs_dim, num_feat_per_dim, bounds', [
-        (1, 4, (to.tensor([-3.]), to.tensor([3.]))),
-        (1, 4, (np.array([-3.]), np.array([3.]))),
-        (2, 4, (to.tensor([-3., -4.]), to.tensor([3., 4.]))),
-        (10, 100, (to.tensor([-3.]*10), to.tensor([3.]*10)))
+    "obs_dim, num_feat_per_dim, bounds",
+    [
+        (1, 4, (to.tensor([-3.0]), to.tensor([3.0]))),
+        (1, 4, (np.array([-3.0]), np.array([3.0]))),
+        (2, 4, (to.tensor([-3.0, -4.0]), to.tensor([3.0, 4.0]))),
+        (10, 100, (to.tensor([-3.0] * 10), to.tensor([3.0] * 10))),
     ],
-    ids=['1_4_to', '1_4_np', '2_4', '10_100']
+    ids=["1_4_to", "1_4_np", "2_4", "10_100"],
 )
 def test_rbf_feat_batched(batch_size, obs_dim, num_feat_per_dim, bounds):
     rbf = RBFFeat(num_feat_per_dim=num_feat_per_dim, bounds=bounds)
@@ -170,27 +190,26 @@ def test_rbf_feat_batched(batch_size, obs_dim, num_feat_per_dim, bounds):
     for _ in range(10):
         obs = to.randn(batch_size, obs_dim)  # 2-dim obs array
         feats_val = fs(obs)
-        assert feats_val.shape == (batch_size, obs_dim*num_feat_per_dim)
+        assert feats_val.shape == (batch_size, obs_dim * num_feat_per_dim)
 
 
 @pytest.mark.features
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob',
-        'default_qqsu',
-        'default_qbb',
-        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    "env",
+    [
+        "default_bob",
+        "default_qqsu",
+        "default_qbb",
+        pytest.param("default_bop5d_bt", marks=m_needs_bullet),
     ],
-    ids=['bob', 'qq-st', 'qbb', 'bop5D'],
-    indirect=True
+    ids=["bob", "qq-st", "qbb", "bop5D"],
+    indirect=True,
 )
-@pytest.mark.parametrize(
-    'num_feat_per_dim', [4, 100],
-    ids=['4', '100']
-)
+@pytest.mark.parametrize("num_feat_per_dim", [4, 100], ids=["4", "100"])
 def test_rff_policy_serial(env, num_feat_per_dim):
-    rff = RandFourierFeat(inp_dim=env.obs_space.flat_dim, num_feat_per_dim=num_feat_per_dim,
-                          bandwidth=env.obs_space.bound_up)
+    rff = RandFourierFeat(
+        inp_dim=env.obs_space.flat_dim, num_feat_per_dim=num_feat_per_dim, bandwidth=env.obs_space.bound_up
+    )
     policy = LinearPolicy(env.spec, FeatureStack([rff]))
     for _ in range(10):
         obs = env.obs_space.sample_uniform()
@@ -200,24 +219,23 @@ def test_rff_policy_serial(env, num_feat_per_dim):
 
 @pytest.mark.features
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob',
-        'default_qqsu',
-        'default_qbb',
-        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    "env",
+    [
+        "default_bob",
+        "default_qqsu",
+        "default_qbb",
+        pytest.param("default_bop5d_bt", marks=m_needs_bullet),
     ],
-    ids=['bob', 'qq-su', 'qbb', 'bop5D'],
-    indirect=True
+    ids=["bob", "qq-su", "qbb", "bop5D"],
+    indirect=True,
 )
 @pytest.mark.parametrize(
-    'batch_size, num_feat_per_dim', [
-        (1, 4), (20, 4), (1, 100), (20, 100)
-    ],
-    ids=['1_4', '20_4', '1_100', '20_100']
+    "batch_size, num_feat_per_dim", [(1, 4), (20, 4), (1, 100), (20, 100)], ids=["1_4", "20_4", "1_100", "20_100"]
 )
 def test_rff_policy_batch(env, batch_size, num_feat_per_dim):
-    rff = RandFourierFeat(inp_dim=env.obs_space.flat_dim, num_feat_per_dim=num_feat_per_dim,
-                          bandwidth=env.obs_space.bound_up)
+    rff = RandFourierFeat(
+        inp_dim=env.obs_space.flat_dim, num_feat_per_dim=num_feat_per_dim, bandwidth=env.obs_space.bound_up
+    )
     policy = LinearPolicy(env.spec, FeatureStack([rff]))
     for _ in range(10):
         obs = env.obs_space.sample_uniform()
@@ -228,19 +246,17 @@ def test_rff_policy_batch(env, batch_size, num_feat_per_dim):
 
 @pytest.mark.features
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob',
-        'default_qqsu',
-        'default_qbb',
-        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    "env",
+    [
+        "default_bob",
+        "default_qqsu",
+        "default_qbb",
+        pytest.param("default_bop5d_bt", marks=m_needs_bullet),
     ],
-    ids=['bob', 'qq-su', 'qbb', 'bop5D'],
-    indirect=True
+    ids=["bob", "qq-su", "qbb", "bop5D"],
+    indirect=True,
 )
-@pytest.mark.parametrize(
-    'num_feat_per_dim', [4, 100],
-    ids=['4', '100']
-)
+@pytest.mark.parametrize("num_feat_per_dim", [4, 100], ids=["4", "100"])
 def test_rfb_policy_serial(env, num_feat_per_dim):
     rbf = RBFFeat(num_feat_per_dim=num_feat_per_dim, bounds=env.obs_space.bounds)
     fs = FeatureStack([rbf])
@@ -253,20 +269,18 @@ def test_rfb_policy_serial(env, num_feat_per_dim):
 
 @pytest.mark.features
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob',
-        'default_qqsu',
-        'default_qbb',
-        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    "env",
+    [
+        "default_bob",
+        "default_qqsu",
+        "default_qbb",
+        pytest.param("default_bop5d_bt", marks=m_needs_bullet),
     ],
-    ids=['bob', 'qq-su', 'qbb', 'bop5D'],
-    indirect=True
+    ids=["bob", "qq-su", "qbb", "bop5D"],
+    indirect=True,
 )
 @pytest.mark.parametrize(
-    'batch_size, num_feat_per_dim', [
-        (1, 4), (20, 4), (1, 100), (20, 100)
-    ],
-    ids=['1_4', '20_4', '1_100', '20_100']
+    "batch_size, num_feat_per_dim", [(1, 4), (20, 4), (1, 100), (20, 100)], ids=["1_4", "20_4", "1_100", "20_100"]
 )
 def test_rfb_policy_batch(env, batch_size, num_feat_per_dim):
     rbf = RBFFeat(num_feat_per_dim=num_feat_per_dim, bounds=env.obs_space.bounds)
@@ -281,46 +295,40 @@ def test_rfb_policy_batch(env, batch_size, num_feat_per_dim):
 
 @pytest.mark.features
 @pytest.mark.parametrize(
-    'env', [
-        pytest.param('default_wambic', marks=m_needs_mujoco),  # so far, the only use case
+    "env",
+    [
+        pytest.param("default_wambic", marks=m_needs_mujoco),  # so far, the only use case
     ],
-    ids=['wambic'],
-    indirect=True
+    ids=["wambic"],
+    indirect=True,
 )
-@pytest.mark.parametrize('dim_mask', [0, 1, 2],
-                         ids=['0', '1', '2'])
+@pytest.mark.parametrize("dim_mask", [0, 1, 2], ids=["0", "1", "2"])
 def test_dualrbf_policy(env, dim_mask):
     # Hyper-parameters for the RBF features are not important here
-    rbf_hparam = dict(num_feat_per_dim=7, bounds=(np.array([0.]), np.array([1.])), scale=None)
+    rbf_hparam = dict(num_feat_per_dim=7, bounds=(np.array([0.0]), np.array([1.0])), scale=None)
     policy = DualRBFLinearPolicy(env.spec, rbf_hparam, dim_mask)
-    assert policy.num_param == policy.num_active_feat*env.act_space.flat_dim//2
+    assert policy.num_param == policy.num_active_feat * env.act_space.flat_dim // 2
 
     ro = rollout(env, policy, eval=True)
     assert ro is not None
 
 
+@pytest.mark.parametrize("env", ["default_bob", "default_qbb"], ids=["bob", "qbb"], indirect=True)
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob',
-        'default_qbb'
+    "policy",
+    [
+        "linear_policy",
+        "fnn_policy",
+        "rnn_policy",
+        "lstm_policy",
+        "gru_policy",
+        "adn_policy",
+        "nf_policy",
+        "thfnn_policy",
+        "thgru_policy",
     ],
-    ids=['bob', 'qbb'],
-    indirect=True
-)
-@pytest.mark.parametrize(
-    'policy', [
-        'linear_policy',
-        'fnn_policy',
-        'rnn_policy',
-        'lstm_policy',
-        'gru_policy',
-        'adn_policy',
-        'nf_policy',
-        'thfnn_policy',
-        'thgru_policy',
-    ],
-    ids=['lin', 'fnn', 'rnn', 'lstm', 'gru', 'adn', 'nf', 'thfnn', 'thgru'],
-    indirect=True
+    ids=["lin", "fnn", "rnn", "lstm", "gru", "adn", "nf", "thfnn", "thgru"],
+    indirect=True,
 )
 def test_parameterized_policies_init_param(env, policy):
     some_values = to.ones_like(policy.param_values)
@@ -328,23 +336,13 @@ def test_parameterized_policies_init_param(env, policy):
     to.testing.assert_allclose(policy.param_values, some_values)
 
 
+@pytest.mark.parametrize("env", ["default_bob", "default_qbb"], ids=["bob", "qbb"], indirect=True)
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob',
-        'default_qbb'
-    ],
-    ids=['bob', 'qbb'],
-    indirect=True
+    "policy",
+    ["idle_policy", "dummy_policy", "linear_policy", "fnn_policy"],
+    ids=["idle", "dummy", "lin", "fnn"],
+    indirect=True,
 )
-@pytest.mark.parametrize(
-    'policy', [
-        'idle_policy',
-        'dummy_policy',
-        'linear_policy',
-        'fnn_policy'
-    ],
-    ids=['idle', 'dummy', 'lin', 'fnn'],
-    indirect=True)
 def test_feedforward_policy_one_step(env, policy):
     obs = env.spec.obs_space.sample_uniform()
     obs = to.from_numpy(obs)
@@ -352,21 +350,15 @@ def test_feedforward_policy_one_step(env, policy):
     assert isinstance(act, to.Tensor)
 
 
+@pytest.mark.parametrize("env", ["default_bob", "default_qbb"], ids=["bob", "qbb"], indirect=True)
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob',
-        'default_qbb'
+    "policy",
+    [
+        "time_policy",
+        "tracetime_policy",
     ],
-    ids=['bob', 'qbb'],
-    indirect=True
-)
-@pytest.mark.parametrize(
-    'policy', [
-        'time_policy',
-        'tracetime_policy',
-    ],
-    ids=['time', 'tracetime'],
-    indirect=True
+    ids=["time", "tracetime"],
+    indirect=True,
 )
 def test_time_policy_one_step(env, policy):
     policy.reset()
@@ -377,25 +369,19 @@ def test_time_policy_one_step(env, policy):
 
 
 @pytest.mark.recurrent_policy
+@pytest.mark.parametrize("env", ["default_bob", "default_qbb"], ids=["bob", "qbb"], indirect=True)
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob',
-        'default_qbb'
+    "policy",
+    [
+        "rnn_policy",
+        "lstm_policy",
+        "gru_policy",
+        "adn_policy",
+        "nf_policy",
+        "thgru_policy",
     ],
-    ids=['bob', 'qbb'],
-    indirect=True
-)
-@pytest.mark.parametrize(
-    'policy', [
-        'rnn_policy',
-        'lstm_policy',
-        'gru_policy',
-        'adn_policy',
-        'nf_policy',
-        'thgru_policy',
-    ],
-    ids=['rnn', 'lstm', 'gru', 'adn', 'nf', 'thgru'],
-    indirect=True
+    ids=["rnn", "lstm", "gru", "adn", "nf", "thgru"],
+    indirect=True,
 )
 def test_recurrent_policy_one_step(env, policy):
     hid = policy.init_hidden()
@@ -410,22 +396,26 @@ def test_recurrent_policy_one_step(env, policy):
 
 
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob',
-        'default_qbb',
-        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    "env",
+    [
+        "default_bob",
+        "default_qbb",
+        pytest.param("default_bop5d_bt", marks=m_needs_bullet),
     ],
-    ids=['bob', 'qbb', 'bop5D'],
-    indirect=True
+    ids=["bob", "qbb", "bop5D"],
+    indirect=True,
 )
 @pytest.mark.parametrize(
-    'policy', [
+    "policy",
+    [
         # dummy_policy and idle_policy are not supported
-        'linear_policy',
-        'fnn_policy',
+        "linear_policy",
+        "fnn_policy",
     ],
-    ids=['lin', 'fnn'], indirect=True)
-@pytest.mark.parametrize('batch_size', [1, 2, 3])
+    ids=["lin", "fnn"],
+    indirect=True,
+)
+@pytest.mark.parametrize("batch_size", [1, 2, 3])
 def test_feedforward_policy_batching(env, policy, batch_size):
     obs = np.stack([policy.env_spec.obs_space.sample_uniform() for _ in range(batch_size)])  # shape = (batch_size, 4)
     obs = to.from_numpy(obs)
@@ -435,29 +425,31 @@ def test_feedforward_policy_batching(env, policy, batch_size):
 
 @pytest.mark.recurrent_policy
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob',
-        'default_qbb',
-        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    "env",
+    [
+        "default_bob",
+        "default_qbb",
+        pytest.param("default_bop5d_bt", marks=m_needs_bullet),
     ],
-    ids=['bob', 'qbb', 'bop5D'],
-    indirect=True
+    ids=["bob", "qbb", "bop5D"],
+    indirect=True,
 )
 @pytest.mark.parametrize(
-    'policy', [
-        'rnn_policy',
-        'lstm_policy',
-        'gru_policy',
-        'adn_policy',
-        'nf_policy',
-        'thrnn_policy',
-        'thgru_policy',
-        'thlstm_policy',
+    "policy",
+    [
+        "rnn_policy",
+        "lstm_policy",
+        "gru_policy",
+        "adn_policy",
+        "nf_policy",
+        "thrnn_policy",
+        "thgru_policy",
+        "thlstm_policy",
     ],
-    ids=['rnn', 'lstm', 'gru', 'adn', 'nf', 'thgrnn', 'thgru', 'thlstm'],
-    indirect=True
+    ids=["rnn", "lstm", "gru", "adn", "nf", "thgrnn", "thgru", "thlstm"],
+    indirect=True,
 )
-@pytest.mark.parametrize('batch_size', [1, 2, 4, 256])
+@pytest.mark.parametrize("batch_size", [1, 2, 4, 256])
 def test_recurrent_policy_batching(env, policy, batch_size):
     assert policy.is_recurrent
     obs = np.stack([policy.env_spec.obs_space.sample_uniform() for _ in range(batch_size)])  # shape = (batch_size, 4)
@@ -480,7 +472,7 @@ def test_recurrent_policy_batching(env, policy, batch_size):
 
     if batch_size > 1:
         # Try to use a subset of the batch
-        subset = to.arange(batch_size//2)
+        subset = to.arange(batch_size // 2)
         if isinstance(policy, TwoHeadedRNNPolicyBase):
             act_sub, _, hid_sub = policy(obs[subset, :], hidden[subset, :])
         else:
@@ -490,27 +482,21 @@ def test_recurrent_policy_batching(env, policy, batch_size):
 
 
 @pytest.mark.recurrent_policy
+@pytest.mark.parametrize("env", ["default_bob", "default_qbb"], ids=["bob", "qbb"], indirect=True)
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob',
-        'default_qbb'
+    "policy",
+    [
+        "rnn_policy",
+        "lstm_policy",
+        "gru_policy",
+        "adn_policy",
+        "nf_policy",
+        "thrnn_policy",
+        "thgru_policy",
+        "thlstm_policy",
     ],
-    ids=['bob', 'qbb'],
-    indirect=True
-)
-@pytest.mark.parametrize(
-    'policy', [
-        'rnn_policy',
-        'lstm_policy',
-        'gru_policy',
-        'adn_policy',
-        'nf_policy',
-        'thrnn_policy',
-        'thgru_policy',
-        'thlstm_policy',
-    ],
-    ids=['rnn', 'lstm', 'gru', 'adn', 'nf', 'thgrnn', 'thgru', 'thlstm'],
-    indirect=True
+    ids=["rnn", "lstm", "gru", "adn", "nf", "thgrnn", "thgru", "thlstm"],
+    indirect=True,
 )
 def test_pytorch_recurrent_policy_rollout(env, policy):
     ro = rollout(env, policy, render_mode=RenderMode())
@@ -518,27 +504,21 @@ def test_pytorch_recurrent_policy_rollout(env, policy):
 
 
 @pytest.mark.recurrent_policy
+@pytest.mark.parametrize("env", ["default_bob", "default_qbb"], ids=["bob", "qbb"], indirect=True)
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob',
-        'default_qbb'
+    "policy",
+    [
+        "rnn_policy",
+        "lstm_policy",
+        "gru_policy",
+        "adn_policy",
+        "nf_policy",
+        "thrnn_policy",
+        "thgru_policy",
+        "thlstm_policy",
     ],
-    ids=['bob', 'qbb'],
-    indirect=True
-)
-@pytest.mark.parametrize(
-    'policy', [
-        'rnn_policy',
-        'lstm_policy',
-        'gru_policy',
-        'adn_policy',
-        'nf_policy',
-        'thrnn_policy',
-        'thgru_policy',
-        'thlstm_policy',
-    ],
-    ids=['rnn', 'lstm', 'gru', 'adn', 'nf', 'thgrnn', 'thgru', 'thlstm'],
-    indirect=True
+    ids=["rnn", "lstm", "gru", "adn", "nf", "thgrnn", "thgru", "thlstm"],
+    indirect=True,
 )
 def test_recurrent_policy_one_step(env, policy):
     assert policy.is_recurrent
@@ -576,26 +556,28 @@ def test_recurrent_policy_one_step(env, policy):
 
 @pytest.mark.recurrent_policy
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob',
-        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    "env",
+    [
+        "default_bob",
+        pytest.param("default_bop5d_bt", marks=m_needs_bullet),
     ],
-    ids=['bob', 'bop5D'],
-    indirect=True
+    ids=["bob", "bop5D"],
+    indirect=True,
 )
 @pytest.mark.parametrize(
-    'policy', [
-        'rnn_policy',
-        'lstm_policy',
-        'gru_policy',
-        'adn_policy',
-        'nf_policy',
-        'thrnn_policy',
-        'thgru_policy',
-        'thlstm_policy',
+    "policy",
+    [
+        "rnn_policy",
+        "lstm_policy",
+        "gru_policy",
+        "adn_policy",
+        "nf_policy",
+        "thrnn_policy",
+        "thgru_policy",
+        "thlstm_policy",
     ],
-    ids=['rnn', 'lstm', 'gru', 'adn', 'nf', 'thgrnn', 'thgru', 'thlstm'],
-    indirect=True
+    ids=["rnn", "lstm", "gru", "adn", "nf", "thgrnn", "thgru", "thlstm"],
+    indirect=True,
 )
 def test_recurrent_policy_evaluate(env, policy):
     # Make a rollout
@@ -628,12 +610,8 @@ def test_hidden_state_packing_batch():
     hidden_size = 2
     batch_size = 2
 
-    unpacked = to.tensor([[[1.0, 2.0],  # l1, b1
-                           [5.0, 6.0]],  # l1, b2
-                          [[3.0, 4.0],  # l2, b1
-                           [7.0, 8.0]]])  # l2, b2
-    packed = to.tensor([[1.0, 2.0, 3.0, 4.0],
-                        [5.0, 6.0, 7.0, 8.0]])
+    unpacked = to.tensor([[[1.0, 2.0], [5.0, 6.0]], [[3.0, 4.0], [7.0, 8.0]]])  # l1, b1  # l1, b2  # l2, b1  # l2, b2
+    packed = to.tensor([[1.0, 2.0, 3.0, 4.0], [5.0, 6.0, 7.0, 8.0]])
 
     # Test unpack
     pu = default_unpack_hidden(packed, num_layers, hidden_size, batch_size)
@@ -650,8 +628,7 @@ def test_hidden_state_packing_nobatch():
     hidden_size = 2
     batch_size = None
 
-    unpacked = to.tensor([[[1.0, 2.0]],  # l1
-                          [[3.0, 4.0]]])  # l2
+    unpacked = to.tensor([[[1.0, 2.0]], [[3.0, 4.0]]])  # l1  # l2
     packed = to.tensor([1.0, 2.0, 3.0, 4.0])
 
     # Test unpack
@@ -664,22 +641,24 @@ def test_hidden_state_packing_nobatch():
 
 
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob',
-        'default_qbb',
-        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    "env",
+    [
+        "default_bob",
+        "default_qbb",
+        pytest.param("default_bop5d_bt", marks=m_needs_bullet),
     ],
-    ids=['bob', 'qbb', 'bop5D'],
-    indirect=True
+    ids=["bob", "qbb", "bop5D"],
+    indirect=True,
 )
 @pytest.mark.parametrize(
-    'policy', [
+    "policy",
+    [
         # TimePolicy and Two-headed policies are not supported
-        'linear_policy',
-        'fnn_policy',
+        "linear_policy",
+        "fnn_policy",
     ],
-    ids=['lin', 'fnn'],
-    indirect=True
+    ids=["lin", "fnn"],
+    indirect=True,
 )
 def test_script_feedforward(env, policy):
     # Generate scripted version
@@ -695,25 +674,27 @@ def test_script_feedforward(env, policy):
 
 @pytest.mark.recurrent_policy
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob',
-        'default_qbb',
-        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    "env",
+    [
+        "default_bob",
+        "default_qbb",
+        pytest.param("default_bop5d_bt", marks=m_needs_bullet),
     ],
-    ids=['bob', 'qbb', 'bop5D'],
-    indirect=True
+    ids=["bob", "qbb", "bop5D"],
+    indirect=True,
 )
 @pytest.mark.parametrize(
-    'policy', [
+    "policy",
+    [
         # Two-headed policies are not supported
-        'rnn_policy',
-        'lstm_policy',
-        'gru_policy',
-        'adn_policy',
-        'nf_policy',
+        "rnn_policy",
+        "lstm_policy",
+        "gru_policy",
+        "adn_policy",
+        "nf_policy",
     ],
-    ids=['rnn', 'lstm', 'gru', 'adn', 'nf'],
-    indirect=True
+    ids=["rnn", "lstm", "gru", "adn", "nf"],
+    indirect=True,
 )
 def test_script_recurrent(env, policy):
     # Generate scripted version
@@ -746,38 +727,37 @@ def test_script_recurrent(env, policy):
 @to.no_grad()
 @m_needs_libtorch
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob',
-        'default_qbb',
-        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    "env",
+    [
+        "default_bob",
+        "default_qbb",
+        pytest.param("default_bop5d_bt", marks=m_needs_bullet),
     ],
-    ids=['bob', 'qbb', 'bop5D'],
-    indirect=True
+    ids=["bob", "qbb", "bop5D"],
+    indirect=True,
 )
 @pytest.mark.parametrize(
-    'policy', [
+    "policy",
+    [
         # TimePolicy and Two-headed policies are not supported
-        'linear_policy',
-        'fnn_policy',
-        'rnn_policy',
-        'lstm_policy',
-        'gru_policy',
-        'adn_policy',
-        'nf_policy',
+        "linear_policy",
+        "fnn_policy",
+        "rnn_policy",
+        "lstm_policy",
+        "gru_policy",
+        "adn_policy",
+        "nf_policy",
     ],
-    ids=['lin', 'fnn', 'rnn', 'lstm', 'gru', 'adn', 'nf'],
-    indirect=True
+    ids=["lin", "fnn", "rnn", "lstm", "gru", "adn", "nf"],
+    indirect=True,
 )
-@pytest.mark.parametrize(
-    'file_type', ['.pt', '.zip'],
-    ids=['pt', 'zip']
-)
+@pytest.mark.parametrize("file_type", [".pt", ".zip"], ids=["pt", "zip"])
 def test_export_cpp(env, policy: Policy, tmpdir, file_type):
     # Generate scripted version (in double mode for CPP compatibility)
     scripted = policy.double().script()
 
     # Export
-    export_file = osp.join(tmpdir, 'policy' + file_type)
+    export_file = osp.join(tmpdir, "policy" + file_type)
     scripted.save(export_file)
 
     # Import again
@@ -791,7 +771,7 @@ def test_export_cpp(env, policy: Policy, tmpdir, file_type):
         assert act_loaded == pytest.approx(act_scripted), f"Wrong action values on step #{i}"
 
     # Test after reset
-    if hasattr(scripted, 'reset'):
+    if hasattr(scripted, "reset"):
         scripted.reset()
         loaded.reset()
         assert loaded.hidden.numpy() == pytest.approx(scripted.hidden.numpy()), "Wrong hidden state after reset"
@@ -806,27 +786,29 @@ def test_export_cpp(env, policy: Policy, tmpdir, file_type):
 @m_needs_rcs
 @m_needs_libtorch
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob',
-        'default_qbb',
-        pytest.param('default_bop5d_bt', marks=m_needs_bullet),
+    "env",
+    [
+        "default_bob",
+        "default_qbb",
+        pytest.param("default_bop5d_bt", marks=m_needs_bullet),
     ],
-    ids=['bob', 'qbb', 'bop5D'],
-    indirect=True
+    ids=["bob", "qbb", "bop5D"],
+    indirect=True,
 )
 @pytest.mark.parametrize(
-    'policy', [
+    "policy",
+    [
         # TimePolicy and Two-headed policies are not supported
-        'linear_policy',
-        'fnn_policy',
-        'rnn_policy',
-        'lstm_policy',
-        'gru_policy',
-        'adn_policy',
-        'nf_policy',
+        "linear_policy",
+        "fnn_policy",
+        "rnn_policy",
+        "lstm_policy",
+        "gru_policy",
+        "adn_policy",
+        "nf_policy",
     ],
-    ids=['lin', 'fnn', 'rnn', 'lstm', 'gru', 'adn', 'nf'],
-    indirect=True
+    ids=["lin", "fnn", "rnn", "lstm", "gru", "adn", "nf"],
+    indirect=True,
 )
 def test_export_rcspysim(env, policy, tmpdir):
     from rcsenv import ControlPolicy
@@ -836,11 +818,11 @@ def test_export_rcspysim(env, policy, tmpdir):
     print(scripted.graph)
 
     # Export
-    export_file = osp.join(tmpdir, 'policy.pt')
+    export_file = osp.join(tmpdir, "policy.pt")
     to.jit.save(scripted, export_file)
 
     # Import in C
-    cpp = ControlPolicy('torch', export_file)
+    cpp = ControlPolicy("torch", export_file)
 
     # Compare a couple of inputs
     for _ in range(50):
@@ -850,7 +832,7 @@ def test_export_rcspysim(env, policy, tmpdir):
         assert act_cpp == pytest.approx(act_script)
 
     # Test after reset
-    if hasattr(scripted, 'reset'):
+    if hasattr(scripted, "reset"):
         scripted.reset()
         cpp.reset()
         obs = policy.env_spec.obs_space.sample_uniform()
@@ -859,17 +841,13 @@ def test_export_rcspysim(env, policy, tmpdir):
         assert act_cpp == pytest.approx(act_script)
 
 
-@pytest.mark.parametrize('in_features', [1, 3],
-                         ids=['1dim', '3dim'])
-@pytest.mark.parametrize('same_nonlin', [True, False],
-                         ids=['same_nonlin', 'different_nonlin'])
-@pytest.mark.parametrize('bias', [True, False],
-                         ids=['bias', 'no_bias'])
-@pytest.mark.parametrize('weight', [True, False],
-                         ids=['weight', 'no_weight'])
+@pytest.mark.parametrize("in_features", [1, 3], ids=["1dim", "3dim"])
+@pytest.mark.parametrize("same_nonlin", [True, False], ids=["same_nonlin", "different_nonlin"])
+@pytest.mark.parametrize("bias", [True, False], ids=["bias", "no_bias"])
+@pytest.mark.parametrize("weight", [True, False], ids=["weight", "no_weight"])
 def test_indi_nonlin_layer(in_features, same_nonlin, bias, weight):
     if not same_nonlin and in_features > 1:
-        nonlin = in_features*[to.tanh]
+        nonlin = in_features * [to.tanh]
     else:
         nonlin = to.sigmoid
     layer = IndiNonlinLayer(in_features, nonlin, bias, weight)
@@ -881,25 +859,22 @@ def test_indi_nonlin_layer(in_features, same_nonlin, bias, weight):
     assert i.shape == o.shape
 
 
+@pytest.mark.parametrize("env", [MockEnv(obs_space=InfBoxSpace(shape=1), act_space=InfBoxSpace(shape=1))])
 @pytest.mark.parametrize(
-    'env', [MockEnv(obs_space=InfBoxSpace(shape=1), act_space=InfBoxSpace(shape=1))]
-)
-@pytest.mark.parametrize(
-    'policy', [
+    "policy",
+    [
         # Two-headed policies are not supported
-        'rnn_policy',
-        'lstm_policy',
-        'gru_policy',
-        'adn_policy',
-        'nf_policy',
+        "rnn_policy",
+        "lstm_policy",
+        "gru_policy",
+        "adn_policy",
+        "nf_policy",
     ],
-    ids=['rnn', 'lstm', 'gru', 'adn', 'nf'],
-    indirect=True
+    ids=["rnn", "lstm", "gru", "adn", "nf"],
+    indirect=True,
 )
-@pytest.mark.parametrize('windowed', [True, False],
-                         ids=['windowed', 'not_windowed'])
-@pytest.mark.parametrize('cascaded', [True, False],
-                         ids=['cascaded', 'not_cascaded'])
+@pytest.mark.parametrize("windowed", [True, False], ids=["windowed", "not_windowed"])
+@pytest.mark.parametrize("cascaded", [True, False], ids=["cascaded", "not_cascaded"])
 def test_tspred(tsdataset, env, policy, windowed, cascaded):
     if windowed:
         inp_seq = tsdataset.data_trn_inp

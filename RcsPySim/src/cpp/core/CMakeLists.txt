@@ -37,7 +37,6 @@ set(CORE_SRCS
     ECBallOnPlate.cpp
     ECBoxFlipping.cpp
     ECBoxLifting.cpp
-    ECBoxLiftingSimple.cpp
     ECBoxShelving.cpp
     ECMPBlending.cpp
     ECPlanar3Link.cpp
@@ -58,7 +57,6 @@ set(CORE_SRCS
     initState/ISSBallOnPlate.cpp
     initState/ISSBoxFlipping.cpp
     initState/ISSBoxLifting.cpp
-    initState/ISSBoxLiftingSimple.cpp
     initState/ISSBoxShelving.cpp
     initState/ISSMPBlending.cpp
     initState/ISSPlanar3Link.cpp
@@ -118,9 +116,7 @@ set(CORE_SRCS
 
 # Add PyTorch specific sources if available
 IF (TORCH_FOUND)
-  LIST(APPEND CORE_SRCS
-      control/TorchPolicy.cpp
-      )
+  LIST(APPEND CORE_SRCS control/TorchPolicy.cpp)
 ENDIF ()
 
 add_library(RcsEnvCore SHARED ${CORE_SRCS})

@@ -86,7 +86,7 @@ protected:
             // Obtain the inner action model
             std::unique_ptr<AMIKGeneric> innerAM(new AMIKGeneric(graph));
             
-            // Check if the MPs are defined on position or task level
+            // Check if the MPs are defined on position or velocity level
             if (properties->getPropertyBool("positionTasks", true)) {
                 innerAM->addTask(new TaskPosition1D("X", graph, effector, nullptr, nullptr));
                 innerAM->addTask(new TaskPosition1D("Y", graph, effector, nullptr, nullptr));
@@ -122,7 +122,7 @@ protected:
             auto amIK = new AMIKControllerActivation(graph, tcm);
             std::vector<Task*> tasks;
     
-            // Check if the tasks are defined on position or task level. Adapt their parameters if desired.
+            // Check if the tasks are defined on position or velocity level. Adapt their parameters if desired.
             if (properties->getPropertyBool("positionTasks", true)) {
                 RcsBody* goalLL = RcsGraph_getBodyByName(graph, "GoalLL");
                 RcsBody* goalUL = RcsGraph_getBodyByName(graph, "GoalUL");
@@ -158,7 +158,7 @@ protected:
     
             // Set the tasks' desired states
             std::vector<PropertySource*> taskSpec = properties->getChildList("taskSpecIK");
-            amIK->setXdesFromTaskSpec(taskSpec, tasks);
+            amIK->setXdesFromTaskSpec(taskSpec);
     
             return amIK;
         }

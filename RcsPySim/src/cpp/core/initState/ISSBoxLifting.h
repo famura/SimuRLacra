@@ -65,7 +65,6 @@ private:
     bool fixedInitState;
     RcsBody* platform;
     RcsBody* rail;
-    RcsBody* link2L;
     RcsBody* link2R;
 };
 

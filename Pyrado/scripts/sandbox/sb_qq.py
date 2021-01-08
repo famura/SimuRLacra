@@ -39,12 +39,12 @@ from pyrado.sampling.rollout import rollout
 from pyrado.utils.data_types import RenderMode
 
 
-if __name__ == '__main__':
-    plt.rc('text', usetex=True)
+if __name__ == "__main__":
+    plt.rc("text", usetex=True)
 
     # Set up environment
-    env = QQubeSwingUpSim(dt=1/500., max_steps=3500)
-    env = GaussianObsNoiseWrapper(env, noise_std=[0., 0., 0., 0., 2., 0])  # only noise on theta_dot [rad/s]
+    env = QQubeSwingUpSim(dt=1 / 500.0, max_steps=3500)
+    env = GaussianObsNoiseWrapper(env, noise_std=[0.0, 0.0, 0.0, 0.0, 2.0, 0])  # only noise on theta_dot [rad/s]
 
     # Set up policy
     policy = QQubeSwingUpAndBalanceCtrl(env.spec)
@@ -62,18 +62,18 @@ if __name__ == '__main__':
 
     # Plot the filtered signals versus the orignal observations
     fix, axs = plt.subplots(2, figsize=(16, 8))
-    axs[0].plot(theta_dot, label=r'$\dot{\theta}$')
-    axs[0].plot(theta_dot_filt_3, label=r'$\dot{\theta}_{filt}, \sigma=3$')
-    axs[0].plot(theta_dot_filt_5, label=r'$\dot{\theta}_{filt}, \sigma=5$')
-    axs[1].plot(alpha_dot, label=r'$\dot{\alpha}$')
-    axs[1].plot(alpha_dot_filt_3, label=r'$\dot{\alpha}_{filt}, \sigma=3$')
-    axs[1].plot(alpha_dot_filt_5, label=r'$\dot{\alpha}_{filt}, \sigma=5$')
+    axs[0].plot(theta_dot, label=r"$\dot{\theta}$")
+    axs[0].plot(theta_dot_filt_3, label=r"$\dot{\theta}_{filt}, \sigma=3$")
+    axs[0].plot(theta_dot_filt_5, label=r"$\dot{\theta}_{filt}, \sigma=5$")
+    axs[1].plot(alpha_dot, label=r"$\dot{\alpha}$")
+    axs[1].plot(alpha_dot_filt_3, label=r"$\dot{\alpha}_{filt}, \sigma=3$")
+    axs[1].plot(alpha_dot_filt_5, label=r"$\dot{\alpha}_{filt}, \sigma=5$")
 
-    axs[0].set_title(r'Gaussian 1D filter on noisy $\theta$ signal')
-    axs[1].set_ylabel(r'$\dot{\theta}$ [rad/s]')
+    axs[0].set_title(r"Gaussian 1D filter on noisy $\theta$ signal")
+    axs[1].set_ylabel(r"$\dot{\theta}$ [rad/s]")
     axs[0].legend()
-    axs[1].set_title(r'Gaussian 1D filter on clean $\alpha$ signal')
-    axs[1].set_xlabel('time steps')
-    axs[1].set_ylabel(r'$\dot{\alpha}$ [rad/s]')
+    axs[1].set_title(r"Gaussian 1D filter on clean $\alpha$ signal")
+    axs[1].set_xlabel("time steps")
+    axs[1].set_ylabel(r"$\dot{\alpha}$ [rad/s]")
     axs[1].legend()
     plt.show()

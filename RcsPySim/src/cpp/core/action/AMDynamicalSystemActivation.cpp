@@ -247,7 +247,7 @@ TaskCombinationMethod AMDynamicalSystemActivation::checkTaskCombinationMethod(st
     }
     else {
         std::ostringstream os;
-        os << "Unsupported task combination method: " << tcmName;
+        os << "Unsupported task combination method: " << tcmName << "! Supported methods: sum, mean, softmax, product.";
         throw std::invalid_argument(os.str());
     }
     return tcm;

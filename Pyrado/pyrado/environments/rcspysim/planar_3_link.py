@@ -47,7 +47,7 @@ from pyrado.utils.data_types import EnvSpec
 
 
 rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)
-rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, 'Planar3Link'))
+rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "Planar3Link"))
 
 
 class Planar3LinkSim(RcsSim, Serializable):
@@ -68,27 +68,27 @@ class Planar3LinkSim(RcsSim, Serializable):
         """
         Serializable._init(self, locals())
 
-        if kwargs.get('collisionConfig', None) is None:
+        if kwargs.get("collisionConfig", None) is None:
             collision_config = {
-                'pairs': [
-                    {'body1': 'Effector', 'body2': 'Link2'},
-                    {'body1': 'Effector', 'body2': 'Link1'},
+                "pairs": [
+                    {"body1": "Effector", "body2": "Link2"},
+                    {"body1": "Effector", "body2": "Link1"},
                 ],
-                'threshold': 0.15,
-                'predCollHorizon': 20
+                "threshold": 0.15,
+                "predCollHorizon": 20,
             }
         else:
-            collision_config = kwargs.get('collisionConfig')
+            collision_config = kwargs.get("collisionConfig")
 
         # Forward to RcsSim's constructor
         RcsSim.__init__(
             self,
             task_args=task_args,
-            envType='Planar3Link',
-            graphFileName=kwargs.pop('graphFileName', 'gPlanar3Link_trqCtrl.xml'),  # by default torque control
-            positionTasks=kwargs.pop('positionTasks', None),  # invalid default value, positionTasks can be unnecessary
+            envType="Planar3Link",
+            graphFileName=kwargs.pop("graphFileName", "gPlanar3Link_trqCtrl.xml"),  # by default torque control
+            positionTasks=kwargs.pop("positionTasks", None),  # invalid default value, positionTasks can be unnecessary
             collisionConfig=collision_config,
-            **kwargs
+            **kwargs,
         )
 
         # Setup disturbance
@@ -100,38 +100,38 @@ class Planar3LinkSim(RcsSim, Serializable):
         # Sample angle and force uniformly
         angle = np.random.uniform(-np.pi, np.pi)
         force = np.random.uniform(0, self._max_dist_force)
-        return np.array([force*np.sin(angle), 0, force*np.cos(angle)])
+        return np.array([force * np.sin(angle), 0, force * np.cos(angle)])
 
     @classmethod
     def get_nominal_domain_param(cls):
         return dict(
-            link1_mass=2.,
-            link2_mass=2.,
-            link3_mass=2.,
+            link1_mass=2.0,
+            link2_mass=2.0,
+            link3_mass=2.0,
         )
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the indices for selection. This needs to match the observations' names in RcsPySim.
-        if task_args.get('consider_velocities', False):
-            idcs = ['Effector_X', 'Effector_Z', 'Effector_Xd', 'Effector_Zd']
+        if task_args.get("consider_velocities", False):
+            idcs = ["Effector_X", "Effector_Z", "Effector_Xd", "Effector_Zd"]
         else:
-            idcs = ['Effector_X', 'Effector_Z']
+            idcs = ["Effector_X", "Effector_Z"]
 
         # Get the masked environment specification
         spec = EnvSpec(
             self.spec.obs_space,
             self.spec.act_space,
-            self.spec.state_space.subspace(self.spec.state_space.create_mask(idcs))
+            self.spec.state_space.subspace(self.spec.state_space.create_mask(idcs)),
         )
 
         # Get and set goal position in world coordinates for all three sub-goals
-        p1 = self.get_body_position('Goal1', '', '')
-        p2 = self.get_body_position('Goal2', '', '')
-        p3 = self.get_body_position('Goal3', '', '')
+        p1 = self.get_body_position("Goal1", "", "")
+        p2 = self.get_body_position("Goal2", "", "")
+        p3 = self.get_body_position("Goal3", "", "")
         state_des1 = np.array([p1[0], p1[2], 0, 0])
         state_des2 = np.array([p2[0], p2[2], 0, 0])
         state_des3 = np.array([p3[0], p3[2], 0, 0])
-        if task_args.get('consider_velocities', False):
+        if task_args.get("consider_velocities", False):
             Q = np.diag([5e-1, 5e-1, 2e-1, 2e-1])
         else:
             Q = np.diag([1e0, 1e0])
@@ -144,33 +144,31 @@ class Planar3LinkSim(RcsSim, Serializable):
 
         # Create the tasks
         subtask_1 = FinalRewTask(
-            DesStateTask(spec, state_des1, ExpQuadrErrRewFcn(Q, R), success_fcn),
-            mode=FinalRewMode(time_dependent=True)
+            DesStateTask(spec, state_des1, ExpQuadrErrRewFcn(Q, R), success_fcn), mode=FinalRewMode(time_dependent=True)
         )
         subtask_2 = FinalRewTask(
-            DesStateTask(spec, state_des2, ExpQuadrErrRewFcn(Q, R), success_fcn),
-            mode=FinalRewMode(time_dependent=True)
+            DesStateTask(spec, state_des2, ExpQuadrErrRewFcn(Q, R), success_fcn), mode=FinalRewMode(time_dependent=True)
         )
         subtask_3 = FinalRewTask(
-            DesStateTask(spec, state_des3, ExpQuadrErrRewFcn(Q, R), success_fcn),
-            mode=FinalRewMode(time_dependent=True)
+            DesStateTask(spec, state_des3, ExpQuadrErrRewFcn(Q, R), success_fcn), mode=FinalRewMode(time_dependent=True)
         )
         subtask_4 = FinalRewTask(
-            DesStateTask(spec, state_des1, ExpQuadrErrRewFcn(Q, R), success_fcn),
-            mode=FinalRewMode(time_dependent=True)
+            DesStateTask(spec, state_des1, ExpQuadrErrRewFcn(Q, R), success_fcn), mode=FinalRewMode(time_dependent=True)
         )
         subtask_5 = FinalRewTask(
-            DesStateTask(spec, state_des2, ExpQuadrErrRewFcn(Q, R), success_fcn),
-            mode=FinalRewMode(time_dependent=True)
+            DesStateTask(spec, state_des2, ExpQuadrErrRewFcn(Q, R), success_fcn), mode=FinalRewMode(time_dependent=True)
         )
         subtask_6 = FinalRewTask(
-            DesStateTask(spec, state_des3, ExpQuadrErrRewFcn(Q, R), success_fcn),
-            mode=FinalRewMode(time_dependent=True)
+            DesStateTask(spec, state_des3, ExpQuadrErrRewFcn(Q, R), success_fcn), mode=FinalRewMode(time_dependent=True)
         )
         task = FinalRewTask(
-            SequentialTasks([subtask_1, subtask_2, subtask_3, subtask_4, subtask_5, subtask_6], hold_rew_when_done=True,
-                            verbose=True),
-            mode=FinalRewMode(always_positive=True), factor=5e3,
+            SequentialTasks(
+                [subtask_1, subtask_2, subtask_3, subtask_4, subtask_5, subtask_6],
+                hold_rew_when_done=True,
+                verbose=True,
+            ),
+            mode=FinalRewMode(always_positive=True),
+            factor=5e3,
         )
         masked_task = MaskedTask(self.spec, task, idcs)
 
@@ -181,7 +179,7 @@ class Planar3LinkSim(RcsSim, Serializable):
             return ParallelTasks([masked_task, task_check_bounds], easily_satisfied=True)
         else:
             task_ts_discrepancy = create_task_space_discrepancy_task(
-                self.spec, AbsErrRewFcn(q=0.5*np.ones(2), r=np.zeros(self.act_space.shape))
+                self.spec, AbsErrRewFcn(q=0.5 * np.ones(2), r=np.zeros(self.act_space.shape))
             )
             # Return the masked task and and additional task that ends the episode if the unmasked state is out of bound
             return ParallelTasks([masked_task, task_check_bounds, task_ts_discrepancy], easily_satisfied=True)
@@ -190,7 +188,7 @@ class Planar3LinkSim(RcsSim, Serializable):
 class Planar3LinkJointCtrlSim(Planar3LinkSim, Serializable):
     """ Planar 3-link robot controlled by directly setting the joint angles """
 
-    name: str = 'p3l-jt'
+    name: str = "p3l-jt"
 
     def __init__(self, task_args: dict = None, **kwargs):
         """
@@ -203,16 +201,16 @@ class Planar3LinkJointCtrlSim(Planar3LinkSim, Serializable):
         # Forward to the Planar3LinkSim's constructor, specifying the characteristic action model
         super().__init__(
             task_args=dict() if task_args is None else task_args,
-            actionModelType='joint_pos',
-            graphFileName='gPlanar3Link_posCtrl.xml',
-            **kwargs
+            actionModelType="joint_pos",
+            graphFileName="gPlanar3Link_posCtrl.xml",
+            **kwargs,
         )
 
 
 class Planar3LinkIKActivationSim(Planar3LinkSim, Serializable):
     """ Planar 3-link robot environment controlled by setting the input to an Rcs IK-based controller """
 
-    name: str = 'p3l-ika'
+    name: str = "p3l-ika"
 
     def __init__(self, task_args: dict = None, **kwargs):
         """
@@ -233,30 +231,26 @@ class Planar3LinkIKActivationSim(Planar3LinkSim, Serializable):
         Serializable._init(self, locals())
 
         task_spec_ik = [
-            dict(x_des=np.array([0., 0., 0.])),
-            dict(x_des=np.array([0., 0., 0.])),
-            dict(x_des=np.array([0., 0., 0.]))
+            dict(x_des=np.array([0.0, 0.0, 0.0])),
+            dict(x_des=np.array([0.0, 0.0, 0.0])),
+            dict(x_des=np.array([0.0, 0.0, 0.0])),
         ]
 
         # Forward to the Planar3LinkSim's constructor, specifying the characteristic action model
         super().__init__(
             task_args=dict() if task_args is None else task_args,
-            actionModelType='ik_activation',
+            actionModelType="ik_activation",
             taskSpecIK=task_spec_ik,
-            **kwargs
+            **kwargs,
         )
 
 
 class Planar3LinkTASim(Planar3LinkSim, Serializable):
     """ Planar 3-link robot controlled by setting the task activation of a Rcs control task """
 
-    name: str = 'p3l-ta'
+    name: str = "p3l-ta"
 
-    def __init__(self,
-                 task_args: dict = None,
-                 mps: Sequence[dict] = None,
-                 position_mps: bool = True,
-                 **kwargs):
+    def __init__(self, task_args: dict = None, mps: Sequence[dict] = None, position_mps: bool = True, **kwargs):
         """
         Constructor
 
@@ -306,48 +300,45 @@ class Planar3LinkTASim(Planar3LinkSim, Serializable):
             if position_mps:
                 mps = [
                     {
-                        'function': 'msd_nlin',
-                        'attractorStiffness': 30.,
-                        'mass': 1.,
-                        'damping': 50.,
-                        'goal': np.array([-0.8, 0.8]),  # position of the left sphere
+                        "function": "msd_nlin",
+                        "attractorStiffness": 30.0,
+                        "mass": 1.0,
+                        "damping": 50.0,
+                        "goal": np.array([-0.8, 0.8]),  # position of the left sphere
                     },
                     {
-                        'function': 'msd_nlin',
-                        'attractorStiffness': 30.,
-                        'mass': 1.,
-                        'damping': 50.,
-                        'goal': np.array([+0.8, 0.8]),  # position of the lower right sphere
+                        "function": "msd_nlin",
+                        "attractorStiffness": 30.0,
+                        "mass": 1.0,
+                        "damping": 50.0,
+                        "goal": np.array([+0.8, 0.8]),  # position of the lower right sphere
                     },
                     {
-                        'function': 'msd_nlin',
-                        'attractorStiffness': 30.,
-                        'mass': 1.,
-                        'damping': 50.,
-                        'goal': np.array([-0.25, 1.2]),  # position of the upper right sphere
-                    }
+                        "function": "msd_nlin",
+                        "attractorStiffness": 30.0,
+                        "mass": 1.0,
+                        "damping": 50.0,
+                        "goal": np.array([-0.25, 1.2]),  # position of the upper right sphere
+                    },
                 ]
             else:
-                dt = kwargs.get('dt', 0.01)  # 100 Hz is the default
+                dt = kwargs.get("dt", 0.01)  # 100 Hz is the default
                 mps = [
                     {
-                        'function': 'lin',
-                        'errorDynamics': 5.*np.eye(2),
-                        'goal': dt*np.array([0.06, 0.06])  # X and Z [m/s]
+                        "function": "lin",
+                        "errorDynamics": 5.0 * np.eye(2),
+                        "goal": dt * np.array([0.06, 0.06]),  # X and Z [m/s]
                     },
                     {
-                        'function': 'lin',
-                        'errorDynamics': 5.*np.eye(2),
-                        'goal': dt*np.array([-0.04, -0.04])  # X and Z [m/s]
-                    }
+                        "function": "lin",
+                        "errorDynamics": 5.0 * np.eye(2),
+                        "goal": dt * np.array([-0.04, -0.04]),  # X and Z [m/s]
+                    },
                 ]
 
         # Forward to the Planar3LinkSim's constructor, specifying the characteristic action model
         super().__init__(
-            task_args=dict() if task_args is None else task_args,
-            actionModelType='ds_activation',
-            tasks=mps,
-            **kwargs
+            task_args=dict() if task_args is None else task_args, actionModelType="ds_activation", tasks=mps, **kwargs
         )
 
         # # State space definition

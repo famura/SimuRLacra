@@ -38,11 +38,13 @@ from pyrado.utils.input_output import color_validity
 class BoxSpace(Space):
     """ Multidimensional box space. This class can also be used to describe a sphere. """
 
-    def __init__(self,
-                 bound_lo: [float, list, np.ndarray],
-                 bound_up: [float, list, np.ndarray],
-                 shape: [tuple, int] = None,
-                 labels: Sequence[str] = None):
+    def __init__(
+        self,
+        bound_lo: [float, list, np.ndarray],
+        bound_up: [float, list, np.ndarray],
+        shape: [tuple, int] = None,
+        labels: Sequence[str] = None,
+    ):
         """
         Constructor
 
@@ -53,8 +55,8 @@ class BoxSpace(Space):
         """
         if shape is not None:
             # The bounds are scalars
-            self.bound_lo = np.ones(shape)*bound_lo
-            self.bound_up = np.ones(shape)*bound_up
+            self.bound_lo = np.ones(shape) * bound_lo
+            self.bound_up = np.ones(shape) * bound_up
         else:
             # Cast the bounds into arrays if necessary
             try:
@@ -123,9 +125,9 @@ class BoxSpace(Space):
         if not new_lo.shape == new_up.shape:
             raise pyrado.ShapeErr(given=new_up, expected_match=new_lo)
         if not (new_lo >= self.bound_lo).all():
-            raise pyrado.ValueErr(msg='At least one new lower bound is too low!')
+            raise pyrado.ValueErr(msg="At least one new lower bound is too low!")
         if not (new_up <= self.bound_up).all():
-            raise pyrado.ValueErr(msg='At least one new upper bound is too high!')
+            raise pyrado.ValueErr(msg="At least one new upper bound is too high!")
 
         shrinked_box = self.copy()
         shrinked_box.bound_lo = new_lo
@@ -138,9 +140,8 @@ class BoxSpace(Space):
             raise pyrado.ShapeErr(given=cand, expected_match=self)
         if np.isnan(cand).any():
             raise pyrado.ValueErr(
-                msg=f'At least one value is NaN!' +
-                    tabulate([list(self.labels), [*color_validity(cand, np.invert(np.isnan(cand)))]],
-                             headers='firstrow')
+                msg=f"At least one value is NaN!"
+                + tabulate([list(self.labels), [*color_validity(cand, np.invert(np.isnan(cand)))]], headers="firstrow")
             )
 
         # Check upper and lower bound separately
@@ -152,11 +153,16 @@ class BoxSpace(Space):
             return True
         else:
             if verbose:
-                print(tabulate([
-                    ['lower bound ', *color_validity(self.bound_lo, check_lo)],
-                    ['candidate ', *color_validity(cand, idcs_valid)],
-                    ['upper bound ', *color_validity(self.bound_up, check_up)]
-                ], headers=[''] + list(self.labels)))
+                print(
+                    tabulate(
+                        [
+                            ["lower bound ", *color_validity(self.bound_lo, check_lo)],
+                            ["candidate ", *color_validity(cand, idcs_valid)],
+                            ["upper bound ", *color_validity(self.bound_up, check_up)],
+                        ],
+                        headers=[""] + list(self.labels),
+                    )
+                )
             return False
 
     def sample_uniform(self, concrete_inf: float = 1e6) -> np.ndarray:

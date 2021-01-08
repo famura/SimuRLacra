@@ -1,8 +1,8 @@
-# Build all options
 name: Publish Docker Images On Release
 
 on:
   release:
+
 jobs:
   build-images:
     runs-on: ubuntu-latest
@@ -34,9 +34,9 @@ jobs:
           context: .
           push: true
           tags: |
-            simurlacra/simurlacra:${{matrix.flavor}}
-            ghcr.io/${{ github.repository_owner }}/simurlacra:${{matrix.flavor}}
+            simurlacra/simurlacra:${{ matrix.flavor }}
+            ghcr.io/${{ github.repository_owner }}/simurlacra:${{ matrix.flavor }}
           build-args: |
             OPTION=${{ matrix.flavor }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/simurlacra:${{matrix.flavor}}-${GITHUB_REF#refs/*/}
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/simurlacra:${{ matrix.flavor }}-${GITHUB_REF#refs/*/}
           cache-to: type=inline

@@ -64,11 +64,7 @@ class AdversarialWrapper(EnvWrapper, ABC):
 class AdversarialObservationWrapper(AdversarialWrapper, Serializable):
     """" Wrapper to apply adversarial perturbations to the observations (used in ARPL) """
 
-    def __init__(self,
-                 wrapped_env,
-                 policy,
-                 eps,
-                 phi):
+    def __init__(self, wrapped_env, policy, eps, phi):
         """
         Constructor
 
@@ -93,18 +89,13 @@ class AdversarialObservationWrapper(AdversarialWrapper, Serializable):
         l2_norm_mean = -to.norm(mean_arpl, p=2, dim=1)
         l2_norm_mean.backward()
         state_grad = state_tensor.grad
-        return self._eps*to.sign(state_grad)
+        return self._eps * to.sign(state_grad)
 
 
 class AdversarialStateWrapper(AdversarialWrapper, Serializable):
     """" Wrapper to apply adversarial perturbations to the state (used in ARPL) """
 
-    def __init__(self,
-                 wrapped_env,
-                 policy,
-                 eps,
-                 phi,
-                 torch_observation=False):
+    def __init__(self, wrapped_env, policy, eps, phi, torch_observation=False):
         """
         Constructor
 
@@ -122,12 +113,12 @@ class AdversarialStateWrapper(AdversarialWrapper, Serializable):
         obs, reward, done, info = self.wrapped_env.step(act)
         saw = typed_env(self.wrapped_env, StateAugmentationWrapper)
         state = inner_env(self).state
-        nonobserved = to.from_numpy(obs[saw.offset:])
+        nonobserved = to.from_numpy(obs[saw.offset :])
         adversarial = self.get_arpl_grad(state, nonobserved)
         if self.decide_apply():
             inner_env(self).state += adversarial.view(-1).numpy()
         if saw:
-            obs[:saw.offset] = inner_env(self).observe(inner_env(self).state)
+            obs[: saw.offset] = inner_env(self).observe(inner_env(self).state)
         else:
             obs = inner_env(self).observe(inner_env(self).state)
         return obs, reward, done, info
@@ -138,7 +129,7 @@ class AdversarialStateWrapper(AdversarialWrapper, Serializable):
         elif isinstance(state, to.Tensor):
             state_tensor = state
         else:
-            raise ValueError('state could not be converted to a torch tensor')
+            raise ValueError("state could not be converted to a torch tensor")
         if self.torch_observation:
             observation = inner_env(self).observe(state_tensor, dtype=to.Tensor)
         else:
@@ -147,18 +138,13 @@ class AdversarialStateWrapper(AdversarialWrapper, Serializable):
         l2_norm_mean = -to.norm(mean_arpl, p=2, dim=0)
         l2_norm_mean.backward()
         state_grad = state_tensor.grad
-        return self._eps*to.sign(state_grad)
+        return self._eps * to.sign(state_grad)
 
 
 class AdversarialDynamicsWrapper(AdversarialWrapper, Serializable):
     """" Wrapper to apply adversarial perturbations to the domain parameters (used in ARPL) """
 
-    def __init__(self,
-                 wrapped_env,
-                 policy,
-                 eps,
-                 phi,
-                 width=0.25):
+    def __init__(self, wrapped_env, policy, eps, phi, width=0.25):
         """
         Constructor
 
@@ -178,7 +164,7 @@ class AdversarialDynamicsWrapper(AdversarialWrapper, Serializable):
         self.re_adv()
 
     def re_adv(self):
-        self.adv = np.random.uniform(1 - self.width, 1 + self.width, self.nominal.shape)*self.nominal
+        self.adv = np.random.uniform(1 - self.width, 1 + self.width, self.nominal.shape) * self.nominal
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         self.re_adv()
@@ -188,7 +174,7 @@ class AdversarialDynamicsWrapper(AdversarialWrapper, Serializable):
     def step(self, act: np.ndarray):
         obs, reward, done, info = self.wrapped_env.step(act)
         state = obs.clone()
-        adversarial = self.get_arpl_grad(state)*self.nominalT
+        adversarial = self.get_arpl_grad(state) * self.nominalT
         if self.decide_apply():
             new_params = to.tensor(self.adv).squeeze(0) + adversarial
             self.saw.set_param(new_params.squeeze(0))
@@ -201,5 +187,5 @@ class AdversarialDynamicsWrapper(AdversarialWrapper, Serializable):
         l2_norm_mean = -to.norm(mean_arpl, p=2, dim=1)
         l2_norm_mean.backward()
         state_grad = state_tensor.grad
-        state_grad = state_grad[:, self.saw.offset:]
-        return self._eps*to.sign(state_grad)
+        state_grad = state_grad[:, self.saw.offset :]
+        return self._eps * to.sign(state_grad)

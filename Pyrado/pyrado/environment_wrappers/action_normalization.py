@@ -40,12 +40,12 @@ class ActNormWrapper(EnvWrapperAct):
         lb, ub = self.wrapped_env.act_space.bounds
 
         # Denormalize action
-        act_denorm = lb + (act + 1)*(ub - lb)/2
+        act_denorm = lb + (act + 1) * (ub - lb) / 2
         return act_denorm  # can be out of action space, but this has to be checked by the environment
 
     def _process_act_space(self, space: BoxSpace) -> BoxSpace:
         if not isinstance(space, BoxSpace):
-            raise NotImplementedError('Only implemented ActNormWrapper._process_act_space() for BoxSpace!')
+            raise NotImplementedError("Only implemented ActNormWrapper._process_act_space() for BoxSpace!")
 
         # Return space with same shape but bounds from -1 to 1
         return BoxSpace(-np.ones(space.shape), np.ones(space.shape), labels=space.labels)

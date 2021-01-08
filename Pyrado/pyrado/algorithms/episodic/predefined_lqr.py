@@ -46,17 +46,19 @@ from pyrado.utils.tensor import insert_tensor_col
 class LQR(Algorithm):
     """ Linear Quadratic Regulator created using the control module """
 
-    name: str = 'lqr'
+    name: str = "lqr"
 
-    def __init__(self,
-                 save_dir: str,
-                 env: SimEnv,
-                 policy: Policy,
-                 min_rollouts: int = None,
-                 min_steps: int = None,
-                 num_workers: int = 4,
-                 logger: StepLogger = None,
-                 ball_z_dim_mismatch: bool = True):
+    def __init__(
+        self,
+        save_dir: str,
+        env: SimEnv,
+        policy: Policy,
+        min_rollouts: int = None,
+        min_steps: int = None,
+        num_workers: int = 4,
+        logger: StepLogger = None,
+        ball_z_dim_mismatch: bool = True,
+    ):
         """
         Constructor
 
@@ -83,23 +85,22 @@ class LQR(Algorithm):
         self.ball_z_dim_mismatch = ball_z_dim_mismatch
 
         self.sampler = ParallelRolloutSampler(
-            env, self._policy,
-            num_workers=num_workers,
-            min_steps=min_steps,
-            min_rollouts=min_rollouts
+            env, self._policy, num_workers=num_workers, min_steps=min_steps, min_rollouts=min_rollouts
         )
         self.eigvals = np.array([pyrado.inf])  # initialize with sth positive
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
 
         if isinstance(inner_env(self._env), BallOnPlate5DSim):
-            ctrl_gains = to.tensor([
-                [0.1401, 0, 0, 0, -0.09819, -0.1359, 0, 0.545, 0, 0, 0, -0.01417, -0.04427, 0],
-                [0, 0.1381, 0, 0.2518, 0, 0, -0.2142, 0, 0.5371, 0, 0.03336, 0, 0, -0.1262],
-                [0, 0, 0.1414, 0.0002534, 0, 0, -0.0002152, 0, 0, 0.5318, 0, 0, 0, -0.0001269],
-                [0, -0.479, -0.0004812, 39.24, 0, 0, -15.44, 0, -1.988, -0.001934, 9.466, 0, 0, -13.14],
-                [0.3039, 0, 0, 0, 25.13, 15.66, 0, 1.284, 0, 0, 0, 7.609, 6.296, 0]
-            ])
+            ctrl_gains = to.tensor(
+                [
+                    [0.1401, 0, 0, 0, -0.09819, -0.1359, 0, 0.545, 0, 0, 0, -0.01417, -0.04427, 0],
+                    [0, 0.1381, 0, 0.2518, 0, 0, -0.2142, 0, 0.5371, 0, 0.03336, 0, 0, -0.1262],
+                    [0, 0, 0.1414, 0.0002534, 0, 0, -0.0002152, 0, 0, 0.5318, 0, 0, 0, -0.0001269],
+                    [0, -0.479, -0.0004812, 39.24, 0, 0, -15.44, 0, -1.988, -0.001934, 9.466, 0, 0, -13.14],
+                    [0.3039, 0, 0, 0, 25.13, 15.66, 0, 1.284, 0, 0, 0, 7.609, 6.296, 0],
+                ]
+            )
 
             # Compensate for the mismatching different state definition
             if self.ball_z_dim_mismatch:
@@ -112,24 +113,25 @@ class LQR(Algorithm):
 
             # System modeling
             dp = self._env.domain_param
-            dp['J_eq'] = self._env._J_eq
-            dp['B_eq_v'] = self._env._B_eq_v
-            dp['c_kin'] = self._env._c_kin
-            dp['zeta'] = self._env._zeta
-            dp['A_m'] = self._env._A_m
+            dp["J_eq"] = self._env._J_eq
+            dp["B_eq_v"] = self._env._B_eq_v
+            dp["c_kin"] = self._env._c_kin
+            dp["zeta"] = self._env._zeta
+            dp["A_m"] = self._env._A_m
 
             A = np.zeros((self._env.obs_space.flat_dim, self._env.obs_space.flat_dim))
-            A[:self._env.obs_space.flat_dim//2, self._env.obs_space.flat_dim//2:] = \
-                np.eye(self._env.obs_space.flat_dim//2)
-            A[4, 4] = -dp['B_eq_v']/dp['J_eq']
-            A[5, 5] = -dp['B_eq_v']/dp['J_eq']
-            A[6, 0] = dp['c_kin']*dp['m_ball']*dp['g']*dp['r_ball']**2/dp['zeta']
-            A[6, 6] = -dp['c_kin']*dp['r_ball']**2/dp['zeta']
-            A[7, 1] = dp['c_kin']*dp['m_ball']*dp['g']*dp['r_ball']**2/dp['zeta']
-            A[7, 7] = -dp['c_kin']*dp['r_ball']**2/dp['zeta']
+            A[: self._env.obs_space.flat_dim // 2, self._env.obs_space.flat_dim // 2 :] = np.eye(
+                self._env.obs_space.flat_dim // 2
+            )
+            A[4, 4] = -dp["B_eq_v"] / dp["J_eq"]
+            A[5, 5] = -dp["B_eq_v"] / dp["J_eq"]
+            A[6, 0] = dp["c_kin"] * dp["m_ball"] * dp["g"] * dp["r_ball"] ** 2 / dp["zeta"]
+            A[6, 6] = -dp["c_kin"] * dp["r_ball"] ** 2 / dp["zeta"]
+            A[7, 1] = dp["c_kin"] * dp["m_ball"] * dp["g"] * dp["r_ball"] ** 2 / dp["zeta"]
+            A[7, 7] = -dp["c_kin"] * dp["r_ball"] ** 2 / dp["zeta"]
             B = np.zeros((self._env.obs_space.flat_dim, self._env.act_space.flat_dim))
-            B[4, 0] = dp['A_m']/dp['J_eq']
-            B[5, 1] = dp['A_m']/dp['J_eq']
+            B[4, 0] = dp["A_m"] / dp["J_eq"]
+            B[5, 1] = dp["A_m"] / dp["J_eq"]
             # C = np.zeros((self._env.obs_space.flat_dim // 2, self._env.obs_space.flat_dim))
             # C[:self._env.obs_space.flat_dim // 2, :self._env.obs_space.flat_dim // 2] =
             # np.eye(self._env.obs_space.flat_dim // 2)
@@ -142,7 +144,7 @@ class LQR(Algorithm):
                 R = self._env.task.rew_fcn.R
             else:
                 # The environment does not use a reward function compatible with the LQR, apply some fine tuning
-                Q = np.diag([1e2, 1e2, 5e2, 5e2, 1e-2, 1e-2, 5e+0, 5e+0])
+                Q = np.diag([1e2, 1e2, 5e2, 5e2, 1e-2, 1e-2, 5e0, 5e0])
                 R = np.diag([1e-2, 1e-2])
 
             # Solve the continuous time Riccati eq
@@ -153,24 +155,26 @@ class LQR(Algorithm):
             raise pyrado.TypeErr(given=inner_env(self._env), expected_type=[BallOnPlate5DSim, QBallBalancerSim])
 
         # Assign the controller gains
-        self._policy.init_param(-1*ctrl_gains)  # in classical control it is u = -K*x; here a = psi(s)*s
+        self._policy.init_param(-1 * ctrl_gains)  # in classical control it is u = -K*x; here a = psi(s)*s
 
         # Sample rollouts to evaluate the LQR
         ros = self.sampler.sample()
 
         # Logging
         rets = [ro.undiscounted_return() for ro in ros]
-        self.logger.add_value('max return', np.max(rets), 4)
-        self.logger.add_value('median return', np.median(rets), 4)
-        self.logger.add_value('min return', np.min(rets), 4)
-        self.logger.add_value('avg return', np.mean(rets), 4)
-        self.logger.add_value('std return', np.std(rets), 4)
-        self.logger.add_value('avg rollout len', np.mean([ro.length for ro in ros]), 4)
-        self.logger.add_value('num total samples', self._cnt_samples)
-        self.logger.add_value('min mag policy param',
-                              self._policy.param_values[to.argmin(abs(self._policy.param_values))])
-        self.logger.add_value('max mag policy param',
-                              self._policy.param_values[to.argmax(abs(self._policy.param_values))])
+        self.logger.add_value("max return", np.max(rets), 4)
+        self.logger.add_value("median return", np.median(rets), 4)
+        self.logger.add_value("min return", np.min(rets), 4)
+        self.logger.add_value("avg return", np.mean(rets), 4)
+        self.logger.add_value("std return", np.std(rets), 4)
+        self.logger.add_value("avg rollout len", np.mean([ro.length for ro in ros]), 4)
+        self.logger.add_value("num total samples", self._cnt_samples)
+        self.logger.add_value(
+            "min mag policy param", self._policy.param_values[to.argmin(abs(self._policy.param_values))]
+        )
+        self.logger.add_value(
+            "max mag policy param", self._policy.param_values[to.argmax(abs(self._policy.param_values))]
+        )
 
         # Save snapshot data
         self.make_snapshot(snapshot_mode, float(np.mean(rets)), meta_info)
@@ -184,4 +188,4 @@ class LQR(Algorithm):
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            pyrado.save(self._env, 'env', 'pkl', self.save_dir, meta_info)
+            pyrado.save(self._env, "env", "pkl", self.save_dir, meta_info)

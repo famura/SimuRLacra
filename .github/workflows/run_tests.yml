@@ -1,9 +1,6 @@
-# Build all options
 name: Run Tests
 
-on:
-  push:
-  pull_request:
+on: [push, pull_request]
 
 jobs:
   build-images:
@@ -30,18 +27,18 @@ jobs:
           context: .
           load: true
           tags: |
-            simurlacra/simurlacra:${{matrix.flavor}}
-            ghcr.io/${{ github.repository_owner }}/simurlacra:${{matrix.flavor}}
+            simurlacra/simurlacra:${{ matrix.flavor }}
+            ghcr.io/${{ github.repository_owner }}/simurlacra:${{ matrix.flavor }}
           build-args: |
             OPTION=${{ matrix.flavor }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/simurlacra:${{matrix.flavor}}
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/simurlacra:${{ matrix.flavor }}
           cache-to: type=inline
       - name: Execute tests
         env:
-          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         run: |
           export COVPATH=$(realpath .)
-          docker run --rm -i -v $COVPATH:/cov ghcr.io/${{ github.repository_owner }}/simurlacra:${{matrix.flavor}} conda run -n pyrado bash -c "pytest Pyrado/tests --cov=./Pyrado --cov-report=xml -n 4 --verbose -m 'not visualization'; sudo cp ./coverage.xml /cov"
+          docker run --rm -i -v $COVPATH:/cov ghcr.io/${{ github.repository_owner }}/simurlacra:${{ matrix.flavor }} conda run -n pyrado bash -c "pytest Pyrado/tests --cov=./Pyrado --cov-report=xml -n 4 --verbose -m 'not visualization'; sudo cp ./coverage.xml /cov"
           sudo mkdir /home/user/
           sudo mkdir /home/user/SimuRLacra
           sudo ln -s $COVPATH /home/user/SimuRLacra

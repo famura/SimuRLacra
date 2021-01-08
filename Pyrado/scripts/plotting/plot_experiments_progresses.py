@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Script for visually comparing policy learning progress over different random seeds
+Script to visually compare policy learning progress (e.g. over different random seeds)
 """
 import numpy as np
 import os
@@ -42,18 +42,18 @@ from pyrado.utils.experiments import read_csv_w_replace
 from pyrado.utils.order import get_immediate_subdirs, natural_sort
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
-    plt.rc('text', usetex=args.use_tex)
+    plt.rc("text", usetex=args.use_tex)
 
     # Get the experiments' directories to load from
-    if args.ex_dir is None:
-        parent_dir = input('Please enter the parent directory for the experiments to compare:\n')
+    if args.dir is None:
+        parent_dir = input("Please enter the directory for the experiments to compare:\n")
     else:
-        parent_dir = args.ex_dir
+        parent_dir = args.dir
     if not osp.isdir(parent_dir):
-        raise pyrado.PathErr(parent_dir)
+        raise pyrado.PathErr(given=parent_dir)
     dirs = get_immediate_subdirs(parent_dir)
     dirs = natural_sort(dirs)
 
@@ -62,22 +62,28 @@ if __name__ == '__main__':
     best_returns = []
 
     # Plot progress of each experiment
-    fig, axs = plt.subplots(2, figsize=pyrado.figsize_IEEE_1col_18to10)
+    fig, axs = plt.subplots(2, figsize=(12, 8))
     for idx, d in enumerate(dirs):
         # Load an experiment's data
-        file = os.path.join(d, 'progress.csv')
+        file = os.path.join(d, "progress.csv")
         data = read_csv_w_replace(file)
 
         # Append one column per experiment
-        df = pd.concat([df, pd.DataFrame({f'ex_{idx}': data.avg_return})], axis=1)
+        df = pd.concat([df, pd.DataFrame({f"ex_{idx}": data.avg_return})], axis=1)
 
-        axs[0].plot(np.arange(len(data.avg_return)), data.avg_return, ls='--', lw=1, label=f'ex_{idx}')
-        axs[0].legend()
+        axs[0].plot(np.arange(len(data.avg_return)), data.avg_return, ls="--", lw=1, label=f"{d[d.rfind('/')+1:]}")
+        axs[0].legend(loc="upper left", bbox_to_anchor=(1.0, 1.0))  # legend outside to the right of the plots
+        axs[0].set_ylabel("return")
 
     # Plot mean and std across columns
     draw_curve(
-        'mean_std', axs[1], pd.DataFrame(dict(mean=df.mean(axis=1), std=df.std(axis=1))),
-        np.arange(len(df)), x_label='iteration', y_label='average return'
+        "mean_std",
+        axs[1],
+        pd.DataFrame(dict(mean=df.mean(axis=1), std=df.std(axis=1))),
+        np.arange(len(df)),
+        x_label="iteration",
+        y_label="return",
     )
 
+    plt.tight_layout()
     plt.show()

@@ -33,11 +33,14 @@ import sys
 import torch as to
 from init_args_serializer import Serializable
 from tqdm import tqdm
-from typing import Sequence, List, NamedTuple
+from typing import Sequence, List, NamedTuple, Union, Optional
 
 import pyrado
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper, DomainRandWrapperBuffer, \
-    remove_all_dr_wrappers
+from pyrado.environment_wrappers.domain_randomization import (
+    DomainRandWrapper,
+    DomainRandWrapperBuffer,
+    remove_all_dr_wrappers,
+)
 from pyrado.environments.base import Env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
@@ -51,6 +54,7 @@ from pyrado.environment_wrappers.utils import typed_env, attr_env_get, inner_env
 
 class ParameterSample(NamedTuple):
     """ Stores policy parameters and associated rollouts. """
+
     params: to.Tensor
     rollouts: List[StepSequence]
 
@@ -124,34 +128,35 @@ def _pes_sample_one(G, param):
     pol_param, dom_param, init_state = param
     vector_to_parameters(pol_param, G.policy.parameters())
 
-    return rollout(G.env, G.policy, reset_kwargs={
-        'init_state': init_state,
-        'domain_param': dom_param,
-    })
+    return rollout(
+        G.env,
+        G.policy,
+        reset_kwargs={
+            "init_state": init_state,
+            "domain_param": dom_param,
+        },
+    )
 
 
 class ParameterExplorationSampler(Serializable):
     """ Parallel sampler for parameter exploration """
 
-    def __init__(self,
-                 env: Env,
-                 policy: Policy,
-                 num_workers: int,
-                 num_rollouts_per_param: int,
-                 seed: int = None):
+    def __init__(
+        self, env: Env, policy: Policy, num_rollouts_per_param: int, num_workers: int, seed: Optional[int] = None
+    ):
         """
         Constructor
 
         :param env: environment to sample from
         :param policy: policy used for sampling
-        :param num_workers: number of parallel samplers
         :param num_rollouts_per_param: number of rollouts per policy parameter set (and init state if specified)
+        :param num_workers: number of parallel samplers
         :param seed: seed value for the random number generators, pass `None` for no seeding
         """
         if not isinstance(num_rollouts_per_param, int):
             raise pyrado.TypeErr(given=num_rollouts_per_param, expected_type=int)
         if num_rollouts_per_param < 1:
-            raise pyrado.ValueErr(given=num_rollouts_per_param, ge_constraint='1')
+            raise pyrado.ValueErr(given=num_rollouts_per_param, ge_constraint="1")
 
         Serializable._init(self, locals())
 
@@ -175,23 +180,23 @@ class ParameterExplorationSampler(Serializable):
         # Distribute environments. We use pickle to make sure a copy is created for n_envs = 1
         self.pool.invoke_all(_pes_init, pickle.dumps(self.env), pickle.dumps(self.policy))
 
-    def _sample_domain_params(self) -> [list, dict]:
+    def _sample_domain_params(self) -> list:
         """ Sample domain parameters from the cached domain randomization wrapper. """
         if self._dr_wrapper is None:
-            # No params
-            return [None]*self.num_rollouts_per_param
+            # There was no randomizer, thus do not set any domain parameters
+            return [None] * self.num_rollouts_per_param
 
         elif isinstance(self._dr_wrapper, DomainRandWrapperBuffer) and self._dr_wrapper.buffer is not None:
-            # Use buffered param sets
+            # Use buffered domain parameter sets
             idcs = np.random.randint(0, len(self._dr_wrapper.buffer), size=self.num_rollouts_per_param)
             return [self._dr_wrapper.buffer[i] for i in idcs]
 
         else:
-            # Sample new ones (same as in DomainRandWrapperBuffer.fill_buffer)
+            # Sample new domain parameters (same as in DomainRandWrapperBuffer.fill_buffer)
             self._dr_wrapper.randomizer.randomize(self.num_rollouts_per_param)
-            return self._dr_wrapper.randomizer.get_params(-1, format='list', dtype='numpy')
+            return self._dr_wrapper.randomizer.get_params(-1, fmt="list", dtype="numpy")
 
-    def _sample_one_init_state(self, domain_param: dict) -> [np.ndarray, None]:
+    def _sample_one_init_state(self, domain_param: dict) -> Union[np.ndarray, None]:
         """
         Sample an init state for the given domain parameter set(s).
         For some environments, the initial state space depends on the domain parameters, so we need to set them before
@@ -201,45 +206,47 @@ class ParameterExplorationSampler(Serializable):
         :return: initial state, `None` if no initial state space is defined
         """
         self.env.reset(domain_param=domain_param)
-        ispace = attr_env_get(self.env, 'init_space')
+        ispace = attr_env_get(self.env, "init_space")
         if ispace is not None:
             return ispace.sample_uniform()
         else:
             # No init space, no init state
             return None
 
-    def sample(self, param_sets: to.Tensor) -> ParameterSamplingResult:
+    def sample(self, param_sets: to.Tensor, init_states: Optional[List[np.ndarray]] = None) -> ParameterSamplingResult:
         """
         Sample rollouts for a given set of parameters.
 
         :param param_sets: sets of policy parameters
+        :param init_states: fixed initial states, pass `None` to randomly sample initial states
         :return: data structure containing the policy parameter sets and the associated rollout data
         """
+        if init_states is not None and not isinstance(init_states, list):
+            pyrado.TypeErr(given=init_states, expected_type=list)
+
         # Sample domain params for each rollout
         domain_params = self._sample_domain_params()
-
-        if isinstance(domain_params, dict):
-            # There is only one domain parameter set (i.e. one init state)
-            init_states = [self._sample_one_init_state(domain_params)]
-            domain_params = [domain_params]  # cast to list of dict to make iterable like the next case
-        elif isinstance(domain_params, list):
-            # There are more than one domain parameter set (i.e. multiple init states)
-            init_states = [self._sample_one_init_state(dp) for dp in domain_params]
-        else:
+        if not isinstance(domain_params, list):
             raise pyrado.TypeErr(given=domain_params, expected_type=[list, dict])
 
+        if init_states is not None and len(init_states) != len(domain_params):
+            raise pyrado.ShapeErr(given=init_states, expected_match=domain_params)
+
+        if init_states is None:
+            init_states = [self._sample_one_init_state(dp) for dp in domain_params]
+
         # Explode parameter list for rollouts per param
-        all_params = [(p, *r)
-                      for p in param_sets
-                      for r in zip(domain_params, init_states)]
+        all_params = [(p, *r) for p in param_sets for r in zip(domain_params, init_states)]
 
         # Sample rollouts in parallel
-        with tqdm(leave=False, file=sys.stdout, desc='Sampling', unit='rollouts') as pb:
+        with tqdm(leave=False, file=sys.stdout, desc="Sampling", unit="rollouts") as pb:
             all_ros = self.pool.run_map(_pes_sample_one, all_params, pb)
 
         # Group rollouts by parameters
         ros_iter = iter(all_ros)
-        return ParameterSamplingResult([
-            ParameterSample(params=p, rollouts=list(itertools.islice(ros_iter, self.num_rollouts_per_param)))
-            for p in param_sets
-        ])
+        return ParameterSamplingResult(
+            [
+                ParameterSample(params=p, rollouts=list(itertools.islice(ros_iter, self.num_rollouts_per_param)))
+                for p in param_sets
+            ]
+        )

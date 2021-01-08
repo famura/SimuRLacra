@@ -30,14 +30,13 @@
 
 <Controller graph="gBoxLifting_posCtrl.xml">
 
-  <Task name="Hand L XYZ" effector="PowerGrasp_L" controlVariable="XYZ" active="true"/>
-  <Task name="Hand L ABC" effector="PowerGrasp_L" controlVariable="ABC" active="true"/>
+<!--  <Task name="Hand L XYZ" effector="PowerGrasp_L" controlVariable="XYZ" active="true"/>-->
+<!--  <Task name="Hand L ABC" effector="PowerGrasp_L" controlVariable="ABC" active="true"/>-->
   <Task name="Hand R XYZ" effector="PowerGrasp_R" controlVariable="XYZ" active="true"/>
   <Task name="Hand R ABC" effector="PowerGrasp_R" controlVariable="ABC" active="true"/>
+  <Task name="Distance tip1R Box" effector="tip1_R" refBdy="Box" controlVariable="Distance" gainDX="0.5" active="false"/>
 
-  <!--  <Task name="Finger1 L" controlVariable="Joint" jnt="fing1-knuck1_L" active="true"/>-->
-
-  <Task name="Hand L Joints" controlVariable="Joints" jnts="fing1-knuck1_L tip1-fing1_L fing2-knuck2_L tip2-fing2_L fing3-knuck3_L tip3-fing3_L knuck1-base_L" tmc="0.1" vmax="1000" active="untrue"/>
+<!--  <Task name="Hand L Joints" controlVariable="Joints" jnts="fing1-knuck1_L tip1-fing1_L fing2-knuck2_L tip2-fing2_L fing3-knuck3_L tip3-fing3_L knuck1-base_L" tmc="0.1" vmax="1000" active="untrue"/>-->
   <Task name="Hand R Joints" controlVariable="Joints" jnts="fing1-knuck1_R tip1-fing1_R fing2-knuck2_R tip2-fing2_R fing3-knuck3_R tip3-fing3_R knuck1-base_R" tmc="0.1" vmax="1000" active="untrue"/>
 
   <Task name="Base XYZ" effector="ImetronPlatform" controlVariable="XYZ" active="untrue"/>

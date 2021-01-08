@@ -45,12 +45,12 @@ from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(HalfCheetahSim.name, f'{PPO.name}_{FNNPolicy.name}')
+    ex_dir = setup_experiment(HalfCheetahSim.name, f"{PPO.name}_{FNNPolicy.name}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
@@ -61,7 +61,7 @@ if __name__ == '__main__':
     # Simple Randomizer
     dp_nom = HalfCheetahSim.get_nominal_domain_param()
     randomizer = DomainRandomizer(
-        NormalDomainParam(name='total_mass', mean=dp_nom['total_mass'], std=dp_nom['total_mass']/10, clip_lo=1e-3)
+        NormalDomainParam(name="total_mass", mean=dp_nom["total_mass"], std=dp_nom["total_mass"] / 10, clip_lo=1e-3)
     )
     env = DomainRandWrapperLive(env, randomizer)
 
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     # Algorithm
     algo_hparam = dict(
         max_iter=500,
-        min_steps=20*env.max_steps,
+        min_steps=20 * env.max_steps,
         num_epoch=5,
         eps_clip=0.1,
         batch_size=512,
@@ -95,13 +95,15 @@ if __name__ == '__main__':
     algo = PPO(ex_dir, env, policy, critic, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        # dict(env=env_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(critic=critic_hparam, vfcn=vfcn_hparam),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            # dict(env=env_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(critic=critic_hparam, vfcn=vfcn_hparam),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha
-    algo.train(seed=args.seed, snapshot_mode='best')
+    algo.train(seed=args.seed, snapshot_mode="best")

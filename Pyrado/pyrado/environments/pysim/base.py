@@ -41,10 +41,7 @@ from pyrado.tasks.base import Task
 class SimPyEnv(SimEnv, Serializable):
     """ Base class for simulated environments implemented in pure Python """
 
-    def __init__(self,
-                 dt: float,
-                 max_steps: int = pyrado.inf,
-                 task_args: [dict, None] = None):
+    def __init__(self, dt: float, max_steps: int = pyrado.inf, task_args: [dict, None] = None):
         """
         Constructor
 
@@ -175,19 +172,19 @@ class SimPyEnv(SimEnv, Serializable):
         if init_state.shape == self.state_space.shape:
             # Allow setting the complete state space
             if not self.state_space.contains(init_state, verbose=True):
-                pyrado.ValueErr(msg='The full init state must be within the state space!')
+                pyrado.ValueErr(msg="The full init state must be within the state space!")
             self.state = init_state.copy()
         else:
             # Set the initial state determined by an element of the init space
             if not self.init_space.contains(init_state, verbose=True):
-                pyrado.ValueErr(msg='The init state must be within init state space!')
+                pyrado.ValueErr(msg="The init state must be within init state space!")
             self.state = self._state_from_init(init_state)
 
         # Reset the task
         self._task.reset(env_spec=self.spec)
 
         # Reset VPython animation
-        if self._anim['canvas'] is not None:
+        if self._anim["canvas"] is not None:
             self._reset_anim()
 
         # Return an observation
@@ -200,8 +197,9 @@ class SimPyEnv(SimEnv, Serializable):
         :param init_state: init state from init space
         :return: internal state
         """
-        assert self._init_space.shape == self._state_space.shape, \
-            "Must override _state_from_init if init state space differs from state space!"
+        assert (
+            self._init_space.shape == self._state_space.shape
+        ), "Must override _state_from_init if init state space differs from state space!"
         return init_state
 
     def step(self, act: np.ndarray) -> tuple:
@@ -216,7 +214,7 @@ class SimPyEnv(SimEnv, Serializable):
         # Apply the action and simulate the resulting dynamics
         self._step_dynamics(act)
 
-        info = dict(t=self._curr_step*self._dt)
+        info = dict(t=self._curr_step * self._dt)
         self._curr_step += 1
 
         # Check if the task or the environment is done
@@ -231,21 +229,21 @@ class SimPyEnv(SimEnv, Serializable):
         return self.observe(self.state), self._curr_rew, done, info
 
     def render(self, mode: RenderMode, render_step: int = 1):
-        if self._curr_step%render_step == 0:
+        if self._curr_step % render_step == 0:
             # Call base class
             super().render(mode)
 
             # Print to console
             if mode.text:
-                print("step: {:3}  |  r_t: {: 1.3f}  |  a_t: {}\t |  s_t+1: {}".format(
-                    self._curr_step,
-                    self._curr_rew,
-                    self._curr_act,
-                    self.state))
+                print(
+                    "step: {:3}  |  r_t: {: 1.3f}  |  a_t: {}\t |  s_t+1: {}".format(
+                        self._curr_step, self._curr_rew, self._curr_act, self.state
+                    )
+                )
 
             # VPython
             if mode.video:
-                if self._anim['canvas'] is None:
+                if self._anim["canvas"] is None:
                     self._init_anim()
 
                 # Update the animation

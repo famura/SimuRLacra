@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Ball-on-Plate environment using Soft Actor-Critic.
+Train an agent to solve the One-Mass-Oscillator environment using Soft Actor-Critic.
 
 .. note::
     The hyper-parameters are not tuned at all!
@@ -47,18 +47,18 @@ from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(OneMassOscillatorSim.name, f'{SAC.name}_{TwoHeadedFNNPolicy.name}')
+    ex_dir = setup_experiment(OneMassOscillatorSim.name, f"{SAC.name}_{TwoHeadedFNNPolicy.name}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1/50., max_steps=200)
+    env_hparams = dict(dt=1 / 50.0, max_steps=200)
     env = OneMassOscillatorSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
     env = ActNormWrapper(env)
 
@@ -67,21 +67,18 @@ if __name__ == '__main__':
         shared_hidden_sizes=[32, 32],
         shared_hidden_nonlin=to.relu,
     )
-    policy = TwoHeadedFNNPolicy(spec=env.spec, **policy_hparam)
+    policy = TwoHeadedFNNPolicy(spec=env.spec, **policy_hparam, use_cuda=True)
 
     # Critic
-    qfcn_hparam = dict(
-        hidden_sizes=[32, 32],
-        hidden_nonlin=to.relu
-    )
+    qfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.relu)
     obsact_space = BoxSpace.cat([env.obs_space, env.act_space])
-    qfcn_1 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **qfcn_hparam)
-    qfcn_2 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **qfcn_hparam)
+    qfcn_1 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **qfcn_hparam, use_cuda=True)
+    qfcn_2 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **qfcn_hparam, use_cuda=True)
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=1000*env.max_steps,
-        memory_size=100*env.max_steps,
+        max_iter=1000 * env.max_steps,
+        memory_size=100 * env.max_steps,
         gamma=0.995,
         num_batch_updates=1,
         tau=0.995,
@@ -91,18 +88,20 @@ if __name__ == '__main__':
         standardize_rew=False,
         min_steps=1,
         batch_size=256,
-        num_workers=4,
+        num_workers=1,
         lr=3e-4,
     )
     algo = SAC(ex_dir, env, policy, qfcn_1, qfcn_2, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(qfcn=qfcn_hparam),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(qfcn=qfcn_hparam),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha

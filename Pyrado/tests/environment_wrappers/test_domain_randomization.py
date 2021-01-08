@@ -34,11 +34,12 @@ from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLi
 
 @pytest.mark.wrapper
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob',
-        'default_qbb',
+    "env",
+    [
+        "default_bob",
+        "default_qbb",
     ],
-    indirect=True
+    indirect=True,
 )
 def test_dr_wrapper_live_bob(env):
     param_init = env.domain_param
@@ -56,11 +57,12 @@ def test_dr_wrapper_live_bob(env):
 
 @pytest.mark.wrapper
 @pytest.mark.parametrize(
-    'env', [
-        'default_bob',
-        'default_qbb',
+    "env",
+    [
+        "default_bob",
+        "default_qbb",
     ],
-    indirect=True
+    indirect=True,
 )
 def test_dr_wrapper_live_bob(env):
     param_init = env.domain_param

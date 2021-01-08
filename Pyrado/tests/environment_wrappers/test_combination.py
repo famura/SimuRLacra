@@ -28,24 +28,28 @@
 
 import numpy as np
 import pytest
+from copy import deepcopy
 
 from pyrado.domain_randomization.default_randomizers import create_default_randomizer
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.action_noise import GaussianActNoiseWrapper
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
-from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
+from pyrado.environment_wrappers.downsampling import DownsamplingWrapper
+from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper, ObsRunningNormWrapper
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
 from pyrado.environment_wrappers.utils import inner_env, remove_env, typed_env
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
+from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.special.dummy import DummyPolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.data_types import RenderMode
+from pyrado.domain_randomization.utils import wrap_like_other_env
 
 
 @pytest.mark.wrapper
 def test_combination():
-    env = QCartPoleSwingUpSim(dt=1/50., max_steps=20)
+    env = QCartPoleSwingUpSim(dt=1 / 50.0, max_steps=20)
 
     randomizer = create_default_randomizer(env)
     env_r = DomainRandWrapperBuffer(env, randomizer)
@@ -61,8 +65,8 @@ def test_combination():
     assert dp_after[0] == dp_after[3]
 
     env_rn = ActNormWrapper(env)
-    elb = {'x_dot': -213., 'theta_dot': -42.}
-    eub = {'x_dot': 213., 'theta_dot': 42., 'x': 0.123}
+    elb = {"x_dot": -213.0, "theta_dot": -42.0}
+    eub = {"x_dot": 213.0, "theta_dot": 42.0, "x": 0.123}
     env_rn = ObsNormWrapper(env_rn, explicit_lb=elb, explicit_ub=eub)
     alb, aub = env_rn.act_space.bounds
     assert all(alb == -1)
@@ -75,12 +79,12 @@ def test_combination():
     ro_rn = rollout(env_rn, DummyPolicy(env_rn.spec), eval=True, seed=0, render_mode=RenderMode())
     assert np.allclose(env_rn._process_obs(ro_r.observations), ro_rn.observations)
 
-    env_rnp = ObsPartialWrapper(env_rn, idcs=['x_dot', r'cos_theta'])
+    env_rnp = ObsPartialWrapper(env_rn, idcs=["x_dot", r"cos_theta"])
     ro_rnp = rollout(env_rnp, DummyPolicy(env_rnp.spec), eval=True, seed=0, render_mode=RenderMode())
 
-    env_rnpa = GaussianActNoiseWrapper(env_rnp,
-                                       noise_mean=0.5*np.ones(env_rnp.act_space.shape),
-                                       noise_std=0.1*np.ones(env_rnp.act_space.shape))
+    env_rnpa = GaussianActNoiseWrapper(
+        env_rnp, noise_mean=0.5 * np.ones(env_rnp.act_space.shape), noise_std=0.1 * np.ones(env_rnp.act_space.shape)
+    )
     ro_rnpa = rollout(env_rnpa, DummyPolicy(env_rnpa.spec), eval=True, seed=0, render_mode=RenderMode())
     assert np.allclose(ro_rnp.actions, ro_rnpa.actions)
     assert not np.allclose(ro_rnp.observations, ro_rnpa.observations)
@@ -95,3 +99,43 @@ def test_combination():
     assert isinstance(env_rnpd, ActDelayWrapper)
     env_rnpdr = remove_env(env_rnpd, ActDelayWrapper)
     assert not isinstance(env_rnpdr, ActDelayWrapper)
+
+
+@pytest.mark.wrapper
+@pytest.mark.parametrize(
+    "env",
+    [
+        "default_qbb",
+    ],
+    ids=["qbb"],
+    indirect=True,
+)
+def test_wrap_like_other_env(env: SimEnv):
+    wenv_like = deepcopy(env)
+    wenv_like.dt /= 3
+
+    wenv = DownsamplingWrapper(env, factor=3)
+    assert type(wenv_like) != type(wenv)
+    wenv_like = wrap_like_other_env(wenv_like, wenv, use_downsampling=True)
+    assert type(wenv_like) == type(wenv)
+
+    wenv = ActNormWrapper(wenv)
+    assert type(wenv_like) != type(wenv)
+    wenv_like = wrap_like_other_env(wenv_like, wenv)
+    assert type(wenv_like) == type(wenv)
+
+    wenv = ObsNormWrapper(wenv)
+    assert type(wenv_like) != type(wenv)
+    wenv_like = wrap_like_other_env(wenv_like, wenv)
+    assert type(wenv_like) == type(wenv)
+    assert type(wenv_like.wrapped_env) == type(wenv.wrapped_env)
+
+    wenv = ObsRunningNormWrapper(wenv)
+    wenv_like = wrap_like_other_env(wenv_like, wenv)
+    assert type(wenv_like) == type(wenv)
+    assert type(wenv_like.wrapped_env) == type(wenv.wrapped_env)
+
+    wenv = ObsPartialWrapper(wenv, idcs=["x"])
+    wenv_like = wrap_like_other_env(wenv_like, wenv)
+    assert type(wenv_like) == type(wenv)
+    assert type(wenv_like.wrapped_env) == type(wenv.wrapped_env)

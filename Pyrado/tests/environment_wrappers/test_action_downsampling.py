@@ -104,7 +104,7 @@ def test_domain_param():
     assert mockenv.last_act == [4, 4]
 
     # change the downsampling and reset
-    wenv.domain_param = {'downsampling': 1}
+    wenv.domain_param = {"downsampling": 1}
     wenv.reset()
 
     wenv.step(np.array([1, 2]))

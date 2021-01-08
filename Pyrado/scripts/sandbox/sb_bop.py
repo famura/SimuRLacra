@@ -48,23 +48,18 @@ rcsenv.setLogLevel(4)
 
 def create_setup(physics_engine, dt, max_steps, max_dist_force):
     # Set up environment
-    env = BallOnPlate5DSim(
-        physicsEngine=physics_engine,
-        dt=dt,
-        max_steps=max_steps,
-        max_dist_force=max_dist_force
-    )
+    env = BallOnPlate5DSim(physicsEngine=physics_engine, dt=dt, max_steps=max_steps, max_dist_force=max_dist_force)
     env = ActNormWrapper(env)
     print_domain_params(env.domain_param)
 
     # Set up policy
     def policy_fcn(t: float):
         return [
-            0.,  # x_ddot_plate
-            10.*math.cos(2.*math.pi*5*t),  # y_ddot_plate
-            0.5*math.cos(2.*math.pi/5.*t),  # z_ddot_plate
-            0.,  # alpha_ddot_plate
-            0.,  # beta_ddot_plate
+            0.0,  # x_ddot_plate
+            10.0 * math.cos(2.0 * math.pi * 5 * t),  # y_ddot_plate
+            0.5 * math.cos(2.0 * math.pi / 5.0 * t),  # z_ddot_plate
+            0.0,  # alpha_ddot_plate
+            0.0,  # beta_ddot_plate
         ]
 
     policy = TimePolicy(env.spec, policy_fcn, dt)
@@ -72,20 +67,25 @@ def create_setup(physics_engine, dt, max_steps, max_dist_force):
     return env, policy
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Initialize
-    fig, axs = plt.subplots(3, figsize=(8, 12), sharex='col', tight_layout=True)
+    fig, axs = plt.subplots(3, figsize=(8, 12), sharex="col", tight_layout=True)
 
     # Try to run several possible cases
-    for pe in ['Bullet', 'Vortex']:
-        print_cbt(f'Running with {pe} physics engine', 'c', bright=True)
+    for pe in ["Bullet", "Vortex"]:
+        print_cbt(f"Running with {pe} physics engine", "c", bright=True)
 
         if rcsenv.supportsPhysicsEngine(pe):
-            env, policy = create_setup(pe, dt=0.01, max_steps=1000, max_dist_force=0.)
+            env, policy = create_setup(pe, dt=0.01, max_steps=1000, max_dist_force=0.0)
 
             # Simulate
-            ro = rollout(env, policy, render_mode=RenderMode(video=True), seed=0,
-                         reset_kwargs=dict(init_state=np.array([0.18, 20/180.*np.pi])))
+            ro = rollout(
+                env,
+                policy,
+                render_mode=RenderMode(video=True),
+                seed=0,
+                reset_kwargs=dict(init_state=np.array([0.18, 20 / 180.0 * np.pi])),
+            )
 
             # Render plots
             axs[0].plot(ro.observations[:, 0], label=pe)
@@ -96,9 +96,9 @@ if __name__ == '__main__':
             axs[2].legend()
 
     # Show plots
-    axs[0].set_title('gBotKuka.xml')
-    axs[0].set_ylabel('plate x pos')
-    axs[1].set_ylabel('plate y pos')
-    axs[2].set_ylabel('plate z pos')
-    axs[2].set_xlabel('time steps')
+    axs[0].set_title("gBotKuka.xml")
+    axs[0].set_ylabel("plate x pos")
+    axs[1].set_ylabel("plate y pos")
+    axs[2].set_ylabel("plate z pos")
+    axs[2].set_xlabel("time steps")
     plt.show()

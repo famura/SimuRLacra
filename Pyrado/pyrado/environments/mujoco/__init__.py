@@ -27,10 +27,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import pyrado
+from pyrado.utils.input_output import print_cbt
 
 
-if not pyrado.mujoco_available:
-    raise ImportError(
+try:
+    import mujoco_py
+except (ImportError, Exception):
+    # The ImportError is raised if mujoco-py is simply not installed
+    # The Exception catches the case that you have everything installed properly but your IDE does not set the
+    # LD_LIBRARY_PATH correctly (happens for PyCharm & CLion). To check this, try to run your script from the terminal.
+    print_cbt(
         "You are trying to use are MuJoCo-based environment, but the required mujoco_py module can not be imported.\n"
         "Try adding\n"
         "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/$USER/.mujoco/mujoco200/bin\n"
@@ -38,5 +44,10 @@ if not pyrado.mujoco_available:
         "to your shell's rc-file.\n"
         "If you are using PyCharm or CLion, also add the environment variables above to your run configurations. "
         "Note that the IDE will not resolve $USER for some reason, so enter the user name directly, "
-        "or run it from your terminal."
+        "or run it from your terminal.\n\n"
+        "Here comes the mujoco-py error message:\n\n",
+        "r",
     )
+    pyrado.mujoco_loaded = False
+else:
+    pyrado.mujoco_loaded = True

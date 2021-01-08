@@ -76,7 +76,7 @@ def run_direct_control(ex_dir, qpos_des, qvel_des, start_pos):
 
     # Connect to client
     c = r.Client()
-    c.start('192.168.2.2', 2013)  # ip adress and port
+    c.start("192.168.2.2", 2013)  # ip adress and port
     print("Connected to client.")
 
     # Reset the robot to the initial position
@@ -96,7 +96,7 @@ def run_direct_control(ex_dir, qpos_des, qvel_des, start_pos):
     print("P gain:", p_gains)
     print("D gain:", d_gains)
 
-    input('Hit enter to continue.')
+    input("Hit enter to continue.")
 
     # Global callback attributes
     n = qpos_des.shape[0]
@@ -107,42 +107,42 @@ def run_direct_control(ex_dir, qpos_des, qvel_des, start_pos):
     # Start the direct control
     dc = c.create(r.ClosedLoopDirectControl, "RIGHT_ARM", "")
     print("Executing trajectory")
-    dc.start(False, 1, callback, ['POS', 'VEL'], [], [])
+    dc.start(False, 1, callback, ["POS", "VEL"], [], [])
     dc.wait_for_completion()
     print("Finished execution.")
 
-    print('Measured positions:', np.array(qpos).shape)
-    print('Measured velocities:', np.array(qvel).shape)
+    print("Measured positions:", np.array(qpos).shape)
+    print("Measured velocities:", np.array(qvel).shape)
 
-    np.save(osp.join(ex_dir, 'qpos_real.npy'), qpos)
-    np.save(osp.join(ex_dir, 'qvel_real.npy'), qvel)
+    np.save(osp.join(ex_dir, "qpos_real.npy"), qpos)
+    np.save(osp.join(ex_dir, "qvel_real.npy"), qvel)
 
     c.stop()
-    print('Connection closed.')
+    print("Connection closed.")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Get the experiment's directory to load from if not given as command line argument
-    ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
+    ex_dir = ask_for_experiment() if args.dir is None else args.dir
 
     # Get desired positions and velocities
-    if args.mode == 'des':
+    if args.mode == "des":
         # If using the PD controller
-        print_cbt('Running desired trajectory ...', 'c', bright=True)
-        qpos_exec = np.load(osp.join(ex_dir, 'qpos_des.npy'))
-        qvel_exec = np.load(osp.join(ex_dir, 'qvel_des.npy'))
-        print_cbt('Saved trajectory into qpos_des.npy and qvel_des.npy', 'g')
-    elif args.mode == 'rec':
+        print_cbt("Running desired trajectory ...", "c", bright=True)
+        qpos_exec = np.load(osp.join(ex_dir, "qpos_des.npy"))
+        qvel_exec = np.load(osp.join(ex_dir, "qvel_des.npy"))
+        print_cbt("Saved trajectory into qpos_des.npy and qvel_des.npy", "g")
+    elif args.mode == "rec":
         # If using WAM's feedforward controller
-        print_cbt('Running recorded trajectory ...', 'c', bright=True)
-        qpos_exec = np.load(osp.join(ex_dir, 'qpos.npy'))
-        qvel_exec = np.load(osp.join(ex_dir, 'qvel.npy'))
-        print_cbt('Saved trajectory into qpos.npy and qvel.npy', 'g')
+        print_cbt("Running recorded trajectory ...", "c", bright=True)
+        qpos_exec = np.load(osp.join(ex_dir, "qpos.npy"))
+        qvel_exec = np.load(osp.join(ex_dir, "qvel.npy"))
+        print_cbt("Saved trajectory into qpos.npy and qvel.npy", "g")
     else:
-        raise pyrado.ValueErr(given=args.mode, eq_constraint='des or rec')
+        raise pyrado.ValueErr(given=args.mode, eq_constraint="des or rec")
 
     # Run on real WAM
     run_direct_control(ex_dir, qpos_exec, qvel_exec, start_pos=qpos_exec[0, :])

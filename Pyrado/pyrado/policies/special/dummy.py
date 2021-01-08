@@ -38,7 +38,7 @@ from pyrado.utils.data_types import EnvSpec
 class IdlePolicy(Policy):
     """ The most simple policy which simply does nothing """
 
-    name: str = 'idle'
+    name: str = "idle"
 
     def __init__(self, spec: EnvSpec, use_cuda: bool = False):
         """
@@ -60,7 +60,7 @@ class IdlePolicy(Policy):
 class DummyPolicy(Policy):
     """ Simple policy which samples random values form the action space """
 
-    name: str = 'dummy'
+    name: str = "dummy"
 
     def __init__(self, spec: EnvSpec, use_cuda: bool = False):
         """
@@ -89,7 +89,7 @@ class RecurrentDummyPolicy(RecurrentPolicy):
     always returns hidden states with value zero
     """
 
-    name: str = 'rec_cummy'
+    name: str = "rec_cummy"
 
     def __init__(self, spec: EnvSpec, hidden_size: int, use_cuda: bool = False):
         """
@@ -117,5 +117,5 @@ class RecurrentDummyPolicy(RecurrentPolicy):
         # Observations and hidden states are ignored
         return self._distr.sample(), to.zeros(self._hidden_size)
 
-    def evaluate(self, rollout: StepSequence, hidden_states_name: str = 'hidden_states') -> to.Tensor:
+    def evaluate(self, rollout: StepSequence, hidden_states_name: str = "hidden_states") -> to.Tensor:
         raise NotImplemented

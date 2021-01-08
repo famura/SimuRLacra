@@ -56,14 +56,16 @@ class QBallBalancerPDCtrl(Policy):
         This class's desired state specification deviates from the Pyrado policies which interact with a `Task`.
     """
 
-    name: str = 'qbb-pd'
+    name: str = "qbb-pd"
 
-    def __init__(self,
-                 env_spec: EnvSpec,
-                 state_des: to.Tensor = to.zeros(2),
-                 kp: to.Tensor = None,
-                 kd: to.Tensor = None,
-                 use_cuda: bool = False):
+    def __init__(
+        self,
+        env_spec: EnvSpec,
+        state_des: to.Tensor = to.zeros(2),
+        kp: to.Tensor = None,
+        kd: to.Tensor = None,
+        use_cuda: bool = False,
+    ):
         """
         Constructor
 
@@ -77,7 +79,7 @@ class QBallBalancerPDCtrl(Policy):
 
         self.state_des = state_des
         self.limit_rad = 0.52360  # limit for angle command; see the saturation block in the Simulink model
-        self.kp_servo = 14.  # P-gain for the servo angle; see the saturation block the Simulink model
+        self.kp_servo = 14.0  # P-gain for the servo angle; see the saturation block the Simulink model
         self.Kp, self.Kd = None, None
         self.init_param(kp, kd)
 
@@ -91,7 +93,7 @@ class QBallBalancerPDCtrl(Policy):
         th_x, th_y, x, y, _, _, x_dot, y_dot = obs
 
         err = to.tensor([self.state_des[0] - x, self.state_des[1] - y])
-        err_dot = to.tensor([0. - x_dot, 0. - y_dot])
+        err_dot = to.tensor([0.0 - x_dot, 0.0 - y_dot])
         th_des = self.Kp.mv(err) + self.Kd.mv(err_dot)
 
         # Saturation for desired angular position
@@ -99,7 +101,7 @@ class QBallBalancerPDCtrl(Policy):
         err_th = th_des - to.tensor([th_x, th_y])
 
         # Return action, see "Actuator Electrical Dynamics" block in [1]
-        return err_th*self.kp_servo
+        return err_th * self.kp_servo
 
     def init_param(self, kp: to.Tensor = None, kd: to.Tensor = None, verbose: bool = False, **kwargs):
         """
@@ -138,43 +140,57 @@ class QBallBalancerPDCtrl(Policy):
 class QCartPoleSwingUpAndBalanceCtrl(Policy):
     """ Swing-up and balancing controller for the Quanser Cart-Pole """
 
-    name: str = 'qcp-sub'
+    name: str = "qcp-sub"
 
-    def __init__(self,
-                 env_spec: EnvSpec,
-                 u_max: float = 18.,
-                 v_max: float = 12.,
-                 long: bool = False,
-                 use_cuda: bool = False):
+    def __init__(self, env_spec: EnvSpec, long: bool = False, use_cuda: bool = False):
         """
         Constructor
 
         :param env_spec: environment specification
-        :param u_max: maximum energy gain
-        :param v_max: maximum voltage the control signal will be clipped to
         :param long: flag for long or short pole
         :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU
         """
         super().__init__(env_spec, use_cuda)
 
-        # Store inputs
-        self.u_max = u_max
-        self.v_max = v_max
+        self.long = long
         self.pd_control = False
         self.pd_activated = False
-        self.long = long
         self.dp_nom = QCartPoleSim.get_nominal_domain_param(self.long)
 
+        self._log_u_max = nn.Parameter(to.log(to.tensor(59.5)), requires_grad=True)  # former: 18
         if long:
-            self.K_pd = to.tensor([-41.833, 189.8393, -47.8483, 28.0941])
+            self._log_K_pd = nn.Parameter(
+                to.log(to.tensor([41.833, 189.8393, 47.8483, 28.0941])), requires_grad=True
+            )  # former: [-41.833, 189.8393, -47.8483, 28.0941]
         else:
-            self.k_p = to.tensor(8.5)  # former: 8.5
-            self.k_d = to.tensor(0.)  # former: 0.
-            self.k_e = to.tensor(24.5)  # former: 19.5 (frequency dependent)
-            self.K_pd = to.tensor([41., -200., 55., -16.])  # former: [+41.8, -173.4, +46.1, -16.2]
+            self._log_k_e = nn.Parameter(to.log(to.tensor(36.5)), requires_grad=True)  # former: 24.5
+            self._log_k_p = nn.Parameter(to.log(to.tensor(2.25)), requires_grad=True)  # former: 8.5
+            self._log_K_pd = nn.Parameter(
+                to.log(to.tensor([34.1, 118.0, 43.4, 18.1])), requires_grad=True
+            )  # former: [+41.8, -173.4, +46.1, -16.2]
+
+    @property
+    def u_max(self):
+        return to.exp(self._log_u_max)
+
+    @property
+    def k_e(self):
+        return to.exp(self._log_k_e)
+
+    @property
+    def k_p(self):
+        return to.exp(self._log_k_p)
+
+    @property
+    def K_pd(self):
+        if self.long:
+            return to.exp(self._log_K_pd) * to.tensor([-1, 1, -1, 1])
+        else:
+            return to.exp(self._log_K_pd) * to.tensor([1, -1, 1, -1])  # the gains related to theta need to be negative
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
-        pass
+        if init_values is not None:
+            self.param_values = init_values
 
     def forward(self, obs: to.Tensor) -> to.Tensor:
         """
@@ -187,15 +203,16 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
         theta = to.atan2(sin_th, cos_th)
         alpha = (theta - math.pi) if theta > 0 else (theta + math.pi)
 
-        J_pole = self.dp_nom['l_pole']**2*self.dp_nom['m_pole']/3.
-        J_eq = self.dp_nom['m_cart'] + (self.dp_nom['eta_g']*self.dp_nom['K_g']**2*
-                                        self.dp_nom['J_m'])/self.dp_nom['r_mp']**2
+        J_pole = self.dp_nom["l_pole"] ** 2 * self.dp_nom["m_pole"] / 3.0
+        J_eq = (
+            self.dp_nom["m_cart"]
+            + (self.dp_nom["eta_g"] * self.dp_nom["K_g"] ** 2 * self.dp_nom["J_m"]) / self.dp_nom["r_mp"] ** 2
+        )
 
-        # Energy terms
-        E_kin = J_pole/2.*theta_dot**2
-        E_pot = self.dp_nom['m_pole']*self.dp_nom['g']*self.dp_nom['l_pole']*(
-            1 - cos_th)  # E(0) = 0., E(pi) = E(-pi) = 2 mgl
-        E_ref = 2.*self.dp_nom['m_pole']*self.dp_nom['g']*self.dp_nom['l_pole']
+        # Energy terms: E_pot(0) = 0; E_pot(pi) = E_pot(-pi) = 2 mgl
+        E_kin = J_pole / 2.0 * theta_dot ** 2
+        E_pot = self.dp_nom["m_pole"] * self.dp_nom["g"] * self.dp_nom["l_pole"] * (1 - cos_th)
+        E_ref = 2.0 * self.dp_nom["m_pole"] * self.dp_nom["g"] * self.dp_nom["l_pole"]
 
         if to.abs(alpha) < 0.1745 or self.pd_control:
             # Stabilize at the top
@@ -203,39 +220,40 @@ class QCartPoleSwingUpAndBalanceCtrl(Policy):
             u = self.K_pd.dot(to.tensor([x, alpha, x_dot, theta_dot]))
         else:
             # Swing up
-            u = self.k_e*(E_kin + E_pot - E_ref)*to.sign(theta_dot*cos_th) + self.k_p*(0. - x) + self.k_d*(0. - x_dot)
-            u = u.clamp(-self.u_max, self.u_max)
+            u = self.k_e * (E_kin + E_pot - E_ref) * to.sign(theta_dot * cos_th) + self.k_p * (0.0 - x)
+            u = clamp_symm(u, self.u_max)
 
             if self.pd_activated:
                 self.pd_activated = False
 
-        act = (J_eq*self.dp_nom['R_m']*self.dp_nom['r_mp']*u)/ \
-              (self.dp_nom['eta_g']*self.dp_nom['K_g']*self.dp_nom['eta_m']*self.dp_nom['k_m']) + \
-              self.dp_nom['K_g']*self.dp_nom['k_m']*x_dot/self.dp_nom['r_mp']
+        act = (J_eq * self.dp_nom["R_m"] * self.dp_nom["r_mp"] * u) / (
+            self.dp_nom["eta_g"] * self.dp_nom["K_g"] * self.dp_nom["eta_m"] * self.dp_nom["k_m"]
+        ) + self.dp_nom["K_g"] * self.dp_nom["k_m"] * x_dot / self.dp_nom["r_mp"]
 
         # Return the clipped action
-        act = act.clamp(-self.v_max, self.v_max)
         return act.view(1)  # such that when act is later converted to numpy it does not become a float
 
 
 class QQubeSwingUpAndBalanceCtrl(Policy):
-    """ Hybrid controller (QQubeEnergyCtrl, QQubePDCtrl) switching based on the pendulum pole angle alpha
+    """Hybrid controller (QQubeEnergyCtrl, QQubePDCtrl) switching based on the pendulum pole angle alpha
 
     .. note::
         Extracted Quanser's values from q_qube2_swingup.mdl
     """
 
-    name: str = 'qq-sub'
+    name: str = "qq-sub"
 
-    def __init__(self,
-                 env_spec: EnvSpec,
-                 ref_energy: float = 0.025,  # Quanser's value: 0.02
-                 energy_gain: float = 50.,  # Quanser's value: 50
-                 energy_th_gain: float = 0.4,  # former: 0.4
-                 acc_max: float = 5.,  # Quanser's value: 6
-                 alpha_max_pd_enable: float = 20.,  # Quanser's value: 20
-                 pd_gains: to.Tensor = to.tensor([-2, 35, -1.5, 3]),  # Quanser's value: [-2, 35, -1.5, 3]
-                 use_cuda: bool = False):
+    def __init__(
+        self,
+        env_spec: EnvSpec,
+        ref_energy: float = 0.025,  # Quanser's value: 0.02
+        energy_gain: float = 50.0,  # Quanser's value: 50
+        energy_th_gain: float = 0.4,  # former: 0.4
+        acc_max: float = 5.0,  # Quanser's value: 6
+        alpha_max_pd_enable: float = 20.0,  # Quanser's value: 20
+        pd_gains: to.Tensor = to.tensor([-2, 35, -1.5, 3]),  # Quanser's value: [-2, 35, -1.5, 3]
+        use_cuda: bool = False,
+    ):
         """
         Constructor
 
@@ -255,7 +273,7 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
         """
         super().__init__(env_spec, use_cuda)
 
-        self.alpha_max_pd_enable = alpha_max_pd_enable/180.*math.pi
+        self.alpha_max_pd_enable = alpha_max_pd_enable / 180.0 * math.pi
 
         # Set up the energy and PD controller
         self.e_ctrl = QQubeEnergyCtrl(env_spec, ref_energy, energy_gain, energy_th_gain, acc_max)
@@ -268,11 +286,12 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
         :param cos_al: cosine of the pendulum pole angle
         :return: bool if condition is met
         """
-        cos_al_delta = 1. + to.cos(to.tensor(math.pi - self.alpha_max_pd_enable))
-        return bool(to.abs(1. + cos_al) < cos_al_delta)
+        cos_al_delta = 1.0 + to.cos(to.tensor(math.pi - self.alpha_max_pd_enable))
+        return bool(to.abs(1.0 + cos_al) < cos_al_delta)
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
-        pass
+        if init_values is not None:
+            self.param_values = init_values
 
     def forward(self, obs: to.tensor):
         # Reconstruct the sate for the error-based controller
@@ -280,7 +299,7 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
         s = to.stack([to.atan2(sin_th, cos_th), to.atan2(sin_al, cos_al), th_d, al_d])
 
         if self.pd_enabled(cos_al):
-            s[1] = s[1]%(2*math.pi)  # alpha can have multiple revolutions
+            s[1] = s[1] % (2 * math.pi)  # alpha can have multiple revolutions
             return self.pd_ctrl(s)
         else:
             return self.e_ctrl(s)
@@ -289,13 +308,15 @@ class QQubeSwingUpAndBalanceCtrl(Policy):
 class QQubeEnergyCtrl(Policy):
     """ Energy-based controller used to swing the pendulum up """
 
-    def __init__(self,
-                 env_spec: EnvSpec,
-                 ref_energy: float,
-                 energy_gain: float,
-                 th_gain: float,
-                 acc_max: float,
-                 use_cuda: bool = False):
+    def __init__(
+        self,
+        env_spec: EnvSpec,
+        ref_energy: float,
+        energy_gain: float,
+        th_gain: float,
+        acc_max: float,
+        use_cuda: bool = False,
+    ):
         """
         Constructor
 
@@ -334,7 +355,8 @@ class QQubeEnergyCtrl(Policy):
         self._log_E_gain = to.log(new_mu)
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
-        pass
+        if init_values is not None:
+            self.param_values = init_values
 
     def forward(self, obs: to.Tensor) -> to.Tensor:
         """
@@ -347,16 +369,16 @@ class QQubeEnergyCtrl(Policy):
         th, al, thd, ald = obs
 
         # Compute energies
-        J_pole = self.dp_nom['Mp']*self.dp_nom['Lp']**2/12.
-        E_kin = 0.5*J_pole*ald**2
-        E_pot = 0.5*self.dp_nom['Mp']*self.dp_nom['g']*self.dp_nom['Lp']*(1. - to.cos(al))
+        J_pole = self.dp_nom["Mp"] * self.dp_nom["Lp"] ** 2 / 12.0
+        E_kin = 0.5 * J_pole * ald ** 2
+        E_pot = 0.5 * self.dp_nom["Mp"] * self.dp_nom["g"] * self.dp_nom["Lp"] * (1.0 - to.cos(al))
         E = E_kin + E_pot
 
         # Compute clipped action
-        u = self.E_gain*(E - self.E_ref)*to.sign(ald*to.cos(al)) - self._th_gain*th
+        u = self.E_gain * (E - self.E_ref) * to.sign(ald * to.cos(al)) - self._th_gain * th
         acc = clamp_symm(u, self.acc_max)
-        trq = self.dp_nom['Mr']*self.dp_nom['Lr']*acc
-        volt = self.dp_nom['Rm']/self.dp_nom['km']*trq
+        trq = self.dp_nom["Mr"] * self.dp_nom["Lr"] * acc
+        volt = self.dp_nom["Rm"] / self.dp_nom["km"] * trq
         return volt.unsqueeze(0)
 
 
@@ -367,13 +389,15 @@ class QQubePDCtrl(Policy):
     Flag done is set when $|x_des - x| < tol$.
     """
 
-    def __init__(self,
-                 env_spec: EnvSpec,
-                 k: to.Tensor = to.tensor([4., 0, 0.5, 0]),
-                 th_des: float = 0.,
-                 al_des: float = 0.,
-                 tols: to.Tensor = to.tensor([1.5, 0.5, 0.1, 0.1], dtype=to.float64)/180.*math.pi,
-                 use_cuda: bool = False):
+    def __init__(
+        self,
+        env_spec: EnvSpec,
+        k: to.Tensor = to.tensor([4.0, 0, 0.5, 0]),
+        th_des: float = 0.0,
+        al_des: float = 0.0,
+        tols: to.Tensor = to.tensor([1.5, 0.5, 0.1, 0.1], dtype=to.float64) / 180.0 * math.pi,
+        use_cuda: bool = False,
+    ):
         r"""
         Constructor
 
@@ -387,12 +411,13 @@ class QQubePDCtrl(Policy):
         super().__init__(env_spec, use_cuda)
 
         self.k = nn.Parameter(k, requires_grad=True)
-        self.state_des = to.tensor([th_des, al_des, 0., 0.])
+        self.state_des = to.tensor([th_des, al_des, 0.0, 0.0])
         self.tols = tols
         self.done = False
 
     def init_param(self, init_values: to.Tensor = None, **kwargs):
-        pass
+        if init_values is not None:
+            self.param_values = init_values
 
     def forward(self, meas: to.Tensor) -> to.Tensor:
         # Unpack the raw measurement (is not an observation)
@@ -422,7 +447,7 @@ class QCartPoleGoToLimCtrl:
         self.xd_max = 1e-4
         self.delta_x_min = 0.1
         self.sign = 1 if positive else -1
-        self.u_max = self.sign*np.array([1.5])
+        self.u_max = self.sign * np.array([1.5])
         self._t_init = False
         self._t0 = None
         self._t_max = 10.0
@@ -495,7 +520,7 @@ class QQubeGoToLimCtrl:
 
         # Do this for cnt_done time steps
         self.done = self.cnt >= self.cnt_done
-        return to.tensor([self.sign*self.u_max])
+        return to.tensor([self.sign * self.u_max])
 
 
 def get_lin_ctrl(env: SimEnv, ctrl_type: str, ball_z_dim_mismatch: bool = True) -> LinearPolicy:
@@ -514,28 +539,102 @@ def get_lin_ctrl(env: SimEnv, ctrl_type: str, ball_z_dim_mismatch: bool = True) 
 
     if isinstance(inner_env(env), BallOnPlate5DSim):
         # Get the controller gains (K-matrix)
-        if ctrl_type.lower() == 'lqr':
-            ctrl_gains = to.tensor([
-                [0.1401, 0, 0, 0, -0.09819, -0.1359, 0, 0.545, 0, 0, 0, -0.01417, -0.04427, 0],
-                [0, 0.1381, 0, 0.2518, 0, 0, -0.2142, 0, 0.5371, 0, 0.03336, 0, 0, -0.1262],
-                [0, 0, 0.1414, 0.0002534, 0, 0, -0.0002152, 0, 0, 0.5318, 0, 0, 0, -0.0001269],
-                [0, -0.479, -0.0004812, 39.24, 0, 0, -15.44, 0, -1.988, -0.001934, 9.466, 0, 0, -13.14],
-                [0.3039, 0, 0, 0, 25.13, 15.66, 0, 1.284, 0, 0, 0, 7.609, 6.296, 0]
-            ])
+        if ctrl_type.lower() == "lqr":
+            ctrl_gains = to.tensor(
+                [
+                    [0.1401, 0, 0, 0, -0.09819, -0.1359, 0, 0.545, 0, 0, 0, -0.01417, -0.04427, 0],
+                    [0, 0.1381, 0, 0.2518, 0, 0, -0.2142, 0, 0.5371, 0, 0.03336, 0, 0, -0.1262],
+                    [0, 0, 0.1414, 0.0002534, 0, 0, -0.0002152, 0, 0, 0.5318, 0, 0, 0, -0.0001269],
+                    [0, -0.479, -0.0004812, 39.24, 0, 0, -15.44, 0, -1.988, -0.001934, 9.466, 0, 0, -13.14],
+                    [0.3039, 0, 0, 0, 25.13, 15.66, 0, 1.284, 0, 0, 0, 7.609, 6.296, 0],
+                ]
+            )
 
-        elif ctrl_type.lower() == 'h2':
-            ctrl_gains = to.tensor([
-                [-73.88, -2.318, 39.49, -4.270, 12.25, 0.9779, 0.2564, 35.11, 5.756, 0.8661, -0.9898, 1.421, 3.132,
-                 -0.01899],
-                [-24.45, 0.7202, -10.58, 2.445, -0.6957, 2.1619, -0.3966, -61.66, -3.254, 5.356, 0.1908, 12.88,
-                 6.142, -0.3812],
-                [-101.8, -9.011, 64.345, -5.091, 17.83, -2.636, 0.9506, -44.28, 3.206, 37.59, 2.965, -32.65, -21.68,
-                 -0.1133],
-                [-59.56, 1.56, -0.5794, 26.54, -2.503, 3.827, -7.534, 9.999, 1.143, -16.96, 8.450, -5.302, 4.620,
-                 -10.32],
-                [-107.1, 0.4359, 19.03, -9.601, 20.33, 10.36, 0.2285, -74.98, -2.136, 7.084, -1.240, 62.62, 33.66,
-                 1.790]
-            ])
+        elif ctrl_type.lower() == "h2":
+            ctrl_gains = to.tensor(
+                [
+                    [
+                        -73.88,
+                        -2.318,
+                        39.49,
+                        -4.270,
+                        12.25,
+                        0.9779,
+                        0.2564,
+                        35.11,
+                        5.756,
+                        0.8661,
+                        -0.9898,
+                        1.421,
+                        3.132,
+                        -0.01899,
+                    ],
+                    [
+                        -24.45,
+                        0.7202,
+                        -10.58,
+                        2.445,
+                        -0.6957,
+                        2.1619,
+                        -0.3966,
+                        -61.66,
+                        -3.254,
+                        5.356,
+                        0.1908,
+                        12.88,
+                        6.142,
+                        -0.3812,
+                    ],
+                    [
+                        -101.8,
+                        -9.011,
+                        64.345,
+                        -5.091,
+                        17.83,
+                        -2.636,
+                        0.9506,
+                        -44.28,
+                        3.206,
+                        37.59,
+                        2.965,
+                        -32.65,
+                        -21.68,
+                        -0.1133,
+                    ],
+                    [
+                        -59.56,
+                        1.56,
+                        -0.5794,
+                        26.54,
+                        -2.503,
+                        3.827,
+                        -7.534,
+                        9.999,
+                        1.143,
+                        -16.96,
+                        8.450,
+                        -5.302,
+                        4.620,
+                        -10.32,
+                    ],
+                    [
+                        -107.1,
+                        0.4359,
+                        19.03,
+                        -9.601,
+                        20.33,
+                        10.36,
+                        0.2285,
+                        -74.98,
+                        -2.136,
+                        7.084,
+                        -1.240,
+                        62.62,
+                        33.66,
+                        1.790,
+                    ],
+                ]
+            )
 
         else:
             raise pyrado.ValueErr(given=ctrl_type, eq_constraint="'lqr' or 'h2'")
@@ -547,27 +646,28 @@ def get_lin_ctrl(env: SimEnv, ctrl_type: str, ball_z_dim_mismatch: bool = True) 
 
     elif isinstance(inner_env(env), QBallBalancerSim):
         # Get the controller gains (K-matrix)
-        if ctrl_type.lower() == 'pd':
+        if ctrl_type.lower() == "pd":
             # Quanser gains (the original Quanser controller includes action clipping)
-            ctrl_gains = -to.tensor([[-14., 0, -14*3.45, 0, 0, 0, -14*2.11, 0],
-                                     [0, -14., 0, -14*3.45, 0, 0, 0, -14*2.11]])
+            ctrl_gains = -to.tensor(
+                [[-14.0, 0, -14 * 3.45, 0, 0, 0, -14 * 2.11, 0], [0, -14.0, 0, -14 * 3.45, 0, 0, 0, -14 * 2.11]]
+            )
 
-        elif ctrl_type.lower() == 'lqr':
+        elif ctrl_type.lower() == "lqr":
             # Since the control module can by tricky to install (recommended using anaconda), we only load it if needed
             import control
 
             # System modeling
             A = np.zeros((env.obs_space.flat_dim, env.obs_space.flat_dim))
-            A[:env.obs_space.flat_dim//2, env.obs_space.flat_dim//2:] = np.eye(env.obs_space.flat_dim//2)
-            A[4, 4] = -env.B_eq_v/env.J_eq
-            A[5, 5] = -env.B_eq_v/env.J_eq
-            A[6, 0] = env.c_kin*env.m_ball*env.g*env.r_ball**2/env.zeta
-            A[6, 6] = -env.c_kin*env.r_ball**2/env.zeta
-            A[7, 1] = env.c_kin*env.m_ball*env.g*env.r_ball**2/env.zeta
-            A[7, 7] = -env.c_kin*env.r_ball**2/env.zeta
+            A[: env.obs_space.flat_dim // 2, env.obs_space.flat_dim // 2 :] = np.eye(env.obs_space.flat_dim // 2)
+            A[4, 4] = -env.B_eq_v / env.J_eq
+            A[5, 5] = -env.B_eq_v / env.J_eq
+            A[6, 0] = env.c_kin * env.m_ball * env.g * env.r_ball ** 2 / env.zeta
+            A[6, 6] = -env.c_kin * env.r_ball ** 2 / env.zeta
+            A[7, 1] = env.c_kin * env.m_ball * env.g * env.r_ball ** 2 / env.zeta
+            A[7, 7] = -env.c_kin * env.r_ball ** 2 / env.zeta
             B = np.zeros((env.obs_space.flat_dim, env.act_space.flat_dim))
-            B[4, 0] = env.A_m/env.J_eq
-            B[5, 1] = env.A_m/env.J_eq
+            B[4, 0] = env.A_m / env.J_eq
+            B[5, 1] = env.A_m / env.J_eq
             # C = np.zeros((env.obs_space.flat_dim // 2, env.obs_space.flat_dim))
             # C[:env.obs_space.flat_dim // 2, :env.obs_space.flat_dim // 2] = np.eye(env.obs_space.flat_dim // 2)
             # D = np.zeros((env.obs_space.flat_dim // 2, env.act_space.flat_dim))
@@ -589,5 +689,5 @@ def get_lin_ctrl(env: SimEnv, ctrl_type: str, ball_z_dim_mismatch: bool = True) 
     # Reconstruct the controller
     feats = FeatureStack([identity_feat])
     ctrl = LinearPolicy(env.spec, feats)
-    ctrl.init_param(-1*ctrl_gains)  # in classical control it is u = -K*x; here a = psi(s)*s
+    ctrl.init_param(-1 * ctrl_gains)  # in classical control it is u = -K*x; here a = psi(s)*s
     return ctrl

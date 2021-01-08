@@ -40,7 +40,7 @@ from pyrado import set_seed
 from pyrado.sampling.step_sequence import StepSequence
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # -----
     # Setup
     # -----
@@ -48,9 +48,9 @@ if __name__ == '__main__':
     # Generate the data
     set_seed(1001)
     env = OneMassOscillatorSim(dt=0.01, max_steps=500)
-    ro = rollout(env, IdlePolicy(env.spec), reset_kwargs={'init_state': np.array([0.5, 0.])})
+    ro = rollout(env, IdlePolicy(env.spec), reset_kwargs={"init_state": np.array([0.5, 0.0])})
     ro.torch(data_type=to.get_default_dtype())
-    inp = ro.observations[:-1] + 0.01*to.randn(ro.observations[:-1].shape)  # observation noise
+    inp = ro.observations[:-1] + 0.01 * to.randn(ro.observations[:-1].shape)  # observation noise
     targ = ro.observations[1:, 0]
 
     inp_ro = StepSequence(rewards=ro.rewards, observations=inp, actions=targ)
@@ -72,7 +72,7 @@ if __name__ == '__main__':
     net = LSTMPolicy(env.spec, hidden_size, num_layers)
 
     # Create the optimizer
-    optim = optim.Adam([{'params': net.parameters()}], lr=lr, eps=1e-8)
+    optim = optim.Adam([{"params": net.parameters()}], lr=lr, eps=1e-8)
 
     # --------
     # Training
@@ -91,9 +91,9 @@ if __name__ == '__main__':
         loss.backward()
         optim.step()
 
-        if e%10 == 0:
-            loss_avg = loss.item()/num_trn_samples
-            print(f'Epoch {e:4d} | avg loss {loss_avg:.3e}')
+        if e % 10 == 0:
+            loss_avg = loss.item() / num_trn_samples
+            print(f"Epoch {e:4d} | avg loss {loss_avg:.3e}")
 
     # -------
     # Testing
@@ -109,15 +109,15 @@ if __name__ == '__main__':
         output, hidden = net(inp[:num_init_steps].view(num_init_steps, -1), hidden)
         hidden = hidden[-1, :]
 
-    for i in range(int(informative_hidden_init)*num_init_steps, num_trn_samples):
+    for i in range(int(informative_hidden_init) * num_init_steps, num_trn_samples):
         output, hidden = net(inp[i], hidden)
         pred.append(output)
 
     # Plotting
     pred = np.array(pred)
-    targ = targ[int(informative_hidden_init)*num_init_steps:].numpy()
-    inp = inp[int(informative_hidden_init)*num_init_steps:].numpy()
-    plt.plot(targ, label='target')
-    plt.plot(pred, label='prediction')
+    targ = targ[int(informative_hidden_init) * num_init_steps :].numpy()
+    inp = inp[int(informative_hidden_init) * num_init_steps :].numpy()
+    plt.plot(targ, label="target")
+    plt.plot(pred, label="prediction")
     plt.legend()
     plt.show()

@@ -47,11 +47,11 @@ from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.functions import skyline
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    data_set_name = 'skyline'
+    data_set_name = "skyline"
 
     # Experiment
     ex_dir = setup_experiment(TSPred.name, NFPolicy.name)
@@ -60,35 +60,33 @@ if __name__ == '__main__':
     pyrado.set_seed(args.seed, verbose=True)
 
     # Load the data
-    if data_set_name == 'skyline':
+    if data_set_name == "skyline":
         dt = 0.01
-        _, vals = skyline(dt=dt, t_end=20.,
-                          t_intvl_space=BoxSpace(0.5, 3, shape=(1,)),
-                          val_space=BoxSpace(-2., 3., shape=(1,)))
+        _, vals = skyline(
+            dt=dt, t_end=20.0, t_intvl_space=BoxSpace(0.5, 3, shape=(1,)), val_space=BoxSpace(-2.0, 3.0, shape=(1,))
+        )
         data = to.from_numpy(vals).view(-1, 1)
     else:
-        data = pd.read_csv(osp.join(pyrado.PERMA_DIR, 'time_series', f'{data_set_name}.csv'))
-        if data_set_name == 'daily_min_temperatures':
-            data = to.tensor(data['Temp'].values, dtype=to.get_default_dtype()).view(-1, 1)
-            dt = 1.
-        elif data_set_name == 'monthly_sunspots':
-            data = to.tensor(data['Sunspots'].values, dtype=to.get_default_dtype()).view(-1, 1)
-            dt = 1.
-        elif 'oscillation' in data_set_name:
-            data = to.tensor(data['Positions'].values, dtype=to.get_default_dtype()).view(-1, 1)
+        data = pd.read_csv(osp.join(pyrado.PERMA_DIR, "time_series", f"{data_set_name}.csv"))
+        if data_set_name == "daily_min_temperatures":
+            data = to.tensor(data["Temp"].values, dtype=to.get_default_dtype()).view(-1, 1)
+            dt = 1.0
+        elif data_set_name == "monthly_sunspots":
+            data = to.tensor(data["Sunspots"].values, dtype=to.get_default_dtype()).view(-1, 1)
+            dt = 1.0
+        elif "oscillation" in data_set_name:
+            data = to.tensor(data["Positions"].values, dtype=to.get_default_dtype()).view(-1, 1)
             dt = 0.02
         else:
             raise pyrado.ValueErr(
-                given=data_set_name, eq_constraint="'daily_min_temperatures', 'monthly_sunspots', "
-                                                   "'oscillation_50Hz_initpos-0.5', or 'oscillation_100Hz_initpos-0.4")
+                given=data_set_name,
+                eq_constraint="'daily_min_temperatures', 'monthly_sunspots', "
+                "'oscillation_50Hz_initpos-0.5', or 'oscillation_100Hz_initpos-0.4",
+            )
 
     # Dataset
     data_set_hparam = dict(
-        name=data_set_name,
-        ratio_train=0.8,
-        window_size=50,
-        standardize_data=False,
-        scale_min_max_data=True
+        name=data_set_name, ratio_train=0.8, window_size=50, standardize_data=False, scale_min_max_data=True
     )
     dataset = TimeSeriesDataSet(data, **data_set_hparam)
 
@@ -101,14 +99,14 @@ if __name__ == '__main__':
         mirrored_conv_weights=True,
         conv_out_channels=1,
         conv_kernel_size=None,
-        conv_padding_mode='circular',
-        tau_init=10. if 'oscillation' in data_set_name else 1.,
+        conv_padding_mode="circular",
+        tau_init=10.0 if "oscillation" in data_set_name else 1.0,
         tau_learnable=True,
         kappa_init=1e-3,
         kappa_learnable=True,
         potential_init_learnable=True,
         # init_param_kwargs=dict(bell=True),
-        use_cuda=False
+        use_cuda=False,
     )
     policy = NFPolicy(spec=EnvSpec(act_space=InfBoxSpace(shape=1), obs_space=InfBoxSpace(shape=1)), **policy_hparam)
 
@@ -124,11 +122,13 @@ if __name__ == '__main__':
     algo = TSPred(ex_dir, dataset, policy, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(data_set=data_set_hparam, data_set_name=data_set_name, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(data_set=data_set_hparam, data_set_name=data_set_name, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha

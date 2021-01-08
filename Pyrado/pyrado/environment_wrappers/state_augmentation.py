@@ -67,7 +67,7 @@ class StateAugmentationWrapper(EnvWrapper, Serializable):
     @property
     def obs_space(self):
         outer_space = self.wrapped_env.obs_space
-        augmented_space = BoxSpace(0.5*self._nominal, 1.5*self._nominal, [self._nominal.shape[0]], self._params)
+        augmented_space = BoxSpace(0.5 * self._nominal, 1.5 * self._nominal, [self._nominal.shape[0]], self._params)
         return BoxSpace.cat((outer_space, augmented_space))
 
     def step(self, act: np.ndarray):

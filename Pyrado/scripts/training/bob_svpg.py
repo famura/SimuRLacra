@@ -39,7 +39,7 @@ from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yam
 from pyrado.utils.argparser import get_argparser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
@@ -50,7 +50,7 @@ if __name__ == '__main__':
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1/100., max_steps=500)
+    env_hparams = dict(dt=1 / 100.0, max_steps=500)
     env = BallOnBeamSim(**env_hparams)
     env = ActNormWrapper(env)
 
@@ -69,14 +69,14 @@ if __name__ == '__main__':
         num_epoch=5,
         lr=1e-3,
         standardize_adv=False,
-        max_grad_norm=5.,
+        max_grad_norm=5.0,
     )
     particle_hparam = dict(actor=actor_hparam, vfcn=vfcn_hparam, critic=critic_hparam)
 
     # Algorithm
     algo_hparam = dict(
         max_iter=200,
-        min_steps=30*env.max_steps,
+        min_steps=30 * env.max_steps,
         num_particles=3,
         temperature=1,
         lr=1e-3,
@@ -87,10 +87,8 @@ if __name__ == '__main__':
     algo = SVPG(ex_dir, env, particle_hparam, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [dict(env=env_hparams, seed=args.seed), dict(algo=algo_hparam, algo_name=algo.name)], ex_dir
     )
 
     # Jeeeha

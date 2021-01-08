@@ -33,6 +33,7 @@ import torch as to
 from torch.optim import lr_scheduler
 
 import pyrado
+from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 from pyrado.algorithms.step_based.a2c import A2C
@@ -40,67 +41,77 @@ from pyrado.algorithms.step_based.gae import GAE
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.features import FeatureStack, identity_feat, sin_feat
+from pyrado.policies.features import FeatureStack, identity_feat, sin_feat, RandFourierFeat, RBFFeat
 from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.policies.feed_forward.linear import LinearPolicy
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment
-    ex_dir = setup_experiment(BallOnBeamSim.name, f'{A2C.name}_{LinearPolicy.name}')
+    ex_dir = setup_experiment(BallOnBeamSim.name, f"{A2C.name}_{LinearPolicy.name}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1/100., max_steps=500)
+    env_hparams = dict(dt=1 / 100.0, max_steps=500)
     env = BallOnBeamSim(**env_hparams)
+    env = ActNormWrapper(env)
 
     # Policy
     policy_hparam = dict(
-        # feats=FeatureStack([RandFourierFeat(env.obs_space.flat_dim, num_feat=100, bandwidth=env.obs_space.bound_up)])
+        # feats=FeatureStack(
+        #     [
+        #         RandFourierFeat(
+        #             env.obs_space.flat_dim, num_feat_per_dim=50, bandwidth=env.obs_space.bound_up, use_cuda=True
+        #         )
+        #     ]
+        # )
+        # feats=FeatureStack([RBFFeat(num_feat_per_dim=20, bounds=env.obs_space.bounds, scale=None, use_cuda=True)])
         feats=FeatureStack([identity_feat, sin_feat])
     )
-    policy = LinearPolicy(spec=env.spec, **policy_hparam)
+    policy = LinearPolicy(spec=env.spec, **policy_hparam, use_cuda=True)
 
     # Critic
     vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)
-    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam)
+    vfcn = FNNPolicy(spec=EnvSpec(env.obs_space, ValueFunctionSpace), **vfcn_hparam, use_cuda=True)
     critic_hparam = dict(
         gamma=0.99,
         lamda=0.95,
         batch_size=100,
-        standardize_adv=False,
+        standardize_adv=True,
         lr_scheduler=lr_scheduler.ExponentialLR,
-        lr_scheduler_hparam=dict(gamma=0.99)
+        lr_scheduler_hparam=dict(gamma=0.99),
     )
     critic = GAE(vfcn, **critic_hparam)
 
     # Algorithm
     algo_hparam = dict(
         max_iter=500,
-        min_steps=10000,
+        min_steps=env.max_steps * 10,
         num_workers=4,
         vfcn_coeff=0.7,
         entropy_coeff=4e-5,
-        batch_size=100,
+        batch_size=256,
         std_init=0.8,
         lr=2e-3,
         lr_scheduler=lr_scheduler.ExponentialLR,
-        lr_scheduler_hparam=dict(gamma=0.99)
+        lr_scheduler_hparam=dict(gamma=0.99),
     )
     algo = A2C(ex_dir, env, policy, critic, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(critic=critic_hparam, vfcn=vfcn_hparam),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(critic=critic_hparam, vfcn=vfcn_hparam),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha

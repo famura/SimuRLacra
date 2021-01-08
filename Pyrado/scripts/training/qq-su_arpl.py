@@ -17,19 +17,19 @@ from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSim.name, f'{ARPL.name}_{FNNPolicy.name}', 'actnorm')
+    ex_dir = setup_experiment(QQubeSim.name, f"{ARPL.name}_{FNNPolicy.name}", "actnorm")
     # ex_dir = setup_experiment(QQubeSim.name, f'{ARPL.name}_{GRUPolicy.name}', 'actnorm')
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1/250., max_steps=1500)
+    env_hparams = dict(dt=1 / 250.0, max_steps=1500)
     env = QQubeSim(**env_hparams)
     env = ActNormWrapper(env)
     env = StateAugmentationWrapper(env, domain_param=None)
@@ -60,7 +60,7 @@ if __name__ == '__main__':
     # Algorithm
     subrtn_hparam = dict(
         max_iter=0,
-        min_steps=23*env.max_steps,
+        min_steps=23 * env.max_steps,
         min_rollouts=None,
         num_workers=12,
         num_epoch=5,
@@ -71,7 +71,7 @@ if __name__ == '__main__':
     )
     algo_hparam = dict(
         max_iter=500,
-        steps_num=23*env.max_steps,
+        steps_num=23 * env.max_steps,
         halfspan=0.05,
         dyn_eps=0.07,
         dyn_phi=0.25,
@@ -79,20 +79,22 @@ if __name__ == '__main__':
         obs_eps=0.05,
         proc_phi=0.1,
         proc_eps=0.03,
-        torch_observation=True
+        torch_observation=True,
     )
     subrtn = PPO(ex_dir, env, policy, critic, **subrtn_hparam)
     algo = ARPL(ex_dir, env, subrtn, policy, subrtn.expl_strat, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(critic=critic_hparam, vfcn=vfcn_hparam),
-        dict(subrtn_hparam=subrtn_hparam, subrtn_name=subrtn.name),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(critic=critic_hparam, vfcn=vfcn_hparam),
+            dict(subrtn_hparam=subrtn_hparam, subrtn_name=subrtn.name),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha
-    algo.train(snapshot_mode='best', seed=args.seed)
+    algo.train(snapshot_mode="best", seed=args.seed)

@@ -55,7 +55,7 @@ class Task(ABC):
         Get the desired state (same dimensions as the environment's state).
         Only override this if the task has a desired state.
         """
-        raise AttributeError(f'{get_class_name(self)} has no desired state.')
+        raise AttributeError(f"{get_class_name(self)} has no desired state.")
 
     @state_des.setter
     def state_des(self, state_des: np.ndarray):
@@ -63,7 +63,7 @@ class Task(ABC):
         Set the desired state (same dimensions as the environment's state).
         Only override this if the task has a desired state.
         """
-        raise AttributeError(f'{get_class_name(self)} has no desired state.')
+        raise AttributeError(f"{get_class_name(self)} has no desired state.")
 
     @property
     def space_des(self) -> Space:
@@ -71,7 +71,7 @@ class Task(ABC):
         Get the desired state (same dimensions as the environment's state).
         Only override this if the task has a desired state.
         """
-        raise AttributeError(f'{get_class_name(self)} has no desired space.')
+        raise AttributeError(f"{get_class_name(self)} has no desired space.")
 
     @space_des.setter
     def space_des(self, space_des: np.ndarray):
@@ -79,7 +79,7 @@ class Task(ABC):
         Set the desired state (same dimensions as the environment's state).
         Only override this if the task has a desired state.
         """
-        raise AttributeError(f'{get_class_name(self)} has no desired space.')
+        raise AttributeError(f"{get_class_name(self)} has no desired space.")
 
     @property
     @abstractmethod
@@ -127,7 +127,7 @@ class Task(ABC):
         :param remaining_steps: number of time steps left in the episode forwarded to `compute_final_rew`
         :return rew: summed final reward
         """
-        sum_final_rew = 0.
+        sum_final_rew = 0.0
         for t in all_tasks(self):
             sum_final_rew += t.compute_final_rew(state, remaining_steps)
         return sum_final_rew
@@ -143,7 +143,7 @@ class Task(ABC):
         :param remaining_steps: number of time steps left in the episode
         :return: final reward
         """
-        return 0.
+        return 0.0
 
     @abstractmethod
     def has_succeeded(self, state: np.ndarray) -> bool:

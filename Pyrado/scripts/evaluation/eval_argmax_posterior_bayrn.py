@@ -34,17 +34,17 @@ from pyrado.logger.experiment import ask_for_experiment
 from pyrado.utils.argparser import get_argparser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
+    ex_dir = ask_for_experiment() if args.dir is None else args.dir
 
     # Load the required data
-    cands = pyrado.load(None, 'candidates', 'pt', ex_dir)
-    cands_values = pyrado.load(None, 'candidates_values', 'pt', ex_dir).unsqueeze(1)
-    ddp_space = pyrado.load(None, 'ddp_space', 'pkl', ex_dir)
+    cands = pyrado.load(None, "candidates", "pt", ex_dir)
+    cands_values = pyrado.load(None, "candidates_values", "pt", ex_dir).unsqueeze(1)
+    ddp_space = pyrado.load(None, "ddp_space", "pkl", ex_dir)
 
     # Compute and print the argmax
     BayRn.argmax_posterior_mean(cands, cands_values, ddp_space, num_restarts=500, num_samples=1000)

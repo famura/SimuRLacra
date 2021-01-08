@@ -40,12 +40,12 @@ from pyrado.policies.recurrent.adn import pd_cubic, ADNPolicy
 from pyrado.utils.argparser import get_argparser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(Planar3LinkIKActivationSim.name, f'{HCNormal.name}_{ADNPolicy.name}')
+    ex_dir = setup_experiment(Planar3LinkIKActivationSim.name, f"{HCNormal.name}_{ADNPolicy.name}")
     # ex_dir = setup_experiment(Planar3LinkTASim.name, f'{HCNormal.name}_{ADNPolicy.name}', 'obsnorm')
 
     # Set seed if desired
@@ -53,13 +53,13 @@ if __name__ == '__main__':
 
     # Environment
     env_hparams = dict(
-        physicsEngine='Bullet',  # Bullet or Vortex
-        dt=1/50.,
+        physicsEngine="Bullet",  # Bullet or Vortex
+        dt=1 / 50.0,
         max_steps=1200,
         task_args=dict(consider_velocities=True),
         max_dist_force=None,
         positionTasks=True,
-        taskCombinationMethod='product',
+        taskCombinationMethod="product",
         checkJointLimits=True,
         collisionAvoidanceIK=True,
         observeVelocities=True,
@@ -83,13 +83,13 @@ if __name__ == '__main__':
     # env = ObsNormWrapper(env, explicit_ub=eub)
     # env = ObsNormWrapper(env)
     # env = ObsPartialWrapper(env, idcs=['Effector_Xd', 'Effector_Zd'])
-    env = ObsPartialWrapper(env, idcs=['Effector_DiscrepTS_X', 'Effector_DiscrepTS_Z'])
+    env = ObsPartialWrapper(env, idcs=["Effector_DiscrepTS_X", "Effector_DiscrepTS_Z"])
     # env = ObsPartialWrapper(env, idcs=['Effector_DiscrepTS_X', 'Effector_DiscrepTS_Z', 'Effector_Xd', 'Effector_Zd'])
     print(env)
 
     # Policy
     policy_hparam = dict(
-        tau_init=10.,
+        tau_init=10.0,
         tau_learnable=False,
         kappa_init=1e-2,
         kappa_learnable=True,
@@ -102,7 +102,7 @@ if __name__ == '__main__':
     # Algorithm
     algo_hparam = dict(
         max_iter=100,
-        pop_size=5*policy.num_param,
+        pop_size=5 * policy.num_param,
         num_rollouts=1,
         expl_factor=1.05,
         expl_std_init=1.0,
@@ -111,11 +111,13 @@ if __name__ == '__main__':
     algo = HCNormal(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha

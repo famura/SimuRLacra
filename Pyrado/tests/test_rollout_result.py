@@ -71,11 +71,11 @@ actions = [
 ]
 # Policy infos as dict collapse test
 policy_infos = [
-    {'mean': np.array([0, 1]), 'std': 0.4},
-    {'mean': np.array([0, 3]), 'std': 0.2},
-    {'mean': np.array([2, 4]), 'std': 0.1},
-    {'mean': np.array([3, 1]), 'std': 0.05},
-    {'mean': np.array([0, 0]), 'std': 0.025},
+    {"mean": np.array([0, 1]), "std": 0.4},
+    {"mean": np.array([0, 3]), "std": 0.2},
+    {"mean": np.array([2, 4]), "std": 0.1},
+    {"mean": np.array([3, 1]), "std": 0.05},
+    {"mean": np.array([0, 0]), "std": 0.025},
 ]
 # Hidden is a tuple, like we see with LSTMs
 hidden = [
@@ -91,26 +91,31 @@ def test_create_rew_only():
     # Don't require additional fields for this test
     StepSequence.required_fields = {}
 
-    ro = StepSequence(rewards=rewards, data_format='numpy')
+    ro = StepSequence(rewards=rewards, data_format="numpy")
     assert len(ro) == 5
     assert (ro.rewards == np.array(rewards)).all()
 
 
 @pytest.mark.parametrize(
-    'data_format, tensor_type', [('numpy', np.ndarray), ('torch', to.Tensor)],
-    ids=['numpy', 'torch']
+    "data_format, tensor_type", [("numpy", np.ndarray), ("torch", to.Tensor)], ids=["numpy", "torch"]
 )
 def test_create(data_format, tensor_type):
     # With actions, observations and dicts
-    ro = StepSequence(rewards=rewards, observations=observations, actions=actions, policy_infos=policy_infos,
-                      hidden=hidden, data_format=data_format)
+    ro = StepSequence(
+        rewards=rewards,
+        observations=observations,
+        actions=actions,
+        policy_infos=policy_infos,
+        hidden=hidden,
+        data_format=data_format,
+    )
     assert len(ro) == 5
 
     assert isinstance(ro.rewards, tensor_type)
     assert isinstance(ro.observations, tensor_type)
     assert isinstance(ro.actions, tensor_type)
-    assert isinstance(ro.policy_infos['mean'], tensor_type)
-    assert isinstance(ro.policy_infos['std'], tensor_type)
+    assert isinstance(ro.policy_infos["mean"], tensor_type)
+    assert isinstance(ro.policy_infos["std"], tensor_type)
     assert isinstance(ro.hidden[0], tensor_type)
 
     # Done should always be a ndarray
@@ -120,35 +125,44 @@ def test_create(data_format, tensor_type):
 
 
 @pytest.mark.parametrize(
-    'other_format, tensor_type', [('torch', np.ndarray), ('numpy', to.Tensor)],
-    ids=['numpy to torch', 'torch to numpy']
+    "other_format, tensor_type", [("torch", np.ndarray), ("numpy", to.Tensor)], ids=["numpy to torch", "torch to numpy"]
 )
 def test_convert(other_format, tensor_type):
-    ro = StepSequence(rewards=rewards, observations=observations, actions=actions, policy_infos=policy_infos,
-                      hidden=hidden, data_format=other_format)
+    ro = StepSequence(
+        rewards=rewards,
+        observations=observations,
+        actions=actions,
+        policy_infos=policy_infos,
+        hidden=hidden,
+        data_format=other_format,
+    )
     # convert
-    if other_format == 'numpy':
+    if other_format == "numpy":
         ro.torch()
-    elif other_format == 'torch':
+    elif other_format == "torch":
         ro.numpy()
     # Verify
     assert isinstance(ro.rewards, tensor_type)
     assert isinstance(ro.observations, tensor_type)
     assert isinstance(ro.actions, tensor_type)
-    assert isinstance(ro.policy_infos['mean'], tensor_type)
-    assert isinstance(ro.policy_infos['std'], tensor_type)
+    assert isinstance(ro.policy_infos["mean"], tensor_type)
+    assert isinstance(ro.policy_infos["std"], tensor_type)
     assert isinstance(ro.hidden[0], tensor_type)
 
     # Done should always be a ndarray
     assert isinstance(ro.done, np.ndarray)
 
 
-@pytest.mark.parametrize(
-    'data_format', ['numpy', 'torch']
-)
+@pytest.mark.parametrize("data_format", ["numpy", "torch"])
 def test_step_iter(data_format):
-    ro = StepSequence(rewards=rewards, observations=observations, actions=actions, policy_infos=policy_infos,
-                      hidden=hidden, data_format=data_format)
+    ro = StepSequence(
+        rewards=rewards,
+        observations=observations,
+        actions=actions,
+        policy_infos=policy_infos,
+        hidden=hidden,
+        data_format=data_format,
+    )
 
     assert len(ro) == 5
 
@@ -158,19 +172,21 @@ def test_step_iter(data_format):
         assert (step.observation == to_format(observations[i], data_format)).all()
         assert (step.next_observation == to_format(observations[i + 1], data_format)).all()
         # Check dict sub element
-        assert (step.policy_info.mean == to_format(policy_infos[i]['mean'], data_format)).all()
+        assert (step.policy_info.mean == to_format(policy_infos[i]["mean"], data_format)).all()
         assert (step.hidden[0] == to_format(hidden[i][0], data_format)).all()
 
 
-@pytest.mark.parametrize(
-    'sls', [slice(2, 4), slice(2, 5, 2), slice(3), slice(4, None)]
-)
-@pytest.mark.parametrize(
-    'data_format', ['numpy', 'torch']
-)
+@pytest.mark.parametrize("sls", [slice(2, 4), slice(2, 5, 2), slice(3), slice(4, None)])
+@pytest.mark.parametrize("data_format", ["numpy", "torch"])
 def test_slice(sls, data_format):
-    ro = StepSequence(rewards=rewards, observations=observations, actions=actions, policy_infos=policy_infos,
-                      hidden=hidden, data_format=data_format)
+    ro = StepSequence(
+        rewards=rewards,
+        observations=observations,
+        actions=actions,
+        policy_infos=policy_infos,
+        hidden=hidden,
+        data_format=data_format,
+    )
 
     # Slice rollout
     sliced = ro[sls]
@@ -181,9 +197,7 @@ def test_slice(sls, data_format):
         assert step.reward == sliced_rew[i]
 
 
-@pytest.mark.parametrize(
-    'data_format', ['numpy', 'torch']
-)
+@pytest.mark.parametrize("data_format", ["numpy", "torch"])
 def test_add_data(data_format):
     ro = StepSequence(
         rewards=rewards,
@@ -191,19 +205,17 @@ def test_add_data(data_format):
         actions=actions,
         policy_infos=policy_infos,
         hidden=hidden,
-        data_format=data_format
+        data_format=data_format,
     )
     # Add a data field
-    ro.add_data('return', discounted_value(ro, 0.9))
-    assert hasattr(ro, 'return')
+    ro.add_data("return", discounted_value(ro, 0.9))
+    assert hasattr(ro, "return")
 
     # Query new data field from steps
-    assert abs(ro[2]['return'] - -86.675) < 0.01
+    assert abs(ro[2]["return"] - -86.675) < 0.01
 
 
-@pytest.mark.parametrize(
-    'data_format', ['numpy', 'torch']
-)
+@pytest.mark.parametrize("data_format", ["numpy", "torch"])
 def test_concat(data_format):
     # Create some rollouts with random rewards
     ros = [
@@ -211,18 +223,18 @@ def test_concat(data_format):
             rewards=np.random.randn(5),
             observations=np.random.randn(6),
             actions=np.random.randn(5),
-            policy_infos={'mean': np.random.randn(5)},
+            policy_infos={"mean": np.random.randn(5)},
             hidden=(np.random.randn(5), np.random.randn(5)),
-            data_format=data_format
+            data_format=data_format,
         ),
         StepSequence(
             rewards=np.random.randn(5),
             observations=np.random.randn(6),
             actions=np.random.randn(5),
-            policy_infos={'mean': np.random.randn(5)},
+            policy_infos={"mean": np.random.randn(5)},
             hidden=(np.random.randn(5), np.random.randn(5)),
-            data_format=data_format
-        )
+            data_format=data_format,
+        ),
     ]
 
     # Perform concatenation
@@ -238,18 +250,12 @@ def test_concat(data_format):
         assert step_ro.done == step_cat.done
 
 
-@pytest.mark.parametrize(
-    'data_format', ['numpy', 'torch']
-)
+@pytest.mark.parametrize("data_format", ["numpy", "torch"])
 def test_split_multi(data_format):
     # Don't require additional fields for this test
     StepSequence.required_fields = {}
 
-    ro = StepSequence(
-        rewards=np.arange(20),
-        rollout_bounds=[0, 4, 11, 17, 20],
-        data_format=data_format
-    )
+    ro = StepSequence(rewards=np.arange(20), rollout_bounds=[0, 4, 11, 17, 20], data_format=data_format)
 
     # There should be four parts
     assert ro.rollout_count == 4
@@ -274,12 +280,16 @@ def test_split_multi(data_format):
     assert s2[7].reward == ro[17].reward
 
 
-@pytest.mark.parametrize(
-    'data_format', ['numpy', 'torch']
-)
+@pytest.mark.parametrize("data_format", ["numpy", "torch"])
 def test_pickle(data_format):
-    ro = StepSequence(rewards=rewards, observations=observations, actions=actions, policy_infos=policy_infos,
-                      hidden=hidden, data_format=data_format)
+    ro = StepSequence(
+        rewards=rewards,
+        observations=observations,
+        actions=actions,
+        policy_infos=policy_infos,
+        hidden=hidden,
+        data_format=data_format,
+    )
 
     # Pickle/unpickle
     ro2 = pickle.loads(pickle.dumps(ro, pickle.HIGHEST_PROTOCOL))
@@ -291,11 +301,14 @@ def test_pickle(data_format):
         assert step.done == step_pi.done
 
 
-@pytest.mark.parametrize(['env', 'policy'], [
-    ('default_bob', 'linear_policy'),
-],
-                         ids=['bob_linpol'], indirect=True
-                         )
+@pytest.mark.parametrize(
+    ["env", "policy"],
+    [
+        ("default_bob", "linear_policy"),
+    ],
+    ids=["bob_linpol"],
+    indirect=True,
+)
 def test_advantage_calculation(env, policy):
     ro = rollout(env, policy)
     gamma = 0.99
@@ -305,7 +318,7 @@ def test_advantage_calculation(env, policy):
     values = np.ones_like(ro.rewards)
     if not ro.done[-1]:
         values = to.cat([values, 0])
-    ro.add_data('values', values)
+    ro.add_data("values", values)
 
     gae1 = gae_returns(ro, gamma, lamb)
 
@@ -315,17 +328,19 @@ def test_advantage_calculation(env, policy):
         if ro[k].done:
             gae2[k] = ro[k].reward - values[k]
         else:
-            gae2[k] = ro[k].reward + gamma*values[k + 1] - values[k] + \
-                      gamma*lamb*gae2[k + 1]
+            gae2[k] = ro[k].reward + gamma * values[k + 1] - values[k] + gamma * lamb * gae2[k + 1]
 
     assert (gae1 == gae2).all()
 
 
 @pytest.mark.parametrize(
-    'capacity', [
-        1, 2, 8,
+    "capacity",
+    [
+        1,
+        2,
+        8,
     ],
-    ids=['1', '2', '8']
+    ids=["1", "2", "8"],
 )
 def test_replay_memory(capacity):
     rm = ReplayMemory(capacity)
@@ -355,17 +370,11 @@ class DummyNT(NamedTuple):
     part2: to.Tensor
 
 
-@pytest.mark.parametrize(
-    'data_format', ['numpy', 'torch']
-)
+@pytest.mark.parametrize("data_format", ["numpy", "torch"])
 def test_namedtuple(data_format):
     hid_nt = [DummyNT(*it) for it in hidden]
 
-    ro = StepSequence(
-        rewards=rewards,
-        hidden=hid_nt,
-        data_format=data_format
-    )
+    ro = StepSequence(rewards=rewards, hidden=hid_nt, data_format=data_format)
 
     assert isinstance(ro.hidden, DummyNT)
 
@@ -375,27 +384,28 @@ def test_namedtuple(data_format):
 
 
 @pytest.mark.parametrize(
-    'env', [
-        'default_pend',
-        'default_bob',
-    ],
-    ids=['pend', 'bob'],
-    indirect=True
-)
-@pytest.mark.parametrize(
-    'num_real_ros', [1, 3],
-    ids=['1realro', '3realro']
-)
-@pytest.mark.parametrize(
-    'num_sim_ros', [1, 3],
-    ids=['1simro', '3simro']
-)
-@pytest.mark.parametrize(
-    'max_real_steps, max_sim_steps',
+    "env",
     [
-        (4, 4,), (4, 7), (7, 4), (10000, 10000)
+        "default_pend",
+        "default_bob",
     ],
-    ids=['real=sim', 'real<sim', 'real>sim', 'inf']
+    ids=["pend", "bob"],
+    indirect=True,
+)
+@pytest.mark.parametrize("num_real_ros", [1, 3], ids=["1realro", "3realro"])
+@pytest.mark.parametrize("num_sim_ros", [1, 3], ids=["1simro", "3simro"])
+@pytest.mark.parametrize(
+    "max_real_steps, max_sim_steps",
+    [
+        (
+            4,
+            4,
+        ),
+        (4, 7),
+        (7, 4),
+        (10000, 10000),
+    ],
+    ids=["real=sim", "real<sim", "real>sim", "inf"],
 )
 def test_truncate_rollouts(env, num_real_ros, num_sim_ros, max_real_steps, max_sim_steps):
     policy = DummyPolicy(env.spec)

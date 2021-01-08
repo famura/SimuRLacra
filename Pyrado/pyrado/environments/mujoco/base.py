@@ -49,11 +49,9 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         https://github.com/openai/gym/blob/master/gym/envs/mujoco/mujoco_env.py
     """
 
-    def __init__(self,
-                 model_path: str,
-                 frame_skip: int = 1,
-                 max_steps: int = pyrado.inf,
-                 task_args: [dict, None] = None):
+    def __init__(
+        self, model_path: str, frame_skip: int = 1, max_steps: int = pyrado.inf, task_args: [dict, None] = None
+    ):
         """
         Constructor
 
@@ -68,13 +66,13 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         self.model_path = model_path
         self.frame_skip = frame_skip
         self._domain_param = self.get_nominal_domain_param()
-        with open(self.model_path, mode='r') as file_raw:
+        with open(self.model_path, mode="r") as file_raw:
             # Save raw (with placeholders) XML-file as attribute since we need it for resetting the domain params
             self.xml_model_template = file_raw.read()
         self._create_mujoco_model()
 
         # Call SimEnv's constructor
-        super().__init__(dt=self.model.opt.timestep*self.frame_skip, max_steps=max_steps)
+        super().__init__(dt=self.model.opt.timestep * self.frame_skip, max_steps=max_steps)
 
         self.init_qpos = self.sim.data.qpos.copy()
         self.init_qvel = self.sim.data.qvel.copy()
@@ -150,6 +148,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
             # If the viewer already exists and we reset the domain parameters, we must also recreate the viewer since
             # it references to the simulation object which get's reconstructed during _create_mujoco_model()
             import glfw
+
             glfw.destroy_window(self.viewer.window)
             self.viewer = None
 
@@ -170,11 +169,11 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         :return: adapted model file where the placeholders are filled with numerical values
         """
         # The mesh dir is not resolved when later passed as a string, thus we do it manually
-        xml_model = xml_model.replace(f'[ASSETS_DIR]', pyrado.MUJOCO_ASSETS_DIR)
+        xml_model = xml_model.replace(f"[ASSETS_DIR]", pyrado.MUJOCO_ASSETS_DIR)
 
         # Replace all occurrences of the domain parameter placeholder with its value
         for key, value in domain_param.items():
-            xml_model = xml_model.replace(f'[{key}]', str(value))
+            xml_model = xml_model.replace(f"[{key}]", str(value))
 
         return xml_model
 
@@ -204,7 +203,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
     def configure_viewer(self):
         """ Configure the camera when the viewer is initialized. You need to set `self.camera_config` before. """
         # Render a fog around the scene by default
-        if self.camera_config.pop('render_fog', True):
+        if self.camera_config.pop("render_fog", True):
             self.viewer.scn.flags[RND_FOG] = 1
 
         # Parse all other options
@@ -233,7 +232,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
                 raise pyrado.TypeErr(given=init_state, expected_type=[np.ndarray, list])
 
         if not self.init_space.contains(init_state, verbose=True):
-            pyrado.ValueErr(msg='The init state must be within init state space!')
+            pyrado.ValueErr(msg="The init state must be within init state space!")
 
         # Update the state attribute
         self.state = init_state.copy()
@@ -248,11 +247,15 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         if not init_state[:nq].shape == old_state.qpos.shape:  # check joint positions dimension
             raise pyrado.ShapeErr(given=init_state[:nq], expected_match=old_state.qpos)
         # Exclude everything that is appended to the state (at the end), e.g. the ball position for WAMBallInCupSim
-        if not init_state[nq:2*nq].shape == old_state.qvel.shape:  # check joint velocities dimension
-            raise pyrado.ShapeErr(given=init_state[nq:2*nq], expected_match=old_state.qvel)
+        if not init_state[nq : 2 * nq].shape == old_state.qvel.shape:  # check joint velocities dimension
+            raise pyrado.ShapeErr(given=init_state[nq : 2 * nq], expected_match=old_state.qvel)
         new_state = mujoco_py.MjSimState(
             # Exclude everything that is appended to the state (at the end), e.g. the ball position for WAMBallInCupSim
-            old_state.time, init_state[:nq], init_state[nq:2*nq], old_state.act, old_state.udd_state
+            old_state.time,
+            init_state[:nq],
+            init_state[nq : 2 * nq],
+            old_state.act,
+            old_state.udd_state,
         )
         self.sim.set_state(new_state)
         self.sim.forward()
@@ -271,11 +274,11 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
 
         # Apply the action and simulate the resulting dynamics
         info = self._mujoco_step(act)
-        info['t'] = self._curr_step*self._dt
+        info["t"] = self._curr_step * self._dt
         self._curr_step += 1
 
         # Check if the environment is done due to a failure within the mujoco simulation (e.g. bad inputs)
-        mjsim_done = info.get('failed', False)
+        mjsim_done = info.get("failed", False)
 
         # Check if the task is done
         task_done = self._task.is_done(self.state)
@@ -292,17 +295,17 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         return self.observe(self.state), self._curr_rew, done, info
 
     def render(self, mode: RenderMode = RenderMode(), render_step: int = 1):
-        if self._curr_step%render_step == 0:
+        if self._curr_step % render_step == 0:
             # Call base class
             super().render(mode)
 
             # Print to console
             if mode.text:
-                print("step: {:3}  |  r_t: {: 1.3f}  |  a_t: {}\t |  s_t+1: {}".format(
-                    self._curr_step,
-                    self._curr_rew,
-                    self._curr_act,
-                    self.state))
+                print(
+                    "step: {:3}  |  r_t: {: 1.3f}  |  a_t: {}\t |  s_t+1: {}".format(
+                        self._curr_step, self._curr_rew, self._curr_act, self.state
+                    )
+                )
 
             # Forward to MuJoCo viewer
             if mode.video:

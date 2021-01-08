@@ -72,7 +72,7 @@ class DiscreteSpace(Space):
 
     def __str__(self):
         """ Get an information string. """
-        return f'DiscreteSpace id: {id(self)}\nelements: {self.eles}'
+        return f"DiscreteSpace id: {id(self)}\nelements: {self.eles}"
 
     @property
     def shape(self) -> tuple:
@@ -99,9 +99,8 @@ class DiscreteSpace(Space):
             raise pyrado.ShapeErr(given=cand, expected_match=self)
         if np.isnan(cand).any():
             raise pyrado.ValueErr(
-                msg=f'At least one value is NaN!' +
-                    tabulate([list(self.labels), [*color_validity(cand, np.invert(np.isnan(cand)))]],
-                             headers='firstrow')
+                msg=f"At least one value is NaN!"
+                + tabulate([list(self.labels), [*color_validity(cand, np.invert(np.isnan(cand)))]], headers="firstrow")
             )
 
         # Cast and approximately compare

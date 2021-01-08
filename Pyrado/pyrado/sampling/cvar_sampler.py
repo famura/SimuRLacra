@@ -34,7 +34,7 @@ from pyrado.sampling.sampler import SamplerBase
 from pyrado.sampling.step_sequence import StepSequence
 
 
-def select_cvar(rollouts, epsilon: float, gamma: float = 1.):
+def select_cvar(rollouts, epsilon: float, gamma: float = 1.0):
     """
     Select a subset of rollouts so that their mean discounted return is the CVaR(eps) of the full rollout set.
 
@@ -49,7 +49,7 @@ def select_cvar(rollouts, epsilon: float, gamma: float = 1.):
     rollouts.sort(key=lambda r: r.discounted_return(gamma))
 
     # Now, computing the quantile on a sorted list is easy
-    k = len(rollouts)*epsilon
+    k = len(rollouts) * epsilon
     n = int(np.floor(k))
 
     # Only use the selected paths
@@ -62,13 +62,9 @@ class CVaRSampler(SamplerBase, LoggerAware):
     This is done by sampling more rollouts, and then only using the epsilon-qunatile of them.
     """
 
-    def __init__(self,
-                 wrapped_sampler,
-                 epsilon: float,
-                 gamma: float = 1.,
-                 *,
-                 min_rollouts: int = None,
-                 min_steps: int = None):
+    def __init__(
+        self, wrapped_sampler, epsilon: float, gamma: float = 1.0, *, min_rollouts: int = None, min_steps: int = None
+    ):
         """
         Constructor
 
@@ -93,10 +89,10 @@ class CVaRSampler(SamplerBase, LoggerAware):
         # This modifies the inner samplers parameter values, that's ok since we don't use them afterwards
         if min_rollouts is not None:
             # Expand rollout count to full set
-            min_rollouts = int(min_rollouts/self.epsilon)
+            min_rollouts = int(min_rollouts / self.epsilon)
         if min_steps is not None:
             # Simply increasing the number of steps as done for the rollouts is not identical, however it is goo enough
-            min_steps = int(min_steps/self.epsilon)
+            min_steps = int(min_steps / self.epsilon)
         self._wrapped_sampler.set_min_count(min_rollouts=min_rollouts, min_steps=min_steps)
 
     def reinit(self, env=None, policy=None):
@@ -112,10 +108,10 @@ class CVaRSampler(SamplerBase, LoggerAware):
         ret_avg = np.mean(rets)
         ret_med = np.median(rets)
         ret_std = np.std(rets)
-        self.logger.add_value('full avg rollout len', np.mean([ro.length for ro in fullset]))
-        self.logger.add_value('full avg return', ret_avg)
-        self.logger.add_value('full median return', ret_med)
-        self.logger.add_value('full std return', ret_std)
+        self.logger.add_value("full avg rollout len", np.mean([ro.length for ro in fullset]))
+        self.logger.add_value("full avg return", ret_avg)
+        self.logger.add_value("full median return", ret_med)
+        self.logger.add_value("full std return", ret_std)
 
         # Return subset
         return select_cvar(fullset, self.epsilon, self.gamma)

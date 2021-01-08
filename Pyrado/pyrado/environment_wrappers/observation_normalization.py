@@ -43,10 +43,9 @@ class ObsNormWrapper(EnvWrapperObs, Serializable):
     hard-coded bounds, such that all values are in range [-1, 1]
     """
 
-    def __init__(self,
-                 wrapped_env: Env,
-                 explicit_lb: Mapping[str, float] = None,
-                 explicit_ub: Mapping[str, float] = None):
+    def __init__(
+        self, wrapped_env: Env, explicit_lb: Mapping[str, float] = None, explicit_ub: Mapping[str, float] = None
+    ):
         """
         Constructor
 
@@ -73,16 +72,18 @@ class ObsNormWrapper(EnvWrapperObs, Serializable):
 
         # Check if the new bounds are valid
         if any(self.ov_lb == -pyrado.inf):
-            raise pyrado.ValueErr(msg=f'At least one element of the lower bounds is (negative) infinite:\n'
-                                      f'(overwritten) bound: {self.ov_lb}\nnames: {wos.labels}')
+            raise pyrado.ValueErr(
+                msg=f"At least one element of the lower bounds is (negative) infinite:\n"
+                f"(overwritten) bound: {self.ov_lb}\nnames: {wos.labels}"
+            )
         if any(self.ov_ub == pyrado.inf):
-            raise pyrado.ValueErr(msg=f'At least one element of the upper bound is (positive) infinite:\n'
-                                      f'(overwritten) bound: {self.ov_ub}\nnames: {wos.labels}')
+            raise pyrado.ValueErr(
+                msg=f"At least one element of the upper bound is (positive) infinite:\n"
+                f"(overwritten) bound: {self.ov_ub}\nnames: {wos.labels}"
+            )
 
     @staticmethod
-    def override_bounds(bounds: np.ndarray,
-                        override: Optional[Mapping[str, float]],
-                        names: np.ndarray) -> np.ndarray:
+    def override_bounds(bounds: np.ndarray, override: Optional[Mapping[str, float]], names: np.ndarray) -> np.ndarray:
         """
         Override a given bound. This function is useful if some entries of the observation space have an infinite bound
         and/or you want to specify a certain bound
@@ -103,8 +104,9 @@ class ObsNormWrapper(EnvWrapperObs, Serializable):
                 bc[idx] = ov
             elif np.isinf(bc[idx]):
                 # Report unbounded entry
-                raise pyrado.ValueErr(msg=f'The entry {name} of a bound is infinite and not overwritten.'
-                                          f'Cannot apply normalization!')
+                raise pyrado.ValueErr(
+                    msg=f"The entry {name} of a bound is infinite and not overwritten." f"Cannot apply normalization!"
+                )
             else:
                 # Do nothing if ov is None
                 pass
@@ -112,12 +114,12 @@ class ObsNormWrapper(EnvWrapperObs, Serializable):
 
     def _process_obs(self, obs: np.ndarray) -> np.ndarray:
         # Normalize observation
-        obs_norm = (obs - self.ov_lb)/(self.ov_ub - self.ov_lb)*2 - 1
+        obs_norm = (obs - self.ov_lb) / (self.ov_ub - self.ov_lb) * 2 - 1
         return obs_norm
 
     def _process_obs_space(self, space: BoxSpace) -> BoxSpace:
         if not isinstance(space, BoxSpace):
-            raise NotImplementedError('Only implemented ObsNormWrapper._process_obs_space() for BoxSpace!')
+            raise NotImplementedError("Only implemented ObsNormWrapper._process_obs_space() for BoxSpace!")
 
         # Return space with same shape but bounds from -1 to 1
         return BoxSpace(-np.ones(space.shape), np.ones(space.shape), labels=space.labels)
@@ -146,7 +148,7 @@ class ObsRunningNormWrapper(EnvWrapperObs, Serializable):
 
     def _process_obs_space(self, space: BoxSpace) -> BoxSpace:
         if not isinstance(space, BoxSpace):
-            raise NotImplementedError('Only implemented ObsRunningNormWrapper._process_obs_space() for BoxSpace!')
+            raise NotImplementedError("Only implemented ObsRunningNormWrapper._process_obs_space() for BoxSpace!")
 
         # Return space with same shape but bounds from -1 to 1
         return BoxSpace(-np.ones(space.shape), np.ones(space.shape), labels=space.labels)

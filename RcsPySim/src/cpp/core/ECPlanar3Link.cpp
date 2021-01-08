@@ -83,12 +83,7 @@ protected:
     {
         std::string actionModelType = "unspecified";
         properties->getProperty(actionModelType, "actionModelType");
-    
-        // Get the method how to combine the movement primitives / tasks given their activation (not used in every case)
-        std::string taskCombinationMethod = "mean";
-        properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
-        TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(taskCombinationMethod);
-    
+        
         // Common for the action models
         RcsBody* effector = RcsGraph_getBodyByName(graph, "Effector");
         RCHECK(effector);
@@ -121,11 +116,16 @@ protected:
         }
 
         else if (actionModelType == "ik_activation") {
+            // Get the method how to combine the movement primitives / tasks given their activation (not used in every case)
+            std::string taskCombinationMethod = "unspecified";
+            properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
+            TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(taskCombinationMethod);
+            
             // Create the action model
             auto amIK = new AMIKControllerActivation(graph, tcm);
             std::vector<Task*> tasks;
     
-            // Check if the tasks are defined on position or task level. Adapt their parameters if desired.
+            // Check if the tasks are defined on position or velocity level. Adapt their parameters if desired.
             if (properties->getPropertyBool("positionTasks", true)) {
                 // Define the Rcs controller tasks
                 RcsBody* goal1 = RcsGraph_getBodyByName(graph, "Goal1");
@@ -166,7 +166,7 @@ protected:
     
             // Set the tasks' desired states
             std::vector<PropertySource*> taskSpec = properties->getChildList("taskSpecIK");
-            amIK->setXdesFromTaskSpec(taskSpec, tasks);
+            amIK->setXdesFromTaskSpec(taskSpec);
     
             // Incorporate collision costs into IK
             if (properties->getPropertyBool("collisionAvoidanceIK", true)) {
@@ -183,7 +183,7 @@ protected:
             // Obtain the inner action model
             std::unique_ptr<AMIKGeneric> innerAM(new AMIKGeneric(graph));
             
-            // Check if the MPs are defined on position or task level
+            // Check if the MPs are defined on position or velocity level
             if (properties->getPropertyBool("positionTasks", true)) {
                 innerAM->addTask(new TaskPosition1D("X", graph, effector, nullptr, nullptr));
                 innerAM->addTask(new TaskPosition1D("Z", graph, effector, nullptr, nullptr));
@@ -218,6 +218,11 @@ protected:
                 taskRel.push_back(task.release());
             }
             
+            // Get the method how to combine the movement primitives / tasks given their activation (not used in every case)
+            std::string taskCombinationMethod = "unspecified";
+            properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
+            TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(taskCombinationMethod);
+    
             // Create the action model
             return new AMDynamicalSystemActivation(innerAM.release(), taskRel, tcm);
         }

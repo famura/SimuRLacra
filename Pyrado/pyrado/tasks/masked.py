@@ -37,11 +37,7 @@ from pyrado.tasks.reward_functions import RewFcn
 class MaskedTask(Task):
     """ Task using only a subset of state and actions """
 
-    def __init__(self,
-                 env_spec: EnvSpec,
-                 wrapped_task: Task,
-                 state_idcs: [str, int],
-                 action_idcs: [str, int] = None):
+    def __init__(self, env_spec: EnvSpec, wrapped_task: Task, state_idcs: [str, int], action_idcs: [str, int] = None):
         """
         Constructor
 
@@ -106,9 +102,11 @@ class MaskedTask(Task):
             env_spec=EnvSpec(
                 env_spec.obs_space,
                 env_spec.act_space.subspace(self._action_mask),
-                env_spec.state_space.subspace(
-                    self._state_mask) if env_spec.state_space is not EmptySpace else EmptySpace),
-            **kwargs
+                env_spec.state_space.subspace(self._state_mask)
+                if env_spec.state_space is not EmptySpace
+                else EmptySpace,
+            ),
+            **kwargs,
         )
 
     def step_rew(self, state: np.ndarray, act: np.ndarray, remaining_steps: int) -> float:

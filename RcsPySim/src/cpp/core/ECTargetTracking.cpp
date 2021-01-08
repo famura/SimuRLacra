@@ -105,7 +105,7 @@ protected:
         }
         
         // Get the method how to combine the movement primitives / tasks given their activation
-        std::string taskCombinationMethod = "mean";
+        std::string taskCombinationMethod = "unspecified";
         properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
         TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(taskCombinationMethod);
         

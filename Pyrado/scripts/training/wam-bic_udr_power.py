@@ -43,41 +43,34 @@ from pyrado.policies.special.dual_rfb import DualRBFLinearPolicy
 from pyrado.utils.argparser import get_argparser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment
-    ex_dir = setup_experiment(WAMBallInCupSim.name, f'{UDR.name}-{PoWER.name}_{DualRBFLinearPolicy.name}',
-                              'rand-cs-rl-bm-jd-js')
+    ex_dir = setup_experiment(
+        WAMBallInCupSim.name, f"{UDR.name}-{PoWER.name}_{DualRBFLinearPolicy.name}", "rand-cs-rl-bm-jd-js"
+    )
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(
-        num_dof=4,
-        max_steps=1750,
-        task_args=dict(final_factor=0.5),
-        fixed_init_state=False
-    )
+    env_hparams = dict(num_dof=4, max_steps=1750, task_args=dict(final_factor=0.5), fixed_init_state=False)
     env = WAMBallInCupSim(**env_hparams)
 
     # Randomizer
     randomizer = DomainRandomizer(
-        UniformDomainParam(name='cup_scale', mean=0.95, halfspan=0.05),
-        NormalDomainParam(name='rope_length', mean=0.3, std=0.005),
-        NormalDomainParam(name='ball_mass', mean=0.021, std=0.001),
-        UniformDomainParam(name='joint_damping', mean=0.05, halfspan=0.05),
-        UniformDomainParam(name='joint_stiction', mean=0.1, halfspan=0.1),
+        UniformDomainParam(name="cup_scale", mean=0.95, halfspan=0.05),
+        NormalDomainParam(name="rope_length", mean=0.3, std=0.005),
+        NormalDomainParam(name="ball_mass", mean=0.021, std=0.001),
+        UniformDomainParam(name="joint_damping", mean=0.05, halfspan=0.05),
+        UniformDomainParam(name="joint_stiction", mean=0.1, halfspan=0.1),
     )
     env = DomainRandWrapperLive(env, randomizer)
 
     # Policy
-    policy_hparam = dict(
-        rbf_hparam=dict(num_feat_per_dim=10, bounds=(0., 1.), scale=None),
-        dim_mask=2
-    )
+    policy_hparam = dict(rbf_hparam=dict(num_feat_per_dim=10, bounds=(0.0, 1.0), scale=None), dim_mask=2)
     policy = DualRBFLinearPolicy(env.spec, **policy_hparam)
 
     # Algorithm
@@ -86,19 +79,21 @@ if __name__ == '__main__':
         pop_size=200,
         num_is_samples=10,
         num_rollouts=8,
-        expl_std_init=np.pi/12,
+        expl_std_init=np.pi / 12,
         expl_std_min=0.02,
         num_workers=8,
     )
     algo = PoWER(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha
-    algo.train(seed=args.seed, snapshot_mode='best')
+    algo.train(seed=args.seed, snapshot_mode="best")

@@ -40,7 +40,7 @@ class EmptySpace(Space):
 
     def _members(self) -> tuple:
         # We're a singleton, compare by id
-        return id(self),
+        return (id(self),)
 
     @property
     def bounds(self) -> tuple:
@@ -63,9 +63,8 @@ class EmptySpace(Space):
             raise pyrado.ShapeErr(given=cand, expected_match=self)
         if np.isnan(cand).any():
             raise pyrado.ValueErr(
-                msg=f'At least one value is NaN!' +
-                    tabulate([list(self.labels), [*color_validity(cand, np.invert(np.isnan(cand)))]],
-                             headers='firstrow')
+                msg=f"At least one value is NaN!"
+                + tabulate([list(self.labels), [*color_validity(cand, np.invert(np.isnan(cand)))]], headers="firstrow")
             )
         return True
 

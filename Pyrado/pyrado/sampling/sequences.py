@@ -67,6 +67,7 @@ def sequence_const(x_init, iter, dtype=int):
     :param dtype: data type to cast to (either int of float)
     :return: element at the given iteration and array of the whole sequence
     """
+
     def iter_function(x_seq, i, x_init):
         return x_init
 
@@ -82,6 +83,7 @@ def sequence_plus_one(x_init, iter, dtype=int):
     :param dtype: data type to cast to (either int of float)
     :return: element at the given iteration and array of the whole sequence
     """
+
     def iter_function(x_seq, i, x_init):
         return x_seq[0, :] + i
 
@@ -115,7 +117,7 @@ def sequence_rec_double(x_init, iter, dtype=int):
     """
     # exponential growth
     def iter_function(x_seq, i, x_init):
-        return x_seq[i - 1, :] * 2.
+        return x_seq[i - 1, :] * 2.0
 
     return sequence(x_init, iter, iter_function, dtype)
 

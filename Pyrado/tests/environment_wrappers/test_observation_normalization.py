@@ -34,8 +34,7 @@ from pyrado.environment_wrappers.observation_normalization import ObsNormWrapper
 from tests.environment_wrappers.mock_env import MockEnv
 
 
-@pytest.fixture(scope='function',
-                ids=['mock_obs_space'])
+@pytest.fixture(scope="function", ids=["mock_obs_space"])
 def mock_obs_space():
     return BoxSpace([-2, -1, 0], [2, 3, 1])
 

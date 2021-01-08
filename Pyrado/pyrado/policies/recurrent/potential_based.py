@@ -44,17 +44,19 @@ class PotentialBasedPolicy(RecurrentPolicy, ABC):
 
     name: str = None
 
-    def __init__(self,
-                 spec: EnvSpec,
-                 obs_layer: [nn.Module, Policy],
-                 activation_nonlin: Callable,
-                 tau_init: float,
-                 tau_learnable: bool,
-                 kappa_init: float,
-                 kappa_learnable: bool,
-                 potential_init_learnable: bool,
-                 use_cuda: bool,
-                 hidden_size: Optional[int] = None):
+    def __init__(
+        self,
+        spec: EnvSpec,
+        obs_layer: [nn.Module, Policy],
+        activation_nonlin: Callable,
+        tau_init: float,
+        tau_learnable: bool,
+        kappa_init: float,
+        kappa_learnable: bool,
+        potential_init_learnable: bool,
+        use_cuda: bool,
+        hidden_size: Optional[int] = None,
+    ):
         """
         Constructor
 
@@ -78,7 +80,7 @@ class PotentialBasedPolicy(RecurrentPolicy, ABC):
         self._input_size = spec.obs_space.flat_dim  # observations include goal distance, prediction error, ect.
         self._hidden_size = spec.act_space.flat_dim if hidden_size is None else hidden_size
         self.num_recurrent_layers = 1
-        self._potentials_max = 100.  # clip potentials symmetrically at a very large value (for debugging)
+        self._potentials_max = 100.0  # clip potentials symmetrically at a very large value (for debugging)
         self._stimuli_external = to.zeros(self.hidden_size)
         self._stimuli_internal = to.zeros(self.hidden_size)
 
@@ -92,7 +94,7 @@ class PotentialBasedPolicy(RecurrentPolicy, ABC):
             self._potentials_init = nn.Parameter(to.randn(self.hidden_size), requires_grad=True)
         else:
             if activation_nonlin is to.sigmoid:
-                self._potentials_init = -7.*to.ones(self.hidden_size)
+                self._potentials_init = -7.0 * to.ones(self.hidden_size)
             else:
                 self._potentials_init = to.zeros(self.hidden_size)
 
@@ -106,7 +108,7 @@ class PotentialBasedPolicy(RecurrentPolicy, ABC):
 
         # Potential dynamics's cubic decay
         self.kappa_learnable = kappa_learnable
-        if self.kappa_learnable or kappa_init != 0.:
+        if self.kappa_learnable or kappa_init != 0.0:
             self._log_kappa_init = to.log(to.tensor([kappa_init], dtype=to.get_default_dtype()))
             if self.kappa_learnable:
                 self._log_kappa = nn.Parameter(self._log_kappa_init, requires_grad=True)
@@ -114,15 +116,17 @@ class PotentialBasedPolicy(RecurrentPolicy, ABC):
                 self._log_kappa = self._log_kappa_init
         else:
             # Disable cubic decay
-            self._log_kappa = to.tensor([1.])
+            self._log_kappa = to.tensor([1.0])
 
     def extra_repr(self) -> str:
-        return f'tau_learnable={self.tau_learnable}, kappa_learnable={self.kappa_learnable}, learn_init_potentials=' \
-               f'{isinstance(self._potentials_init, nn.Parameter)}'
+        return (
+            f"tau_learnable={self.tau_learnable}, kappa_learnable={self.kappa_learnable}, learn_init_potentials="
+            f"{isinstance(self._potentials_init, nn.Parameter)}"
+        )
 
     @property
     def hidden_size(self) -> int:
-        return self.num_recurrent_layers*self._hidden_size
+        return self.num_recurrent_layers * self._hidden_size
 
     @property
     def stimuli_external(self) -> to.Tensor:
@@ -192,21 +196,25 @@ class PotentialBasedPolicy(RecurrentPolicy, ABC):
         :return: unpacked hidden state of shape batch_size x channels_in x length_in, ready for the `Conv1d` module
         """
         if len(hidden.shape) == 1:
-            assert hidden.shape[0] == self.num_recurrent_layers*self._hidden_size, \
-                "Passed hidden variable's size doesn't match the one required by the network."
-            assert batch_size is None, 'Cannot use batched observations with unbatched hidden state'
-            return hidden.view(self.num_recurrent_layers*self._hidden_size)
+            assert (
+                hidden.shape[0] == self.num_recurrent_layers * self._hidden_size
+            ), "Passed hidden variable's size doesn't match the one required by the network."
+            assert batch_size is None, "Cannot use batched observations with unbatched hidden state"
+            return hidden.view(self.num_recurrent_layers * self._hidden_size)
 
         elif len(hidden.shape) == 2:
-            assert hidden.shape[1] == self.num_recurrent_layers*self._hidden_size, \
-                "Passed hidden variable's size doesn't match the one required by the network."
-            assert hidden.shape[0] == batch_size, \
-                f'Batch size of hidden state ({hidden.shape[0]}) must match batch size of observations ({batch_size})'
-            return hidden.view(batch_size, self.num_recurrent_layers*self._hidden_size)
+            assert (
+                hidden.shape[1] == self.num_recurrent_layers * self._hidden_size
+            ), "Passed hidden variable's size doesn't match the one required by the network."
+            assert (
+                hidden.shape[0] == batch_size
+            ), f"Batch size of hidden state ({hidden.shape[0]}) must match batch size of observations ({batch_size})"
+            return hidden.view(batch_size, self.num_recurrent_layers * self._hidden_size)
 
         else:
-            raise RuntimeError(f"Improper shape of 'hidden'. Policy received {hidden.shape}, "
-                               f"but shape should be 1- or 2-dim")
+            raise RuntimeError(
+                f"Improper shape of 'hidden'. Policy received {hidden.shape}, " f"but shape should be 1- or 2-dim"
+            )
 
     def _pack_hidden(self, hidden: to.Tensor, batch_size: int = None):
         """
@@ -219,20 +227,20 @@ class PotentialBasedPolicy(RecurrentPolicy, ABC):
         """
         if batch_size is None:
             # Simply flatten the hidden state
-            return hidden.view(self.num_recurrent_layers*self._hidden_size)
+            return hidden.view(self.num_recurrent_layers * self._hidden_size)
         else:
             # Make sure that the batch dimension is the first element
-            return hidden.view(batch_size, self.num_recurrent_layers*self._hidden_size)
+            return hidden.view(batch_size, self.num_recurrent_layers * self._hidden_size)
 
     @abstractmethod
     def forward(self, obs: to.Tensor, hidden: to.Tensor = None) -> (to.Tensor, to.Tensor):
         raise NotImplementedError
 
-    def evaluate(self, rollout: StepSequence, hidden_states_name: str = 'hidden_states') -> to.Tensor:
-        if not rollout.data_format == 'torch':
-            raise pyrado.TypeErr(msg='The rollout data passed to evaluate() must be of type torch.Tensor!')
+    def evaluate(self, rollout: StepSequence, hidden_states_name: str = "hidden_states") -> to.Tensor:
+        if not rollout.data_format == "torch":
+            raise pyrado.TypeErr(msg="The rollout data passed to evaluate() must be of type torch.Tensor!")
         if not rollout.continuous:
-            raise pyrado.ValueErr(msg='The rollout data passed to evaluate() from a continuous rollout!')
+            raise pyrado.ValueErr(msg="The rollout data passed to evaluate() from a continuous rollout!")
 
         # Set policy, i.e. PyTorch nn.Module, to evaluation mode
         self.eval()

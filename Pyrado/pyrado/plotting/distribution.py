@@ -41,12 +41,12 @@ def render_distr_evo(
     ax: plt.Axes,
     distributions: Sequence[Distribution],
     x_grid_limits: Sequence,
-    x_label: str = '',
-    y_label: str = '',
+    x_label: str = "",
+    y_label: str = "",
     distr_labels: Sequence[str] = None,
     resolution: int = 201,
     alpha: float = 0.3,
-    cmap_name: str = 'plasma',
+    cmap_name: str = "plasma",
     show_legend: bool = True,
     title: str = None,
 ) -> plt.Figure:
@@ -71,25 +71,25 @@ def render_distr_evo(
     :return: handle to the resulting figure
     """
     if not check_all_types_equal(distributions):
-        raise pyrado.TypeErr(msg='Types of all distributions have to be identical!')
+        raise pyrado.TypeErr(msg="Types of all distributions have to be identical!")
     if not isinstance(distributions[0], Distribution):
-        raise pyrado.TypeErr(msg='Distributions must be PyTorch Distribution instances!')
+        raise pyrado.TypeErr(msg="Distributions must be PyTorch Distribution instances!")
 
     if distr_labels is None:
-        distr_labels = [rf'iter\_{i}' for i in range(len(distributions))]
+        distr_labels = [rf"iter\_{i}" for i in range(len(distributions))]
 
     # Get the color map customized to the number of distributions to plot
     cmap = get_cmap(cmap_name)
-    ax.set_prop_cycle(color=cmap(np.linspace(0., 1., max(2, len(distributions)))))
+    ax.set_prop_cycle(color=cmap(np.linspace(0.0, 1.0, max(2, len(distributions)))))
 
     # Create evaluation grid
     x_gird = to.linspace(x_grid_limits[0], x_grid_limits[1], resolution)
 
     # Plot the data
     for i, d in enumerate(distributions):
-        probs = to.exp(d.log_prob(x_gird))
-        ax.plot(x_gird.numpy(), probs.detach().numpy(), label=distr_labels[i])
-        ax.fill_between(x_gird.detach().numpy(), np.zeros(probs.size()), probs.detach().numpy(), alpha=alpha)
+        probs = to.exp(d.log_prob(x_gird)).detach().cpu().numpy()
+        ax.plot(x_gird.numpy(), probs, label=distr_labels[i])
+        ax.fill_between(x_gird.detach().cpu().numpy(), np.zeros_like(probs), probs, alpha=alpha)
 
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)

@@ -77,7 +77,7 @@ class IterationTracker:
     def __iter__(self):
         yield from self._iter_stack
 
-    def format(self, scope_sep='-', label_num_sep='_'):
+    def format(self, scope_sep="-", label_num_sep="_"):
         """
         Format the current iteration stack into a string. Two parts can be customized:
 

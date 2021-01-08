@@ -63,11 +63,11 @@ def gen_ordered_batch_idcs(batch_size: int, data_size: int, sorted: bool = False
         If num_rollouts = 2, data_size = 5 and sorted = False, then the output might be ((2, 3), (0, 1), (4,))
         If num_rollouts = 2, data_size = 5 and sorted = True, then the output will be ((0, 1), (2, 3), (4,))
     """
-    num_batches = int(ceil(data_size/batch_size))
+    num_batches = int(ceil(data_size / batch_size))
 
     # Create a list of lists, each containing num_rollouts ordered elements
     idcs_all = list(range(data_size))
-    idcs_batches = [idcs_all[i*batch_size:i*batch_size + batch_size] for i in range(num_batches)]
+    idcs_batches = [idcs_all[i * batch_size : i * batch_size + batch_size] for i in range(num_batches)]
 
     if not sorted:
         # Yield a random sample from the list of lists

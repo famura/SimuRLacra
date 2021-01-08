@@ -28,10 +28,10 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<Graph>
+<Graph xmlns:xi="http://www.w3.org/2003/XInclude" resourcePath="${HOME}/localdisk/Software/SimuRLacra/RcsPySim/config ${HOME}/Software/SimuRLacra/RcsPySim/config ${SIT}/Data/RobotMeshes/1.0/data">
 
   <Body name="GroundPlane" physics="kinematic">
-    <Shape type="BOX" graphics="true" physics="true" extents="5.0 5.0 0.01" transform="0 0 -0.005 0 0 0" color="PEWTER" textureFile="../textures/fMRT_brown_squares_2x2.png"/>
+    <Shape type="BOX" graphics="true" physics="true" extents="6.0 6.0 0.02" transform="0 0 -0.01 0 0 0" color="PEWTER" textureFile="textures/fMRT_brown_squares_2x2.png"/>
     <Shape type="FRAME" scale="1"/>
   </Body>
 

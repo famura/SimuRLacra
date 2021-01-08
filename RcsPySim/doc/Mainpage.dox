@@ -16,6 +16,13 @@ Please follow the readme-file in the root project folder (one level above RcsPyS
 <h2> Where to start </h2>
 Check out Rcs::ExperimentConfig where the simulation environments are specified and Rcs::RcsSimEnv which runs the simulations.
 
+<h2> Information about Rcs graphs  </h2>
+In Rcs, he kinematic dependency ob bodies is modeled as a graph. There can be multiple graphs in one program, and the same graph you be used by multiple object. Thus, it important to understand, on which graph an operation is executed.
+In general, RcsPySim uses 2 graphs:
+(i) a graph, called "config graph", which is created from the environment specific config xml-file, then stored in the `config` attribute of the Rcs::RcsSimEnv class. This graph is also later passed to the Rcs::PhysicsParameterManager which takes care of the domain parameter randomization.
+(ii) a graph, called "desired graph", which is a deep copy from the config graph. The desired graph only exists in the Rcs::ActionModelIK and its derived classes. To be more exact, the controller within these action models owns this copied graph.
+Note, that depending on how the simulation was created, the viewer is receives a node based on the config graph, and a node based on the controller's desired graph.
+
 */
 
 

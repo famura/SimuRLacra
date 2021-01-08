@@ -46,22 +46,18 @@ from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(BallOnPlate2DSim.name, f'{SAC.name}_{TwoHeadedFNNPolicy.name}')
+    ex_dir = setup_experiment(BallOnPlate2DSim.name, f"{SAC.name}_{TwoHeadedFNNPolicy.name}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(
-        physicsEngine='Bullet',
-        dt=1/100.,
-        max_steps=500
-    )
+    env_hparams = dict(physicsEngine="Bullet", dt=1 / 100.0, max_steps=500)
     env = BallOnPlate2DSim(**env_hparams)
     env = ActNormWrapper(env)
 
@@ -73,18 +69,15 @@ if __name__ == '__main__':
     policy = TwoHeadedFNNPolicy(spec=env.spec, **policy_hparam)
 
     # Critic
-    qfcn_hparam = dict(
-        hidden_sizes=[32, 32],
-        hidden_nonlin=to.relu
-    )
+    qfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.relu)
     obsact_space = BoxSpace.cat([env.obs_space, env.act_space])
     qfcn_1 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **qfcn_hparam)
     qfcn_2 = FNNPolicy(spec=EnvSpec(obsact_space, ValueFunctionSpace), **qfcn_hparam)
 
     # Algorithm
     algo_hparam = dict(
-        max_iter=1000*env.max_steps,
-        memory_size=1000*env.max_steps,
+        max_iter=1000 * env.max_steps,
+        memory_size=1000 * env.max_steps,
         gamma=0.995,
         num_batch_updates=1,
         tau=0.99,
@@ -100,12 +93,14 @@ if __name__ == '__main__':
     algo = SAC(ex_dir, env, policy, qfcn_1, qfcn_2, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(qfcn=qfcn_hparam),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(qfcn=qfcn_hparam),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha

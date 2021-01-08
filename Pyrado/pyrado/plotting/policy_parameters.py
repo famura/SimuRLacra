@@ -41,13 +41,15 @@ from pyrado.utils.data_types import EnvSpec
 from pyrado.utils.input_output import print_cbt
 
 
-def _annotate_img(img,
-                  data: [list, np.ndarray] = None,
-                  thold_lo: float = None,
-                  thold_up: float = None,
-                  valfmt: str = '{x:.2f}',
-                  textcolors: tuple = ('white', 'black'),
-                  **textkw: Any):
+def _annotate_img(
+    img,
+    data: [list, np.ndarray] = None,
+    thold_lo: float = None,
+    thold_up: float = None,
+    valfmt: str = "{x:.2f}",
+    textcolors: tuple = ("white", "black"),
+    **textkw: Any,
+):
     """
     Annotate a given image.
 
@@ -69,12 +71,12 @@ def _annotate_img(img,
 
     # Normalize the threshold to the images color range
     if thold_lo is None:
-        thold_lo = data.min()*0.5
+        thold_lo = data.min() * 0.5
     if thold_up is None:
-        thold_up = data.max()*0.5
+        thold_up = data.max() * 0.5
 
     # Set default alignment to center, but allow it to be overwritten by textkw
-    kw = dict(horizontalalignment='center', verticalalignment='center')
+    kw = dict(horizontalalignment="center", verticalalignment="center")
     kw.update(textkw)
 
     # Get the formatter in case a string is supplied
@@ -90,16 +92,17 @@ def _annotate_img(img,
             texts.append(text)
 
 
-def draw_policy_params(policy: Policy,
-                       env_spec: EnvSpec,
-                       cmap_name: str = 'RdBu',
-                       ax_hm: plt.Axes = None,
-                       annotate: bool = True,
-                       annotation_valfmt: str = '{x:.2f}',
-                       colorbar_label: str = '',
-                       x_label: str = None,
-                       y_label: str = None,
-                       ) -> plt.Figure:
+def draw_policy_params(
+    policy: Policy,
+    env_spec: EnvSpec,
+    cmap_name: str = "RdBu",
+    ax_hm: plt.Axes = None,
+    annotate: bool = True,
+    annotation_valfmt: str = "{x:.2f}",
+    colorbar_label: str = "",
+    x_label: str = None,
+    y_label: str = None,
+) -> plt.Figure:
     """
     Plot the weights and biases as images, and a color bar.
 
@@ -134,43 +137,43 @@ def draw_policy_params(policy: Policy,
     for i, (name, param) in enumerate(policy.named_parameters()):
         # Create current axis
         ax = plt.subplot(gs[i, 0])
-        ax.set_title(name.replace('_', r'\_'))
+        ax.set_title(name.replace("_", r"\_"))
 
         # Convert the data and plot the image with the colors proportional to the parameters
         if param.ndim == 3:
             # For example convolution layers
             param = param.flatten(0)
-            print_cbt(f'Flattened the first dimension of the {name} parameter tensor.', 'y')
+            print_cbt(f"Flattened the first dimension of the {name} parameter tensor.", "y")
         data = np.atleast_2d(param.detach().cpu().numpy())
 
-        img = plt.imshow(data, cmap=cmap, norm=norm, aspect='auto', origin='lower')
+        img = plt.imshow(data, cmap=cmap, norm=norm, aspect="auto", origin="lower")
 
         if annotate:
             _annotate_img(
                 img,
-                thold_lo=0.75*min(policy.param_values).detach().cpu().numpy(),
-                thold_up=0.75*max(policy.param_values).detach().cpu().numpy(),
-                valfmt=annotation_valfmt
+                thold_lo=0.75 * min(policy.param_values).detach().cpu().numpy(),
+                thold_up=0.75 * max(policy.param_values).detach().cpu().numpy(),
+                valfmt=annotation_valfmt,
             )
 
         # Prepare the ticks
         if isinstance(policy, ADNPolicy):
-            if name == 'obs_layer.weight':
+            if name == "obs_layer.weight":
                 ax.set_xticks(np.arange(env_spec.obs_space.flat_dim))
                 ax.set_yticks(np.arange(env_spec.act_space.flat_dim))
                 ax.set_xticklabels(env_spec.obs_space.labels)
                 ax.set_yticklabels(env_spec.act_space.labels)
-            elif name in ['obs_layer.bias', 'nonlin_layer.log_weight', 'nonlin_layer.bias']:
+            elif name in ["obs_layer.bias", "nonlin_layer.log_weight", "nonlin_layer.bias"]:
                 ax.set_xticks(np.arange(env_spec.act_space.flat_dim))
                 ax.set_xticklabels(env_spec.act_space.labels)
                 ax.yaxis.set_major_locator(ticker.NullLocator())
                 ax.yaxis.set_minor_formatter(ticker.NullFormatter())
-            elif name == 'prev_act_layer.weight':
+            elif name == "prev_act_layer.weight":
                 ax.set_xticks(np.arange(env_spec.act_space.flat_dim))
                 ax.set_yticks(np.arange(env_spec.act_space.flat_dim))
                 ax.set_xticklabels(env_spec.act_space.labels)
                 ax.set_yticklabels(env_spec.act_space.labels)
-            elif name in ['_log_tau', '_log_kappa', '_log_capacity']:
+            elif name in ["_log_tau", "_log_kappa", "_log_capacity"]:
                 ax.xaxis.set_major_locator(ticker.NullLocator())
                 ax.yaxis.set_major_locator(ticker.NullLocator())
                 ax.xaxis.set_minor_formatter(ticker.NullFormatter())
@@ -180,18 +183,26 @@ def draw_policy_params(policy: Policy,
                 ax.yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
 
         elif isinstance(policy, NFPolicy):
-            if name == 'obs_layer.weight':
+            if name == "obs_layer.weight":
                 ax.set_xticks(np.arange(env_spec.obs_space.flat_dim))
                 ax.yaxis.set_major_locator(ticker.NullLocator())
                 ax.set_xticklabels(env_spec.obs_space.labels)
                 ax.yaxis.set_minor_formatter(ticker.NullFormatter())
-            elif name in ['_log_tau', '_log_kappa', '_potentials_init', 'resting_level', 'obs_layer.bias',
-                          'conv_layer.weight', 'nonlin_layer.log_weight', 'nonlin_layer.bias']:
+            elif name in [
+                "_log_tau",
+                "_log_kappa",
+                "_potentials_init",
+                "resting_level",
+                "obs_layer.bias",
+                "conv_layer.weight",
+                "nonlin_layer.log_weight",
+                "nonlin_layer.bias",
+            ]:
                 ax.xaxis.set_major_locator(ticker.NullLocator())
                 ax.yaxis.set_major_locator(ticker.NullLocator())
                 ax.xaxis.set_minor_formatter(ticker.NullFormatter())
                 ax.yaxis.set_minor_formatter(ticker.NullFormatter())
-            elif name == 'act_layer.weight':
+            elif name == "act_layer.weight":
                 ax.xaxis.set_major_locator(ticker.NullLocator())
                 ax.set_yticks(np.arange(env_spec.act_space.flat_dim))
                 ax.xaxis.set_minor_formatter(ticker.NullFormatter())
@@ -204,7 +215,7 @@ def draw_policy_params(policy: Policy,
         colorbar.ColorbarBase(ax_cb, cmap=cmap, norm=norm, label=colorbar_label)
 
     # Increase the vertical white spaces between the subplots
-    plt.subplots_adjust(hspace=.7, wspace=0.1)
+    plt.subplots_adjust(hspace=0.7, wspace=0.1)
 
     # Set the labels
     if x_label is not None:

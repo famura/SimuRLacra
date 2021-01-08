@@ -55,15 +55,17 @@ def to_pyrado_space(space) -> [BoxSpace, EmptySpace]:
 class RcsSim(SimEnv, Serializable):
     """ Base class for RcsPySim environments. Uses Serializable to facilitate proper serialization. """
 
-    def __init__(self,
-                 envType: str,
-                 task_args: dict,
-                 dt: float = 0.01,
-                 max_steps: int = pyrado.inf,
-                 init_state: np.ndarray = None,
-                 checkJointLimits: bool = False,
-                 joint_limit_penalty: float = -1e3,
-                 **kwargs):
+    def __init__(
+        self,
+        envType: str,
+        task_args: dict,
+        dt: float = 0.01,
+        max_steps: int = pyrado.inf,
+        init_state: np.ndarray = None,
+        checkJointLimits: bool = False,
+        joint_limit_penalty: float = -1e3,
+        **kwargs,
+    ):
         """
         Constructor
 
@@ -89,18 +91,13 @@ class RcsSim(SimEnv, Serializable):
         self._check_joint_limits = checkJointLimits
 
         # Create Rcs-based implementation (RcsSimEnv comes from the pybind11 module)
-        self._sim = RcsSimEnv(
-            dt=dt,
-            envType=envType,
-            checkJointLimits=self._check_joint_limits,
-            **kwargs
-        )
+        self._sim = RcsSimEnv(dt=dt, envType=envType, checkJointLimits=self._check_joint_limits, **kwargs)
 
         # Setup the initial domain parameters
         self._domain_param = self._unadapt_domain_param(self._sim.domainParam)
 
         if joint_limit_penalty > 0:
-            raise pyrado.ValueErr(given=joint_limit_penalty, le_constraint='0')
+            raise pyrado.ValueErr(given=joint_limit_penalty, le_constraint="0")
         self._joint_limit_penalty = joint_limit_penalty
 
         # Initial init state space is taken from C++
@@ -210,12 +207,12 @@ class RcsSim(SimEnv, Serializable):
         return params
 
     def _get_state(self, state_dict: dict):
-        state_dict['domain_param'] = self.domain_param
-        state_dict['init_state'] = self.init_state
+        state_dict["domain_param"] = self.domain_param
+        state_dict["init_state"] = self.init_state
 
     def _set_state(self, state_dict: dict, copying: bool = False):
-        self.domain_param = state_dict['domain_param']
-        self.init_state = state_dict['init_state']
+        self.domain_param = state_dict["domain_param"]
+        self.init_state = state_dict["init_state"]
 
     def _disturbance_generator(self) -> (np.ndarray, None):
         """ Provide an artificial disturbance. For example a force on a body in the physics simulation. """
@@ -262,11 +259,11 @@ class RcsSim(SimEnv, Serializable):
             obs = self._sim.step(act, disturbance)
         except JointLimitException:
             # Joint limits exceeded! Return (obs, rew, done, info) directly after this failure.
-            return self._sim.lastObservation, self._joint_limit_penalty, True, dict(t=self._curr_step*self._dt)
+            return self._sim.lastObservation, self._joint_limit_penalty, True, dict(t=self._curr_step * self._dt)
 
         self.state = self._state_from_obs(obs)  # only for the Python side
 
-        info = dict(t=self._curr_step*self._dt)
+        info = dict(t=self._curr_step * self._dt)
         self._curr_step += 1
 
         # Check if the task or the environment is done
@@ -281,7 +278,7 @@ class RcsSim(SimEnv, Serializable):
         return obs, self._curr_rew, done, info
 
     def render(self, mode: RenderMode = RenderMode(text=True), render_step: int = 1):
-        if self._curr_step%render_step == 0:
+        if self._curr_step % render_step == 0:
             # Call base class
             super().render(mode)
 

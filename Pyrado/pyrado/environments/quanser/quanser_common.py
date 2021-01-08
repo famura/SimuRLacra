@@ -44,9 +44,9 @@ class QSocket:
         :param u_len: number of control variables to send
         :param port: port to connect to, see the server block in the Simulink models
         """
-        self._x_fmt = '>' + x_len*'d'
-        self._u_fmt = '>' + u_len*'d'
-        self._buf_size = x_len*8  # 8 bytes for each double
+        self._x_fmt = ">" + x_len * "d"
+        self._u_fmt = ">" + u_len * "d"
+        self._buf_size = x_len * 8  # 8 bytes for each double
         self._port = port
         self._ip = ip
         self._soc = None
@@ -85,8 +85,9 @@ class VelocityFilter:
         This velocity filter class is currently not used since we now get the velocities from the Simulink model.
     """
 
-    def __init__(self, x_len: int, num: tuple = (50, 0), den: tuple = (1, 50), dt: float = 0.002,
-                 x_init: np.ndarray = None):
+    def __init__(
+        self, x_len: int, num: tuple = (50, 0), den: tuple = (1, 50), dt: float = 0.002, x_init: np.ndarray = None
+    ):
         """
         Initialize discrete filter coefficients.
 

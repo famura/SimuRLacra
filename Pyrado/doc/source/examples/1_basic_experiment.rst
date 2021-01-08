@@ -72,7 +72,8 @@ instances are deterministic. The exploration is handled separately (see `Pyrado/
 Specify the algorithm you want to use for learning the policy parameters.
 For deterministic sampling, you need to set `num_workers=1`. If `num_workers>1`, PyTorch's multiprocessing
 library will be used to parallelize sampling from the environment on the CPU. The resulting behavior is non-deterministic,
-i.e. even for the same random seed, you will get different results.
+i.e. even for the same random seed, you will get different results. Moreover, it is advised to set `num_workers` to 1
+if you want to debug your code.
 The algorithms can be categorized in two different types: one type randomizes the action every step (their exploration
 strategy inherits from `StochasticActionExplStrat`), and the other type randomizes the policy parameters once every
 rollout their exploration strategy inherits from `StochasticParamExplStrat`). It goes without saying that every

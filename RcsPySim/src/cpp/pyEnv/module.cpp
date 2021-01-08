@@ -74,18 +74,18 @@ PYBIND11_MODULE(_rcsenv, m)
     
     // Define simulator base class
     py::class_<Rcs::RcsSimEnv>(m, "RcsSimEnv").def(py::init([](py::kwargs kwargs) {
-                                                       // Get properties from xml or python
-                                                       Rcs::PropertySource* config;
-                                                       std::string configFileName;
-                                                       if (try_get(kwargs, "experimentConfigFile", configFileName)) {
-                                                           config = new Rcs::PropertySourceXml(configFileName.c_str());
-                                                       }
-                                                       else {
-                                                           config = new Rcs::PropertySourceDict(kwargs);
-                                                       }
-                                                       // Create config object, takes ownership of property source
-                                                       return new Rcs::RcsSimEnv(config);
-                                                   })
+               // Get properties from xml or python
+               Rcs::PropertySource* config;
+               std::string configFileName;
+               if (try_get(kwargs, "experimentConfigFile", configFileName)) {
+                   config = new Rcs::PropertySourceXml(configFileName.c_str());
+               }
+               else {
+                   config = new Rcs::PropertySourceDict(kwargs);
+               }
+               // Create config object, takes ownership of property source
+               return new Rcs::RcsSimEnv(config);
+            })
         )
         .def("step", &Rcs::RcsSimEnv::step, py::arg("action"), py::arg("disturbance") = py::none(),
              py::call_guard<py::gil_scoped_release>())

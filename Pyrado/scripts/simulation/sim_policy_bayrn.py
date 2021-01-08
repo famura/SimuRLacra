@@ -48,16 +48,16 @@ from pyrado.utils.input_output import print_cbt
 from pyrado.utils.data_types import RenderMode
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
+    ex_dir = ask_for_experiment() if args.dir is None else args.dir
 
     # Load the environment randomizer
-    env_sim = joblib.load(osp.join(ex_dir, 'env_sim.pkl'))
-    hparam = load_dict_from_yaml(osp.join(ex_dir, 'hyperparams.yaml'))
+    env_sim = joblib.load(osp.join(ex_dir, "env_sim.pkl"))
+    hparam = load_dict_from_yaml(osp.join(ex_dir, "hyperparams.yaml"))
 
     # Override the time step size if specified
     if args.dt is not None:
@@ -67,22 +67,22 @@ if __name__ == '__main__':
     found_policies, found_cands = None, None
     for root, dirs, files in os.walk(ex_dir):
         dirs.clear()  # prevents walk() from going into subdirectories
-        found_policies = [p for p in files if p.endswith('_policy.pt')]
-        found_cands = [c for c in files if c.endswith('_candidate.pt')]
+        found_policies = [p for p in files if p.endswith("_policy.pt")]
+        found_cands = [c for c in files if c.endswith("_candidate.pt")]
 
     # Remove unwanted entries from the lists
-    found_policies = [p for p in found_policies if not p.startswith('ddp_')]
+    found_policies = [p for p in found_policies if not p.startswith("ddp_")]
     if not args.load_all:
-        found_policies = [p for p in found_policies if not p.startswith('init_') and p.endswith('_policy.pt')]
-        found_cands = [c for c in found_cands if not c.startswith('init_') and c.endswith('_candidate.pt')]
+        found_policies = [p for p in found_policies if not p.startswith("init_") and p.endswith("_policy.pt")]
+        found_cands = [c for c in found_cands if not c.startswith("init_") and c.endswith("_candidate.pt")]
 
     # Check
     if not found_policies:
-        raise pyrado.ShapeErr(msg='No policies found!')
+        raise pyrado.ShapeErr(msg="No policies found!")
     if not found_cands:
-        raise pyrado.ShapeErr(msg='No candidates found!')
+        raise pyrado.ShapeErr(msg="No candidates found!")
     if len(found_policies) != len(found_cands):  # don't count the final policy
-        raise pyrado.ShapeErr(msg=f'Found {len(found_policies)} initial policies but {len(found_cands)} candidates!')
+        raise pyrado.ShapeErr(msg=f"Found {len(found_policies)} initial policies but {len(found_cands)} candidates!")
 
     # Sort
     found_policies = natural_sort(found_policies)
@@ -92,10 +92,10 @@ if __name__ == '__main__':
     fig, ax = plt.subplots(1)
     for i in range(len(found_cands)):
         cand = to.load(osp.join(ex_dir, found_cands[i])).numpy()
-        ax.scatter(np.arange(cand.size), cand, label=r'$\phi_{' + str(i) + '}$', c=f'C{i%10}', s=16)
+        ax.scatter(np.arange(cand.size), cand, label=r"$\phi_{" + str(i) + "}$", c=f"C{i%10}", s=16)
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-    ax.set_ylabel('parameter value')
-    ax.set_xlabel('parameter index')
+    ax.set_ylabel("parameter value")
+    ax.set_xlabel("parameter index")
     plt.legend()
     plt.show()
 
@@ -108,16 +108,21 @@ if __name__ == '__main__':
         # Set the domain randomizer
         if isinstance(env_sim, MetaDomainRandWrapper):
             env_sim.adapt_randomizer(cand)
-            print_cbt(f'Set the domain randomizer to\n{env_sim.randomizer}', 'c')
+            print_cbt(f"Set the domain randomizer to\n{env_sim.randomizer}", "c")
         else:
             raise pyrado.TypeErr(given=env_sim, expected_type=MetaDomainRandWrapper)
 
         done, state, param = False, None, None
         while not done:
-            print_cbt(f'Simulating {found_policies[i]} with associated domain parameter distribution.', 'g')
-            ro = rollout(env_sim, policy, render_mode=RenderMode(video=True), eval=True,
-                         reset_kwargs=dict(domain_param=param, init_state=state))  # calls env.reset()
+            print_cbt(f"Simulating {found_policies[i]} with associated domain parameter distribution.", "g")
+            ro = rollout(
+                env_sim,
+                policy,
+                render_mode=RenderMode(video=True),
+                eval=True,
+                reset_kwargs=dict(domain_param=param, init_state=state),
+            )  # calls env.reset()
             print_domain_params(env_sim.domain_param)
-            print_cbt(f'Return: {ro.undiscounted_return()}', 'g', bright=True)
+            print_cbt(f"Return: {ro.undiscounted_return()}", "g", bright=True)
             done, state, param = after_rollout_query(env_sim, policy, ro)
     pyrado.close_vpython()

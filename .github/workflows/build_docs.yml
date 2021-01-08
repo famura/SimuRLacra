@@ -1,9 +1,9 @@
-# Build all options
 name: Build Documentation
 
 on:
   push:
     branches: [master]
+
 jobs:
   build-images:
     runs-on: ubuntu-latest
@@ -29,18 +29,18 @@ jobs:
           context: .
           load: true
           tags: |
-            simurlacra/simurlacra:${{matrix.flavor}}
-            ghcr.io/${{ github.repository_owner }}/simurlacra:${{matrix.flavor}}
+            simurlacra/simurlacra:${{ matrix.flavor }}
+            ghcr.io/${{ github.repository_owner }}/simurlacra:${{ matrix.flavor }}
           build-args: |
             OPTION=${{ matrix.flavor }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/simurlacra:${{matrix.flavor}}
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/simurlacra:${{ matrix.flavor }}
           cache-to: type=inline
       - name: Build Docs
         continue-on-error: true
         run: |
           mkdir public
           export PUBLIC=$(realpath ./public)
-          docker run --rm -u 1000:1000 -v $PUBLIC:/var/www ghcr.io/${{ github.repository_owner }}/simurlacra:${{matrix.flavor}} conda run -n pyrado bash -c "./build_docs.sh;sudo mkdir /var/www/pyrado; sudo cp -r Pyrado/doc/build/* /var/www/pyrado;mv RcsPySim/build/doc/html RcsPySim/build/doc/rcspysim; sudo cp -r RcsPySim/build/doc/rcspysim /var/www"
+          docker run --rm -u 1000:1000 -v $PUBLIC:/var/www ghcr.io/${{ github.repository_owner }}/simurlacra:${{ matrix.flavor }} conda run -n pyrado bash -c "./build_docs.sh;sudo mkdir /var/www/pyrado; sudo cp -r Pyrado/doc/build/* /var/www/pyrado;mv RcsPySim/build/doc/html RcsPySim/build/doc/rcspysim; sudo cp -r RcsPySim/build/doc/rcspysim /var/www"
           echo $PUBLIC
           ls $PUBLIC
       - name: Deploy

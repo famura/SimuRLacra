@@ -74,12 +74,12 @@ class Policy(nn.Module, ABC):
 
         self._env_spec = spec
         if not use_cuda:
-            self._device = 'cpu'
+            self._device = "cpu"
         elif use_cuda and to.cuda.is_available():
-            self._device = 'cuda'
+            self._device = "cuda"
         elif use_cuda and not to.cuda.is_available():
-            warn('Tried to run on CUDA, but it is not available. Falling back to CPU.')
-            self._device = 'cpu'
+            warn("Tried to run on CUDA, but it is not available. Falling back to CPU.")
+            self._device = "cpu"
 
     @property
     def device(self) -> str:
@@ -139,8 +139,10 @@ class Policy(nn.Module, ABC):
         :param batch_size: number of states to track in parallel
         :return: Tensor of batch_size x hidden_size
         """
-        raise AttributeError('Only recurrent policies should use the init_hidden() method.'
-                             'Make sure to implement this function for every recurrent policy type.')
+        raise AttributeError(
+            "Only recurrent policies should use the init_hidden() method."
+            "Make sure to implement this function for every recurrent policy type."
+        )
 
     @abstractmethod
     def init_param(self, init_values: to.Tensor = None, **kwargs):
@@ -161,16 +163,17 @@ class Policy(nn.Module, ABC):
         pass  # this is used in rollout() even though your IDE might not link it
 
     @abstractmethod
-    def forward(self, obs: to.Tensor) -> [to.Tensor, (to.Tensor, to.Tensor)]:
+    def forward(self, *args, **kwargs) -> [to.Tensor, (to.Tensor, to.Tensor)]:
         """
         Get the action according to the policy and the observations (forward pass).
 
-        :param obs: observation from the environment
-        :return act: action to be taken
+        :param args: inputs, e.g. an observation from the environment or an observation and a hidden state
+        :param kwargs: inputs, e.g. an observation from the environment or an observation and a hidden state
+        :return: outputs, e.g. an action or an action and a hidden state
         """
         raise NotImplementedError
 
-    def evaluate(self, rollout: StepSequence, hidden_states_name: str = 'hidden_states') -> to.Tensor:
+    def evaluate(self, rollout: StepSequence, hidden_states_name: str = "hidden_states") -> to.Tensor:
         """
         Re-evaluate the given rollout and return a derivable action tensor.
         The default implementation simply calls `forward()`.
@@ -183,7 +186,7 @@ class Policy(nn.Module, ABC):
         # Set policy, i.e. PyTorch nn.Module, to evaluation mode
         self.eval()
 
-        res = self(rollout.get_data_values('observations', truncate_last=True))  # all observations at once
+        res = self(rollout.get_data_values("observations", truncate_last=True))  # all observations at once
 
         # Set policy, i.e. PyTorch nn.Module, back to training mode
         self.train()

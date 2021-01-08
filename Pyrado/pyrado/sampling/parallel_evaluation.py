@@ -77,8 +77,12 @@ def _setup_env_policy(G, env, policy):
 
 
 def _run_rollout_dp(G, domain_param, init_state=None):
-    return rollout(G.env, G.policy, eval=True,  # render_mode=RenderMode(video=True),
-                   reset_kwargs={'domain_param': domain_param, 'init_state': init_state})
+    return rollout(
+        G.env,
+        G.policy,
+        eval=True,  # render_mode=RenderMode(video=True),
+        reset_kwargs={"domain_param": domain_param, "init_state": init_state},
+    )
 
 
 def eval_domain_params(pool: SamplerPool, env: SimEnv, policy: Policy, params: list, init_state=None) -> list:
@@ -98,12 +102,12 @@ def eval_domain_params(pool: SamplerPool, env: SimEnv, policy: Policy, params: l
     pool.invoke_all(_setup_env_policy, env, policy)
 
     # Run with progress bar
-    with tqdm(leave=False, file=sys.stdout, unit='rollouts', desc='Sampling') as pb:
+    with tqdm(leave=False, file=sys.stdout, unit="rollouts", desc="Sampling") as pb:
         return pool.run_map(functools.partial(_run_rollout_dp, init_state=init_state), params, pb)
 
 
 def _run_rollout_nom(G, init_state):
-    return rollout(G.env, G.policy, eval=True, reset_kwargs={'init_state': init_state})
+    return rollout(G.env, G.policy, eval=True, reset_kwargs={"init_state": init_state})
 
 
 def eval_nominal_domain(pool: SamplerPool, env: SimEnv, policy: Policy, init_states: list) -> list:
@@ -122,14 +126,13 @@ def eval_nominal_domain(pool: SamplerPool, env: SimEnv, policy: Policy, init_sta
     pool.invoke_all(_setup_env_policy, env, policy)
 
     # Run with progress bar
-    with tqdm(leave=False, file=sys.stdout, unit='rollouts', desc='Sampling') as pb:
+    with tqdm(leave=False, file=sys.stdout, unit="rollouts", desc="Sampling") as pb:
         return pool.run_map(_run_rollout_nom, init_states, pb)
 
 
-def eval_randomized_domain(pool: SamplerPool,
-                           env: SimEnv, randomizer: DomainRandomizer,
-                           policy: Policy,
-                           init_states: list) -> list:
+def eval_randomized_domain(
+    pool: SamplerPool, env: SimEnv, randomizer: DomainRandomizer, policy: Policy, init_states: list
+) -> list:
     """
     Evaluate a policy in a randomized domain.
 
@@ -146,5 +149,5 @@ def eval_randomized_domain(pool: SamplerPool,
     pool.invoke_all(_setup_env_policy, env, policy)
 
     # Run with progress bar
-    with tqdm(leave=False, file=sys.stdout, unit='rollouts', desc='Sampling') as pb:
+    with tqdm(leave=False, file=sys.stdout, unit="rollouts", desc="Sampling") as pb:
         return pool.run_map(_run_rollout_nom, init_states, pb)

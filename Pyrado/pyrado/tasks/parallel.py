@@ -39,12 +39,14 @@ from pyrado.utils.input_output import print_cbt
 class ParallelTasks(Task):
     """ Task class for a set of tasks a.k.a. goals which can be achieved in any order or parallel """
 
-    def __init__(self,
-                 tasks: Sequence[Task],
-                 hold_rew_when_done: bool = False,
-                 allow_failures: bool = False,
-                 easily_satisfied: bool = False,
-                 verbose: bool = False):
+    def __init__(
+        self,
+        tasks: Sequence[Task],
+        hold_rew_when_done: bool = False,
+        allow_failures: bool = False,
+        easily_satisfied: bool = False,
+        verbose: bool = False,
+    ):
         """
         Constructor
 
@@ -85,7 +87,7 @@ class ParallelTasks(Task):
     @property
     def state_des(self) -> list:
         """ Get a list of all desired states. """
-        return [task.state_des for task in self._tasks if hasattr(task, 'state_des')]
+        return [task.state_des for task in self._tasks if hasattr(task, "state_des")]
 
     @state_des.setter
     def state_des(self, states_des: Union[list, tuple]):
@@ -97,14 +99,14 @@ class ParallelTasks(Task):
             raise pyrado.ShapeErr(given=states_des, expected_match=self.state_des)
         i = 0
         for task in self._tasks:
-            if hasattr(task, 'state_des'):
+            if hasattr(task, "state_des"):
                 task.state_des = states_des[i]
                 i += 1
 
     @property
     def space_des(self) -> list:
         """ Get a list of all desired spaces. """
-        return [task.space_des for task in self._tasks if hasattr(task, 'space_des')]
+        return [task.space_des for task in self._tasks if hasattr(task, "space_des")]
 
     @space_des.setter
     def space_des(self, spaces_des: Sequence):
@@ -116,7 +118,7 @@ class ParallelTasks(Task):
             raise pyrado.ShapeErr(given=spaces_des, expected_match=self.space_des)
         i = 0
         for task in self._tasks:
-            if hasattr(task, 'space_des'):
+            if hasattr(task, "space_des"):
                 task.space_des = spaces_des[i]
                 i += 1
 
@@ -127,7 +129,7 @@ class ParallelTasks(Task):
 
     def step_rew(self, state: np.ndarray, act: np.ndarray, remaining_steps: int) -> float:
         """ Get the step reward accumulated from every non-done task. """
-        step_rew = 0.
+        step_rew = 0.0
         for i in range(len(self)):
             if not (self.succeeded_tasks[i] or self.failed_tasks[i]):
                 # Task has not been marked done yet
@@ -156,7 +158,7 @@ class ParallelTasks(Task):
         :param remaining_steps: number of time steps left in the episode
         :return: final reward of all sub-tasks
         """
-        sum_final_rew = 0.
+        sum_final_rew = 0.0
         for t in self._tasks:
             sum_final_rew += t.compute_final_rew(state, remaining_steps)
         return sum_final_rew
@@ -174,11 +176,9 @@ class ParallelTasks(Task):
         if self.hold_rew_when_done:
             self.held_rews = np.zeros(len(self))
 
-    def _is_any_task_done(self,
-                          state: np.ndarray,
-                          act: np.ndarray,
-                          remaining_steps: int,
-                          verbose: bool = False) -> float:
+    def _is_any_task_done(
+        self, state: np.ndarray, act: np.ndarray, remaining_steps: int, verbose: bool = False
+    ) -> float:
         """
         Check if any of the tasks is done. If so, return the final reward of this task.
 
@@ -186,7 +186,7 @@ class ParallelTasks(Task):
         :param act: current action
         :param remaining_steps: number of time steps left in the episode
         """
-        task_final_rew = 0.
+        task_final_rew = 0.0
         for i, task in enumerate(self._tasks):
             if not self.succeeded_tasks[i] and not self.failed_tasks[i] and task.is_done(state):
                 # Task has not been marked done yet, but is now done
@@ -195,16 +195,16 @@ class ParallelTasks(Task):
                     # Check off successfully completed tasks
                     self.succeeded_tasks[i] = True
                     if verbose:
-                        print_cbt(f'task {i} has succeeded (is done) at state {state}', 'g')
+                        print_cbt(f"task {i} has succeeded (is done) at state {state}", "g")
 
                 elif task.has_failed(state):
                     # Check off unsuccessfully completed tasks
                     self.failed_tasks[i] = True
                     if verbose:
-                        print_cbt(f'Task {i} has failed (is done) at state {state}', 'r')
+                        print_cbt(f"Task {i} has failed (is done) at state {state}", "r")
 
                 else:
-                    raise pyrado.ValueErr(msg=f'Task {i} neither succeeded or failed but is done!')
+                    raise pyrado.ValueErr(msg=f"Task {i} neither succeeded or failed but is done!")
 
                 # Give a reward for completing the task defined by the task
                 task_final_rew += task.final_rew(state, remaining_steps)  # there could be more than one finished task
@@ -230,7 +230,7 @@ class ParallelTasks(Task):
             successful = np.all(self.succeeded_tasks)
 
         if successful and self.verbose:
-            print_cbt(f'All {len(self)} parallel sub-tasks are done successfully', 'g')
+            print_cbt(f"All {len(self)} parallel sub-tasks are done successfully", "g")
         return successful
 
     def has_failed(self, state: np.ndarray = None) -> bool:

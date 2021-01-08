@@ -53,7 +53,7 @@ from pyrado.utils.input_output import print_cbt
 def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     """
     Objective function for the Optuna `Study` to maximize.
-    
+
     .. note::
         Optuna expects only the `trial` argument, thus we use `functools.partial` to sneak in custom arguments.
 
@@ -66,102 +66,117 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     pyrado.set_seed(seed)
 
     # Load the data
-    data_set_name = 'oscillation_50Hz_initpos-0.5'
-    data = pd.read_csv(osp.join(pyrado.PERMA_DIR, 'time_series', f'{data_set_name}.csv'))
-    if data_set_name == 'daily_min_temperatures':
-        data = to.tensor(data['Temp'].values, dtype=to.get_default_dtype()).view(-1, 1)
-    elif data_set_name == 'monthly_sunspots':
-        data = to.tensor(data['Sunspots'].values, dtype=to.get_default_dtype()).view(-1, 1)
-    elif 'oscillation' in data_set_name:
-        data = to.tensor(data['Positions'].values, dtype=to.get_default_dtype()).view(-1, 1)
+    data_set_name = "oscillation_50Hz_initpos-0.5"
+    data = pd.read_csv(osp.join(pyrado.PERMA_DIR, "time_series", f"{data_set_name}.csv"))
+    if data_set_name == "daily_min_temperatures":
+        data = to.tensor(data["Temp"].values, dtype=to.get_default_dtype()).view(-1, 1)
+    elif data_set_name == "monthly_sunspots":
+        data = to.tensor(data["Sunspots"].values, dtype=to.get_default_dtype()).view(-1, 1)
+    elif "oscillation" in data_set_name:
+        data = to.tensor(data["Positions"].values, dtype=to.get_default_dtype()).view(-1, 1)
     else:
         raise pyrado.ValueErr(
-            given=data_set_name, eq_constraint="'daily_min_temperatures', 'monthly_sunspots', "
-                                               "'oscillation_50Hz_initpos-0.5', or 'oscillation_100Hz_initpos-0.4")
+            given=data_set_name,
+            eq_constraint="'daily_min_temperatures', 'monthly_sunspots', "
+            "'oscillation_50Hz_initpos-0.5', or 'oscillation_100Hz_initpos-0.4",
+        )
 
     # Dataset
     data_set_hparam = dict(
         name=data_set_name,
         ratio_train=0.7,
-        window_size=trial.suggest_int('dataset_window_size', 1, 100),
+        window_size=trial.suggest_int("dataset_window_size", 1, 100),
         standardize_data=False,
-        scale_min_max_data=True
+        scale_min_max_data=True,
     )
     dataset = TimeSeriesDataSet(data, **data_set_hparam)
 
     # Policy
     policy_hparam = dict(
-        dt=0.02 if 'oscillation' in data_set_name else 1.,
-        hidden_size=trial.suggest_int('policy_hidden_size', 2, 51),
+        dt=0.02 if "oscillation" in data_set_name else 1.0,
+        hidden_size=trial.suggest_int("policy_hidden_size", 2, 51),
         obs_layer=None,
         activation_nonlin=fcn_from_str(
-            trial.suggest_categorical('policy_activation_nonlin', ['to_tanh', 'to_sigmoid'])),
-        mirrored_conv_weights=trial.suggest_categorical('policy_mirrored_conv_weights', [True, False]),
+            trial.suggest_categorical("policy_activation_nonlin", ["to_tanh", "to_sigmoid"])
+        ),
+        mirrored_conv_weights=trial.suggest_categorical("policy_mirrored_conv_weights", [True, False]),
         conv_out_channels=1,
         conv_kernel_size=None,
-        conv_padding_mode=trial.suggest_categorical('policy_conv_padding_mode', ['zeros', 'circular']),
-        tau_init=trial.suggest_loguniform('policy_tau_init', 1e-2, 1e3),
+        conv_padding_mode=trial.suggest_categorical("policy_conv_padding_mode", ["zeros", "circular"]),
+        tau_init=trial.suggest_loguniform("policy_tau_init", 1e-2, 1e3),
         tau_learnable=True,
-        kappa_init=trial.suggest_categorical('policy_kappa_init', [0, 1e-4, 1e-2]),
+        kappa_init=trial.suggest_categorical("policy_kappa_init", [0, 1e-4, 1e-2]),
         kappa_learnable=True,
-        potential_init_learnable=trial.suggest_categorical('policy_potential_init_learnable', [True, False]),
-        init_param_kwargs=trial.suggest_categorical('policy_init_param_kwargs', [None, dict(bell=True)]),
-        use_cuda=False
+        potential_init_learnable=trial.suggest_categorical("policy_potential_init_learnable", [True, False]),
+        init_param_kwargs=trial.suggest_categorical("policy_init_param_kwargs", [None, dict(bell=True)]),
+        use_cuda=False,
     )
     policy = NFPolicy(spec=EnvSpec(act_space=InfBoxSpace(shape=1), obs_space=InfBoxSpace(shape=1)), **policy_hparam)
 
     # Algorithm
     algo_hparam = dict(
-        windowed=trial.suggest_categorical('algo_windowed', [True, False]),
+        windowed=trial.suggest_categorical("algo_windowed", [True, False]),
         max_iter=1000,
         optim_class=optim.Adam,
         optim_hparam=dict(
-            lr=trial.suggest_uniform('optim_lr', 5e-4, 5e-2),
-            eps=trial.suggest_uniform('optim_eps', 1e-8, 1e-5),
-            weight_decay=trial.suggest_uniform('optim_weight_decay', 5e-5, 5e-3)
+            lr=trial.suggest_uniform("optim_lr", 5e-4, 5e-2),
+            eps=trial.suggest_uniform("optim_eps", 1e-8, 1e-5),
+            weight_decay=trial.suggest_uniform("optim_weight_decay", 5e-5, 5e-3),
         ),
         loss_fcn=nn.MSELoss(),
     )
-    csv_logger = create_csv_step_logger(osp.join(study_dir, f'trial_{trial.number}'))
+    csv_logger = create_csv_step_logger(osp.join(study_dir, f"trial_{trial.number}"))
     algo = TSPred(study_dir, dataset, policy, **algo_hparam, logger=csv_logger)
 
     # Train without saving the results
-    algo.train(snapshot_mode='latest', seed=seed)
+    algo.train(snapshot_mode="latest", seed=seed)
 
     # Evaluate
     num_init_samples = dataset.window_size
-    _, loss_trn = TSPred.evaluate(policy, dataset.data_trn_inp, dataset.data_trn_targ, windowed=algo.windowed,
-                                  num_init_samples=num_init_samples, cascaded=False)
-    _, loss_tst = TSPred.evaluate(policy, dataset.data_tst_inp, dataset.data_tst_targ, windowed=algo.windowed,
-                                  num_init_samples=num_init_samples, cascaded=False)
+    _, loss_trn = TSPred.evaluate(
+        policy,
+        dataset.data_trn_inp,
+        dataset.data_trn_targ,
+        windowed=algo.windowed,
+        num_init_samples=num_init_samples,
+        cascaded=False,
+    )
+    _, loss_tst = TSPred.evaluate(
+        policy,
+        dataset.data_tst_inp,
+        dataset.data_tst_targ,
+        windowed=algo.windowed,
+        num_init_samples=num_init_samples,
+        cascaded=False,
+    )
 
     return loss_trn
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    if args.ex_dir is None:
-        ex_dir = setup_experiment('hyperparams', TSPred.name, f'{TSPred.name}_{NFPolicy.name}')
+    if args.dir is None:
+        ex_dir = setup_experiment("hyperparams", TSPred.name, f"{TSPred.name}_{NFPolicy.name}")
         study_dir = osp.join(pyrado.TEMP_DIR, ex_dir)
-        print_cbt(f'Starting a new Optuna study.', 'c', bright=True)
+        print_cbt(f"Starting a new Optuna study.", "c", bright=True)
     else:
-        study_dir = args.ex_dir
+        study_dir = args.dir
         if not osp.isdir(study_dir):
             raise pyrado.PathErr(given=study_dir)
-        print_cbt(f'Continuing an existing Optuna study.', 'c', bright=True)
+        print_cbt(f"Continuing an existing Optuna study.", "c", bright=True)
 
-    name = f'{TSPred.name}_{TSPred.name}_{NFPolicy.name}'
+    name = f"{TSPred.name}_{TSPred.name}_{NFPolicy.name}"
     study = optuna.create_study(
         study_name=name,
         storage=f"sqlite:////{osp.join(study_dir, f'{name}.db')}",
-        direction='maximize',
-        load_if_exists=True
+        direction="maximize",
+        load_if_exists=True,
     )
 
     # Start optimizing
     study.optimize(functools.partial(train_and_eval, study_dir=study_dir, seed=args.seed), n_trials=100, n_jobs=16)
 
     # Save the best hyper-parameters
-    save_list_of_dicts_to_yaml([study.best_params, dict(seed=args.seed)], study_dir, 'best_hyperparams')
+    save_list_of_dicts_to_yaml([study.best_params, dict(seed=args.seed)], study_dir, "best_hyperparams")

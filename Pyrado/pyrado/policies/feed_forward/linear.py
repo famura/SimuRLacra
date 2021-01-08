@@ -41,7 +41,7 @@ class LinearPolicy(Policy):
     A linear policy defined by the inner product of nonlinear features of the observations with the policy parameters
     """
 
-    name: str = 'lin'
+    name: str = "lin"
 
     def __init__(self, spec: EnvSpec, feats: FeatureStack, init_param_kwargs: dict = None, use_cuda: bool = False):
         """
@@ -50,6 +50,7 @@ class LinearPolicy(Policy):
         :param spec: specification of environment
         :param feats: list of feature functions
         :param init_param_kwargs: additional keyword arguments for the policy parameter initialization
+        :param use_cuda: `True` to move the module to the GPU, `False` (default) to use the CPU
         """
         if not isinstance(feats, FeatureStack):
             raise pyrado.TypeErr(given=feats, expected_type=FeatureStack)
@@ -94,7 +95,7 @@ class LinearPolicy(Policy):
         :param obs: observations from the environment
         :return: actions
         """
-        obs = obs.to(self.device)
+        obs = obs.to(device=self.device, dtype=to.get_default_dtype())
         batched = obs.ndimension() == 2  # number of dim is 1 if unbatched, dim > 2 is cought by features
         feats_val = self.eval_feats(obs)
 

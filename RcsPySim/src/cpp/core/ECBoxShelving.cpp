@@ -184,7 +184,7 @@ protected:
         }
         
         // Get the method how to combine the movement primitives / tasks given their activation
-        std::string taskCombinationMethod = "mean";
+        std::string taskCombinationMethod = "unspecified";
         properties->getProperty(taskCombinationMethod, "taskCombinationMethod");
         TaskCombinationMethod tcm = AMDynamicalSystemActivation::checkTaskCombinationMethod(taskCombinationMethod);
         
@@ -420,8 +420,8 @@ public:
             linesOut.emplace_back(
                 string_format("box relative: [% 1.3f,% 1.3f,% 1.3f] m   [% 3.0f,% 3.0f,% 3.0f] deg",
                               obs->ele[omLeftLin.pos + 3], obs->ele[omLeftLin.pos + 4], obs->ele[omLeftLin.pos + 5],
-                              obs->ele[omBoxAng.pos]*180/M_PI, obs->ele[omBoxAng.pos + 1]*180/M_PI,
-                              obs->ele[omBoxAng.pos + 2]*180/M_PI));
+                              RCS_RAD2DEG(obs->ele[omBoxAng.pos]), RCS_RAD2DEG(obs->ele[omBoxAng.pos + 1]),
+                              RCS_RAD2DEG(obs->ele[omBoxAng.pos + 2])));
         }
         else if (omLeftLin) {
             linesOut.emplace_back(

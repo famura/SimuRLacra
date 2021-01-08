@@ -40,6 +40,7 @@ from pyrado.utils.checks import is_sequence
 
 class EnvSpec(NamedTuple):
     """ The specification of an environment's input and output space """
+
     obs_space: Space
     act_space: Space
     state_space: Space = EmptySpace
@@ -47,12 +48,14 @@ class EnvSpec(NamedTuple):
 
 class RenderMode(NamedTuple):
     """ The specification of a render mode, do not print or render anything by default """
+
     text: bool = False
     video: bool = False
 
 
 class TimeSeriesDataPair(NamedTuple):
     """ Pair of an input sequence and an associated target value for training time series prediction. """
+
     inp_seq: to.Tensor
     targ: to.Tensor
 
@@ -83,12 +86,14 @@ class MSDDSSpec(DSSpec):
     MSDDSSpec(function='msd_nlin', goal=np.array([-1., 2.]), attractorStiffness=50., damping=10., mass=1.)
     """
 
-    def __init__(self,
-                 function: str,
-                 goal: [np.ndarray, float, int],
-                 attractorStiffness: [float, int],
-                 damping: [float, int],
-                 mass: [float, int] = 1.):
+    def __init__(
+        self,
+        function: str,
+        goal: [np.ndarray, float, int],
+        attractorStiffness: [float, int],
+        damping: [float, int],
+        mass: [float, int] = 1.0,
+    ):
         """
         Constructor
 
@@ -98,11 +103,12 @@ class MSDDSSpec(DSSpec):
         :param damping: damping parameter of the dynamical system
         :param mass: mass parameter of the dynamical system
         """
-        if not (function == 'msd' or function == 'msd_nlin'):
+        if not (function == "msd" or function == "msd_nlin"):
             raise pyrado.ValueErr(given=function, eq_constraint="'msd' or 'msd_nlin")
 
-        super().__init__(function=function, goal=goal, attractorStiffness=attractorStiffness, damping=damping,
-                         mass=mass)
+        super().__init__(
+            function=function, goal=goal, attractorStiffness=attractorStiffness, damping=damping, mass=mass
+        )
 
 
 class LinDSSpec(DSSpec):
@@ -113,10 +119,7 @@ class LinDSSpec(DSSpec):
     LinDSSpec(function='lin', goal=np.array([-1., 2.]), errorDynamics=np.eye(2))
     """
 
-    def __init__(self,
-                 function: str,
-                 goal: [np.ndarray, float, int],
-                 errorDynamics: [np.ndarray, float, int]):
+    def __init__(self, function: str, goal: [np.ndarray, float, int], errorDynamics: [np.ndarray, float, int]):
         """
         Constructor
 
@@ -124,7 +127,7 @@ class LinDSSpec(DSSpec):
         :param goal: desired state, e.g. a task space position or velocity
         :param errorDynamics: a matrix determining the dynamics or the error difference between
         """
-        if not function == 'lin':
+        if not function == "lin":
             raise pyrado.ValueErr(given=function, eq_constraint="'lin'")
 
         super().__init__(function=function, goal=goal, errorDynamics=errorDynamics)

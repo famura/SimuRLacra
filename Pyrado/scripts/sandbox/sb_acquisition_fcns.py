@@ -47,30 +47,30 @@ from pyrado.utils.math import UnitCubeProjector
 from pyrado.utils.functions import noisy_nonlin_fcn
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Adjustable experiment parameters
     set_seed(1001)
     num_init_samples = 4  # number of initial random points
     num_iter = 6  # number of BO updates
-    noise_std = 0.  # noise level
-    acq_fcn = 'EI'  # acquisition function (UCB / EI / PI)
+    noise_std = 0.0  # noise level
+    acq_fcn = "EI"  # acquisition function (UCB / EI / PI)
     num_acq_restarts = 100  # number of restarts for optimizing the acquisition function
     num_acq_samples = 500  # number of samples for used for optimizing the acquisition function
     ucb_beta = 0.1  # UCB coefficient (only necessary if UCB is used
 
     # Function boundaries
     x_min_raw, x_max_raw = (-2.0, 5.0)
-    x_min, x_max = (0., 1.0)
+    x_min, x_max = (0.0, 1.0)
     bounds_raw = to.tensor([[x_min_raw], [x_max_raw]])
     bounds = to.tensor([[x_min], [x_max]])
     uc = UnitCubeProjector(bounds_raw[0, :], bounds_raw[1, :])
 
     # Generate initial data
-    X_train_raw = (x_max_raw - x_min_raw)*to.rand(num_init_samples, 1) + x_min_raw
+    X_train_raw = (x_max_raw - x_min_raw) * to.rand(num_init_samples, 1) + x_min_raw
     y_train_raw = to.from_numpy(noisy_nonlin_fcn(X_train_raw.numpy(), noise_std=noise_std))
     X_train = uc.project_to(X_train_raw)
     y_mean, y_std = y_train_raw.mean(), y_train_raw.std()
-    y_train = (y_train_raw - y_mean)/y_std
+    y_train = (y_train_raw - y_mean) / y_std
 
     # Get best observed value from dataset
     best_observed = [y_train_raw.max().item()]
@@ -81,7 +81,7 @@ if __name__ == '__main__':
 
     # Bayesian Optimization Loop
     for i in tqdm(range(num_iter), total=num_iter):
-        print('Iteration:', i + 1)
+        print("Iteration:", i + 1)
 
         # Fit the model
         # mll.train()
@@ -93,7 +93,7 @@ if __name__ == '__main__':
         ucb = UpperConfidenceBound(gp, beta=ucb_beta, maximize=True)
         ei = ExpectedImprovement(gp, best_f=y_train.max().item(), maximize=True)
         pi = ProbabilityOfImprovement(gp, best_f=y_train.max().item(), maximize=True)
-        acq_dict = {'UCB': ucb, 'EI': ei, 'PI': pi}
+        acq_dict = {"UCB": ucb, "EI": ei, "PI": pi}
 
         # Optimize acquisition function
         candidate, acq_value = optimize_acqf(
@@ -101,7 +101,7 @@ if __name__ == '__main__':
             bounds=bounds,
             q=1,
             num_restarts=num_acq_restarts,
-            raw_samples=num_acq_samples
+            raw_samples=num_acq_samples,
         )
         x_new = candidate.detach()
         x_new_raw = uc.project_back(x_new)
@@ -124,39 +124,47 @@ if __name__ == '__main__':
             # Get the posterior
             posterior = gp.posterior(X_test)
             mean = posterior.mean
-            mean_raw = mean*y_test_raw.std() + y_test_raw.mean()
+            mean_raw = mean * y_test_raw.std() + y_test_raw.mean()
             lower, upper = posterior.mvn.confidence_region()
-            lower = lower*y_test_raw.std() + y_test_raw.mean()
-            upper = upper*y_test_raw.std() + y_test_raw.mean()
+            lower = lower * y_test_raw.std() + y_test_raw.mean()
+            upper = upper * y_test_raw.std() + y_test_raw.mean()
 
-            ax_gp.plot(X_test_raw.numpy(), y_test_raw.numpy(), 'k--', label='f(x)')
+            ax_gp.plot(X_test_raw.numpy(), y_test_raw.numpy(), "k--", label="f(x)")
 
-            ax_gp.plot(X_test_raw.numpy(), mean_raw.numpy(), 'b-', lw=2, label='mean')
-            ax_gp.fill_between(X_test_raw.numpy(), lower.numpy(), upper.numpy(),
-                               alpha=0.2, label=r'2$\sigma$ confidence')
-            ax_gp.plot(X_train_raw.numpy(), y_train_raw.numpy(), 'kx', mew=2, label='samples')
+            ax_gp.plot(X_test_raw.numpy(), mean_raw.numpy(), "b-", lw=2, label="mean")
+            ax_gp.fill_between(
+                X_test_raw.numpy(), lower.numpy(), upper.numpy(), alpha=0.2, label=r"2$\sigma$ confidence"
+            )
+            ax_gp.plot(X_train_raw.numpy(), y_train_raw.numpy(), "kx", mew=2, label="samples")
 
             utility = acq_dict[acq_fcn](X_test[:, None, None])
             ax_acq.plot(X_test_raw.numpy(), utility.numpy(), label=acq_fcn)
-            ax_acq.plot(X_test_raw.numpy()[utility.argmax().item()], utility.max().item(), '*', markersize=10,
-                        markerfacecolor='gold', markeredgecolor='k', markeredgewidth=1)
+            ax_acq.plot(
+                X_test_raw.numpy()[utility.argmax().item()],
+                utility.max().item(),
+                "*",
+                markersize=10,
+                markerfacecolor="gold",
+                markeredgecolor="k",
+                markeredgewidth=1,
+            )
 
             if i == num_iter - 1:
-                ax_acq.set_xlabel('x')
+                ax_acq.set_xlabel("x")
             if i == 0:
-                ax_gp.set_ylabel(r'surrogate $f(x)$')
-                ax_acq.set_ylabel(r'utility $\alpha (x)$')
+                ax_gp.set_ylabel(r"surrogate $f(x)$")
+                ax_acq.set_ylabel(r"utility $\alpha (x)$")
                 ax_gp.legend()
                 ax_acq.legend()
 
-            fig.suptitle(f'Iteration {i + 1}', y=1.)
+            fig.suptitle(f"Iteration {i + 1}", y=1.0)
             plt.tight_layout()
 
         # Update dataset
         X_train_raw = to.cat([X_train_raw, x_new_raw])
         X_train = to.cat([X_train, x_new])  # == uc.project_to(X_train_raw)
         y_train_raw = to.cat([y_train_raw, y_new_raw])
-        y_train = (y_train_raw - y_test_raw.mean())/y_test_raw.std()
+        y_train = (y_train_raw - y_test_raw.mean()) / y_test_raw.std()
 
         # Update best observed value list
         best_observed.append(y_train_raw.max().item())

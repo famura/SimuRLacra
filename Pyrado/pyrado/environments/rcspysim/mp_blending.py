@@ -33,25 +33,20 @@ from typing import Sequence
 
 import rcsenv
 from pyrado.environments.rcspysim.base import RcsSim
-from pyrado.spaces.singular import SingularStateSpace
 from pyrado.tasks.goalless import GoallessTask
 from pyrado.tasks.reward_functions import ZeroPerStepRewFcn
 
 
 rcsenv.addResourcePath(rcsenv.RCSPYSIM_CONFIG_PATH)
-rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, 'MPBlending'))
+rcsenv.addResourcePath(osp.join(rcsenv.RCSPYSIM_CONFIG_PATH, "MPBlending"))
 
 
 class MPBlendingSim(RcsSim, Serializable):
     """ Sandbox class for testing different ways of combining a set of movement primitives """
 
-    name: str = 'mpb'
+    name: str = "mpb"
 
-    def __init__(self,
-                 action_model_type: str,
-                 mps: Sequence[dict] = None,
-                 task_args: dict = None,
-                 **kwargs):
+    def __init__(self, action_model_type: str, mps: Sequence[dict] = None, task_args: dict = None, **kwargs):
         """
         Constructor
 
@@ -65,23 +60,23 @@ class MPBlendingSim(RcsSim, Serializable):
         Serializable._init(self, locals())
 
         task_spec_ik = [
-            dict(x_des=np.array([0., 0., 0.])),
-            dict(x_des=np.array([0., 0., 0.])),
-            dict(x_des=np.array([0., 0., 0.])),
-            dict(x_des=np.array([0., 0., 0.]))
+            dict(x_des=np.array([0.0, 0.0, 0.0])),
+            dict(x_des=np.array([0.0, 0.0, 0.0])),
+            dict(x_des=np.array([0.0, 0.0, 0.0])),
+            dict(x_des=np.array([0.0, 0.0, 0.0])),
         ]
 
         # Forward to RcsSim's constructor
         RcsSim.__init__(
             self,
             task_args=task_args,
-            envType='MPBlending',
-            graphFileName='gMPBlending.xml',
+            envType="MPBlending",
+            graphFileName="gMPBlending.xml",
             actionModelType=action_model_type,
             tasks=mps,
-            positionTasks=kwargs.pop('positionTasks', None),  # invalid default value, positionTasks can be unnecessary
+            positionTasks=kwargs.pop("positionTasks", None),  # invalid default value, positionTasks can be unnecessary
             taskSpecIK=task_spec_ik,
-            **kwargs
+            **kwargs,
         )
 
     def _create_task(self, task_args: dict) -> GoallessTask:

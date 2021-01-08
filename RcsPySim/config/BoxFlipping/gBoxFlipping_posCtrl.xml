@@ -28,7 +28,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<Graph xmlns:xi="http://www.w3.org/2003/XInclude" name="BoxFlipping">
+<Graph xmlns:xi="http://www.w3.org/2003/XInclude" name="BoxFlipping" resourcePath="${HOME}/localdisk/Software/SimuRLacra/RcsPySim/config ${HOME}/Software/SimuRLacra/RcsPySim/config ${SIT}/Data/RobotMeshes/1.0/data">
 
   <xi:include href="gBoxFlipping_common.xml"/>
 

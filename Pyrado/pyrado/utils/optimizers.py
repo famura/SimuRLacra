@@ -50,15 +50,15 @@ class GSS(Optimizer):
 
         defaults = dict(param_min=param_min, param_max=param_max)
         super().__init__(params, defaults)
-        self.gr = (math.sqrt(5) + 1)/2
+        self.gr = (math.sqrt(5) + 1) / 2
 
     def reset(self):
         for group in self.param_groups:
-            for p in group['params']:
+            for p in group["params"]:
                 state = self.state[p]
-                state['step'] = 0
-                state['lb'] = group['param_min']
-                state['ub'] = group['param_max']
+                state["step"] = 0
+                state["lb"] = group["param_min"]
+                state["ub"] = group["param_max"]
 
     def step(self, closure: Callable):
         """
@@ -67,22 +67,22 @@ class GSS(Optimizer):
         :param closure: a closure that reevaluates the model and returns the loss
         :return: accumulated loss for all parameter groups after the parameter update
         """
-        loss = to.tensor([0.])
+        loss = to.tensor([0.0])
         for group in self.param_groups:
-            for p in group['params']:
+            for p in group["params"]:
                 state = self.state[p]
 
                 # State initialization
                 if len(state) == 0:
-                    state['step'] = 0
-                    state['lb'] = group['param_min']
-                    state['ub'] = group['param_max']
+                    state["step"] = 0
+                    state["lb"] = group["param_min"]
+                    state["ub"] = group["param_max"]
 
-                state['step'] += 1
+                state["step"] += 1
 
                 # Compute new bounds for evaluating
-                cand_lb = state['ub'] - (state['ub'] - state['lb'])/self.gr
-                cand_ub = state['lb'] + (state['ub'] - state['lb'])/self.gr
+                cand_lb = state["ub"] - (state["ub"] - state["lb"]) / self.gr
+                cand_ub = state["lb"] + (state["ub"] - state["lb"]) / self.gr
 
                 # Set param to lower bound and evaluate
                 p.data = cand_lb
@@ -93,12 +93,12 @@ class GSS(Optimizer):
                 loss_ub = closure()
 
                 if loss_lb < loss_ub:
-                    state['ub'] = cand_ub
+                    state["ub"] = cand_ub
                 else:
-                    state['lb'] = cand_lb
+                    state["lb"] = cand_lb
 
                 # Set param to average value
-                p.data = (state['ub'] + state['lb'])/2.
+                p.data = (state["ub"] + state["lb"]) / 2.0
 
                 # Accumulate the loss
                 loss += closure()

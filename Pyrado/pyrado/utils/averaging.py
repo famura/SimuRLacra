@@ -44,22 +44,21 @@ class RunningExpDecayingAverage:
 
         :param alpha: decay factor
         """
-        if not 0 <= alpha <= 1.:
-            raise pyrado.ValueErr(given=alpha, ge_constraint='0', le_constraint='1')
+        if not 0 <= alpha <= 1.0:
+            raise pyrado.ValueErr(given=alpha, ge_constraint="0", le_constraint="1")
         self._prev_est = None  # previous estimate of the mean
         self._alpha = alpha
 
     def reset(self, alpha: float = None):
         """ Reset internal variables. """
         if alpha is not None:
-            if not 0 <= alpha <= 1.:
-                raise pyrado.ValueErr(given=alpha, ge_constraint='0', le_constraint='1')
+            if not 0 <= alpha <= 1.0:
+                raise pyrado.ValueErr(given=alpha, ge_constraint="0", le_constraint="1")
             self._alpha = alpha
         self._prev_est = None  # leads to re-init on call
 
     def __repr__(self):
-        return f'RunningExpDecayingAverage ID: {id(self)}\n' \
-               f'mean: {self._prev_est}\nalpha: {self._alpha}'
+        return f"RunningExpDecayingAverage ID: {id(self)}\n" f"mean: {self._prev_est}\nalpha: {self._alpha}"
 
     def __call__(self, data: [np.ndarray, to.Tensor]) -> [np.ndarray, to.Tensor]:
         """
@@ -73,7 +72,7 @@ class RunningExpDecayingAverage:
                 self._prev_est = data.copy()
             else:
                 # Store current estimate in the _prev_est attribute for the next iteration
-                self._prev_est = self._alpha*data + (1. - self._alpha)*self._prev_est
+                self._prev_est = self._alpha * data + (1.0 - self._alpha) * self._prev_est
             # Return current estimate
             return self._prev_est.copy()
 
@@ -82,7 +81,7 @@ class RunningExpDecayingAverage:
                 self._prev_est = data.clone()
             else:
                 # Store current estimate in the _prev_est attribute for the next iteration
-                self._prev_est = self._alpha*data + (1. - self._alpha)*self._prev_est
+                self._prev_est = self._alpha * data + (1.0 - self._alpha) * self._prev_est
             # Return current estimate
             return self._prev_est.clone()
 
@@ -100,7 +99,7 @@ class RunningMemoryAverage:
         :param capacity: memory size
         """
         if not 1 <= capacity:
-            raise pyrado.ValueErr(given=capacity, ge_constraint='1')
+            raise pyrado.ValueErr(given=capacity, ge_constraint="1")
         self.capacity = capacity
         self._memory = None
 
@@ -112,7 +111,7 @@ class RunningMemoryAverage:
         """ Reset internal variables. """
         if capacity is not None:
             if not 1 <= capacity:
-                raise pyrado.ValueErr(given=capacity, ge_constraint='1')
+                raise pyrado.ValueErr(given=capacity, ge_constraint="1")
         self.capacity = capacity
         self._memory = None
 
@@ -124,7 +123,7 @@ class RunningMemoryAverage:
         :return: unweighted average
         """
         if data.ndim > 1:
-            raise pyrado.ShapeErr(msg='RunningMemoryAverage only supports scalars and vectors')
+            raise pyrado.ShapeErr(msg="RunningMemoryAverage only supports scalars and vectors")
 
         if isinstance(data, np.ndarray):
             # Format new data
@@ -136,7 +135,7 @@ class RunningMemoryAverage:
                 self._memory = np.concatenate([self._memory, new], axis=0)
 
             # Drop surplus
-            self._memory = self._memory[-self.capacity:]
+            self._memory = self._memory[-self.capacity :]
 
             # Return current estimate
             return np.mean(self._memory, axis=0)
@@ -151,7 +150,7 @@ class RunningMemoryAverage:
                 self._memory = to.cat([self._memory, new], dim=0)
 
             # Drop surplus
-            self._memory = self._memory[-self.capacity:]
+            self._memory = self._memory[-self.capacity :]
 
             # Return current estimate
             return to.mean(self._memory, dim=0)

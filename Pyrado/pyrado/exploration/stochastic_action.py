@@ -50,7 +50,7 @@ class StochasticActionExplStrat(Policy, ABC):
 
         :param policy: wrapped policy
         """
-        super().__init__(policy.env_spec, use_cuda=policy.device == 'cuda')
+        super().__init__(policy.env_spec, use_cuda=policy.device != "cpu")
         self.policy = policy
 
     @property
@@ -82,7 +82,7 @@ class StochasticActionExplStrat(Policy, ABC):
         # Compute exploration (use rsample to apply the reparametrization trick  if needed)
         act_expl = self.action_dist_at(act).rsample()  # act is the mean if train_mean=False
 
-        # Return the exploratove actions and optionally the other policy outputs
+        # Return the explorative actions and optionally the other policy outputs
         if self.policy.is_recurrent:
             if isinstance(self.policy, TwoHeadedPolicy):
                 return act_expl, other, hidden
@@ -94,7 +94,7 @@ class StochasticActionExplStrat(Policy, ABC):
             else:
                 return act_expl
 
-    def evaluate(self, rollout: StepSequence, hidden_states_name: str = 'hidden_states') -> Distribution:
+    def evaluate(self, rollout: StepSequence, hidden_states_name: str = "hidden_states") -> Distribution:
         """
         Re-evaluate the given rollout using the policy wrapped by this exploration strategy.
         Use this method to get gradient data on the action distribution.
@@ -122,12 +122,14 @@ class StochasticActionExplStrat(Policy, ABC):
 class NormalActNoiseExplStrat(StochasticActionExplStrat):
     """ Exploration strategy which adds Gaussian noise to the continuous policy actions """
 
-    def __init__(self,
-                 policy: Policy,
-                 std_init: [float, to.Tensor],
-                 std_min: [float, to.Tensor] = 1e-3,
-                 train_mean: bool = False,
-                 learnable: bool = True):
+    def __init__(
+        self,
+        policy: Policy,
+        std_init: [float, to.Tensor],
+        std_min: [float, to.Tensor] = 1e-3,
+        train_mean: bool = False,
+        learnable: bool = True,
+    ):
         """
         Constructor
 
@@ -140,12 +142,12 @@ class NormalActNoiseExplStrat(StochasticActionExplStrat):
         super().__init__(policy)
 
         self._noise = DiagNormalNoise(
-            use_cuda=policy.device == 'cuda',
             noise_dim=policy.env_spec.act_space.flat_dim,
             std_init=std_init,
             std_min=std_min,
             train_mean=train_mean,
-            learnable=learnable
+            learnable=learnable,
+            use_cuda=policy.device != "cpu",
         )
 
     def reset_expl_params(self, *args, **kwargs):
@@ -182,12 +184,14 @@ class NormalActNoiseExplStrat(StochasticActionExplStrat):
 class UniformActNoiseExplStrat(StochasticActionExplStrat):
     """ Exploration strategy which adds uniform noise to the continuous policy actions """
 
-    def __init__(self,
-                 policy: Policy,
-                 halfspan_init: [float, to.Tensor],
-                 halfspan_min: [float, list] = 0.01,
-                 train_mean: bool = False,
-                 learnable: bool = True):
+    def __init__(
+        self,
+        policy: Policy,
+        halfspan_init: [float, to.Tensor],
+        halfspan_min: [float, list] = 0.01,
+        train_mean: bool = False,
+        learnable: bool = True,
+    ):
         """
         Constructor
 
@@ -200,12 +204,12 @@ class UniformActNoiseExplStrat(StochasticActionExplStrat):
         super().__init__(policy)
 
         self._noise = UniformNoise(
-            use_cuda=policy.device == 'cuda',
+            use_cuda=policy.device != "cpu",
             noise_dim=policy.env_spec.act_space.flat_dim,
             halfspan_init=halfspan_init,
             halfspan_min=halfspan_min,
             train_mean=train_mean,
-            learnable=learnable
+            learnable=learnable,
         )
 
     @property
@@ -215,8 +219,6 @@ class UniformActNoiseExplStrat(StochasticActionExplStrat):
 
     def action_dist_at(self, policy_output: to.Tensor) -> Distribution:
         return self._noise(policy_output)
-
-    # Make NormalActNoiseExplStrat appear as if it would have the following functions / properties
 
     def reset_expl_params(self, *args, **kwargs):
         return self._noise.reset_expl_params(*args, **kwargs)
@@ -255,16 +257,16 @@ class SACExplStrat(StochasticActionExplStrat):
 
         # Do not need to learn the exploration noise via an optimizer, since it is handled by the policy in this case
         self._noise = DiagNormalNoise(
-            use_cuda=policy.device == 'cuda',
             noise_dim=policy.env_spec.act_space.flat_dim,
-            std_init=1.,  # std_init will be overwritten by 2nd policy head
-            std_min=0.,  # ignore since we are explicitly clipping in log space later
+            std_init=1.0,  # std_init will be overwritten by 2nd policy head
+            std_min=0.0,  # ignore since we are explicitly clipping in log space later
             train_mean=False,
-            learnable=False
+            learnable=False,
+            use_cuda=policy.device != "cpu",
         )
 
-        self._log_std_min = to.tensor(-20.)  # approx 2.061e-10
-        self._log_std_max = to.tensor(2.)  # approx 7.389
+        self._log_std_min = to.tensor(-20.0, device=self._noise.device)  # approx 2.061e-10
+        self._log_std_max = to.tensor(2.0, device=self._noise.device)  # approx 7.389
 
     @property
     def noise(self) -> DiagNormalNoise:
@@ -353,7 +355,7 @@ class SACExplStrat(StochasticActionExplStrat):
         else:
             return log_probs_.squeeze(1)  # one sample at a time
 
-    def evaluate(self, rollout: StepSequence, hidden_states_name: str = 'hidden_states') -> Distribution:
+    def evaluate(self, rollout: StepSequence, hidden_states_name: str = "hidden_states") -> Distribution:
         """
         Re-evaluate the given rollout using the policy wrapped by this exploration strategy.
         Use this method to get gradient data on the action distribution.
@@ -371,7 +373,7 @@ class SACExplStrat(StochasticActionExplStrat):
 class EpsGreedyExplStrat(StochasticActionExplStrat):
     """ Exploration strategy which selects discrete actions epsilon-greedily """
 
-    def __init__(self, policy: Policy, eps: float = 1., eps_schedule_gamma: float = 0.99, eps_final: float = 0.05):
+    def __init__(self, policy: Policy, eps: float = 1.0, eps_schedule_gamma: float = 0.99, eps_final: float = 0.05):
         """
         Constructor
 
@@ -390,13 +392,13 @@ class EpsGreedyExplStrat(StochasticActionExplStrat):
         self.distr_eps = Bernoulli(probs=self.eps.data)  # eps chance to sample 1
 
         flat_dim = self.policy.env_spec.act_space.flat_dim
-        self.distr_act = Categorical(to.ones(flat_dim)/flat_dim)
+        self.distr_act = Categorical(to.ones(flat_dim) / flat_dim)
 
     def eval(self):
         """ Call PyTorch's eval function and set the deny every exploration. """
         super(Policy, self).eval()
         self._eps_old = self.eps.clone()
-        self.eps.data = to.tensor(0.)
+        self.eps.data = to.tensor(0.0)
         self.distr_eps = Bernoulli(probs=self.eps.data)
 
     def train(self, mode=True):
@@ -406,7 +408,7 @@ class EpsGreedyExplStrat(StochasticActionExplStrat):
         self.distr_eps = Bernoulli(probs=self.eps.data)
 
     def schedule_eps(self, steps: int):
-        self.eps.data = self._eps_final + (self._eps_init - self._eps_final)*self.eps_gamma**steps
+        self.eps.data = self._eps_final + (self._eps_init - self._eps_final) * self.eps_gamma ** steps
         self.distr_eps = Bernoulli(probs=self.eps.data)
 
     def forward(self, obs: to.Tensor, *extra) -> (to.Tensor, tuple):

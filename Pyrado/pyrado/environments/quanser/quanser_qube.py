@@ -44,13 +44,15 @@ from pyrado.utils.input_output import print_cbt, completion_context
 class QQubeReal(QuanserReal, Serializable):
     """ Class for the real Quanser Qube a.k.a. Furuta pendulum """
 
-    name: str = 'qq'
+    name: str = "qq"
 
-    def __init__(self,
-                 dt: float = 1/500.,
-                 max_steps: int = pyrado.inf,
-                 task_args: [dict, None] = None,
-                 ip: str = '192.168.2.40'):
+    def __init__(
+        self,
+        dt: float = 1 / 500.0,
+        max_steps: int = pyrado.inf,
+        task_args: [dict, None] = None,
+        ip: str = "192.168.2.40",
+    ):
         """
         Constructor
 
@@ -68,22 +70,21 @@ class QQubeReal(QuanserReal, Serializable):
 
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
-        state_des = task_args.get('state_des', np.array([0., np.pi, 0., 0.]))
-        Q = task_args.get('Q', np.diag([3e-1, 1., 2e-2, 5e-3]))
-        R = task_args.get('R', np.diag([4e-3]))
+        state_des = task_args.get("state_des", np.array([0.0, np.pi, 0.0, 0.0]))
+        Q = task_args.get("Q", np.diag([3e-1, 1.0, 2e-2, 5e-3]))
+        R = task_args.get("R", np.diag([4e-3]))
 
         return RadiallySymmDesStateTask(self.spec, state_des, ExpQuadrErrRewFcn(Q, R), idcs=[1])
 
     def _create_spaces(self):
         # Define the spaces
-        max_state = np.array([120./180*np.pi, 4*np.pi, 20*np.pi, 20*np.pi])  # [rad, rad, rad/s, rad/s]
-        max_obs = np.array([1., 1., 1., 1., pyrado.inf, pyrado.inf])  # [-, -, -, -, rad/s, rad/s]
-        self._state_space = BoxSpace(-max_state, max_state,
-                                     labels=['theta', 'alpha', 'theta_dot', 'alpha_dot'])
-        self._obs_space = BoxSpace(-max_obs, max_obs,
-                                   labels=['sin_theta', 'cos_theta', 'sin_alpha', 'cos_alpha',
-                                           'theta_dot', 'alpha_dot'])
-        self._act_space = BoxSpace(-max_act_qq, max_act_qq, labels=['V'])
+        max_state = np.array([120.0 / 180 * np.pi, 4 * np.pi, 20 * np.pi, 20 * np.pi])  # [rad, rad, rad/s, rad/s]
+        max_obs = np.array([1.0, 1.0, 1.0, 1.0, pyrado.inf, pyrado.inf])  # [-, -, -, -, rad/s, rad/s]
+        self._state_space = BoxSpace(-max_state, max_state, labels=["theta", "alpha", "theta_dot", "alpha_dot"])
+        self._obs_space = BoxSpace(
+            -max_obs, max_obs, labels=["sin_theta", "cos_theta", "sin_alpha", "cos_alpha", "theta_dot", "alpha_dot"]
+        )
+        self._act_space = BoxSpace(-max_act_qq, max_act_qq, labels=["V"])
 
     @property
     def task(self) -> Task:
@@ -114,10 +115,10 @@ class QQubeReal(QuanserReal, Serializable):
     def _correct_sensor_offset(self, meas: np.ndarray) -> np.ndarray:
         return meas - self._sens_offset
 
-    def _wait_for_pole_at_rest(self, thold_ang_vel: float = 0.1/180.*np.pi):
+    def _wait_for_pole_at_rest(self, thold_ang_vel: float = 0.1 / 180.0 * np.pi):
         """ Wait until the Qube's rotating pole is at rest """
         cnt = 0
-        while cnt < 1.5/self._dt:
+        while cnt < 1.5 / self._dt:
             # Get next measurement
             meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
 
@@ -128,14 +129,14 @@ class QQubeReal(QuanserReal, Serializable):
 
     def calibrate(self):
         """ Calibration routine to move to the init position and determine the sensor offset """
-        with completion_context('Estimating sensor offset', color='c', bright=True):
+        with completion_context("Estimating sensor offset", color="c", bright=True):
             # Reset calibration
             self._sens_offset = np.zeros(4)  # last two entries are never calibrated but useful for broadcasting
             self._wait_for_pole_at_rest()
 
             # Create parts of the calibration controller
-            go_right = QQubeGoToLimCtrl(positive=True, cnt_done=int(1.5/self._dt))
-            go_left = QQubeGoToLimCtrl(positive=False, cnt_done=int(1.5/self._dt))
+            go_right = QQubeGoToLimCtrl(positive=True, cnt_done=int(1.5 / self._dt))
+            go_left = QQubeGoToLimCtrl(positive=False, cnt_done=int(1.5 / self._dt))
             go_center = QQubePDCtrl(self.spec)
 
             # Estimate alpha offset. Go to both limits for theta calibration.
@@ -144,19 +145,21 @@ class QQubeReal(QuanserReal, Serializable):
                 meas = self._qsoc.snd_rcv(go_right(to.from_numpy(meas)))
             while not go_left.done:
                 meas = self._qsoc.snd_rcv(go_left(to.from_numpy(meas)))
-            self._sens_offset[0] = (go_right.th_lim + go_left.th_lim)/2
+            self._sens_offset[0] = (go_right.th_lim + go_left.th_lim) / 2
 
             # Estimate alpha offset
             self._wait_for_pole_at_rest()
             meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
             self._sens_offset[1] = meas[1]
 
-        print_cbt(f'Sensor offset: '
-                  f'theta = {self._sens_offset[0]*180/np.pi:.3f} deg, '
-                  f'alpha = {self._sens_offset[1]*180/np.pi:.3f} deg', 'g')
+        print_cbt(
+            f"Sensor offset: "
+            f"theta = {self._sens_offset[0]*180/np.pi:.3f} deg, "
+            f"alpha = {self._sens_offset[1]*180/np.pi:.3f} deg",
+            "g",
+        )
 
-        with completion_context('Centering cube', color='c', bright=True):
+        with completion_context("Centering cube", color="c", bright=True):
             meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
             while not go_center.done:
-                meas = self._qsoc.snd_rcv(
-                    go_center(to.from_numpy(meas - self._sens_offset)))
+                meas = self._qsoc.snd_rcv(go_center(to.from_numpy(meas - self._sens_offset)))

@@ -38,26 +38,26 @@ from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
-    plt.rc('text', usetex=args.use_tex)
+    plt.rc("text", usetex=args.use_tex)
 
     # Get the experiment's directory to load from
-    ex_dir = ask_for_experiment() if args.ex_dir is None else args.ex_dir
+    ex_dir = ask_for_experiment() if args.dir is None else args.dir
 
     # Load the policy
     _, policy, _ = load_experiment(ex_dir, args)
 
     # Print the policy structure
     for name, param in policy.named_parameters():
-        print(f'{name}\n{param.detach().cpu().numpy()}')
+        print(f"{name}\n{param.detach().cpu().numpy()}")
 
     # Visualize the parameters
     fig = draw_policy_params(policy, policy.env_spec, annotate=args.verbose)
 
     if args.save_figures:
-        for fmt in ['pdf', 'pgf', 'png']:
-            fig.savefig(osp.join(ex_dir, f'policy-parameters.{fmt}'), dpi=500)
+        for fmt in ["pdf", "pgf", "png"]:
+            fig.savefig(osp.join(ex_dir, f"policy-parameters.{fmt}"), dpi=500)
 
     plt.show()

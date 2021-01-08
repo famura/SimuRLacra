@@ -42,36 +42,33 @@ from pyrado.policies.feed_forward.fnn import DiscreteActQValPolicy, FNN
 from pyrado.utils.argparser import get_argparser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
     # Experiment
-    ex_dir = setup_experiment(BallOnBeamDiscSim.name, f'{DQL.name}_{DiscreteActQValPolicy.name}')
+    ex_dir = setup_experiment(BallOnBeamDiscSim.name, f"{DQL.name}_{DiscreteActQValPolicy.name}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environment
-    env_hparams = dict(dt=1/100., max_steps=500)
+    env_hparams = dict(dt=1 / 100.0, max_steps=500)
     env = BallOnBeamDiscSim(**env_hparams)
 
     # Policy
-    policy_hparam = dict(
-        hidden_sizes=[32, 32],
-        hidden_nonlin=to.tanh
-    )
+    policy_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.tanh)
     net = FNN(
         input_size=DiscreteActQValPolicy.get_qfcn_input_size(env.spec),
         output_size=DiscreteActQValPolicy.get_qfcn_output_size(),
-        **policy_hparam
+        **policy_hparam,
     )
     policy = DiscreteActQValPolicy(spec=env.spec, net=net)
 
     # Algorithm
     algo_hparam = dict(
         max_iter=5000,
-        memory_size=10*env.max_steps,
+        memory_size=10 * env.max_steps,
         eps_init=0.1286,
         eps_schedule_gamma=0.9955,
         gamma=0.998,
@@ -86,12 +83,14 @@ if __name__ == '__main__':
     algo = DQL(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml([
-        dict(env=env_hparams, seed=args.seed),
-        dict(policy=policy_hparam),
-        dict(algo=algo_hparam, algo_name=algo.name)],
-        ex_dir
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(policy=policy_hparam),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
     )
 
     # Jeeeha
-    algo.train(snapshot_mode='best', seed=args.seed)
+    algo.train(snapshot_mode="best", seed=args.seed)

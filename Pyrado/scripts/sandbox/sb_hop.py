@@ -37,7 +37,7 @@ from pyrado.utils.data_types import RenderMode
 from pyrado.utils.input_output import print_cbt
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Set up environment
     env = HopperSim()
 
@@ -49,9 +49,14 @@ if __name__ == '__main__':
     done, param, state = False, None, None
     while not done:
         env.reset()
-        print_cbt(f'init obs (before): {env.observe(env.state)}', 'c')
-        ro = rollout(env, policy, render_mode=RenderMode(text=False, video=True), eval=True,
-                     reset_kwargs=dict(domain_param=param, init_state=env.state.copy()))
+        print_cbt(f"init obs (before): {env.observe(env.state)}", "c")
+        ro = rollout(
+            env,
+            policy,
+            render_mode=RenderMode(text=False, video=True),
+            eval=True,
+            reset_kwargs=dict(domain_param=param, init_state=env.state.copy()),
+        )
         print_domain_params(env.domain_param)
-        print_cbt(f'init obs (after): {ro.observations[0]}', 'c')
+        print_cbt(f"init obs (after): {ro.observations[0]}", "c")
         done, state, param = after_rollout_query(env, policy, ro)

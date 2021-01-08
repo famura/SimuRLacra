@@ -28,6 +28,7 @@
 
 """
 Testing the simulation-based inference (SBI) toolbox
+
 .. seealso::
     https://astroautomata.com/blog/simulation-based-inference/
 """
@@ -44,6 +45,7 @@ import pyrado
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
 from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.sampling.rollout import rollout
+
 # test
 
 plt.rcParams.update({"text.usetex": False})
@@ -51,32 +53,39 @@ plt.rcParams.update({"text.usetex": False})
 
 def simulator(mu):
     # In the end, the output of this could be a distance measure over trajectories instead of just the final state
-    ro = rollout(env, policy, eval=True, reset_kwargs=dict(
-        # domain_param=dict(k=mu[0], d=mu[1]), init_state=np.array([-0.7, 0.])  # no variance over the init state
-        domain_param=dict(k=mu[0], d=mu[1])  # no variance over the parameters
-    ))
+    ro = rollout(
+        env,
+        policy,
+        eval=True,
+        reset_kwargs=dict(
+            # domain_param=dict(k=mu[0], d=mu[1]), init_state=np.array([-0.7, 0.])  # no variance over the init state
+            domain_param=dict(k=mu[0], d=mu[1])  # no variance over the parameters
+        ),
+    )
     return to.from_numpy(ro.observations[-1]).to(dtype=to.float32)
 
 
 def simulator2(mu):
     # In the end, the output of this could be a distance measure over trajectories instead of just the final state
-    ro = rollout(env, policy, eval=True, reset_kwargs=dict(
-        # domain_param=dict(k=mu[0], d=mu[1]), init_state=np.array([-0.7, 0.])  # no variance over the init state
-        domain_param=dict(k=mu[0], d=mu[1])  # no variance over the parameters
-    ))
+    ro = rollout(
+        env,
+        policy,
+        eval=True,
+        reset_kwargs=dict(
+            # domain_param=dict(k=mu[0], d=mu[1]), init_state=np.array([-0.7, 0.])  # no variance over the init state
+            domain_param=dict(k=mu[0], d=mu[1])  # no variance over the parameters
+        ),
+    )
     return to.tensor(ro.observations).to(dtype=to.float32).view(-1, 1).squeeze()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pyrado.set_seed(0)
 
     env = OneMassOscillatorSim(dt=0.005, max_steps=200)
     policy = IdlePolicy(env.spec)
 
-    prior = utils.BoxUniform(
-        low=to.tensor([25., 0.05]),
-        high=to.tensor([35., 0.15])
-    )
+    prior = utils.BoxUniform(low=to.tensor([25.0, 0.05]), high=to.tensor([35.0, 0.15]))
 
     input_space = 402
     # embedding_net = SummaryNet()
@@ -86,18 +95,19 @@ if __name__ == '__main__':
     num_rounds = 1
     num_samples = 200
     n_observations = 5
-    method = 'SNPE'  # SNPE or SNLE or SNRE
+    method = "SNPE"  # SNPE or SNLE or SNRE
 
     true_params = to.tensor([30, 0.1])
     x_o = simulator2(true_params)
     print(x_o.shape)
 
     simulator, prior = prepare_for_sbi(simulator2, prior)
-    neural_posterior = utils.posterior_nn(model='maf', hidden_features=10,
-                                          num_transforms=2, embedding_net=embedding_net)
+    neural_posterior = utils.posterior_nn(
+        model="maf", hidden_features=10, num_transforms=2, embedding_net=embedding_net
+    )
     inference = SNPE(prior, density_estimator=neural_posterior)
 
-    #inference = SNPE(prior)
+    # inference = SNPE(prior)
 
     for _ in range(num_rounds):
         theta, x = simulate_for_sbi(simulator, prior, num_simulations=num_sim, simulation_batch_size=1)
@@ -109,40 +119,35 @@ if __name__ == '__main__':
     samples = to.cat([posterior.sample((num_samples,), x=obs) for obs in x_o], dim=0)
 
     bounds = [20, 40, 0.0, 0.2]
-    mu_1, mu_2 = to.tensor(np.mgrid[bounds[0]:bounds[1]:20/50., bounds[2]:bounds[3]:0.2/50.]).float()
-    grids = to.cat(
-        (mu_1.reshape(-1, 1), mu_2.reshape(-1, 1)),
-        dim=1
-    )
-    if method == 'SNPE':
-        log_prob = sum([
-            posterior.log_prob(grids, x_o[i])
-            for i in range(len(x_o))
-        ])
+    mu_1, mu_2 = to.tensor(np.mgrid[bounds[0] : bounds[1] : 20 / 50.0, bounds[2] : bounds[3] : 0.2 / 50.0]).float()
+    grids = to.cat((mu_1.reshape(-1, 1), mu_2.reshape(-1, 1)), dim=1)
+    if method == "SNPE":
+        log_prob = sum([posterior.log_prob(grids, x_o[i]) for i in range(len(x_o))])
     else:
-        log_prob = sum([
-            posterior.net(to.cat([grids, x_o[i].repeat((grids.shape[0], 1))], dim=1))[:, 0] +
-            posterior._prior.log_prob(grids)
-            for i in range(len(x_o))
-        ]).detach()
+        log_prob = sum(
+            [
+                posterior.net(to.cat([grids, x_o[i].repeat((grids.shape[0], 1))], dim=1))[:, 0]
+                + posterior._prior.log_prob(grids)
+                for i in range(len(x_o))
+            ]
+        ).detach()
     prob = to.exp(log_prob - log_prob.max())  # scale the probabilities to [0, 1]
 
     # log_probability = posterior.log_prob(samples, x=observation[0])  # log_probability seems to be unused
 
     # Plot
     sns.scatterplot(x=x_o[:, 0], y=x_o[:, 1])
-    plt.xlabel(r'$x_0$')
-    plt.ylabel(r'$x_1$')
+    plt.xlabel(r"$x_0$")
+    plt.ylabel(r"$x_1$")
 
-    out = utils.pairplot(samples, limits=[[20., 40.], [0.0, 0.2]], fig_size=(6, 6), upper='kde', diag='kde')
+    out = utils.pairplot(samples, limits=[[20.0, 40.0], [0.0, 0.2]], fig_size=(6, 6), upper="kde", diag="kde")
 
     plt.figure(dpi=200)
-    plt.plot([20., 40.], [0.1, 0.1], color='w', ls='--')
-    plt.plot([30., 30.], [0.0, 0.2], color='w', ls='--')
+    plt.plot([20.0, 40.0], [0.1, 0.1], color="w", ls="--")
+    plt.plot([30.0, 30.0], [0.0, 0.2], color="w", ls="--")
     plt.contourf(mu_1.numpy(), mu_2.numpy(), prob.reshape(*mu_1.shape).numpy())
     # plt.contourf(prob.reshape(*mu_1.shape), extent=bounds, origin='lower')
-    plt.title(f'Posterior with learned likelihood \n from {num_sim} examples of the true distribution')
-    plt.xlabel(r'$k$')
-    plt.ylabel(r'$d$')
+    plt.title(f"Posterior with learned likelihood \n from {num_sim} examples of the true distribution")
+    plt.xlabel(r"$k$")
+    plt.ylabel(r"$d$")
     plt.show()
-

@@ -53,9 +53,9 @@ class Env(ABC, Serializable):
         """
         if dt is not None:
             if dt < 0:
-                raise pyrado.ValueErr(given=dt, eq_constraint='None', ge_constraint='0')
+                raise pyrado.ValueErr(given=dt, eq_constraint="None", ge_constraint="0")
         if max_steps < 1:
-            raise pyrado.ValueErr(given=max_steps, ge_constraint='1')
+            raise pyrado.ValueErr(given=max_steps, ge_constraint="1")
         self._dt = dt
         self._max_steps = max_steps
         self._curr_step = 0
@@ -64,10 +64,24 @@ class Env(ABC, Serializable):
 
     def __str__(self):
         """ Get an information string. """
-        return Style.BRIGHT + f'{get_class_name(self)}' + Style.RESET_ALL + f' (id: {id(self)})\n' + \
-               Style.BRIGHT + 'state space: ' + Style.RESET_ALL + f'\n{str(self.state_space)}\n' + \
-               Style.BRIGHT + 'observation space: ' + Style.RESET_ALL + f'\n{str(self.obs_space)}\n' + \
-               Style.BRIGHT + 'action space: ' + Style.RESET_ALL + f'\n{str(self.act_space)}\n'
+        return (
+            Style.BRIGHT
+            + f"{get_class_name(self)}"
+            + Style.RESET_ALL
+            + f" (id: {id(self)})\n"
+            + Style.BRIGHT
+            + "state space: "
+            + Style.RESET_ALL
+            + f"\n{str(self.state_space)}\n"
+            + Style.BRIGHT
+            + "observation space: "
+            + Style.RESET_ALL
+            + f"\n{str(self.obs_space)}\n"
+            + Style.BRIGHT
+            + "action space: "
+            + Style.RESET_ALL
+            + f"\n{str(self.act_space)}\n"
+        )
 
     @property
     @abstractmethod
@@ -101,7 +115,7 @@ class Env(ABC, Serializable):
     def dt(self, dt: Union[int, float]):
         """ Set the time step size. """
         if not dt > 0:
-            raise pyrado.ValueErr(given=dt, g_constraint='0')
+            raise pyrado.ValueErr(given=dt, g_constraint="0")
         if not isinstance(dt, (float, int)):
             raise pyrado.TypeErr(given=dt, expected_type=[float, int])
         self._dt = float(dt)
@@ -127,9 +141,9 @@ class Env(ABC, Serializable):
         :param num_steps: number of steps
         """
         if not (isinstance(num_steps, int) or num_steps == pyrado.inf):
-            raise pyrado.TypeErr(msg=f'Number of steps needs to be an integer of infinite, but is {num_steps}')
+            raise pyrado.TypeErr(msg=f"Number of steps needs to be an integer of infinite, but is {num_steps}")
         if not num_steps > 0:
-            raise pyrado.ValueErr(given=num_steps, g_constraint='0')
+            raise pyrado.ValueErr(given=num_steps, g_constraint="0")
         self._max_steps = num_steps
 
     @property

@@ -39,13 +39,15 @@ import pyrado
 class UniformNoise(nn.Module):
     """ Module for learnable additive uniform noise """
 
-    def __init__(self,
-                 use_cuda: bool,
-                 noise_dim: [int, tuple],
-                 halfspan_init: [float, int, to.Tensor],
-                 halfspan_min: [float, to.Tensor] = 0.01,
-                 train_mean: bool = False,
-                 learnable: bool = True):
+    def __init__(
+        self,
+        use_cuda: bool,
+        noise_dim: [int, tuple],
+        halfspan_init: [float, int, to.Tensor],
+        halfspan_min: [float, to.Tensor] = 0.01,
+        train_mean: bool = False,
+        learnable: bool = True,
+    ):
         """
         Constructor
 
@@ -58,25 +60,33 @@ class UniformNoise(nn.Module):
         """
         if not isinstance(halfspan_init, (float, int, to.Tensor)):
             raise pyrado.TypeErr(given=halfspan_init, expected_type=[float, to.Tensor])
-        if not (isinstance(halfspan_init, (int, float)) and halfspan_init > 0 or
-                isinstance(halfspan_init, to.Tensor) and all(halfspan_init > 0)):
-            raise pyrado.ValueErr(given=halfspan_init, g_constraint='0')
+        if not (
+            isinstance(halfspan_init, (int, float))
+            and halfspan_init > 0
+            or isinstance(halfspan_init, to.Tensor)
+            and all(halfspan_init > 0)
+        ):
+            raise pyrado.ValueErr(given=halfspan_init, g_constraint="0")
         if not isinstance(halfspan_min, (float, to.Tensor)):
             raise pyrado.TypeErr(given=halfspan_min, expected_type=[float, to.Tensor])
-        if not (isinstance(halfspan_min, float) and halfspan_min > 0 or
-                isinstance(halfspan_min, to.Tensor) and all(halfspan_min > 0)):
-            raise pyrado.ValueErr(given=halfspan_min, g_constraint='0')
+        if not (
+            isinstance(halfspan_min, float)
+            and halfspan_min > 0
+            or isinstance(halfspan_min, to.Tensor)
+            and all(halfspan_min > 0)
+        ):
+            raise pyrado.ValueErr(given=halfspan_min, g_constraint="0")
 
         # Call torch.nn.Module's constructor
         super().__init__()
 
         if not use_cuda:
-            self._device = 'cpu'
+            self._device = "cpu"
         elif use_cuda and to.cuda.is_available():
-            self._device = 'cuda'
+            self._device = "cuda"
         elif use_cuda and not to.cuda.is_available():
-            warn('Tried to run on CUDA, but it is not available. Falling back to CPU.')
-            self._device = 'cpu'
+            warn("Tried to run on CUDA, but it is not available. Falling back to CPU.")
+            self._device = "cpu"
 
         # Register parameters
         if learnable:
@@ -87,8 +97,11 @@ class UniformNoise(nn.Module):
             self.mean = None
 
         # Initialize parameters
-        self.log_halfspan_init = to.log(to.tensor(halfspan_init, dtype=to.get_default_dtype())) if isinstance(halfspan_init, (int, float)) else to.log(
-            halfspan_init)
+        self.log_halfspan_init = (
+            to.log(to.tensor(halfspan_init, dtype=to.get_default_dtype()))
+            if isinstance(halfspan_init, (int, float))
+            else to.log(halfspan_init)
+        )
         self.halfspan_min = to.tensor(halfspan_min) if isinstance(halfspan_min, float) else halfspan_min
         if not isinstance(self.log_halfspan_init, to.Tensor):
             raise pyrado.TypeErr(given=self.log_halfspan_init, expected_type=to.Tensor)
@@ -134,9 +147,9 @@ class UniformNoise(nn.Module):
         if not (isinstance(mean, to.Tensor) or mean is None):
             raise pyrado.TypeErr(given=mean, expected_type=to.Tensor)
         if not (isinstance(halfspan, to.Tensor) and (halfspan >= 0).all() or halfspan is None):
-            raise pyrado.TypeErr(msg='The halfspan must be a Tensor with all elements > 0 or None!')
+            raise pyrado.TypeErr(msg="The halfspan must be a Tensor with all elements > 0 or None!")
         if mean is not None:
-            assert self.mean is not None, 'Can not change fixed zero mean!'
+            assert self.mean is not None, "Can not change fixed zero mean!"
             if not mean.shape == self.mean.shape:
                 raise pyrado.ShapeErr(given=mean, expected_match=self.mean)
             self.mean.data = mean
@@ -162,4 +175,4 @@ class UniformNoise(nn.Module):
 
         :return: entropy value
         """
-        return to.log(2*self.halfspan)
+        return to.log(2 * self.halfspan)

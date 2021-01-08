@@ -28,34 +28,25 @@
  POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<Graph xmlns:xi="http://www.w3.org/2003/XInclude" name="DexterousManipulation" resourcePath="${HOME}/Software/SimuRLacra/RcsPySim/config ${SIT}/Data/RobotMeshes/1.0/data">
+<Graph xmlns:xi="http://www.w3.org/2003/XInclude" name="DexterousManipulation" resourcePath="${HOME}/localdisk/Software/SimuRLacra/RcsPySim/config ${HOME}/Software/SimuRLacra/RcsPySim/config ${SIT}/Data/RobotMeshes/1.0/data">
 
   <Body name="Base" mass="80" cogVector="0.13 0 0.9" transform="0 0 0 0 0 180">
-    <Shape type="SSL" radius="0.08" length="0.2" distance="true" physics="false" color="BLUE"
-           transform="-0.02 0 0.1 0 0 0"/>
-    <Shape type="SSL" radius="0.2" length="1.65" distance="true" physics="false" color="BLUE"
-           transform="0.17 0 0 0 0 0"/>
-    <Shape type="SSL" radius="0.08" length="0.72" distance="true" physics="false" color="BLUE"
-           transform="0.36 0.18 0.17 0 -90 0"/>
-    <Shape type="SSL" radius="0.08" length="0.72" distance="true" physics="false" color="BLUE"
-           transform="0.36 -0.18 0.17 0 -90 0"/>
-    <Shape type="BOX" extents="0.16 0.32 1.7" transform="0.13 0 0.85 0 0 0" physics="true" distance="false"
-           textureFile="textures/aluminium-profile.jpg"/>
-    <Shape type="BOX" extents="0.04 1.25 0.08" transform="-0.405 0 0.04 0 0 0" physics="true" distance="false"
-           textureFile="textures/aluminium-profile.jpg"/>
-    <Shape type="BOX" extents="0.04 1.25 0.08" transform="0.405 0 0.04 0 0 0" physics="true" distance="false"
-           textureFile="textures/aluminium-profile.jpg"/>
-    <Shape type="BOX" extents="0.77 0.04 0.24" transform="0 0.18 0.12 0 0 0" physics="true" distance="false"
-           textureFile="textures/aluminium-profile.jpg"/>
-    <Shape type="BOX" extents="0.77 0.04 0.24" transform="0 -0.18 0.12 0 0 0" physics="true" distance="false"
-           textureFile="textures/aluminium-profile.jpg"/>
+    <Shape type="SSL" radius="0.08" length="0.2" distance="true" physics="false" color="BLUE" transform="-0.02 0 0.1 0 0 0"/>
+    <Shape type="SSL" radius="0.2" length="1.65" distance="true" physics="false" color="BLUE" transform="0.17 0 0 0 0 0"/>
+    <Shape type="SSL" radius="0.08" length="0.72" distance="true" physics="false" color="BLUE" transform="0.36 0.18 0.17 0 -90 0"/>
+    <Shape type="SSL" radius="0.08" length="0.72" distance="true" physics="false" color="BLUE" transform="0.36 -0.18 0.17 0 -90 0"/>
+    <Shape type="BOX" extents="0.16 0.32 1.7" transform="0.13 0 0.85 0 0 0" physics="true" distance="false" textureFile="textures/aluminium-profile.jpg"/>
+    <Shape type="BOX" extents="0.04 1.25 0.08" transform="-0.405 0 0.04 0 0 0" physics="true" distance="false" textureFile="textures/aluminium-profile.jpg"/>
+    <Shape type="BOX" extents="0.04 1.25 0.08" transform="0.405 0 0.04 0 0 0" physics="true" distance="false" textureFile="textures/aluminium-profile.jpg"/>
+    <Shape type="BOX" extents="0.77 0.04 0.24" transform="0 0.18 0.12 0 0 0" physics="true" distance="false" textureFile="textures/aluminium-profile.jpg"/>
+    <Shape type="BOX" extents="0.77 0.04 0.24" transform="0 -0.18 0.12 0 0 0" physics="true" distance="false" textureFile="textures/aluminium-profile.jpg"/>
     <!-- <Shape type="FRAME" scale="0.75" /> -->
   </Body>
 
   <Body name="RailBase" prev="Base" mass="240" cogVector="0.15 0 0.8">
-    <Shape type="MESH" meshFile="dexbot_description/RoboFrame.stl" scale="0.001" graphics="true" distance="false"
+    <Shape type="MESH" meshFile="DexBot/RoboFrame.stl" scale="0.001" graphics="true" distance="false"
            transform="0.501 -0.561 0.004 0 0 180"/>
-    <Shape type="MESH" meshFile="dexbot_description/LinearRail.stl" scale="0.001" graphics="true" distance="false"
+    <Shape type="MESH" meshFile="DexBot/LinearRail.stl" scale="0.001" graphics="true" distance="false"
            transform="0.210 0 0.8975 180 0 -90"/>
     <!-- <Shape type="BOX" extents="0.048 0.28 1.2" graphics="true" distance="false" transform="0.403 0 0.8 0 0 0" color="BLUE" /> -->
   </Body>
@@ -65,32 +56,22 @@
     <!-- Screen dimensions: outer extents: 36.5cm x 55.0cm   x 10cm (?)
                             inner extents: 52.0cm x     32.5cm -->
     <Shape type="SSR" extents="0.55 0.33 0.1" distance="true" color="BLACK_RUBBER" transform="0 0 0 0 90 0"/>
-    <Shape type="BOX" extents="0.07 0.36 0.55" graphics="true" distance="false" color="BLACK_RUBBER"
-           transform="0 0 0 0 0 0"/>
-    <Shape type="BOX" extents="0.001 0.33 0.52" graphics="true" distance="false" color="PUREWHITE"
-           transform="-0.0350 0 0 0 0 0"/>
-    <Shape type="BOX" extents="0.001 0.33 0.2" graphics="true" distance="false" transform="-0.0354 0 0 0 0 0"
-           textureFile="textures/hri-eu-logoB.png"/>
+    <Shape type="BOX" extents="0.07 0.36 0.55" graphics="true" distance="false" color="BLACK_RUBBER" transform="0 0 0 0 0 0"/>
+    <Shape type="BOX" extents="0.001 0.33 0.52" graphics="true" distance="false" color="PUREWHITE" transform="-0.0350 0 0 0 0 0"/>
+    <Shape type="BOX" extents="0.001 0.33 0.2" graphics="true" distance="false" transform="-0.0354 0 0 0 0 0" textureFile="textures/hri-eu-logoB.png"/>
   </xxBody>
 
   <Body name="RailBot" prev="RailBase" mass="20" transform="0.209 0 0 0 0 0" cogVector="-0.35 0 0">
     <Joint name="DofChestZ" type="TransZ" range="0.55 0.8 1" weightJL="1.0" weightMetric="1.0"
            transform="0 0 0.375  0 0 0" constraint="false" ctrlType="Position"/>
-    <Shape type="MESH" meshFile="dexbot_description/LinearSlide.stl" scale="0.001" graphics="true" distance="false"
-           transform="0 0 0 180 0 -90"/>
-    <Shape type="MESH" meshFile="dexbot_description/Slide-Simple.stl" scale="0.001" graphics="true" distance="false"
-           transform="0.085  0 -0.2 0 0 0"/>
-    <Shape type="MESH" meshFile="dexbot_description/Wing-Simple.stl" scale="0.001" graphics="true" distance="false"
-           transform="0.203  0.101 -0.05 90 180 -15"/> <!-- Right -->
-    <Shape type="MESH" meshFile="dexbot_description/Wing-Simple.stl" scale="0.001" graphics="true" distance="false"
-           transform="0.135 -0.101 0.2 -90 180 15"/> <!-- Left -->
+    <Shape type="MESH" meshFile="DexBot/LinearSlide.stl" scale="0.001" graphics="true" distance="false" transform="0 0 0 180 0 -90"/>
+    <Shape type="MESH" meshFile="DexBot/Slide-Simple.stl" scale="0.001" graphics="true" distance="false" transform="0.085  0 -0.2 0 0 0"/>
+    <Shape type="MESH" meshFile="DexBot/Wing-Simple.stl" scale="0.001" graphics="true" distance="false" transform="0.203  0.101 -0.05 90 180 -15"/> <!-- Right -->
+    <Shape type="MESH" meshFile="DexBot/Wing-Simple.stl" scale="0.001" graphics="true" distance="false" transform="0.135 -0.101 0.2 -90 180 15"/> <!-- Left -->
 
-    <Shape type="BOX" extents="0.085 0.158 0.4" transform="-0.0725 0 0 0 0 0" physics="true" graphics="true"
-           distance="false" textureFile="textures/brushed-metal.jpg"/>
-    <Shape type="BOX" extents="0.08 0.2 0.2" transform="0.01 0 0.1 0 0 0" physics="true" graphics="true"
-           distance="false" textureFile="textures/aluminium-profile.jpg"/>
-    <Shape type="BOX" extents="0.04 0.75 0.2" transform="0.17 0 0.1 0 0 0" physics="true" graphics="true"
-           distance="false" textureFile="textures/aluminium-profile.jpg"/>
+    <Shape type="BOX" extents="0.085 0.158 0.4" transform="-0.0725 0 0 0 0 0" physics="true" graphics="true" distance="false" textureFile="textures/brushed-metal.jpg"/>
+    <Shape type="BOX" extents="0.08 0.2 0.2" transform="0.01 0 0.1 0 0 0" physics="true" graphics="true" distance="false" textureFile="textures/aluminium-profile.jpg"/>
+    <Shape type="BOX" extents="0.04 0.75 0.2" transform="0.17 0 0.1 0 0 0" physics="true" graphics="true" distance="false" textureFile="textures/aluminium-profile.jpg"/>
     <xShape type="FRAME" scale="0.5"/>
   </Body>
 
@@ -104,11 +85,10 @@
   </Group>
 
   <Group name="_L" prev="lbr_link_7_L" transform="0 0 0.1707 0 0 75">
-    <!--<xi:include href="SDH_trqCtrl.xml" prev="Base"/>-->
-    <xi:include href="SDH_posCtrl.xml" prev="Base"/>
+    <xi:include href="SDH_trqCtrl.xml" prev="Base"/>
   </Group>
 
-  <Body name="PowerGrasp_L" prev="sdh-base_L" transform="0 0 0.1 90 0 90">
+  <Body name="PowerGrasp_L" prev="sdh-base_L" transform="0 0 0.1 90 0 90" oldtransform="0 0 0.125 90 0 90">
     <Shape type="POINT" distance="true"/>
     <Shape type="FRAME" scale="0.2"/>
   </Body>
@@ -125,11 +105,11 @@
   </Group>
 
   <Group name="_R" prev="lbr_link_7_R" transform="0 0 0.1707 0 0 75">
-    <!--        <xi:include href="SDH_trqCtrl.xml"/>-->
-    <xi:include href="SDH_posCtrl.xml" prev="Base"/>
+<!--    <xi:include href="SDH_trqCtrl.xml"/>-->
+    <xi:include href="SDH_posCtrl.xml"/>
   </Group>
 
-  <Body name="PowerGrasp_R" prev="sdh-base_R" transform="0 0 0.1 -90 0 -90">
+  <Body name="PowerGrasp_R" prev="sdh-base_R" transform="0 0 0.1 -90 0 -90" xxtransform="0 0 0.08 -90 0 -90" oldtransform="0 0 0.125 -90 0 -90">
     <Shape type="POINT" distance="true"/>
     <Shape type="FRAME" scale="0.2"/>
   </Body>

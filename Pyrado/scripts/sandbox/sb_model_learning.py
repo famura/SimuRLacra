@@ -35,11 +35,11 @@ from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.input_output import print_cbt
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Set up environment
-    dp_gt = dict(m=2., k=20., d=0.8)  # ground truth
-    dp_init = dict(m=1.0, k=22., d=0.4)  # initial guess
-    dt = 1/50.
+    dp_gt = dict(m=2.0, k=20.0, d=0.8)  # ground truth
+    dp_init = dict(m=1.0, k=22.0, d=0.4)  # initial guess
+    dt = 1 / 50.0
     env = OneMassOscillatorSim(dt=dt, max_steps=400)
     env.reset(domain_param=dp_gt)
 
@@ -56,6 +56,6 @@ if __name__ == '__main__':
 
     model.update(ros)
 
-    print_cbt(f'true domain param   : {dp_gt}', 'g')
-    print_cbt(f'initial domain param: {dp_init}', 'y')
-    print_cbt(f'learned domain param: {model.dp_est.detach().cpu().numpy()}', 'c')
+    print_cbt(f"true domain param   : {dp_gt}", "g")
+    print_cbt(f"initial domain param: {dp_init}", "y")
+    print_cbt(f"learned domain param: {model.dp_est.detach().cpu().numpy()}", "c")

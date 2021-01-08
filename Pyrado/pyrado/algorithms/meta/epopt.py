@@ -49,14 +49,9 @@ class EPOpt(Algorithm):
         Model Ensembles", ICLR, 2017
     """
 
-    name: str = 'epopt'
+    name: str = "epopt"
 
-    def __init__(self,
-                 env: EnvWrapper,
-                 subrtn: Algorithm,
-                 skip_iter: int,
-                 epsilon: float,
-                 gamma: float = 1.):
+    def __init__(self, env: EnvWrapper, subrtn: Algorithm, skip_iter: int, epsilon: float, gamma: float = 1.0):
         """
         Constructor
 
@@ -70,14 +65,14 @@ class EPOpt(Algorithm):
             raise pyrado.TypeErr(given=subrtn, expected_type=Algorithm)
         if not typed_env(env, DomainRandWrapper):  # there is a DR wrapper
             raise pyrado.TypeErr(given=env, expected_type=DomainRandWrapper)
-        if not hasattr(subrtn, 'sampler'):
-            raise AttributeError('The subroutine must have a sampler attribute!')
+        if not hasattr(subrtn, "sampler"):
+            raise AttributeError("The subroutine must have a sampler attribute!")
 
         # Call Algorithm's constructor with the subroutine's properties
         super().__init__(subrtn.save_dir, subrtn.max_iter, subrtn.policy, subrtn.logger)
 
         self._subrtn = subrtn
-        self._subrtn.save_name = 'subrtn'
+        self._subrtn.save_name = "subrtn"
         self.epsilon = epsilon
         self.gamma = gamma
         self.skip_iter = skip_iter
@@ -85,15 +80,15 @@ class EPOpt(Algorithm):
         # Override the subroutine's sampler
         self._subrtn.sampler = CVaRSampler(
             self._subrtn.sampler,
-            epsilon=1.,  # keep all rollouts until curr_iter = skip_iter
+            epsilon=1.0,  # keep all rollouts until curr_iter = skip_iter
             gamma=self.gamma,
             min_rollouts=self._subrtn.sampler.min_rollouts,
             min_steps=self._subrtn.sampler.min_steps,
         )
 
         # Save initial environment and randomizer
-        joblib.dump(env, osp.join(self.save_dir, 'env.pkl'))
-        joblib.dump(env.randomizer, osp.join(self.save_dir, 'randomizer.pkl'))
+        joblib.dump(env, osp.join(self.save_dir, "env.pkl"))
+        joblib.dump(env.randomizer, osp.join(self.save_dir, "randomizer.pkl"))
 
     @property
     def subroutine(self) -> Algorithm:
@@ -124,8 +119,8 @@ class EPOpt(Algorithm):
             # This algorithm instance is not a subroutine of another algorithm
             if self.curr_iter == self.skip_iter - 1:
                 # Save the last snapshot before applying the CVaR
-                self._subrtn.save_snapshot(meta_info=dict(prefix=f'iter_{self.skip_iter - 1}'))
+                self._subrtn.save_snapshot(meta_info=dict(prefix=f"iter_{self.skip_iter - 1}"))
             else:
                 self._subrtn.save_snapshot(meta_info=None)
         else:
-            raise pyrado.ValueErr(msg=f'{self.name} is not supposed be run as a subroutine!')
+            raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subroutine!")

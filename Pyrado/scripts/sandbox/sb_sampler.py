@@ -38,7 +38,7 @@ from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Set up environment
     env = BallOnBeamSim(dt=0.02, max_steps=500)
     env = ActNormWrapper(env)
@@ -52,6 +52,11 @@ if __name__ == '__main__':
 
     # Sample and print
     ros = sampler.sample()
-    print(tabulate({'StepSequence count': len(ros),
-                    'Step count': sum(map(len, ros)),
-                    }.items()))
+    print(
+        tabulate(
+            {
+                "StepSequence count": len(ros),
+                "Step count": sum(map(len, ros)),
+            }.items()
+        )
+    )

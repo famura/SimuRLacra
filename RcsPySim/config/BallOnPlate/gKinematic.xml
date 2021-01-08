@@ -29,10 +29,10 @@
 -->
 
 <!-- Simulate the plate as kinematic object -->
-<Graph xmlns:xi="http://www.w3.org/2003/XInclude" name="BOPBot">
+<Graph xmlns:xi="http://www.w3.org/2003/XInclude" name="BallOnPlate">
 
   <Body name="GroundPlane" physics="kinematic">
-    <Shape type="BOX" graphics="true" physics="true" extents="5.0 5.0 0.01" transform="0 0 -0.005 0 0 0" color="PEWTER" textureFile="../textures/fMRT_brown_squares_2x2.png"/>
+    <Shape type="BOX" graphics="true" physics="true" extents="6.0 6.0 0.02" transform="0 0 -0.01 0 0 0" color="PEWTER" textureFile="textures/fMRT_brown_squares_2x2.png"/>
     <Shape type="FRAME" graphics="true" scale="0.5"/>
   </Body>
 

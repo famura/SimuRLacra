@@ -46,19 +46,19 @@ def input_timeout(prompt: str, t_timeout: [float, int] = 30, default: str = None
     :param default: default output that is returned if the timeout was raised, pass `None` for no default
     :return: return the input as a string captured by the system
     """
-    print(prompt, end=' ')
+    print(prompt, end=" ")
     rlist, _, _ = select.select([sys.stdin], [], [], t_timeout)
 
     if not rlist:
         if default is None:
-            raise RuntimeError(f'No input received within {t_timeout}s!')
+            raise RuntimeError(f"No input received within {t_timeout}s!")
         else:
             return default
 
     return sys.stdin.readline().strip()
 
 
-def print_cbt(msg: str, color: str = '', bright: bool = False, tag: str = '', end='\n'):
+def print_cbt(msg: str, color: str = "", bright: bool = False, tag: str = "", end="\n"):
     """
     Print a colored (and bright) message with a tag in the beginning.
 
@@ -68,43 +68,45 @@ def print_cbt(msg: str, color: str = '', bright: bool = False, tag: str = '', en
     :param tag: tag to be printed in brackets in front of the message
     :param end: endline symbol forwarded to `print()`
     """
-    brgt = Style.BRIGHT if bright else ''
+    brgt = Style.BRIGHT if bright else ""
 
     if not isinstance(tag, str):
         raise pyrado.TypeErr(given=tag, expected_type=str)
     else:
-        if tag != '':
-            tag = f'[{tag}] '
+        if tag != "":
+            tag = f"[{tag}] "
 
     color = color.lower()
-    if color in ['', 'w', 'white']:
+    if color in ["", "w", "white"]:
         print(brgt + tag + msg + Style.RESET_ALL, end=end)
-    elif color in ['y', 'yellow']:
+    elif color in ["y", "yellow"]:
         print(Fore.YELLOW + brgt + tag + msg + Style.RESET_ALL, end=end)
-    elif color in ['b', 'blue']:
+    elif color in ["b", "blue"]:
         print(Fore.BLUE + brgt + tag + msg + Style.RESET_ALL, end=end)
-    elif color in ['g', 'green']:
+    elif color in ["g", "green"]:
         print(Fore.GREEN + brgt + tag + msg + Style.RESET_ALL, end=end)
-    elif color in ['r', 'red']:
+    elif color in ["r", "red"]:
         print(Fore.RED + brgt + tag + msg + Style.RESET_ALL, end=end)
-    elif color in ['c', 'cyan']:
+    elif color in ["c", "cyan"]:
         print(Fore.CYAN + brgt + tag + msg + Style.RESET_ALL, end=end)
     else:
         raise pyrado.ValueErr(given=color, eq_constraint="'y', 'b', 'g', 'r', or 'c'")
 
 
 @run_once
-def print_cbt_once(msg: str, color: str = '', bright: bool = False, tag: str = '', end='\n'):
+def print_cbt_once(msg: str, color: str = "", bright: bool = False, tag: str = "", end="\n"):
     """ Wrapped version of `print_cbt` that only prints once. """
     return print_cbt(msg, color, bright, tag, end)
 
 
-def select_query(items: Sequence,
-                 max_display: int = 10,
-                 fallback: Callable = None,
-                 item_formatter: Callable[[Any], str] = str,
-                 header: str = 'Available options:',
-                 footer: str = 'Please enter the number of the option to use.'):
+def select_query(
+    items: Sequence,
+    max_display: int = 10,
+    fallback: Callable = None,
+    item_formatter: Callable[[Any], str] = str,
+    header: str = "Available options:",
+    footer: str = "Please enter the number of the option to use.",
+):
     """
     Ask the user to select an item out of the given list.
 
@@ -122,11 +124,11 @@ def select_query(items: Sequence,
     print(header)
     if max_display is not None and len(items) > max_display:
         items = items[:max_display]
-        print(f'(showing the latest {max_display})')
+        print(f"(showing the latest {max_display})")
 
     # Display list
     for i, exp in enumerate(items):
-        print('  ', i, ': ', item_formatter(exp))
+        print("  ", i, ": ", item_formatter(exp))
 
     print(footer)
 
@@ -135,7 +137,7 @@ def select_query(items: Sequence,
         sel = input()
 
         # Check if sel is a number, if so use it.
-        if sel == '':
+        if sel == "":
             # first item is default
             return items[0]
         elif sel.isdigit():
@@ -144,7 +146,7 @@ def select_query(items: Sequence,
             if sel_idx < len(items):
                 return items[sel_idx]
             # Error
-            print('Please enter a number between 0 and ', len(items) - 1, '.')
+            print("Please enter a number between 0 and ", len(items) - 1, ".")
         elif fallback is not None:
             # Use fallback if any
             fres = fallback(sel)
@@ -152,7 +154,7 @@ def select_query(items: Sequence,
                 return fres
             # The fallback should report it's own errors
         else:
-            print('Please enter a number.')
+            print("Please enter a number.")
 
 
 def insert_newlines(string: str, every: int) -> str:
@@ -163,7 +165,7 @@ def insert_newlines(string: str, every: int) -> str:
     :param every: gap in number of characters between every line break
     :return: the input sting with line breaks
     """
-    return '\n'.join(string[i:i + every] for i in range(0, len(string), every))
+    return "\n".join(string[i : i + every] for i in range(0, len(string), every))
 
 
 def ensure_math_mode(inp: [str, Sequence[str]]) -> [str, list]:
@@ -174,13 +176,13 @@ def ensure_math_mode(inp: [str, Sequence[str]]) -> [str, list]:
     :return s: sting in math mode
     """
     if isinstance(inp, str):
-        if inp.count('$') == 0:
+        if inp.count("$") == 0:
             # There are no $ symbols yet
-            if not inp[0] == '$':
-                inp = '$' + inp
-            if not inp[-1] == '$':
-                inp = inp + '$'
-        elif inp.count('$')%2 == 0:
+            if not inp[0] == "$":
+                inp = "$" + inp
+            if not inp[-1] == "$":
+                inp = inp + "$"
+        elif inp.count("$") % 2 == 0:
             # There is an even number of $ symbols, so we assume they are correct and do nothing
             pass
         else:
@@ -228,14 +230,14 @@ def completion_context(msg: str, **kwargs):
 
     try:
         # Execute the code
-        print_cbt(msg, **kwargs, end=' ')
+        print_cbt(msg, **kwargs, end=" ")
         yield
     except Exception as e:
         # In case of any error
-        print_cbt(pyrado.sym_failure, color=kwargs.get('color', 'r'), bright=kwargs.get('bright', False))
+        print_cbt(pyrado.sym_failure, color=kwargs.get("color", "r"), bright=kwargs.get("bright", False))
         raise e
     else:
         # No error
-        print_cbt(pyrado.sym_success, color=kwargs.get('color', 'g'), bright=kwargs.get('bright', False))
+        print_cbt(pyrado.sym_success, color=kwargs.get("color", "g"), bright=kwargs.get("bright", False))
     finally:
         pass

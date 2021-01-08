@@ -137,7 +137,7 @@ class EnvWrapper(Env, Serializable):
 
     @property
     def randomizer(self) -> [DomainRandomizer, None]:
-        getattr(self._wrapped_env, 'randomizer', None)
+        getattr(self._wrapped_env, "randomizer", None)
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         """

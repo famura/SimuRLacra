@@ -77,7 +77,7 @@ class RecurrentPolicy(Policy, ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def evaluate(self, rollout: StepSequence, hidden_states_name: str = 'hidden_states') -> to.Tensor:
+    def evaluate(self, rollout: StepSequence, hidden_states_name: str = "hidden_states") -> to.Tensor:
         """
         Re-evaluate the given rollout and return a derivable action tensor.
         This method makes sure that the gradient is propagated through the hidden state.
@@ -131,15 +131,15 @@ class StatefulRecurrentNetwork(nn.Module):
         # Make absolutely sure there are no leftover back-connections here!
         hidden_buf = to.zeros_like(hidden)
         hidden_buf.data.copy_(hidden.data)
-        self.register_buffer('hidden', hidden_buf)
+        self.register_buffer("hidden", hidden_buf)
 
         # Trace network (using random observation and init hidden state)
         inputs = {
-            'forward': (
+            "forward": (
                 to.from_numpy(net.env_spec.obs_space.sample_uniform()).to(to.get_default_dtype()),
-                hidden_buf.to(to.get_default_dtype())
+                hidden_buf.to(to.get_default_dtype()),
             ),
-            'init_hidden': tuple()  # call with no arguments
+            "init_hidden": tuple(),  # call with no arguments
         }
         self.net = trace_module(net, inputs)
 
@@ -169,22 +169,26 @@ def default_unpack_hidden(hidden: to.Tensor, num_recurrent_layers: int, hidden_s
     :return: unpacked hidden state, a tensor of num_recurrent_layers x batch_size x hidden_size.
     """
     if len(hidden.shape) == 1:
-        assert hidden.shape[0] == num_recurrent_layers*hidden_size, \
-            "Passed hidden variable's size doesn't match the one required by the network."
+        assert (
+            hidden.shape[0] == num_recurrent_layers * hidden_size
+        ), "Passed hidden variable's size doesn't match the one required by the network."
         # we could handle that case, but for now it's not necessary.
-        assert batch_size is None, 'Cannot use batched observations with unbatched hidden state'
+        assert batch_size is None, "Cannot use batched observations with unbatched hidden state"
         return hidden.view(num_recurrent_layers, 1, hidden_size)
 
     elif len(hidden.shape) == 2:
-        assert hidden.shape[1] == num_recurrent_layers*hidden_size, \
-            "Passed hidden variable's size doesn't match the one required by the network."
-        assert hidden.shape[0] == batch_size, \
-            f'Batch size of hidden state ({hidden.shape[0]}) must match batch size of observations ({batch_size})'
+        assert (
+            hidden.shape[1] == num_recurrent_layers * hidden_size
+        ), "Passed hidden variable's size doesn't match the one required by the network."
+        assert (
+            hidden.shape[0] == batch_size
+        ), f"Batch size of hidden state ({hidden.shape[0]}) must match batch size of observations ({batch_size})"
         return hidden.view(batch_size, num_recurrent_layers, hidden_size).permute(1, 0, 2)
 
     else:
-        raise RuntimeError(f"Improper shape of 'hidden'. Policy received {hidden.shape}, "
-                           f"but shape should be 1- or 2-dim")
+        raise RuntimeError(
+            f"Improper shape of 'hidden'. Policy received {hidden.shape}, " f"but shape should be 1- or 2-dim"
+        )
 
 
 def default_pack_hidden(hidden: to.Tensor, num_recurrent_layers, hidden_size: int, batch_size: int = None):
@@ -200,7 +204,7 @@ def default_pack_hidden(hidden: to.Tensor, num_recurrent_layers, hidden_size: in
     """
     if batch_size is None:
         # Simply flatten the hidden state
-        return hidden.view(num_recurrent_layers*hidden_size)
+        return hidden.view(num_recurrent_layers * hidden_size)
     else:
         # Need to make sure that the batch dimension is the first element
-        return hidden.permute(1, 0, 2).reshape(batch_size, num_recurrent_layers*hidden_size)
+        return hidden.permute(1, 0, 2).reshape(batch_size, num_recurrent_layers * hidden_size)

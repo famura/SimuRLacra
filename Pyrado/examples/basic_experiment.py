@@ -1,3 +1,31 @@
+# Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and
+# Technical University of Darmstadt.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,
+#    or Technical University of Darmstadt, nor the names of its contributors may
+#    be used to endorse or promote products derived from this software without
+#    specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,
+# OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+# IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
 """
 This file provides a step-by-step example of how to write a training script in Pyrado.
 There are many valid possibilities to deviate from this scheme. However, the following sequence is battle-tested.
@@ -22,7 +50,7 @@ by passing any directory as `base_dir`. In Pyrado, the folders are structured li
 Aside from this, you can name your experiments and folders however you like. Use the `load_experiment()` function to
 later oad your results. It will look for an environment as well as a policy file in the provided path.
 """
-ex_dir = setup_experiment(BallOnBeamSim.name, f'{HCNormal.name}_{LinearPolicy.name}', 'ident-sin')
+ex_dir = setup_experiment(BallOnBeamSim.name, f"{HCNormal.name}_{LinearPolicy.name}", "ident-sin")
 
 """
 Additionally, you can set a seed for the random number generators. It is suggested to do so, if you want to
@@ -43,10 +71,7 @@ any computer vision aspects. It is all about dynamics-based interaction and (con
 randomization for the environments varies strongly, since it is a lot of work to randomize them properly (including
 testing) and I have to graduate after all ;)
 """
-env_hparams = dict(
-    dt=1/50.,
-    max_steps=300
-)
+env_hparams = dict(dt=1 / 50.0, max_steps=300)
 env = BallOnBeamSim(**env_hparams)
 env = ActNormWrapper(env)
 
@@ -57,9 +82,7 @@ vary in terms of required hyper-parameters. You can find some examples at `Pyrad
 Note that all policies must inherit from `Policy` which inherits from `torch.nn.Module`. Moreover, all `Policy`
 instances are deterministic. The exploration is handled separately (see `Pyrado/pyrado/exploration`).
 """
-policy_hparam = dict(
-    feats=FeatureStack([identity_feat, sin_feat])
-)
+policy_hparam = dict(feats=FeatureStack([identity_feat, sin_feat]))
 policy = LinearPolicy(spec=env.spec, **policy_hparam)
 
 """
@@ -78,7 +101,7 @@ algo_hparam = dict(
     pop_size=20,
     num_rollouts=10,
     expl_factor=1.1,
-    expl_std_init=1.,
+    expl_std_init=1.0,
     num_workers=4,
 )
 algo = HCNormal(ex_dir, env, policy, **algo_hparam)
@@ -87,11 +110,8 @@ algo = HCNormal(ex_dir, env, policy, **algo_hparam)
 Save the hyper-parameters before staring the training in a YAML-file. This step is not strictly necessary, but it helps
 you to later see which hyper-parameters you used, i.e. which setting leads to a successfully trained policy.
 """
-save_list_of_dicts_to_yaml([
-    dict(env=env_hparams, seed=0),
-    dict(policy=policy_hparam),
-    dict(algo=algo_hparam, algo_name=algo.name)],
-    ex_dir
+save_list_of_dicts_to_yaml(
+    [dict(env=env_hparams, seed=0), dict(policy=policy_hparam), dict(algo=algo_hparam, algo_name=algo.name)], ex_dir
 )
 
 """
@@ -103,9 +123,9 @@ only saves if the average return is a new highscore.
 Moreover, you can set the random number generator's seed. This second option for setting the seed comes in handy when
 you want to continue from a previous experiment multiple times. 
 """
-algo.train(snapshot_mode='latest', seed=None)
+algo.train(snapshot_mode="latest", seed=None)
 
-input('\nFinished training. Hit enter to simulate the policy.\n')
+input("\nFinished training. Hit enter to simulate the policy.\n")
 
 """
 Simulate the learned policy in the environment it has been trained in. The following is a part of
@@ -113,8 +133,13 @@ Simulate the learned policy in the environment it has been trained in. The follo
 """
 done, state, param = False, None, None
 while not done:
-    ro = rollout(env, policy, render_mode=RenderMode(video=True), eval=True,
-                 reset_kwargs=dict(domain_param=param, init_state=state))
-    print_cbt(f'Return: {ro.undiscounted_return()}', 'g', bright=True)
+    ro = rollout(
+        env,
+        policy,
+        render_mode=RenderMode(video=True),
+        eval=True,
+        reset_kwargs=dict(domain_param=param, init_state=state),
+    )
+    print_cbt(f"Return: {ro.undiscounted_return()}", "g", bright=True)
     done, state, param = after_rollout_query(env, policy, ro)
 pyrado.close_vpython()

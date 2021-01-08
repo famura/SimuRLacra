@@ -45,22 +45,24 @@ from pyrado.utils.input_output import print_cbt
 class TSPred(Algorithm):
     """ Train a policy to predict a time series of data. """
 
-    name: str = 'tspred'  # unique identifier
+    name: str = "tspred"  # unique identifier
 
-    def __init__(self,
-                 save_dir: str,
-                 dataset: TimeSeriesDataSet,
-                 policy: Policy,
-                 max_iter: int,
-                 windowed: bool = False,
-                 cascaded: bool = False,
-                 optim_class=optim.Adam,
-                 optim_hparam: dict = None,
-                 loss_fcn=nn.MSELoss(),
-                 lr_scheduler=None,
-                 lr_scheduler_hparam: Optional[dict] = None,
-                 num_workers: int = 1,
-                 logger: StepLogger = None):
+    def __init__(
+        self,
+        save_dir: str,
+        dataset: TimeSeriesDataSet,
+        policy: Policy,
+        max_iter: int,
+        windowed: bool = False,
+        cascaded: bool = False,
+        optim_class=optim.Adam,
+        optim_hparam: dict = None,
+        loss_fcn=nn.MSELoss(),
+        lr_scheduler=None,
+        lr_scheduler_hparam: Optional[dict] = None,
+        num_workers: int = 1,
+        logger: StepLogger = None,
+    ):
         """
         Constructor
 
@@ -83,7 +85,7 @@ class TSPred(Algorithm):
         if not isinstance(dataset, TimeSeriesDataSet):
             raise pyrado.TypeErr(given=dataset, expected_type=TimeSeriesDataSet)
         if not policy.is_recurrent:
-            raise pyrado.TypeErr(msg='TSPred algorithm only supports recurrent policies!')
+            raise pyrado.TypeErr(msg="TSPred algorithm only supports recurrent policies!")
 
         # Call Algorithm's constructor
         super().__init__(save_dir, max_iter, policy, logger)
@@ -95,7 +97,7 @@ class TSPred(Algorithm):
         self.loss_fcn = loss_fcn
 
         optim_hparam = dict(lr=1e-1, eps=1e-8, weight_decay=1e-4) if optim_hparam is None else optim_hparam
-        self.optim = optim_class([{'params': self._policy.parameters()}], **optim_hparam)
+        self.optim = optim_class([{"params": self._policy.parameters()}], **optim_hparam)
         self._lr_scheduler = lr_scheduler
         self._lr_scheduler_hparam = lr_scheduler_hparam
         if lr_scheduler is not None and lr_scheduler_hparam is not None:
@@ -143,8 +145,12 @@ class TSPred(Algorithm):
         with to.no_grad():
             # Feed one epoch of the testing set to the policy
             if self.windowed:
-                preds_tst = to.stack([TSPred.predict(self._policy, inp_seq, self.windowed, self.cascaded)[0]
-                                      for inp_seq, _ in self.dataset.data_tst_seqs])
+                preds_tst = to.stack(
+                    [
+                        TSPred.predict(self._policy, inp_seq, self.windowed, self.cascaded)[0]
+                        for inp_seq, _ in self.dataset.data_tst_seqs
+                    ]
+                )
                 targs_tst = to.stack([targ.unsqueeze(0) for _, targ in self.dataset.data_tst_seqs])
             elif not self.windowed:
                 preds_tst = TSPred.predict(self._policy, self.dataset.data_tst_inp, self.windowed, self.cascaded)[0]
@@ -152,24 +158,24 @@ class TSPred(Algorithm):
             loss_tst = self.loss_fcn(targs_tst, preds_tst)
 
         # Log metrics computed from the old/updated policy (loss value from update on this training sample)
-        self.logger.add_value('trn loss', loss_trn, 6)
-        self.logger.add_value('tst loss', loss_tst, 6)
-        self.logger.add_value('min mag policy param',
-                              self._policy.param_values[to.argmin(abs(self._policy.param_values))])
-        self.logger.add_value('max mag policy param',
-                              self._policy.param_values[to.argmax(abs(self._policy.param_values))])
+        self.logger.add_value("trn loss", loss_trn, 6)
+        self.logger.add_value("tst loss", loss_tst, 6)
+        self.logger.add_value(
+            "min mag policy param", self._policy.param_values[to.argmin(abs(self._policy.param_values))]
+        )
+        self.logger.add_value(
+            "max mag policy param", self._policy.param_values[to.argmax(abs(self._policy.param_values))]
+        )
         if self._lr_scheduler is not None:
-            self.logger.add_value('avg lr', np.mean(self._lr_scheduler.get_last_lr()), 6)
+            self.logger.add_value("avg lr", np.mean(self._lr_scheduler.get_last_lr()), 6)
 
         # Save snapshot data
         self.make_snapshot(snapshot_mode, -loss_trn.item(), meta_info)
 
     @staticmethod
-    def predict(policy: Policy,
-                inp_seq: to.Tensor,
-                windowed: bool,
-                cascaded: bool,
-                hidden: Optional[to.Tensor] = None) -> (to.Tensor, to.Tensor):
+    def predict(
+        policy: Policy, inp_seq: to.Tensor, windowed: bool, cascaded: bool, hidden: Optional[to.Tensor] = None
+    ) -> (to.Tensor, to.Tensor):
         """
         Reset the hidden states, predict one output given a arbitrary long sequence of inputs.
 
@@ -240,19 +246,21 @@ class TSPred(Algorithm):
         super().save_snapshot()
 
         # Does not matter if this algorithm instance is a subroutine of another algorithm
-        pyrado.save(self._policy, 'policy', 'pt', self.save_dir, meta_info)
-        pyrado.save(self.dataset, 'dataset', 'pt', self.save_dir, meta_info)
+        pyrado.save(self._policy, "policy", "pt", self.save_dir, meta_info)
+        pyrado.save(self.dataset, "dataset", "pt", self.save_dir, meta_info)
 
     @staticmethod
-    def evaluate(policy: Policy,
-                 inps: to.Tensor,
-                 targs: to.Tensor,
-                 windowed: bool,
-                 cascaded: bool,
-                 num_init_samples: int,
-                 hidden: Optional[to.Tensor] = None,
-                 loss_fcn=nn.MSELoss(),
-                 verbose: bool = True):
+    def evaluate(
+        policy: Policy,
+        inps: to.Tensor,
+        targs: to.Tensor,
+        windowed: bool,
+        cascaded: bool,
+        num_init_samples: int,
+        hidden: Optional[to.Tensor] = None,
+        loss_fcn=nn.MSELoss(),
+        verbose: bool = True,
+    ):
         if not inps.shape[0] == targs.shape[0]:
             raise pyrado.ShapeErr(given=inps, expected_match=targs)
 
@@ -283,8 +291,10 @@ class TSPred(Algorithm):
 
         if verbose:
             print_cbt(
-                f'The {policy.name} policy with {policy.num_param} parameters predicted {inps.shape[0]} data points '
-                f'with a loss of {loss.item():.4e}.', 'g')
+                f"The {policy.name} policy with {policy.num_param} parameters predicted {inps.shape[0]} data points "
+                f"with a loss of {loss.item():.4e}.",
+                "g",
+            )
 
         # Set policy, i.e. PyTorch nn.Module, back to training mode
         policy.train()
