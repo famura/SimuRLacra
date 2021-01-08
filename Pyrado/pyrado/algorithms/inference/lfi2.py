@@ -72,7 +72,7 @@ class LFI(Algorithm):
         policy: Policy,
         dp_mapping: Mapping[int, str],
         prior: Distribution,
-        posterior_nn_hparam: dict,  #Callable[[], DirectPosterior],
+        posterior_nn_hparam: dict,  # Callable[[], DirectPosterior],
         sbi_subrtn_class: Type[PosteriorEstimator],
         max_iter: int,
         num_real_rollouts: int,
@@ -163,16 +163,11 @@ class LFI(Algorithm):
                 simulation_batch_size=1,
                 num_workers=1,  # leave it for now
             )
-
             sbi_subrtn.append_simulations(
                 domain_param,
                 sim_output,
                 proposal=None,  # pass None if the parameters were sampled from the prior
             )
-            posterior_estimator = sbi_subrtn.train(**self.sbi_training_hparam)
-            posterior = (
-                sbi_subrtn.build_posterior()
-            )  # todo why are we not passing density_estimator=posterior_estimator here. sbi.inference.base::infer() also doesn't do it, but why?
 
         # Remaining training iterations
         else:
@@ -191,15 +186,18 @@ class LFI(Algorithm):
                 )
                 sbi_subrtn.append_simulations(domain_param, sim_output)
 
-            posterior_estimator = sbi_subrtn.train(**self.sbi_training_hparam)
-            posterior = (
-                sbi_subrtn.build_posterior()
-            )  # todo why are we not passing density_estimator=posterior_estimator here. sbi.inference.base::infer() also doesn't do it, but why?
+        # Train the posterior
+        posterior_estimator = sbi_subrtn.train(**self.sbi_training_hparam)
+        posterior = (
+            sbi_subrtn.build_posterior()
+        )  # todo why are we not passing density_estimator=posterior_estimator here. sbi.inference.base::infer() also doesn't do it, but why?
 
         # Logging
-        _, log_prob, _ = LFI.eval_posterior(
+        domain_param_eval, log_prob, _ = LFI.eval_posterior(
             posterior, observations_real, self.num_eval_samples, sbi_simulator
         )
+        self.logger.add_value("avg domain param", to.mean(domain_param_eval, dim=[0, 1]))
+        self.logger.add_value("std domain param", to.std(domain_param_eval, dim=[0, 1]))
         self.logger.add_value("avg log prob", to.mean(log_prob))
         self.logger.add_value("num simulations", self.num_sbi_simulations)
 
@@ -249,9 +247,9 @@ class LFI(Algorithm):
         if domain_params.shape[0] != num_obs or domain_params.shape[1] != num_samples:  # shape[2] = num_domain_param
             raise pyrado.ShapeErr(given=domain_params, expected_match=(num_obs, num_samples, -1))
 
+        # Init containers and
         log_prob = to.empty((num_obs, num_samples))
         observations_sim = to.empty((num_obs, num_samples, dim_obs)) if simulate_observations else None
-
         for idx in tqdm(
             range(num_obs),
             total=num_obs,
@@ -290,7 +288,7 @@ class LFI(Algorithm):
         if not (isinstance(inner_env(env), RealEnv) or isinstance(inner_env(env), SimEnv)):
             raise pyrado.TypeErr(given=inner_env(env), expected_type=[RealEnv, SimEnv])
 
-        # Evaluate sequentially when conducting a sim-to-real experiment
+        # Evaluate sequentially (necessary for sim-to-real experiments)
         rollout_worker = RealRolloutSamplerForSBI(env, policy)
         obs_real = []
         for _ in tqdm(
