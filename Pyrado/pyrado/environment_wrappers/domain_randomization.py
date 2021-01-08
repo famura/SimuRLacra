@@ -84,7 +84,7 @@ class MetaDomainRandWrapper(DomainRandWrapper, Serializable):
         Constructor
 
         :param wrapped_rand_env: randomized environment to wrap
-        :param dp_mapping: dp_mapping from index of the numpy array (coming from the algorithm) to domain parameter name
+        :param dp_mapping: mapping from index of the numpy array (coming from the algorithm) to domain parameter name
                            (e.g. mass, length) and the domain distribution parameter (e.g. mean, std)
 
         .. code-block:: python

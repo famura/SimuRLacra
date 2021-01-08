@@ -50,20 +50,19 @@ from pyrado.utils.input_output import print_cbt
 
 class LFI(Algorithm):
     """
-    SBI-Wrapper.
-    This class currently only works with posterior estimators and currently excludes
-    likelihood- and density-ratio-estimators. This might be added later.
-    Examplary file in '/pyrado/scripts/lfi/....py'
+    Learn a physically-grounded stochastic simulator using the sbi toolbox.
+
+    TODO This class currently only works with posterior estimators and currently excludes likelihood- and density-ratio-estimators. This might be added later.
     """
 
-    name: str = "lfi"
+    name: str = "lfi"  # TODO better acronym
 
     def __init__(
         self,
         save_dir: str,
         env_sim: SimEnv,
         env_real: Union[RealEnv, EnvWrapper],
-        behavior_policy: Policy,
+        policy: Policy,
         dp_mapping: Mapping[int, str],
         prior: Distribution,
         flow: Callable[[], DirectPosterior],
@@ -75,8 +74,26 @@ class LFI(Algorithm):
         num_samples: int = 25,
         logger: Optional[StepLogger] = None,
     ):
+        """
+        Constructor
+
+        :param save_dir: directory to save the snapshots i.e. the results in
+        :param env_sim: randomized simulation environment a.k.a. source domain
+        :param env_real: real-world environment a.k.a. target domain
+        :param policy: behavioral policy  TODO fixed for now, eventually learned
+        :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
+        :param prior:
+        :param flow:
+        :param inference:
+        :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
+        :param posterior:
+        :param num_sim:
+        :param num_real_rollouts:
+        :param num_samples:
+        :param logger: logger for every step of the algorithm, if `None` the default logger will be created
+        """
         # Call Algorithm's constructor
-        super().__init__(save_dir, max_iter, behavior_policy, logger)
+        super().__init__(save_dir, max_iter, policy, logger)
 
         self._env_sim = env_sim
         self._env_real = env_real

@@ -103,8 +103,8 @@ class DomainRandomizer:
         Add an arbitrary number of domain parameters with their distributions to the randomizer.
 
         :param domain_params: list or tuple of `DomainParam` instances
-        :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass,
-                           length). This only sets the same and is intended to be used to guarantee the right number and
+        :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
+                           This only sets the same and is intended to be used to guarantee the right number and
                            order of domain parameters in the randomizer.
         """
         for dp in domain_params:
