@@ -329,7 +329,7 @@ class SelfPacedLearnerParameter(DomainParam):
             target_cov_chol_flat.shape == context_cov_chol_flat.shape
         ), "Target and context cov chols should have same shape!"
 
-        super().__init__(name=name, mean=context_mean)
+        super().__init__(name=name)
 
         self.target_mean = target_mean
         self.target_cov_chol_flat = target_cov_chol_flat
@@ -391,16 +391,10 @@ class SelfPacedLearnerParameter(DomainParam):
                 )
                 raise err
 
-    def sample(self, num_samples: int = 1) -> list:
+    def sample(self, num_samples: int = 1) -> List[to.tensor]:
         assert isinstance(num_samples, int) and num_samples > 0
         samples = self._context_distribution.sample((num_samples,))
-        if len(samples.shape) == 1:
-            samples = samples.reshape((-1, 1))
-        if self._sample_buffer is None:
-            self._sample_buffer = samples
-        else:
-            self._sample_buffer = to.vstack([self._sample_buffer, samples])
-        return list(samples)
+        return list(samples.flatten())
 
     def reset(self):
         self._sample_buffer = None
