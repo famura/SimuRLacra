@@ -5,7 +5,7 @@ from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 
 from pyrado.logger.experiment import setup_experiment, ask_for_experiment
 from pyrado.algorithms.inference.lfi import LFI
-from pyrado.algorithms.inference.simulator import EnvSimulator
+from pyrado.algorithms.inference.rolloutsamplerforsbibase import EnvSimulator
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.sampling.rollout import rollout
 from pyrado.utils.argparser import get_argparser
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     # Set the seed
     pyrado.set_seed(1001, verbose=True)
 
-    # define Simulator
+    # define RolloutSamplerForSBIBase
     simulator, prior, real_params = create_qq_setup()
 
     # sample from true parameter distribution and generate observations with it

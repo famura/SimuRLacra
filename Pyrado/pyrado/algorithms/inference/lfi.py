@@ -6,7 +6,7 @@ import torch as to
 import os.path as osp
 
 from pyrado.algorithms.episodic.sysid_via_episodic_rl import SysIdViaEpisodicRL
-from pyrado.algorithms.inference.simulator import Simulator
+from pyrado.algorithms.inference.rolloutsamplerforsbibase import RolloutSamplerForSBIBase
 from pyrado.environments.base import Env
 from pyrado.logger.step import StepLogger, TensorBoardPrinter, LoggerAware
 from pyrado.policies.base import Policy
@@ -80,7 +80,7 @@ class LFI(LoggerAware):
     def __init__(
         self,
         save_dir: str,
-        simulator: Simulator,
+        simulator: RolloutSamplerForSBIBase,
         prior: Distribution,
         inference: Type[PosteriorEstimator] = None,
         flow: Callable[[], DirectPosterior] = None,

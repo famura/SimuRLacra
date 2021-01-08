@@ -37,71 +37,15 @@ from typing import Optional, Callable, Type, Union, List, Mapping
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.inference.rolloutsamplerforsbibase import RolloutSamplerForSBI, RealRolloutSamplerForSBI
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.utils import inner_env
-from pyrado.environments.base import Env
 from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.sampling.rollout import rollout
 from pyrado.utils.checks import check_all_lengths_equal
 from pyrado.utils.input_output import print_cbt
-
-
-class EnvSimulator(Callable):
-    """
-    Mapping from the environment system parameters to a trajectory-based rollout using a control-policy.
-
-    TODO find a better solution. the output should always have the same size.
-    TODO this is the place where we choose how to compute the observations from the rollouts, which are then used by sbi
-    """
-
-    def __init__(
-        self,
-        env: Env,
-        policy: Policy,
-        dp_mapping: Mapping[int, str],
-    ):
-        self.env = env
-        self.policy = policy
-        self.param_names = dp_mapping.values()
-
-    def __call__(self, params):
-        ro = rollout(
-            self.env,
-            self.policy,
-            eval=True,
-            reset_kwargs=dict(domain_param=dict(zip(self.param_names, params.squeeze()))),
-        )
-        ro.torch(data_type=to.float32)
-        obs = ro.observations[:50]  # TODO only take the first 50 cause the envs are very unlikely to end earlier
-        return obs.view(-1, 1).squeeze()
-
-
-class EnvSimulatorReal(Callable):
-    """
-    TODO Dirty shit. Bah this is ugly.
-    """
-
-    def __init__(
-        self,
-        env: Env,
-        policy: Policy,
-    ):
-        self.env = env
-        self.policy = policy
-
-    def __call__(self) :
-        ro = rollout(
-            self.env,
-            self.policy,
-            eval=True,
-            # Don't set the domain params here since they are set by the DomainRandWrapperBuffer to mimic the randomness
-        )
-        ro.torch(data_type=to.float32)
-        obs = ro.observations[:50]  # TODO only take the first 50 cause the envs are very unlikely to end earlier
-        return obs.view(-1, 1).squeeze()
 
 
 class LFI(Algorithm):
@@ -136,7 +80,7 @@ class LFI(Algorithm):
 
         self._env_sim = env_sim
         self._env_real = env_real
-        self.simulator = EnvSimulator(self._env_sim, self._policy, dp_mapping)
+        self.simulator = RolloutSamplerForSBI(self._env_sim, self._policy, dp_mapping)
         self.dp_mapping = dp_mapping
         self._posterior = posterior
         self.prior = prior
@@ -350,7 +294,7 @@ class LFI(Algorithm):
             print_cbt(f"Executing {prefix}_policy ...", "c", bright=True)
 
         # Evaluate sequentially when conducting a sim-to-real experiment
-        rollout_worker = EnvSimulatorReal(env, policy)
+        rollout_worker = RealRolloutSamplerForSBI(env, policy)
         obs_real = []
         for i in range(num_rollouts):
             obs_real.append(rollout_worker())

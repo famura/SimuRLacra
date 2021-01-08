@@ -47,7 +47,7 @@ if __name__ == "__main__":
     # Set the seed
     pyrado.set_seed(1001, verbose=True)
 
-    # define Simulator
+    # define RolloutSamplerForSBIBase
     simulator, prior, real_param_dist, params_names = create_omo_setup()
 
     # sample from true parameter distribution and generate observations with it
