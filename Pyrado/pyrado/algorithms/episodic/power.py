@@ -139,7 +139,7 @@ class PoWER(ParameterExploring):
         # Average the return values over the rollouts
         rets_avg_ros = to.from_numpy(param_results.mean_returns).to(to.get_default_dtype())
         if any(rets_avg_ros < 0):
-            rets_avg_ros[rets_avg_ros < 0] = 1e-3
+            rets_avg_ros[rets_avg_ros < 0] = 1e-6
             print_cbt("PoWER is must use positive reward functions (improper probability distribution)!", "r")
 
         # We do the simplification from the original implementation, which is only valid for the return-based variant

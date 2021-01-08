@@ -50,6 +50,7 @@ class LinearPolicy(Policy):
         :param spec: specification of environment
         :param feats: list of feature functions
         :param init_param_kwargs: additional keyword arguments for the policy parameter initialization
+        :param use_cuda: `True` to move the module to the GPU, `False` (default) to use the CPU
         """
         if not isinstance(feats, FeatureStack):
             raise pyrado.TypeErr(given=feats, expected_type=FeatureStack)

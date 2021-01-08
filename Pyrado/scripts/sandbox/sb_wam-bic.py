@@ -73,8 +73,8 @@ def compute_trajectory(weights, time, width):
 
 
 def compute_trajectory_pyrado(weights, time, width):
-    weights = to.from_numpy(weights)
-    time = to.tensor(time, requires_grad=True)
+    weights = to.from_numpy(weights).to(dtype=to.get_default_dtype())
+    time = to.tensor(time, requires_grad=True, dtype=to.get_default_dtype())
     rbf = RBFFeat(num_feat_per_dim=weights.shape[0], bounds=(np.array([0.0]), np.array([1.0])), scale=1 / (2 * width))
     pos_feat = rbf(time)
     q = pos_feat @ weights
@@ -96,7 +96,7 @@ def compute_trajectory_pyrado(weights, time, width):
     qd = to.cat([q1d, q2d, q3d], dim=1)
 
     # Check similarity
-    assert to.norm(qd_E - qd) < 1e-6
+    assert to.norm(qd_E - qd) < 1e-3  # used to be 1e-6 with double precision
 
     return q, qd
 
@@ -234,6 +234,7 @@ def rollout_dummy_rbf_policy_4dof():
     # Printing out actual positions for 4-dof (..just needed to setup the hard-coded values in the class)
     print("Ball pos:", env.sim.data.get_body_xpos("ball"))
     print("Cup goal:", env.sim.data.get_site_xpos("cup_goal"))
+    print("Cup bottom:", env.sim.data.get_site_xpos("cup_bottom"))
     print("Joint pos (incl. first rope angle):", env.sim.data.qpos[:5])
 
     # Apply DualRBFLinearPolicy and plot the joint states over the desired ones
@@ -259,7 +260,7 @@ if __name__ == "__main__":
     # eval_damping()
 
     # Apply DualRBFLinearPolicy and plot the joint states over the desired ones
-    rollout_dummy_rbf_policy()
+    # rollout_dummy_rbf_policy()
 
     # Do a rollout with the 4-dof WAM
-    # rollout_dummy_rbf_policy_4dof()
+    rollout_dummy_rbf_policy_4dof()

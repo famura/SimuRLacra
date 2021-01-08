@@ -192,6 +192,7 @@
                 <!--<geom name="cup_geom13" class="cup_geom" mesh="cup13"/>-->
                 <!--<geom name="cup_geom14" class="cup_geom" mesh="cup14" />-->
                 <geom name="cup_base" class="cup_geom" pos="0 -0.035 [pos_goal]" type="cylinder" size="[size_cup] 0.0045"/>
+                <site name="cup_bottom" pos="0 -0.035 [pos_goal]" size="1e-2"/>
                 <geom name="cup_geom15" class="cup_geom" mesh="cup15"/>
                 <geom name="cup_geom16" class="cup_geom" mesh="cup16"/>
                 <geom name="cup_geom17" class="cup_geom" mesh="cup17"/>

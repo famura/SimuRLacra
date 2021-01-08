@@ -35,6 +35,7 @@ from tqdm import tqdm
 
 from pyrado.spaces import BoxSpace
 from pyrado.sampling.utils import gen_batch_idcs, gen_ordered_batch_idcs, gen_ordered_batches
+from pyrado.utils.checks import is_iterator, check_all_types_equal, check_all_lengths_equal, check_all_shapes_equal
 from pyrado.utils.data_types import *
 from pyrado.utils.functions import noisy_nonlin_fcn, skyline
 from pyrado.utils.input_output import completion_context, print_cbt_once
@@ -656,3 +657,72 @@ def test_diff_coeffs(s, d, h):
     coeffs, order = diff_coeffs(s, d, h)
     assert sum(coeffs) == 0
     assert order > 0
+
+
+@pytest.mark.parametrize(
+    "x, b",
+    [
+        [iter((1, 2, 3)), True],
+        [iter([1, 2, 3]), True],
+        [iter(dict(a=1, b=2)), True],
+        [(1, 2, 3), False],
+        [[1, 2, 3], False],
+    ],
+)
+def test_is_iterator(x, b):
+    assert is_iterator(x) == b
+
+
+@pytest.mark.parametrize(
+    "x, b",
+    [
+        [(1, 2, 3), True],
+        [[1, 2, 3], True],
+        [dict(a=1, b=2), True],
+        [1, False],
+    ],
+)
+def test_is_sequence(x, b):
+    assert is_sequence(x) == b
+
+
+@pytest.mark.parametrize(
+    "x, b",
+    [
+        [(1, 2, 3), True],
+        [(1.0, 2.0, 3.0), True],
+        [[1, 2, 3], True],
+        [(1, 2, 3.0), False],
+        [(1, 2, [3]), False],
+    ],
+)
+def test_check_all_types_equal(x, b):
+    assert check_all_types_equal(x) == b
+
+
+@pytest.mark.parametrize(
+    "x, b",
+    [
+        [([1], [2], [3]), True],
+        [([1, 2], [2], [3]), False],
+        [(np.array([1]), np.array([2]), np.array([3])), True],
+        [(np.array([1, 2]), np.array([2]), np.array([3])), False],
+        [(to.tensor([1]), to.tensor([2]), to.tensor([3])), True],
+        [(to.tensor([1, 2]), to.tensor([2]), to.tensor([3])), False],
+    ],
+)
+def test_check_all_lengths_equal(x, b):
+    assert check_all_lengths_equal(x) == b
+
+
+@pytest.mark.parametrize(
+    "x, b",
+    [
+        [(np.array([1]), np.array([2]), np.array([3])), True],
+        [(np.array([1, 2]), np.array([2]), np.array([3])), False],
+        [(to.tensor([1]), to.tensor([2]), to.tensor([3])), True],
+        [(to.tensor([1, 2]), to.tensor([2]), to.tensor([3])), False],
+    ],
+)
+def test_check_all_shapes_equal(x, b):
+    assert check_all_shapes_equal(x) == b

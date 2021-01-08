@@ -126,6 +126,7 @@ def draw_observations(ro: StepSequence, idcs_sel: Sequence[int] = None):
             num_cols,
             figsize=(num_cols * 5, num_rows * 3),
         )
+        axs = np.atleast_2d(axs).T
         fig.canvas.set_window_title("Observations over Time")
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, len(dim_obs)))
 
@@ -137,11 +138,7 @@ def draw_observations(ro: StepSequence, idcs_sel: Sequence[int] = None):
                 for j in range(num_cols):
                     if j + i * num_cols < len(dim_obs):
                         # Omit the last observation for simplicity
-                        axs[i, j].plot(
-                            t,
-                            ro.observations[:-1, j + i * num_cols],
-                            c=colors[j + i * num_cols],
-                        )
+                        axs[i, j].plot(t, ro.observations[:-1, j + i * num_cols], c=colors[j + i * num_cols])
                         axs[i, j].set_ylabel(_get_obs_label(ro, j + i * num_cols))
                     else:
                         # We might create more subplots than there are observations
@@ -176,6 +173,7 @@ def draw_features(ro: StepSequence, policy: Policy):
         num_rows = int(np.ceil(len(dim_feat) / num_cols))
 
         fig, axs = plt.subplots(num_rows, num_cols, figsize=(num_cols * 5, num_rows * 3), constrained_layout=True)
+        axs = np.atleast_2d(axs).T
         fig.canvas.set_window_title("Feature Values over Time")
         plt.subplots_adjust(hspace=0.5)
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, len(dim_feat)))
@@ -188,11 +186,7 @@ def draw_features(ro: StepSequence, policy: Policy):
                 for j in range(num_cols):
                     if j + i * num_cols < len(dim_feat):
                         # Omit the last observation for simplicity
-                        axs[i, j].plot(
-                            t,
-                            feat_vals[:-1, j + i * num_cols],
-                            c=colors[j + i * num_cols],
-                        )
+                        axs[i, j].plot(t, feat_vals[:-1, j + i * num_cols], c=colors[j + i * num_cols])
                         axs[i, j].set_ylabel(rf"$\phi_{j + i*num_cols}$")
                     else:
                         # We might create more subplots than there are observations

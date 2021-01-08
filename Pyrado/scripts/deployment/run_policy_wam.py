@@ -37,7 +37,8 @@ from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.barrett_wam.wam import WAMBallInCupRealEpisodic, WAMBallInCupRealStepBased
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.sampling.rollout import rollout, after_rollout_query
-from pyrado.utils.experiments import wrap_like_other_env, load_experiment
+from pyrado.utils.experiments import load_experiment
+from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.utils.input_output import print_cbt
 from pyrado.utils.argparser import get_argparser
 
@@ -62,8 +63,8 @@ if __name__ == "__main__":
             mode = input("Pass ep for episodic and sb for step-based control mode: ").lower()
         if mode == "sb":
             env_real = WAMBallInCupRealStepBased(
-                observe_ball=env_sim.observe_ball,
-                observe_cup=env_sim.observe_cup,
+                observe_ball=inner_env(env_sim).observe_ball,
+                observe_cup=inner_env(env_sim).observe_cup,
                 dt=dt,
                 max_steps=max_steps,
                 num_dof=inner_env(env_sim).num_dof,

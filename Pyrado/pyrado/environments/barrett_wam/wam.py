@@ -42,6 +42,8 @@ from pyrado.environments.barrett_wam import (
     wam_dgains,
     qpos_lo,
     qpos_up,
+    cup_pos_init_sim_4dof,
+    cup_pos_init_sim_7dof,
 )
 from pyrado.environments.barrett_wam.natnet_client import NatNetClient
 from pyrado.environments.barrett_wam.trackers import RigidBodyTracker
@@ -377,7 +379,7 @@ class WAMBallInCupRealStepBased(WAMBallInCupReal):
         self.natnet_client = NatNetClient(ver=(3, 0, 0, 0), quiet=True)
         self.rigid_body_tracker = RigidBodyTracker(
             ["Cup", "Ball"],
-            rotation=Rotation.from_euler("xzy", [90.0, 0.0, 0.0], degrees=True),
+            rotation=Rotation.from_euler("yxz", [-90.0, 90.0, 0.0], degrees=True),
         )
         self.natnet_client.rigidBodyListener = self.rigid_body_tracker
 
@@ -432,6 +434,16 @@ class WAMBallInCupRealStepBased(WAMBallInCupReal):
         # Start NatNet client only once
         if self.natnet_client.dataSocket is None or self.natnet_client.commandSocket is None:
             self.natnet_client.run()
+
+            # If the rigid body tracker is not ready yet, get_current_estimate() will throw an error
+            while not self.rigid_body_tracker.initialized():
+                time.sleep(0.05)
+
+        # Determine offset for the rigid body tracker (from OptiTrack to MuJoCo)
+        cup_pos_init_sim = cup_pos_init_sim_4dof if self.num_dof == 4 else cup_pos_init_sim_7dof
+        self.rigid_body_tracker.reset_offset()
+        offset = self.rigid_body_tracker.get_current_estimate(["Cup"])[0] - cup_pos_init_sim
+        self.rigid_body_tracker.offset = offset
 
         # Get current joint state
         self.state = np.concatenate(self._get_joint_state())

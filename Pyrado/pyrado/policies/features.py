@@ -31,6 +31,7 @@ import torch as to
 from copy import deepcopy
 from functools import reduce
 from typing import Sequence, Callable, Union
+from warnings import warn
 
 import pyrado
 from pyrado.utils import get_class_name
@@ -50,7 +51,7 @@ class FeatureStack:
         Constructor
 
         :param feat_fcns: list of feature functions, each of them maps from a multi-dim input to a multi-dim output
-        (e.g. identity_feat, squared_feat, exception: const_feat)
+                          (e.g. identity_feat, squared_feat, exception: const_feat)
         """
         self.feat_fcns = feat_fcns
 
@@ -59,7 +60,7 @@ class FeatureStack:
         feat_fcn_names = [f.__name__ if f is callable else str(f) for f in self.feat_fcns]
         return f"{get_class_name(self)} [" + ", ".join(feat_fcn_names) + "]"
 
-    def __call__(self, inp: to.Tensor):
+    def __call__(self, inp: to.Tensor) -> to.Tensor:
         """
         Evaluate the features for a given input.
 
@@ -240,7 +241,13 @@ class RandFourierFeat:
         [1] A. Rahimi and B. Recht "Random Features for Large-Scale Kernel Machines", NIPS, 2007
     """
 
-    def __init__(self, inp_dim: int, num_feat_per_dim: int, bandwidth: Union[float, np.ndarray, to.Tensor]):
+    def __init__(
+        self,
+        inp_dim: int,
+        num_feat_per_dim: int,
+        bandwidth: Union[float, np.ndarray, to.Tensor],
+        use_cuda: bool = False,
+    ):
         r"""
         Gaussian kernel: $k(x,y) = \exp(-\sigma**2 / (2*d) * ||x-y||^2)$
                          Sample from $\mathcal{N}(0,1)$ and scale the result by $\sigma / \sqrt{2*d}$
@@ -249,21 +256,36 @@ class RandFourierFeat:
         :param num_feat_per_dim: number of random Fourier features, called $D$ in [1]. In contrast to the `RBFFeat`
                                  class, the output dimensionality, thus the number of associated policy parameters is
                                  `num_feat_per_dim` and not`num_feat_per_dim * inp_dim`.
-        :param bandwidth: scaling factor for the sampled frequencies.
-                          Pass a constant of for example env.obs_space.bound_up.
-                          According to [1] and the note above we should use d here.
+        :param bandwidth: scaling factor for the sampled frequencies. Pass a constant of for example
+                          `env.obs_space.bound_up`. According to [1] and the note above we should use d here.
                           Actually, it is not a bandwidth since it is not a frequency.
+        :param use_cuda: `True` to move the module to the GPU, `False` (default) to use the CPU
         """
         self.num_feat_per_dim = num_feat_per_dim
         self.scale = to.sqrt(to.tensor(2.0 / num_feat_per_dim))
+
         # Sample omega from a standardized normal distribution
         self.freq = to.randn(num_feat_per_dim, inp_dim)
+
         # Scale the frequency matrix with the bandwidth factor
         if not isinstance(bandwidth, to.Tensor):
             bandwidth = to.from_numpy(np.asanyarray(bandwidth))
         self.freq *= to.sqrt(to.tensor(2.0) / atleast_2D(bandwidth))
+
         # Sample b from a uniform distribution [0, 2pi]
         self.shift = 2 * np.pi * to.rand(num_feat_per_dim)
+
+        # Move to the correct device
+        if not use_cuda:
+            self._device = "cpu"
+        elif use_cuda and to.cuda.is_available():
+            self._device = "cuda"
+        elif use_cuda and not to.cuda.is_available():
+            warn("Tried to run on CUDA, but it is not available. Falling back to CPU.", "r")
+            self._device = "cpu"
+        self.scale = self.scale.to(device=self._device)
+        self.freq = self.freq.to(device=self._device)
+        self.shift = self.shift.to(device=self._device)
 
     def __call__(self, inp: to.Tensor) -> to.Tensor:
         """
@@ -275,6 +297,8 @@ class RandFourierFeat:
         :param inp: input i.e. observations in the RL setting
         :return: 1-dim vector of all feature values given the observations
         """
+        inp = inp.to(device=self._device, dtype=to.get_default_dtype())
+
         if inp.ndimension() > 2:
             raise pyrado.ShapeErr(msg="RBF class can only handle 1-dim or 2-dim input!")
         inp = atleast_2D(inp)  # first dim is the batch size, the second dim it the actual input dimension
@@ -291,8 +315,9 @@ class RBFFeat:
         self,
         num_feat_per_dim: int,
         bounds: [Sequence[list], Sequence[tuple], Sequence[np.ndarray], Sequence[to.Tensor], Sequence[float]],
-        scale: float = None,
+        scale: Union[float, to.Tensor] = None,
         state_wise_norm: bool = True,
+        use_cuda: bool = False,
     ):
         """
         Constructor
@@ -303,6 +328,7 @@ class RBFFeat:
                       neighboring RBFs have a value of 0.2 at the other center
         :param state_wise_norm: `True` to apply the normalization across input state dimensions separately (every
                                  dimension sums to one), or `False` to jointly normalize them
+        :param use_cuda: `True` to move the module to the GPU, `False` (default) to use the CPU
         """
         if not num_feat_per_dim > 1:
             raise pyrado.ValueErr(given=num_feat_per_dim, g_constraint="1")
@@ -319,9 +345,7 @@ class RBFFeat:
             elif isinstance(b, (list, tuple)):
                 bounds_to[i] = to.tensor(b, dtype=to.get_default_dtype())
             elif isinstance(b, (int, float)):
-                bounds_to[i] = to.tensor(b, dtype=to.get_default_dtype()).view(
-                    1,
-                )
+                bounds_to[i] = to.tensor(b, dtype=to.get_default_dtype()).view(1)
             else:
                 raise pyrado.TypeErr(given=b, expected_type=[np.ndarray, to.Tensor, list, tuple, int, float])
         if any([any(np.isinf(b)) for b in bounds_to]):
@@ -342,9 +366,34 @@ class RBFFeat:
             delta_center = self.centers[1, :] - self.centers[0, :]
             self.scale = -to.log(to.tensor(0.2)) / to.pow(delta_center, 2)
         else:
-            self.scale = scale
+            self.scale = to.as_tensor(scale, dtype=to.get_default_dtype())
 
         self._state_wise_norm = state_wise_norm
+
+        # Move to the correct device
+        if not use_cuda:
+            self._device = "cpu"
+        elif use_cuda and to.cuda.is_available():
+            self._device = "cuda"
+        elif use_cuda and not to.cuda.is_available():
+            warn("Tried to run on CUDA, but it is not available. Falling back to CPU.", "r")
+            self._device = "cpu"
+        self.centers = self.centers.to(device=self._device)
+        self.scale = self.scale.to(device=self._device)
+
+    def _normalize_and_reshape(self, inp: to.Tensor) -> to.Tensor:
+        """
+        Normalize (depending on `state_wise_norm`) and reshape the input.
+
+        :param inp: input tensor of exponentiated squared distances
+        :return: feature value
+        """
+        if self._state_wise_norm:
+            # Normalize the features such that the activation for every state dimension sums up to one
+            return normalize(inp, axis=0, order=1).t().reshape(-1)
+        else:
+            # Turn the features into a vector and normalize over all of them
+            return normalize(inp.t().reshape(-1), axis=-1, order=1)
 
     def __call__(self, inp: to.Tensor) -> to.Tensor:
         """
@@ -356,30 +405,22 @@ class RBFFeat:
         :param inp: input i.e. observations in the RL setting
         :return: 1-dim vector of all feature values given the observations
         """
+        inp = inp.to(device=self._device, dtype=to.get_default_dtype())
+
         if inp.ndimension() > 2:
             raise pyrado.ShapeErr(msg="RBF class can only handle 1-dim or 2-dim input!")
         inp = atleast_2D(inp)  # first dim is the batch size, the second dim it the actual input dimension
         inp = inp.reshape(inp.shape[0], 1, inp.shape[1]).repeat(1, self.centers.shape[0], 1)  # reshape explicitly
 
+        # Exponentiate the squared distances
         exp_sq_dist = to.exp(-self.scale * to.pow(inp - self.centers, 2))
 
-        feat_val = to.empty(inp.shape[0], self.num_feat)
-        for i, sample in enumerate(exp_sq_dist):
-            if self._state_wise_norm:
-                # Normalize the features such that the activation for every state dimension sums up to one
-                feat_val[i, :] = normalize(sample, axis=0, order=1).t().reshape(-1)
-            else:
-                # Turn the features into a vector and normalize over all of them
-                feat_val[i, :] = normalize(
-                    sample.t().reshape(-1),
-                    axis=-1,
-                    order=1,
-                )
-        return feat_val
+        # Normalize, reshape, and return the feature values
+        return to.stack([self._normalize_and_reshape(esd) for esd in exp_sq_dist])
 
     def derivative(self, inp: to.Tensor) -> to.Tensor:
         """
-        Compute the drivative of the features w.r.t. the inputs.
+        Compute the derivative of the features w.r.t. the inputs.
 
         .. note::
             Only processing of 1-dim input (e.g., no images)! The input can be batched along the first dimension.
@@ -411,11 +452,8 @@ class RBFFeat:
                     order=1,
                 )
 
-            feat_val_dot[i, :] = sample_d.reshape(-1,) * feat_val[i, :] - feat_val[i, :] * sum(
-                sample_d.reshape(
-                    -1,
-                )
-                * feat_val[i, :]
+            feat_val_dot[i, :] = sample_d.reshape(-1) * feat_val[i, :] - feat_val[i, :] * sum(
+                sample_d.reshape(-1) * feat_val[i, :]
             )
 
         return feat_val_dot

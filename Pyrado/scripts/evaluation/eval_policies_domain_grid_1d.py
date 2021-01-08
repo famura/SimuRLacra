@@ -35,7 +35,7 @@ import pandas as pd
 from prettyprinter import pprint
 
 import pyrado
-from pyrado.domain_randomization.utils import param_grid
+from pyrado.domain_randomization.utils import param_grid, wrap_like_other_env
 from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim, QCartPoleStabSim
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
@@ -47,7 +47,7 @@ from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.checks import check_all_lengths_equal
 from pyrado.utils.data_types import dict_arraylike_to_float
-from pyrado.utils.experiments import load_experiment, wrap_like_other_env
+from pyrado.utils.experiments import load_experiment
 from pyrado.utils.input_output import print_cbt
 
 
