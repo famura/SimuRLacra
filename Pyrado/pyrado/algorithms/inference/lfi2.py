@@ -26,6 +26,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import joblib
+import os.path as osp
 import torch as to
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
 from sbi.inference.snpe import PosteriorEstimator
@@ -33,11 +35,11 @@ from sbi.inference.base import simulate_for_sbi
 from sbi.user_input.user_input_checks import prepare_for_sbi
 from torch.distributions import Distribution
 from torch.utils.tensorboard import SummaryWriter
-from typing import Optional, Callable, Type, Union, List, Mapping
+from typing import Optional, Callable, Type, Union, Mapping
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.inference.rolloutsamplerforsbibase import RolloutSamplerForSBI, RealRolloutSamplerForSBI
+from pyrado.algorithms.inference.sbi_rollout_sampler import RolloutSamplerForSBI, RealRolloutSamplerForSBI
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.real_base import RealEnv
@@ -66,11 +68,11 @@ class LFI(Algorithm):
         dp_mapping: Mapping[int, str],
         prior: Distribution,
         flow: Callable[[], DirectPosterior],
-        inference: Type[PosteriorEstimator],
+        sbi_subrtn_class: Type[PosteriorEstimator],
         max_iter: int,
+        num_real_rollouts: int,
+        num_sim_per_real_rollout: int,
         posterior: DirectPosterior = None,
-        num_sim: int = 5,
-        num_real_rollouts: int = 5,
         num_samples: int = 25,
         logger: Optional[StepLogger] = None,
     ):
@@ -84,10 +86,10 @@ class LFI(Algorithm):
         :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
         :param prior:
         :param flow:
-        :param inference:
+        :param sbi_subrtn_class:
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
         :param posterior:
-        :param num_sim:
+        :param num_sim_per_real_rollout:
         :param num_real_rollouts:
         :param num_samples:
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
@@ -97,20 +99,27 @@ class LFI(Algorithm):
 
         self._env_sim = env_sim
         self._env_real = env_real
-        self.simulator = RolloutSamplerForSBI(self._env_sim, self._policy, dp_mapping)
         self.dp_mapping = dp_mapping
         self._posterior = posterior
-        self.prior = prior
-        self.num_sim = num_sim
+        self._prior = prior
         self.num_real_rollouts = num_real_rollouts
+        self.num_sim_per_real_rollout = num_sim_per_real_rollout
         self.num_samples = num_samples
-        self._cnt_samples = 0
+        self.sbi_training_hparam = dict()
 
-        self.batch_simulator, self.batch_prior = prepare_for_sbi(self.simulator, self.prior)
+        # Prepare simulator and prior for usage in sbi
+        self._rollout_sampler = RolloutSamplerForSBI(self._env_sim, self._policy, dp_mapping)
+        self.sbi_simulator, self.batch_prior = prepare_for_sbi(self._rollout_sampler, self._prior)
 
+        # Create the algorithm instance used in sbi, e.g. SNPE-A/B/C or SNLE
         summary_writer = self.logger.printers[2].writer
         assert isinstance(summary_writer, SummaryWriter)
-        self.sbi_subrtn = inference(prior=self.prior, density_estimator=flow, summary_writer=summary_writer)
+        self.sbi_subrtn = sbi_subrtn_class(prior=self._prior, density_estimator=flow, summary_writer=summary_writer)
+
+    @property
+    def prior(self) -> Distribution:
+        """ Get the prior. """
+        return self._prior
 
     @property
     def posterior(self) -> Union[DirectPosterior, None]:
@@ -123,8 +132,13 @@ class LFI(Algorithm):
         if not isinstance(posterior, DirectPosterior):
             raise pyrado.TypeErr(given=posterior, expected_type=DirectPosterior)
         self._posterior = posterior
+    
+    @property
+    def num_sbi_simulations(self) -> int:
+        """ Get the number of simulations done per call of the sbi subroutine. """
+        return self.num_sim_per_real_rollout * self.num_real_rollouts
 
-    def step(self, snapshot_mode: str, meta_info: dict = None, logging=False):
+    def step(self, snapshot_mode: str, meta_info: dict = None):
         """
         Trains the posterior using SNPE using observed rollouts and the prior distribution
 
@@ -140,22 +154,13 @@ class LFI(Algorithm):
             num_rollouts=self.num_real_rollouts,
         )
 
-        # TODO our current comparison on traj level causes problems if the simulations are not equally long
-        min_length = min([len(obs) for obs in observations_real])
-        if not check_all_lengths_equal(observations_real):
-            # Truncate the observations if necessary
-            for idx, obs in enumerate(observations_real):
-                observations_real[idx] = obs[:min_length]
+        if observations_real.ndim != 2:
+            raise pyrado.ShapeErr(msg="The observations must be a 2-dim PyTorch tensor!")
 
-        observations_real = to.stack(observations_real)
-
-        if observations_real.shape != (self.num_real_rollouts, min_length):
-            raise pyrado.ShapeErr(given=observations_real, expected_match=(self.num_real_rollouts, min_length))
-
-        num_sim = 0
-        if logging:
-            log_prob_hist = []
-            num_sim_hist = []
+        # Logging
+        # num_sim = 0
+        # log_prob_hist = []
+        # num_sim_hist = []
 
         # Set proposal prior
         proposal_prior = self.batch_prior
@@ -163,62 +168,40 @@ class LFI(Algorithm):
         # First iteration
         if self._curr_iter == 0:
             theta, x = simulate_for_sbi(
-                self.batch_simulator,
-                proposal_prior,
-                num_simulations=self.num_sim * self.num_real_rollouts,
+                simulator=self.sbi_simulator,
+                proposal=proposal_prior,
+                num_simulations=self.num_sbi_simulations,
                 simulation_batch_size=1,
             )
-            _ = self.sbi_subrtn.append_simulations(theta, x).train()
+            posterior_estimator = self.sbi_subrtn.append_simulations(theta, x)
+            posterior_estimator.train(**self.sbi_training_hparam)
             self._posterior = self.sbi_subrtn.build_posterior()
-
-            if logging:
-                _, log_prob, _ = self.evaluate(
-                    rollouts_real=observations_real, num_samples=self.num_samples, compute_quantity={"log_prob": True}
-                )
-                log_prob = log_prob.mean().squeeze()
-                num_sim += self.num_sim
-                num_sim_hist.append(num_sim)
-                log_prob_hist.append(log_prob)
-                self.logger.add_value("Mean Log Probability", log_prob)
-                self.logger.add_value("Number of Simulations", to.tensor(num_sim))
 
         # Remaining training iterations
         else:
             for ro in observations_real:
                 self._posterior.set_default_x(ro)
                 theta, x = simulate_for_sbi(
-                    self.batch_simulator, self._posterior, num_simulations=self.num_sim, simulation_batch_size=1
+                    simulator=self.sbi_simulator,
+                    proposal=self._posterior,
+                    num_simulations=self.num_sbi_simulations,
+                    simulation_batch_size=1,
                 )
                 self.sbi_subrtn.append_simulations(theta, x)
-                num_sim += self.num_sim
+                # num_sim += self.num_sbi_simulations
 
             _ = self.sbi_subrtn.train()
             self._posterior = self.sbi_subrtn.build_posterior()
 
-            if logging:
-                _, log_prob, _ = self.evaluate(
-                    rollouts_real=observations_real, num_samples=self.num_samples, compute_quantity={"log_prob": True}
-                )
-                log_prob = log_prob.mean().squeeze()
-                log_prob_hist.append(log_prob)
-                num_sim_hist.append(num_sim)
-                self.logger.add_value("Mean Log Probability", log_prob)
-                self.logger.add_value("Number of Simulations", to.tensor(num_sim))
-
-                pyrado.save(
-                    to.stack(log_prob_hist),
-                    "log_probs",
-                    "pt",
-                    self._save_dir,
-                    meta_info=dict(prefix=f"iter_{self._curr_iter}"),
-                )
-                pyrado.save(
-                    to.tensor(num_sim_hist),
-                    "num_sims",
-                    "pt",
-                    self._save_dir,
-                    meta_info=dict(prefix=f"iter_{self._curr_iter}"),
-                )
+        # Logging
+        _, log_prob, _ = self.evaluate(
+            rollouts_real=observations_real, num_samples=self.num_samples, compute_quantity={"log_prob": True}
+        )
+        # log_prob = log_prob.mean().squeeze()
+        # log_prob_hist.append(log_prob)
+        # num_sim_hist.append(num_sim)
+        self.logger.add_value("avg log prob", to.mean(log_prob))
+        self.logger.add_value("num simulations", self.num_sbi_simulations)
 
     def evaluate(
         self,
@@ -229,6 +212,11 @@ class LFI(Algorithm):
         """
         Evaluates the posterior by calculating parameter samples given observed data, its log probability
         and the simulated trajectory.
+
+        :param rollouts_real:
+        :param num_samples:
+        :param compute_quantity:
+        :return:
         """
         compute_dict = {"log_prob": False, "sample_params": False, "sim_traj": False}
         if compute_quantity is not None:
@@ -275,8 +263,8 @@ class LFI(Algorithm):
                             end="",
                         )
                     # compute trajectories for each observation and every sample
-                    sim_traj[o, s, :] = self.batch_simulator(prop_params[o, s, :].unsqueeze(0))
-                    # sim_trajs.append(self.batch_simulator(prop_params[o]))
+                    sim_traj[o, s, :] = self.sbi_simulator(prop_params[o, s, :].unsqueeze(0))
+                    # sim_trajs.append(self.sbi_simulator(prop_params[o]))
             cnt += 1
         if not compute_dict["sample_params"]:
             prop_params = None
@@ -290,9 +278,10 @@ class LFI(Algorithm):
         prefix: str,
         num_rollouts: int,
         num_parallel_envs: int = 1,
-    ) -> List[to.Tensor]:
+    ) -> to.Tensor:
         """
-        Roll-out a (behavioral) policy on the target system (real-world platform), and save the results.
+        Roll-out a (behavioral) policy on the target system (real-world platform), and save the observations computed
+        from the recorded rollouts.
         This method is static to facilitate evaluation of specific policies in hindsight.
 
         :param save_dir: directory to save the snapshots i.e. the results in, if `None` nothing is saved
@@ -302,7 +291,7 @@ class LFI(Algorithm):
         :param num_rollouts: number of rollouts to collect on the target system
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
         :param num_parallel_envs: number of environments for the parallel sampler (only used for SimEnv)
-        :return: 2-dim tensor of observations extracted from the rollouts
+        :return: 2-dim tensor of observations extracted from the rollouts, where the samples are along the first dim
         """
         if not (isinstance(inner_env(env), RealEnv) or isinstance(inner_env(env), SimEnv)):
             raise pyrado.TypeErr(given=inner_env(env), expected_type=[RealEnv, SimEnv])
@@ -320,10 +309,26 @@ class LFI(Algorithm):
         if save_dir is not None:
             pyrado.save(obs_real, f"{prefix}_observations_real", "pkl", save_dir)
 
+        # TODO our current comparison on traj level causes problems if the simulations are not equally long
+        min_length = min([len(obs) for obs in obs_real])
+        if not check_all_lengths_equal(obs_real):
+            # Truncate the observations if necessary
+            print_cbt("Needed to truncate.", "y", bright=True)
+            for idx, obs in enumerate(obs_real):
+                obs_real[idx] = obs[:min_length]
+
+        # Return stacked tensor
+        obs_real = to.stack(obs_real)
         return obs_real
 
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
-        pyrado.save(self._policy, "policy", "pt", self.save_dir, meta_info)
-        pyrado.save(self._posterior, "posterior", "pt", self._save_dir, meta_info, use_state_dict=False)
+        if meta_info is None:
+            # This algorithm instance is not a subroutine of another algorithm
+            joblib.dump(self._env_sim, osp.join(self.save_dir, "env_sim.pkl"))
+            joblib.dump(self._env_real, osp.join(self.save_dir, "env_real.pkl"))
+            pyrado.save(self._policy, "policy", "pt", self.save_dir, None)
+            pyrado.save(self._posterior, "posterior", "pt", self._save_dir, meta_info, use_state_dict=False)
+        else:
+            raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subroutine!")

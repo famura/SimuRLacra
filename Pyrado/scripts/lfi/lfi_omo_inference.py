@@ -73,7 +73,7 @@ if __name__ == "__main__":
         save_dir=ex_dir,
         simulator=simulator,
         flow=flow,
-        inference=SNPE,
+        sbi_subrtn_class=SNPE,
         prior=prior,
         params_names=params_names,
         **inference_hparam,

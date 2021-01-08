@@ -85,7 +85,7 @@ if __name__ == "__main__":
     flow = utils.posterior_nn(model="maf", embedding_net=embedding_net, **flow_hparam)
 
     # Algorithm
-    algo_hparam = dict(max_iter=5, num_sim=10, num_real_rollouts=num_real_obs)
+    algo_hparam = dict(max_iter=10, num_real_rollouts=num_real_obs, num_sim_per_real_rollout=5)
     algo = LFI(
         ex_dir,
         env_sim,

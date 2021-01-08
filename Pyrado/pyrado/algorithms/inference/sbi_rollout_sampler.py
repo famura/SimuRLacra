@@ -153,7 +153,9 @@ class RolloutSamplerForSBI(RolloutSamplerForSBIBase):
         ro.torch(data_type=to.float32)
 
         # Return the observations used for LFI from the rollout data
-        return self.transform_data(ro[:50], strategy=self.strategy)  # TODO only take the first 50 cause the envs are very unlikely to end earlier
+        return self.transform_data(
+            ro[:50], strategy=self.strategy
+        )  # TODO only take the first 50 cause the envs are very unlikely to end earlier
 
 
 class RealRolloutSamplerForSBI(RolloutSamplerForSBIBase):
@@ -172,7 +174,7 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBIBase):
         self.env = env
         self.policy = policy
 
-    def __call__(self) :
+    def __call__(self):
         ro = rollout(
             self.env,
             self.policy,
@@ -182,4 +184,6 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBIBase):
         ro.torch(data_type=to.float32)
 
         # Return the observations used for LFI from the rollout data
-        return self.transform_data(ro[:50], strategy=self.strategy)  # TODO only take the first 50 cause the envs are very unlikely to end earlier
+        return self.transform_data(
+            ro[:50], strategy=self.strategy
+        )  # TODO only take the first 50 cause the envs are very unlikely to end earlier
