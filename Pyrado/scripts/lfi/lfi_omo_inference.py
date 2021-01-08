@@ -90,7 +90,7 @@ if __name__ == "__main__":
         inference.set_posterior(posterior)
 
     sample_params, _, _ = inference.evaluate(
-        rollouts_real=ro_real, num_samples=num_samples, compute_quantity={"sample_params": True}
+        observations=ro_real, num_samples=num_samples, compute_quantity={"sample_params": True}
     )
 
     # estimate prior with normalizing flows

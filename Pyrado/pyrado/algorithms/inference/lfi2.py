@@ -28,14 +28,18 @@
 
 import joblib
 import os.path as osp
+import sys
 import torch as to
+from colorama import Style, Fore
+from torch.distributions import Distribution
+from torch.utils.tensorboard import SummaryWriter
+from tqdm import tqdm
+from typing import Optional, Callable, Type, Union, Mapping, Tuple
+
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
 from sbi.inference.snpe import PosteriorEstimator
 from sbi.inference.base import simulate_for_sbi
 from sbi.user_input.user_input_checks import prepare_for_sbi
-from torch.distributions import Distribution
-from torch.utils.tensorboard import SummaryWriter
-from typing import Optional, Callable, Type, Union, Mapping
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
@@ -73,7 +77,7 @@ class LFI(Algorithm):
         num_real_rollouts: int,
         num_sim_per_real_rollout: int,
         posterior: DirectPosterior = None,
-        num_samples: int = 25,
+        num_eval_samples: int = 25,
         logger: Optional[StepLogger] = None,
     ):
         """
@@ -91,7 +95,7 @@ class LFI(Algorithm):
         :param posterior:
         :param num_sim_per_real_rollout:
         :param num_real_rollouts:
-        :param num_samples:
+        :param num_eval_samples: number of samples for evaluating the posterior in `eval_posterior()`
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         # Call Algorithm's constructor
@@ -100,39 +104,40 @@ class LFI(Algorithm):
         self._env_sim = env_sim
         self._env_real = env_real
         self.dp_mapping = dp_mapping
-        self._posterior = posterior
-        self._prior = prior
+        self._sbi_posterior = posterior
+        self.sbi_training_hparam = dict()
         self.num_real_rollouts = num_real_rollouts
         self.num_sim_per_real_rollout = num_sim_per_real_rollout
-        self.num_samples = num_samples
-        self.sbi_training_hparam = dict()
+        self.num_eval_samples = num_eval_samples
 
-        # Prepare simulator and prior for usage in sbi
+        # Prepare simulator and prior for usage in sbi (only needs to be done once)
         self._rollout_sampler = RolloutSamplerForSBI(self._env_sim, self._policy, dp_mapping)
-        self.sbi_simulator, self.batch_prior = prepare_for_sbi(self._rollout_sampler, self._prior)
+        self.sbi_simulator, self._sbi_prior = prepare_for_sbi(self._rollout_sampler, prior)
 
         # Create the algorithm instance used in sbi, e.g. SNPE-A/B/C or SNLE
         summary_writer = self.logger.printers[2].writer
         assert isinstance(summary_writer, SummaryWriter)
-        self.sbi_subrtn = sbi_subrtn_class(prior=self._prior, density_estimator=flow, summary_writer=summary_writer)
+        self.sbi_subrtn = sbi_subrtn_class(
+            prior=self._sbi_prior, density_estimator=flow, summary_writer=summary_writer
+        )
 
     @property
     def prior(self) -> Distribution:
         """ Get the prior. """
-        return self._prior
+        return self._sbi_prior
 
     @property
     def posterior(self) -> Union[DirectPosterior, None]:
         """ Get the posterior. """
-        return self._posterior
+        return self._sbi_posterior
 
     @posterior.setter
     def posterior(self, posterior: DirectPosterior):
         """ Set the posterior. """
         if not isinstance(posterior, DirectPosterior):
             raise pyrado.TypeErr(given=posterior, expected_type=DirectPosterior)
-        self._posterior = posterior
-    
+        self._sbi_posterior = posterior
+
     @property
     def num_sbi_simulations(self) -> int:
         """ Get the number of simulations done per call of the sbi subroutine. """
@@ -153,122 +158,116 @@ class LFI(Algorithm):
             prefix=f"iter_{self._curr_iter}",
             num_rollouts=self.num_real_rollouts,
         )
-
         if observations_real.ndim != 2:
             raise pyrado.ShapeErr(msg="The observations must be a 2-dim PyTorch tensor!")
 
-        # Logging
-        # num_sim = 0
-        # log_prob_hist = []
-        # num_sim_hist = []
-
-        # Set proposal prior
-        proposal_prior = self.batch_prior
-
         # First iteration
         if self._curr_iter == 0:
-            theta, x = simulate_for_sbi(
+            # Sample parameters proposal, and simulate these parameters to obtain the observations
+            domain_param, sim_output = simulate_for_sbi(
                 simulator=self.sbi_simulator,
-                proposal=proposal_prior,
+                proposal=self._sbi_prior,
                 num_simulations=self.num_sbi_simulations,
                 simulation_batch_size=1,
+                num_workers=1,  # leave it for now
             )
-            posterior_estimator = self.sbi_subrtn.append_simulations(theta, x)
-            posterior_estimator.train(**self.sbi_training_hparam)
-            self._posterior = self.sbi_subrtn.build_posterior()
+
+            self.sbi_subrtn.append_simulations(
+                domain_param,
+                sim_output,
+                proposal=None,  # pass None if the parameters were sampled from the prior
+            )
+            posterior_estimator = self.sbi_subrtn.train(**self.sbi_training_hparam)
+            self._sbi_posterior = (
+                self.sbi_subrtn.build_posterior()
+            )  # todo why are we not passing density_estimator=posterior_estimator here. sbi.inference.base::infer() also doesn't do it, but why?
 
         # Remaining training iterations
         else:
             for ro in observations_real:
-                self._posterior.set_default_x(ro)
-                theta, x = simulate_for_sbi(
+                self._sbi_posterior.set_default_x(ro)
+
+                # Sample parameters proposal, and simulate these parameters to obtain the observations
+                domain_param, sim_output = simulate_for_sbi(
                     simulator=self.sbi_simulator,
-                    proposal=self._posterior,
+                    proposal=self._sbi_posterior,
                     num_simulations=self.num_sbi_simulations,
                     simulation_batch_size=1,
+                    num_workers=1,  # leave it for now
                 )
-                self.sbi_subrtn.append_simulations(theta, x)
-                # num_sim += self.num_sbi_simulations
+                self.sbi_subrtn.append_simulations(domain_param, sim_output)
 
-            _ = self.sbi_subrtn.train()
-            self._posterior = self.sbi_subrtn.build_posterior()
+            posterior_estimator = self.sbi_subrtn.train(**self.sbi_training_hparam)
+            self._sbi_posterior = (
+                self.sbi_subrtn.build_posterior()
+            )  # todo why are we not passing density_estimator=posterior_estimator here. sbi.inference.base::infer() also doesn't do it, but why?
 
         # Logging
-        _, log_prob, _ = self.evaluate(
-            rollouts_real=observations_real, num_samples=self.num_samples, compute_quantity={"log_prob": True}
+        _, log_prob, _ = LFI.eval_posterior(
+            self.posterior, observations_real, self.num_eval_samples, self.sbi_simulator
         )
-        # log_prob = log_prob.mean().squeeze()
-        # log_prob_hist.append(log_prob)
-        # num_sim_hist.append(num_sim)
         self.logger.add_value("avg log prob", to.mean(log_prob))
         self.logger.add_value("num simulations", self.num_sbi_simulations)
 
-    def evaluate(
-        self,
-        rollouts_real: to.Tensor,
-        num_samples: int = 1000,
-        compute_quantity: dict = None,
-    ):
+        # Save snapshot data
+        self.make_snapshot(snapshot_mode, float(to.mean(log_prob)), meta_info)
+
+    @staticmethod
+    def eval_posterior(
+        posterior: DirectPosterior,
+        observations: to.Tensor,
+        num_samples: int,
+        simulator: Callable = None,
+        simulate_observations: bool = True,
+    ) -> Tuple[to.Tensor, to.Tensor, Optional[to.Tensor]]:
         """
-        Evaluates the posterior by calculating parameter samples given observed data, its log probability
+        Evaluates the posterior by computing parameter samples given observed data, its log probability
         and the simulated trajectory.
 
-        :param rollouts_real:
-        :param num_samples:
-        :param compute_quantity:
-        :return:
+        :param posterior: posterior to evaluate, i.e. normalizing flow that samples domain parameters conditioned on
+                          the provided observations
+        :param observations: observations from the real-world rollout a.k.a. x_o
+        :param num_samples: number of samples to draw from the posterior
+        :param simulator: simulator used during the sbi training procedure
+        :param simulate_observations: create simulated observations using the domain parameters sampled from the
+                                      posterior and same simulator as used during the sbi training procedure
+        :return: domain parameters sampled form the posterior
         """
-        compute_dict = {"log_prob": False, "sample_params": False, "sim_traj": False}
-        if compute_quantity is not None:
-            if not all(k in compute_dict for k in compute_quantity):
-                raise pyrado.KeyErr(keys=list(compute_quantity.keys()))
-            compute_dict.update(compute_quantity)
 
-        if rollouts_real.dim() == 1:
-            # add a dimension to treat single rollouts as a batch of data
-            rollouts_real = rollouts_real.unsqueeze(0)
-        if rollouts_real.dim() > 2:
-            raise pyrado.ShapeErr(given=rollouts_real)
+        def _eval_single_obs():
+            """ Take the variables from the outer scope, and evaluate the posterior for one real-world observation. """
+            # Compute the log probability
+            log_prob[idx, :] = posterior.log_prob(domain_params[idx, :, :], x=observations[idx, :])
 
-        # generate sample parameters
-        prop_params = to.stack([self._posterior.sample((num_samples,), x=obs) for obs in rollouts_real], dim=0)
-        # prop_params = [self._posterior.sample((num_samples,), x=obs) for obs in rollouts_real]
+            # Simulate trajectories with the domain parameters from the posterior
+            if simulate_observations:
+                observations_sim[idx, :, :] = to.cat(
+                    [simulator(domain_params[idx, s, :].unsqueeze(0)) for s in range(num_samples)], dim=0
+                )
 
-        log_prob, sim_traj = None, None
-        num_obs = rollouts_real.shape[0]
-        lenum_obs = rollouts_real.shape[1]
-        if compute_dict["sim_traj"]:
-            # sim_trajs = []
-            sim_traj = to.empty((num_obs, num_samples, lenum_obs))
-        if compute_dict["log_prob"]:
-            # log_probs = []
-            log_prob = to.empty((num_obs, num_samples))
+        if observations.ndim != 2:
+            raise pyrado.ShapeErr(msg="The observations must be a 2-dim PyTorch tensor!")
+        num_obs, dim_obs = observations.shape
 
-        cnt = 0
-        for o in range(num_obs):
+        # Sample domain parameters from the normalizing flow
+        domain_params = to.stack([posterior.sample((num_samples,), x=obs) for obs in observations], dim=0)
+        if domain_params.shape[0] != num_obs or domain_params.shape[1] != num_samples:  # shape[2] = num_domain_param
+            raise pyrado.ShapeErr(given=domain_params, expected_match=(num_obs, num_samples, -1))
 
-            # compute log probability
-            if compute_dict["log_prob"]:
-                log_prob[o, :] = self._posterior.log_prob(prop_params[o, :, :], x=rollouts_real[o, :])
-                # log_probs.append(self._posterior.log_prob(prop_params[o], x=rollouts_real[o]))
+        log_prob = to.empty((num_obs, num_samples))
+        observations_sim = to.empty((num_obs, num_samples, dim_obs)) if simulate_observations else None
 
-            # compute trajectories
-            if compute_dict["sim_traj"]:
-                for s in range(num_samples):
-                    if not s % 10:
-                        print(
-                            "\r[trainum_lfi.py/evaluate_lfi] Observation: ({}|{}), Sample: ({}|{})".format(
-                                o, num_obs, s, num_samples
-                            ),
-                            end="",
-                        )
-                    # compute trajectories for each observation and every sample
-                    sim_traj[o, s, :] = self.sbi_simulator(prop_params[o, s, :].unsqueeze(0))
-                    # sim_trajs.append(self.sbi_simulator(prop_params[o]))
-            cnt += 1
-        if not compute_dict["sample_params"]:
-            prop_params = None
-        return prop_params, log_prob, sim_traj
+        for idx in tqdm(
+            range(num_obs),
+            total=num_obs,
+            desc="Evaluating posterior",
+            unit="observations",
+            file=sys.stdout,
+            leave=False,
+        ):
+            _eval_single_obs()
+
+        return domain_params, log_prob, observations_sim
 
     @staticmethod
     def collect_real_observations(
@@ -296,13 +295,16 @@ class LFI(Algorithm):
         if not (isinstance(inner_env(env), RealEnv) or isinstance(inner_env(env), SimEnv)):
             raise pyrado.TypeErr(given=inner_env(env), expected_type=[RealEnv, SimEnv])
 
-        if save_dir is not None:
-            print_cbt(f"Executing {prefix}_policy ...", "c", bright=True)
-
         # Evaluate sequentially when conducting a sim-to-real experiment
         rollout_worker = RealRolloutSamplerForSBI(env, policy)
         obs_real = []
-        for i in range(num_rollouts):
+        for _ in tqdm(
+            range(num_rollouts),
+            total=num_rollouts,
+            desc=Fore.CYAN + Style.BRIGHT + f"Executing {prefix}_policy" + Style.RESET_ALL,
+            unit="rollouts",
+            file=sys.stdout,
+        ):
             obs_real.append(rollout_worker())
 
         # Optionally save the data
@@ -322,13 +324,23 @@ class LFI(Algorithm):
         return obs_real
 
     def save_snapshot(self, meta_info: dict = None):
-        super().save_snapshot(meta_info)
+        # super().save_snapshot(meta_info)
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
             joblib.dump(self._env_sim, osp.join(self.save_dir, "env_sim.pkl"))
             joblib.dump(self._env_real, osp.join(self.save_dir, "env_real.pkl"))
             pyrado.save(self._policy, "policy", "pt", self.save_dir, None)
-            pyrado.save(self._posterior, "posterior", "pt", self._save_dir, meta_info, use_state_dict=False)
+            pyrado.save(self._sbi_posterior, "posterior", "pt", self._save_dir, meta_info, use_state_dict=False)
         else:
             raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subroutine!")
+
+    # def __getstate__(self):
+    #     self.__dict__.pop("sbi_simulator")
+    #     self.__dict__.pop("sbi_subrtn")
+    #     return super().__getstate__()
+    #
+    # def __setstate__(self, state):
+    #     self.__dict__["sbi_simulator"] = None
+    #     self.__dict__["sbi_subrtn"] = None
+    #     super().__setstate__(state)
