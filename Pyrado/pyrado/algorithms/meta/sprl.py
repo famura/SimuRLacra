@@ -53,7 +53,7 @@ class MultivariateNormalWrapper:
         ), "Stacked has invalid size! Must be 2*dim (one times for mean, a second time for covariance cholesky diagonal)."
         mean = stacked[:dim]
         cov_chol_flat = stacked[dim:]
-        return MultivariateNormalWrapper(to.tensor(mean), to.tensor(cov_chol_flat))
+        return MultivariateNormalWrapper(to.tensor(mean).float(), to.tensor(cov_chol_flat).float())
 
     @property
     def mean(self):
@@ -173,7 +173,7 @@ class SPRL(Algorithm):
             self._parameter.context_mean, self._parameter.context_cov_chol_flat
         )
         rollouts = self._subroutine.rollouts
-        contexts = to.tensor([stepseq.rollout_info['domain_param'][self._parameter.name] for rollout in rollouts for stepseq in rollout], requires_grad=True)
+        contexts = to.tensor(np.array([stepseq.rollout_info['domain_param'][self._parameter.name] for rollout in rollouts for stepseq in rollout]), requires_grad=True).reshape(-1,1)
 
         print(f'Current mean of sampled domain param {self._parameter.name}: {contexts.mean()}')
 
@@ -233,13 +233,13 @@ class SPRL(Algorithm):
         )
 
         if result.success:
-            self._parameter.adapt("context_mean", to.tensor([result.x[0]]))
-            self._parameter.adapt("context_cov_chol_flat", to.tensor([result.x[1]]))
+            self._parameter.adapt("context_mean", to.tensor([result.x[0]]).float())
+            self._parameter.adapt("context_cov_chol_flat", to.tensor([result.x[1]]).float())
         else:
             old_f = objective(previous_distribution.get_stacked())[0]
             if kl_constraint_fn(result.x) <= self._kl_constraints_ub and result.fun < old_f:
-                self._parameter.adapt("context_mean", to.tensor([result.x[0]]))
-                self._parameter.adapt("context_cov_chol_flat", to.tensor([result.x[1]]))
+                self._parameter.adapt("context_mean", to.tensor([result.x[0]]).float())
+                self._parameter.adapt("context_cov_chol_flat", to.tensor([result.x[1]]).float())
             else:
                 raise pyrado.BaseErr("Sad… :/")
 
