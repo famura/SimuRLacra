@@ -29,7 +29,7 @@ def create_qq_setup():
 
     # parameter which LFI trains for
     params_names = list(env_sim.get_nominal_domain_param().keys())
-    simulator = EnvSimulator(env_sim, behavior_policy, params_names, "summary")
+    simulator = EnvSimulator(env_sim, behavior_policy, params_names, "ramos")
 
     # define prior and true parameter distributions
     real_params = to.tensor(list(env_sim.get_nominal_domain_param().values()), dtype=to.float32)

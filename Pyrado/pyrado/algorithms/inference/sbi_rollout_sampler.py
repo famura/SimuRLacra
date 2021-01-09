@@ -3,7 +3,7 @@ from itertools import product
 import pyrado
 import torch as to
 from abc import ABC, abstractmethod
-from typing import Callable, Union, Mapping
+from typing import Union, Mapping
 
 from pyrado.environments.base import Env
 from pyrado.policies.base import Policy
@@ -23,12 +23,17 @@ class RolloutSamplerForSBIBase(ABC):
         Constructor
 
         :param strategy: the method with which the observations are computed from the rollouts. Possible options:
-                         states, and summary.
-        """
-        if not strategy.lower() in ["states", "summary"]:
-            raise pyrado.ValueErr(given=strategy, eq_constraint="states, summary")
+                         `states` (uses all observed states from rollout),
+                         `final_state` (use the last observed state from the rollout), and
+                         `ramos` (summary statistics as proposed in  [1])
 
-        self.strategy = strategy
+        [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
+            inference for robotics simulators", CONFERENCE?, 2020
+        """
+        if not strategy.lower() in ["states", "final_state", "ramos"]:
+            raise pyrado.ValueErr(given=strategy, eq_constraint="states, final_state, summary")
+
+        self.strategy = strategy.lower()
         self._transformed_representation = False  # TODO why should we ever not transform?
 
     def set_representation(self, transformed_representation: bool):
@@ -38,27 +43,27 @@ class RolloutSamplerForSBIBase(ABC):
     def __call__(self, params) -> Union[StepSequence, to.Tensor]:
         raise NotImplementedError
 
-    def transform_data(self, ro: StepSequence, strategy: str = None):
+    def transform_data(self, rollout: StepSequence):
         """
         Transforms rollouts into the observations used for likelihood-free inference.
         Currently a state-representation as well as state-action summary-statistics are available.
 
-        :param ro:
-        :param strategy:
-        :return:
+        :param rollout: one rollout containing the data which should be transformed into an observation for inference
+        :return: observation used for inference
         """
-        strategy = self.strategy if strategy is None else strategy
-        if strategy is "states":
-            context_strat = self.states_representation
-        elif strategy is "summary":
-            # calculate summary statistics
-            context_strat = self.summary_statistics
+        if self.strategy == "states":
+            context_strat = self.all_states
+        elif self.strategy == "final_state":
+            context_strat = self.final_state
+        elif self.strategy == "ramos":
+            context_strat = self.ramos_statistic
         else:
-            raise pyrado.ValueErr(given=strategy)
-        return context_strat(ro)
+            raise NotImplementedError
+
+        return context_strat(rollout)
 
     @staticmethod
-    def summary_statistics(ro: StepSequence) -> to.Tensor:
+    def ramos_statistic(rollout: StepSequence) -> to.Tensor:
         """
         Computing summary statistics based on approach in [1], see eq. (22).
         This method guarantees output which has the same size for every trajectory.
@@ -66,11 +71,13 @@ class RolloutSamplerForSBIBase(ABC):
         [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
             inference for robotics simulators", CONFERENCE?, 2020
 
-        :param ro:
-        :return:
+        :param rollout: one rollout containing the data which should be transformed into an observation for inference
+        :return: summary statistics of the rollout
         """
-        act = ro.actions
-        obs = ro.observations
+        rollout.torch(data_type=to.get_default_dtype())
+
+        act = rollout.actions
+        obs = rollout.observations
         # dot product for the state-action dot-product
         obs_diff = obs[1:] - obs[:-1]
 
@@ -79,21 +86,36 @@ class RolloutSamplerForSBIBase(ABC):
             ao_dot_prod.append(to.dot(a, o).item())
         ao_dot_prod = to.tensor(ao_dot_prod)
 
-        mean_obs_diff = to.mean(obs_diff, 0)
-        var_obs_diff = ((mean_obs_diff - obs_diff) ** 2).mean(dim=0)
-        summary_statistics = to.cat((ao_dot_prod, mean_obs_diff, var_obs_diff), 0)
-        return summary_statistics
+        mean_obs_diff = to.mean(obs_diff, dim=0)
+        var_obs_diff = to.mean((mean_obs_diff - obs_diff) ** 2, dim=0)
+
+        # Combine all the statistics
+        return to.cat((ao_dot_prod, mean_obs_diff, var_obs_diff), dim=0)
 
     @staticmethod
-    def states_representation(ro: StepSequence) -> to.Tensor:
+    def all_states(rollout: StepSequence) -> to.Tensor:
         """
-        Returns the observations of the rollout as one vector.
+        Returns the observations of the rollout as a vector.
         Can be used if each trajectory has the same size or for rnn networks.
 
-        :param ro:
-        :return:
+        :param rollout: one rollout containing the data which should be transformed into an observation for inference
+        :return: observations as a vector
         """
-        return ro.observations.view(-1, 1).squeeze()
+        rollout.torch(data_type=to.get_default_dtype())
+
+        return rollout.observations.view(-1)
+
+    @staticmethod
+    def final_state(rollout: StepSequence) -> to.Tensor:
+        """
+        Returns the last observations of the rollout as a vector.
+
+        :param rollout: one rollout containing the data which should be transformed into an observation for inference
+        :return: last observations as a vector
+        """
+        rollout.torch(data_type=to.get_default_dtype())
+
+        return rollout.observations[-1].view(-1)
 
 
 class EnvSimulator(RolloutSamplerForSBIBase):
@@ -115,9 +137,9 @@ class EnvSimulator(RolloutSamplerForSBIBase):
             eval=True,
             reset_kwargs=dict(domain_param=dict(zip(self.param_names, params.squeeze().numpy()))),
         )
-        ro.torch(data_type=to.float32)
+        ro.torch(data_type=to.get_default_dtype())
         if self._transformed_representation:
-            ro = self.transform_data(ro, strategy=self.strategy)
+            ro = self.transform_data(ro)
         # return to.tensor(ro.observations).view(-1, 1).squeeze()
         return ro
 
@@ -135,7 +157,7 @@ class RolloutSamplerForSBI(RolloutSamplerForSBIBase):
         env: Env,
         policy: Policy,
         dp_mapping: Mapping[int, str],
-        strategy: str = "states",
+        strategy: str,
     ):
         super().__init__(strategy=strategy)
 
@@ -150,12 +172,10 @@ class RolloutSamplerForSBI(RolloutSamplerForSBIBase):
             eval=True,
             reset_kwargs=dict(domain_param=dict(zip(self.param_names, params.squeeze()))),
         )
-        ro.torch(data_type=to.float32)
+        ro.torch(data_type=to.get_default_dtype())
 
-        # Return the observations used for LFI from the rollout data
-        return self.transform_data(
-            ro[:50], strategy=self.strategy
-        )  # TODO only take the first 50 cause the envs are very unlikely to end earlier
+        # Return the observations used for inference from the rollout data
+        return self.transform_data(ro)
 
 
 class RealRolloutSamplerForSBI(RolloutSamplerForSBIBase):
@@ -167,23 +187,21 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBIBase):
         self,
         env: Env,
         policy: Policy,
-        strategy: str = "states",
+        strategy: str,
     ):
         super().__init__(strategy=strategy)
 
         self.env = env
         self.policy = policy
 
-    def __call__(self):
+    def __call__(self, params=None):
         ro = rollout(
             self.env,
             self.policy,
             eval=True,
             # Don't set the domain params here since they are set by the DomainRandWrapperBuffer to mimic the randomness
         )
-        ro.torch(data_type=to.float32)
+        ro.torch(data_type=to.get_default_dtype())
 
-        # Return the observations used for LFI from the rollout data
-        return self.transform_data(
-            ro[:50], strategy=self.strategy
-        )  # TODO only take the first 50 cause the envs are very unlikely to end earlier
+        # Return the observations used for inference from the rollout data
+        return self.transform_data(ro)

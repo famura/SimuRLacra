@@ -40,14 +40,14 @@ class EnvSimulator(Callable):
             reset_kwargs=dict(domain_param=dict(zip(self.param_names, params.squeeze().numpy()))),
         )
         if self.transformed_representation:
-            ro = self.transform_data(ro, strategy=self.strategy)
+            ro = self.transform_data(ro)
         # return to.tensor(ro.observations).view(-1, 1).squeeze().to(dtype=to.float32)
         return ro
 
-    def transform_data(self, ro: StepSequence, strategy: str = "summary"):
+    def transform_data(self, ro: StepSequence, strategy: str = "ramos"):
         if strategy is "states":
             context_strat = self.states_representation
-        elif strategy is "summary":
+        elif strategy is "ramos":
             # calculate summary statistics
             context_strat = self.summary_statistics
         else:
