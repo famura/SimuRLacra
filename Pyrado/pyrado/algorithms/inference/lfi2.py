@@ -168,7 +168,7 @@ class LFI(Algorithm):
         if observations_real.ndim != 2 or observations_real.shape[0] != self.num_real_rollouts:
             raise pyrado.ShapeErr(
                 msg=f"The observations must be a 2-dim PyTorch tensor where the first dimension has as"
-                    f"many entries as there are observations, but the shape is {observations_real.shape}!"
+                f"many entries as there are observations, but the shape is {observations_real.shape}!"
             )
 
         # LFI.truncate_to_shortest(observations_real)
