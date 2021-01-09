@@ -81,16 +81,18 @@ class RolloutSamplerForSBIBase(ABC):
         # dot product for the state-action dot-product
         obs_diff = obs[1:] - obs[:-1]
 
-        ao_dot_prod = []
-        for a, o in product(act.T, obs_diff.T):
-            ao_dot_prod.append(to.dot(a, o).item())
-        ao_dot_prod = to.tensor(ao_dot_prod)
+        # TODO Sample as below but faster :D
+        act_obs_dot_prod = to.einsum("ij,ik->jk", act, obs_diff).view(-1)
+        # act_obs_dot_prod = []
+        # for a, o in product(act.T, obs_diff.T):
+        #     act_obs_dot_prod.append(to.dot(a, o).item())
+        # act_obs_dot_prod = to.tensor(act_obs_dot_prod)
 
         mean_obs_diff = to.mean(obs_diff, dim=0)
         var_obs_diff = to.mean((mean_obs_diff - obs_diff) ** 2, dim=0)
 
         # Combine all the statistics
-        return to.cat((ao_dot_prod, mean_obs_diff, var_obs_diff), dim=0)
+        return to.cat((act_obs_dot_prod, mean_obs_diff, var_obs_diff), dim=0)
 
     @staticmethod
     def all_states(rollout: StepSequence) -> to.Tensor:
