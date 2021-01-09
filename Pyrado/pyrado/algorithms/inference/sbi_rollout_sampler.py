@@ -34,10 +34,6 @@ class RolloutSamplerForSBIBase(ABC):
             raise pyrado.ValueErr(given=strategy, eq_constraint="states, final_state, summary")
 
         self.strategy = strategy.lower()
-        self._transformed_representation = False  # TODO why should we ever not transform?
-
-    def set_representation(self, transformed_representation: bool):
-        self._transformed_representation = transformed_representation
 
     @abstractmethod
     def __call__(self, params) -> Union[StepSequence, to.Tensor]:
@@ -140,8 +136,7 @@ class EnvSimulator(RolloutSamplerForSBIBase):
             reset_kwargs=dict(domain_param=dict(zip(self.param_names, params.squeeze().numpy()))),
         )
         ro.torch(data_type=to.get_default_dtype())
-        if self._transformed_representation:
-            ro = self.transform_data(ro)
+        ro = self.transform_data(ro)
         # return to.tensor(ro.observations).view(-1, 1).squeeze()
         return ro
 
