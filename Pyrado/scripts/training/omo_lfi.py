@@ -66,8 +66,8 @@ if __name__ == "__main__":
     num_real_obs = 5
     env_real = deepcopy(env_sim)
     randomizer = DomainRandomizer(
-        NormalDomainParam(name="k", mean=30.0, std=0.3),
-        NormalDomainParam(name="d", mean=0.1, std=0.001),
+        NormalDomainParam(name="k", mean=33.0, std=0.33),
+        NormalDomainParam(name="d", mean=0.2, std=0.002),
     )
     env_real = DomainRandWrapperBuffer(env_real, randomizer)
     env_real.fill_buffer(num_real_obs)
@@ -77,15 +77,14 @@ if __name__ == "__main__":
     behavior_policy = IdlePolicy(env_sim.spec)
 
     # Define a prior
-    prior = utils.BoxUniform(low=to.tensor([27.0, 0.05]), high=to.tensor([33, 0.15]))
+    prior_hparam = dict(low=to.tensor([25.0, 0.05]), high=to.tensor([35, 0.45]))
+    prior = utils.BoxUniform(**prior_hparam)
 
     # Normalizing flow
-    embedding_net = nn.Identity()
-    flow_hparam = dict(hidden_features=10, num_transforms=2)
-    flow = utils.posterior_nn(model="maf", embedding_net=embedding_net, **flow_hparam)
+    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=2)
 
     # Algorithm
-    algo_hparam = dict(max_iter=10, num_real_rollouts=num_real_obs, num_sim_per_real_rollout=5)
+    algo_hparam = dict(max_iter=10, num_real_rollouts=num_real_obs, num_sim_per_real_rollout=100)
     algo = LFI(
         ex_dir,
         env_sim,
@@ -93,7 +92,7 @@ if __name__ == "__main__":
         behavior_policy,
         dp_mapping,
         prior,
-        flow,
+        posterior_nn_hparam,
         SNPE,
         **algo_hparam,
     )
@@ -102,7 +101,8 @@ if __name__ == "__main__":
     save_list_of_dicts_to_yaml(
         [
             dict(env=env_hparams, seed=args.seed),
-            dict(flow=flow_hparam),
+            dict(prior=prior_hparam),
+            dict(posterior_nn=posterior_nn_hparam),
             dict(algo=algo_hparam, algo_name=algo.name),
         ],
         ex_dir,

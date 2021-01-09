@@ -121,7 +121,7 @@ if __name__ == "__main__":
 
     # sample parameters
     sample_params, _, sim_rollouts = inference.evaluate(
-        rollouts_real=ro_real, num_samples=num_samples, compute_quantity={"sample_params": True, "sim_traj": True}
+        observations=ro_real, num_samples=num_samples, compute_quantity={"sample_params": True, "sim_traj": True}
     )
 
     sim_rollouts = sim_rollouts.unsqueeze(-1).view(num_obs, num_samples, 4, 2)
