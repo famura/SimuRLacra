@@ -161,13 +161,14 @@ class LFI(Algorithm):
             self.save_dir,
             self._env_real,
             self._policy,
+            self.summary_statistic,
             prefix=f"iter_{self._curr_iter}",
             num_rollouts=self.num_real_rollouts,
         )
         if observations_real.ndim != 2 or observations_real.shape[0] != self.num_real_rollouts:
             raise pyrado.ShapeErr(
                 msg=f"The observations must be a 2-dim PyTorch tensor where the first dimension has as"
-                f"many entries as there are observations, but the shape is {observations_real.shape}!"
+                    f"many entries as there are observations, but the shape is {observations_real.shape}!"
             )
 
         # LFI.truncate_to_shortest(observations_real)
@@ -286,9 +287,9 @@ class LFI(Algorithm):
         save_dir: Optional[str],
         env: [RealEnv, SimEnv],
         policy: Policy,
+        summary_statistic: str,
         prefix: str,
         num_rollouts: int,
-        num_parallel_envs: int = 1,
     ) -> to.Tensor:
         """
         Roll-out a (behavioral) policy on the target system (real-world platform), and save the observations computed
@@ -298,17 +299,21 @@ class LFI(Algorithm):
         :param save_dir: directory to save the snapshots i.e. the results in, if `None` nothing is saved
         :param env: target environment for evaluation, in the sim-2-sim case this is another simulation instance
         :param policy: policy to evaluate
+        :param summary_statistic: the method with which the observations for LFI are computed from the rollouts.
+                                  Possible options:
+                                 `states` (uses all observed states from rollout),
+                                 `final_state` (use the last observed state from the rollout), and
+                                 `ramos` (summary statistics as proposed in  [1])
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
         :param num_rollouts: number of rollouts to collect on the target system
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
-        :param num_parallel_envs: number of environments for the parallel sampler (only used for SimEnv)
         :return: 2-dim tensor of observations extracted from the rollouts, where the samples are along the first dim
         """
         if not (isinstance(inner_env(env), RealEnv) or isinstance(inner_env(env), SimEnv)):
             raise pyrado.TypeErr(given=inner_env(env), expected_type=[RealEnv, SimEnv])
 
         # Evaluate sequentially (necessary for sim-to-real experiments)
-        rollout_worker = RealRolloutSamplerForSBI(env, policy, strategy="final_state")
+        rollout_worker = RealRolloutSamplerForSBI(env, policy, summary_statistic)
         observations_real = []
         for _ in tqdm(
             range(num_rollouts),
