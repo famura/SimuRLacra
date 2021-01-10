@@ -84,7 +84,9 @@ if __name__ == "__main__":
     posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=2)
 
     # Algorithm
-    algo_hparam = dict(max_iter=10, num_real_rollouts=num_real_obs, num_sim_per_real_rollout=100)
+    algo_hparam = dict(
+        summary_statistic="ramos", max_iter=10, num_real_rollouts=num_real_obs, num_sim_per_real_rollout=50
+    )
     algo = LFI(
         ex_dir,
         env_sim,

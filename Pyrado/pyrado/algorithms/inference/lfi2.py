@@ -34,7 +34,7 @@ from colorama import Style, Fore
 from torch.distributions import Distribution
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
-from typing import Optional, Callable, Type, Union, Mapping, Tuple
+from typing import Optional, Callable, Type, Union, Mapping, Tuple, List
 
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
 from sbi.inference.snpe import PosteriorEstimator
@@ -74,6 +74,7 @@ class LFI(Algorithm):
         prior: Distribution,
         posterior_nn_hparam: dict,  # Callable[[], DirectPosterior],
         sbi_subrtn_class: Type[PosteriorEstimator],
+        summary_statistic: str,
         max_iter: int,
         num_real_rollouts: int,
         num_sim_per_real_rollout: int,
@@ -88,9 +89,14 @@ class LFI(Algorithm):
         :param env_real: real-world environment a.k.a. target domain
         :param policy: behavioral policy  TODO fixed for now, eventually learned
         :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
-        :param prior:
+        :param prior: distribution used by sbi as a prior
         :param posterior_nn_hparam: hyper parameters for creating the posterior"s density estimator
-        :param sbi_subrtn_class:
+        :param sbi_subrtn_class: sbi algorithm calls for executing the LFI, e.g. SNPE
+        :param summary_statistic: the method with which the observations for LFI are computed from the rollouts.
+                                  Possible options:
+                                 `states` (uses all observed states from rollout),
+                                 `final_state` (use the last observed state from the rollout), and
+                                 `ramos` (summary statistics as proposed in  [1])
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
         :param num_sim_per_real_rollout:
         :param num_real_rollouts:
@@ -103,6 +109,7 @@ class LFI(Algorithm):
         self._env_sim = env_sim
         self._env_real = env_real
         self.dp_mapping = dp_mapping
+        self.summary_statistic = summary_statistic.lower()
         self.posterior_nn_hparam = posterior_nn_hparam
         self.sbi_subrtn_class = sbi_subrtn_class
         self.sbi_training_hparam = dict()
@@ -110,14 +117,13 @@ class LFI(Algorithm):
         self.num_sim_per_real_rollout = num_sim_per_real_rollout
         self.num_eval_samples = num_eval_samples
 
-        to.save(prior, osp.join(self._save_dir, "prior.pt"))
         pyrado.save(prior, "prior", "pt", self._save_dir, meta_info=None, use_state_dict=False)
 
     def set_up_sbi(self) -> Tuple[Callable, Distribution, PosteriorEstimator]:
         """"""
         # Prepare simulator and prior for usage in sbi
         prior = pyrado.load(None, "prior", "pt", self._save_dir)
-        rollout_sampler = RolloutSamplerForSBI(self._env_sim, self._policy, self.dp_mapping)
+        rollout_sampler = RolloutSamplerForSBI(self._env_sim, self._policy, self.dp_mapping, self.summary_statistic)
         sbi_simulator, sbi_prior = prepare_for_sbi(rollout_sampler, prior)
 
         # Create the algorithm instance used in sbi, e.g. SNPE-A/B/C or SNLE
@@ -133,25 +139,39 @@ class LFI(Algorithm):
         """ Get the number of simulations done per call of the sbi subroutine. """
         return self.num_sim_per_real_rollout * self.num_real_rollouts
 
+    @staticmethod
+    def truncate_to_shortest(data: List[to.Tensor]):
+        """
+        TODO shoulnt be used in the end
+        Truncate the data sets to the shortest one if necessary
+
+        :param data: list of (at least 1-dim) data sets
+        """
+        min_length = min([len(d) for d in data])
+        if not check_all_lengths_equal(data):
+            print_cbt("Needed to truncate.", "y", bright=True)
+            for idx, d in enumerate(data):
+                data[idx] = d[:min_length]
+
     def step(self, snapshot_mode: str, meta_info: dict = None):
-        """
-        Trains the posterior using SNPE using observed rollouts and the prior distribution
-
-        """
+        # Create the objects used by sbi
         sbi_simulator, sbi_prior, sbi_subrtn = self.set_up_sbi()
-
-        # TODO: raise exception if flow, prior or inference is not given. In this case only the posterior is given
-        #  and should only be used for evaluation
 
         observations_real = LFI.collect_real_observations(
             self.save_dir,
             self._env_real,
             self._policy,
+            self.summary_statistic,
             prefix=f"iter_{self._curr_iter}",
             num_rollouts=self.num_real_rollouts,
         )
-        if observations_real.ndim != 2:
-            raise pyrado.ShapeErr(msg="The observations must be a 2-dim PyTorch tensor!")
+        if observations_real.ndim != 2 or observations_real.shape[0] != self.num_real_rollouts:
+            raise pyrado.ShapeErr(
+                msg=f"The observations must be a 2-dim PyTorch tensor where the first dimension has as"
+                f"many entries as there are observations, but the shape is {observations_real.shape}!"
+            )
+
+        # LFI.truncate_to_shortest(observations_real)
 
         # First iteration
         if self._curr_iter == 0:
@@ -267,9 +287,9 @@ class LFI(Algorithm):
         save_dir: Optional[str],
         env: [RealEnv, SimEnv],
         policy: Policy,
+        summary_statistic: str,
         prefix: str,
         num_rollouts: int,
-        num_parallel_envs: int = 1,
     ) -> to.Tensor:
         """
         Roll-out a (behavioral) policy on the target system (real-world platform), and save the observations computed
@@ -279,18 +299,22 @@ class LFI(Algorithm):
         :param save_dir: directory to save the snapshots i.e. the results in, if `None` nothing is saved
         :param env: target environment for evaluation, in the sim-2-sim case this is another simulation instance
         :param policy: policy to evaluate
+        :param summary_statistic: the method with which the observations for LFI are computed from the rollouts.
+                                  Possible options:
+                                 `states` (uses all observed states from rollout),
+                                 `final_state` (use the last observed state from the rollout), and
+                                 `ramos` (summary statistics as proposed in  [1])
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
         :param num_rollouts: number of rollouts to collect on the target system
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
-        :param num_parallel_envs: number of environments for the parallel sampler (only used for SimEnv)
         :return: 2-dim tensor of observations extracted from the rollouts, where the samples are along the first dim
         """
         if not (isinstance(inner_env(env), RealEnv) or isinstance(inner_env(env), SimEnv)):
             raise pyrado.TypeErr(given=inner_env(env), expected_type=[RealEnv, SimEnv])
 
         # Evaluate sequentially (necessary for sim-to-real experiments)
-        rollout_worker = RealRolloutSamplerForSBI(env, policy)
-        obs_real = []
+        rollout_worker = RealRolloutSamplerForSBI(env, policy, summary_statistic)
+        observations_real = []
         for _ in tqdm(
             range(num_rollouts),
             total=num_rollouts,
@@ -298,23 +322,17 @@ class LFI(Algorithm):
             unit="rollouts",
             file=sys.stdout,
         ):
-            obs_real.append(rollout_worker())
+            observations_real.append(rollout_worker())
 
         # Optionally save the data
         if save_dir is not None:
-            pyrado.save(obs_real, f"{prefix}_observations_real", "pkl", save_dir)
+            pyrado.save(observations_real, f"{prefix}_observations_real", "pkl", save_dir)
 
-        # TODO our current comparison on traj level causes problems if the simulations are not equally long
-        min_length = min([len(obs) for obs in obs_real])
-        if not check_all_lengths_equal(obs_real):
-            # Truncate the observations if necessary
-            print_cbt("Needed to truncate.", "y", bright=True)
-            for idx, obs in enumerate(obs_real):
-                obs_real[idx] = obs[:min_length]
+        # LFI.truncate_to_shortest(observations_real)
 
         # Return stacked tensor
-        obs_real = to.stack(obs_real)
-        return obs_real
+        observations_real = to.stack(observations_real)
+        return observations_real
 
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
