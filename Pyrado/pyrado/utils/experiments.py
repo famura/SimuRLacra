@@ -34,6 +34,7 @@ from typing import Callable, Any, Union
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
+from pyrado.algorithms.inference.lfi2 import LFI
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.algorithms.meta.epopt import EPOpt
 from pyrado.algorithms.meta.simopt import SimOpt
@@ -162,6 +163,18 @@ def load_experiment(ex_dir: str, args: Any = None) -> (Union[SimEnv, EnvWrapper]
         if isinstance(algo.subroutine, ActorCritic):
             extra["vfcn"] = pyrado.load(algo.subroutine.critic.vfcn, f"{args.vfcn_name}", "pt", ex_dir, None)
             print_cbt(f"Loaded {osp.join(ex_dir, f'{args.vfcn_name}.pt')}", "g")
+
+    elif isinstance(algo, LFI):
+        # Environment
+        env = pyrado.load(None, "env_sim", "pkl", ex_dir, None)
+        # Policy
+        policy = pyrado.load(algo.policy, f"{args.policy_name}", "pt", ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
+        # Extra (posterior)
+        extra["prior"] = pyrado.load(None, "prior", "pt", ex_dir, None)
+        extra["posterior"] = pyrado.load(None, "posterior", "pt", ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'prior.pt')}", "g")
+        print_cbt(f"Loaded {osp.join(ex_dir, f'posterior.pt')}", "g")
 
     elif isinstance(algo, ActorCritic):
         # Environment

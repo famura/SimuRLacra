@@ -180,7 +180,7 @@ class LFI(Algorithm):
                 proposal=sbi_prior,
                 num_simulations=self.num_sim_per_real_rollout,
                 simulation_batch_size=1,
-                num_workers=self.num_workers,  # leave it for now
+                num_workers=self.num_workers,
             )
             sbi_subrtn.append_simulations(
                 domain_param,
@@ -188,6 +188,9 @@ class LFI(Algorithm):
                 proposal=None,  # pass None if the parameters were sampled from the prior
             )
             self._cnt_samples += self.num_sim_per_real_rollout
+
+            # Save the first observations
+            pyrado.save(observations_real, "observations_real", "pt", self._save_dir)
 
         # Remaining training iterations
         else:
@@ -209,11 +212,16 @@ class LFI(Algorithm):
                 )  # TODO @group, this one is new
                 self._cnt_samples += self.num_sim_per_real_rollout
 
+            # Append and save all observations
+            prev_observations = pyrado.load(
+                None, "observations_real", "pt", self._save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter - 1 }")
+            )
+            all_observations = to.cat([prev_observations, observations_real], dim=0)
+            pyrado.save(all_observations, "observations_real", "pt", self._save_dir)
+
         # Train the posterior
-        posterior_estimator = sbi_subrtn.train(**self.sbi_training_hparam)
-        posterior = (
-            sbi_subrtn.build_posterior()
-        )  # todo why are we not passing density_estimator=posterior_estimator here. sbi.inference.base::infer() also doesn't do it, but why?
+        sbi_subrtn.train(**self.sbi_training_hparam)
+        posterior = sbi_subrtn.build_posterior()  # no need to pass density_estimator, since latest is used by default
 
         # Logging
         domain_param_eval, log_prob, _ = LFI.eval_posterior(
@@ -327,14 +335,15 @@ class LFI(Algorithm):
         ):
             observations_real.append(rollout_worker())
 
-        # Optionally save the data
-        if save_dir is not None:
-            pyrado.save(observations_real, f"{prefix}_observations_real", "pkl", save_dir)
-
         # LFI.truncate_to_shortest(observations_real)
 
-        # Return stacked tensor
+        # Stacked to tensor, samples along 1st dimension
         observations_real = to.stack(observations_real)
+
+        # Optionally save the data
+        if save_dir is not None:
+            pyrado.save(observations_real, f"{prefix}_observations_real", "pt", save_dir)
+
         return observations_real
 
     def save_snapshot(self, meta_info: dict = None):
