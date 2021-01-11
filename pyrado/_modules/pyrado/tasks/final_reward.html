@@ -471,23 +471,19 @@
 <div class="viewcode-block" id="BestStateFinalRewTask"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.final_reward.BestStateFinalRewTask">[docs]</a><span class="k">class</span> <span class="nc">BestStateFinalRewTask</span><span class="p">(</span><span class="n">TaskWrapper</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper for tasks which yields a reward / cost on success / failure based on the best reward / cost observed in the</span>
-<span class="sd">    current trajectory that is scaled by the number of taken / remaining time steps.</span>
+<span class="sd">    current trajectory.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapped_task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">max_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapped_task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param wrapped_task: task to wrap</span>
-<span class="sd">        :param max_steps: maximum number of time steps in the environment to infer the number of steps when done</span>
 <span class="sd">        :param factor: value to scale the final reward</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Call TaskWrapper&#39;s constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wrapped_task</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_steps</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">max_steps</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_max_steps</span> <span class="o">=</span> <span class="n">max_steps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">=</span> <span class="n">factor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">best_rew</span> <span class="o">=</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_yielded_final_rew</span> <span class="o">=</span> <span class="kc">False</span>
@@ -519,13 +515,11 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yielded_final_rew</span><span class="p">:</span>
             <span class="c1"># Only yield the final reward once</span>
             <span class="k">return</span> <span class="mf">0.0</span>
-
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_yielded_final_rew</span> <span class="o">=</span> <span class="kc">True</span>
 
-            <span class="c1"># Return the highest reward / lowest cost scaled with the number of taken time steps and the factor</span>
-            <span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_steps</span> <span class="o">-</span> <span class="n">remaining_steps</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span>
-            <span class="k">return</span> <span class="n">scale</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_rew</span></div></div>
+            <span class="c1"># Return the highest reward / lowest cost scaled with the factor</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_rew</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span></div></div>
 </pre></div>
 
            </div>

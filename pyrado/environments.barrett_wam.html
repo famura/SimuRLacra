@@ -345,7 +345,7 @@ This code is based on work from Pascal Klink.</p>
 
 <dl class="py class">
 <dt id="pyrado.environments.barrett_wam.trackers.RigidBodyTracker">
-<em class="property">class </em><code class="sig-name descname">RigidBodyTracker</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">names</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">rotation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/barrett_wam/trackers.html#RigidBodyTracker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.barrett_wam.trackers.RigidBodyTracker" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">RigidBodyTracker</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">names</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">rotation</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">offset</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>list<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">array([0.0, 0.0, 0.0])</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/barrett_wam/trackers.html#RigidBodyTracker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.barrett_wam.trackers.RigidBodyTracker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class for tracking rigid bodies with OptiTrack and a NatNet client
 This code is based on work from Pascal Klink.</p>
@@ -368,6 +368,12 @@ would only be one element in the list</p>
 <dt id="pyrado.environments.barrett_wam.trackers.RigidBodyTracker.initialized">
 <code class="sig-name descname">initialized</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/barrett_wam/trackers.html#RigidBodyTracker.initialized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.barrett_wam.trackers.RigidBodyTracker.initialized" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if all rigid bodies have been seen at least once.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environments.barrett_wam.trackers.RigidBodyTracker.reset_offset">
+<code class="sig-name descname">reset_offset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/barrett_wam/trackers.html#RigidBodyTracker.reset_offset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.barrett_wam.trackers.RigidBodyTracker.reset_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the Cartesian offset, e.g. before calibrating.</p>
 </dd></dl>
 
 </dd></dl>
