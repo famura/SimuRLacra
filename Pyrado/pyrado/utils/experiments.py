@@ -217,6 +217,17 @@ def load_experiment(
         # Policy
         policy = pyrado.load(f"{args.policy_name}.pt", ex_dir, obj=algo.policy, verbose=True)
 
+    elif algo.name == 'sprl': 
+        # Environment
+        env = pyrado.load(None, "env", "pkl", ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, 'env.pkl')}.", "g")
+        # Policy
+        policy = pyrado.load(algo.policy, f"{args.policy_name}", "pt", ex_dir, None)
+        print_cbt(f"Loaded {osp.join(ex_dir, f'{args.policy_name}.pt')}", "g")
+        # Extra (value function)
+        if isinstance(algo._subroutine, ActorCritic):
+            extra["vfcn"] = pyrado.load(algo._subroutine.critic.vfcn, f"{args.vfcn_name}", "pt", ex_dir, None)
+            print_cbt(f"Loaded {osp.join(ex_dir, f'{args.vfcn_name}.pt')}", "g")
     else:
         raise pyrado.TypeErr(msg="No matching algorithm name found during loading the experiment!")
 
