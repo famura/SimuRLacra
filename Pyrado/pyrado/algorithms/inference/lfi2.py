@@ -201,7 +201,10 @@ class LFI(Algorithm):
                     simulation_batch_size=1,
                     num_workers=1,  # leave it for now
                 )
-                sbi_subrtn.append_simulations(domain_param, sim_output)
+                sbi_subrtn.append_simulations(
+                    domain_param, sim_output, proposal=posterior
+                )  # TODO @group, this one is new
+                self._cnt_samples += self.num_sim_per_real_rollout
 
         # Train the posterior
         posterior_estimator = sbi_subrtn.train(**self.sbi_training_hparam)
