@@ -79,6 +79,7 @@ class LFI(Algorithm):
         num_real_rollouts: int,
         num_sim_per_real_rollout: int,
         num_eval_samples: int = 25,
+        num_workers: int = 1,
         logger: Optional[StepLogger] = None,
     ):
         """
@@ -102,6 +103,7 @@ class LFI(Algorithm):
                                   observation is computed
         :param num_sim_per_real_rollout: number of simulations done by sbi per real-world observation received
         :param num_eval_samples: number of samples for evaluating the posterior in `eval_posterior()`
+        :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         # Call Algorithm's constructor
@@ -117,6 +119,7 @@ class LFI(Algorithm):
         self.num_real_rollouts = num_real_rollouts
         self.num_sim_per_real_rollout = num_sim_per_real_rollout
         self.num_eval_samples = num_eval_samples
+        self.num_workers = num_workers
 
         pyrado.save(prior, "prior", "pt", self._save_dir, meta_info=None, use_state_dict=False)
 
@@ -177,7 +180,7 @@ class LFI(Algorithm):
                 proposal=sbi_prior,
                 num_simulations=self.num_sim_per_real_rollout,
                 simulation_batch_size=1,
-                num_workers=1,  # leave it for now
+                num_workers=self.num_workers,  # leave it for now
             )
             sbi_subrtn.append_simulations(
                 domain_param,
@@ -199,7 +202,7 @@ class LFI(Algorithm):
                     proposal=posterior,
                     num_simulations=self.num_sim_per_real_rollout,
                     simulation_batch_size=1,
-                    num_workers=1,  # leave it for now
+                    num_workers=self.num_workers,  # leave it for now
                 )
                 sbi_subrtn.append_simulations(
                     domain_param, sim_output, proposal=posterior
