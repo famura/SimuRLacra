@@ -98,8 +98,9 @@ class LFI(Algorithm):
                                  `final_state` (use the last observed state from the rollout), and
                                  `ramos` (summary statistics as proposed in  [1])
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
-        :param num_sim_per_real_rollout:
-        :param num_real_rollouts:
+        :param num_real_rollouts: number of real-world observation received by sbi, i.e. from every rollout exactly one
+                                  observation is computed
+        :param num_sim_per_real_rollout: number of simulations done by sbi per real-world observation received
         :param num_eval_samples: number of samples for evaluating the posterior in `eval_posterior()`
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
@@ -133,11 +134,6 @@ class LFI(Algorithm):
         sbi_subrtn = self.sbi_subrtn_class(prior=sbi_prior, density_estimator=flow, summary_writer=summary_writer)
 
         return sbi_simulator, sbi_prior, sbi_subrtn
-
-    @property
-    def num_sbi_simulations(self) -> int:
-        """ Get the number of simulations done per call of the sbi subroutine. """
-        return self.num_sim_per_real_rollout * self.num_real_rollouts
 
     @staticmethod
     def truncate_to_shortest(data: List[to.Tensor]):
@@ -179,7 +175,7 @@ class LFI(Algorithm):
             domain_param, sim_output = simulate_for_sbi(
                 simulator=sbi_simulator,
                 proposal=sbi_prior,
-                num_simulations=self.num_sbi_simulations,
+                num_simulations=self.num_sim_per_real_rollout,
                 simulation_batch_size=1,
                 num_workers=1,  # leave it for now
             )
@@ -188,6 +184,7 @@ class LFI(Algorithm):
                 sim_output,
                 proposal=None,  # pass None if the parameters were sampled from the prior
             )
+            self._cnt_samples += self.num_sim_per_real_rollout
 
         # Remaining training iterations
         else:
@@ -200,7 +197,7 @@ class LFI(Algorithm):
                 domain_param, sim_output = simulate_for_sbi(
                     simulator=sbi_simulator,
                     proposal=posterior,
-                    num_simulations=self.num_sbi_simulations,
+                    num_simulations=self.num_sim_per_real_rollout,
                     simulation_batch_size=1,
                     num_workers=1,  # leave it for now
                 )
@@ -219,7 +216,7 @@ class LFI(Algorithm):
         self.logger.add_value("avg domain param", to.mean(domain_param_eval, dim=[0, 1]))
         self.logger.add_value("std domain param", to.std(domain_param_eval, dim=[0, 1]))
         self.logger.add_value("avg log prob", to.mean(log_prob))
-        self.logger.add_value("num simulations", self.num_sbi_simulations)
+        self.logger.add_value("num total samples", self._cnt_samples)  # here the samples are simulations
 
         # Save snapshot data
         pyrado.save(posterior, "posterior", "pt", self._save_dir, meta_info, use_state_dict=False)
