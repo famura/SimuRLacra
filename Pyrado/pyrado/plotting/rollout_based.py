@@ -70,13 +70,18 @@ def draw_observations_actions_rewards(ro: StepSequence):
     :param ro: input rollout
     """
     if hasattr(ro, "observations") and hasattr(ro, "actions") and hasattr(ro, "env_infos"):
+        if not isinstance(ro.observations, np.ndarray):
+            raise pyrado.TypeErr(given=ro.observations, expected_type=np.ndarray)
+        if not isinstance(ro.actions, np.ndarray):
+            raise pyrado.TypeErr(given=ro.actions, expected_type=np.ndarray)
+
         dim_obs = ro.observations.shape[1]
         dim_act = ro.actions.shape[1]
 
         # Use recorded time stamps if possible
         t = ro.env_infos.get("t", np.arange(0, ro.length)) if hasattr(ro, "env_infos") else np.arange(0, ro.length)
 
-        fig, axs = plt.subplots(dim_obs + dim_act + 1, 1, figsize=(8, 12))
+        fig, axs = plt.subplots(dim_obs + dim_act + 1, 1, figsize=(8, 12), tight_layout=True)
         fig.canvas.set_window_title("Observations, Actions, and Reward over Time")
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_obs if dim_obs > dim_act else dim_act))
 
@@ -106,6 +111,9 @@ def draw_observations(ro: StepSequence, idcs_sel: Sequence[int] = None):
     :param idcs_sel: indices of the selected selected observations, if `None` plot all
     """
     if hasattr(ro, "observations"):
+        if not isinstance(ro.observations, np.ndarray):
+            raise pyrado.TypeErr(given=ro.observations, expected_type=np.ndarray)
+
         # Select dimensions to plot
         dim_obs = range(ro.observations.shape[1]) if idcs_sel is None else idcs_sel
 
@@ -121,12 +129,9 @@ def draw_observations(ro: StepSequence, idcs_sel: Sequence[int] = None):
         num_cols = int(np.ceil(len(dim_obs) / divisor))
         num_rows = int(np.ceil(len(dim_obs) / num_cols))
 
-        fig, axs = plt.subplots(
-            num_rows,
-            num_cols,
-            figsize=(num_cols * 5, num_rows * 3),
-        )
-        axs = np.atleast_2d(axs).T
+        fig, axs = plt.subplots(num_rows, num_cols, figsize=(num_cols * 5, num_rows * 3), tight_layout=True)
+        axs = np.atleast_2d(axs)
+        axs = axs.T if axs.shape[0] == 1 else axs  # compensate for np.atleast_2d in case axs was 1-dim
         fig.canvas.set_window_title("Observations over Time")
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, len(dim_obs)))
 
@@ -172,8 +177,9 @@ def draw_features(ro: StepSequence, policy: Policy):
         num_cols = int(np.ceil(len(dim_feat) / divisor))
         num_rows = int(np.ceil(len(dim_feat) / num_cols))
 
-        fig, axs = plt.subplots(num_rows, num_cols, figsize=(num_cols * 5, num_rows * 3), constrained_layout=True)
-        axs = np.atleast_2d(axs).T
+        fig, axs = plt.subplots(num_rows, num_cols, figsize=(num_cols * 5, num_rows * 3), tight_layout=True)
+        axs = np.atleast_2d(axs)
+        axs = axs.T if axs.shape[0] == 1 else axs  # compensate for np.atleast_2d in case axs was 1-dim
         fig.canvas.set_window_title("Feature Values over Time")
         plt.subplots_adjust(hspace=0.5)
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, len(dim_feat)))
@@ -208,7 +214,7 @@ def draw_actions(ro: StepSequence, env: Env):
         # Use recorded time stamps if possible
         t = ro.env_infos.get("t", np.arange(0, ro.length)) if hasattr(ro, "env_infos") else np.arange(0, ro.length)
 
-        fig, axs = plt.subplots(dim_act, figsize=(8, 12))
+        fig, axs = plt.subplots(dim_act, figsize=(8, 12), tight_layout=True)
         fig.canvas.set_window_title("Actions over Time")
         colors = plt.get_cmap("tab20")(np.linspace(0, 1, dim_act))
 
@@ -251,7 +257,7 @@ def draw_rewards(ro: StepSequence):
         # Use recorded time stamps if possible
         t = ro.env_infos.get("t", np.arange(0, ro.length)) if hasattr(ro, "env_infos") else np.arange(0, ro.length)
 
-        fig, ax = plt.subplots(1)
+        fig, ax = plt.subplots(1, tight_layout=True)
         fig.canvas.set_window_title("Reward over Time")
         ax.plot(t, ro.rewards, c="k")
         ax.set_ylabel("reward")
