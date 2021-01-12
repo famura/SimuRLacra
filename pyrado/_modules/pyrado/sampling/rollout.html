@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>pyrado.sampling.rollout &mdash; Pyrado 0.4 documentation</title>
   
@@ -17,7 +17,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Pyrado
+            <a href="../../../index.html" class="icon icon-home"> Pyrado
           
 
           
@@ -87,9 +90,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -151,6 +154,8 @@
         <div class="rst-content">
         
           
+
+
 
 
 
@@ -406,7 +411,7 @@
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">act</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">render_mode</span><span class="p">,</span> <span class="n">render_step</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span>
-                <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;At least one action value is NaN!&quot;</span>
+                <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;At least one observation value is NaN!&quot;</span>
                 <span class="o">+</span> <span class="n">tabulate</span><span class="p">(</span>
                     <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">labels</span><span class="p">),</span> <span class="p">[</span><span class="o">*</span><span class="n">color_validity</span><span class="p">(</span><span class="n">act</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">act</span><span class="p">)))]],</span> <span class="n">headers</span><span class="o">=</span><span class="s2">&quot;firstrow&quot;</span>
                 <span class="p">)</span>
@@ -454,7 +459,7 @@
 
         <span class="k">if</span> <span class="n">render_mode</span><span class="o">.</span><span class="n">video</span><span class="p">:</span>
             <span class="n">do_sleep</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">if</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">mujoco_loaded</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">mujoco_available</span><span class="p">:</span>
                 <span class="kn">from</span> <span class="nn">pyrado.environments.mujoco.base</span> <span class="kn">import</span> <span class="n">MujocoSimEnv</span>
 
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">MujocoSimEnv</span><span class="p">):</span>
@@ -523,12 +528,14 @@
         <span class="p">[</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="s2">&quot;print information about environment (including randomizer), and policy&quot;</span><span class="p">],</span>
         <span class="p">[</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="s2">&quot;set a domain parameter explicitly&quot;</span><span class="p">],</span>
         <span class="p">[</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="s2">&quot;plot all observations, actions, and rewards&quot;</span><span class="p">],</span>
-        <span class="p">[</span><span class="s2">&quot;PO [indices]&quot;</span><span class="p">,</span> <span class="s2">&quot;plot all observations, or selected ones by passing separated integers&quot;</span><span class="p">],</span>
         <span class="p">[</span><span class="s2">&quot;PA&quot;</span><span class="p">,</span> <span class="s2">&quot;plot actions&quot;</span><span class="p">],</span>
         <span class="p">[</span><span class="s2">&quot;PR&quot;</span><span class="p">,</span> <span class="s2">&quot;plot rewards&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;PO&quot;</span><span class="p">,</span> <span class="s2">&quot;plot all observations&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;PO idcs&quot;</span><span class="p">,</span> <span class="s2">&quot;plot selected observations (integers separated by whitespaces)&quot;</span><span class="p">],</span>
         <span class="p">[</span><span class="s2">&quot;PF&quot;</span><span class="p">,</span> <span class="s2">&quot;plot features (for linear policy)&quot;</span><span class="p">],</span>
-        <span class="p">[</span><span class="s2">&quot;PPOT&quot;</span><span class="p">,</span> <span class="s2">&quot;plot potentials, stimuli, and actions (for potential-based policies)&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;PP&quot;</span><span class="p">,</span> <span class="s2">&quot;plot policy parameters (not suggested for many parameters)&quot;</span><span class="p">],</span>
         <span class="p">[</span><span class="s2">&quot;PDT&quot;</span><span class="p">,</span> <span class="s2">&quot;plot time deltas (profiling of a real system)&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;PPOT&quot;</span><span class="p">,</span> <span class="s2">&quot;plot potentials, stimuli, and actions&quot;</span><span class="p">],</span>
         <span class="p">[</span><span class="s2">&quot;E&quot;</span><span class="p">,</span> <span class="s2">&quot;exit&quot;</span><span class="p">],</span>
     <span class="p">]</span>
 
@@ -545,11 +552,11 @@
                 <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">inner_env</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">SimEnv</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inner_env</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> <span class="n">SimEnv</span><span class="p">):</span>
                 <span class="c1"># Get the user input</span>
-                <span class="n">usr_inp</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span>
+                <span class="nb">str</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Enter the </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="si">}</span><span class="s2">-dim initial state&quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;(format: each dim separated by a whitespace):</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
-                <span class="n">state</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">usr_inp</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
                     <span class="n">state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
@@ -581,7 +588,7 @@
 
     <span class="k">elif</span> <span class="n">ans</span> <span class="o">==</span> <span class="s2">&quot;p&quot;</span><span class="p">:</span>
         <span class="n">draw_observations_actions_rewards</span><span class="p">(</span><span class="n">rollout</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">after_rollout_query</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">rollout</span><span class="p">)</span>
 
     <span class="k">elif</span> <span class="n">ans</span> <span class="o">==</span> <span class="s2">&quot;pa&quot;</span><span class="p">:</span>
@@ -657,28 +664,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020
+        &#169; Copyright 2020.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

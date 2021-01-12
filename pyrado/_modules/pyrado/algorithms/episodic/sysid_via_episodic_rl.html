@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>pyrado.algorithms.episodic.sysid_via_episodic_rl &mdash; Pyrado 0.4 documentation</title>
   
@@ -17,7 +17,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> Pyrado
+            <a href="../../../../index.html" class="icon icon-home"> Pyrado
           
 
           
@@ -87,9 +90,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -151,6 +154,8 @@
         <div class="rst-content">
         
           
+
+
 
 
 
@@ -246,12 +251,7 @@
 
 
 <div class="viewcode-block" id="SysIdViaEpisodicRL"><a class="viewcode-back" href="../../../../algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL">[docs]</a><span class="k">class</span> <span class="nc">SysIdViaEpisodicRL</span><span class="p">(</span><span class="n">Algorithm</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Wrapper to frame black-box system identification as an episodic reinforcement learning problem</span>
-
-<span class="sd">    .. note::</span>
-<span class="sd">        This algorithm was designed as a subroutine of SimOpt. However, it could also be used independently.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Wrapper to frame black-box system identification as an episodic reinforcement learning problem &quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;sysiderl&quot;</span>
     <span class="n">iteration_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;sysiderl_iteration&quot;</span>  <span class="c1"># logger&#39;s iteration key</span>
@@ -313,15 +313,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">obs_dim_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">obs_dim_weight</span><span class="p">)</span>  <span class="c1"># weighting factor between the different observations</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">std_obs_filt</span> <span class="o">=</span> <span class="n">std_obs_filt</span>
         <span class="k">if</span> <span class="n">metric</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;None&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">weighted_l1_l2_metric</span><span class="p">,</span> <span class="n">w_abs</span><span class="o">=</span><span class="n">w_abs</span><span class="p">,</span> <span class="n">w_sq</span><span class="o">=</span><span class="n">w_sq</span><span class="p">,</span> <span class="n">obs_dim_weight</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_dim_weight</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_metric</span><span class="p">,</span> <span class="n">w_abs</span><span class="o">=</span><span class="n">w_abs</span><span class="p">,</span> <span class="n">w_sq</span><span class="o">=</span><span class="n">w_sq</span><span class="p">,</span> <span class="n">obs_dim_weight</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_dim_weight</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="o">=</span> <span class="n">metric</span>
 
-        <span class="c1"># Get and optionally clip the observation bounds of the environment</span>
-        <span class="n">elb</span><span class="p">,</span> <span class="n">eub</span> <span class="o">=</span> <span class="n">subrtn</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">bound_lo</span><span class="p">,</span> <span class="n">subrtn</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">bound_up</span>
-        <span class="n">elb</span><span class="p">,</span> <span class="n">eub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">override_obs_bounds</span><span class="p">(</span><span class="n">elb</span><span class="p">,</span> <span class="n">eub</span><span class="p">,</span> <span class="n">subrtn</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
+        <span class="n">elb</span> <span class="o">=</span> <span class="n">ObsNormWrapper</span><span class="o">.</span><span class="n">override_bounds</span><span class="p">(</span>
+            <span class="n">subrtn</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">bound_lo</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;theta_dot&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">20.0</span><span class="p">,</span> <span class="s2">&quot;alpha_dot&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">20.0</span><span class="p">},</span> <span class="n">subrtn</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">labels</span>
+        <span class="p">)</span>
+        <span class="n">eub</span> <span class="o">=</span> <span class="n">ObsNormWrapper</span><span class="o">.</span><span class="n">override_bounds</span><span class="p">(</span>
+            <span class="n">subrtn</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">bound_up</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;theta_dot&quot;</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">,</span> <span class="s2">&quot;alpha_dot&quot;</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">},</span> <span class="n">subrtn</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">labels</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">obs_normalizer</span> <span class="o">=</span> <span class="n">UnitCubeProjector</span><span class="p">(</span><span class="n">bound_lo</span><span class="o">=</span><span class="n">elb</span><span class="p">,</span> <span class="n">bound_up</span><span class="o">=</span><span class="n">eub</span><span class="p">)</span>
 
         <span class="c1"># Create the sampler used to execute the same policy as on the real system in the meta-randomized env</span>
@@ -442,23 +443,8 @@
         <span class="c1"># Save snapshot data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">make_snapshot</span><span class="p">(</span><span class="n">snapshot_mode</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">param_samp_res</span><span class="o">.</span><span class="n">mean_returns</span><span class="p">)),</span> <span class="n">meta_info</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SysIdViaEpisodicRL.override_obs_bounds"><a class="viewcode-back" href="../../../../algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.override_obs_bounds">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">override_obs_bounds</span><span class="p">(</span><span class="n">bound_lo</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">bound_up</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Default overriding method for the bounds of an observation space. This is necessary when the observations</span>
-<span class="sd">        are scaled with their range, e.g. to compare a deviation over different kinds of abservations like position and</span>
-<span class="sd">        annular velocity. Thus, infinite bounds are not feasible.</span>
-
-<span class="sd">        :param bound_lo: lower bound of the observation space</span>
-<span class="sd">        :param bound_up: upper bound of the observation space</span>
-<span class="sd">        :return: clipped lower and upper bound</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">bound_lo</span> <span class="o">=</span> <span class="n">ObsNormWrapper</span><span class="o">.</span><span class="n">override_bounds</span><span class="p">(</span><span class="n">bound_lo</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;theta_dot&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">20.0</span><span class="p">,</span> <span class="s2">&quot;alpha_dot&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">20.0</span><span class="p">},</span> <span class="n">labels</span><span class="p">)</span>
-        <span class="n">bound_up</span> <span class="o">=</span> <span class="n">ObsNormWrapper</span><span class="o">.</span><span class="n">override_bounds</span><span class="p">(</span><span class="n">bound_up</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;theta_dot&quot;</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">,</span> <span class="s2">&quot;alpha_dot&quot;</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">},</span> <span class="n">labels</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">bound_lo</span><span class="p">,</span> <span class="n">bound_up</span></div>
-
-<div class="viewcode-block" id="SysIdViaEpisodicRL.weighted_l1_l2_metric"><a class="viewcode-back" href="../../../../algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.weighted_l1_l2_metric">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">weighted_l1_l2_metric</span><span class="p">(</span><span class="n">err</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">w_abs</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">w_sq</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">obs_dim_weight</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+<div class="viewcode-block" id="SysIdViaEpisodicRL.default_metric"><a class="viewcode-back" href="../../../../algorithms.episodic.html#pyrado.algorithms.episodic.sysid_via_episodic_rl.SysIdViaEpisodicRL.default_metric">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">default_metric</span><span class="p">(</span><span class="n">err</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">w_abs</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">w_sq</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">obs_dim_weight</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the weighted linear combination of the observation error&#39;s MAE and MSE, averaged over time</span>
 
@@ -558,12 +544,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">meta_info</span><span class="p">[</span><span class="s1">&#39;prefix&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">_ddp&quot;</span><span class="p">))</span>  <span class="c1"># save iter_X_ddp_policy.pt</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">save_snapshot</span><span class="p">(</span><span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ddp&quot;</span><span class="p">))</span>  <span class="c1"># override ddp_policy.pt</span>
 
-        <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="s2">&quot;env_sim.pkl&quot;</span><span class="p">))</span>
-
         <span class="c1"># Print the current search distribution&#39;s mean</span>
         <span class="n">cpp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">transform_to_ddp_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">param_values</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">adapt_randomizer</span><span class="p">(</span><span class="n">domain_distr_param_values</span><span class="o">=</span><span class="n">cpp</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
         <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current policy domain parameter distribution</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">randomizer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">)</span>
+        <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="s2">&quot;env_sim.pkl&quot;</span><span class="p">))</span>
 
         <span class="c1"># Set the randomizer to best fitted domain distribution</span>
         <span class="n">cbp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">transform_to_ddp_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">best_policy_param</span><span class="p">)</span>
@@ -579,28 +564,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020
+        &#169; Copyright 2020.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

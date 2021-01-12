@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>pyrado.algorithms.meta.spota &mdash; Pyrado 0.4 documentation</title>
   
@@ -17,7 +17,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> Pyrado
+            <a href="../../../../index.html" class="icon icon-home"> Pyrado
           
 
           
@@ -87,9 +90,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -151,6 +154,8 @@
         <div class="rst-content">
         
           
+
+
 
 
 
@@ -605,18 +610,16 @@
 
         <span class="k">if</span> <span class="n">ratio_neg_diffs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># All diffs are negative</span>
-            <span class="n">ci_bs_lo</span><span class="p">,</span> <span class="n">ci_bs_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">]</span>
-            <span class="p">)</span>  <span class="c1"># such that the UCBOG comparison in stopping_criterion_met() does not break</span>
+            <span class="n">ci_bs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)]</span>  <span class="c1"># such that the UCBOG comparison in stopping_criterion_met() does not break</span>
             <span class="n">log_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Gn_est&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">,</span> <span class="s2">&quot;UCBOG&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">,</span> <span class="s2">&quot;ratio_neg_diffs&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Apply bootstrapping</span>
-            <span class="n">m_bs</span><span class="p">,</span> <span class="n">ci_bs_lo</span><span class="p">,</span> <span class="n">ci_bs_up</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span>
+            <span class="n">m_bs</span><span class="p">,</span> <span class="n">ci_bs</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Gn_diffs</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_bs_reps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">studentized_ci</span>
             <span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;m_bs: </span><span class="si">{</span><span class="n">m_bs</span><span class="si">}</span><span class="s2">, ci_bs: </span><span class="si">{</span><span class="n">ci_bs_lo</span><span class="p">,</span> <span class="n">ci_bs_up</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">OG (point estimate): </span><span class="si">{</span><span class="n">Gn_est</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">UCBOG: </span><span class="si">{</span><span class="n">ci_bs_up</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">log_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Gn_est&quot;</span><span class="p">:</span> <span class="n">Gn_est</span><span class="p">,</span> <span class="s2">&quot;UCBOG&quot;</span><span class="p">:</span> <span class="n">ci_bs_up</span><span class="p">,</span> <span class="s2">&quot;ratio_neg_diffs&quot;</span><span class="p">:</span> <span class="n">ratio_neg_diffs</span><span class="p">}</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;m_bs: </span><span class="si">{</span><span class="n">m_bs</span><span class="si">}</span><span class="s2">, ci_bs: </span><span class="si">{</span><span class="n">ci_bs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">OG (point estimate): </span><span class="si">{</span><span class="n">Gn_est</span><span class="si">}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">UCBOG: </span><span class="si">{</span><span class="n">ci_bs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">log_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Gn_est&quot;</span><span class="p">:</span> <span class="n">Gn_est</span><span class="p">,</span> <span class="s2">&quot;UCBOG&quot;</span><span class="p">:</span> <span class="n">ci_bs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;ratio_neg_diffs&quot;</span><span class="p">:</span> <span class="n">ratio_neg_diffs</span><span class="p">}</span>
 
         <span class="c1"># Log the optimality gap data</span>
         <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;w&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_iter</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;a&quot;</span>
@@ -628,7 +631,7 @@
             <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">log_dict</span><span class="p">)</span>
 
         <span class="c1"># Store the current UCBOG estimated from all samples</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ucbog</span> <span class="o">=</span> <span class="n">ci_bs_up</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ucbog</span> <span class="o">=</span> <span class="n">ci_bs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_handle_neg_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cand_rets</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">refs_rets</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -702,28 +705,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020
+        &#169; Copyright 2020.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

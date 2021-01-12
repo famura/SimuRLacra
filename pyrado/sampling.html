@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>sampling &mdash; Pyrado 0.4 documentation</title>
   
@@ -17,7 +17,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -52,7 +55,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Pyrado
+            <a href="index.html" class="icon icon-home"> Pyrado
           
 
           
@@ -89,9 +92,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul class="current">
@@ -184,6 +187,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -195,7 +200,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/sampling.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -215,10 +220,9 @@
 <span id="bootstrapping"></span><h2>bootstrapping<a class="headerlink" href="#module-pyrado.sampling.bootstrapping" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="pyrado.sampling.bootstrapping.bootstrap_ci">
-<code class="sig-name descname">bootstrap_ci</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">stat_fcn</span><span class="p">:</span> <span class="n">Callable</span></em>, <em class="sig-param"><span class="n">num_reps</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">ci_sides</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">bias_correction</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">studentized</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">seed</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/bootstrapping.html#bootstrap_ci"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.bootstrapping.bootstrap_ci" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">bootstrap_ci</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">stat_fcn</span></em>, <em class="sig-param"><span class="n">num_reps</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">ci_sides</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">bias_correction</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">studentized</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">seed</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/bootstrapping.html#bootstrap_ci"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.bootstrapping.bootstrap_ci" title="Permalink to this definition">¶</a></dt>
 <dd><p>Re-sampling input data using the nonparametric bootstrap method, computing bootstrap replications using stat_fcn and
-computing a confidence interval on the statistic of interest given by <cite>stat_fcn</cite> which needs to expect the argument
-<cite>axis</cite> (like numpy functions do).</p>
+computing a confidence interval on the statistic of interest given by stat_fcn.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p>[1] <a class="reference external" href="https://projecteuclid.org/download/pdf_1/euclid.ss/1032280214">https://projecteuclid.org/download/pdf_1/euclid.ss/1032280214</a>
@@ -237,20 +241,14 @@ computing a confidence interval on the statistic of interest given by <cite>stat
 <li><p><strong>num_reps</strong> – number of samples in every bootstrap sample</p></li>
 <li><p><strong>alpha</strong> – determines the confidence level <span class="math notranslate nohighlight">\(1 - \alpha \in [0, 1]\)</span></p></li>
 <li><p><strong>ci_sides</strong> – one or two-sided confidence interval</p></li>
-<li><p><strong>axis</strong> – axis to compute along in case of 2-dim data</p></li>
 <li><p><strong>bias_correction</strong> – bool to decide if the bias should be subtracted (see [2]). However, the confidence intervals
-are constructed independent of the bias-correction (see [5, p.7]).
-The bias-correction can be dangerous in practice. Even though T_bc(D) is less biased than
-T(D), the bias-corrected estimator may have substantially larger variance. This is due to a
-possibly higher variability in the estimate of the bias, particularly when computed from
-small data sets.
-Other estimates of the bias-correction factor than stat_emp possible, see [4].</p></li>
+are constructed independent of the bias-correction (see [5, p.7])</p></li>
 <li><p><strong>studentized</strong> – flag to determine if the method based on the t-distribution is used (leads to a wider ci)</p></li>
-<li><p><strong>seed</strong> – value for the random number generators’ seeds, pass <cite>None</cite> to skip seeding</p></li>
+<li><p><strong>seed</strong> – seed value for the random number generators, pass <cite>None</cite> for no seeding</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>mean of the bootstrap replications, and the confidence interval</p>
+<dd class="field-even"><p>mean of the bootstrap replications and the confidence interval</p>
 </dd>
 </dl>
 </dd></dl>
@@ -549,19 +547,16 @@ initial state space</p></li>
 <span id="parameter-exploration-sampler"></span><h2>parameter_exploration_sampler<a class="headerlink" href="#module-pyrado.sampling.parameter_exploration_sampler" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler">
-<em class="property">class </em><code class="sig-name descname">ParameterExplorationSampler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">num_rollouts_per_param</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num_workers</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">seed</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parameter_exploration_sampler.html#ParameterExplorationSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">ParameterExplorationSampler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">num_workers</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num_rollouts_per_param</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">seed</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/sampling/parameter_exploration_sampler.html#ParameterExplorationSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Parallel sampler for parameter exploration</p>
 <dl class="py method">
 <dt id="pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler.sample">
-<code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">param_sets</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">init_states</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>List<span class="p">[</span>numpy.ndarray<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult" title="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult">pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult</a><a class="reference internal" href="_modules/pyrado/sampling/parameter_exploration_sampler.html#ParameterExplorationSampler.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler.sample" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">param_sets</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult" title="pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult">pyrado.sampling.parameter_exploration_sampler.ParameterSamplingResult</a><a class="reference internal" href="_modules/pyrado/sampling/parameter_exploration_sampler.html#ParameterExplorationSampler.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler.sample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sample rollouts for a given set of parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>param_sets</strong> – sets of policy parameters</p></li>
-<li><p><strong>init_states</strong> – fixed initial states, pass <cite>None</cite> to randomly sample initial states</p></li>
-</ul>
+<dd class="field-odd"><p><strong>param_sets</strong> – sets of policy parameters</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>data structure containing the policy parameter sets and the associated rollout data</p>
@@ -1399,37 +1394,29 @@ chunks</p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="environments.html" class="btn btn-neutral float-right" title="environments" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="exploration.html" class="btn btn-neutral float-left" title="exploration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="environments.html" class="btn btn-neutral float-right" title="environments" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="exploration.html" class="btn btn-neutral float-left" title="exploration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020
+        &#169; Copyright 2020.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

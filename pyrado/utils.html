@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>utils &mdash; Pyrado 0.4 documentation</title>
   
@@ -17,7 +17,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -52,7 +55,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Pyrado
+            <a href="index.html" class="icon icon-home"> Pyrado
           
 
           
@@ -89,9 +92,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -188,6 +191,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -199,7 +204,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/utils.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -880,6 +885,24 @@ properties, i.e. <cite>df.prop_abc</cite> instead of <cite>df[‘prop abc’]</c
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Pandas <cite>DataFrame</cite> with replaced chars in columns</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.utils.experiments.wrap_like_other_env">
+<code class="sig-name descname">wrap_like_other_env</code><span class="sig-paren">(</span><em class="sig-param">env_targ: Union[pyrado.environments.sim_base.SimEnv, pyrado.environments.real_base.RealEnv], env_src: [&lt;class 'pyrado.environments.sim_base.SimEnv'&gt;, &lt;class 'pyrado.environment_wrappers.base.EnvWrapper'&gt;], use_downsampling: bool = False</em><span class="sig-paren">)</span> &#x2192; Union<span class="p">[</span><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a><span class="p">, </span><a class="reference internal" href="environments.html#pyrado.environments.real_base.RealEnv" title="pyrado.environments.real_base.RealEnv">pyrado.environments.real_base.RealEnv</a><span class="p">]</span><a class="reference internal" href="_modules/pyrado/utils/experiments.html#wrap_like_other_env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.experiments.wrap_like_other_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrap a given real environment like it’s simulated counterpart (except the domain randomization of course).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_targ</strong> – target environment e.g. environment representing the physical device</p></li>
+<li><p><strong>env_src</strong> – source environment e.g. simulation environment used for training</p></li>
+<li><p><strong>use_downsampling</strong> – apply a wrapper that downsamples the actions if the sampling frequencies don’t match</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>target environment</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1621,21 +1644,6 @@ PyTorch modules (file_ext = ‘pt’) are saved.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pyrado.utils.tensor.deepcopy_or_clone">
-<code class="sig-name descname">deepcopy_or_clone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">copy_from</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>dict<span class="p">, </span>list<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; Union<span class="p">[</span>dict<span class="p">, </span>list<span class="p">]</span><a class="reference internal" href="_modules/pyrado/utils/tensor.html#deepcopy_or_clone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.tensor.deepcopy_or_clone" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unfortunately, deepcopy() only works for leave tensors right now. Thus, we need to iterate throught the input and
-clone the PyTorch tensors where possible.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>copy_from</strong> – list or dict to copy</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>copy of the input where every tensor was cloned, and every other data type was deepcopied</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt id="pyrado.utils.tensor.insert_tensor_col">
 <code class="sig-name descname">insert_tensor_col</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">idx</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">col</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/utils/tensor.html#insert_tensor_col"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.utils.tensor.insert_tensor_col" title="Permalink to this definition">¶</a></dt>
 <dd><p>Insert a column into a PyTorch Tensor.</p>
@@ -1720,37 +1728,29 @@ clone the PyTorch tensors where possible.</p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="tests.html" class="btn btn-neutral float-right" title="tests" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="plotting.html" class="btn btn-neutral float-left" title="plotting" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="tests.html" class="btn btn-neutral float-right" title="tests" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="plotting.html" class="btn btn-neutral float-left" title="plotting" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020
+        &#169; Copyright 2020.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

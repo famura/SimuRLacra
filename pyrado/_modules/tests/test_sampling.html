@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>tests.test_sampling &mdash; Pyrado 0.4 documentation</title>
   
@@ -17,7 +17,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> Pyrado
+            <a href="../../index.html" class="icon icon-home"> Pyrado
           
 
           
@@ -87,9 +90,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/1_basic_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/3_algorithm.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -166,6 +169,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -223,7 +228,6 @@
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">torch.distributions.multivariate_normal</span> <span class="kn">import</span> <span class="n">MultivariateNormal</span>
 
-<span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="n">create_default_randomizer</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="n">DomainRandWrapperLive</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
@@ -484,54 +488,55 @@
     <span class="c1"># plt.show()</span>
 
 
-<div class="viewcode-block" id="test_boostrap_methods"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_boostrap_methods">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">30</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">46</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">42</span><span class="p">])])</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">123</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;seed1&quot;</span><span class="p">,</span> <span class="s2">&quot;seed1&quot;</span><span class="p">,</span> <span class="s2">&quot;seed123&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_boostrap_methods</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
-    <span class="c1"># Emperical bootstrap</span>
-    <span class="n">m_bs</span><span class="p">,</span> <span class="n">ci_bs_lo</span><span class="p">,</span> <span class="n">ci_bs_up</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">num_reps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">ci_sides</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+<div class="viewcode-block" id="test_bootsrapping"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_bootsrapping">[docs]</a><span class="k">def</span> <span class="nf">test_bootsrapping</span><span class="p">():</span>
+    <span class="c1"># Why you should operate on the deltas and not directly on the statistic from the resampled data</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">30</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">46</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">42</span><span class="p">])</span>
+    <span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mean</span><span class="p">)</span>
+    <span class="n">m</span><span class="p">,</span> <span class="n">ci</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">num_reps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">ci_sides</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">ci</span><span class="p">)</span>
 
-    <span class="c1"># Percentile bootstrap</span>
-    <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
     <span class="n">resampled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">20</span><span class="p">),</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">resampled</span><span class="p">)</span>
-    <span class="n">ci_lo</span><span class="p">,</span> <span class="n">ci_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">means</span><span class="p">,</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">95</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">means</span><span class="p">))</span>
+    <span class="n">ci_lo</span><span class="p">,</span> <span class="n">ci_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">means</span><span class="p">,</span> <span class="p">[</span><span class="mi">100</span> <span class="o">*</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mi">100</span> <span class="o">*</span> <span class="mf">0.95</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ci_lo</span><span class="p">,</span> <span class="n">ci_up</span><span class="p">)</span>
 
-    <span class="c1"># You should operate on the deltas (emperical bootsrap) and not directly on the statistic from the resampled data</span>
-    <span class="c1"># (percentile bootsrap)</span>
-    <span class="k">assert</span> <span class="n">ci_lo</span> <span class="o">!=</span> <span class="n">ci_bs_lo</span>
-    <span class="k">assert</span> <span class="n">ci_up</span> <span class="o">!=</span> <span class="n">ci_bs_up</span></div>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+    <span class="c1"># x = np.random.uniform(5, 15, 20)</span>
+    <span class="c1"># x = np.random.poisson(5, 30)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># print(bs.bootstrap(x, stat_func=bs_stats.mean))</span>
 
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">m</span><span class="p">,</span> <span class="n">ci</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">num_reps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ci_sides</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">studentized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bias_correction</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[use_t_for_ci=False] mean: &quot;</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[use_t_for_ci=False] CI: &quot;</span><span class="p">,</span> <span class="n">ci</span><span class="p">)</span>
 
-<div class="viewcode-block" id="test_bootsrapping"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_bootsrapping">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="s2">&quot;data&quot;</span><span class="p">,</span>
-    <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">40</span><span class="p">,)),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">13</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">3</span><span class="p">))],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1dim-data&quot;</span><span class="p">,</span> <span class="s2">&quot;3dim-data&quot;</span><span class="p">],</span>
-<span class="p">)</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_reps&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;100reps&quot;</span><span class="p">,</span> <span class="s2">&quot;1000reps&quot;</span><span class="p">,</span> <span class="s2">&quot;10000reps&quot;</span><span class="p">])</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">123</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;seed1&quot;</span><span class="p">,</span> <span class="s2">&quot;seed12&quot;</span><span class="p">,</span> <span class="s2">&quot;seed123&quot;</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_bootsrapping</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">num_reps</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
-    <span class="c1"># Fully-fledged example</span>
-    <span class="n">bootstrap_ci</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">num_reps</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ci_sides</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">studentized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bias_correction</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">m</span><span class="p">,</span> <span class="n">ci</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">num_reps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ci_sides</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">studentized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bias_correction</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[bias_correction=True] mean: &quot;</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
 
-    <span class="n">m</span><span class="p">,</span> <span class="n">ci_lo</span><span class="p">,</span> <span class="n">ci_up</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span>
-        <span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">num_reps</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ci_sides</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">studentized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bias_correction</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span>
-    <span class="p">)</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">m</span> <span class="o">&gt;=</span> <span class="n">ci_lo</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">m</span> <span class="o">&lt;=</span> <span class="n">ci_up</span><span class="p">)</span>
+    <span class="n">m</span><span class="p">,</span> <span class="n">ci</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">num_reps</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">384</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ci_sides</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">studentized</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[use_t_for_ci=False] mean: &quot;</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[use_t_for_ci=False] CI: &quot;</span><span class="p">,</span> <span class="n">ci</span><span class="p">)</span>
 
-    <span class="n">m_bc</span><span class="p">,</span> <span class="n">ci_lo</span><span class="p">,</span> <span class="n">ci_up</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span>
-        <span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">num_reps</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ci_sides</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">studentized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bias_correction</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span>
-    <span class="p">)</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">m_bc</span> <span class="o">!=</span> <span class="n">m</span><span class="p">)</span>
+    <span class="n">m</span><span class="p">,</span> <span class="n">ci</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">num_reps</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">384</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ci_sides</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">studentized</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[use_t_for_ci=True] mean: &quot;</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[use_t_for_ci=True] CI: &quot;</span><span class="p">,</span> <span class="n">ci</span><span class="p">)</span>
 
-    <span class="n">m</span><span class="p">,</span> <span class="n">ci_lo</span><span class="p">,</span> <span class="n">ci_up</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">num_reps</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ci_sides</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">studentized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
-    <span class="n">m_t</span><span class="p">,</span> <span class="n">ci_lo_t</span><span class="p">,</span> <span class="n">ci_up_t</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">num_reps</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ci_sides</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">studentized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">m</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">m_t</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">m_t</span> <span class="o">&gt;=</span> <span class="n">ci_lo_t</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">m_t</span> <span class="o">&lt;=</span> <span class="n">ci_up_t</span><span class="p">)</span>
-    <span class="c1"># Bounds are different (not generally wider) when assuming a t-distribution</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">ci_lo</span> <span class="o">!=</span> <span class="n">ci_lo_t</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">ci_up</span> <span class="o">!=</span> <span class="n">ci_up_t</span><span class="p">)</span></div>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Matlab example:&quot;</span><span class="p">)</span>
+    <span class="c1"># https://de.mathworks.com/help/stats/bootci.htmls</span>
+    <span class="n">x_matlab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+
+    <span class="n">m</span><span class="p">,</span> <span class="n">ci</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span><span class="n">x_matlab</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">num_reps</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ci_sides</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">studentized</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[use_t_for_ci=False] mean: &quot;</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[use_t_for_ci=False] CI: &quot;</span><span class="p">,</span> <span class="n">ci</span><span class="p">)</span>
+
+    <span class="n">m</span><span class="p">,</span> <span class="n">ci</span> <span class="o">=</span> <span class="n">bootstrap_ci</span><span class="p">(</span><span class="n">x_matlab</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">num_reps</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">ci_sides</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">studentized</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[use_t_for_ci=True] mean: &quot;</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[use_t_for_ci=True] CI: &quot;</span><span class="p">,</span> <span class="n">ci</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_param_expl_sampler"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_param_expl_sampler">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
@@ -542,57 +547,39 @@
     <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;bob_fnnpol&quot;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="p">[</span><span class="s2">&quot;num_rollouts_per_param&quot;</span><span class="p">,</span> <span class="s2">&quot;fixed_init_state&quot;</span><span class="p">],</span>
-    <span class="p">[</span>
-        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
-        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
-        <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
-        <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
-    <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1rops-randinit&quot;</span><span class="p">,</span> <span class="s2">&quot;1rops-fixedinit&quot;</span><span class="p">,</span> <span class="s2">&quot;9rops-randinit&quot;</span><span class="p">,</span> <span class="s2">&quot;9rops-fixedinit&quot;</span><span class="p">],</span>
-<span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_param_expl_sampler</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">num_rollouts_per_param</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">fixed_init_state</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_param_expl_sampler</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">):</span>
     <span class="c1"># Add randomizer</span>
     <span class="n">pert</span> <span class="o">=</span> <span class="n">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="n">env</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pert</span><span class="p">)</span>
 
     <span class="c1"># Create the sampler</span>
-    <span class="n">sampler</span> <span class="o">=</span> <span class="n">ParameterExplorationSampler</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_rollouts_per_param</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">num_rollouts_per_param</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">ParameterExplorationSampler</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_rollouts_per_param</span><span class="o">=</span><span class="n">num_rollouts_per_param</span><span class="p">)</span>
 
     <span class="c1"># Use some random parameters</span>
-    <span class="n">num_ps</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="n">num_ps</span> <span class="o">=</span> <span class="mi">12</span>
     <span class="n">params</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_ps</span><span class="p">,</span> <span class="n">policy</span><span class="o">.</span><span class="n">num_param</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">fixed_init_state</span><span class="p">:</span>
-        <span class="c1"># Sample a custom init state</span>
-        <span class="n">init_states</span> <span class="o">=</span> <span class="p">[</span><span class="n">env</span><span class="o">.</span><span class="n">init_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()]</span> <span class="o">*</span> <span class="n">num_rollouts_per_param</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># Let the sampler forward to the env to randomly sample an init state</span>
-        <span class="n">init_states</span> <span class="o">=</span> <span class="kc">None</span>
-
     <span class="c1"># Do the sampling</span>
-    <span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">param_sets</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">init_states</span><span class="o">=</span><span class="n">init_states</span><span class="p">)</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
-    <span class="c1"># Check if the correct number of rollouts has been sampled</span>
     <span class="k">assert</span> <span class="n">num_ps</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">num_ps</span> <span class="o">*</span> <span class="n">num_rollouts_per_param</span> <span class="o">==</span> <span class="n">samples</span><span class="o">.</span><span class="n">num_rollouts</span>
     <span class="k">for</span> <span class="n">ps</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">:</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ps</span><span class="o">.</span><span class="n">rollouts</span><span class="p">)</span> <span class="o">==</span> <span class="n">num_rollouts_per_param</span>
 
     <span class="c1"># Compare rollouts that should be matching</span>
-    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rollouts_per_param</span><span class="p">):</span>
-        <span class="c1"># Use the first parameter set as pivot</span>
+    <span class="k">for</span> <span class="n">ri</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rollouts_per_param</span><span class="p">):</span>
+        <span class="c1"># Use the first paramset as pivot</span>
         <span class="n">piter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
-        <span class="n">pivot</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">piter</span><span class="p">)</span><span class="o">.</span><span class="n">rollouts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-
+        <span class="n">pivot</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">piter</span><span class="p">)</span><span class="o">.</span><span class="n">rollouts</span><span class="p">[</span><span class="n">ri</span><span class="p">]</span>
         <span class="c1"># Iterate through others</span>
         <span class="k">for</span> <span class="n">ops</span> <span class="ow">in</span> <span class="n">piter</span><span class="p">:</span>
-            <span class="n">other_ro</span> <span class="o">=</span> <span class="n">ops</span><span class="o">.</span><span class="n">rollouts</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="n">ro</span> <span class="o">=</span> <span class="n">ops</span><span class="o">.</span><span class="n">rollouts</span><span class="p">[</span><span class="n">ri</span><span class="p">]</span>
+
             <span class="c1"># Compare domain params</span>
-            <span class="k">assert</span> <span class="n">pivot</span><span class="o">.</span><span class="n">rollout_info</span><span class="p">[</span><span class="s2">&quot;domain_param&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">other_ro</span><span class="o">.</span><span class="n">rollout_info</span><span class="p">[</span><span class="s2">&quot;domain_param&quot;</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">pivot</span><span class="o">.</span><span class="n">rollout_info</span><span class="p">[</span><span class="s2">&quot;domain_param&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ro</span><span class="o">.</span><span class="n">rollout_info</span><span class="p">[</span><span class="s2">&quot;domain_param&quot;</span><span class="p">]</span>
             <span class="c1"># Compare first observation a.k.a. init state</span>
-            <span class="k">assert</span> <span class="n">pivot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">observation</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">other_ro</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">observation</span><span class="p">)</span></div>
+            <span class="k">assert</span> <span class="n">pivot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">observation</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">ro</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">observation</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="test_cuda_sampling_w_dr"><a class="viewcode-back" href="../../tests.html#tests.test_sampling.test_cuda_sampling_w_dr">[docs]</a><span class="nd">@m_needs_cuda</span>
@@ -628,10 +615,10 @@
     <span class="s2">&quot;env&quot;</span><span class="p">,</span>
     <span class="p">[</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_qqsurcs_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bs_ds_pos_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bit_ika_pos_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bs_pos_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bit_ik_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
     <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;qqsurcs_bt&quot;</span><span class="p">,</span> <span class="s2">&quot;bs_pos_bt&quot;</span><span class="p">,</span> <span class="s2">&quot;bit_ika_bt&quot;</span><span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;qqsurcs_bt&quot;</span><span class="p">,</span> <span class="s2">&quot;bs_pos_bt&quot;</span><span class="p">,</span> <span class="s2">&quot;bit_ik_bt&quot;</span><span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;idle_policy&quot;</span><span class="p">],</span> <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;idle&quot;</span><span class="p">],</span> <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># ad deterministic policy</span>
@@ -660,28 +647,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020
+        &#169; Copyright 2020.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

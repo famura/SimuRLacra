@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>pyrado.environments.rcspysim.ball_in_tube &mdash; Pyrado 0.4 documentation</title>
   
@@ -17,7 +17,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> Pyrado
+            <a href="../../../../index.html" class="icon icon-home"> Pyrado
           
 
           
@@ -87,9 +90,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -151,6 +154,8 @@
         <div class="rst-content">
         
           
+
+
 
 
 
@@ -397,10 +402,10 @@
         <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="BallInTubePosIKActivationSim"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.BallInTubePosIKActivationSim">[docs]</a><span class="k">class</span> <span class="nc">BallInTubePosIKActivationSim</span><span class="p">(</span><span class="n">BallInTubeSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
+<div class="viewcode-block" id="BallInTubeIKActivationSim"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.ball_in_tube.BallInTubeIKActivationSim">[docs]</a><span class="k">class</span> <span class="nc">BallInTubeIKActivationSim</span><span class="p">(</span><span class="n">BallInTubeSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Humanoid robot fiddling a ball out of a tube using two hooks and an position-level IK controller &quot;&quot;&quot;</span>
 
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bit-ika-pos&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bit-ika&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_frame</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">continuous_rew_fcn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -454,8 +459,8 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ref_frame</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">tasks_left</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
-        <span class="n">tasks_right</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">mps_left</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">mps_right</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">continuous_rew_fcn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
@@ -463,8 +468,8 @@
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param ref_frame: reference frame for the MPs, e.g. &#39;world&#39;, or &#39;table&#39;</span>
-<span class="sd">        :param tasks_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
-<span class="sd">        :param tasks_right: right arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
+<span class="sd">        :param mps_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
+<span class="sd">        :param mps_right: right arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
 <span class="sd">        :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used</span>
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
 <span class="sd">                       fixedInitState: bool = False,</span>
@@ -483,8 +488,8 @@
         <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
 
         <span class="c1"># Fall back to some defaults of no MPs are defined (e.g. for testing)</span>
-        <span class="k">if</span> <span class="n">tasks_left</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">tasks_left</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="k">if</span> <span class="n">mps_left</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mps_left</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="c1"># Effector position relative to slider</span>
                 <span class="p">{</span>
                     <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;msd_nlin&quot;</span><span class="p">,</span>
@@ -502,8 +507,8 @@
                     <span class="s2">&quot;goal&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
                 <span class="p">},</span>  <span class="c1"># [rad]</span>
             <span class="p">]</span>
-        <span class="k">if</span> <span class="n">tasks_right</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">tasks_right</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="k">if</span> <span class="n">mps_right</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mps_right</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="c1"># Effector position relative to slider</span>
                 <span class="p">{</span>
                     <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;msd_nlin&quot;</span><span class="p">,</span>
@@ -528,8 +533,8 @@
             <span class="n">ref_frame</span><span class="o">=</span><span class="n">ref_frame</span><span class="p">,</span>
             <span class="n">actionModelType</span><span class="o">=</span><span class="s2">&quot;ds_activation&quot;</span><span class="p">,</span>
             <span class="n">positionTasks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">tasksLeft</span><span class="o">=</span><span class="n">tasks_left</span><span class="p">,</span>
-            <span class="n">tasksRight</span><span class="o">=</span><span class="n">tasks_right</span><span class="p">,</span>
+            <span class="n">tasksLeft</span><span class="o">=</span><span class="n">mps_left</span><span class="p">,</span>
+            <span class="n">tasksRight</span><span class="o">=</span><span class="n">mps_right</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span></div>
 
@@ -542,8 +547,8 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ref_frame</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">tasks_left</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
-        <span class="n">tasks_right</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">mps_left</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">mps_right</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">continuous_rew_fcn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
@@ -551,8 +556,8 @@
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param ref_frame: reference frame for the MPs, e.g. &#39;world&#39;, or &#39;table&#39;</span>
-<span class="sd">        :param tasks_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
-<span class="sd">        :param tasks_right: right arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
+<span class="sd">        :param mps_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
+<span class="sd">        :param mps_right: right arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
 <span class="sd">        :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used</span>
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
 <span class="sd">                       fixedInitState: bool = False,</span>
@@ -572,8 +577,8 @@
 
         <span class="c1"># Fall back to some defaults of no MPs are defined (e.g. for testing)</span>
         <span class="n">dt</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dt&quot;</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>  <span class="c1"># 100 Hz is the default</span>
-        <span class="k">if</span> <span class="n">tasks_left</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">tasks_left</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="k">if</span> <span class="n">mps_left</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mps_left</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="c1"># Effector Xd</span>
                 <span class="p">{</span><span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="s2">&quot;errorDynamics&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;goal&quot;</span><span class="p">:</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.15</span><span class="p">])},</span>  <span class="c1"># [m/s]</span>
                 <span class="c1"># Effector Yd</span>
@@ -587,8 +592,8 @@
                 <span class="c1"># Effector Cd</span>
                 <span class="p">{</span><span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="s2">&quot;errorDynamics&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;goal&quot;</span><span class="p">:</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">15</span> <span class="o">/</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">])},</span>  <span class="c1"># [rad/s]</span>
             <span class="p">]</span>
-        <span class="k">if</span> <span class="n">tasks_right</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">tasks_right</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="k">if</span> <span class="n">mps_right</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mps_right</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="c1"># Effector Xd</span>
                 <span class="p">{</span><span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="s2">&quot;errorDynamics&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;goal&quot;</span><span class="p">:</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.15</span><span class="p">])},</span>  <span class="c1"># [m/s]</span>
                 <span class="c1"># Effector Yd</span>
@@ -609,8 +614,8 @@
             <span class="n">ref_frame</span><span class="o">=</span><span class="n">ref_frame</span><span class="p">,</span>
             <span class="n">actionModelType</span><span class="o">=</span><span class="s2">&quot;ds_activation&quot;</span><span class="p">,</span>
             <span class="n">positionTasks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">tasksLeft</span><span class="o">=</span><span class="n">tasks_left</span><span class="p">,</span>
-            <span class="n">tasksRight</span><span class="o">=</span><span class="n">tasks_right</span><span class="p">,</span>
+            <span class="n">tasksLeft</span><span class="o">=</span><span class="n">mps_left</span><span class="p">,</span>
+            <span class="n">tasksRight</span><span class="o">=</span><span class="n">mps_right</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span></div>
 </pre></div>
@@ -619,28 +624,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020
+        &#169; Copyright 2020.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>tests.test_domain_randomization &mdash; Pyrado 0.4 documentation</title>
   
@@ -17,7 +17,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> Pyrado
+            <a href="../../index.html" class="icon icon-home"> Pyrado
           
 
           
@@ -87,9 +90,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/1_basic_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/3_algorithm.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -166,6 +169,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -223,12 +228,10 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 
-<span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">NormalDomainParam</span><span class="p">,</span>
     <span class="n">MultivariateNormalDomainParam</span><span class="p">,</span>
     <span class="n">BernoulliDomainParam</span><span class="p">,</span>
-    <span class="n">UniformDomainParam</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.utils</span> <span class="kn">import</span> <span class="n">param_grid</span>
 <span class="kn">from</span> <span class="nn">tests.conftest</span> <span class="kn">import</span> <span class="n">m_needs_bullet</span><span class="p">,</span> <span class="n">m_needs_mujoco</span>
@@ -237,24 +240,26 @@
 <div class="viewcode-block" id="test_domain_param"><a class="viewcode-back" href="../../tests.html#tests.test_domain_randomization.test_domain_param">[docs]</a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s2">&quot;dp&quot;</span><span class="p">,</span>
     <span class="p">[</span>
-        <span class="n">UniformDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">halfspan</span><span class="o">=</span><span class="mf">11.0</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span> <span class="n">clip_up</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
         <span class="n">NormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">clip_lo</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">clip_up</span><span class="o">=</span><span class="mi">11</span><span class="p">),</span>
         <span class="n">MultivariateNormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">cov</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">clip_lo</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">clip_up</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
         <span class="n">MultivariateNormalDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">10</span> <span class="o">*</span> <span class="n">to</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,)),</span> <span class="n">cov</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">to</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">clip_up</span><span class="o">=</span><span class="mi">11</span><span class="p">),</span>
         <span class="n">BernoulliDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">val_0</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">val_1</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">prob_1</span><span class="o">=</span><span class="mf">0.8</span><span class="p">),</span>
         <span class="n">BernoulliDomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">val_0</span><span class="o">=-</span><span class="mi">3</span><span class="p">,</span> <span class="n">val_1</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">prob_1</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">clip_up</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
     <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;U&quot;</span><span class="p">,</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;MVN_v1&quot;</span><span class="p">,</span> <span class="s2">&quot;MVN_v2&quot;</span><span class="p">,</span> <span class="s2">&quot;B_v1&quot;</span><span class="p">,</span> <span class="s2">&quot;B_v2&quot;</span><span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1dim&quot;</span><span class="p">,</span> <span class="s2">&quot;2dim_v1&quot;</span><span class="p">,</span> <span class="s2">&quot;2dim_v2&quot;</span><span class="p">,</span> <span class="s2">&quot;bern_v1&quot;</span><span class="p">,</span> <span class="s2">&quot;bern_v2&quot;</span><span class="p">],</span>
 <span class="p">)</span>
-<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;num_samples&quot;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
-<span class="k">def</span> <span class="nf">test_domain_param</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">):</span>
-    <span class="c1"># assert dp == dp</span>
-    <span class="n">fns</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">get_field_names</span><span class="p">()</span>
-    <span class="k">assert</span> <span class="n">fns</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+<span class="k">def</span> <span class="nf">test_domain_param</span><span class="p">(</span><span class="n">dp</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">num_samples</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">25</span><span class="p">]:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="n">num_samples</span></div>
 
-    <span class="n">s</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="n">num_samples</span></div>
+
+<div class="viewcode-block" id="test_randomizer_dummy"><a class="viewcode-back" href="../../tests.html#tests.test_domain_randomization.test_randomizer_dummy">[docs]</a><span class="k">def</span> <span class="nf">test_randomizer_dummy</span><span class="p">(</span><span class="n">default_dummy_randomizer</span><span class="p">):</span>
+    <span class="n">default_dummy_randomizer</span><span class="o">.</span><span class="n">randomize</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">default_dummy_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="c1"># The dummy randomizer should always return the nominal parameter values</span>
+        <span class="k">assert</span> <span class="n">samples</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">samples</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># only works if none of the values is an array</span></div>
 
 
 <div class="viewcode-block" id="test_randomizer"><a class="viewcode-back" href="../../tests.html#tests.test_domain_randomization.test_randomizer">[docs]</a><span class="k">def</span> <span class="nf">test_randomizer</span><span class="p">(</span><span class="n">default_randomizer</span><span class="p">):</span>
@@ -263,50 +268,50 @@
     <span class="n">default_randomizer</span><span class="o">.</span><span class="n">randomize</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
 
     <span class="c1"># Test all variations of the getter function&#39;s parameters format and dtype</span>
-    <span class="n">pp_3_to_dict</span> <span class="o">=</span> <span class="n">default_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">)</span>
+    <span class="n">pp_3_to_dict</span> <span class="o">=</span> <span class="n">default_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_3_to_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_3_to_dict</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp_3_to_dict</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">3</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_3_to_dict</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_3_to_dict</span><span class="p">[</span><span class="s2">&quot;multidim&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="ow">and</span> <span class="n">pp_3_to_dict</span><span class="p">[</span><span class="s2">&quot;multidim&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
-    <span class="n">pp_3_to_list</span> <span class="o">=</span> <span class="n">default_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">)</span>
+    <span class="n">pp_3_to_list</span> <span class="o">=</span> <span class="n">default_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_3_to_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp_3_to_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_3_to_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_3_to_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;mass&quot;</span><span class="p">],</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_3_to_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;multidim&quot;</span><span class="p">],</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="ow">and</span> <span class="n">pp_3_to_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;multidim&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
-    <span class="n">pp_3_np_dict</span> <span class="o">=</span> <span class="n">default_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+    <span class="n">pp_3_np_dict</span> <span class="o">=</span> <span class="n">default_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_3_np_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_3_np_dict</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp_3_np_dict</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">3</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_3_np_dict</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_3_np_dict</span><span class="p">[</span><span class="s2">&quot;multidim&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">pp_3_np_dict</span><span class="p">[</span><span class="s2">&quot;multidim&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">2</span>
-    <span class="n">pp_3_np_list</span> <span class="o">=</span> <span class="n">default_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+    <span class="n">pp_3_np_list</span> <span class="o">=</span> <span class="n">default_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_3_np_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp_3_np_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_3_np_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_3_np_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;mass&quot;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_3_np_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;multidim&quot;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">pp_3_np_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;multidim&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">2</span>
 
-    <span class="n">pp_all_to_dict</span> <span class="o">=</span> <span class="n">default_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">)</span>
+    <span class="n">pp_all_to_dict</span> <span class="o">=</span> <span class="n">default_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_all_to_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_all_to_dict</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp_all_to_dict</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">7</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_all_to_dict</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_all_to_dict</span><span class="p">[</span><span class="s2">&quot;multidim&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="ow">and</span> <span class="n">pp_all_to_dict</span><span class="p">[</span><span class="s2">&quot;multidim&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
-    <span class="n">pp_all_to_list</span> <span class="o">=</span> <span class="n">default_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">)</span>
+    <span class="n">pp_all_to_list</span> <span class="o">=</span> <span class="n">default_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_all_to_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp_all_to_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">7</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_all_to_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_all_to_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;mass&quot;</span><span class="p">],</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_all_to_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;multidim&quot;</span><span class="p">],</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="ow">and</span> <span class="n">pp_all_to_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;multidim&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
-    <span class="n">pp_all_np_dict</span> <span class="o">=</span> <span class="n">default_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+    <span class="n">pp_all_np_dict</span> <span class="o">=</span> <span class="n">default_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_all_np_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_all_np_dict</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp_all_np_dict</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">7</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_all_np_dict</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_all_np_dict</span><span class="p">[</span><span class="s2">&quot;multidim&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">pp_all_np_dict</span><span class="p">[</span><span class="s2">&quot;multidim&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">2</span>
-    <span class="n">pp_all_np_list</span> <span class="o">=</span> <span class="n">default_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+    <span class="n">pp_all_np_list</span> <span class="o">=</span> <span class="n">default_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_all_np_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp_all_to_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">7</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pp_all_np_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span>
@@ -315,7 +320,7 @@
 
 
 <div class="viewcode-block" id="test_rescaling"><a class="viewcode-back" href="../../tests.html#tests.test_domain_randomization.test_rescaling">[docs]</a><span class="k">def</span> <span class="nf">test_rescaling</span><span class="p">(</span><span class="n">default_randomizer</span><span class="p">):</span>
-    <span class="c1"># This test relies on a fixed structure of the default_randomizer (mass is ele 0, and length is ele 2 in the list)</span>
+    <span class="c1"># This test relies on a fixed structure of the default_randomizer (&#39;mass&#39; is ele 0, and &#39;length is ele 2 in the list).</span>
     <span class="n">randomizer</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">default_randomizer</span><span class="p">)</span>
     <span class="n">randomizer</span><span class="o">.</span><span class="n">rescale_distr_param</span><span class="p">(</span><span class="s2">&quot;std&quot;</span><span class="p">,</span> <span class="mf">12.5</span><span class="p">)</span>
     <span class="c1"># Check if the right parameter of the distribution changed</span>
@@ -352,13 +357,13 @@
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bop2d_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bop5d_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_cth&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_mujoco</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_hop&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_mujoco</span><span class="p">),</span>
+        <span class="c1"># pytest.param(&#39;default_hop&#39;, marks=m_needs_mujoco),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_wambic&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_mujoco</span><span class="p">),</span>
     <span class="p">],</span>
-    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;bob&quot;</span><span class="p">,</span> <span class="s2">&quot;omo&quot;</span><span class="p">,</span> <span class="s2">&quot;pend&quot;</span><span class="p">,</span> <span class="s2">&quot;qbb&quot;</span><span class="p">,</span> <span class="s2">&quot;qcp-st&quot;</span><span class="p">,</span> <span class="s2">&quot;qcp-su&quot;</span><span class="p">,</span> <span class="s2">&quot;bop2d&quot;</span><span class="p">,</span> <span class="s2">&quot;bop5d&quot;</span><span class="p">,</span> <span class="s2">&quot;cth&quot;</span><span class="p">,</span> <span class="s2">&quot;hop&quot;</span><span class="p">,</span> <span class="s2">&quot;wam-bic&quot;</span><span class="p">],</span>
+    <span class="c1"># ids=[&#39;bob&#39;, &#39;omo&#39;, &#39;pend&#39;, &#39;qbb&#39;, &#39;qcp-st&#39;, &#39;qcp-su&#39;, &#39;bop2d&#39;, &#39;bop5d&#39;, &#39;cth&#39;, &#39;hop&#39;, &#39;wam-bic&#39;],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_setting_dp_vals</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">test_setting_dp_vals</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
     <span class="c1"># Loop over all possible domain parameters and set them to a random value</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">dp_key</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">supported_domain_param</span><span class="p">:</span>
@@ -376,28 +381,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020
+        &#169; Copyright 2020.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>pyrado.environment_wrappers.domain_randomization &mdash; Pyrado 0.4 documentation</title>
   
@@ -17,7 +17,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -50,7 +53,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Pyrado
+            <a href="../../../index.html" class="icon icon-home"> Pyrado
           
 
           
@@ -87,9 +90,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -151,6 +154,8 @@
         <div class="rst-content">
         
           
+
+
 
 
 
@@ -281,9 +286,8 @@
 <span class="sd">        :param mapping: mapping from index of the numpy array (coming from the algorithm) to domain parameter name</span>
 <span class="sd">                        (e.g. mass, length) and the domain distribution parameter (e.g. mean, std)</span>
 
-<span class="sd">        .. code-block:: python</span>
-
-<span class="sd">            # For the mapping arg use the this dict constructor</span>
+<span class="sd">        .. note::</span>
+<span class="sd">            For the `mapping` arg use the this dict constructor:</span>
 <span class="sd">            ```</span>
 <span class="sd">            m = {0: (&#39;name1&#39;, &#39;parameter_type1&#39;), 1: (&#39;name2&#39;, &#39;parameter_type2&#39;)}</span>
 <span class="sd">            ```</span>
@@ -337,7 +341,7 @@
         <span class="k">if</span> <span class="n">domain_param</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># No explicit specification of domain parameters, so randomizer is called to draw a parameter dict</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_randomizer</span><span class="o">.</span><span class="n">randomize</span><span class="p">(</span><span class="n">num_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">domain_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+            <span class="n">domain_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
 
         <span class="c1"># Set the new domain parameters (and the initial sate) by calling the reset method of the wrapped env</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">domain_param</span><span class="p">)</span></div></div>
@@ -381,7 +385,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_domains</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_domains</span> <span class="o">&gt;=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_randomizer</span><span class="o">.</span><span class="n">randomize</span><span class="p">(</span><span class="n">num_domains</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_randomizer</span><span class="o">.</span><span class="n">get_params</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ring_idx</span> <span class="o">=</span> <span class="mi">0</span></div>
 
     <span class="nd">@property</span>
@@ -458,28 +462,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020
+        &#169; Copyright 2020.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
