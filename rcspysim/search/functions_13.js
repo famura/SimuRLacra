@@ -27,7 +27,6 @@ var searchData=
   ['_7eissballonplate',['~ISSBallOnPlate',['../classRcs_1_1ISSBallOnPlate.html#a47d13f2a9a45a52868f0cdf7d48fc02a',1,'Rcs::ISSBallOnPlate']]],
   ['_7eissboxflipping',['~ISSBoxFlipping',['../classRcs_1_1ISSBoxFlipping.html#ab04da4523951699ad3911e5ede1ddb79',1,'Rcs::ISSBoxFlipping']]],
   ['_7eissboxlifting',['~ISSBoxLifting',['../classRcs_1_1ISSBoxLifting.html#a0cc79dfb103e3baf3b379dcbd7541120',1,'Rcs::ISSBoxLifting']]],
-  ['_7eissboxliftingsimple',['~ISSBoxLiftingSimple',['../classRcs_1_1ISSBoxLiftingSimple.html#a6cade3d948681c79d3b9f1edd8674219',1,'Rcs::ISSBoxLiftingSimple']]],
   ['_7eissboxshelving',['~ISSBoxShelving',['../classRcs_1_1ISSBoxShelving.html#a790b87bbac22d5224da6e3bb55e21794',1,'Rcs::ISSBoxShelving']]],
   ['_7eissmpblending',['~ISSMPBlending',['../classRcs_1_1ISSMPBlending.html#a5f206cb4383837799d4bd7ef3be2dcf7',1,'Rcs::ISSMPBlending']]],
   ['_7eissplanar3link',['~ISSPlanar3Link',['../classRcs_1_1ISSPlanar3Link.html#ae0ce19bbc41962ae8a830211245fe3bd',1,'Rcs::ISSPlanar3Link']]],

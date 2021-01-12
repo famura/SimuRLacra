@@ -90,9 +90,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/1_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples/3_algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -251,22 +251,22 @@
         <span class="s2">&quot;default_qcpst&quot;</span><span class="p">,</span>
         <span class="s2">&quot;default_qcpsu&quot;</span><span class="p">,</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_qqsurcs_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_p3l_ik_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_p3l_ika_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_p3l_ta_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_p3l_ta_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_pi_ik_5l_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_pi_ika_5l_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_pi_ika_6l_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_pi_ta_6l_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_pi_ik_6l_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bop2d_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bop2d_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bop5d_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bop5d_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bs_pos_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bs_pos_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bit_ik_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bit_vel_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bf_ik_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bf_vel_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bs_ds_pos_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bs_ds_pos_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bit_ika_pos_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bit_ds_vel_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bf_ika_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bf_ds_vel_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_cth&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_mujoco</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_hop&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_mujoco</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_wambic&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_mujoco</span><span class="p">),</span>
@@ -284,22 +284,22 @@
         <span class="s2">&quot;qcp-st&quot;</span><span class="p">,</span>
         <span class="s2">&quot;qcp-su&quot;</span><span class="p">,</span>
         <span class="s2">&quot;qqsurcs&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;p3l_ik_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;p3l_ika_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;p3l_ta_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;p3l_ta_vx&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;pi_ik_5l_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pi_ika_5l_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pi_ika_6l_vx&quot;</span><span class="p">,</span>
         <span class="s2">&quot;pi_ta_6l_bt&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;pi_ik_6l_vx&quot;</span><span class="p">,</span>
         <span class="s2">&quot;bop2d_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;bop2d_vx&quot;</span><span class="p">,</span>
         <span class="s2">&quot;bop5d_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;bop5d_vx&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bspos_bt&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bspos_vx&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bit_ik_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bs_ds_pos_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bs_ds_pos_vx&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bit_ika_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;bit_vel_bt&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bf_ik_bt&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bf_vel_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bf_ika_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bf_ds_vel_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;cth&quot;</span><span class="p">,</span>
         <span class="s2">&quot;hop&quot;</span><span class="p">,</span>
         <span class="s2">&quot;wam-bic&quot;</span><span class="p">,</span>
@@ -337,22 +337,22 @@
         <span class="s2">&quot;default_qcpst&quot;</span><span class="p">,</span>
         <span class="s2">&quot;default_qcpsu&quot;</span><span class="p">,</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_qqsurcs_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_p3l_ik_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_p3l_ika_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_p3l_ta_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_p3l_ta_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_pi_ik_5l_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_pi_ika_5l_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_pi_ika_6l_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_pi_ta_6l_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_pi_ik_6l_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bop2d_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bop2d_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bop5d_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bop5d_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bs_pos_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bs_pos_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bit_ik_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bit_vel_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bf_ik_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bf_vel_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bs_ds_pos_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bs_ds_pos_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bit_ika_pos_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bit_ds_vel_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bf_ika_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bf_ds_vel_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_cth&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_mujoco</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_hop&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_mujoco</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_wambic&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_mujoco</span><span class="p">),</span>
@@ -370,22 +370,22 @@
         <span class="s2">&quot;qcp-st&quot;</span><span class="p">,</span>
         <span class="s2">&quot;qcp-su&quot;</span><span class="p">,</span>
         <span class="s2">&quot;qqsurcs&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;p3l_ik_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;p3l_ika_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;p3l_ta_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;p3l_ta_vx&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;pi_ik_5l_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pi_ika_5l_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pi_ika_6l_vx&quot;</span><span class="p">,</span>
         <span class="s2">&quot;pi_ta_6l_bt&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;pi_ik_6l_vx&quot;</span><span class="p">,</span>
         <span class="s2">&quot;bop2d_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;bop2d_vx&quot;</span><span class="p">,</span>
         <span class="s2">&quot;bop5d_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;bop5d_vx&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bspos_bt&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bspos_vx&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bit_ik_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bs_ds_pos_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bs_ds_pos_vx&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bit_ika_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;bit_vel_bt&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bf_ik_bt&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bf_vel_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bf_ika_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bf_ds_vel_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;cth&quot;</span><span class="p">,</span>
         <span class="s2">&quot;hop&quot;</span><span class="p">,</span>
         <span class="s2">&quot;wam-bic&quot;</span><span class="p">,</span>
@@ -418,22 +418,22 @@
         <span class="s2">&quot;default_qcpst&quot;</span><span class="p">,</span>
         <span class="s2">&quot;default_qcpsu&quot;</span><span class="p">,</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_qqsurcs_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_p3l_ik_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_p3l_ika_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_p3l_ta_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_p3l_ta_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_pi_ik_5l_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_pi_ika_5l_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_pi_ika_6l_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_pi_ta_6l_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_pi_ik_6l_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bop2d_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bop2d_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bop5d_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bop5d_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bs_pos_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bs_pos_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bit_ik_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bit_vel_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bf_ik_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bf_vel_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bs_ds_pos_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bs_ds_pos_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bit_ika_pos_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bit_ds_vel_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bf_ika_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bf_ds_vel_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_cth&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_mujoco</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_hop&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_mujoco</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_wambic&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_mujoco</span><span class="p">),</span>
@@ -451,22 +451,22 @@
         <span class="s2">&quot;qcp-st&quot;</span><span class="p">,</span>
         <span class="s2">&quot;qcp-su&quot;</span><span class="p">,</span>
         <span class="s2">&quot;qqsurcs&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;p3l_ik_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;p3l_ika_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;p3l_ta_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;p3l_ta_vx&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;pi_ik_5l_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pi_ika_5l_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pi_ika_6l_vx&quot;</span><span class="p">,</span>
         <span class="s2">&quot;pi_ta_6l_bt&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;pi_ik_6l_vx&quot;</span><span class="p">,</span>
         <span class="s2">&quot;bop2d_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;bop2d_vx&quot;</span><span class="p">,</span>
         <span class="s2">&quot;bop5d_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;bop5d_vx&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bspos_bt&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bspos_vx&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bit_ik_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bs_ds_pos_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bs_ds_pos_vx&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bit_ika_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;bit_vel_bt&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bf_ik_bt&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bf_vel_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bf_ika_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bf_ds_vel_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;cth&quot;</span><span class="p">,</span>
         <span class="s2">&quot;hop&quot;</span><span class="p">,</span>
         <span class="s2">&quot;wam-bic&quot;</span><span class="p">,</span>
@@ -531,41 +531,41 @@
     <span class="s2">&quot;env&quot;</span><span class="p">,</span>
     <span class="p">[</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_qqsurcs_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_p3l_ik_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_p3l_ika_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_p3l_ta_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_p3l_ta_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_pi_ik_5l_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_pi_ika_5l_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_pi_ika_6l_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_pi_ta_6l_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_pi_ik_6l_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bop2d_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bop2d_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bop5d_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
         <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bop5d_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bs_pos_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bs_pos_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bit_ik_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bit_vel_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bf_ik_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bf_vel_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bs_ds_pos_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bs_ds_pos_vx&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_vortex</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bit_ika_pos_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bit_ds_vel_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bf_ika_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;default_bf_ds_vel_bt&quot;</span><span class="p">,</span> <span class="n">marks</span><span class="o">=</span><span class="n">m_needs_bullet</span><span class="p">),</span>
     <span class="p">],</span>
     <span class="n">ids</span><span class="o">=</span><span class="p">[</span>
         <span class="s2">&quot;qqsurcs_bt&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;p3l_ik_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;p3l_ika_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;p3l_ta_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;p3l_ta_vx&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;pi_ik_5l_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pi_ika_5l_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pi_ika_6l_vx&quot;</span><span class="p">,</span>
         <span class="s2">&quot;pi_ta_6l_bt&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;pi_ik_6l_vx&quot;</span><span class="p">,</span>
         <span class="s2">&quot;bop2d_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;bop2d_vx&quot;</span><span class="p">,</span>
         <span class="s2">&quot;bop5d_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;bop5d_vx&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bspos_bt&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bspos_vx&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bit_ik_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bs_ds_pos_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bs_ds_pos_vx&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bit_ika_bt&quot;</span><span class="p">,</span>
         <span class="s2">&quot;bit_vel_bt&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bf_ik_bt&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bf_vel_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bf_ika_bt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bf_ds_vel_bt&quot;</span><span class="p">,</span>
     <span class="p">],</span>
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>

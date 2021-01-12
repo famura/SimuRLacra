@@ -90,9 +90,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -225,12 +225,14 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
+<span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
 <span class="kn">from</span> <span class="nn">torch.distributions.uniform</span> <span class="kn">import</span> <span class="n">Uniform</span>
 <span class="kn">from</span> <span class="nn">torch.distributions.normal</span> <span class="kn">import</span> <span class="n">Normal</span>
 <span class="kn">from</span> <span class="nn">torch.distributions.multivariate_normal</span> <span class="kn">import</span> <span class="n">MultivariateNormal</span>
 <span class="kn">from</span> <span class="nn">torch.distributions.bernoulli</span> <span class="kn">import</span> <span class="n">Bernoulli</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Mapping</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_parameter</span> <span class="kn">import</span> <span class="p">(</span>
@@ -240,6 +242,7 @@
     <span class="n">BernoulliDomainParam</span><span class="p">,</span>
     <span class="n">MultivariateNormalDomainParam</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.tensor</span> <span class="kn">import</span> <span class="n">deepcopy_or_clone</span>
 
 
 <div class="viewcode-block" id="DomainRandomizer"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer">[docs]</a><span class="k">class</span> <span class="nc">DomainRandomizer</span><span class="p">:</span>
@@ -294,29 +297,45 @@
             <span class="p">[[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">headers_ordered</span><span class="p">]</span> <span class="k">for</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">dps</span><span class="p">],</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers_ordered</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;simple&quot;</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="DomainRandomizer.add_domain_params"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.add_domain_params">[docs]</a>    <span class="k">def</span> <span class="nf">add_domain_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">domain_params</span><span class="p">:</span> <span class="n">DomainParam</span><span class="p">):</span>
+<div class="viewcode-block" id="DomainRandomizer.add_domain_params"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.add_domain_params">[docs]</a>    <span class="k">def</span> <span class="nf">add_domain_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">domain_params</span><span class="p">:</span> <span class="n">DomainParam</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add an arbitrary number of domain parameters with their distributions to the randomizer.</span>
 
 <span class="sd">        :param domain_params: list or tuple of `DomainParam` instances</span>
+<span class="sd">        :param mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass, length).</span>
+<span class="sd">                        This only sets the same and is intended to be used to guarantee the right number and order of</span>
+<span class="sd">                        domain parameters in the randomizer.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">domain_params</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">DomainParam</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">dp</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">DomainParam</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">domain_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dp</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">domain_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dp</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">mapping</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Sort according to the indices held by the keys</span>
+            <span class="n">sorted_mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">mapping</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">sorted_mapping</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">domain_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DomainParam</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">value</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="DomainRandomizer.randomize"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.randomize">[docs]</a>    <span class="k">def</span> <span class="nf">randomize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Draw random parameters from the associated distributions.</span>
-<span class="sd">        Internally stores a dict with parameter names as dict-keys and the new parameters in list form as dict-values.</span>
+<span class="sd">        Internally stores a dict with parameter names as dict-keys and the new parameters in list form as dict values.</span>
 
 <span class="sd">        :param num_samples: number of samples to draw for each parameter</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_samples</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="c1"># Generate samples</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_samples</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">g_constraint</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Generate domain parameter samples</span>
         <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">dp</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">dp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_params</span><span class="p">]</span>
         <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">dp</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span> <span class="k">for</span> <span class="n">dp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain_params</span><span class="p">]</span>
 
+        <span class="c1"># Fill the internal storage containers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">values</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_samples</span><span class="p">):</span>
@@ -325,68 +344,75 @@
                 <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DomainRandomizer.get_params"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;numpy&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
+<div class="viewcode-block" id="DomainRandomizer.get_params"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">fmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;numpy&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the values in the data frame of the perturbed parameters.</span>
 
 <span class="sd">        :param num_samples: number of samples to be extracted from the randomizer</span>
-<span class="sd">        :param format: format (list of dicts or dict of lists) in which the params should be returned</span>
+<span class="sd">        :param fmt: format (list of dicts or dict of lists) in which the params should be returned</span>
 <span class="sd">        :param dtype: data type in which the params should be returned</span>
 <span class="sd">        :return: dict of num_samples perturbed values per specified param or one dict of one perturbed</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_samples</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">2</span> <span class="ow">and</span> <span class="n">num_samples</span> <span class="o">!=</span> <span class="mi">0</span>
-        <span class="k">assert</span> <span class="nb">format</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span> <span class="ow">or</span> <span class="nb">format</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;dict&quot;</span>
-        <span class="k">assert</span> <span class="n">dtype</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span> <span class="ow">or</span> <span class="n">dtype</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_samples</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mi">2</span> <span class="ow">or</span> <span class="n">num_samples</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;The number of samples needs to be -1 or a positive integer!&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">fmt</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span> <span class="ow">or</span> <span class="n">fmt</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;dict&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">fmt</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;list or dict&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dtype</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span> <span class="ow">or</span> <span class="n">dtype</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;torch&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;numpy or torch&quot;</span><span class="p">)</span>
+
+        <span class="n">copy</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">num_samples</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># Return all samples that the randomizer holds</span>
-            <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>
                 <span class="c1"># Return a list with all domain parameter sets</span>
-                <span class="n">copy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_list</span><span class="p">)</span>
+                <span class="n">copy</span> <span class="o">=</span> <span class="n">deepcopy_or_clone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_list</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>  <span class="c1"># nothing to be done for torch</span>
                     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">copy</span><span class="p">)):</span>
                         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                            <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-                <span class="k">return</span> <span class="n">copy</span>
+                            <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
 
-            <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;dict&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;dict&quot;</span><span class="p">:</span>
                 <span class="c1"># Returns a dict (as many entries as parameters) with lists as values (as many entries as samples)</span>
-                <span class="n">copy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_dict</span><span class="p">)</span>
+                <span class="n">copy</span> <span class="o">=</span> <span class="n">deepcopy_or_clone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_dict</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>  <span class="c1"># nothing to be done for torch</span>
                     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">copy</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                        <span class="n">copy</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">samples</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">samples</span> <span class="ow">in</span> <span class="n">copy</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
-                <span class="k">return</span> <span class="n">copy</span>
+                        <span class="n">copy</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">samples</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">samples</span> <span class="ow">in</span> <span class="n">copy</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
 
         <span class="k">elif</span> <span class="n">num_samples</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># If only one sample is wanted or the internal list just contains 1 element</span>
-            <span class="n">copy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">copy</span> <span class="o">=</span> <span class="n">deepcopy_or_clone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>  <span class="c1"># nothing to be done for torch</span>
                 <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">copy</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                    <span class="n">copy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-            <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>  <span class="c1"># nothing to be done for dict</span>
+                    <span class="n">copy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>  <span class="c1"># nothing to be done for dict</span>
                 <span class="n">copy</span> <span class="o">=</span> <span class="p">[</span><span class="n">copy</span><span class="p">]</span>
-            <span class="k">return</span> <span class="n">copy</span>
 
         <span class="k">elif</span> <span class="n">num_samples</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># Return a subset of all samples that the randomizer holds</span>
-            <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>
-                <span class="n">copy</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_list</span><span class="p">[:</span><span class="n">num_samples</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>
+                <span class="n">copy</span> <span class="o">=</span> <span class="n">deepcopy_or_clone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_list</span><span class="p">[:</span><span class="n">num_samples</span><span class="p">])</span>
                 <span class="c1"># Return a list with the fist num_samples domain parameter sets</span>
                 <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>  <span class="c1"># nothing to be done for torch</span>
                     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_samples</span><span class="p">):</span>
                         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                            <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-                <span class="k">return</span> <span class="n">copy</span>
+                            <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
 
-            <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s2">&quot;dict&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;dict&quot;</span><span class="p">:</span>
                 <span class="c1"># Return a dict with as many keys as perturbed params and num_samples values for each of them</span>
-                <span class="n">params_pert_subset</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">copy</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
                 <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_dict</span><span class="p">:</span>
                     <span class="c1"># Only select the fist num_samples elements of the list</span>
-                    <span class="n">params_pert_subset</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][:</span><span class="n">num_samples</span><span class="p">]</span>
+                    <span class="n">copy</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params_pert_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][:</span><span class="n">num_samples</span><span class="p">]</span>
                     <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>  <span class="c1"># nothing to be done for torch</span>
-                        <span class="n">params_pert_subset</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params_pert_subset</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
-                <span class="k">return</span> <span class="n">params_pert_subset</span></div>
+                        <span class="n">copy</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">copy</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
+
+        <span class="k">if</span> <span class="n">copy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Something when wrong during get_params(</span><span class="si">{</span><span class="n">num_samples</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">fmt</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">)!&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">copy</span></div>
 
 <div class="viewcode-block" id="DomainRandomizer.adapt_one_distr_param"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.adapt_one_distr_param">[docs]</a>    <span class="k">def</span> <span class="nf">adapt_one_distr_param</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">domain_param_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">domain_distr_param</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">domain_distr_param_value</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
@@ -406,8 +432,8 @@
                         <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">domain_distr_param_value</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span>
                     <span class="n">dp</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="n">domain_distr_param</span><span class="p">,</span> <span class="n">domain_distr_param_value</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;The domain parameter </span><span class="si">{</span><span class="n">dp</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> does not have a domain distribution parameter &quot;</span>
+                    <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">KeyErr</span><span class="p">(</span>
+                        <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;The domain parameter </span><span class="si">{</span><span class="n">dp</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> does not have a domain distribution parameter &quot;</span>
                         <span class="sa">f</span><span class="s2">&quot;called </span><span class="si">{</span><span class="n">domain_distr_param</span><span class="si">}</span><span class="s2">!&quot;</span>
                     <span class="p">)</span></div>
 

@@ -90,9 +90,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -227,7 +227,7 @@
 
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span> <span class="k">as</span> <span class="n">nn</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_randomizer</span> <span class="kn">import</span> <span class="n">DomainRandomizer</span>
@@ -246,7 +246,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">mapping</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
-        <span class="n">trafo_mask</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+        <span class="n">trafo_mask</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span>
         <span class="n">prior</span><span class="p">:</span> <span class="n">DomainRandomizer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">scale_params</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -254,12 +254,15 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
-<span class="sd">        :param mapping: mapping from index of the numpy array (coming from the algorithm) to domain parameter name</span>
-<span class="sd">                        (e.g. mass, length) and the domain distribution parameter (e.g. mean, std)</span>
-<span class="sd">        :param trafo_mask: every domain distribution parameter that is set to `True` in this mask will be exponentially</span>
-<span class="sd">                           transformed. This is useful to avoid setting negative variance.</span>
+<span class="sd">        :param mapping: mapping from subsequent integers to domain distribution parameters, where the first string of</span>
+<span class="sd">                        the value tuple is the name of the domain parameter (e.g. mass, length) and the second string is</span>
+<span class="sd">                        the name of the distribution parameter (e.g. mean, std).  The integers are indices of the numpy</span>
+<span class="sd">                        array which come from the algorithm.</span>
+<span class="sd">        :param trafo_mask: every domain parameter that is set to `True` in this mask will be learned via a &#39;virtual&#39;</span>
+<span class="sd">                           parameter, i.e. in sqrt-space, and then finally squared to retrieve the domain parameter.</span>
+<span class="sd">                           This transformation is useful to avoid setting a negative variance.</span>
 <span class="sd">        :param prior: prior believe about the distribution parameters in from of a `DomainRandomizer`</span>
-<span class="sd">        :param scale_params: if `True`, the log-transformed policy parameters are scaled in the range of $[-0.5, 0.5]$.</span>
+<span class="sd">        :param scale_params: if `True`, the sqrt-transformed policy parameters are scaled in the range of $[-0.5, 0.5]$.</span>
 <span class="sd">                             The advantage of this is to make the parameter-based exploration easier.</span>
 <span class="sd">        :param use_cuda: `True` to move the policy to the GPU, `False` (default) to use the CPU</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -268,7 +271,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">trafo_mask</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">mapping</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">trafo_mask</span><span class="p">,</span> <span class="n">expected_match</span><span class="o">=</span><span class="n">mapping</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="n">mapping</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span> <span class="o">=</span> <span class="n">mapping</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">trafo_mask</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">prior</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_scale_params</span> <span class="o">=</span> <span class="n">scale_params</span>
@@ -284,11 +287,20 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">param_scaler</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># initialized during init_param()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_param</span><span class="p">(</span><span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">)</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the mapping from subsequent integers to domain distribution parameters, where the first string of the value</span>
+<span class="sd">        tuple is the name of the domain parameter and the second string is the name of the distribution parameter.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span>
+
 <div class="viewcode-block" id="DomainDistrParamPolicy.transform_to_ddp_space"><a class="viewcode-back" href="../../../../policies.special.html#pyrado.policies.special.domain_distribution.DomainDistrParamPolicy.transform_to_ddp_space">[docs]</a>    <span class="k">def</span> <span class="nf">transform_to_ddp_space</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the transformed domain distribution parameters. The policy&#39;s parameters are in log space.</span>
+<span class="sd">        Get the transformed domain distribution parameters. Where ever the mask is `True`, the corresponding policy</span>
+<span class="sd">        parameter is learned in sqrt space. Moreover, the policy parameters can be scaled.</span>
 
-<span class="sd">        :param params: policy parameters (can be the log of the actual domain distribution parameter value)</span>
+<span class="sd">        :param params: policy parameters (can be the sqrt of the actual domain distribution parameter value)</span>
 <span class="sd">        :return: policy parameters transformed according to the mask</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ddp</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
@@ -297,17 +309,17 @@
             <span class="c1"># Only one set of domain distribution parameters</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale_params</span><span class="p">:</span>
                 <span class="n">ddp</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_scaler</span><span class="o">.</span><span class="n">scale_back</span><span class="p">(</span><span class="n">ddp</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-            <span class="n">ddp</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">ddp</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">])</span>
+            <span class="n">ddp</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">ddp</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">ddp</span><span class="o">.</span><span class="n">ndimension</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="c1"># Multiple sets of domain distribution parameters along the first axis</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale_params</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ddp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
                     <span class="n">ddp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_scaler</span><span class="o">.</span><span class="n">scale_back</span><span class="p">(</span><span class="n">ddp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-            <span class="n">ddp</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">ddp</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">])</span>
+            <span class="n">ddp</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">ddp</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Inputs must not have more than 2 dimensions!&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;The input must not have more than 2 dimensions!&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">ddp</span></div>
 
@@ -322,14 +334,14 @@
                 <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;prior&quot;</span><span class="p">],</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">DomainRandomizer</span><span class="p">)</span>
 
             <span class="c1"># For every domain distribution parameter in the mapping, check if there is prior information</span>
-            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ddp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ddp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">for</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;prior&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">domain_params</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">ddp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">dp</span><span class="o">.</span><span class="n">name</span> <span class="ow">and</span> <span class="n">ddp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">dp</span><span class="o">.</span><span class="n">get_field_names</span><span class="p">():</span>
                         <span class="c1"># The domain parameter exists in the prior and in the mapping</span>
                         <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ddp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">[</span><span class="n">idx</span><span class="p">]:</span>
-                            <span class="c1"># Log-transform since it will later be exp-transformed</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">val</span><span class="p">)))</span>
+                            <span class="c1"># Sqrt-transform since it will later be squared</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">val</span><span class="p">)))</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
                         <span class="k">if</span> <span class="n">to</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">to</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)):</span>
@@ -340,7 +352,7 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span>
-                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;DomainDistrParamPolicy needs to be initialized! Either with a set of policy&quot;</span>
+                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;DomainDistrParamPolicy needs to be initialized! Either with a set of policy &quot;</span>
                 <span class="s2">&quot;parameters, or with a prior in form of a DomainRandomizer!&quot;</span>
             <span class="p">)</span>
 

@@ -90,9 +90,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -236,7 +236,7 @@
 <span class="kn">from</span> <span class="nn">pyrado.tasks.base</span> <span class="kn">import</span> <span class="n">Task</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.desired_state</span> <span class="kn">import</span> <span class="n">DesStateTask</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.masked</span> <span class="kn">import</span> <span class="n">MaskedTask</span>
-<span class="kn">from</span> <span class="nn">pyrado.tasks.reward_functions</span> <span class="kn">import</span> <span class="n">ExpQuadrErrRewFcn</span><span class="p">,</span> <span class="n">MinusOnePerStepRewFcn</span><span class="p">,</span> <span class="n">RewFcn</span><span class="p">,</span> <span class="n">AbsErrRewFcn</span>
+<span class="kn">from</span> <span class="nn">pyrado.tasks.reward_functions</span> <span class="kn">import</span> <span class="n">ExpQuadrErrRewFcn</span><span class="p">,</span> <span class="n">MinusOnePerStepRewFcn</span><span class="p">,</span> <span class="n">AbsErrRewFcn</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.parallel</span> <span class="kn">import</span> <span class="n">ParallelTasks</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.utils</span> <span class="kn">import</span> <span class="n">proximity_succeeded</span>
 <span class="kn">from</span> <span class="nn">pyrado.tasks.predefined</span> <span class="kn">import</span> <span class="p">(</span>
@@ -250,6 +250,7 @@
 
 
 <span class="n">rcsenv</span><span class="o">.</span><span class="n">addResourcePath</span><span class="p">(</span><span class="n">rcsenv</span><span class="o">.</span><span class="n">RCSPYSIM_CONFIG_PATH</span><span class="p">)</span>
+<span class="n">rcsenv</span><span class="o">.</span><span class="n">addResourcePath</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rcsenv</span><span class="o">.</span><span class="n">RCSPYSIM_CONFIG_PATH</span><span class="p">,</span> <span class="s2">&quot;BoxShelving&quot;</span><span class="p">))</span>
 
 
 <div class="viewcode-block" id="create_box_upper_shelve_task"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.box_shelving.create_box_upper_shelve_task">[docs]</a><span class="k">def</span> <span class="nf">create_box_upper_shelve_task</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">continuous_rew_fcn</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">succ_thold</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
@@ -278,7 +279,9 @@
 <div class="viewcode-block" id="BoxShelvingSim"><a class="viewcode-back" href="../../../../environments.rcspysim.html#pyrado.environments.rcspysim.box_shelving.BoxShelvingSim">[docs]</a><span class="k">class</span> <span class="nc">BoxShelvingSim</span><span class="p">(</span><span class="n">RcsSim</span><span class="p">,</span> <span class="n">Serializable</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Base class for 2-armed humanoid robot putting a box into a shelve &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">ref_frame</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">position_mps</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">mps_left</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">ref_frame</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">position_mps</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">tasks_left</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
@@ -287,7 +290,7 @@
 
 <span class="sd">        :param task_args: arguments for the task construction</span>
 <span class="sd">        :param ref_frame: reference frame for the MPs, e.g. &#39;world&#39;, &#39;box&#39;, or &#39;upperGoal&#39;</span>
-<span class="sd">        :param mps_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
+<span class="sd">        :param tasks_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
 <span class="sd">        :param position_mps: `True` if the MPs are defined on position level, `False` if defined on velocity level</span>
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
 <span class="sd">                       fixedInitState: bool = False,</span>
@@ -314,7 +317,7 @@
             <span class="n">hudColor</span><span class="o">=</span><span class="s2">&quot;BLACK_RUBBER&quot;</span><span class="p">,</span>
             <span class="n">refFrame</span><span class="o">=</span><span class="n">ref_frame</span><span class="p">,</span>
             <span class="n">positionTasks</span><span class="o">=</span><span class="n">position_mps</span><span class="p">,</span>
-            <span class="n">tasksLeft</span><span class="o">=</span><span class="n">mps_left</span><span class="p">,</span>
+            <span class="n">tasksLeft</span><span class="o">=</span><span class="n">tasks_left</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -343,13 +346,13 @@
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;bs-pos&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">ref_frame</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mps_left</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">continuous_rew_fcn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">ref_frame</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tasks_left</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">continuous_rew_fcn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param ref_frame: reference frame for the MPs, e.g. &#39;world&#39;, &#39;box&#39;, or &#39;upperGoal&#39;</span>
-<span class="sd">        :param mps_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
+<span class="sd">        :param tasks_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
 <span class="sd">        :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used</span>
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
 <span class="sd">                       fixedInitState: bool = False,</span>
@@ -371,10 +374,10 @@
         <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">BoxShelvingSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
 
         <span class="c1"># Fall back to some defaults of no MPs are defined (e.g. for testing)</span>
-        <span class="k">if</span> <span class="n">mps_left</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">tasks_left</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">ref_frame</span> <span class="o">==</span> <span class="s2">&quot;upperGoal&quot;</span><span class="p">:</span>
                 <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using tasks specified in the upperGoal frame in the </span><span class="si">{</span><span class="n">ref_frame</span><span class="si">}</span><span class="s2"> frame!&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">mps_left</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">tasks_left</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="c1"># Left power grasp position</span>
                 <span class="p">{</span>
                     <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;msd&quot;</span><span class="p">,</span>
@@ -424,8 +427,8 @@
 
         <span class="c1"># Forward to the BoxShelvingSim&#39;s constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">continuous_rew_fcn</span><span class="o">=</span><span class="n">continuous_rew_fcn</span><span class="p">,</span> <span class="n">mps_left</span><span class="o">=</span><span class="n">mps_left</span><span class="p">),</span>
-            <span class="n">mps_left</span><span class="o">=</span><span class="n">mps_left</span><span class="p">,</span>
+            <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">continuous_rew_fcn</span><span class="o">=</span><span class="n">continuous_rew_fcn</span><span class="p">,</span> <span class="n">tasks_left</span><span class="o">=</span><span class="n">tasks_left</span><span class="p">),</span>
+            <span class="n">tasks_left</span><span class="o">=</span><span class="n">tasks_left</span><span class="p">,</span>
             <span class="n">ref_frame</span><span class="o">=</span><span class="n">ref_frame</span><span class="p">,</span>
             <span class="n">position_mps</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
@@ -441,7 +444,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ref_frame</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">bidirectional_mps</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-        <span class="n">mps_left</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">tasks_left</span><span class="p">:</span> <span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">continuous_rew_fcn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
@@ -452,7 +455,7 @@
 <span class="sd">        :param bidirectional_mps: if `True` then the MPs can be activated &quot;forward&quot; and &quot;backward&quot;, thus the `ADN`</span>
 <span class="sd">                                  output activations must be in [-1, 1] and the output nonlinearity should be a tanh.</span>
 <span class="sd">                                  If `false` then the behavior is the same as for position-level MPs.</span>
-<span class="sd">        :param mps_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
+<span class="sd">        :param tasks_left: left arm&#39;s movement primitives holding the dynamical systems and the goal states</span>
 <span class="sd">        :param continuous_rew_fcn: specify if the continuous or an uninformative reward function should be used</span>
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
 <span class="sd">                       fixedInitState: bool = False,</span>
@@ -474,11 +477,11 @@
         <span class="n">dp_nom</span> <span class="o">=</span> <span class="n">BoxShelvingSim</span><span class="o">.</span><span class="n">get_nominal_domain_param</span><span class="p">()</span>
 
         <span class="c1"># Fall back to some defaults of no MPs are defined (e.g. for testing)</span>
-        <span class="k">if</span> <span class="n">mps_left</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">tasks_left</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">dt</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dt&quot;</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>  <span class="c1"># 100 Hz is the default</span>
 
             <span class="k">if</span> <span class="n">bidirectional_mps</span><span class="p">:</span>
-                <span class="n">mps_left</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">tasks_left</span> <span class="o">=</span> <span class="p">[</span>
                     <span class="c1"># Xd</span>
                     <span class="p">{</span><span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="s2">&quot;errorDynamics&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;goal&quot;</span><span class="p">:</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.15</span><span class="p">])},</span>  <span class="c1"># [m/s]</span>
                     <span class="c1"># Yd</span>
@@ -499,7 +502,7 @@
                     <span class="p">},</span>
                 <span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">mps_left</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">tasks_left</span> <span class="o">=</span> <span class="p">[</span>
                     <span class="c1"># Xd</span>
                     <span class="p">{</span><span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="s2">&quot;errorDynamics&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;goal&quot;</span><span class="p">:</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.15</span><span class="p">])},</span>  <span class="c1"># [m/s]</span>
                     <span class="p">{</span><span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="s2">&quot;errorDynamics&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;goal&quot;</span><span class="p">:</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.15</span><span class="p">])},</span>  <span class="c1"># [m/s]</span>
@@ -528,7 +531,7 @@
         <span class="c1"># Forward to the BoxShelvingSim&#39;s constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">task_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">continuous_rew_fcn</span><span class="o">=</span><span class="n">continuous_rew_fcn</span><span class="p">),</span>
-            <span class="n">mps_left</span><span class="o">=</span><span class="n">mps_left</span><span class="p">,</span>
+            <span class="n">tasks_left</span><span class="o">=</span><span class="n">tasks_left</span><span class="p">,</span>
             <span class="n">ref_frame</span><span class="o">=</span><span class="n">ref_frame</span><span class="p">,</span>
             <span class="n">position_mps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">bidirectionalMPs</span><span class="o">=</span><span class="n">bidirectional_mps</span><span class="p">,</span>

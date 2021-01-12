@@ -90,9 +90,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -231,6 +231,15 @@
 <span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_normalization</span> <span class="kn">import</span> <span class="n">ActNormWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.base</span> <span class="kn">import</span> <span class="n">EnvWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.downsampling</span> <span class="kn">import</span> <span class="n">DownsamplingWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.observation_normalization</span> <span class="kn">import</span> <span class="n">ObsNormWrapper</span><span class="p">,</span> <span class="n">ObsRunningNormWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.observation_partial</span> <span class="kn">import</span> <span class="n">ObsPartialWrapper</span>
+<span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.utils</span> <span class="kn">import</span> <span class="n">typed_env</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.real_base</span> <span class="kn">import</span> <span class="n">RealEnv</span>
+<span class="kn">from</span> <span class="nn">pyrado.environments.sim_base</span> <span class="kn">import</span> <span class="n">SimEnv</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
 
 
 <div class="viewcode-block" id="param_grid"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.utils.param_grid">[docs]</a><span class="k">def</span> <span class="nf">param_grid</span><span class="p">(</span><span class="n">param_values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
@@ -287,6 +296,58 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">domain_params</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="wrap_like_other_env"><a class="viewcode-back" href="../../../domain_randomization.html#pyrado.domain_randomization.utils.wrap_like_other_env">[docs]</a><span class="k">def</span> <span class="nf">wrap_like_other_env</span><span class="p">(</span>
+    <span class="n">env_targ</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">RealEnv</span><span class="p">],</span> <span class="n">env_src</span><span class="p">:</span> <span class="p">[</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">],</span> <span class="n">use_downsampling</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">SimEnv</span><span class="p">,</span> <span class="n">RealEnv</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrap a given real environment like it&#39;s simulated counterpart (except the domain randomization of course).</span>
+
+<span class="sd">    :param env_targ: target environment e.g. environment representing the physical device</span>
+<span class="sd">    :param env_src: source environment e.g. simulation environment used for training</span>
+<span class="sd">    :param use_downsampling: apply a wrapper that downsamples the actions if the sampling frequencies don&#39;t match</span>
+<span class="sd">    :return: target environment</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">use_downsampling</span> <span class="ow">and</span> <span class="n">env_src</span><span class="o">.</span><span class="n">dt</span> <span class="o">&gt;</span> <span class="n">env_targ</span><span class="o">.</span><span class="n">dt</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">typed_env</span><span class="p">(</span><span class="n">env_targ</span><span class="p">,</span> <span class="n">DownsamplingWrapper</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ds_factor</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">env_src</span><span class="o">.</span><span class="n">dt</span> <span class="o">/</span> <span class="n">env_targ</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+            <span class="n">env_targ</span> <span class="o">=</span> <span class="n">DownsamplingWrapper</span><span class="p">(</span><span class="n">env_targ</span><span class="p">,</span> <span class="n">ds_factor</span><span class="p">)</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wrapped the target environment with a DownsamplingWrapper of factor </span><span class="si">{</span><span class="n">ds_factor</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;The target environment was already wrapped with a DownsamplingWrapper.&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">typed_env</span><span class="p">(</span><span class="n">env_src</span><span class="p">,</span> <span class="n">ActNormWrapper</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">typed_env</span><span class="p">(</span><span class="n">env_targ</span><span class="p">,</span> <span class="n">ActNormWrapper</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">env_targ</span> <span class="o">=</span> <span class="n">ActNormWrapper</span><span class="p">(</span><span class="n">env_targ</span><span class="p">)</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;Wrapped the target environment with an ActNormWrapper.&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;The target environment was already wrapped with an ActNormWrapper.&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">typed_env</span><span class="p">(</span><span class="n">env_src</span><span class="p">,</span> <span class="n">ObsNormWrapper</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">typed_env</span><span class="p">(</span><span class="n">env_targ</span><span class="p">,</span> <span class="n">ObsNormWrapper</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">env_targ</span> <span class="o">=</span> <span class="n">ObsNormWrapper</span><span class="p">(</span><span class="n">env_targ</span><span class="p">)</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;Wrapped the target environment with an ObsNormWrapper.&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;The target environment was already wrapped with an ObsNormWrapper.&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">typed_env</span><span class="p">(</span><span class="n">env_src</span><span class="p">,</span> <span class="n">ObsRunningNormWrapper</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">typed_env</span><span class="p">(</span><span class="n">env_targ</span><span class="p">,</span> <span class="n">ObsRunningNormWrapper</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">env_targ</span> <span class="o">=</span> <span class="n">ObsRunningNormWrapper</span><span class="p">(</span><span class="n">env_targ</span><span class="p">)</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;Wrapped the target environment with an ObsRunningNormWrapper.&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;The target environment was already wrapped with an ObsRunningNormWrapper.&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">typed_env</span><span class="p">(</span><span class="n">env_src</span><span class="p">,</span> <span class="n">ObsPartialWrapper</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">typed_env</span><span class="p">(</span><span class="n">env_targ</span><span class="p">,</span> <span class="n">ObsPartialWrapper</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">env_targ</span> <span class="o">=</span> <span class="n">ObsPartialWrapper</span><span class="p">(</span>
+                <span class="n">env_targ</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">typed_env</span><span class="p">(</span><span class="n">env_src</span><span class="p">,</span> <span class="n">ObsPartialWrapper</span><span class="p">)</span><span class="o">.</span><span class="n">keep_mask</span><span class="p">,</span> <span class="n">keep_selected</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;Wrapped the target environment with an ObsPartialWrapper.&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;The target environment was already wrapped with an ObsPartialWrapper.&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">env_targ</span></div>
 </pre></div>
 
            </div>

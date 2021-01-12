@@ -90,9 +90,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -280,7 +280,8 @@
 
 <span class="sd">        :param wrapped_task: task to wrap</span>
 <span class="sd">        :param mode: mode for calculating the final reward</span>
-<span class="sd">        :param factor: value to scale the final reward, does not matter if `mode.time_dependent is True`</span>
+<span class="sd">        :param factor: (positive) value to scale the final reward.</span>
+<span class="sd">                       The `factor` is ignored if `mode.time_dependent` is `True`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Call TaskWrapper&#39;s constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wrapped_task</span><span class="p">)</span>
@@ -293,7 +294,7 @@
             <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;If the user_input == True, then all other specifications in FinalRewMode are ignored.&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">=</span> <span class="n">factor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_yielded_final_rew</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="nd">@property</span>
@@ -316,9 +317,10 @@
 
         <span class="k">def</span> <span class="nf">mode_switch</span><span class="p">(</span><span class="n">on</span><span class="o">=</span><span class="p">(),</span> <span class="n">off</span><span class="o">=</span><span class="p">()):</span>
             <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            Helper function to avoid complex logical expressions</span>
-<span class="sd">            :param on: all values that have to be trudey</span>
-<span class="sd">            :param off: all values that have to be falsy</span>
+<span class="sd">            Helper function to avoid complex logical expressions.</span>
+
+<span class="sd">            :param on: all values that have to be true</span>
+<span class="sd">            :param off: all values that have to be false</span>
 <span class="sd">            :return: result</span>
 <span class="sd">            &quot;&quot;&quot;</span>
             <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">on</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">off</span><span class="p">)</span>
@@ -341,9 +343,9 @@
                     <span class="p">)</span>
                 <span class="p">):</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_failed</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">factor</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span>
                     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_succeeded</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">factor</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">return</span> <span class="mf">0.0</span>
 
@@ -354,7 +356,7 @@
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_failed</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
                         <span class="k">return</span> <span class="mf">0.0</span>
                     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_succeeded</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">factor</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">return</span> <span class="mf">0.0</span>
 
@@ -363,7 +365,7 @@
                     <span class="n">off</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">always_positive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">state_dependent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">time_dependent</span><span class="p">),</span>
                 <span class="p">):</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_failed</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">factor</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span>
                     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_succeeded</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
                         <span class="k">return</span> <span class="mf">0.0</span>
                     <span class="k">else</span><span class="p">:</span>
@@ -456,7 +458,7 @@
 
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;No matching configuration found for the given&quot;</span> <span class="sa">f</span><span class="s2">&quot;FinalRewMode:</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;No matching configuration found for the given FinalRewMode:</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
@@ -474,23 +476,19 @@
 <div class="viewcode-block" id="BestStateFinalRewTask"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.final_reward.BestStateFinalRewTask">[docs]</a><span class="k">class</span> <span class="nc">BestStateFinalRewTask</span><span class="p">(</span><span class="n">TaskWrapper</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper for tasks which yields a reward / cost on success / failure based on the best reward / cost observed in the</span>
-<span class="sd">    current trajectory that is scaled by the number of taken / remaining time steps.</span>
+<span class="sd">    current trajectory.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapped_task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">max_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapped_task</span><span class="p">:</span> <span class="n">Task</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
 <span class="sd">        :param wrapped_task: task to wrap</span>
-<span class="sd">        :param max_steps: maximum number of time steps in the environment to infer the number of steps when done</span>
 <span class="sd">        :param factor: value to scale the final reward</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Call TaskWrapper&#39;s constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wrapped_task</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_steps</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">max_steps</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_max_steps</span> <span class="o">=</span> <span class="n">max_steps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">=</span> <span class="n">factor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">best_rew</span> <span class="o">=</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_yielded_final_rew</span> <span class="o">=</span> <span class="kc">False</span>
@@ -522,13 +520,11 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yielded_final_rew</span><span class="p">:</span>
             <span class="c1"># Only yield the final reward once</span>
             <span class="k">return</span> <span class="mf">0.0</span>
-
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_yielded_final_rew</span> <span class="o">=</span> <span class="kc">True</span>
 
-            <span class="c1"># Return the highest reward / lowest cost scaled with the number of taken time steps and the factor</span>
-            <span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_steps</span> <span class="o">-</span> <span class="n">remaining_steps</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span>
-            <span class="k">return</span> <span class="n">scale</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_rew</span></div></div>
+            <span class="c1"># Return the highest reward / lowest cost scaled with the factor</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_rew</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span></div></div>
 </pre></div>
 
            </div>

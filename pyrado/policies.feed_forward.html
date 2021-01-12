@@ -92,9 +92,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="examples/1_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/2_environment_wrappers.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -219,10 +219,13 @@
 <dd><p>Get the action according to the policy and the observations (forward pass).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>obs</strong> – observation from the environment</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
+<li><p><strong>kwargs</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return act</dt>
-<dd class="field-even"><p>action to be taken</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>outputs, e.g. an action or an action and a hidden state</p>
 </dd>
 </dl>
 </dd></dl>
@@ -288,7 +291,7 @@ Since we operate on a discrete action space, we can construct a table.</p>
 
 <dl class="py method">
 <dt id="pyrado.policies.feed_forward.fnn.FNN.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/feed_forward/fnn.html#FNN.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.feed_forward.fnn.FNN.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="_modules/pyrado/policies/feed_forward/fnn.html#FNN.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.policies.feed_forward.fnn.FNN.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines the computation performed at every call.</p>
 <p>Should be overridden by all subclasses.</p>
 <div class="admonition note">
@@ -336,10 +339,13 @@ The values are copied, modifying the return value does not propagate to the actu
 <dd><p>Get the action according to the policy and the observations (forward pass).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>obs</strong> – observation from the environment</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
+<li><p><strong>kwargs</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return act</dt>
-<dd class="field-even"><p>action to be taken</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>outputs, e.g. an action or an action and a hidden state</p>
 </dd>
 </dl>
 </dd></dl>
@@ -442,10 +448,13 @@ The values are copied, modifying the return value does not propagate to the actu
 <dd><p>Get the action according to the policy and the observations (forward pass).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>obs</strong> – observation from the environment</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
+<li><p><strong>kwargs</strong> – inputs, e.g. an observation from the environment or an observation and a hidden state</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return act</dt>
-<dd class="field-even"><p>action to be taken</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>outputs, e.g. an action or an action and a hidden state</p>
 </dd>
 </dl>
 </dd></dl>

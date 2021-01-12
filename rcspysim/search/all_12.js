@@ -22,7 +22,6 @@ var searchData=
   ['regballonplate',['RegBallOnPlate',['../namespaceRcs.html#ac50ae92d4d56ee2a978d97f2bef78b34',1,'Rcs']]],
   ['regboxflipping',['RegBoxFlipping',['../namespaceRcs.html#add5e3085059ed2e9d7612c935d01b6a1',1,'Rcs']]],
   ['regboxlifting',['RegBoxLifting',['../namespaceRcs.html#a1bbcf97343212d670518e82fcacfc1f9',1,'Rcs']]],
-  ['regboxliftingsimple',['RegBoxLiftingSimple',['../namespaceRcs.html#aedb6dda3962f2adffc172f977dd3a404',1,'Rcs']]],
   ['regboxshelving',['RegBoxShelving',['../namespaceRcs.html#a6cbb6168cfa50aac8358cee7394fbdbd',1,'Rcs']]],
   ['registertype',['registerType',['../classRcs_1_1ControlPolicy.html#aa3308b7f7ce4bfc15aa5c9c3670d2180',1,'Rcs::ControlPolicy::registerType()'],['../classRcs_1_1ExperimentConfig.html#a5c06fb5ac0bd53abd3f9940a53925209',1,'Rcs::ExperimentConfig::registerType()']]],
   ['registry',['registry',['../namespaceRcs.html#a53f81200cc93bb395e429dcee62d6ffa',1,'Rcs::registry()'],['../namespaceRcs.html#a870ea68705b1e797dfea34d440d4245f',1,'Rcs::registry()']]],

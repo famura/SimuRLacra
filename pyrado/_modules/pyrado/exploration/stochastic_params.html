@@ -90,9 +90,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -340,6 +340,7 @@
         <span class="n">std_init</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
         <span class="n">std_min</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
         <span class="n">train_mean</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">use_cuda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
@@ -349,17 +350,18 @@
 <span class="sd">        :param std_init: initial standard deviation for the noise distribution</span>
 <span class="sd">        :param std_min: minimal standard deviation for the exploration noise</span>
 <span class="sd">        :param train_mean: set `True` if the noise should have an adaptive nonzero mean, `False` otherwise</span>
+<span class="sd">        :param use_cuda: `True` to move the module to the GPU, `False` (default) to use the CPU</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Call the StochasticParamExplStrat&#39;s constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">param_dim</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">full_cov</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span> <span class="o">=</span> <span class="n">FullNormalNoise</span><span class="p">(</span>
-                <span class="n">use_cuda</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">noise_dim</span><span class="o">=</span><span class="n">param_dim</span><span class="p">,</span> <span class="n">std_init</span><span class="o">=</span><span class="n">std_init</span><span class="p">,</span> <span class="n">std_min</span><span class="o">=</span><span class="n">std_min</span><span class="p">,</span> <span class="n">train_mean</span><span class="o">=</span><span class="n">train_mean</span>
+                <span class="n">noise_dim</span><span class="o">=</span><span class="n">param_dim</span><span class="p">,</span> <span class="n">std_init</span><span class="o">=</span><span class="n">std_init</span><span class="p">,</span> <span class="n">std_min</span><span class="o">=</span><span class="n">std_min</span><span class="p">,</span> <span class="n">train_mean</span><span class="o">=</span><span class="n">train_mean</span><span class="p">,</span> <span class="n">use_cuda</span><span class="o">=</span><span class="n">use_cuda</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span> <span class="o">=</span> <span class="n">DiagNormalNoise</span><span class="p">(</span>
-                <span class="n">use_cuda</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">noise_dim</span><span class="o">=</span><span class="n">param_dim</span><span class="p">,</span> <span class="n">std_init</span><span class="o">=</span><span class="n">std_init</span><span class="p">,</span> <span class="n">std_min</span><span class="o">=</span><span class="n">std_min</span><span class="p">,</span> <span class="n">train_mean</span><span class="o">=</span><span class="n">train_mean</span>
+                <span class="n">noise_dim</span><span class="o">=</span><span class="n">param_dim</span><span class="p">,</span> <span class="n">std_init</span><span class="o">=</span><span class="n">std_init</span><span class="p">,</span> <span class="n">std_min</span><span class="o">=</span><span class="n">std_min</span><span class="p">,</span> <span class="n">train_mean</span><span class="o">=</span><span class="n">train_mean</span><span class="p">,</span> <span class="n">use_cuda</span><span class="o">=</span><span class="n">use_cuda</span>
             <span class="p">)</span>
 
 <div class="viewcode-block" id="NormalParamNoise.reset_expl_params"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_params.NormalParamNoise.reset_expl_params">[docs]</a>    <span class="k">def</span> <span class="nf">reset_expl_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -373,7 +375,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">noise</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">FullNormalNoise</span><span class="p">,</span> <span class="n">DiagNormalNoise</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot; Get the exploation noise. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; Get the exploration noise. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span>
 
 <div class="viewcode-block" id="NormalParamNoise.sample_param_set"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_params.NormalParamNoise.sample_param_set">[docs]</a>    <span class="k">def</span> <span class="nf">sample_param_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nominal_params</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>

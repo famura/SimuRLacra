@@ -92,9 +92,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="examples/1_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/2_environment_wrappers.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -212,7 +212,7 @@
 <p>Storage for default a.k.a. nominal domain parameter values and default randomizers</p>
 <dl class="py function">
 <dt id="pyrado.domain_randomization.default_randomizers.create_conservative_randomizer">
-<code class="sig-name descname">create_conservative_randomizer</code><span class="sig-paren">(</span><em class="sig-param">env: [&lt;class 'pyrado.environments.sim_base.SimEnv'&gt;, &lt;class 'pyrado.environment_wrappers.base.EnvWrapper'&gt;]</em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_conservative_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_conservative_randomizer" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">create_conservative_randomizer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n">Union<span class="p">[</span><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a><span class="p">, </span><a class="reference internal" href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper" title="pyrado.environment_wrappers.base.EnvWrapper">pyrado.environment_wrappers.base.EnvWrapper</a><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_conservative_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_conservative_randomizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create the default conservative randomizer depending on the passed environment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -226,7 +226,7 @@
 
 <dl class="py function">
 <dt id="pyrado.domain_randomization.default_randomizers.create_default_randomizer">
-<code class="sig-name descname">create_default_randomizer</code><span class="sig-paren">(</span><em class="sig-param">env: [&lt;class 'pyrado.environments.sim_base.SimEnv'&gt;, &lt;class 'pyrado.environment_wrappers.base.EnvWrapper'&gt;]</em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_default_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_default_randomizer" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">create_default_randomizer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n">Union<span class="p">[</span><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a><span class="p">, </span><a class="reference internal" href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper" title="pyrado.environment_wrappers.base.EnvWrapper">pyrado.environment_wrappers.base.EnvWrapper</a><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_default_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_default_randomizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create the default randomizer depending on the passed environment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -388,7 +388,7 @@
 
 <dl class="py function">
 <dt id="pyrado.domain_randomization.default_randomizers.create_zero_var_randomizer">
-<code class="sig-name descname">create_zero_var_randomizer</code><span class="sig-paren">(</span><em class="sig-param">env: [&lt;class 'pyrado.environments.sim_base.SimEnv'&gt;, &lt;class 'pyrado.environment_wrappers.base.EnvWrapper'&gt;], eps: float = 1e-18</em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_zero_var_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_zero_var_randomizer" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">create_zero_var_randomizer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n">Union<span class="p">[</span><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a><span class="p">, </span><a class="reference internal" href="environment_wrappers.html#pyrado.environment_wrappers.base.EnvWrapper" title="pyrado.environment_wrappers.base.EnvWrapper">pyrado.environment_wrappers.base.EnvWrapper</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">eps</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1e-08</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><a class="reference internal" href="_modules/pyrado/domain_randomization/default_randomizers.html#create_zero_var_randomizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.default_randomizers.create_zero_var_randomizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create the randomizer which always returns the nominal domain parameter values.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -537,20 +537,20 @@ nominal parameter values</p>
 
 <dl class="py method">
 <dt id="pyrado.domain_randomization.domain_parameter.BernoulliDomainParam.get_field_names">
-<em class="property">static </em><code class="sig-name descname">get_field_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Sequence<span class="p">[</span>str<span class="p">]</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#BernoulliDomainParam.get_field_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.BernoulliDomainParam.get_field_names" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">get_field_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>str<span class="p">]</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#BernoulliDomainParam.get_field_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.BernoulliDomainParam.get_field_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get union of all hyper-parameters of all domain parameter distributions.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.domain_randomization.domain_parameter.BernoulliDomainParam.sample">
-<code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_samples</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#BernoulliDomainParam.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.BernoulliDomainParam.sample" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_samples</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>torch.Tensor<span class="p">]</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#BernoulliDomainParam.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.BernoulliDomainParam.sample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate new domain parameter values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>num_samples</strong> – number of samples (sets of new parameter values)</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list of Tensors containing the new parameter values</p>
+<dd class="field-even"><p>list of tensors containing the new parameter values</p>
 </dd>
 </dl>
 </dd></dl>
@@ -559,8 +559,8 @@ nominal parameter values</p>
 
 <dl class="py class">
 <dt id="pyrado.domain_randomization.domain_parameter.DomainParam">
-<em class="property">class </em><code class="sig-name descname">DomainParam</code><span class="sig-paren">(</span><em class="sig-param">name: str, mean: [&lt;class 'int'&gt;, &lt;class 'float'&gt;, &lt;class 'torch.Tensor'&gt;], clip_lo: [&lt;class 'int'&gt;, &lt;class 'float'&gt;] = -inf, clip_up: [&lt;class 'int'&gt;, &lt;class 'float'&gt;] = inf, roundint=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#DomainParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.DomainParam" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<em class="property">class </em><code class="sig-name descname">DomainParam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">clip_lo</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">- inf</span></em>, <em class="sig-param"><span class="n">clip_up</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">inf</span></em>, <em class="sig-param"><span class="n">roundint</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#DomainParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.DomainParam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class to store and manage a (single) domain parameter a.k.a. physics parameter a.k.a. simulator parameter</p>
 <dl class="py method">
 <dt id="pyrado.domain_randomization.domain_parameter.DomainParam.adapt">
@@ -582,20 +582,20 @@ nominal parameter values</p>
 
 <dl class="py method">
 <dt id="pyrado.domain_randomization.domain_parameter.DomainParam.get_field_names">
-<em class="property">static </em><code class="sig-name descname">get_field_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Sequence<span class="p">[</span>str<span class="p">]</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#DomainParam.get_field_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.DomainParam.get_field_names" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">get_field_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>str<span class="p">]</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#DomainParam.get_field_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.DomainParam.get_field_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get union of all hyper-parameters of all domain parameter distributions.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.domain_randomization.domain_parameter.DomainParam.sample">
-<code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_samples</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#DomainParam.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.DomainParam.sample" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_samples</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>torch.Tensor<span class="p">]</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#DomainParam.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.DomainParam.sample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate new domain parameter values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>num_samples</strong> – number of samples (sets of new parameter values)</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list of Tensors containing the new parameter values</p>
+<dd class="field-even"><p>list of tensors containing the new parameter values</p>
 </dd>
 </dl>
 </dd></dl>
@@ -604,7 +604,7 @@ nominal parameter values</p>
 
 <dl class="py class">
 <dt id="pyrado.domain_randomization.domain_parameter.MultivariateNormalDomainParam">
-<em class="property">class </em><code class="sig-name descname">MultivariateNormalDomainParam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cov</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#MultivariateNormalDomainParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.MultivariateNormalDomainParam" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">MultivariateNormalDomainParam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mean</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">cov</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>list<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#MultivariateNormalDomainParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.MultivariateNormalDomainParam" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.domain_randomization.domain_parameter.DomainParam" title="pyrado.domain_randomization.domain_parameter.DomainParam"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.domain_randomization.domain_parameter.DomainParam</span></code></a></p>
 <p>Domain parameter sampled from a normal distribution</p>
 <dl class="py method">
@@ -627,7 +627,7 @@ nominal parameter values</p>
 
 <dl class="py method">
 <dt id="pyrado.domain_randomization.domain_parameter.MultivariateNormalDomainParam.get_field_names">
-<em class="property">static </em><code class="sig-name descname">get_field_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Sequence<span class="p">[</span>str<span class="p">]</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#MultivariateNormalDomainParam.get_field_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.MultivariateNormalDomainParam.get_field_names" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">get_field_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>str<span class="p">]</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#MultivariateNormalDomainParam.get_field_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.MultivariateNormalDomainParam.get_field_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get union of all hyper-parameters of all domain parameter distributions.</p>
 </dd></dl>
 
@@ -635,7 +635,7 @@ nominal parameter values</p>
 
 <dl class="py class">
 <dt id="pyrado.domain_randomization.domain_parameter.NormalDomainParam">
-<em class="property">class </em><code class="sig-name descname">NormalDomainParam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">std</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>float<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#NormalDomainParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.NormalDomainParam" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">NormalDomainParam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mean</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">std</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#NormalDomainParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.NormalDomainParam" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.domain_randomization.domain_parameter.DomainParam" title="pyrado.domain_randomization.domain_parameter.DomainParam"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.domain_randomization.domain_parameter.DomainParam</span></code></a></p>
 <p>Domain parameter sampled from a normal distribution</p>
 <dl class="py method">
@@ -658,7 +658,7 @@ nominal parameter values</p>
 
 <dl class="py method">
 <dt id="pyrado.domain_randomization.domain_parameter.NormalDomainParam.get_field_names">
-<em class="property">static </em><code class="sig-name descname">get_field_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Sequence<span class="p">[</span>str<span class="p">]</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#NormalDomainParam.get_field_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.NormalDomainParam.get_field_names" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">get_field_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>str<span class="p">]</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#NormalDomainParam.get_field_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.NormalDomainParam.get_field_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get union of all hyper-parameters of all domain parameter distributions.</p>
 </dd></dl>
 
@@ -666,7 +666,7 @@ nominal parameter values</p>
 
 <dl class="py class">
 <dt id="pyrado.domain_randomization.domain_parameter.UniformDomainParam">
-<em class="property">class </em><code class="sig-name descname">UniformDomainParam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">halfspan</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#UniformDomainParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.UniformDomainParam" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">UniformDomainParam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mean</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">halfspan</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">, </span>torch.Tensor<span class="p">]</span></span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#UniformDomainParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.UniformDomainParam" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.domain_randomization.domain_parameter.DomainParam" title="pyrado.domain_randomization.domain_parameter.DomainParam"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.domain_randomization.domain_parameter.DomainParam</span></code></a></p>
 <p>Domain parameter sampled from a normal distribution</p>
 <dl class="py method">
@@ -689,7 +689,7 @@ nominal parameter values</p>
 
 <dl class="py method">
 <dt id="pyrado.domain_randomization.domain_parameter.UniformDomainParam.get_field_names">
-<em class="property">static </em><code class="sig-name descname">get_field_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Sequence<span class="p">[</span>str<span class="p">]</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#UniformDomainParam.get_field_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.UniformDomainParam.get_field_names" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">get_field_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>str<span class="p">]</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_parameter.html#UniformDomainParam.get_field_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_parameter.UniformDomainParam.get_field_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get union of all hyper-parameters of all domain parameter distributions.</p>
 </dd></dl>
 
@@ -720,24 +720,29 @@ nominal parameter values</p>
 
 <dl class="py method">
 <dt id="pyrado.domain_randomization.domain_randomizer.DomainRandomizer.add_domain_params">
-<code class="sig-name descname">add_domain_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">domain_params</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.domain_randomization.domain_parameter.DomainParam" title="pyrado.domain_randomization.domain_parameter.DomainParam">pyrado.domain_randomization.domain_parameter.DomainParam</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_randomizer.html#DomainRandomizer.add_domain_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.add_domain_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_domain_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">domain_params</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.domain_randomization.domain_parameter.DomainParam" title="pyrado.domain_randomization.domain_parameter.DomainParam">pyrado.domain_randomization.domain_parameter.DomainParam</a></span></em>, <em class="sig-param"><span class="n">mapping</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Mapping<span class="p">[</span>int<span class="p">, </span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_randomizer.html#DomainRandomizer.add_domain_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.add_domain_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add an arbitrary number of domain parameters with their distributions to the randomizer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>domain_params</strong> – list or tuple of <cite>DomainParam</cite> instances</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>domain_params</strong> – list or tuple of <cite>DomainParam</cite> instances</p></li>
+<li><p><strong>mapping</strong> – mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass, length).
+This only sets the same and is intended to be used to guarantee the right number and order of
+domain parameters in the randomizer.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyrado.domain_randomization.domain_randomizer.DomainRandomizer.get_params">
-<code class="sig-name descname">get_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_samples</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">format</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'list'</span></em>, <em class="sig-param"><span class="n">dtype</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'numpy'</span></em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘list’&gt;, &lt;class ‘dict’&gt;]<a class="reference internal" href="_modules/pyrado/domain_randomization/domain_randomizer.html#DomainRandomizer.get_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.get_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_samples</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">fmt</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'list'</span></em>, <em class="sig-param"><span class="n">dtype</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'numpy'</span></em><span class="sig-paren">)</span> &#x2192; [&lt;class ‘list’&gt;, &lt;class ‘dict’&gt;]<a class="reference internal" href="_modules/pyrado/domain_randomization/domain_randomizer.html#DomainRandomizer.get_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.get_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the values in the data frame of the perturbed parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>num_samples</strong> – number of samples to be extracted from the randomizer</p></li>
-<li><p><strong>format</strong> – format (list of dicts or dict of lists) in which the params should be returned</p></li>
+<li><p><strong>fmt</strong> – format (list of dicts or dict of lists) in which the params should be returned</p></li>
 <li><p><strong>dtype</strong> – data type in which the params should be returned</p></li>
 </ul>
 </dd>
@@ -751,7 +756,7 @@ nominal parameter values</p>
 <dt id="pyrado.domain_randomization.domain_randomizer.DomainRandomizer.randomize">
 <code class="sig-name descname">randomize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_samples</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_randomizer.html#DomainRandomizer.randomize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.randomize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw random parameters from the associated distributions.
-Internally stores a dict with parameter names as dict-keys and the new parameters in list form as dict-values.</p>
+Internally stores a dict with parameter names as dict-keys and the new parameters in list form as dict values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>num_samples</strong> – number of samples to draw for each parameter</p>
@@ -799,6 +804,24 @@ Internally stores a dict with parameter names as dict-keys and the new parameter
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>domain_params</strong> – list of dicts or a single dict containing the a list of domain parameters</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyrado.domain_randomization.utils.wrap_like_other_env">
+<code class="sig-name descname">wrap_like_other_env</code><span class="sig-paren">(</span><em class="sig-param">env_targ: Union[pyrado.environments.sim_base.SimEnv, pyrado.environments.real_base.RealEnv], env_src: [&lt;class 'pyrado.environments.sim_base.SimEnv'&gt;, &lt;class 'pyrado.environment_wrappers.base.EnvWrapper'&gt;], use_downsampling: bool = False</em><span class="sig-paren">)</span> &#x2192; Union<span class="p">[</span><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a><span class="p">, </span><a class="reference internal" href="environments.html#pyrado.environments.real_base.RealEnv" title="pyrado.environments.real_base.RealEnv">pyrado.environments.real_base.RealEnv</a><span class="p">]</span><a class="reference internal" href="_modules/pyrado/domain_randomization/utils.html#wrap_like_other_env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.utils.wrap_like_other_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrap a given real environment like it’s simulated counterpart (except the domain randomization of course).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_targ</strong> – target environment e.g. environment representing the physical device</p></li>
+<li><p><strong>env_src</strong> – source environment e.g. simulation environment used for training</p></li>
+<li><p><strong>use_downsampling</strong> – apply a wrapper that downsamples the actions if the sampling frequencies don’t match</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>target environment</p>
 </dd>
 </dl>
 </dd></dl>

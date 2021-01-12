@@ -90,9 +90,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -249,7 +249,7 @@
 
 <span class="sd">        :param policy: wrapped policy</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">policy</span><span class="o">.</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">use_cuda</span><span class="o">=</span><span class="n">policy</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">policy</span><span class="o">.</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">use_cuda</span><span class="o">=</span><span class="n">policy</span><span class="o">.</span><span class="n">device</span> <span class="o">!=</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">policy</span> <span class="o">=</span> <span class="n">policy</span>
 
     <span class="nd">@property</span>
@@ -281,7 +281,7 @@
         <span class="c1"># Compute exploration (use rsample to apply the reparametrization trick  if needed)</span>
         <span class="n">act_expl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_dist_at</span><span class="p">(</span><span class="n">act</span><span class="p">)</span><span class="o">.</span><span class="n">rsample</span><span class="p">()</span>  <span class="c1"># act is the mean if train_mean=False</span>
 
-        <span class="c1"># Return the exploratove actions and optionally the other policy outputs</span>
+        <span class="c1"># Return the explorative actions and optionally the other policy outputs</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">is_recurrent</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="n">TwoHeadedPolicy</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">act_expl</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">hidden</span>
@@ -341,12 +341,12 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">policy</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span> <span class="o">=</span> <span class="n">DiagNormalNoise</span><span class="p">(</span>
-            <span class="n">use_cuda</span><span class="o">=</span><span class="n">policy</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="s2">&quot;cuda&quot;</span><span class="p">,</span>
             <span class="n">noise_dim</span><span class="o">=</span><span class="n">policy</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">,</span>
             <span class="n">std_init</span><span class="o">=</span><span class="n">std_init</span><span class="p">,</span>
             <span class="n">std_min</span><span class="o">=</span><span class="n">std_min</span><span class="p">,</span>
             <span class="n">train_mean</span><span class="o">=</span><span class="n">train_mean</span><span class="p">,</span>
             <span class="n">learnable</span><span class="o">=</span><span class="n">learnable</span><span class="p">,</span>
+            <span class="n">use_cuda</span><span class="o">=</span><span class="n">policy</span><span class="o">.</span><span class="n">device</span> <span class="o">!=</span> <span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="NormalActNoiseExplStrat.reset_expl_params"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_action.NormalActNoiseExplStrat.reset_expl_params">[docs]</a>    <span class="k">def</span> <span class="nf">reset_expl_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -403,7 +403,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">policy</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span> <span class="o">=</span> <span class="n">UniformNoise</span><span class="p">(</span>
-            <span class="n">use_cuda</span><span class="o">=</span><span class="n">policy</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="s2">&quot;cuda&quot;</span><span class="p">,</span>
+            <span class="n">use_cuda</span><span class="o">=</span><span class="n">policy</span><span class="o">.</span><span class="n">device</span> <span class="o">!=</span> <span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
             <span class="n">noise_dim</span><span class="o">=</span><span class="n">policy</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">,</span>
             <span class="n">halfspan_init</span><span class="o">=</span><span class="n">halfspan_init</span><span class="p">,</span>
             <span class="n">halfspan_min</span><span class="o">=</span><span class="n">halfspan_min</span><span class="p">,</span>
@@ -418,8 +418,6 @@
 
 <div class="viewcode-block" id="UniformActNoiseExplStrat.action_dist_at"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_action.UniformActNoiseExplStrat.action_dist_at">[docs]</a>    <span class="k">def</span> <span class="nf">action_dist_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">policy_output</span><span class="p">:</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Distribution</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="p">(</span><span class="n">policy_output</span><span class="p">)</span></div>
-
-    <span class="c1"># Make NormalActNoiseExplStrat appear as if it would have the following functions / properties</span>
 
 <div class="viewcode-block" id="UniformActNoiseExplStrat.reset_expl_params"><a class="viewcode-back" href="../../../exploration.html#pyrado.exploration.stochastic_action.UniformActNoiseExplStrat.reset_expl_params">[docs]</a>    <span class="k">def</span> <span class="nf">reset_expl_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">reset_expl_params</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
@@ -458,16 +456,16 @@
 
         <span class="c1"># Do not need to learn the exploration noise via an optimizer, since it is handled by the policy in this case</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_noise</span> <span class="o">=</span> <span class="n">DiagNormalNoise</span><span class="p">(</span>
-            <span class="n">use_cuda</span><span class="o">=</span><span class="n">policy</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="s2">&quot;cuda&quot;</span><span class="p">,</span>
             <span class="n">noise_dim</span><span class="o">=</span><span class="n">policy</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">act_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">,</span>
             <span class="n">std_init</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># std_init will be overwritten by 2nd policy head</span>
             <span class="n">std_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># ignore since we are explicitly clipping in log space later</span>
             <span class="n">train_mean</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">learnable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">use_cuda</span><span class="o">=</span><span class="n">policy</span><span class="o">.</span><span class="n">device</span> <span class="o">!=</span> <span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_log_std_min</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="o">-</span><span class="mf">20.0</span><span class="p">)</span>  <span class="c1"># approx 2.061e-10</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_log_std_max</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>  <span class="c1"># approx 7.389</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_std_min</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="o">-</span><span class="mf">20.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>  <span class="c1"># approx 2.061e-10</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_std_max</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_noise</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>  <span class="c1"># approx 7.389</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">noise</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DiagNormalNoise</span><span class="p">:</span>

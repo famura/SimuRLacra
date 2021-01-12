@@ -90,9 +90,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -226,14 +226,15 @@
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
+<span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">print_cbt</span>
 
 
 <div class="viewcode-block" id="bootstrap_ci"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.bootstrapping.bootstrap_ci">[docs]</a><span class="k">def</span> <span class="nf">bootstrap_ci</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">stat_fcn</span><span class="p">,</span>
+    <span class="n">stat_fcn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
     <span class="n">num_reps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">ci_sides</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -243,7 +244,8 @@
 <span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Re-sampling input data using the nonparametric bootstrap method, computing bootstrap replications using stat_fcn and</span>
-<span class="sd">    computing a confidence interval on the statistic of interest given by stat_fcn.</span>
+<span class="sd">    computing a confidence interval on the statistic of interest given by `stat_fcn` which needs to expect the argument</span>
+<span class="sd">    `axis` (like numpy functions do).</span>
 
 <span class="sd">    .. seealso::</span>
 <span class="sd">        [1] https://projecteuclid.org/download/pdf_1/euclid.ss/1032280214</span>
@@ -259,109 +261,125 @@
 <span class="sd">    :param num_reps: number of samples in every bootstrap sample</span>
 <span class="sd">    :param alpha: determines the confidence level $1 - \alpha \in [0, 1]$</span>
 <span class="sd">    :param ci_sides: one or two-sided confidence interval</span>
+<span class="sd">    :param axis: axis to compute along in case of 2-dim data</span>
 <span class="sd">    :param bias_correction: bool to decide if the bias should be subtracted (see [2]). However, the confidence intervals</span>
-<span class="sd">                            are constructed independent of the bias-correction (see [5, p.7])</span>
+<span class="sd">                            are constructed independent of the bias-correction (see [5, p.7]).</span>
+<span class="sd">                            The bias-correction can be dangerous in practice. Even though T_bc(D) is less biased than</span>
+<span class="sd">                            T(D), the bias-corrected estimator may have substantially larger variance. This is due to a</span>
+<span class="sd">                            possibly higher variability in the estimate of the bias, particularly when computed from</span>
+<span class="sd">                            small data sets.</span>
+<span class="sd">                            Other estimates of the bias-correction factor than stat_emp possible, see [4].</span>
 <span class="sd">    :param studentized: flag to determine if the method based on the t-distribution is used (leads to a wider ci)</span>
-<span class="sd">    :param seed: seed value for the random number generators, pass `None` for no seeding</span>
-<span class="sd">    :return: mean of the bootstrap replications and the confidence interval</span>
+<span class="sd">    :param seed: value for the random number generators&#39; seeds, pass `None` to skip seeding</span>
+<span class="sd">    :return: mean of the bootstrap replications, and the confidence interval</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_reps</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_reps</span> <span class="o">&gt;</span> <span class="mi">0</span>
-    <span class="k">assert</span> <span class="n">ci_sides</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">ci_sides</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">stat_fcn</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">stat_fcn</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Callable</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_reps</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_reps</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">num_reps</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">ci_sides</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">ci_sides</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">ci_sides</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;1 or 2&quot;</span><span class="p">)</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># correct for np.atleast_2d</span>
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ShapeErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;The data array needs to be at max two-dimensional!&quot;</span><span class="p">)</span>
+    <span class="n">num_data_samples</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">dim_data_samples</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Set the seed if provided</span>
+    <span class="n">pyrado</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="c1"># Get the bootstrap replications. The size of the samples drawn by the bootstrap method have to be equal input</span>
+    <span class="c1"># sample, since the variance of the statistic to be computed depends on sample size</span>
+    <span class="n">data_bs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num_data_samples</span><span class="p">,</span> <span class="n">num_data_samples</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_reps</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span>
+    <span class="p">)</span>
+    <span class="c1"># data_bs = np.random.choice(data, size=(num_data_samples, dim_data_samples, num_reps), replace=True)</span>
 
     <span class="c1"># Compute the statistic of interest based on the empirical distribution (input data)</span>
-    <span class="n">stat_emp</span> <span class="o">=</span> <span class="n">stat_fcn</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">stat_emp</span> <span class="o">=</span> <span class="n">stat_fcn</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">stat_emp</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">dim_data_samples</span><span class="p">,)</span>
 
-    <span class="c1"># Get the bootstrap replications</span>
-    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="c1"># Size of the samples drawn by the bootstrap method have to be equal input sample, since the variance of the</span>
-        <span class="c1"># statistic to be computed depends on sample size</span>
-        <span class="n">size_sample</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="c1"># Set the seed if provided</span>
-        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-        <span class="c1"># Draw samples of data with replacement (uniform weights)</span>
-        <span class="n">data_bs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">size_sample</span><span class="p">,</span> <span class="n">num_reps</span><span class="p">),</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># Only use this function for 1D data sets</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-
-    <span class="c1"># Compute the statistic of interest based on the resampled distribution</span>
-    <span class="c1"># Do it along each row (axis=0) --&gt;&gt; bootstrap replications</span>
-    <span class="n">stat_bs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">stat_fcn</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">data_bs</span><span class="p">)</span>  <span class="c1"># dim = 1 x num_reps</span>
+    <span class="c1"># Compute the statistic of interest based on the resampled distribution --&gt;&gt; bootstrap replications</span>
+    <span class="n">stat_bs</span> <span class="o">=</span> <span class="n">stat_fcn</span><span class="p">(</span><span class="n">data_bs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">stat_bs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">dim_data_samples</span><span class="p">,</span> <span class="n">num_reps</span><span class="p">)</span>
 
     <span class="c1"># Correct for the bias introduced by bootstrapping</span>
-    <span class="c1"># Note: other estimates of the bias-correction factor than stat_emt possible, see [4]</span>
     <span class="k">if</span> <span class="n">bias_correction</span><span class="p">:</span>
         <span class="c1"># bias-corrected statistic (see (2) in [2], or (11.10) in [3])</span>
-        <span class="n">stat_bs_bc</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">stat_emp</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">stat_bs</span><span class="p">)</span>  <span class="c1"># same as bias = mean_repl - stat_emp; repl_bc = stat_emp - bias</span>
-        <span class="n">stat_ret</span> <span class="o">=</span> <span class="n">stat_bs_bc</span>  <span class="c1"># use the correction also for the bs replications? --&gt;&gt; No (so far)</span>
-        <span class="c1"># Note: bias-correction can be dangerous in practice. Even though T_bc(D) is less biased than T(D),</span>
-        <span class="c1"># the bias-corrected estimator may have substantially larger variance. This is due to a possibly higher</span>
-        <span class="c1"># variability in the estimate of the bias, particularly when computed from small data sets.</span>
+        <span class="n">stat_bs_bc</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">stat_emp</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+            <span class="n">stat_bs</span>
+        <span class="p">)</span>  <span class="c1"># repl_bc = stat_emp - bias, with bias = mean_repl - stat_emp</span>
+        <span class="c1"># Return the bias-corrected estimator based on the original sample a.k.a. empirical distribution,</span>
+        <span class="c1"># but use the correction also for the bootstrap replications</span>
+        <span class="n">stat_ret</span> <span class="o">=</span> <span class="n">stat_bs_bc</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Return the estimator based on the original sample a.k.a. empirical distribution</span>
         <span class="n">stat_ret</span> <span class="o">=</span> <span class="n">stat_emp</span>
 
-    <span class="c1"># Compute the deviation to the value of the statistic based on the empirical distribution (see [7])</span>
-    <span class="c1"># This is analogous to the deviation of the empirical value around the true population value</span>
+    <span class="c1"># Compute the deviation to the value of the statistic based on the empirical distribution (see [7]). This is</span>
+    <span class="c1"># analogous to the deviation of the empirical value around the true population value,</span>
     <span class="c1"># i.e. delta = stat_emp - stat_pop</span>
     <span class="c1"># Note: it makes no difference if one uses the percentile operator before or after this difference</span>
-    <span class="n">delta_bs</span> <span class="o">=</span> <span class="n">stat_bs</span> <span class="o">-</span> <span class="n">stat_emp</span>  <span class="c1"># dim = 1 x num_reps</span>
+    <span class="n">delta_bs</span> <span class="o">=</span> <span class="n">stat_bs</span> <span class="o">-</span> <span class="n">stat_emp</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">delta_bs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">dim_data_samples</span><span class="p">,</span> <span class="n">num_reps</span><span class="p">)</span>
 
     <span class="c1"># Confidence interval with asymptotic refinement (a.k.a. percentile-t method)</span>
     <span class="k">if</span> <span class="n">studentized</span><span class="p">:</span>
-        <span class="c1"># Compute the standard deviation of the original sample</span>
-        <span class="n">se_emp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># for dividing by (n-1) set ddof=1</span>
-        <span class="k">if</span> <span class="n">se_emp</span> <span class="o">&lt;</span> <span class="mf">1e-9</span><span class="p">:</span>
-            <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Standard deviation in the empirical data (se_emp) is below 1e-9.&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
+        <span class="c1"># Compute the standard error of the original sample</span>
+        <span class="n">se_emp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># for dividing by (n-1) set ddof=1</span>
+        <span class="k">assert</span> <span class="n">se_emp</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">dim_data_samples</span><span class="p">,)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">se_emp</span> <span class="o">&lt;</span> <span class="mf">1e-9</span><span class="p">):</span>
+            <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;The standard error of the empirical data (se_emp) is below 1e-9.&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
 
         <span class="c1"># Compute the standard error of the replications for the bootstrapped t-statistic</span>
-        <span class="n">se_bs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">stat_bs</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">data_bs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># dim = num_reps x 1</span>
-        <span class="k">if</span> <span class="n">se_bs</span> <span class="o">&lt;</span> <span class="mf">1e-9</span><span class="p">:</span>  <span class="c1"># use any for version 2 above</span>
-            <span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;Standard deviation in the bootstrapped data (se_bs) is below 1e-9. &quot;</span>
+        <span class="n">se_bs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">data_bs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">data_bs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="n">se_bs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">dim_data_samples</span><span class="p">,</span> <span class="n">num_reps</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">se_bs</span> <span class="o">&lt;</span> <span class="mf">1e-9</span><span class="p">):</span>  <span class="c1"># use any for version 2 above</span>
+            <span class="n">print_cbt</span><span class="p">(</span>
+                <span class="s2">&quot;The standard error of the bootstrapped data (se_bs) is below 1e-9. &quot;</span>
                 <span class="s2">&quot;Setting confidence interval bounds to infinity.&quot;</span><span class="p">,</span>
-                <span class="ne">UserWarning</span><span class="p">,</span>
+                <span class="s2">&quot;y&quot;</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="k">return</span> <span class="n">stat_ret</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">infty</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">infty</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">stat_ret</span><span class="p">,</span> <span class="o">-</span><span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span>
 
         <span class="c1"># Compute the t-statistic of the replications</span>
         <span class="n">t_bs</span> <span class="o">=</span> <span class="n">delta_bs</span> <span class="o">/</span> <span class="n">se_bs</span>  <span class="c1"># is consistent with [3, p. 360]</span>
 
-        <span class="k">if</span> <span class="n">ci_sides</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># Two-sided confidence interval</span>
-            <span class="n">t_bs</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-            <span class="n">t_lo</span><span class="p">,</span> <span class="n">t_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">t_bs</span><span class="p">,</span> <span class="p">[</span><span class="mi">100</span> <span class="o">*</span> <span class="n">alpha</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mi">100</span> <span class="o">-</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">alpha</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">])</span>
-            <span class="n">ci_lo</span> <span class="o">=</span> <span class="n">stat_emp</span> <span class="o">-</span> <span class="n">t_up</span> <span class="o">*</span> <span class="n">se_emp</span>  <span class="c1"># see [3, (11.6) p. 364]</span>
-            <span class="n">ci_up</span> <span class="o">=</span> <span class="n">stat_emp</span> <span class="o">-</span> <span class="n">t_lo</span> <span class="o">*</span> <span class="n">se_emp</span>  <span class="c1"># see [3, (11.6) p. 364]</span>
-
-        <span class="k">elif</span> <span class="n">ci_sides</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># One-sided confidence interval (upper bound)</span>
-            <span class="n">t_bs</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-            <span class="n">t_lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">t_bs</span><span class="p">,</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">)</span>
-            <span class="n">ci_lo</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
-            <span class="n">ci_up</span> <span class="o">=</span> <span class="n">stat_emp</span> <span class="o">-</span> <span class="n">t_lo</span> <span class="o">*</span> <span class="n">se_emp</span>  <span class="c1"># see [3, (11.6) p. 364]</span>
-
+        <span class="n">t_bs</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="c1"># Two-sided confidence interval</span>
+        <span class="k">if</span> <span class="n">ci_sides</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">t_lo</span><span class="p">,</span> <span class="n">t_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">t_bs</span><span class="p">,</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">alpha</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># One-sided confidence interval  (lower and upper bound as if there would only be one of them)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">ci_sides</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;1 or 2&quot;</span><span class="p">)</span>
+            <span class="n">t_lo</span><span class="p">,</span> <span class="n">t_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">t_bs</span><span class="p">,</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">alpha</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">ci_lo</span> <span class="o">=</span> <span class="n">stat_emp</span> <span class="o">-</span> <span class="n">t_up</span> <span class="o">*</span> <span class="n">se_emp</span>  <span class="c1"># see [3, (11.6) p. 364]</span>
+        <span class="n">ci_up</span> <span class="o">=</span> <span class="n">stat_emp</span> <span class="o">-</span> <span class="n">t_lo</span> <span class="o">*</span> <span class="n">se_emp</span>  <span class="c1"># see [3, (11.6) p. 364]</span>
 
     <span class="c1"># Confidence interval without asymptotic refinement (a.k.a. basic method)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">ci_sides</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># Two-sided confidence interval</span>
-            <span class="n">delta_bs</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-            <span class="n">delta_lo</span><span class="p">,</span> <span class="n">delta_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">delta_bs</span><span class="p">,</span> <span class="p">[</span><span class="mi">100</span> <span class="o">*</span> <span class="n">alpha</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mi">100</span> <span class="o">-</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">alpha</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">])</span>
-            <span class="n">ci_lo</span> <span class="o">=</span> <span class="n">stat_emp</span> <span class="o">-</span> <span class="n">delta_up</span>
-            <span class="n">ci_up</span> <span class="o">=</span> <span class="n">stat_emp</span> <span class="o">-</span> <span class="n">delta_lo</span>
-
-        <span class="k">elif</span> <span class="n">ci_sides</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># One-sided confidence interval (upper bound)</span>
-            <span class="n">delta_bs</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-            <span class="n">delta_lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">delta_bs</span><span class="p">,</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">)</span>
-            <span class="n">ci_lo</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
-            <span class="n">ci_up</span> <span class="o">=</span> <span class="n">stat_emp</span> <span class="o">-</span> <span class="n">delta_lo</span>
-
+        <span class="n">delta_bs</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="c1"># Two-sided confidence interval</span>
+        <span class="k">if</span> <span class="n">ci_sides</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">delta_lo</span><span class="p">,</span> <span class="n">delta_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">delta_bs</span><span class="p">,</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">alpha</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># One-sided confidence interval (lower and upper bound as if there would only be one of them)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">ci_sides</span><span class="p">,</span> <span class="n">eq_constraint</span><span class="o">=</span><span class="s2">&quot;1 or 2&quot;</span><span class="p">)</span>
+            <span class="n">delta_lo</span><span class="p">,</span> <span class="n">delta_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">delta_bs</span><span class="p">,</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">alpha</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">stat_ret</span><span class="p">,</span> <span class="p">[</span><span class="n">ci_lo</span><span class="p">,</span> <span class="n">ci_up</span><span class="p">]</span></div>
+        <span class="n">ci_lo</span> <span class="o">=</span> <span class="n">stat_emp</span> <span class="o">-</span> <span class="n">delta_up</span>
+        <span class="n">ci_up</span> <span class="o">=</span> <span class="n">stat_emp</span> <span class="o">-</span> <span class="n">delta_lo</span>
+
+    <span class="k">assert</span> <span class="n">ci_lo</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">dim_data_samples</span><span class="p">,)</span>
+    <span class="k">assert</span> <span class="n">ci_up</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">dim_data_samples</span><span class="p">,)</span>
+
+    <span class="k">return</span> <span class="n">stat_ret</span><span class="p">,</span> <span class="n">ci_lo</span><span class="p">,</span> <span class="n">ci_up</span></div>
 </pre></div>
 
            </div>

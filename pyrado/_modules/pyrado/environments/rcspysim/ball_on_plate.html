@@ -90,9 +90,9 @@
             
               <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_experiment.html">How to run an experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_environment_wrappers.html">How to wrap an environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm.html">How to create an algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/1_basic_experiment.html">How to run an experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/2_wrapping_environments.html">How to wrap an environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples/3_algorithm_skeleton.html">How to create an algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Algorithms:</span></p>
 <ul>
@@ -358,14 +358,11 @@
 
     <span class="k">def</span> <span class="nf">_create_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Task</span><span class="p">:</span>
         <span class="c1"># Define the task including the reward function</span>
-        <span class="n">state_des</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state_des&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">state_des</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">state_des</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)</span>
+        <span class="n">state_des</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state_des&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">))</span>
 
-        <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span>
-            <span class="p">[</span><span class="mf">1e-1</span><span class="p">,</span> <span class="mf">1e-1</span><span class="p">,</span> <span class="mf">1e1</span><span class="p">,</span> <span class="mf">1e1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e-2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># Pa, Pb, Bx, By, Bz,</span>
-        <span class="p">)</span>  <span class="c1"># Pad, Pbd, Bxd, Byd, Bzd</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">1e-1</span><span class="p">,</span> <span class="mf">1e-1</span><span class="p">,</span> <span class="mf">1e1</span><span class="p">,</span> <span class="mf">1e1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e-2</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>  <span class="c1"># Pa, Pb, Bx, By, Bz, Pad, Pbd, Bxd, Byd, Bzd</span>
         <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">])</span>  <span class="c1"># Padd, Pbdd</span>
+
         <span class="k">return</span> <span class="n">DesStateTask</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">state_des</span><span class="p">,</span> <span class="n">ScaledExpQuadrErrRewFcn</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span> <span class="n">min_rew</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
         <span class="p">)</span></div>
@@ -393,29 +390,11 @@
 
     <span class="k">def</span> <span class="nf">_create_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Task</span><span class="p">:</span>
         <span class="c1"># Define the task including the reward function</span>
-        <span class="n">state_des</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state_des&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">state_des</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">state_des</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">)</span>
+        <span class="n">state_des</span> <span class="o">=</span> <span class="n">task_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state_des&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_space</span><span class="o">.</span><span class="n">flat_dim</span><span class="p">))</span>
+
         <span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="mf">1e-0</span><span class="p">,</span>
-                <span class="mf">1e-0</span><span class="p">,</span>
-                <span class="mf">1e-0</span><span class="p">,</span>
-                <span class="mf">1e-0</span><span class="p">,</span>
-                <span class="mf">1e-0</span><span class="p">,</span>
-                <span class="mf">1e3</span><span class="p">,</span>
-                <span class="mf">1e3</span><span class="p">,</span>
-                <span class="mf">1e3</span><span class="p">,</span>  <span class="c1"># Px, Py, Pz, Pa, Pb, Bx, By, Bz,</span>
-                <span class="mf">1e-2</span><span class="p">,</span>
-                <span class="mf">1e-2</span><span class="p">,</span>
-                <span class="mf">1e-2</span><span class="p">,</span>
-                <span class="mf">1e-2</span><span class="p">,</span>
-                <span class="mf">1e-2</span><span class="p">,</span>
-                <span class="mf">1e-0</span><span class="p">,</span>
-                <span class="mf">1e-0</span><span class="p">,</span>
-                <span class="mf">1e-0</span><span class="p">,</span>
-            <span class="p">]</span>
-        <span class="p">)</span>  <span class="c1"># Pxd, Pyd, Pzd, Pad, Pbd, Bxd, Byd, Bzd</span>
+            <span class="p">[</span><span class="mf">1e-0</span><span class="p">,</span> <span class="mf">1e-0</span><span class="p">,</span> <span class="mf">1e-0</span><span class="p">,</span> <span class="mf">1e-0</span><span class="p">,</span> <span class="mf">1e-0</span><span class="p">,</span> <span class="mf">1e3</span><span class="p">,</span> <span class="mf">1e3</span><span class="p">,</span> <span class="mf">1e3</span><span class="p">,</span> <span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e-0</span><span class="p">,</span> <span class="mf">1e-0</span><span class="p">,</span> <span class="mf">1e-0</span><span class="p">]</span>
+        <span class="p">)</span>  <span class="c1"># Px, Py, Pz, Pa, Pb, Bx, By, Bz, Pxd, Pyd, Pzd, Pad, Pbd, Bxd, Byd, Bzd</span>
         <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">])</span>  <span class="c1"># Pxdd, Pydd, Pzdd, Padd, Pbdd</span>
         <span class="k">return</span> <span class="n">DesStateTask</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">state_des</span><span class="p">,</span> <span class="n">ScaledExpQuadrErrRewFcn</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">act_space</span><span class="p">,</span> <span class="n">min_rew</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
