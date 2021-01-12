@@ -79,7 +79,7 @@ class LFI(LoggerAware):
     def __init__(
         self,
         save_dir: str,
-        simulator: RolloutSamplerForSBIBase,
+        simulator: Union[RolloutSamplerForSBIBase, Callable],
         prior: Distribution,
         inference: Type[PosteriorEstimator] = None,
         flow: Callable[[], DirectPosterior] = None,
@@ -93,7 +93,7 @@ class LFI(LoggerAware):
         self._save_dir = save_dir
         self.posterior = posterior
         self.simulator = simulator
-        self.simulator.set_representation(True)
+        # self.simulator.set_representation(True)
         self.prior = prior
         self._max_iter = max_iter
         self._curr_iter = 0
@@ -137,19 +137,22 @@ class LFI(LoggerAware):
 
         if not isinstance(rollouts_real, Sequence):
             raise pyrado.TypeErr(given=rollouts_real)
-        if not isinstance(rollouts_real[0], StepSequence):
-            raise pyrado.ShapeErr(given=rollouts_real[0])
+        # if not isinstance(rollouts_real[0], StepSequence):
+        #     raise pyrado.ShapeErr(given=rollouts_real[0])
 
         # obs_context = self.transform_data(rollouts=rollouts_real, strategy=data_representation)
-        obs_context = []
-        for ro in rollouts_real:
-            obs_context.append(self.simulator.transform_data(ro))
-        obs_context = to.stack(obs_context)
+        # obs_context = []
+        # for ro in rollouts_real:
+        #     obs_context.append(self.simulator.transform_data(ro))
+        # obs_context = to.stack(obs_context)
+
+        obs_context = to.stack(rollouts_real)
 
         # logging
         n_sim = 0
         log_probs = []
         n_simulations = []
+        sample_params = []
 
         # set proposal prior
         proposal_prior = self.batch_prior
@@ -167,21 +170,29 @@ class LFI(LoggerAware):
             self.posterior = self.inference.build_posterior()
 
             if logging:
-                _, log_prob, _ = self.evaluate(
+                params, log_prob, _ = self.evaluate(
                     meta_info=dict(rollouts_real=rollouts_real),
                     num_samples=self._num_samples,
-                    compute_quantity={"log_prob": True},
+                    compute_quantity={"log_prob": True,
+                                      "sample_params": True},
                 )
                 log_prob = log_prob.mean().squeeze()
                 n_sim += self._num_sim
                 n_simulations.append(n_sim)
+                sample_params.append(params)
                 log_probs.append(log_prob)
                 self.logger.add_value("Mean Log Probability", log_prob)
                 self.logger.add_value("Number of Simulations", to.tensor(n_sim))
+                meta_info = {
+                    **meta_info,
+                    **dict(zip(["log_probs", "n_simulations", "sample_params"],
+                               [to.stack(log_probs), to.tensor(n_simulations), sample_params])),
+                }
 
             self._curr_iter += 1
 
             self.logger.add_value("Current Iteration", self._curr_iter)
+            self.make_snapshot(snapshot_mode=snapshot_mode, meta_info=meta_info)
 
         # remaining training steps
         while self._curr_iter < self._max_iter:
@@ -198,20 +209,23 @@ class LFI(LoggerAware):
             self.posterior = self.inference.build_posterior()
 
             if logging:
-                _, log_prob, _ = self.evaluate(
+                params, log_prob, _ = self.evaluate(
                     meta_info=dict(rollouts_real=rollouts_real),
                     num_samples=self._num_samples,
-                    compute_quantity={"log_prob": True},
+                    compute_quantity={"log_prob": True,
+                                      "sample_params": True},
                 )
                 log_prob = log_prob.mean().squeeze()
                 log_probs.append(log_prob)
+                sample_params.append(params)
                 n_simulations.append(n_sim)
                 self.logger.add_value("Mean Log Probability", log_prob)
                 self.logger.add_value("Number of Simulations", to.tensor(n_sim))
 
                 meta_info = {
                     **meta_info,
-                    **dict(zip(["log_probs", "n_simulations"], [to.stack(log_probs), to.tensor(n_simulations)])),
+                    **dict(zip(["log_probs", "n_simulations", "sample_params"],
+                               [to.stack(log_probs), to.tensor(n_simulations), sample_params])),
                 }
 
             self._curr_iter += 1
@@ -239,13 +253,15 @@ class LFI(LoggerAware):
 
         if not isinstance(rollouts_real, Sequence):
             raise pyrado.TypeErr(given=rollouts_real)
-        if not isinstance(rollouts_real[0], StepSequence):
-            raise pyrado.ShapeErr(given=rollouts_real[0])
+        # if not isinstance(rollouts_real[0], StepSequence):
+        #     raise pyrado.ShapeErr(given=rollouts_real[0])
 
-        obs_context = []
-        for ro in rollouts_real:
-            obs_context.append(self.simulator.transform_data(ro))
-        obs_context = to.stack(obs_context)
+        # obs_context = []
+        # for ro in rollouts_real:
+        #     obs_context.append(self.simulator.transform_data(ro))
+        # obs_context = to.stack(obs_context)
+
+        obs_context = to.stack(rollouts_real)
 
         # generate sample parameters
         prop_params = to.stack([self.posterior.sample((num_samples,), x=obs) for obs in obs_context], dim=0)
@@ -314,3 +330,6 @@ class LFI(LoggerAware):
         if "log_probs" in meta_info:
             pyrado.save(meta_info["log_probs"], "log_probs", "pkl", self._save_dir)
             pyrado.save(meta_info["n_simulations"], "n_simulations", "pkl", self._save_dir)
+
+        if "sample_params" in meta_info:
+            pyrado.save(meta_info["sample_params"], "sample_params", "pkl", self._save_dir)

@@ -6,7 +6,7 @@ from torch.distributions.uniform import Uniform
 from torch.distributions.multivariate_normal import MultivariateNormal
 
 from pyrado.logger.experiment import setup_experiment, ask_for_experiment
-from pyrado.algorithms.inference.lfi2 import LFI
+from pyrado.algorithms.inference.lfi import LFI
 from pyrado.utils.argparser import get_argparser
 
 from sbi.inference import SNPE
@@ -49,13 +49,13 @@ def create_setup():
     range = 3 * to.ones((6,))
     prior = utils.BoxUniform(low=-range, high=range)
     # real_params = to.tensor([0.7, -2.9, -1, -0.9, 0.6])
-    real_params = to.tensor([0.7, -2.9, -0.5, -0.5, 0.1])
+    real_params = to.tensor([0.7, -1.5, -1, -0.9, 0.6])
     return simulator, prior, real_params
 
 
 def create_sbi_algo():
     # Subroutine
-    inference_hparam = dict(max_iter=5, num_sim=1000)
+    inference_hparam = dict(max_iter=500, num_sim=1000)
     embedding_net = nn.Identity()
     flow = utils.posterior_nn(model="maf", hidden_features=10, num_transforms=2, embedding_net=embedding_net)
     return flow, inference_hparam
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     simulator, prior, real_params = create_setup()
     num_obs = 1
     ro_real = [simulator(real_params) for _ in range(num_obs)]
-    ro_real = to.stack(ro_real)
+    # ro_real = to.stack(ro_real)
 
     num_samples = 100
 
@@ -94,9 +94,8 @@ if __name__ == "__main__":
         save_dir=ex_dir,
         simulator=simulator,
         flow=flow,
-        sbi_subrtn_class=SNPE,
+        inference=SNPE,
         prior=prior,
-        params_names=None,
         **inference_hparam,
     )
 
@@ -121,10 +120,11 @@ if __name__ == "__main__":
 
     # sample parameters
     sample_params, _, sim_rollouts = inference.evaluate(
-        observations=ro_real, num_samples=num_samples, compute_quantity={"sample_params": True, "sim_traj": True}
+        meta_info=dict(rollouts_real=ro_real), num_samples=num_samples, compute_quantity={"sample_params": True, "sim_traj": True}
     )
 
     sim_rollouts = sim_rollouts.unsqueeze(-1).view(num_obs, num_samples, 4, 2)
+    ro_real = to.stack(ro_real)
     ro_real = ro_real.view(num_obs, 4, 2)
 
     fig, ax = plt.subplots()
