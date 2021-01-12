@@ -12,6 +12,8 @@ var searchData=
   ['issboxflipping_2eh',['ISSBoxFlipping.h',['../ISSBoxFlipping_8h.html',1,'']]],
   ['issboxlifting_2ecpp',['ISSBoxLifting.cpp',['../ISSBoxLifting_8cpp.html',1,'']]],
   ['issboxlifting_2eh',['ISSBoxLifting.h',['../ISSBoxLifting_8h.html',1,'']]],
+  ['issboxliftingsimple_2ecpp',['ISSBoxLiftingSimple.cpp',['../ISSBoxLiftingSimple_8cpp.html',1,'']]],
+  ['issboxliftingsimple_2eh',['ISSBoxLiftingSimple.h',['../ISSBoxLiftingSimple_8h.html',1,'']]],
   ['issboxshelving_2ecpp',['ISSBoxShelving.cpp',['../ISSBoxShelving_8cpp.html',1,'']]],
   ['issboxshelving_2eh',['ISSBoxShelving.h',['../ISSBoxShelving_8h.html',1,'']]],
   ['issmpblending_2ecpp',['ISSMPBlending.cpp',['../ISSMPBlending_8cpp.html',1,'']]],

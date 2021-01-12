@@ -2,8 +2,9 @@
 <area shape="rect" id="node2" href="$ECBallOnPlate_8cpp.html" title="src/cpp/core/ECBallOnPlate.cpp" alt="" coords="5,102,216,129"/>
 <area shape="rect" id="node3" href="$ECBoxFlipping_8cpp.html" title="src/cpp/core/ECBoxFlipping.cpp" alt="" coords="240,102,451,129"/>
 <area shape="rect" id="node4" href="$ECBoxLifting_8cpp.html" title="src/cpp/core/ECBoxLifting.cpp" alt="" coords="475,102,675,129"/>
-<area shape="rect" id="node5" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="699,102,914,129"/>
-<area shape="rect" id="node6" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="938,102,1150,129"/>
-<area shape="rect" id="node7" href="$ECQuanserQube_8cpp.html" title="src/cpp/core/ECQuanserQube.cpp" alt="" coords="1174,102,1397,129"/>
-<area shape="rect" id="node8" href="$OMBodyStateAngular_8cpp.html" title="src/cpp/core/observation\l/OMBodyStateAngular.cpp" alt="" coords="1421,95,1598,136"/>
+<area shape="rect" id="node5" href="$ECBoxLiftingSimple_8cpp.html" title="src/cpp/core/ECBoxLifting\lSimple.cpp" alt="" coords="699,95,874,136"/>
+<area shape="rect" id="node6" href="$ECBoxShelving_8cpp.html" title="src/cpp/core/ECBoxShelving.cpp" alt="" coords="898,102,1113,129"/>
+<area shape="rect" id="node7" href="$ECPlanarInsert_8cpp.html" title="src/cpp/core/ECPlanarInsert.cpp" alt="" coords="1137,102,1349,129"/>
+<area shape="rect" id="node8" href="$ECQuanserQube_8cpp.html" title="src/cpp/core/ECQuanserQube.cpp" alt="" coords="1373,102,1595,129"/>
+<area shape="rect" id="node9" href="$OMBodyStateAngular_8cpp.html" title="src/cpp/core/observation\l/OMBodyStateAngular.cpp" alt="" coords="1619,95,1797,136"/>
 </map>

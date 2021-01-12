@@ -164,6 +164,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ECBoxLifting.html">ECBoxLifting</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ECBoxLiftingSimple.html">ECBoxLiftingSimple</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ECBoxShelving.html">ECBoxShelving</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ECMPblending.html">ECMPblending</a></td></tr>
@@ -193,6 +195,8 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ISSBoxFlipping.html">ISSBoxFlipping</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ISSBoxLifting.html">ISSBoxLifting</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ISSBoxLiftingSimple.html">ISSBoxLiftingSimple</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRcs_1_1ISSBoxShelving.html">ISSBoxShelving</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -337,8 +341,8 @@ Functions</h2></td></tr>
 <tr class="separator:a8dcf1f926ab5a11689aaaf9e7d201704"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4f18d98e4d113e47a5d868c85ee62da"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#af4f18d98e4d113e47a5d868c85ee62da">for</a> (auto &amp;name :actionSpace-&gt;getNames())</td></tr>
 <tr class="separator:af4f18d98e4d113e47a5d868c85ee62da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9b3665f8f03983d495ecac0d52b8b8ba"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#a9b3665f8f03983d495ecac0d52b8b8ba">copy_prop_to_xml_attr</a> (xmlNodePtr node, <a class="el" href="classRcs_1_1PropertySource.html">PropertySource</a> *source, const char *name, const char *xmlName=nullptr)</td></tr>
-<tr class="separator:a9b3665f8f03983d495ecac0d52b8b8ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac0c08fbbf0e34d34777c4ccb68a6e43"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#aac0c08fbbf0e34d34777c4ccb68a6e43">copy_prop_to_xml_attr</a> (xmlNodePtr node, <a class="el" href="classRcs_1_1PropertySource.html">PropertySource</a> *source, const char *name, const char *xmlName=NULL)</td></tr>
+<tr class="separator:aac0c08fbbf0e34d34777c4ccb68a6e43"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a119d973666154889f3f1dd8b57f1fa3e"><td class="memItemLeft" align="right" valign="top">RcsCollisionMdl *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#a119d973666154889f3f1dd8b57f1fa3e">RcsCollisionModel_createFromConfig</a> (RcsGraph *graph, <a class="el" href="classRcs_1_1PropertySource.html">PropertySource</a> *config)</td></tr>
 <tr class="separator:a119d973666154889f3f1dd8b57f1fa3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a18cfa4ebac247348154c3966aacccb57"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#a18cfa4ebac247348154c3966aacccb57">defaultWrapJointAngle</a> (RcsJoint *joint)</td></tr>
@@ -397,6 +401,8 @@ Variables</h2></td></tr>
 <tr class="separator:add5e3085059ed2e9d7612c935d01b6a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1bbcf97343212d670518e82fcacfc1f9"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classRcs_1_1ExperimentConfigRegistration.html">ExperimentConfigRegistration</a>&lt; <a class="el" href="classRcs_1_1ECBoxLifting.html">ECBoxLifting</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#a1bbcf97343212d670518e82fcacfc1f9">RegBoxLifting</a> (&quot;BoxLifting&quot;)</td></tr>
 <tr class="separator:a1bbcf97343212d670518e82fcacfc1f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aedb6dda3962f2adffc172f977dd3a404"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classRcs_1_1ExperimentConfigRegistration.html">ExperimentConfigRegistration</a>&lt; <a class="el" href="classRcs_1_1ECBoxLiftingSimple.html">ECBoxLiftingSimple</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#aedb6dda3962f2adffc172f977dd3a404">RegBoxLiftingSimple</a> (&quot;BoxLiftingSimple&quot;)</td></tr>
+<tr class="separator:aedb6dda3962f2adffc172f977dd3a404"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6cbb6168cfa50aac8358cee7394fbdbd"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classRcs_1_1ExperimentConfigRegistration.html">ExperimentConfigRegistration</a>&lt; <a class="el" href="classRcs_1_1ECBoxShelving.html">ECBoxShelving</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#a6cbb6168cfa50aac8358cee7394fbdbd">RegBoxShelving</a> (&quot;BoxShelving&quot;)</td></tr>
 <tr class="separator:a6cbb6168cfa50aac8358cee7394fbdbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a039b4c8a5cb20e7a314c47ce4dc66653"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classRcs_1_1ExperimentConfigRegistration.html">ExperimentConfigRegistration</a>&lt; <a class="el" href="classRcs_1_1ECMPblending.html">ECMPblending</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceRcs.html#a039b4c8a5cb20e7a314c47ce4dc66653">RegMPBlending</a> (&quot;MPBlending&quot;)</td></tr>
@@ -566,8 +572,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="a9b3665f8f03983d495ecac0d52b8b8ba"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9b3665f8f03983d495ecac0d52b8b8ba">&#9670;&nbsp;</a></span>copy_prop_to_xml_attr()</h2>
+<a id="aac0c08fbbf0e34d34777c4ccb68a6e43"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac0c08fbbf0e34d34777c4ccb68a6e43">&#9670;&nbsp;</a></span>copy_prop_to_xml_attr()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -597,7 +603,7 @@ template&lt;typename T &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>xmlName</em> = <code>nullptr</code>&#160;</td>
+          <td class="paramname"><em>xmlName</em> = <code>NULL</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -612,7 +618,7 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ExperimentConfig_8cpp_source.html#l00054">54</a> of file <a class="el" href="ExperimentConfig_8cpp_source.html">ExperimentConfig.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ExperimentConfig_8cpp_source.html#l00055">55</a> of file <a class="el" href="ExperimentConfig_8cpp_source.html">ExperimentConfig.cpp</a>.</p>
 
 </div>
 </div>
@@ -1367,7 +1373,7 @@ template&lt;typename M &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="AMIKControllerActivation_8cpp_source.html#l00044">44</a> of file <a class="el" href="AMIKControllerActivation_8cpp_source.html">AMIKControllerActivation.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="AMIKControllerActivation_8cpp_source.html#l00042">42</a> of file <a class="el" href="AMIKControllerActivation_8cpp_source.html">AMIKControllerActivation.cpp</a>.</p>
 
 </div>
 </div>
@@ -1433,7 +1439,7 @@ template&lt;typename M &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ExperimentConfig_8cpp_source.html#l00067">67</a> of file <a class="el" href="ExperimentConfig_8cpp_source.html">ExperimentConfig.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ExperimentConfig_8cpp_source.html#l00068">68</a> of file <a class="el" href="ExperimentConfig_8cpp_source.html">ExperimentConfig.cpp</a>.</p>
 
 </div>
 </div>
@@ -1756,6 +1762,28 @@ template&lt;typename M  = Eigen::MatrixXd&gt; </div>
 
 </div>
 </div>
+<a id="aedb6dda3962f2adffc172f977dd3a404"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aedb6dda3962f2adffc172f977dd3a404">&#9670;&nbsp;</a></span>RegBoxLiftingSimple</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classRcs_1_1ExperimentConfigRegistration.html">ExperimentConfigRegistration</a>&lt;<a class="el" href="classRcs_1_1ECBoxLiftingSimple.html">ECBoxLiftingSimple</a>&gt; Rcs::RegBoxLiftingSimple(&quot;BoxLiftingSimple&quot;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a6cbb6168cfa50aac8358cee7394fbdbd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6cbb6168cfa50aac8358cee7394fbdbd">&#9670;&nbsp;</a></span>RegBoxShelving</h2>
 
@@ -1822,7 +1850,7 @@ template&lt;typename M  = Eigen::MatrixXd&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ExperimentConfig_8cpp_source.html#l00144">144</a> of file <a class="el" href="ExperimentConfig_8cpp_source.html">ExperimentConfig.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ExperimentConfig_8cpp_source.html#l00145">145</a> of file <a class="el" href="ExperimentConfig_8cpp_source.html">ExperimentConfig.cpp</a>.</p>
 
 </div>
 </div>
@@ -1964,7 +1992,7 @@ template&lt;typename M  = Eigen::MatrixXd&gt; </div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceRcs.html">Rcs</a></li>
-    <li class="footer">Generated on Mon Jan 11 2021 13:50:51 for RcsPySim by
+    <li class="footer">Generated on Tue Jan 12 2021 10:46:23 for RcsPySim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

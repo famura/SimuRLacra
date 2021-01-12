@@ -7,6 +7,7 @@ var classRcs_1_1ISSBoxLifting =
     [ "getMinMax", "classRcs_1_1ISSBoxLifting.html#a15d59a36c08186a533f88f9479961936", null ],
     [ "getNames", "classRcs_1_1ISSBoxLifting.html#aaed0af042c48994d50ecf5caf6a31fba", null ],
     [ "fixedInitState", "classRcs_1_1ISSBoxLifting.html#ac0307844b0ea1d18d05f903813d5c13c", null ],
+    [ "link2L", "classRcs_1_1ISSBoxLifting.html#ae468c659c1720dbd9279bbf8aff0446a", null ],
     [ "link2R", "classRcs_1_1ISSBoxLifting.html#a17db243b8af45d135685789e0144abef", null ],
     [ "platform", "classRcs_1_1ISSBoxLifting.html#a15a44c84807812f410f6fc3e0820f3b4", null ],
     [ "rail", "classRcs_1_1ISSBoxLifting.html#a69808f7bec2369f151461250f05adfa2", null ]

@@ -4,6 +4,7 @@ var searchData=
   ['ecballonplate',['ECBallOnPlate',['../classRcs_1_1ECBallOnPlate.html',1,'Rcs']]],
   ['ecboxflipping',['ECBoxFlipping',['../classRcs_1_1ECBoxFlipping.html',1,'Rcs']]],
   ['ecboxlifting',['ECBoxLifting',['../classRcs_1_1ECBoxLifting.html',1,'Rcs']]],
+  ['ecboxliftingsimple',['ECBoxLiftingSimple',['../classRcs_1_1ECBoxLiftingSimple.html',1,'Rcs']]],
   ['ecboxshelving',['ECBoxShelving',['../classRcs_1_1ECBoxShelving.html',1,'Rcs']]],
   ['ecmpblending',['ECMPblending',['../classRcs_1_1ECMPblending.html',1,'Rcs']]],
   ['ecplanar3link',['ECPlanar3Link',['../classRcs_1_1ECPlanar3Link.html',1,'Rcs']]],

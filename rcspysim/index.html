@@ -100,15 +100,13 @@ $(document).ready(function(){initNavTree('index.html','');});
 <h2>Installation </h2>
 <p>Please follow the readme-file in the root project folder (one level above RcsPySim folder).</p>
 <h2>Where to start </h2>
-<p>Check out <a class="el" href="classRcs_1_1ExperimentConfig.html">Rcs::ExperimentConfig</a> where the simulation environments are specified and <a class="el" href="classRcs_1_1RcsSimEnv.html">Rcs::RcsSimEnv</a> which runs the simulations.</p>
-<h2>Information about <a class="el" href="namespaceRcs.html">Rcs</a> graphs </h2>
-<p>In <a class="el" href="namespaceRcs.html">Rcs</a>, he kinematic dependency ob bodies is modeled as a graph. There can be multiple graphs in one program, and the same graph you be used by multiple object. Thus, it important to understand, on which graph an operation is executed. In general, RcsPySim uses 2 graphs: (i) a graph, called "config graph", which is created from the environment specific config xml-file, then stored in the <code>config</code> attribute of the <a class="el" href="classRcs_1_1RcsSimEnv.html">Rcs::RcsSimEnv</a> class. This graph is also later passed to the <a class="el" href="classRcs_1_1PhysicsParameterManager.html">Rcs::PhysicsParameterManager</a> which takes care of the domain parameter randomization. (ii) a graph, called "desired graph", which is a deep copy from the config graph. The desired graph only exists in the <a class="el" href="classRcs_1_1ActionModelIK.html">Rcs::ActionModelIK</a> and its derived classes. To be more exact, the controller within these action models owns this copied graph. Note, that depending on how the simulation was created, the viewer is receives a node based on the config graph, and a node based on the controller's desired graph. </p>
+<p>Check out <a class="el" href="classRcs_1_1ExperimentConfig.html">Rcs::ExperimentConfig</a> where the simulation environments are specified and <a class="el" href="classRcs_1_1RcsSimEnv.html">Rcs::RcsSimEnv</a> which runs the simulations. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Jan 11 2021 13:50:52 for RcsPySim by
+    <li class="footer">Generated on Tue Jan 12 2021 10:46:24 for RcsPySim by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

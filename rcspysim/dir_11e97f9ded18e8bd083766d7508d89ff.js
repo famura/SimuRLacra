@@ -20,6 +20,10 @@ var dir_11e97f9ded18e8bd083766d7508d89ff =
     [ "ISSBoxLifting.h", "ISSBoxLifting_8h.html", [
       [ "ISSBoxLifting", "classRcs_1_1ISSBoxLifting.html", "classRcs_1_1ISSBoxLifting" ]
     ] ],
+    [ "ISSBoxLiftingSimple.cpp", "ISSBoxLiftingSimple_8cpp.html", null ],
+    [ "ISSBoxLiftingSimple.h", "ISSBoxLiftingSimple_8h.html", [
+      [ "ISSBoxLiftingSimple", "classRcs_1_1ISSBoxLiftingSimple.html", "classRcs_1_1ISSBoxLiftingSimple" ]
+    ] ],
     [ "ISSBoxShelving.cpp", "ISSBoxShelving_8cpp.html", null ],
     [ "ISSBoxShelving.h", "ISSBoxShelving_8h.html", [
       [ "ISSBoxShelving", "classRcs_1_1ISSBoxShelving.html", "classRcs_1_1ISSBoxShelving" ]
