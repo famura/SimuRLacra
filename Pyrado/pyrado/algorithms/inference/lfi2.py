@@ -79,6 +79,7 @@ class LFI(Algorithm):
         num_real_rollouts: int,
         num_sim_per_real_rollout: int,
         num_eval_samples: int = 25,
+        num_workers: int = 1,
         logger: Optional[StepLogger] = None,
     ):
         """
@@ -98,9 +99,11 @@ class LFI(Algorithm):
                                  `final_state` (use the last observed state from the rollout), and
                                  `ramos` (summary statistics as proposed in  [1])
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
-        :param num_sim_per_real_rollout:
-        :param num_real_rollouts:
+        :param num_real_rollouts: number of real-world observation received by sbi, i.e. from every rollout exactly one
+                                  observation is computed
+        :param num_sim_per_real_rollout: number of simulations done by sbi per real-world observation received
         :param num_eval_samples: number of samples for evaluating the posterior in `eval_posterior()`
+        :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         # Call Algorithm's constructor
@@ -116,6 +119,7 @@ class LFI(Algorithm):
         self.num_real_rollouts = num_real_rollouts
         self.num_sim_per_real_rollout = num_sim_per_real_rollout
         self.num_eval_samples = num_eval_samples
+        self.num_workers = num_workers
 
         pyrado.save(prior, "prior", "pt", self._save_dir, meta_info=None, use_state_dict=False)
 
@@ -133,11 +137,6 @@ class LFI(Algorithm):
         sbi_subrtn = self.sbi_subrtn_class(prior=sbi_prior, density_estimator=flow, summary_writer=summary_writer)
 
         return sbi_simulator, sbi_prior, sbi_subrtn
-
-    @property
-    def num_sbi_simulations(self) -> int:
-        """ Get the number of simulations done per call of the sbi subroutine. """
-        return self.num_sim_per_real_rollout * self.num_real_rollouts
 
     @staticmethod
     def truncate_to_shortest(data: List[to.Tensor]):
@@ -179,15 +178,19 @@ class LFI(Algorithm):
             domain_param, sim_output = simulate_for_sbi(
                 simulator=sbi_simulator,
                 proposal=sbi_prior,
-                num_simulations=self.num_sbi_simulations,
+                num_simulations=self.num_sim_per_real_rollout,
                 simulation_batch_size=1,
-                num_workers=1,  # leave it for now
+                num_workers=self.num_workers,
             )
             sbi_subrtn.append_simulations(
                 domain_param,
                 sim_output,
                 proposal=None,  # pass None if the parameters were sampled from the prior
             )
+            self._cnt_samples += self.num_sim_per_real_rollout
+
+            # Save the first observations
+            pyrado.save(observations_real, "observations_real", "pt", self._save_dir)
 
         # Remaining training iterations
         else:
@@ -200,17 +203,25 @@ class LFI(Algorithm):
                 domain_param, sim_output = simulate_for_sbi(
                     simulator=sbi_simulator,
                     proposal=posterior,
-                    num_simulations=self.num_sbi_simulations,
+                    num_simulations=self.num_sim_per_real_rollout,
                     simulation_batch_size=1,
-                    num_workers=1,  # leave it for now
+                    num_workers=self.num_workers,  # leave it for now
                 )
-                sbi_subrtn.append_simulations(domain_param, sim_output)
+                sbi_subrtn.append_simulations(
+                    domain_param, sim_output, proposal=posterior
+                )  # TODO @group, this one is new
+                self._cnt_samples += self.num_sim_per_real_rollout
+
+            # Append and save all observations
+            prev_observations = pyrado.load(
+                None, "observations_real", "pt", self._save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter - 1 }")
+            )
+            all_observations = to.cat([prev_observations, observations_real], dim=0)
+            pyrado.save(all_observations, "observations_real", "pt", self._save_dir)
 
         # Train the posterior
-        posterior_estimator = sbi_subrtn.train(**self.sbi_training_hparam)
-        posterior = (
-            sbi_subrtn.build_posterior()
-        )  # todo why are we not passing density_estimator=posterior_estimator here. sbi.inference.base::infer() also doesn't do it, but why?
+        sbi_subrtn.train(**self.sbi_training_hparam)
+        posterior = sbi_subrtn.build_posterior()  # no need to pass density_estimator, since latest is used by default
 
         # Logging
         domain_param_eval, log_prob, _ = LFI.eval_posterior(
@@ -219,7 +230,7 @@ class LFI(Algorithm):
         self.logger.add_value("avg domain param", to.mean(domain_param_eval, dim=[0, 1]))
         self.logger.add_value("std domain param", to.std(domain_param_eval, dim=[0, 1]))
         self.logger.add_value("avg log prob", to.mean(log_prob))
-        self.logger.add_value("num simulations", self.num_sbi_simulations)
+        self.logger.add_value("num total samples", self._cnt_samples)  # here the samples are simulations
 
         # Save snapshot data
         pyrado.save(posterior, "posterior", "pt", self._save_dir, meta_info, use_state_dict=False)
@@ -324,14 +335,15 @@ class LFI(Algorithm):
         ):
             observations_real.append(rollout_worker())
 
-        # Optionally save the data
-        if save_dir is not None:
-            pyrado.save(observations_real, f"{prefix}_observations_real", "pkl", save_dir)
-
         # LFI.truncate_to_shortest(observations_real)
 
-        # Return stacked tensor
+        # Stacked to tensor, samples along 1st dimension
         observations_real = to.stack(observations_real)
+
+        # Optionally save the data
+        if save_dir is not None:
+            pyrado.save(observations_real, f"{prefix}_observations_real", "pt", save_dir)
+
         return observations_real
 
     def save_snapshot(self, meta_info: dict = None):
