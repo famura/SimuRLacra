@@ -72,7 +72,7 @@ class LFI(Algorithm):
         policy: Policy,
         dp_mapping: Mapping[int, str],
         prior: Distribution,
-        posterior_nn_hparam: dict,  # Callable[[], DirectPosterior],
+        posterior_nn_hparam: dict,
         sbi_subrtn_class: Type[PosteriorEstimator],
         summary_statistic: str,
         max_iter: int,
@@ -121,10 +121,20 @@ class LFI(Algorithm):
         self.num_eval_samples = num_eval_samples
         self.num_workers = num_workers
 
+        # Save quantities that do not change
+        pyrado.save(self._env_sim, "env_sim", "pkl", self._save_dir)
+        pyrado.save(self._env_real, "env_real", "pkl", self._save_dir)
         pyrado.save(prior, "prior", "pt", self._save_dir, meta_info=None, use_state_dict=False)
 
-    def set_up_sbi(self) -> Tuple[Callable, Distribution, PosteriorEstimator]:
-        """"""
+    def setup_sbi(self) -> Tuple[Callable, Distribution, PosteriorEstimator]:
+        """
+        Create the simulator, prior, and LFI algorithm necessary for sbi to run.
+        This function is called at the beginning of every step, since we can't pickle the simulator and the algorithm
+        because they contain callables which are created in the scope of main. There are ways to pickle them too, but
+        re-creating these quantities is simpler.
+
+        :return: sbi-specific simulator, prior, and algorithm
+        """
         # Prepare simulator and prior for usage in sbi
         prior = pyrado.load(None, "prior", "pt", self._save_dir)
         rollout_sampler = RolloutSamplerForSBI(self._env_sim, self._policy, self.dp_mapping, self.summary_statistic)
@@ -153,8 +163,11 @@ class LFI(Algorithm):
                 data[idx] = d[:min_length]
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
+        if meta_info is None:
+            meta_info = dict()
+
         # Create the objects used by sbi
-        sbi_simulator, sbi_prior, sbi_subrtn = self.set_up_sbi()
+        sbi_simulator, sbi_prior, sbi_subrtn = self.setup_sbi()
 
         observations_real = LFI.collect_real_observations(
             self.save_dir,
@@ -189,8 +202,8 @@ class LFI(Algorithm):
             )
             self._cnt_samples += self.num_sim_per_real_rollout
 
-            # Save the first observations
-            pyrado.save(observations_real, "observations_real", "pt", self._save_dir)
+            # Append the first set of observations
+            meta_info["observations_real"] = observations_real
 
         # Remaining training iterations
         else:
@@ -216,12 +229,13 @@ class LFI(Algorithm):
             prev_observations = pyrado.load(
                 None, "observations_real", "pt", self._save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter - 1 }")
             )
-            all_observations = to.cat([prev_observations, observations_real], dim=0)
-            pyrado.save(all_observations, "observations_real", "pt", self._save_dir)
+            meta_info["observations_real"] = to.cat([prev_observations, observations_real], dim=0)
 
         # Train the posterior
         sbi_subrtn.train(**self.sbi_training_hparam)
         posterior = sbi_subrtn.build_posterior()  # no need to pass density_estimator, since latest is used by default
+        pyrado.save(posterior, "posterior", "pt", self._save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter}"))
+        meta_info["posterior"] = posterior
 
         # Logging
         domain_param_eval, log_prob, _ = LFI.eval_posterior(
@@ -233,7 +247,6 @@ class LFI(Algorithm):
         self.logger.add_value("num total samples", self._cnt_samples)  # here the samples are simulations
 
         # Save snapshot data
-        pyrado.save(posterior, "posterior", "pt", self._save_dir, meta_info, use_state_dict=False)
         self.make_snapshot(snapshot_mode, float(to.mean(log_prob)), meta_info)
 
     @staticmethod
@@ -349,10 +362,9 @@ class LFI(Algorithm):
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
-        if meta_info is None:
-            # This algorithm instance is not a subroutine of another algorithm
-            joblib.dump(self._env_sim, osp.join(self.save_dir, "env_sim.pkl"))
-            joblib.dump(self._env_real, osp.join(self.save_dir, "env_real.pkl"))
-            pyrado.save(self._policy, "policy", "pt", self.save_dir, None)
-        else:
-            raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subroutine!")
+        pyrado.save(self._policy, "policy", "pt", self.save_dir, None)
+
+        if "posterior" in meta_info:
+            pyrado.save(meta_info["posterior"], "posterior", "pt", self._save_dir, meta_info, use_state_dict=False)
+        if "observations_real" in meta_info:
+            pyrado.save(meta_info["observations_real"], "observations_real", "pt", self._save_dir)

@@ -51,7 +51,7 @@ if __name__ == "__main__":
     algo = Algorithm.load_snapshot(ex_dir)
     if not isinstance(algo, LFI):
         raise pyrado.TypeErr(given=algo, expected_type=LFI)
-    sbi_simulator, _, _ = algo.set_up_sbi()
+    sbi_simulator, _, _ = algo.setup_sbi()
 
     # Load the posterior
     posterior = pyrado.load(None, "posterior", "pt", ex_dir)
