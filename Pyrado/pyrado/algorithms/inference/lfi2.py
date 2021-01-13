@@ -26,8 +26,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import joblib
-import os.path as osp
 import sys
 import torch as to
 from colorama import Style, Fore
@@ -220,9 +218,7 @@ class LFI(Algorithm):
                     simulation_batch_size=1,
                     num_workers=self.num_workers,  # leave it for now
                 )
-                sbi_subrtn.append_simulations(
-                    domain_param, sim_output, proposal=posterior
-                )  # TODO @group, this one is new
+                sbi_subrtn.append_simulations(domain_param, sim_output, proposal=posterior)
                 self._cnt_samples += self.num_sim_per_real_rollout
 
             # Append and save all observations

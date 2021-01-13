@@ -17,7 +17,6 @@ from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBu
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.utils.argparser import get_argparser
 
 if __name__ == "__main__":
@@ -38,8 +37,8 @@ if __name__ == "__main__":
     num_real_obs = 5
     env_real = deepcopy(env_sim)
     randomizer = DomainRandomizer(
-        NormalDomainParam(name="g", mean=10.0, std=0.1),
-        NormalDomainParam(name="Rm", mean=9.0, std=0.09),
+        NormalDomainParam(name="g", mean=10.0, std=10.0 / 100),
+        NormalDomainParam(name="Rm", mean=9.0, std=9.0 / 100),
     )
     env_real = DomainRandWrapperBuffer(env_real, randomizer)
     env_real.fill_buffer(num_real_obs)
@@ -48,11 +47,11 @@ if __name__ == "__main__":
     # Policy
     behavior_policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec)
 
-    # Define a prior
+    # Prior
     prior_hparam = dict(low=to.tensor([1.0, 1.0]), high=to.tensor([20.0, 10.0]))
     prior = utils.BoxUniform(**prior_hparam)
 
-    # Normalizing flow
+    # Posterior (normalizing flow)
     posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=2)
 
     # Algorithm

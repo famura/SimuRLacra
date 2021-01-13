@@ -173,8 +173,7 @@ class LFI(LoggerAware):
                 params, log_prob, _ = self.evaluate(
                     meta_info=dict(rollouts_real=rollouts_real),
                     num_samples=self._num_samples,
-                    compute_quantity={"log_prob": True,
-                                      "sample_params": True},
+                    compute_quantity={"log_prob": True, "sample_params": True},
                 )
                 log_prob = log_prob.mean().squeeze()
                 n_sim += self._num_sim
@@ -185,8 +184,12 @@ class LFI(LoggerAware):
                 self.logger.add_value("Number of Simulations", to.tensor(n_sim))
                 meta_info = {
                     **meta_info,
-                    **dict(zip(["log_probs", "n_simulations", "sample_params"],
-                               [to.stack(log_probs), to.tensor(n_simulations), sample_params])),
+                    **dict(
+                        zip(
+                            ["log_probs", "n_simulations", "sample_params"],
+                            [to.stack(log_probs), to.tensor(n_simulations), sample_params],
+                        )
+                    ),
                 }
 
             self._curr_iter += 1
@@ -212,8 +215,7 @@ class LFI(LoggerAware):
                 params, log_prob, _ = self.evaluate(
                     meta_info=dict(rollouts_real=rollouts_real),
                     num_samples=self._num_samples,
-                    compute_quantity={"log_prob": True,
-                                      "sample_params": True},
+                    compute_quantity={"log_prob": True, "sample_params": True},
                 )
                 log_prob = log_prob.mean().squeeze()
                 log_probs.append(log_prob)
@@ -224,8 +226,12 @@ class LFI(LoggerAware):
 
                 meta_info = {
                     **meta_info,
-                    **dict(zip(["log_probs", "n_simulations", "sample_params"],
-                               [to.stack(log_probs), to.tensor(n_simulations), sample_params])),
+                    **dict(
+                        zip(
+                            ["log_probs", "n_simulations", "sample_params"],
+                            [to.stack(log_probs), to.tensor(n_simulations), sample_params],
+                        )
+                    ),
                 }
 
             self._curr_iter += 1

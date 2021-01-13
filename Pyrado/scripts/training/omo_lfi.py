@@ -63,11 +63,11 @@ if __name__ == "__main__":
     env_sim = OneMassOscillatorSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
 
     # Create a fake 'ground truth' target domain
-    num_real_obs = 5
+    num_real_obs = 1
     env_real = deepcopy(env_sim)
     randomizer = DomainRandomizer(
-        NormalDomainParam(name="k", mean=33.0, std=0.33),
-        NormalDomainParam(name="d", mean=0.2, std=0.002),
+        NormalDomainParam(name="k", mean=33.0, std=33 / 50),
+        NormalDomainParam(name="d", mean=0.2, std=0.2 / 50),
     )
     env_real = DomainRandWrapperBuffer(env_real, randomizer)
     env_real.fill_buffer(num_real_obs)
@@ -76,16 +76,20 @@ if __name__ == "__main__":
     # Policy
     behavior_policy = IdlePolicy(env_sim.spec)
 
-    # Define a prior
+    # Prior
     prior_hparam = dict(low=to.tensor([25.0, 0.05]), high=to.tensor([35, 0.45]))
     prior = utils.BoxUniform(**prior_hparam)
 
-    # Normalizing flow
+    # Posterior (normalizing flow)
     posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=2)
 
     # Algorithm
     algo_hparam = dict(
-        summary_statistic="ramos", max_iter=10, num_real_rollouts=num_real_obs, num_sim_per_real_rollout=50
+        summary_statistic="ramos",
+        max_iter=15,
+        num_real_rollouts=num_real_obs,
+        num_sim_per_real_rollout=1000,
+        num_workers=4,
     )
     algo = LFI(
         ex_dir,
