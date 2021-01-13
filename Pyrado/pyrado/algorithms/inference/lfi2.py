@@ -49,7 +49,6 @@ from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
-from pyrado.logger.experiment import split_path_custom_common
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.utils.checks import check_all_lengths_equal
@@ -121,7 +120,10 @@ class LFI(Algorithm):
         self.num_sim_per_real_rollout = num_sim_per_real_rollout
         self.num_eval_samples = num_eval_samples
         self.num_workers = num_workers
+
         self._sbi_simulator, self._sbi_prior, self._sbi_subrtn = None, None, None  # sbi needs to be initialized
+        # self._observations_real = None
+        # self._posterior = None
 
         # Save quantities that do not change
         pyrado.save(self._env_sim, "env_sim", "pkl", self._save_dir)
@@ -169,9 +171,6 @@ class LFI(Algorithm):
                 data[idx] = d[:min_length]
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
-        if meta_info is None:
-            meta_info = dict()
-
         # Create the objects used by sbi
         if any(ele is None for ele in [self._sbi_simulator, self._sbi_prior, self._sbi_subrtn]):
             self.setup_sbi()
@@ -210,7 +209,7 @@ class LFI(Algorithm):
             self._cnt_samples += self.num_sim_per_real_rollout
 
             # Append the first set of observations
-            meta_info["observations_real"] = observations_real
+            pyrado.save(observations_real, "observations_real", "pt", self._save_dir)
 
         # Remaining training iterations
         else:
@@ -234,7 +233,7 @@ class LFI(Algorithm):
             prev_observations = pyrado.load(
                 None, "observations_real", "pt", self._save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter - 1 }")
             )
-            meta_info["observations_real"] = to.cat([prev_observations, observations_real], dim=0)
+            self._observations_real = to.cat([prev_observations, observations_real], dim=0)
 
         # Train the posterior
         self._sbi_subrtn.train(**self.sbi_training_hparam)
@@ -242,7 +241,7 @@ class LFI(Algorithm):
             self._sbi_subrtn.build_posterior()
         )  # no need to pass density_estimator, since latest is used by default
         pyrado.save(posterior, "posterior", "pt", self._save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter}"))
-        meta_info["posterior"] = posterior
+        pyrado.save(posterior, "posterior", "pt", self._save_dir, meta_info, use_state_dict=False)
 
         # Logging
         domain_param_eval, log_prob, _ = LFI.eval_posterior(
@@ -370,11 +369,6 @@ class LFI(Algorithm):
         super().save_snapshot(meta_info)
 
         pyrado.save(self._policy, "policy", "pt", self.save_dir, None)
-
-        if "posterior" in meta_info:
-            pyrado.save(meta_info["posterior"], "posterior", "pt", self._save_dir, meta_info, use_state_dict=False)
-        if "observations_real" in meta_info:
-            pyrado.save(meta_info["observations_real"], "observations_real", "pt", self._save_dir)
 
     def __getstate__(self):
         # Remove the unpickleable sbi-related members from this algorithm instance

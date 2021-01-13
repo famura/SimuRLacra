@@ -63,7 +63,7 @@ if __name__ == "__main__":
     env_sim = OneMassOscillatorSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
 
     # Create a fake 'ground truth' target domain
-    num_real_obs = 1
+    num_real_obs = 5
     env_real = deepcopy(env_sim)
     randomizer = DomainRandomizer(
         NormalDomainParam(name="k", mean=33.0, std=33 / 50),
@@ -71,6 +71,7 @@ if __name__ == "__main__":
     )
     env_real = DomainRandWrapperBuffer(env_real, randomizer)
     env_real.fill_buffer(num_real_obs)
+    # env_real.domain_param = dict(k=33, d=0.2)
     dp_mapping = {0: "k", 1: "d"}
 
     # Policy
@@ -88,7 +89,7 @@ if __name__ == "__main__":
         summary_statistic="ramos",
         max_iter=15,
         num_real_rollouts=num_real_obs,
-        num_sim_per_real_rollout=100,
+        num_sim_per_real_rollout=200,
         num_workers=1,
     )
     algo = LFI(
