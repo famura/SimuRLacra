@@ -53,7 +53,7 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(OneMassOscillatorSim.name, f"{LFI.name}_nflow")
+    ex_dir = setup_experiment(OneMassOscillatorSim.name, f"{LFI.name}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
@@ -88,8 +88,8 @@ if __name__ == "__main__":
         summary_statistic="ramos",
         max_iter=15,
         num_real_rollouts=num_real_obs,
-        num_sim_per_real_rollout=1000,
-        num_workers=4,
+        num_sim_per_real_rollout=100,
+        num_workers=1,
     )
     algo = LFI(
         ex_dir,

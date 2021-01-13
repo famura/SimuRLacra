@@ -51,7 +51,7 @@ if __name__ == "__main__":
     algo = Algorithm.load_snapshot(ex_dir)
     if not isinstance(algo, LFI):
         raise pyrado.TypeErr(given=algo, expected_type=LFI)
-    sbi_simulator, _, _ = algo.setup_sbi()
+    algo.setup_sbi()
 
     # Load the posterior
     posterior = pyrado.load(None, "posterior", "pt", ex_dir)
@@ -69,7 +69,7 @@ if __name__ == "__main__":
 
     # Compute and print the argmax
     domain_params, log_prob, observations_sim = LFI.eval_posterior(
-        posterior, observations_real, args.num_samples, sbi_simulator
+        posterior, observations_real, args.num_samples, algo.sbi_simulator
     )
 
     # TODO whatever you wanna do here

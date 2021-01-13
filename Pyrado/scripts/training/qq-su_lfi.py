@@ -24,7 +24,7 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{LFI.name}_nflow")
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{LFI.name}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)

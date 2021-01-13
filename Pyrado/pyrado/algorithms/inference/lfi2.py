@@ -27,6 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import sys
+from copy import deepcopy
+
 import torch as to
 from colorama import Style, Fore
 from torch.distributions import Distribution
@@ -47,6 +49,7 @@ from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
+from pyrado.logger.experiment import split_path_custom_common
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.utils.checks import check_all_lengths_equal
@@ -118,33 +121,38 @@ class LFI(Algorithm):
         self.num_sim_per_real_rollout = num_sim_per_real_rollout
         self.num_eval_samples = num_eval_samples
         self.num_workers = num_workers
+        self._sbi_simulator, self._sbi_prior, self._sbi_subrtn = None, None, None  # sbi needs to be initialized
 
         # Save quantities that do not change
         pyrado.save(self._env_sim, "env_sim", "pkl", self._save_dir)
         pyrado.save(self._env_real, "env_real", "pkl", self._save_dir)
         pyrado.save(prior, "prior", "pt", self._save_dir, meta_info=None, use_state_dict=False)
 
-    def setup_sbi(self) -> Tuple[Callable, Distribution, PosteriorEstimator]:
+    def sbi_simulator(self) -> Optional[Callable]:
+        """ Get the simulator wrapped for sbi. """
+        return self._sbi_simulator
+
+    def setup_sbi(self):
         """
         Create the simulator, prior, and LFI algorithm necessary for sbi to run.
-        This function is called at the beginning of every step, since we can't pickle the simulator and the algorithm
-        because they contain callables which are created in the scope of main. There are ways to pickle them too, but
-        re-creating these quantities is simpler.
-
-        :return: sbi-specific simulator, prior, and algorithm
+        This function is called once at the beginning or after loading, since we can't pickle the sbi-related simulator
+        and the algorithm because they contain callables which are created in the scope of main. There are ways to
+        pickle them too, but re-creating these quantities is simpler.
         """
         # Prepare simulator and prior for usage in sbi
         prior = pyrado.load(None, "prior", "pt", self._save_dir)
         rollout_sampler = RolloutSamplerForSBI(self._env_sim, self._policy, self.dp_mapping, self.summary_statistic)
-        sbi_simulator, sbi_prior = prepare_for_sbi(rollout_sampler, prior)
+        self._sbi_simulator, self._sbi_prior = prepare_for_sbi(rollout_sampler, prior)
 
         # Create the algorithm instance used in sbi, e.g. SNPE-A/B/C or SNLE
-        flow = posterior_nn(**self.posterior_nn_hparam)  # can't be saved, thus needs to be recreated
+        flow = posterior_nn(**self.posterior_nn_hparam)  # can't be saved
         summary_writer = self.logger.printers[2].writer
         assert isinstance(summary_writer, SummaryWriter)
-        sbi_subrtn = self.sbi_subrtn_class(prior=sbi_prior, density_estimator=flow, summary_writer=summary_writer)
+        self._sbi_subrtn = self.sbi_subrtn_class(
+            prior=self._sbi_prior, density_estimator=flow, summary_writer=summary_writer
+        )
 
-        return sbi_simulator, sbi_prior, sbi_subrtn
+        print_cbt("Set up sbi.", "g")
 
     @staticmethod
     def truncate_to_shortest(data: List[to.Tensor]):
@@ -165,7 +173,8 @@ class LFI(Algorithm):
             meta_info = dict()
 
         # Create the objects used by sbi
-        sbi_simulator, sbi_prior, sbi_subrtn = self.setup_sbi()
+        if any(ele is None for ele in [self._sbi_simulator, self._sbi_prior, self._sbi_subrtn]):
+            self.setup_sbi()
 
         observations_real = LFI.collect_real_observations(
             self.save_dir,
@@ -187,13 +196,13 @@ class LFI(Algorithm):
         if self._curr_iter == 0:
             # Sample parameters proposal, and simulate these parameters to obtain the observations
             domain_param, sim_output = simulate_for_sbi(
-                simulator=sbi_simulator,
-                proposal=sbi_prior,
+                simulator=self._sbi_simulator,
+                proposal=self._sbi_prior,
                 num_simulations=self.num_sim_per_real_rollout,
                 simulation_batch_size=1,
                 num_workers=self.num_workers,
             )
-            sbi_subrtn.append_simulations(
+            self._sbi_subrtn.append_simulations(
                 domain_param,
                 sim_output,
                 proposal=None,  # pass None if the parameters were sampled from the prior
@@ -212,13 +221,13 @@ class LFI(Algorithm):
 
                 # Sample parameters proposal, and simulate these parameters to obtain the observations
                 domain_param, sim_output = simulate_for_sbi(
-                    simulator=sbi_simulator,
+                    simulator=self._sbi_simulator,
                     proposal=posterior,
                     num_simulations=self.num_sim_per_real_rollout,
                     simulation_batch_size=1,
                     num_workers=self.num_workers,  # leave it for now
                 )
-                sbi_subrtn.append_simulations(domain_param, sim_output, proposal=posterior)
+                self._sbi_subrtn.append_simulations(domain_param, sim_output, proposal=posterior)
                 self._cnt_samples += self.num_sim_per_real_rollout
 
             # Append and save all observations
@@ -228,14 +237,16 @@ class LFI(Algorithm):
             meta_info["observations_real"] = to.cat([prev_observations, observations_real], dim=0)
 
         # Train the posterior
-        sbi_subrtn.train(**self.sbi_training_hparam)
-        posterior = sbi_subrtn.build_posterior()  # no need to pass density_estimator, since latest is used by default
+        self._sbi_subrtn.train(**self.sbi_training_hparam)
+        posterior = (
+            self._sbi_subrtn.build_posterior()
+        )  # no need to pass density_estimator, since latest is used by default
         pyrado.save(posterior, "posterior", "pt", self._save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter}"))
         meta_info["posterior"] = posterior
 
         # Logging
         domain_param_eval, log_prob, _ = LFI.eval_posterior(
-            posterior, observations_real, self.num_eval_samples, sbi_simulator
+            posterior, observations_real, self.num_eval_samples, self._sbi_simulator
         )
         self.logger.add_value("avg domain param", to.mean(domain_param_eval, dim=[0, 1]))
         self.logger.add_value("std domain param", to.std(domain_param_eval, dim=[0, 1]))
@@ -257,7 +268,7 @@ class LFI(Algorithm):
         Evaluates the posterior by computing parameter samples given observed data, its log probability
         and the simulated trajectory.
 
-        :param posterior: posterior to evaluate, i.e. normalizing flow that samples domain parameters conditioned on
+        :param posterior: posterior to evaluate, e.g. a normalizing flow, that samples domain parameters conditioned on
                           the provided observations
         :param observations: observations from the real-world rollout a.k.a. x_o
         :param num_samples: number of samples to draw from the posterior
@@ -364,3 +375,31 @@ class LFI(Algorithm):
             pyrado.save(meta_info["posterior"], "posterior", "pt", self._save_dir, meta_info, use_state_dict=False)
         if "observations_real" in meta_info:
             pyrado.save(meta_info["observations_real"], "observations_real", "pt", self._save_dir)
+
+    def __getstate__(self):
+        # Remove the unpickleable sbi-related members from this algorithm instance
+        tmp_sbi_simulator = self.__dict__.pop("_sbi_simulator")
+        tmp_sbi_prior = self.__dict__.pop("_sbi_prior")
+        tmp_sbi_subrtn = self.__dict__.pop("_sbi_subrtn")
+
+        # Call Algorithm's __getstate__() without the unpickleable sbi-related members
+        state_dict = super(LFI, self).__getstate__()
+
+        # Make a deep copy of the state dict such that we can return the pickleable version and insert the sbi variables
+        state_dict_copy = deepcopy(state_dict)
+
+        # Inset them back
+        self.__dict__["_sbi_simulator"] = tmp_sbi_simulator
+        self.__dict__["_sbi_prior"] = tmp_sbi_prior
+        self.__dict__["_sbi_subrtn"] = tmp_sbi_subrtn
+
+        return state_dict_copy
+
+    def __setstate__(self, state):
+        # Call Algorithm's __setstate__()
+        super().__setstate__(state)
+
+        # Set the unpickleable sbi-related members to None such that they are treated as uninitialized
+        self.__dict__["_sbi_simulator"] = None
+        self.__dict__["_sbi_prior"] = None
+        self.__dict__["_sbi_subrtn"] = None
