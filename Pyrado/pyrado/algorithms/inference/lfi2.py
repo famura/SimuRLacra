@@ -233,7 +233,8 @@ class LFI(Algorithm):
             prev_observations = pyrado.load(
                 None, "observations_real", "pt", self._save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter - 1 }")
             )
-            self._observations_real = to.cat([prev_observations, observations_real], dim=0)
+            observations_real_hist = to.cat([prev_observations, observations_real], dim=0)
+            pyrado.save(observations_real_hist, "observations_real", "pt", self._save_dir)
 
         # Train the posterior
         self._sbi_subrtn.train(**self.sbi_training_hparam)
@@ -368,7 +369,11 @@ class LFI(Algorithm):
     def save_snapshot(self, meta_info: dict = None):
         super().save_snapshot(meta_info)
 
-        pyrado.save(self._policy, "policy", "pt", self.save_dir, None)
+        if meta_info is None:
+            # This algorithm instance is not a subroutine of another algorithm
+            pyrado.save(self._policy, "policy", "pt", self.save_dir, None)
+        else:
+            raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subroutine!")
 
     def __getstate__(self):
         # Remove the unpickleable sbi-related members from this algorithm instance
