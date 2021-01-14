@@ -44,6 +44,7 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment
+from pyrado.plotting.lfi_posterior_distribution import plot_posterior_distribution
 
 
 if __name__ == "__main__":
@@ -91,8 +92,27 @@ if __name__ == "__main__":
         posterior, observations_real_sel, args.num_samples, algo.sbi_simulator, simulate_observations=False
     )
 
-    # TODO whatever you wanna do here
 
+    # load real environment, initial prior and real distribution for plotting
+    env_real = pyrado.load(None, f"env_real", "pkl", ex_dir)
+    initial_prior = pyrado.load(None, f"prior", "pt", ex_dir)
+
+    # get the environmental parameters to plot in 2D (by default the first two)
+    params_names = list(env_real.buffer[0].keys())[:2]
+    print("Selected {} from {} to plot in 2D".format(params_names, list(env_real.buffer[0].keys())))
+
+    # plot posterior distribution (, true parameter and true distribution)
+    fig, ax = plt.subplots()
+    ax = plot_posterior_distribution(ax, posterior, observations_real,
+                                     initial_prior=initial_prior,
+                                     params_names=params_names,
+                                     real_environment=env_real,
+                                     )
+    plt.show()
+
+
+    # TODO not working with omo or qq-su
+    """ 
     fig, axes = utils.pairplot(
         domain_params[args.iter, :, :],
         limits=[[23, 43], [0, 0.8]],
@@ -129,3 +149,4 @@ if __name__ == "__main__":
     # grid_x2, grid_y2 = np.meshgrid(dp_x, dp_y)
 
     plt.show()
+    """
