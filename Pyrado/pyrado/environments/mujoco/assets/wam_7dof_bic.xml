@@ -130,7 +130,7 @@
     <!--    <light mode="fixed" directional="false" diffuse="0.7 0.7 0.7" specular="0.3 0.3 0.3" pos=" 2 -2 2" dir="-0.5 1 -0.5" castshadow="true"/>-->
     <!--    <light mode="fixed" directional="false" diffuse="0.7 0.7 0.7" specular="0.3 0.3 0.3" pos=" 2  2 2" dir="-0.5 -1 -0.5" castshadow="true"/>-->
 
-    <geom name="floor" pos="0 0 -0.05" size="10 10 .1" type="plane" material="matplane" condim="3" solref="0.001 1."/>
+    <geom name="floor" pos="0 0 0" size="10 10 .05" type="plane" material="matplane" condim="3" solref="0.001 1."/>
     <geom class="x_axis"/>
     <geom class="y_axis"/>
     <geom class="z_axis"/>

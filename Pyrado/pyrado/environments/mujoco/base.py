@@ -312,5 +312,12 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
                 if self.viewer is None:
                     # Create viewer if not existent (see 'human' mode of OpenAI Gym's MujocoEnv)
                     self.viewer = mujoco_py.MjViewer(self.sim)
+
+                    # Adjust window size and position to custom values
+                    import glfw
+                    glfw.make_context_current(self.viewer.window)
+                    glfw.set_window_size(self.viewer.window, 1280, 720)
+                    glfw.set_window_pos(self.viewer.window, 100, 100)
+
                     self.configure_viewer()
                 self.viewer.render()

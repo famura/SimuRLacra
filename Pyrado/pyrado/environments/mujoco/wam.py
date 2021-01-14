@@ -33,6 +33,8 @@ from init_args_serializer import Serializable
 
 import pyrado
 from pyrado.environments.barrett_wam import (
+    goal_pos_init_sim_4dof,
+    goal_pos_init_sim_7dof,
     init_qpos_des_4dof,
     init_qpos_des_7dof,
     act_space_wam_4dof,
@@ -230,7 +232,7 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
     def get_nominal_domain_param(cls) -> dict:
         return dict(
             cup_scale=1.0,  # scaling factor for the radius of the cup [-] (should be >0.65)
-            rope_length=0.3,  # length of the rope [m] (previously 0.3103)
+            rope_length=0.41,  # length of the rope [m]
             ball_mass=0.021,  # mass of the ball [kg]
             joint_damping=0.05,  # damping of motor joints [N/s] (default value is small)
             joint_stiction=0.2,  # dry friction coefficient of motor joints (reasonable values are 0.1 to 0.6)
@@ -245,12 +247,12 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             self.init_qpos[:7] = np.array([0.0, 0.65, 0.0, 1.41, 0.0, -0.28, -1.57])
             self.init_qpos[7] = -0.21  # angle of the first rope segment relative to the cup bottom plate
             init_ball_pos = np.array([0.828, 0.0, 1.131])
-            init_cup_goal = np.array([0.82521, 0, 1.4469])
+            init_cup_goal = goal_pos_init_sim_7dof
         elif self.num_dof == 4:
             self.init_qpos[:4] = np.array([0.0, 0.63, 0.0, 1.27])
             self.init_qpos[4] = -0.34  # angle of the first rope segment relative to the cup bottom plate
             init_ball_pos = np.array([0.723, 0.0, 1.168])
-            init_cup_goal = np.array([0.758, 0, 1.5])
+            init_cup_goal = goal_pos_init_sim_4dof
         # The initial position of the ball in cartesian coordinates
         init_state = np.concatenate([self.init_qpos, self.init_qvel, init_ball_pos, init_cup_goal])
         if self.fixed_init_state:
@@ -379,12 +381,12 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             self.spec.state_space.subspace(self.spec.state_space.create_mask(idcs)),
         )
         # init cup goal position
-        state_des = np.array([0.82521, 0, 1.4469]) if self.num_dof == 7 else np.array([0.758, 0, 1.5])
+        state_des = goal_pos_init_sim_7dof if self.num_dof == 7 else goal_pos_init_sim_4dof
         rew_fcn = QuadrErrRewFcn(
             Q=task_args.get("Q_dev", np.diag([2e-1, 1e-6, 5e0])),  # Cartesian distance from init cup position
             R=task_args.get(
                 "R_dev", np.zeros((self._act_space.shape[0], self._act_space.shape[0]))
-            ),  # interferes with R_default from _create_main_task
+            ),  # joint space distance from init pose, interferes with R_default from _create_main_task
         )
         task = DesStateTask(spec, state_des, rew_fcn)
 

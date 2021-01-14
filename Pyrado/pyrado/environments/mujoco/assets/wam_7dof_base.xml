@@ -96,7 +96,7 @@
     <light mode="fixed" directional="true" diffuse="0.5 0.5 0.5" specular="0 0 0" pos="1 0 4" dir="0 0 -1" castshadow="false"/>
     <light mode="targetbodycom" target="wam/base_link" directional="false" diffuse="0.8 0.8 0.8" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1"/>
 
-    <geom name="floor" pos="0 0 -0.05" size="10 10 .1" type="plane" material="matplane" condim="3" solref="0.001 1."/>
+    <geom name="floor" pos="0 0 0" size="10 10 .05" type="plane" material="matplane" condim="3" solref="0.001 1."/>
     <geom class="x_axis"/>
     <geom class="y_axis"/>
     <geom class="z_axis"/>

@@ -53,6 +53,8 @@ wam_dgains = np.array([7.0, 15.0, 5.0, 2.5, 0.3, 0.3, 0.05])
 qpos_lo = np.array([-2.6, -1.985, -2.8, -0.9, -4.55, -1.5707, -2.7]) + 5 * np.pi / 180
 qpos_up = np.array([2.6, 1.985, 2.8, 3.14159, 1.25, 1.5707, 2.7]) - 5 * np.pi / 180
 
-# Cartesian cup position when 4dof WAM is in init state
-cup_pos_init_sim_4dof = np.array([0.80607, 0.0, 1.4562])
+# Cartesian cup position when WAM is in init state
+cup_pos_init_sim_4dof = np.array([0.80607, 0.0, 1.4562])  # site name="cup_bottom" (see xml file)
 cup_pos_init_sim_7dof = None  # TODO
+goal_pos_init_sim_4dof = np.array([0.8143, 0.0, 1.48])   # site name="cup_goal" (see xml file)
+goal_pos_init_sim_7dof = np.array([0.82521, 0.0, 1.4469])

@@ -436,8 +436,9 @@ class WAMBallInCupRealStepBased(WAMBallInCupReal):
             self.natnet_client.run()
 
             # If the rigid body tracker is not ready yet, get_current_estimate() will throw an error
-            while not self.rigid_body_tracker.initialized():
-                time.sleep(0.05)
+            with completion_context("Initializing rigid body tracker", color="c"):
+                while not self.rigid_body_tracker.initialized():
+                    time.sleep(0.05)
 
         # Determine offset for the rigid body tracker (from OptiTrack to MuJoCo)
         cup_pos_init_sim = cup_pos_init_sim_4dof if self.num_dof == 4 else cup_pos_init_sim_7dof
