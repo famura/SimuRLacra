@@ -259,7 +259,7 @@ class LFI(Algorithm):
     @staticmethod
     def eval_posterior(
         posterior: DirectPosterior,
-        observations: to.Tensor,
+        observations_real: to.Tensor,
         num_samples: int,
         simulator: Callable = None,
         simulate_observations: bool = True,
@@ -270,7 +270,7 @@ class LFI(Algorithm):
 
         :param posterior: posterior to evaluate, e.g. a normalizing flow, that samples domain parameters conditioned on
                           the provided observations
-        :param observations: observations from the real-world rollout a.k.a. x_o
+        :param observations_real: observations from the real-world rollout a.k.a. x_o
         :param num_samples: number of samples to draw from the posterior
         :param simulator: simulator used during the sbi training procedure
         :param simulate_observations: create simulated observations using the domain parameters sampled from the
@@ -281,7 +281,7 @@ class LFI(Algorithm):
         def _eval_single_obs():
             """ Take the variables from the outer scope, and evaluate the posterior for one real-world observation. """
             # Compute the log probability
-            log_prob[idx, :] = posterior.log_prob(domain_params[idx, :, :], x=observations[idx, :])
+            log_prob[idx, :] = posterior.log_prob(domain_params[idx, :, :], x=observations_real[idx, :])
 
             # Simulate trajectories with the domain parameters from the posterior
             if simulate_observations:
@@ -289,18 +289,20 @@ class LFI(Algorithm):
                     [simulator(domain_params[idx, s, :].unsqueeze(0)) for s in range(num_samples)], dim=0
                 )
 
-        if observations.ndim != 2:
+        if observations_real.ndim != 2:
             raise pyrado.ShapeErr(msg="The observations must be a 2-dim PyTorch tensor!")
-        num_obs, dim_obs = observations.shape
+        num_obs, dim_obs = observations_real.shape
 
         # Sample domain parameters from the normalizing flow
-        domain_params = to.stack([posterior.sample((num_samples,), x=obs) for obs in observations], dim=0)
+        domain_params = to.stack([posterior.sample((num_samples,), x=obs) for obs in observations_real], dim=0)
         if domain_params.shape[0] != num_obs or domain_params.shape[1] != num_samples:  # shape[2] = num_domain_param
             raise pyrado.ShapeErr(given=domain_params, expected_match=(num_obs, num_samples, -1))
 
-        # Init containers and
+        # Init containers
         log_prob = to.empty((num_obs, num_samples))
         observations_sim = to.empty((num_obs, num_samples, dim_obs)) if simulate_observations else None
+
+        # Evaluate
         for idx in tqdm(
             range(num_obs),
             total=num_obs,
