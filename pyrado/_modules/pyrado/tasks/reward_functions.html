@@ -449,9 +449,11 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
-<span class="sd">        .. note:: This reward function type depends on environment specific parameters. Due to the domain randomization,</span>
-<span class="sd">        have to re-init the reward function after every randomization of the env, since obs_max and act_max can change</span>
-<span class="sd">        when randomizing the domain parameters.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            This reward function type depends on environment specific parameters. Due to the domain randomization,</span>
+<span class="sd">            have to re-init the reward function after every randomization of the env, since obs_max and act_max can</span>
+<span class="sd">            change when randomizing the domain parameters.</span>
 
 <span class="sd">        :param Q: weight matrix for the state errors (positive semi-definite)</span>
 <span class="sd">        :param R: weight matrix for the action errors (positive definite)</span>
