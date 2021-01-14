@@ -65,13 +65,13 @@ if __name__ == "__main__":
     # Create a fake 'ground truth' target domain
     num_real_obs = 5
     env_real = deepcopy(env_sim)
-    randomizer = DomainRandomizer(
-        NormalDomainParam(name="k", mean=33.0, std=33 / 50),
-        NormalDomainParam(name="d", mean=0.2, std=0.2 / 50),
-    )
-    env_real = DomainRandWrapperBuffer(env_real, randomizer)
-    env_real.fill_buffer(num_real_obs)
-    # env_real.domain_param = dict(k=33, d=0.2)
+    # randomizer = DomainRandomizer(
+    #     NormalDomainParam(name="k", mean=33.0, std=33 / 50),
+    #     NormalDomainParam(name="d", mean=0.2, std=0.2 / 50),
+    # )
+    # env_real = DomainRandWrapperBuffer(env_real, randomizer)
+    # env_real.fill_buffer(num_real_obs)
+    env_real.domain_param = dict(k=33, d=0.2)
     dp_mapping = {0: "k", 1: "d"}
 
     # Policy
@@ -117,7 +117,3 @@ if __name__ == "__main__":
 
     # Jeeeha
     algo.train(seed=args.seed)
-
-    # sample_params, _, _ = algo.evaluate(
-    #     rollouts_real=ro_real, num_samples=num_samples, compute_quantity={"sample_params": True}
-    # )

@@ -109,11 +109,11 @@ if __name__ == "__main__":
     # -------------- WIP
 
     resolution = 100
-    dp_1 = to.linspace(23, 43, resolution)
-    dp_2 = to.linspace(0, 0.8, resolution)
-    x_grid, y_grid = to.meshgrid([dp_1, dp_2])
-    x_grid, y_grid = x_grid.t(), y_grid.t()  # transpose not necessary but makes identical mesh as np.meshgrid
-    grid = to.cat((x_grid.reshape(-1, 1), y_grid.reshape(-1, 1)), dim=1)
+    dp_x = to.linspace(23, 43, resolution)
+    dp_y = to.linspace(0, 0.8, resolution)
+    grid_x, grid_y = to.meshgrid([dp_x, dp_y])
+    grid_x, grid_y = grid_x.t(), grid_y.t()  # transpose not necessary but makes identical mesh as np.meshgrid
+    grid = to.cat((grid_x.reshape(-1, 1), grid_y.reshape(-1, 1)), dim=1)
     if not grid.shape == (resolution**2, 2):
         raise pyrado.ShapeErr(given=grid, expected_match=(resolution**2, 2))
 
@@ -121,9 +121,11 @@ if __name__ == "__main__":
     probs = to.exp(log_probs - log_probs.max())  # scale the probabilities to [0, 1]
     probs = probs.reshape(resolution, resolution).numpy()
 
+    plt.contourf(probs, extent=[dp_x[0], dp_x[-1], dp_y[0], dp_y[-1]], origin='lower')
+
     # import numpy as np
-    # dp_1 = np.linspace(23, 43, 100, endpoint=True)
-    # dp_2 = np.linspace(0, 0.8, 100, endpoint=True)
-    # x_grid2, y_grid2 = np.meshgrid(dp_1, dp_2)
+    # dp_x = np.linspace(23, 43, 100, endpoint=True)
+    # dp_y = np.linspace(0, 0.8, 100, endpoint=True)
+    # grid_x2, grid_y2 = np.meshgrid(dp_x, dp_y)
 
     plt.show()
