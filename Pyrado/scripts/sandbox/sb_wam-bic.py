@@ -32,6 +32,7 @@ Test Linear Policy with RBF Features for the WAM Ball-in-a-cup task.
 import torch as to
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D  # This import registers the 3D projection, but is otherwise unused.
 
 import pyrado
 from pyrado.environment_wrappers.utils import inner_env

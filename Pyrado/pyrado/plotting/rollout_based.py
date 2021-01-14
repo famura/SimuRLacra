@@ -47,9 +47,9 @@ def _get_obs_label(rollout: StepSequence, idx: int):
     try:
         label = f"{rollout.rollout_info['env_spec'].obs_space.labels[idx]}"
         if label == "None":
-            label = f"o_{idx}"
+            label = f"o_{{{idx}}}"
     except (AttributeError, KeyError):
-        label = f"o_{idx}"
+        label = f"o_{{{idx}}}"
     return label
 
 
@@ -57,9 +57,9 @@ def _get_act_label(rollout: StepSequence, idx: int):
     try:
         label = f"{rollout.rollout_info['env_spec'].act_space.labels[idx]}"
         if label == "None":
-            label = f"a_{idx}"
+            label = f"a_{{{idx}}}"
     except (AttributeError, KeyError):
-        label = f"a_{idx}"
+        label = f"a_{{{idx}}}"
     return label
 
 
@@ -193,7 +193,7 @@ def draw_features(ro: StepSequence, policy: Policy):
                     if j + i * num_cols < len(dim_feat):
                         # Omit the last observation for simplicity
                         axs[i, j].plot(t, feat_vals[:-1, j + i * num_cols], c=colors[j + i * num_cols])
-                        axs[i, j].set_ylabel(rf"$\phi_{j + i*num_cols}$")
+                        axs[i, j].set_ylabel(rf"$\phi_{{{j + i*num_cols}}}$")
                     else:
                         # We might create more subplots than there are observations
                         axs[i, j].remove()

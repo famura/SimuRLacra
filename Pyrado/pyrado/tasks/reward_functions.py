@@ -250,9 +250,11 @@ class ScaledExpQuadrErrRewFcn(QuadrErrRewFcn):
     ):
         """
         Constructor
-        .. note:: This reward function type depends on environment specific parameters. Due to the domain randomization,
-        have to re-init the reward function after every randomization of the env, since obs_max and act_max can change
-        when randomizing the domain parameters.
+
+        .. note::
+            This reward function type depends on environment specific parameters. Due to the domain randomization,
+            have to re-init the reward function after every randomization of the env, since obs_max and act_max can
+            change when randomizing the domain parameters.
 
         :param Q: weight matrix for the state errors (positive semi-definite)
         :param R: weight matrix for the action errors (positive definite)

@@ -58,7 +58,7 @@ if __name__ == "__main__":
         # If `max_steps` (or `dt`) are not explicitly set using `args`, use the same as in the simulation
         max_steps = args.max_steps if args.max_steps < pyrado.inf else env_sim.max_steps
         dt = args.dt if args.dt is not None else env_sim.dt
-        mode = ""
+        mode = args.mode if args.mode is not None else ""
         while mode not in ["ep", "sb"]:
             mode = input("Pass ep for episodic and sb for step-based control mode: ").lower()
         if mode == "sb":

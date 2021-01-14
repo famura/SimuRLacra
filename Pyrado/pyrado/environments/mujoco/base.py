@@ -315,6 +315,7 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
 
                     # Adjust window size and position to custom values
                     import glfw
+
                     glfw.make_context_current(self.viewer.window)
                     glfw.set_window_size(self.viewer.window, 1280, 720)
                     glfw.set_window_pos(self.viewer.window, 100, 100)
