@@ -96,7 +96,6 @@ if __name__ == "__main__":
     fig, axes = utils.pairplot(
         domain_params[args.iter, :, :],
         limits=[[23, 43], [0, 0.8]],
-        # ticks=[[23, 43], [0, 1]],
         fig_size=(8, 8),
         points=domain_param_gt[args.iter],
         points_offdiag={"markersize": 6},
@@ -106,4 +105,25 @@ if __name__ == "__main__":
     axes[0,1].axhline(y=prior.support.upper_bound[0], c="w", ls="--")
     axes[0,1].axvline(x=prior.support.lower_bound[1], c="w", ls="--")
     axes[0,1].axvline(x=prior.support.upper_bound[1], c="w", ls="--")
+
+    # -------------- WIP
+
+    resolution = 100
+    dp_1 = to.linspace(23, 43, resolution)
+    dp_2 = to.linspace(0, 0.8, resolution)
+    x_grid, y_grid = to.meshgrid([dp_1, dp_2])
+    x_grid, y_grid = x_grid.t(), y_grid.t()  # transpose not necessary but makes identical mesh as np.meshgrid
+    grid = to.cat((x_grid.reshape(-1, 1), y_grid.reshape(-1, 1)), dim=1)
+    if not grid.shape == (resolution**2, 2):
+        raise pyrado.ShapeErr(given=grid, expected_match=(resolution**2, 2))
+
+    log_probs = posterior.log_prob(grid, x=observations_real_sel[0])  # TODO sum over multiple observations
+    probs = to.exp(log_probs - log_probs.max())  # scale the probabilities to [0, 1]
+    probs = probs.reshape(resolution, resolution).numpy()
+
+    # import numpy as np
+    # dp_1 = np.linspace(23, 43, 100, endpoint=True)
+    # dp_2 = np.linspace(0, 0.8, 100, endpoint=True)
+    # x_grid2, y_grid2 = np.meshgrid(dp_1, dp_2)
+
     plt.show()
