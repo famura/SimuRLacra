@@ -92,27 +92,21 @@ if __name__ == "__main__":
         posterior, observations_real_sel, args.num_samples, algo.sbi_simulator, simulate_observations=False
     )
 
-
-    # load real environment, initial prior and real distribution for plotting
-    env_real = pyrado.load(None, f"env_real", "pkl", ex_dir)
-    initial_prior = pyrado.load(None, f"prior", "pt", ex_dir)
-
-    # get the environmental parameters to plot in 2D (by default the first two)
-    params_names = list(env_real.buffer[0].keys())[:2]
+    # Get the environmental parameters to plot in 2D (by default the first two)
+    params_names = list(algo.dp_mapping.values())
     print("Selected {} from {} to plot in 2D".format(params_names, list(env_real.buffer[0].keys())))
 
-    # plot posterior distribution (, true parameter and true distribution)
+    # Plot the posterior distribution, the true parameters / their distribution
     fig, ax = plt.subplots()
-    ax = plot_posterior_distribution(ax, posterior, observations_real,
-                                     initial_prior=initial_prior,
-                                     params_names=params_names,
-                                     real_environment=env_real,
-                                     )
-    plt.show()
+    ax = plot_posterior_distribution(
+        ax,
+        posterior,
+        observations_real,
+        initial_prior=prior,
+        params_names=params_names,
+        real_environment=env_real,
+    )
 
-
-    # TODO not working with omo or qq-su
-    """ 
     fig, axes = utils.pairplot(
         domain_params[args.iter, :, :],
         limits=[[23, 43], [0, 0.8]],
@@ -126,27 +120,4 @@ if __name__ == "__main__":
     axes[0,1].axvline(x=prior.support.lower_bound[1], c="w", ls="--")
     axes[0,1].axvline(x=prior.support.upper_bound[1], c="w", ls="--")
 
-    # -------------- WIP
-
-    resolution = 100
-    dp_x = to.linspace(23, 43, resolution)
-    dp_y = to.linspace(0, 0.8, resolution)
-    grid_x, grid_y = to.meshgrid([dp_x, dp_y])
-    grid_x, grid_y = grid_x.t(), grid_y.t()  # transpose not necessary but makes identical mesh as np.meshgrid
-    grid = to.cat((grid_x.reshape(-1, 1), grid_y.reshape(-1, 1)), dim=1)
-    if not grid.shape == (resolution**2, 2):
-        raise pyrado.ShapeErr(given=grid, expected_match=(resolution**2, 2))
-
-    log_probs = posterior.log_prob(grid, x=observations_real_sel[0])  # TODO sum over multiple observations
-    probs = to.exp(log_probs - log_probs.max())  # scale the probabilities to [0, 1]
-    probs = probs.reshape(resolution, resolution).numpy()
-
-    plt.contourf(probs, extent=[dp_x[0], dp_x[-1], dp_y[0], dp_y[-1]], origin='lower')
-
-    # import numpy as np
-    # dp_x = np.linspace(23, 43, 100, endpoint=True)
-    # dp_y = np.linspace(0, 0.8, 100, endpoint=True)
-    # grid_x2, grid_y2 = np.meshgrid(dp_x, dp_y)
-
     plt.show()
-    """
