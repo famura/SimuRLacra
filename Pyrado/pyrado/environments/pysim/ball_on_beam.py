@@ -26,8 +26,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import numpy as np
+# Added stuff
 import math
+import pathlib
+
+import numpy as np
 from init_args_serializer.serializable import Serializable
 
 from pyrado.environments.pysim.base import SimPyEnv
@@ -160,10 +163,13 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         from direct.task import Task
         class PandaVis(ShowBase):
             def __init__(self,bob):
+                mydir = str(pathlib.Path(__file__).parent.absolute())
+
                 ShowBase.__init__(self)
+
                 self.bob = bob
-                self.ball = self.loader.loadModel("my_models/ball")
-                self.box = self.loader.loadModel("my_models/ball")
+                self.ball = self.loader.loadModel(mydir + "/ball")
+                self.box = self.loader.loadModel(mydir + "/box")
                 self.ball.reparentTo(self.render)
                 self.box.reparentTo(self.render)
                 self.ball.setPos(float(self.bob.state[0]),0,self.bob.domain_param["d_beam"] / 2.0 + self.bob.domain_param["r_ball"])
@@ -280,3 +286,4 @@ class BallOnBeamDiscSim(BallOnBeamSim, Serializable):
         num_act = 3
         linspaced = np.linspace(min_act, max_act, num=num_act, endpoint=True)
         self._act_space = DiscreteSpace(linspaced, labels=["tau"])
+
