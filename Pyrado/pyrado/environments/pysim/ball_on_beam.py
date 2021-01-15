@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import numpy as np
+import math
 from init_args_serializer.serializable import Serializable
 
 from pyrado.environments.pysim.base import SimPyEnv
@@ -37,6 +38,8 @@ from pyrado.tasks.base import Task
 from pyrado.tasks.reward_functions import ScaledExpQuadrErrRewFcn
 from pyrado.tasks.desired_state import DesStateTask
 
+
+        
 
 class BallOnBeamSim(SimPyEnv, Serializable):
     """
@@ -152,8 +155,45 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         )
 
     def _init_anim(self):
-        import vpython as vp
-
+        #import vpython as vp
+        from direct.showbase.ShowBase import ShowBase
+        from direct.task import Task
+        class PandaVis(ShowBase):
+            def __init__(self,bob):
+                ShowBase.__init__(self)
+                self.bob = bob
+                self.ball = self.loader.loadModel("my_models/ball")
+                self.box = self.loader.loadModel("my_models/ball")
+                self.ball.reparentTo(self.render)
+                self.box.reparentTo(self.render)
+                self.ball.setPos(float(self.bob.state[0]),0,self.bob.domain_param["d_beam"] / 2.0 + self.bob.domain_param["r_ball"])
+                self.ball.setScale(2*self.bob.domain_param["r_ball"],2*self.bob.domain_param["r_ball"],2*self.bob.domain_param["r_ball"])
+                self.box.setPos(0,0,0)
+                self.box.setScale(self.bob.domain_param["l_beam"],self.bob.domain_param["d_beam"],2*self.bob.domain_param["d_beam"])
+                self.taskMgr.add(self.update,"update")
+                self.camera.setPos(0,-10,0)
+                
+                
+                
+            def update(self,task):
+                print("yay")
+                g = self.bob.domain_param["g"]
+                m_ball = self.bob.domain_param["m_ball"]
+                r_ball = self.bob.domain_param["r_ball"]
+                m_beam = self.bob.domain_param["m_beam"]
+                l_beam = self.bob.domain_param["l_beam"]
+                d_beam = self.bob.domain_param["d_beam"]
+                ang_offset = self.bob.domain_param["ang_offset"]
+                c_frict = self.bob.domain_param["c_frict"]
+                x = float(self.bob.state[0])  # ball position along the beam axis [m]
+                a = float(self.bob.state[1])
+                self.ball.setPos(math.cos(a)*x-math.sin(a)*(d_beam/2.0+r_ball),0,math.sin(a) * x + math.cos(a) * (d_beam / 2.0 + r_ball))
+                self.box.setH(float(self.bob.state[3]) * self.bob._dt)
+                return Task.cont
+         
+        self._simulation = PandaVis(self)
+        self._not_initiated = False
+        """
         r_ball = self.domain_param["r_ball"]
         l_beam = self.domain_param["l_beam"]
         d_beam = self.domain_param["d_beam"]
@@ -164,7 +204,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         self._anim["ball"] = vp.sphere(
             pos=vp.vec(x, d_beam / 2.0 + r_ball, 0), radius=r_ball, color=vp.color.red, canvas=self._anim["canvas"]
         )
-        self._anim["beam"] = vp.box(
+         self._anim["beam"] = vp.box(
             pos=vp.vec(0, 0, 0),
             axis=vp.vec(vp.cos(a), vp.sin(a), 0),
             length=l_beam,
@@ -173,10 +213,12 @@ class BallOnBeamSim(SimPyEnv, Serializable):
             color=vp.color.green,
             canvas=self._anim["canvas"],
         )
-
+        """
+                
     def _update_anim(self):
-        import vpython as vp
-
+        #import vpython as vp
+        self._simulation.taskMgr.step()
+"""
         g = self.domain_param["g"]
         m_ball = self.domain_param["m_ball"]
         r_ball = self.domain_param["r_ball"]
@@ -189,6 +231,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         a = float(self.state[1])  # angle [rad]
 
         # Update the animation
+        
         self._anim["ball"].radius = r_ball
         self._anim["ball"].pos = vp.vec(
             vp.cos(a) * x - vp.sin(a) * (d_beam / 2.0 + r_ball), vp.sin(a) * x + vp.cos(a) * (d_beam / 2.0 + r_ball), 0
@@ -199,7 +242,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         # Set caption text
         self._anim[
             "canvas"
-        ].caption = f"""
+        ].caption = f
                     dt: {self._dt : 1.4f}
                     g: {g : 1.3f}
                     m_ball: {m_ball: 1.2f}
@@ -209,7 +252,9 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                     d_beam: {d_beam : 1.2f}
                     c_frict: {c_frict : 1.3f}
                     ang_offset: {ang_offset : 1.3f}
-                    """
+                    
+        """
+        
 
 
 class BallOnBeamDiscSim(BallOnBeamSim, Serializable):
