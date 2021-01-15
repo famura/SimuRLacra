@@ -134,7 +134,7 @@ def plot_posterior_distribution(ax: plt.Axes,
             true_params.append([float(params[params_names[0]]), float(params[params_names[1]])])
         true_params = to.tensor(true_params)
 
-        base_args = dict(c=color_list[:num_obs], zorder=1, s=300, marker='X', edgecolors='black')  # default
+        base_args = dict(c=color_list[:len(true_params)], zorder=1, s=300, marker='X', edgecolors='black')  # default
         base_args.update(scatter_kwargs)
         ax.scatter(true_params[:, 0], true_params[:, 1], **base_args)
 
