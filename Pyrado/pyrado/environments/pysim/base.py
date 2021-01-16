@@ -71,7 +71,7 @@ class SimPyEnv(SimEnv, Serializable):
 
         # Animation with VPython
         self._curr_act = np.zeros(self.act_space.shape)
-        self._anim = dict(canvas=None)
+        self._initiated = False
 
     @property
     def state_space(self) -> Space:
@@ -184,7 +184,7 @@ class SimPyEnv(SimEnv, Serializable):
         self._task.reset(env_spec=self.spec)
 
         # Reset VPython animation
-        if self._anim["canvas"] is not None:
+        if self._initiated:
             self._reset_anim()
 
         # Return an observation
@@ -243,7 +243,7 @@ class SimPyEnv(SimEnv, Serializable):
 
             # VPython
             if mode.video:
-                if self._anim["canvas"] is None:
+                if not self._initiated:
                     self._init_anim()
 
                 # Update the animation
