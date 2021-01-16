@@ -190,7 +190,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                 self.box = self.loader.loadModel(pathlib.Path(mydir, "box.egg"))
                 self.box.setColor(0, 1, 0, 0)
                 self.box.setPos(0, 0, 0)
-                self.box.setR(math.sin(a))
+                self.box.setR(-a*180/math.pi)
                 self.box.setScale(l_beam, 2 * d_beam, d_beam)
                 self.box.reparentTo(self.render)
 
@@ -204,7 +204,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
 
                 self.ball.setPos(x, 0, x + math.cos(a) * d_beam / 2.0 + r_ball)
 
-                self.box.setR(a)
+                self.box.setR(-a*180/math.pi)
 
             def update(self,task):
                 g = self.bob.domain_param["g"]
@@ -220,9 +220,8 @@ class BallOnBeamSim(SimPyEnv, Serializable):
 
                 self.ball.setPos(math.cos(a) * x-math.sin(a) * (d_beam/2.0+r_ball), 0, math.sin(a) * x + math.cos(a) * (d_beam / 2.0 + r_ball))
 
-                self.box.setR(math.sin(a))
+                self.box.setR(-a*180/math.pi)
                 print(a)
-                print(self.bob.state[3])
                 self.text.setText(f"""
                     dt: {self.bob._dt : 1.4f}
                     g: {g : 1.3f}
