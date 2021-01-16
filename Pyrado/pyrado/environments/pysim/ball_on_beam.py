@@ -27,9 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 # Added stuff
-import math
-import pathlib
-import platform
+import math, pathlib, platform
 
 import numpy as np
 from init_args_serializer.serializable import Serializable
@@ -155,7 +153,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
             def __init__(self,bob):
                 ShowBase.__init__(self)
 
-                mydir = str(pathlib.Path(__file__).parent.absolute())
+                mydir = str(pathlib.Path(__file__).resolve().parent.absolute())
                 os = platform.system()
 
                 self.bob = bob
@@ -181,8 +179,8 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                 self.textNodePath.setScale(0.07)
                 self.textNodePath.setPos(0.3, 0, -0.3)
 
-                if os = "Windows":
-                    self.ball = self.loader.loadModel(mydir + "\ball")
+                if os == "Windows":
+                    self.ball = self.loader.loadModel(mydir + "\\ball")
                 else:
                     self.ball = self.loader.loadModel(mydir + "/ball")
                 self.ball.setColor(1, 0, 0, 0)
@@ -190,8 +188,8 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                 self.ball.setPos(x, 0, d_beam / 2.0 + r_ball)
                 self.ball.reparentTo(self.render)
 
-                if os = "Windows":
-                    self.box = self.loader.loadModel(mydir + "\box")
+                if os == "Windows":
+                    self.box = self.loader.loadModel(mydir + "\\box")
                 else:
                     self.box = self.loader.loadModel(mydir + "/box")
                 self.box.setColor(0, 1, 0, 0)
