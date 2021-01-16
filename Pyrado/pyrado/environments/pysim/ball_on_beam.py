@@ -154,7 +154,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
             def __init__(self,bob):
                 ShowBase.__init__(self)
 
-                mydir = pathlib.Path(__file__).parent.absolute()
+                mydir = pathlib.Path(__file__).resolve().parent.absolute()
 
                 self.bob = bob
 
@@ -222,7 +222,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
 
                 self.box.setR(math.sin(a))
                 print(a)
-                print(math.asin(a))
+                print(self.bob.state[3])
                 self.text.setText(f"""
                     dt: {self.bob._dt : 1.4f}
                     g: {g : 1.3f}
