@@ -140,9 +140,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
     def _init_anim(self):
         from direct.showbase.ShowBase import ShowBase
         from direct.task import Task
-        from panda3d.core import loadPrcFileData
-        from panda3d.core import DirectionalLight
-        from panda3d.core import AntialiasAttrib
+        from panda3d.core import loadPrcFileData, DirectionalLight, AntialiasAttrib, TextNode
 
         confVars = """
         win-size 800 600
@@ -169,12 +167,17 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                 self.cam.setY(-7)
                 self.render.setAntialias(AntialiasAttrib.MAuto)
 
-                directionalLight = DirectionalLight('directionalLight')
+                self.directionalLight = DirectionalLight('directionalLight')
                 #directionalLight.setColor((0.2, 0.2, 0.8, 1))
-                directionalLightNP = render.attachNewNode(directionalLight)
+                self.directionalLightNP = render.attachNewNode(self.directionalLight)
                 # This light is facing forwards, away from the camera.
-                directionalLightNP.setHpr(0, -8, 0)
-                render.setLight(directionalLightNP)
+                self.directionalLightNP.setHpr(0, -8, 0)
+                self.render.setLight(self.directionalLightNP)
+
+                self.text = TextNode('parameters')
+                self.textNodePath = aspect2d.attachNewNode(self.text)
+                self.textNodePath.setScale(0.07)
+                self.textNodePath.setPos(0.3, 0, -0.3)
 
                 self.ball = self.loader.loadModel(mydir + "/ball")
                 self.ball.setColor(1, 0, 0, 0)
@@ -186,14 +189,13 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                 self.box.setColor(0, 1, 0, 0)
                 self.box.setPos(0, 0, 0)
                 self.box.setR(a)
-                self.box.setScale(l_beam, 2*d_beam, d_beam)
+                self.box.setScale(l_beam, 2 * d_beam, d_beam)
                 self.box.reparentTo(self.render)
 
                 self.taskMgr.add(self.update,"update")
 
             def reset(self):
                 r_ball = self.bob.domain_param["r_ball"]
-                l_beam = self.bob.domain_param["l_beam"]
                 d_beam = self.bob.domain_param["d_beam"]
                 x = float(self.bob.state[0])  # ball position along the beam axis [m]
                 a = float(self.bob.state[1])  # angle [rad]
@@ -214,9 +216,20 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                 x = float(self.bob.state[0])  # ball position along the beam axis [m]
                 a = float(self.bob.state[1])
 
-                self.ball.setPos(math.cos(a)*x-math.sin(a)*(d_beam/2.0+r_ball), 0, math.sin(a) * x + math.cos(a) * (d_beam / 2.0 + r_ball))
+                self.ball.setPos(math.cos(a) * x-math.sin(a) * (d_beam/2.0+r_ball), 0, math.sin(a) * x + math.cos(a) * (d_beam / 2.0 + r_ball))
 
                 self.box.setR(a)
+                self.text.setText(f"""
+                    dt: {self.bob._dt : 1.4f}
+                    g: {g : 1.3f}
+                    m_ball: {m_ball: 1.2f}
+                    r_ball: {r_ball : 1.3f}
+                    m_beam: {m_beam : 1.2f}
+                    l_beam: {l_beam : 1.2f}
+                    d_beam: {d_beam : 1.2f}
+                    c_frict: {c_frict : 1.3f}
+                    ang_offset: {ang_offset : 1.3f}
+                    """)
 
                 return Task.cont
 
