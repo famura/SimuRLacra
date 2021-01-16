@@ -139,8 +139,9 @@ class BallOnBeamSim(SimPyEnv, Serializable):
     def _init_anim(self):
         from direct.showbase.ShowBase import ShowBase
         from direct.task import Task
-        from panda3d.core import loadPrcFileData, DirectionalLight, AntialiasAttrib, TextNode
+        from panda3d.core import loadPrcFileData, DirectionalLight, AntialiasAttrib, TextNode, WindowProperties
 
+        # Configuration for panda3d-window
         confVars = """
         win-size 800 600
         window-title Ball on Beam
@@ -153,8 +154,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
             def __init__(self,bob):
                 ShowBase.__init__(self)
 
-                mydir = str(pathlib.Path(__file__).resolve().parent.absolute())
-                os = platform.system()
+                mydir = pathlib.Path(__file__).parent.absolute()
 
                 self.bob = bob
 
@@ -166,6 +166,8 @@ class BallOnBeamSim(SimPyEnv, Serializable):
 
                 self.cam.setY(-7)
                 self.render.setAntialias(AntialiasAttrib.MAuto)
+                self.windowProperties = WindowProperties()
+                self.windowProperties.setForeground(True)
 
                 self.directionalLight = DirectionalLight('directionalLight')
                 #directionalLight.setColor((0.2, 0.2, 0.8, 1))
@@ -179,22 +181,16 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                 self.textNodePath.setScale(0.07)
                 self.textNodePath.setPos(0.3, 0, -0.3)
 
-                if os == "Windows":
-                    self.ball = self.loader.loadModel(mydir + "\\ball")
-                else:
-                    self.ball = self.loader.loadModel(mydir + "/ball")
+                self.ball = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
                 self.ball.setColor(1, 0, 0, 0)
                 self.ball.setScale(r_ball)
                 self.ball.setPos(x, 0, d_beam / 2.0 + r_ball)
                 self.ball.reparentTo(self.render)
 
-                if os == "Windows":
-                    self.box = self.loader.loadModel(mydir + "\\box")
-                else:
-                    self.box = self.loader.loadModel(mydir + "/box")
+                self.box = self.loader.loadModel(pathlib.Path(mydir, "box.egg"))
                 self.box.setColor(0, 1, 0, 0)
                 self.box.setPos(0, 0, 0)
-                self.box.setR(a)
+                self.box.setR(math.sin(a))
                 self.box.setScale(l_beam, 2 * d_beam, d_beam)
                 self.box.reparentTo(self.render)
 
@@ -224,7 +220,9 @@ class BallOnBeamSim(SimPyEnv, Serializable):
 
                 self.ball.setPos(math.cos(a) * x-math.sin(a) * (d_beam/2.0+r_ball), 0, math.sin(a) * x + math.cos(a) * (d_beam / 2.0 + r_ball))
 
-                self.box.setR(a)
+                self.box.setR(math.sin(a))
+                print(a)
+                print(math.asin(a))
                 self.text.setText(f"""
                     dt: {self.bob._dt : 1.4f}
                     g: {g : 1.3f}
