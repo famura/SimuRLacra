@@ -42,7 +42,7 @@ from pyrado.tasks.reward_functions import ScaledExpQuadrErrRewFcn
 from pyrado.tasks.desired_state import DesStateTask
 
 
-        
+
 
 class BallOnBeamSim(SimPyEnv, Serializable):
     """
@@ -161,26 +161,44 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         #import vpython as vp
         from direct.showbase.ShowBase import ShowBase
         from direct.task import Task
+        from panda3d.core import loadPrcFileData
+
+        confVars = """
+        win-size 800 600
+        window-title Ball on Beam
+        framebuffer-multisample 1
+        multisamples 2
+        """
+        loadPrcFileData("", confVars)
+
         class PandaVis(ShowBase):
             def __init__(self,bob):
-                mydir = str(pathlib.Path(__file__).parent.absolute())
-
                 ShowBase.__init__(self)
 
+                mydir = str(pathlib.Path(__file__).parent.absolute())
+
                 self.bob = bob
+
+                r_ball = self.bob.domain_param["r_ball"]
+                l_beam = self.bob.domain_param["l_beam"]
+                d_beam = self.bob.domain_param["d_beam"]
+                x = float(self.bob.state[0])  # ball position along the beam axis [m]
+                a = float(self.bob.state[1])  # angle [rad]
+
                 self.ball = self.loader.loadModel(mydir + "/ball")
-                self.box = self.loader.loadModel(mydir + "/box")
+                self.ball.setColor(1, 0, 0, 0)
+                self.ball.setScale(2*r_ball, 2*r_ball, 2*r_ball)
+                self.ball.setPos(float(self.bob.state[0]), 10, d_beam / 2.0 + r_ball)
                 self.ball.reparentTo(self.render)
+
+                self.box = self.loader.loadModel(mydir + "/box")
+                self.box.setColor(0, 1, 0, 0)
+                self.box.setScale(l_beam, d_beam, 2*d_beam)
+                self.box.setPos(0,10,0)
                 self.box.reparentTo(self.render)
-                self.ball.setPos(float(self.bob.state[0]),0,self.bob.domain_param["d_beam"] / 2.0 + self.bob.domain_param["r_ball"])
-                self.ball.setScale(2*self.bob.domain_param["r_ball"],2*self.bob.domain_param["r_ball"],2*self.bob.domain_param["r_ball"])
-                self.box.setPos(0,0,0)
-                self.box.setScale(self.bob.domain_param["l_beam"],self.bob.domain_param["d_beam"],2*self.bob.domain_param["d_beam"])
+
                 self.taskMgr.add(self.update,"update")
-                self.camera.setPos(0,-10,0)
-                
-                
-                
+
             def update(self,task):
                 print("yay")
                 g = self.bob.domain_param["g"]
@@ -193,12 +211,12 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                 c_frict = self.bob.domain_param["c_frict"]
                 x = float(self.bob.state[0])  # ball position along the beam axis [m]
                 a = float(self.bob.state[1])
-                self.ball.setPos(math.cos(a)*x-math.sin(a)*(d_beam/2.0+r_ball),0,math.sin(a) * x + math.cos(a) * (d_beam / 2.0 + r_ball))
+                self.ball.setPos(math.cos(a)*x-math.sin(a)*(d_beam/2.0+r_ball), 10, math.sin(a) * x + math.cos(a) * (d_beam / 2.0 + r_ball))
                 self.box.setH(float(self.bob.state[3]) * self.bob._dt)
                 return Task.cont
-         
+
         self._simulation = PandaVis(self)
-        self._not_initiated = False
+        self._initiated = True
         """
         r_ball = self.domain_param["r_ball"]
         l_beam = self.domain_param["l_beam"]
@@ -220,7 +238,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
             canvas=self._anim["canvas"],
         )
         """
-                
+
     def _update_anim(self):
         #import vpython as vp
         self._simulation.taskMgr.step()
@@ -237,7 +255,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         a = float(self.state[1])  # angle [rad]
 
         # Update the animation
-        
+
         self._anim["ball"].radius = r_ball
         self._anim["ball"].pos = vp.vec(
             vp.cos(a) * x - vp.sin(a) * (d_beam / 2.0 + r_ball), vp.sin(a) * x + vp.cos(a) * (d_beam / 2.0 + r_ball), 0
@@ -258,9 +276,9 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                     d_beam: {d_beam : 1.2f}
                     c_frict: {c_frict : 1.3f}
                     ang_offset: {ang_offset : 1.3f}
-                    
+
         """
-        
+
 
 
 class BallOnBeamDiscSim(BallOnBeamSim, Serializable):
@@ -286,4 +304,3 @@ class BallOnBeamDiscSim(BallOnBeamSim, Serializable):
         num_act = 3
         linspaced = np.linspace(min_act, max_act, num=num_act, endpoint=True)
         self._act_space = DiscreteSpace(linspaced, labels=["tau"])
-
