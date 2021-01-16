@@ -158,10 +158,11 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         )
 
     def _init_anim(self):
-        #import vpython as vp
         from direct.showbase.ShowBase import ShowBase
         from direct.task import Task
         from panda3d.core import loadPrcFileData
+        from panda3d.core import DirectionalLight
+        from panda3d.core import AntialiasAttrib
 
         confVars = """
         win-size 800 600
@@ -185,22 +186,32 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                 x = float(self.bob.state[0])  # ball position along the beam axis [m]
                 a = float(self.bob.state[1])  # angle [rad]
 
+                self.cam.setY(-7)
+                self.render.setAntialias(AntialiasAttrib.MAuto)
+
+                directionalLight = DirectionalLight('directionalLight')
+                #directionalLight.setColor((0.2, 0.2, 0.8, 1))
+                directionalLightNP = render.attachNewNode(directionalLight)
+                # This light is facing forwards, away from the camera.
+                directionalLightNP.setHpr(0, -8, 0)
+                render.setLight(directionalLightNP)
+
                 self.ball = self.loader.loadModel(mydir + "/ball")
                 self.ball.setColor(1, 0, 0, 0)
-                self.ball.setScale(2*r_ball, 2*r_ball, 2*r_ball)
-                self.ball.setPos(float(self.bob.state[0]), 10, d_beam / 2.0 + r_ball)
+                self.ball.setScale(r_ball)
+                self.ball.setPos(x, 0, d_beam / 2.0 + r_ball)
                 self.ball.reparentTo(self.render)
 
                 self.box = self.loader.loadModel(mydir + "/box")
                 self.box.setColor(0, 1, 0, 0)
-                self.box.setScale(l_beam, d_beam, 2*d_beam)
-                self.box.setPos(0,10,0)
+                self.box.setPos(0, 0, 0)
+                self.box.setR(a)
+                self.box.setScale(l_beam, 2*d_beam, d_beam)
                 self.box.reparentTo(self.render)
 
                 self.taskMgr.add(self.update,"update")
 
             def update(self,task):
-                print("yay")
                 g = self.bob.domain_param["g"]
                 m_ball = self.bob.domain_param["m_ball"]
                 r_ball = self.bob.domain_param["r_ball"]
@@ -211,8 +222,11 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                 c_frict = self.bob.domain_param["c_frict"]
                 x = float(self.bob.state[0])  # ball position along the beam axis [m]
                 a = float(self.bob.state[1])
-                self.ball.setPos(math.cos(a)*x-math.sin(a)*(d_beam/2.0+r_ball), 10, math.sin(a) * x + math.cos(a) * (d_beam / 2.0 + r_ball))
-                self.box.setH(float(self.bob.state[3]) * self.bob._dt)
+
+                self.ball.setPos(math.cos(a)*x-math.sin(a)*(d_beam/2.0+r_ball), 0, math.sin(a) * x + math.cos(a) * (d_beam / 2.0 + r_ball))
+
+                self.box.setR(a)
+
                 return Task.cont
 
         self._simulation = PandaVis(self)
