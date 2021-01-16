@@ -189,9 +189,10 @@ class BallOnBeamSim(SimPyEnv, Serializable):
 
                 self.box = self.loader.loadModel(pathlib.Path(mydir, "box.egg"))
                 self.box.setColor(0, 1, 0, 0)
+                self.box.setScale(l_beam / 2, d_beam, d_beam/2)
                 self.box.setPos(0, 0, 0)
                 self.box.setR(-a*180/math.pi)
-                self.box.setScale(l_beam, 2 * d_beam, d_beam)
+
                 self.box.reparentTo(self.render)
 
                 self.taskMgr.add(self.update,"update")
@@ -202,7 +203,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                 x = float(self.bob.state[0])  # ball position along the beam axis [m]
                 a = float(self.bob.state[1])  # angle [rad]
 
-                self.ball.setPos(x, 0, x + math.cos(a) * d_beam / 2.0 + r_ball)
+                self.ball.setPos(x, 0, math.sin(a) * x + math.cos(a) * d_beam / 2.0 + r_ball)
 
                 self.box.setR(-a*180/math.pi)
 
@@ -218,10 +219,9 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                 x = float(self.bob.state[0])  # ball position along the beam axis [m]
                 a = float(self.bob.state[1])
 
-                self.ball.setPos(math.cos(a) * x-math.sin(a) * (d_beam/2.0+r_ball), 0, math.sin(a) * x + math.cos(a) * (d_beam / 2.0 + r_ball))
+                self.ball.setPos(math.cos(a) * x - math.sin(a) * (d_beam / 2.0 + r_ball), 0, math.sin(a) * x + math.cos(a) * (d_beam / 2.0 + r_ball))
 
                 self.box.setR(-a*180/math.pi)
-                print(a)
                 self.text.setText(f"""
                     dt: {self.bob._dt : 1.4f}
                     g: {g : 1.3f}
