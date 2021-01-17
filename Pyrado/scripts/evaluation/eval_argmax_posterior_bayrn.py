@@ -29,6 +29,7 @@
 """
 Script to get the maximizer of a GP's posterior mean given saved data from a BayRn experiment
 """
+import pyrado
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.utils.argparser import get_argparser

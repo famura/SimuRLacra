@@ -105,7 +105,7 @@ class SAC(ValueBased):
                         re-initialized copies of this one
         :param memory_size: number of transitions in the replay memory buffer, e.g. 1000000
         :param gamma: temporal discount factor for the state values
-        :param max_iter: number of iterations (policy updates)
+        :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
         :param num_batch_updates: number of (batched) gradient updates per algorithm step
         :param tau: interpolation factor in averaging for target networks, update used for the soft update a.k.a. polyak
                     update, between 0 and 1

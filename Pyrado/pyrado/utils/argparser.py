@@ -85,7 +85,6 @@ def get_argparser() -> argparse.ArgumentParser:
     )
 
     parser.add_argument(
-        "-n",
         "--num_ro_per_config",
         type=int,
         help="number of rollouts per environment configuration / domain parameter set",
@@ -99,7 +98,7 @@ def get_argparser() -> argparse.ArgumentParser:
         "--num_runs", type=int, default=1, help="number of runs for the overall experiment (default: 1)"
     )
 
-    parser.add_argument("--num_samples", type=int, help="number of samples")
+    parser.add_argument("-n", "--num_samples", type=int, help="number of samples")
 
     parser.add_argument(
         "-q",

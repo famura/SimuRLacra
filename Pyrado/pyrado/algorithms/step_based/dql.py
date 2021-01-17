@@ -85,7 +85,7 @@ class DQL(ValueBased):
         :param eps_init: initial value for the probability of taking a random action, constant if `eps_schedule_gamma=1`
         :param eps_schedule_gamma: temporal discount factor for the exponential decay of epsilon
         :param gamma: temporal discount factor for the state values
-        :param max_iter: number of iterations (policy updates)
+        :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
         :param num_batch_updates: number of batch updates per algorithm steps
         :param target_update_intvl: number of iterations that pass before updating the qfcn_targ network
         :param num_init_memory_steps: number of samples used to initially fill the replay buffer with, pass `None` to

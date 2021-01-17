@@ -28,7 +28,7 @@
 
 import numpy as np
 from init_args_serializer import Serializable
-from typing import Dict, Tuple, Optional, Union, Mapping
+from typing import Tuple, Optional, Union, Mapping
 
 import pyrado
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
@@ -79,13 +79,13 @@ class MetaDomainRandWrapper(DomainRandWrapper, Serializable):
     called domain distribution parameters.
     """
 
-    def __init__(self, wrapped_rand_env: DomainRandWrapper, mapping: Mapping[int, Tuple[str, str]]):
+    def __init__(self, wrapped_rand_env: DomainRandWrapper, dp_mapping: Mapping[int, Tuple[str, str]]):
         """
         Constructor
 
         :param wrapped_rand_env: randomized environment to wrap
-        :param mapping: mapping from index of the numpy array (coming from the algorithm) to domain parameter name
-                        (e.g. mass, length) and the domain distribution parameter (e.g. mean, std)
+        :param dp_mapping: mapping from index of the numpy array (coming from the algorithm) to domain parameter name
+                           (e.g. mass, length) and the domain distribution parameter (e.g. mean, std)
 
         .. code-block:: python
 
@@ -102,7 +102,7 @@ class MetaDomainRandWrapper(DomainRandWrapper, Serializable):
         # Invoke the DomainRandWrapper's constructor
         super().__init__(wrapped_rand_env, None)
 
-        self.mapping = mapping
+        self.dp_mapping = dp_mapping
 
     @property
     def randomizer(self) -> DomainRandomizer:
@@ -129,7 +129,7 @@ class MetaDomainRandWrapper(DomainRandWrapper, Serializable):
 
         # Reconfigure the wrapped environment's DomainRandomizer
         for i, value in enumerate(domain_distr_param_values):
-            dp_name, ddp_name = self.mapping.get(i)
+            dp_name, ddp_name = self.dp_mapping.get(i)
             self._wrapped_env.randomizer.adapt_one_distr_param(dp_name, ddp_name, value)
 
 
