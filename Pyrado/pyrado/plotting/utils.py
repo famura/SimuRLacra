@@ -28,6 +28,45 @@
 
 import numpy as np
 from matplotlib import colors as colors
+from typing import Tuple
+
+
+def num_rows_cols_from_length(n: int) -> Tuple[int, int]:
+    """
+    Use a heuristic to get the number of rows and columns for a plotting grid, given the total number of plots to draw.
+
+    :param n: total number of plots to draw
+    :return: number of rows and columns
+    """
+    num_cols = max_prime_factor(n)  # smaller than the other factor
+    num_rows = n // num_cols
+    return num_rows, num_cols
+
+
+def max_prime_factor(n: int) -> int:
+    r"""
+    Get the largest prime number that is a factor of the given number
+
+    .. seealso::
+        https://www.w3resource.com/python-exercises/challenges/1/python-challenges-1-exercise-35.php
+
+    :param n: given number $n$
+    :return: largest prime number $p$ such that $p \cdot x = n$
+    """
+    prime_factor = 1
+    i = 2
+
+    while i <= n / i:
+        if n % i == 0:
+            prime_factor = i
+            n /= i
+        else:
+            i += 1
+
+    if prime_factor < n:
+        prime_factor = n
+
+    return int(prime_factor)
 
 
 class AccNorm(colors.Normalize):

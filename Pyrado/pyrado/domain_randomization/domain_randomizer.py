@@ -98,23 +98,23 @@ class DomainRandomizer:
             [[getattr(dp, h, None) for h in headers_ordered] for dp in dps], headers=headers_ordered, tablefmt="simple"
         )
 
-    def add_domain_params(self, *domain_params: DomainParam, mapping: Optional[Mapping[int, str]] = None):
+    def add_domain_params(self, *domain_params: DomainParam, dp_mapping: Optional[Mapping[int, str]] = None):
         """
         Add an arbitrary number of domain parameters with their distributions to the randomizer.
 
         :param domain_params: list or tuple of `DomainParam` instances
-        :param mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass, length).
-                        This only sets the same and is intended to be used to guarantee the right number and order of
-                        domain parameters in the randomizer.
+        :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
+                           This only sets the same and is intended to be used to guarantee the right number and
+                           order of domain parameters in the randomizer.
         """
         for dp in domain_params:
             if not isinstance(dp, DomainParam):
                 raise pyrado.TypeErr(given=dp, expected_type=DomainParam)
             self.domain_params.append(dp)
 
-        if mapping is not None:
+        if dp_mapping is not None:
             # Sort according to the indices held by the keys
-            sorted_mapping = dict(sorted(mapping.items()))
+            sorted_mapping = dict(sorted(dp_mapping.items()))
             for _, value in sorted_mapping.items():
                 if not isinstance(value, str):
                     raise pyrado.TypeErr(given=value, expected_type=str)

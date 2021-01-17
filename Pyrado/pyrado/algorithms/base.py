@@ -64,7 +64,7 @@ class Algorithm(ABC, LoggerAware):
         Constructor
 
         :param save_dir: directory to save the snapshots i.e. the results in
-        :param max_iter: maximum number of iterations
+        :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
         :param policy: Pyrado policy (subclass of PyTorch's Module) to train
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         :param save_name: name of the algorithm's pickle file without the ending, this becomes important if the

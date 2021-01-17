@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Train an agent to solve the Ball-on-Plate environment using Soft Actor-Critic.
+Train an agent to solve the One-Mass-Oscillator environment using Soft Actor-Critic.
 
 .. note::
     The hyper-parameters are not tuned at all!
