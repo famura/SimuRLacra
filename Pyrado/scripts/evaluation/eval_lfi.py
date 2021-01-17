@@ -1,0 +1,117 @@
+# Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and
+# Technical University of Darmstadt.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,
+#    or Technical University of Darmstadt, nor the names of its contributors may
+#    be used to endorse or promote products derived from this software without
+#    specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,
+# OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+# IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+"""
+Script to evaluate a posterior obtained using the sbi package
+"""
+import os
+import torch as to
+from matplotlib import pyplot as plt
+
+import pyrado
+from pyrado.algorithms.base import Algorithm
+from pyrado.algorithms.inference.lfi2 import LFI
+from pyrado.logger.experiment import ask_for_experiment
+from pyrado.plotting.distribution import draw_posterior_distr
+from pyrado.plotting.utils import num_rows_cols_from_length
+from pyrado.utils.argparser import get_argparser
+from pyrado.utils.experiments import load_experiment
+from pyrado.plotting.lfi_posterior_distribution import plot_posterior_distribution
+
+
+if __name__ == "__main__":
+    # Parse command line arguments
+    args = get_argparser().parse_args()
+    if not isinstance(args.num_samples, int) or args.num_samples < 1:
+        raise pyrado.ValueErr(given=args.num_samples, ge_constraint="1")
+
+    # Get the experiment's directory to load from
+    ex_dir = ask_for_experiment() if args.dir is None else args.dir
+
+    # Load the environments, the policy, and the posterior
+    env_sim, policy, kwout = load_experiment(ex_dir, args)
+    env_real = pyrado.load(None, "env_real", "pkl", ex_dir)
+    prior = kwout["prior"]
+    posterior = kwout["posterior"]
+    observations_real = kwout["observations_real"]
+
+    # Load the algorithm and the required data
+    algo = Algorithm.load_snapshot(ex_dir)
+    if not isinstance(algo, LFI):
+        raise pyrado.TypeErr(given=algo, expected_type=LFI)
+    algo.setup_sbi()
+
+    # Load a specific real-world observation (by default the latest)
+    if args.iter == -1:
+        # Crawl through the experiment's directory
+        for root, dirs, files in os.walk(ex_dir):
+            dirs.clear()  # prevents walk() from going into subdirectories
+            found_observations = [o for o in files if o.startswith("iter_") and o.endswith("_observations_real.pt")]
+        load_iter = len(found_observations) - 1
+    else:
+        load_iter = args.iter
+    observations_real_sel = pyrado.load(None, f"iter_{load_iter}_observations_real", "pt", ex_dir)
+
+    # Compute and print the argmax
+    domain_params, log_prob, _ = LFI.eval_posterior(
+        posterior, observations_real_sel, args.num_samples, algo.sbi_simulator, simulate_observations=False
+    )
+
+    # Get the environmental parameters to plot in 2D (by default the first two)
+    params_names = list(algo.dp_mapping.values())
+
+    # Plot the posterior distribution, the true parameters / their distribution
+    fig, axs = plt.subplots(
+        # 1,
+        *num_rows_cols_from_length(observations_real_sel.shape[0]),
+        figsize=(14, 7),
+        tight_layout=True,
+    )
+    _ = draw_posterior_distr(
+        axs,
+        "separate",  # joint or separate
+        posterior,
+        observations_real_sel,
+        algo.dp_mapping,
+        env_real,
+        prior,
+        show_prior=True,
+        # grid_bounds=to.tensor([[22, 39], [0, 0.6]])
+    )
+
+    # fig, ax = plt.subplots()
+    # ax = plot_posterior_distribution(
+    #     ax,
+    #     posterior,
+    #     observations_real,
+    #     initial_prior=prior,
+    #     params_names=params_names,
+    #     real_environment=env_real,
+    # )
+
+    plt.show()
