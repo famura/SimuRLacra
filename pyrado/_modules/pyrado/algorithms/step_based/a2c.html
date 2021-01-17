@@ -277,7 +277,7 @@
 <span class="sd">        :param env: the environment which the policy operates</span>
 <span class="sd">        :param policy: policy to be updated</span>
 <span class="sd">        :param critic: advantage estimation function $A(s,a) = Q(s,a) - V(s)$</span>
-<span class="sd">        :param max_iter: number of iterations (policy updates)</span>
+<span class="sd">        :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs</span>
 <span class="sd">        :param min_rollouts: minimum number of rollouts sampled per policy update batch</span>
 <span class="sd">        :param min_steps: minimum number of state transitions sampled per policy update batch</span>
 <span class="sd">        :param vfcn_coeff: weighting factor of the value function term in the combined loss, specific to PPO2</span>

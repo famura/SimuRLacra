@@ -237,7 +237,7 @@
 <span class="kn">from</span> <span class="nn">gpytorch.constraints</span> <span class="kn">import</span> <span class="n">GreaterThan</span>
 <span class="kn">from</span> <span class="nn">gpytorch.mlls</span> <span class="kn">import</span> <span class="n">ExactMarginalLogLikelihood</span>
 <span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.algorithms.base</span> <span class="kn">import</span> <span class="n">Algorithm</span><span class="p">,</span> <span class="n">InterruptableAlgorithm</span>
@@ -279,7 +279,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">env_sim</span><span class="p">:</span> <span class="n">MetaDomainRandWrapper</span><span class="p">,</span>
-        <span class="n">env_real</span><span class="p">:</span> <span class="p">[</span><span class="n">RealEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">],</span>
+        <span class="n">env_real</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">RealEnv</span><span class="p">,</span> <span class="n">EnvWrapper</span><span class="p">],</span>
         <span class="n">subrtn</span><span class="p">:</span> <span class="n">Algorithm</span><span class="p">,</span>
         <span class="n">ddp_space</span><span class="p">:</span> <span class="n">BoxSpace</span><span class="p">,</span>
         <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -500,7 +500,7 @@
 
 <div class="viewcode-block" id="BayRn.eval_policy"><a class="viewcode-back" href="../../../../algorithms.meta.html#pyrado.algorithms.meta.bayrn.BayRn.eval_policy">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">eval_policy</span><span class="p">(</span>
-        <span class="n">save_dir</span><span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">save_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">env</span><span class="p">:</span> <span class="p">[</span><span class="n">RealEnv</span><span class="p">,</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">MetaDomainRandWrapper</span><span class="p">],</span>
         <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
         <span class="n">mc_estimator</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
@@ -657,8 +657,8 @@
         <span class="c1"># Policies of every iteration are saved by the subroutine in train_policy_sim()</span>
         <span class="k">if</span> <span class="n">meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># This algorithm instance is not a subroutine of another algorithm</span>
-            <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_sim</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="s2">&quot;env_sim.pkl&quot;</span><span class="p">))</span>
-            <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_real</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="s2">&quot;env_real.pkl&quot;</span><span class="p">))</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_sim</span><span class="p">,</span> <span class="s2">&quot;env_sim&quot;</span><span class="p">,</span> <span class="s2">&quot;pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_real</span><span class="p">,</span> <span class="s2">&quot;env_real&quot;</span><span class="p">,</span> <span class="s2">&quot;pkl&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
             <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span> <span class="s2">&quot;policy&quot;</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">ValueErr</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not supposed be run as a subroutine!&quot;</span><span class="p">)</span></div>
