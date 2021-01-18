@@ -40,7 +40,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="environment_wrappers" href="tests.environment_wrappers.html" />
+    <link rel="next" title="algorithms" href="tests.algorithms.html" />
     <link rel="prev" title="utils" href="utils.html" /> 
 </head>
 
@@ -131,10 +131,9 @@
 <li class="toctree-l1"><a class="reference internal" href="plotting.html">plotting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests.algorithms.html">algorithms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tests.environment_wrappers.html">environment_wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-tests.conftest">conftest</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-tests.test_algorithm_utils">test_algorithm_utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-tests.test_algorithms">test_algorithms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-tests.test_domain_randomization">test_domain_randomization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-tests.test_environments">test_environments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-tests.test_exploration">test_exploration</a></li>
@@ -222,6 +221,13 @@
 <h1>tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="tests.algorithms.html">algorithms</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests.algorithms.html#module-tests.algorithms.test_algorithms">test_algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.algorithms.html#module-tests.algorithms.test_meta">test_meta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.algorithms.html#module-tests.algorithms.test_utils">test_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests.algorithms.html#module-tests.algorithms">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="tests.environment_wrappers.html">environment_wrappers</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tests.environment_wrappers.html#module-tests.environment_wrappers.mock_env">mock_env</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tests.environment_wrappers.html#module-tests.environment_wrappers.test_action_delay">test_action_delay</a></li>
@@ -545,82 +551,6 @@
 <dl class="py function">
 <dt id="tests.conftest.policy">
 <code class="sig-name descname">policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">request</span></em>, <em class="sig-param"><span class="n">env</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/conftest.html#policy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.conftest.policy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-<div class="section" id="module-tests.test_algorithm_utils">
-<span id="test-algorithm-utils"></span><h2>test_algorithm_utils<a class="headerlink" href="#module-tests.test_algorithm_utils" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="tests.test_algorithm_utils.test_action_statistics">
-<code class="sig-name descname">test_action_statistics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithm_utils.html#test_action_statistics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithm_utils.test_action_statistics" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_algorithm_utils.test_adr_reward_generator">
-<code class="sig-name descname">test_adr_reward_generator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithm_utils.html#test_adr_reward_generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithm_utils.test_adr_reward_generator" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_algorithm_utils.test_get_grad_via_torch">
-<code class="sig-name descname">test_get_grad_via_torch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithm_utils.html#test_get_grad_via_torch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithm_utils.test_get_grad_via_torch" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_algorithm_utils.test_until_thold_exceeded">
-<code class="sig-name descname">test_until_thold_exceeded</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">thold</span></em>, <em class="sig-param"><span class="n">max_iter</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithm_utils.html#test_until_thold_exceeded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithm_utils.test_until_thold_exceeded" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-<div class="section" id="module-tests.test_algorithms">
-<span id="test-algorithms"></span><h2>test_algorithms<a class="headerlink" href="#module-tests.test_algorithms" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="tests.test_algorithms.ex_dir">
-<code class="sig-name descname">ex_dir</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tmpdir</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#ex_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.ex_dir" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_algorithms.test_actor_critic">
-<code class="sig-name descname">test_actor_critic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a></span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em>, <em class="sig-param"><span class="n">algo</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em>, <em class="sig-param"><span class="n">vfcn_type</span></em>, <em class="sig-param"><span class="n">use_cuda</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_actor_critic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_actor_critic" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_algorithms.test_arpl">
-<code class="sig-name descname">test_arpl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_arpl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_arpl" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_algorithms.test_param_expl">
-<code class="sig-name descname">test_param_expl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span></em>, <em class="sig-param"><span class="n">algo_class</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_param_expl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_param_expl" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_algorithms.test_snapshots_notmeta">
-<code class="sig-name descname">test_snapshots_notmeta</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a></span></em>, <em class="sig-param"><span class="n">policy</span></em>, <em class="sig-param"><span class="n">algo_class</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_snapshots_notmeta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_snapshots_notmeta" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_algorithms.test_soft_update">
-<code class="sig-name descname">test_soft_update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span></em>, <em class="sig-param"><span class="n">policy</span><span class="p">:</span> <span class="n"><a class="reference internal" href="policies.html#pyrado.policies.base.Policy" title="pyrado.policies.base.Policy">pyrado.policies.base.Policy</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_soft_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_soft_update" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_algorithms.test_spota_ppo">
-<code class="sig-name descname">test_spota_ppo</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a></span></em>, <em class="sig-param"><span class="n">spota_hparam</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_spota_ppo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_spota_ppo" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_algorithms.test_svpg">
-<code class="sig-name descname">test_svpg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a></span></em>, <em class="sig-param"><span class="n">policy</span></em>, <em class="sig-param"><span class="n">actor_hparam</span></em>, <em class="sig-param"><span class="n">vfcn_hparam</span></em>, <em class="sig-param"><span class="n">critic_hparam</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_svpg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_svpg" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_algorithms.test_sysidasrl">
-<code class="sig-name descname">test_sysidasrl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a></span></em>, <em class="sig-param"><span class="n">num_eval_rollouts</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_sysidasrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_sysidasrl" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="tests.test_algorithms.test_training_parameter_exploring">
-<code class="sig-name descname">test_training_parameter_exploring</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ex_dir</span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a></span></em>, <em class="sig-param"><span class="n">algo</span></em>, <em class="sig-param"><span class="n">algo_hparam</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tests/test_algorithms.html#test_training_parameter_exploring"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tests.test_algorithms.test_training_parameter_exploring" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -1428,7 +1358,7 @@
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="tests.environment_wrappers.html" class="btn btn-neutral float-right" title="environment_wrappers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tests.algorithms.html" class="btn btn-neutral float-right" title="algorithms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="utils.html" class="btn btn-neutral float-left" title="utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
