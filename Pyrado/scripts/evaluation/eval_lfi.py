@@ -65,20 +65,18 @@ if __name__ == "__main__":
     if not isinstance(algo, LFI):
         raise pyrado.TypeErr(given=algo, expected_type=LFI)
 
-    # Load a specific real-world observation (by default the latest)
-    if args.iter == -1:
+    # Load a specific real-world observation (off, i.e. -1, by default)
+    if args.iter != -1:
         # Crawl through the experiment's directory
         for root, dirs, files in os.walk(ex_dir):
             dirs.clear()  # prevents walk() from going into subdirectories
             found_observations = [o for o in files if o.startswith("iter_") and o.endswith("_observations_real.pt")]
         load_iter = len(found_observations) - 1
-    else:
-        load_iter = args.iter
-    observations_real_sel = pyrado.load(None, f"iter_{load_iter}_observations_real", "pt", ex_dir)
+        observations_real = pyrado.load(None, f"iter_{load_iter}_observations_real", "pt", ex_dir)
 
     # Compute and print the argmax
     domain_params, log_prob, _ = LFI.eval_posterior(
-        posterior, observations_real_sel, args.num_samples, algo.sbi_simulator, simulate_observations=False
+        posterior, observations_real, args.num_samples, algo.sbi_simulator, simulate_observations=False
     )
 
     # Get the environmental parameters to plot in 2D (by default the first two)
@@ -87,7 +85,7 @@ if __name__ == "__main__":
     # Plot the posterior distribution, the true parameters / their distribution
     fig, axs = plt.subplots(
         # 1,
-        *num_rows_cols_from_length(observations_real_sel.shape[0]),
+        *num_rows_cols_from_length(observations_real.shape[0]),
         figsize=(14, 7),
         tight_layout=True,
     )
@@ -95,7 +93,7 @@ if __name__ == "__main__":
         axs,
         "separate",  # joint or separate
         posterior,
-        observations_real_sel,
+        observations_real,
         algo.dp_mapping,
         env_real,
         prior,
