@@ -238,8 +238,11 @@
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.domain_randomizer</span> <span class="kn">import</span> <span class="n">DomainRandomizer</span>
 <span class="kn">from</span> <span class="nn">pyrado.domain_randomization.utils</span> <span class="kn">import</span> <span class="n">wrap_like_other_env</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.action_normalization</span> <span class="kn">import</span> <span class="n">ActNormWrapper</span>
-<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="n">create_default_randomizer</span><span class="p">,</span> <span class="n">get_default_domain_param_map_qq</span><span class="p">,</span> \
-    <span class="n">create_zero_var_randomizer</span>
+<span class="kn">from</span> <span class="nn">pyrado.domain_randomization.default_randomizers</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">create_default_randomizer</span><span class="p">,</span>
+    <span class="n">get_default_domain_param_map_qq</span><span class="p">,</span>
+    <span class="n">create_zero_var_randomizer</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pyrado.environment_wrappers.domain_randomization</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">DomainRandWrapperBuffer</span><span class="p">,</span>
     <span class="n">DomainRandWrapperLive</span><span class="p">,</span>
@@ -411,7 +414,7 @@
     <span class="n">env_sim</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">create_zero_var_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">))</span>
     <span class="n">dp_map</span> <span class="o">=</span> <span class="n">get_default_domain_param_map_qq</span><span class="p">()</span>
     <span class="n">env_sim</span> <span class="o">=</span> <span class="n">MetaDomainRandWrapper</span><span class="p">(</span><span class="n">env_sim</span><span class="p">,</span> <span class="n">dp_map</span><span class="p">)</span>
-    <span class="n">env_real</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">Mp</span><span class="o">=</span><span class="mf">0.024</span> <span class="o">*</span> <span class="mf">1.1</span><span class="p">,</span>  <span class="n">Mr</span><span class="o">=</span><span class="mf">0.095</span> <span class="o">*</span> <span class="mf">1.1</span><span class="p">)</span>
+    <span class="n">env_real</span><span class="o">.</span><span class="n">domain_param</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">Mp</span><span class="o">=</span><span class="mf">0.024</span> <span class="o">*</span> <span class="mf">1.1</span><span class="p">,</span> <span class="n">Mr</span><span class="o">=</span><span class="mf">0.095</span> <span class="o">*</span> <span class="mf">1.1</span><span class="p">)</span>
     <span class="n">env_real</span> <span class="o">=</span> <span class="n">wrap_like_other_env</span><span class="p">(</span><span class="n">env_real</span><span class="p">,</span> <span class="n">env_sim</span><span class="p">)</span>
 
     <span class="c1"># Policy and subroutine</span>
