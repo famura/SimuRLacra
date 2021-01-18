@@ -26,7 +26,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import joblib
 import numpy as np
 import os
 import os.path as osp
@@ -218,7 +217,7 @@ class BayRn(InterruptableAlgorithm):
         # Set the domain randomizer
         self._env_sim.adapt_randomizer(cand.detach().cpu().numpy())
 
-        # Reset the subroutine's algorithm which includes resetting the exploration
+        # Reset the subroutine algorithm which includes resetting the exploration
         self._cnt_samples += self._subrtn.sample_count
         self._subrtn.reset()
 
@@ -560,7 +559,7 @@ class BayRn(InterruptableAlgorithm):
         # Set the domain randomizer
         env_sim.adapt_randomizer(argmax_cand.numpy())
 
-        # Reset the subroutine's algorithm which includes resetting the exploration
+        # Reset the subroutine algorithm which includes resetting the exploration
         subrtn.reset()
 
         # Do a warm start

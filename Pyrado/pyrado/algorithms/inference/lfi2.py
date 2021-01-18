@@ -30,10 +30,12 @@ import sys
 import torch as to
 from colorama import Style, Fore
 from copy import deepcopy
+
+from sbi.inference import NeuralInference
 from torch.distributions import Distribution
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
-from typing import Optional, Callable, Type, Union, Mapping, Tuple, List
+from typing import Optional, Callable, Type, Union, Mapping, Tuple
 
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
 from sbi.inference.snpe import PosteriorEstimator
@@ -50,7 +52,6 @@ from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.utils.checks import check_all_lengths_equal
 from pyrado.utils.input_output import print_cbt
 
 
@@ -78,6 +79,8 @@ class LFI(Algorithm):
         num_real_rollouts: int,
         num_sim_per_real_rollout: int,
         num_eval_samples: Optional[int] = 1000,
+        subrtn_policy: Optional[Algorithm] = None,
+        subrtn_policy_snapshot_mode: Optional[str] = "latest",
         num_workers: Optional[int] = 1,
         logger: Optional[StepLogger] = None,
     ):
@@ -102,6 +105,8 @@ class LFI(Algorithm):
                                   observation is computed
         :param num_sim_per_real_rollout: number of simulations done by sbi per real-world observation received
         :param num_eval_samples: number of samples for evaluating the posterior in `eval_posterior()`
+        :param subrtn_policy: algorithm which performs the optimization of the behavioral policy (and value-function)
+        :param subrtn_policy_snapshot_mode: snapshot mode for saving during training of the subroutine
         :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
@@ -120,7 +125,17 @@ class LFI(Algorithm):
         self.num_eval_samples = num_eval_samples
         self.num_workers = num_workers
 
-        self._sbi_simulator, self._sbi_prior, self._sbi_subrtn = None, None, None  # sbi needs to be initialized
+        # Optional policy optimization subroutine
+        self._subrtn_policy = subrtn_policy
+        self._subrtn_policy_snapshot_mode = subrtn_policy_snapshot_mode
+        self._subrtn_policy.save_name = "subrtn_policy"
+        if isinstance(self._subrtn_policy, Algorithm):
+            # Check that the behavioral policy is the one that is being updated
+            if not self._subrtn_policy.policy is self.policy:
+                raise pyrado.ValueErr(
+                    msg="The policy is the policy subroutine is not the same as the one used by "
+                    "the system identification (sbi) subroutine!"
+                )
 
         # Prepare simulator and prior for usage in sbi
         rollout_sampler = RolloutSamplerForSBI(self._env_sim, self._policy, self.dp_mapping, self.summary_statistic)
@@ -139,9 +154,22 @@ class LFI(Algorithm):
         pyrado.save(self._env_real, "env_real", "pkl", self._save_dir)
         pyrado.save(prior, "prior", "pt", self._save_dir, meta_info=None, use_state_dict=False)
 
+    @property
+    def subroutine_policy(self) -> Algorithm:
+        """ Get the policy optimization subroutine. """
+        return self._subrtn_policy
+
+    @property
+    def subroutine_sbi(self) -> NeuralInference:
+        """ Get the system identification subroutine coming from the sbi module. """
+        return self._sbi_subrtn
+
+    @property
     def sbi_simulator(self) -> Optional[Callable]:
         """ Get the simulator wrapped for sbi. """
         return self._sbi_simulator
+
+
 
     # @staticmethod
     # def truncate_to_shortest(data: List[to.Tensor]):
@@ -232,6 +260,9 @@ class LFI(Algorithm):
         self.logger.add_value("std domain param", to.std(domain_param_eval, dim=[0, 1]))
         self.logger.add_value("avg log prob", to.mean(log_prob))
         self.logger.add_value("num total samples", self._cnt_samples)  # here the samples are simulations
+
+        if self._subrtn_policy is not None:
+            self.train_policy_sim(prefix=f"iter_{self._curr_iter}")
 
         # Save snapshot data
         self.make_snapshot(snapshot_mode, float(to.mean(log_prob)), meta_info)
@@ -353,9 +384,39 @@ class LFI(Algorithm):
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
-            pyrado.save(self._policy, "policy", "pt", self.save_dir, None)
+            if self._subrtn_policy is None:
+                # The policy is not being updated by a policy optimization subroutine
+                pyrado.save(self._policy, "policy", "pt", self.save_dir, None)
         else:
             raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subroutine!")
+
+    def train_policy_sim(self, prefix: str) -> float:
+        """
+        Train a policy in simulation for given hyper-parameters from the domain randomizer.
+
+        :param prefix: set a prefix to the saved file name by passing it to `meta_info`
+        :return: estimated return of the trained policy in the target domain
+        """
+        # Set the domain randomizer
+        # self._env_sim.adapt_randomizer(cand.detach().cpu().numpy())
+
+        # Reset the subroutine algorithm which includes resetting the exploration
+        self._cnt_samples += self._subrtn_policy.sample_count
+        self._subrtn_policy.reset()
+
+        # Do a warm start if desired
+        # self._subrtn_policy.init_modules(
+        #     self.warmstart, policy_param_init=self.policy_param_init, valuefcn_param_init=self.valuefcn_param_init
+        # )
+
+        # Train a policy in simulation using the subroutine
+        self._subrtn_policy.train(snapshot_mode="no", meta_info=dict(prefix=prefix))
+
+        # Return the estimated return of the trained policy in simulation
+        # avg_ret_sim = self.eval_policy(
+        #     None, self._env_sim, self._subrtn_policy.policy, prefix, self.num_eval_samples
+        # )
+        # return float(avg_ret_sim)
 
     def __getstate__(self):
         # Remove the unpickleable sbi-related members from this algorithm instance

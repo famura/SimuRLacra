@@ -94,8 +94,10 @@ def print_domain_params(domain_params: Union[dict, Sequence[dict]]):
                         try:
                             dp[k] = v.tolist()  # numpy arrays and PyTorch tensors have a tolist() method
                         except Exception:
-                            pyrado.TypeErr(msg="The domain param entries need to either be a float, a numpy array or a"
-                                               "PyTorch tensor, such that they can be converted to a list!")
+                            pyrado.TypeErr(
+                                msg="The domain param entries need to either be a float, a numpy array or a"
+                                "PyTorch tensor, such that they can be converted to a list!"
+                            )
             # Taubulate is iterating through the lists in the dp dict
             print(tabulate(dp, headers="keys", tablefmt="simple"))
 
