@@ -212,9 +212,7 @@ class LFI(Algorithm):
                 self._cnt_samples += self.num_sim_per_real_rollout
 
             # Append and save all observations
-            prev_observations = pyrado.load(
-                None, "observations_real", "pt", self._save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter - 1 }")
-            )
+            prev_observations = pyrado.load(None, "observations_real", "pt", self._save_dir)
             observations_real_hist = to.cat([prev_observations, observations_real], dim=0)
             pyrado.save(observations_real_hist, "observations_real", "pt", self._save_dir)
 
