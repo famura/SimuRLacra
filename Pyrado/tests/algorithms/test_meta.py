@@ -28,6 +28,8 @@
 
 import pytest
 
+from pyrado.algorithms.episodic.power import PoWER
+from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.meta.arpl import ARPL
 from pyrado.algorithms.episodic.cem import CEM
@@ -37,22 +39,26 @@ from pyrado.algorithms.step_based.svpg import SVPG
 from pyrado.algorithms.episodic.sysid_via_episodic_rl import DomainDistrParamPolicy, SysIdViaEpisodicRL
 from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
+from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.domain_randomization.default_randomizers import create_default_randomizer
+from pyrado.domain_randomization.default_randomizers import create_default_randomizer, get_default_domain_param_map_qq, \
+    create_zero_var_randomizer
 from pyrado.environment_wrappers.domain_randomization import (
     DomainRandWrapperBuffer,
     DomainRandWrapperLive,
     MetaDomainRandWrapper,
 )
 from pyrado.environment_wrappers.state_augmentation import StateAugmentationWrapper
+from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger import set_log_prefix_dir
 from pyrado.policies.features import *
 from pyrado.policies.feed_forward.fnn import FNNPolicy, FNN
 from pyrado.policies.feed_forward.linear import LinearPolicy
+from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.sequences import *
-from pyrado.spaces import ValueFunctionSpace
+from pyrado.spaces import ValueFunctionSpace, BoxSpace
 from pyrado.utils.data_types import EnvSpec
 
 
@@ -84,7 +90,6 @@ def test_svpg(ex_dir, env: SimEnv, policy, actor_hparam, vfcn_hparam, critic_hpa
 
 
 # TODO @Robin
-# @pytest.mark.metaalgorithm
 # @pytest.mark.parametrize(
 #     'env', [
 #         'default_qqsu'
@@ -128,7 +133,6 @@ def test_svpg(ex_dir, env: SimEnv, policy, actor_hparam, vfcn_hparam, critic_hpa
 
 
 @pytest.mark.longtime
-@pytest.mark.metaalgorithm
 @pytest.mark.parametrize("env", ["default_qbb"], ids=["qbb"], indirect=True)
 @pytest.mark.parametrize(
     "spota_hparam",
@@ -182,6 +186,61 @@ def test_spota_ppo(ex_dir, env: SimEnv, spota_hparam):
 
     # Create algorithm and train
     algo = SPOTA(ex_dir, env, sr_cand, sr_refs, **spota_hparam)
+    algo.train()
+
+
+@pytest.mark.longtime
+@pytest.mark.parametrize("env", ["default_qqsu"], ids=["qq"], indirect=True)
+# @pytest.mark.parametrize("env_real", ["default_qqsu"], ids=["qq"], indirect=True)
+@pytest.mark.parametrize(
+    "bayrn_hparam",
+    [
+        dict(
+            max_iter=2,
+            acq_fc="UCB",
+            acq_param=dict(beta=0.25),
+            acq_restarts=500,
+            acq_samples=1000,
+            num_init_cand=3,
+            warmstart=True,
+            num_eval_rollouts_real=10,  # sim-2-sim
+        ),
+    ],
+    ids=["casual_hparam"],
+)
+def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam):
+    # Environments and domain randomization
+    env_real = deepcopy(env)
+    env_sim = DomainRandWrapperLive(env, create_zero_var_randomizer(env))
+    dp_map = get_default_domain_param_map_qq()
+    env_sim = MetaDomainRandWrapper(env_sim, dp_map)
+    env_real.domain_param = dict(Mp=0.024 * 1.1,  Mr=0.095 * 1.1)
+    env_real = wrap_like_other_env(env_real, env_sim)
+
+    # Policy and subroutine
+    policy_hparam = dict(energy_gain=0.587, ref_energy=0.827, acc_max=10.0)
+    policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec, **policy_hparam)
+    subrtn_hparam = dict(
+        max_iter=5,
+        pop_size=40,
+        num_rollouts=8,
+        num_is_samples=10,
+        expl_std_init=2.0,
+        expl_std_min=0.02,
+        symm_sampling=False,
+        num_workers=1,
+    )
+    subrtn = PoWER(ex_dir, env_sim, policy, **subrtn_hparam)
+
+    # Set the boundaries for the GP
+    dp_nom = inner_env(env_sim).get_nominal_domain_param()
+    ddp_space = BoxSpace(
+        bound_lo=np.array([0.8 * dp_nom["Mp"], 1e-8, 0.8 * dp_nom["Mr"], 1e-8]),
+        bound_up=np.array([1.2 * dp_nom["Mp"], 1e-7, 1.2 * dp_nom["Mr"], 1e-7]),
+    )
+
+    # Create algorithm and train
+    algo = BayRn(ex_dir, env_sim, env_real, subrtn, ddp_space, **bayrn_hparam)
     algo.train()
 
 
