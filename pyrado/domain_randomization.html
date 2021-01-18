@@ -720,15 +720,15 @@ nominal parameter values</p>
 
 <dl class="py method">
 <dt id="pyrado.domain_randomization.domain_randomizer.DomainRandomizer.add_domain_params">
-<code class="sig-name descname">add_domain_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">domain_params</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.domain_randomization.domain_parameter.DomainParam" title="pyrado.domain_randomization.domain_parameter.DomainParam">pyrado.domain_randomization.domain_parameter.DomainParam</a></span></em>, <em class="sig-param"><span class="n">mapping</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Mapping<span class="p">[</span>int<span class="p">, </span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_randomizer.html#DomainRandomizer.add_domain_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.add_domain_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_domain_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">domain_params</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyrado.domain_randomization.domain_parameter.DomainParam" title="pyrado.domain_randomization.domain_parameter.DomainParam">pyrado.domain_randomization.domain_parameter.DomainParam</a></span></em>, <em class="sig-param"><span class="n">dp_mapping</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Mapping<span class="p">[</span>int<span class="p">, </span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/domain_randomization/domain_randomizer.html#DomainRandomizer.add_domain_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.domain_randomization.domain_randomizer.DomainRandomizer.add_domain_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add an arbitrary number of domain parameters with their distributions to the randomizer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>domain_params</strong> – list or tuple of <cite>DomainParam</cite> instances</p></li>
-<li><p><strong>mapping</strong> – mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass, length).
-This only sets the same and is intended to be used to guarantee the right number and order of
-domain parameters in the randomizer.</p></li>
+<li><p><strong>dp_mapping</strong> – mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
+This only sets the same and is intended to be used to guarantee the right number and
+order of domain parameters in the randomizer.</p></li>
 </ul>
 </dd>
 </dl>

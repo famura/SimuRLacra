@@ -293,13 +293,13 @@ This is a path-like object, and as such it can be used everywhere a normal path 
 </dd></dl>
 
 <dl class="py function">
-<dt id="pyrado.logger.experiment.save_list_of_dicts_to_yaml">
-<code class="sig-name descname">save_list_of_dicts_to_yaml</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lod</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>dict<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">save_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">file_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'hyperparams'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#save_list_of_dicts_to_yaml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.save_list_of_dicts_to_yaml" title="Permalink to this definition">¶</a></dt>
+<dt id="pyrado.logger.experiment.save_dicts_to_yaml">
+<code class="sig-name descname">save_dicts_to_yaml</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">dicts</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">save_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">file_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'hyperparams'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/logger/experiment.html#save_dicts_to_yaml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.logger.experiment.save_dicts_to_yaml" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save a list of dicts (e.g. hyper-parameters) of an experiment a YAML-file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>lod</strong> – list of dicts each containing 1 key (name) and 1 value (a dict with the hyper-parameters)</p></li>
+<li><p><strong>dicts</strong> – dicts each containing a key (name) and a value (hyper-parameter)</p></li>
 <li><p><strong>save_dir</strong> – directory to save the results in</p></li>
 <li><p><strong>file_name</strong> – name of the YAML-file without suffix</p></li>
 </ul>

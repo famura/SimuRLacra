@@ -10,7 +10,7 @@ There are many valid possibilities to deviate from this scheme. However, the fol
     from pyrado.algorithms.episodic.hc import HCNormal
     from pyrado.environment_wrappers.action_normalization import ActNormWrapper
     from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
-    from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+    from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
     from pyrado.policies.features import FeatureStack, identity_feat, sin_feat
     from pyrado.policies.feed_forward.linear import LinearPolicy
     from pyrado.sampling.rollout import rollout, after_rollout_query
@@ -96,7 +96,7 @@ you to later see which hyper-parameters you used, i.e. which setting leads to a 
 
 .. code-block:: python
 
-    save_list_of_dicts_to_yaml([
+    save_dicts_to_yaml([
         dict(env=env_hparams, seed=0),
         dict(policy=policy_hparam),
         dict(algo=algo_hparam, algo_name=algo.name)],
