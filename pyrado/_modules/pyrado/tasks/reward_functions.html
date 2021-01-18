@@ -449,11 +449,9 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
-
-<span class="sd">        .. note::</span>
-<span class="sd">            This reward function type depends on environment specific parameters. Due to the domain randomization,</span>
-<span class="sd">            have to re-init the reward function after every randomization of the env, since obs_max and act_max can</span>
-<span class="sd">            change when randomizing the domain parameters.</span>
+<span class="sd">        .. note:: This reward function type depends on environment specific parameters. Due to the domain randomization,</span>
+<span class="sd">        have to re-init the reward function after every randomization of the env, since obs_max and act_max can change</span>
+<span class="sd">        when randomizing the domain parameters.</span>
 
 <span class="sd">        :param Q: weight matrix for the state errors (positive semi-definite)</span>
 <span class="sd">        :param R: weight matrix for the action errors (positive definite)</span>
@@ -609,27 +607,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">last_x_pos</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_idx_x_pos</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">fwd_vel_rew</span> <span class="o">-</span> <span class="n">ctrl_cost</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="QCartPoleSwingUpRewFcn"><a class="viewcode-back" href="../../../tasks.html#pyrado.tasks.reward_functions.QCartPoleSwingUpRewFcn">[docs]</a><span class="k">class</span> <span class="nc">QCartPoleSwingUpRewFcn</span><span class="p">(</span><span class="n">RewFcn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Custom reward function for QCartPoleSwingUpSim. &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor</span>
-
-<span class="sd">        :param factor: weighting factor of rotation error to position error</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">=</span> <span class="n">factor</span>
-
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">err_a</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">remaining_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">err_s</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">err_s</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">err_a</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">err_a</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
-
-        <span class="c1"># Reward should be roughly between [0, 1]</span>
-        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">err_s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">err_s</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span></div>
 </pre></div>
 
            </div>

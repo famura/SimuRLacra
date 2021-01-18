@@ -5,7 +5,6 @@ tests
 
 .. toctree::
 
-   tests.algorithms
    tests.environment_wrappers
 
 
@@ -14,6 +13,24 @@ conftest
 --------
 
 .. automodule:: tests.conftest
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+test\_algorithm\_utils
+----------------------
+
+.. automodule:: tests.test_algorithm_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+test\_algorithms
+----------------
+
+.. automodule:: tests.test_algorithms
    :members:
    :undoc-members:
    :show-inheritance:

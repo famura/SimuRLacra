@@ -229,45 +229,6 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">colors</span> <span class="k">as</span> <span class="n">colors</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
-
-
-<div class="viewcode-block" id="num_rows_cols_from_length"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.utils.num_rows_cols_from_length">[docs]</a><span class="k">def</span> <span class="nf">num_rows_cols_from_length</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Use a heuristic to get the number of rows and columns for a plotting grid, given the total number of plots to draw.</span>
-
-<span class="sd">    :param n: total number of plots to draw</span>
-<span class="sd">    :return: number of rows and columns</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">num_cols</span> <span class="o">=</span> <span class="n">max_prime_factor</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>  <span class="c1"># smaller than the other factor</span>
-    <span class="n">num_rows</span> <span class="o">=</span> <span class="n">n</span> <span class="o">//</span> <span class="n">num_cols</span>
-    <span class="k">return</span> <span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span></div>
-
-
-<div class="viewcode-block" id="max_prime_factor"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.utils.max_prime_factor">[docs]</a><span class="k">def</span> <span class="nf">max_prime_factor</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get the largest prime number that is a factor of the given number</span>
-
-<span class="sd">    .. seealso::</span>
-<span class="sd">        https://www.w3resource.com/python-exercises/challenges/1/python-challenges-1-exercise-35.php</span>
-
-<span class="sd">    :param n: given number $n$</span>
-<span class="sd">    :return: largest prime number $p$ such that $p \cdot x = n$</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">prime_factor</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span>
-
-    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span> <span class="o">/</span> <span class="n">i</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">prime_factor</span> <span class="o">=</span> <span class="n">i</span>
-            <span class="n">n</span> <span class="o">/=</span> <span class="n">i</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-
-    <span class="k">if</span> <span class="n">prime_factor</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
-        <span class="n">prime_factor</span> <span class="o">=</span> <span class="n">n</span>
-
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">prime_factor</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="AccNorm"><a class="viewcode-back" href="../../../plotting.html#pyrado.plotting.utils.AccNorm">[docs]</a><span class="k">class</span> <span class="nc">AccNorm</span><span class="p">(</span><span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">):</span>

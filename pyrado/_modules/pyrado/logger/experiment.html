@@ -616,17 +616,17 @@
 <span class="n">AugmentedSafeLoader</span><span class="o">.</span><span class="n">add_constructor</span><span class="p">(</span><span class="s2">&quot;tag:yaml.org,2002:python/tuple&quot;</span><span class="p">,</span> <span class="n">AugmentedSafeLoader</span><span class="o">.</span><span class="n">construct_python_tuple</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="save_dicts_to_yaml"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.save_dicts_to_yaml">[docs]</a><span class="k">def</span> <span class="nf">save_dicts_to_yaml</span><span class="p">(</span><span class="o">*</span><span class="n">dicts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hyperparams&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="save_list_of_dicts_to_yaml"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.save_list_of_dicts_to_yaml">[docs]</a><span class="k">def</span> <span class="nf">save_list_of_dicts_to_yaml</span><span class="p">(</span><span class="n">lod</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hyperparams&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Save a list of dicts (e.g. hyper-parameters) of an experiment a YAML-file.</span>
 
-<span class="sd">    :param dicts: dicts each containing a key (name) and a value (hyper-parameter)</span>
+<span class="sd">    :param lod: list of dicts each containing 1 key (name) and 1 value (a dict with the hyper-parameters)</span>
 <span class="sd">    :param save_dir: directory to save the results in</span>
 <span class="sd">    :param file_name: name of the YAML-file without suffix</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">yaml_file</span><span class="p">:</span>
-        <span class="c1"># Iterate over tuple generated from *dicts</span>
-        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dicts</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">lod</span><span class="p">:</span>
+            <span class="c1"># For every dict in the list</span>
             <span class="n">d</span> <span class="o">=</span> <span class="n">_process_dict_for_saving</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
             <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">yaml_file</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_unicode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
