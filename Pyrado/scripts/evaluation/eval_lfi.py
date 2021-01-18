@@ -64,7 +64,6 @@ if __name__ == "__main__":
     algo = Algorithm.load_snapshot(ex_dir)
     if not isinstance(algo, LFI):
         raise pyrado.TypeErr(given=algo, expected_type=LFI)
-    algo.setup_sbi()
 
     # Load a specific real-world observation (by default the latest)
     if args.iter == -1:

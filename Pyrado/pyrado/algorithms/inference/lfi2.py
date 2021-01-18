@@ -122,8 +122,18 @@ class LFI(Algorithm):
         self.num_workers = num_workers
 
         self._sbi_simulator, self._sbi_prior, self._sbi_subrtn = None, None, None  # sbi needs to be initialized
-        # self._observations_real = None
-        # self._posterior = None
+
+        # Prepare simulator and prior for usage in sbi
+        rollout_sampler = RolloutSamplerForSBI(self._env_sim, self._policy, self.dp_mapping, self.summary_statistic)
+        self._sbi_simulator, self._sbi_prior = prepare_for_sbi(rollout_sampler, prior)
+
+        # Create the algorithm instance used in sbi, e.g. SNPE-A/B/C or SNLE
+        density_estimator = posterior_nn(**self.posterior_nn_hparam)  # can't be saved
+        summary_writer = self.logger.printers[2].writer
+        assert isinstance(summary_writer, SummaryWriter)
+        self._sbi_subrtn = self.sbi_subrtn_class(
+            prior=self._sbi_prior, density_estimator=density_estimator, summary_writer=summary_writer
+        )
 
         # Save quantities that do not change
         pyrado.save(self._env_sim, "env_sim", "pkl", self._save_dir)
@@ -133,28 +143,6 @@ class LFI(Algorithm):
     def sbi_simulator(self) -> Optional[Callable]:
         """ Get the simulator wrapped for sbi. """
         return self._sbi_simulator
-
-    def setup_sbi(self):
-        """
-        Create the simulator, prior, and LFI algorithm necessary for sbi to run.
-        This function is called once at the beginning or after loading, since we can't pickle the sbi-related simulator
-        and the algorithm because they contain callables which are created in the scope of main. There are ways to
-        pickle them too, but re-creating these quantities is simpler.
-        """
-        # Prepare simulator and prior for usage in sbi
-        prior = pyrado.load(None, "prior", "pt", self._save_dir)
-        rollout_sampler = RolloutSamplerForSBI(self._env_sim, self._policy, self.dp_mapping, self.summary_statistic)
-        self._sbi_simulator, self._sbi_prior = prepare_for_sbi(rollout_sampler, prior)
-
-        # Create the algorithm instance used in sbi, e.g. SNPE-A/B/C or SNLE
-        flow = posterior_nn(**self.posterior_nn_hparam)  # can't be saved
-        summary_writer = self.logger.printers[2].writer
-        assert isinstance(summary_writer, SummaryWriter)
-        self._sbi_subrtn = self.sbi_subrtn_class(
-            prior=self._sbi_prior, density_estimator=flow, summary_writer=summary_writer
-        )
-
-        print_cbt("Set up sbi.", "g")
 
     @staticmethod
     def truncate_to_shortest(data: List[to.Tensor]):
@@ -171,10 +159,6 @@ class LFI(Algorithm):
                 data[idx] = d[:min_length]
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
-        # Create the objects used by sbi
-        if any(ele is None for ele in [self._sbi_simulator, self._sbi_prior, self._sbi_subrtn]):
-            self.setup_sbi()
-
         observations_real = LFI.collect_real_observations(
             self.save_dir,
             self._env_real,
@@ -380,8 +364,8 @@ class LFI(Algorithm):
     def __getstate__(self):
         # Remove the unpickleable sbi-related members from this algorithm instance
         tmp_sbi_simulator = self.__dict__.pop("_sbi_simulator")
-        tmp_sbi_prior = self.__dict__.pop("_sbi_prior")
-        tmp_sbi_subrtn = self.__dict__.pop("_sbi_subrtn")
+        tmp_sbi_subrtn_summary_writer = self.__dict__["_sbi_subrtn"].__dict__.pop("_summary_writer")
+        tmp_sbi_subrtn_build_neural_net = self.__dict__["_sbi_subrtn"].__dict__.pop("_build_neural_net")
 
         # Call Algorithm's __getstate__() without the unpickleable sbi-related members
         state_dict = super(LFI, self).__getstate__()
@@ -391,8 +375,8 @@ class LFI(Algorithm):
 
         # Inset them back
         self.__dict__["_sbi_simulator"] = tmp_sbi_simulator
-        self.__dict__["_sbi_prior"] = tmp_sbi_prior
-        self.__dict__["_sbi_subrtn"] = tmp_sbi_subrtn
+        self.__dict__["_sbi_subrtn"]._summary_writer = tmp_sbi_subrtn_summary_writer
+        self.__dict__["_sbi_subrtn"]._build_neural_net = tmp_sbi_subrtn_build_neural_net
 
         return state_dict_copy
 
@@ -400,7 +384,15 @@ class LFI(Algorithm):
         # Call Algorithm's __setstate__()
         super().__setstate__(state)
 
-        # Set the unpickleable sbi-related members to None such that they are treated as uninitialized
-        self.__dict__["_sbi_simulator"] = None
-        self.__dict__["_sbi_prior"] = None
-        self.__dict__["_sbi_subrtn"] = None
+        # Reconstruct the simulator for sbi
+        rollout_sampler = RolloutSamplerForSBI(self._env_sim, self._policy, self.dp_mapping, self.summary_statistic)
+        sbi_simulator, _ = prepare_for_sbi(rollout_sampler, state["_sbi_prior"])  # sbi_prior is fine as it is
+        self.__dict__["_sbi_simulator"] = sbi_simulator
+
+        # Reconstruct the tensorboard printer with the once from this algorithm
+        summary_writer = state["_logger"].printers[2].writer
+        assert isinstance(summary_writer, SummaryWriter)
+        self.__dict__["_sbi_subrtn"]._summary_writer = summary_writer
+
+        # Set the internal sbi construction callable to None
+        self.__dict__["_sbi_subrtn"]._build_neural_net = None
