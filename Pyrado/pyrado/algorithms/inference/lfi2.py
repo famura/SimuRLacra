@@ -27,10 +27,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import sys
-from copy import deepcopy
-
 import torch as to
 from colorama import Style, Fore
+from copy import deepcopy
 from torch.distributions import Distribution
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
@@ -68,7 +67,7 @@ class LFI(Algorithm):
         self,
         save_dir: str,
         env_sim: SimEnv,
-        env_real: Union[RealEnv, EnvWrapper],
+        env_real: Union[RealEnv, EnvWrapper, SimEnv],
         policy: Policy,
         dp_mapping: Mapping[int, str],
         prior: Distribution,
@@ -78,8 +77,8 @@ class LFI(Algorithm):
         max_iter: int,
         num_real_rollouts: int,
         num_sim_per_real_rollout: int,
-        num_eval_samples: int = 25,
-        num_workers: int = 1,
+        num_eval_samples: Optional[int] = 1000,
+        num_workers: Optional[int] = 1,
         logger: Optional[StepLogger] = None,
     ):
         """
@@ -144,19 +143,18 @@ class LFI(Algorithm):
         """ Get the simulator wrapped for sbi. """
         return self._sbi_simulator
 
-    @staticmethod
-    def truncate_to_shortest(data: List[to.Tensor]):
-        """
-        TODO shoulnt be used in the end
-        Truncate the data sets to the shortest one if necessary
-
-        :param data: list of (at least 1-dim) data sets
-        """
-        min_length = min([len(d) for d in data])
-        if not check_all_lengths_equal(data):
-            print_cbt("Needed to truncate.", "y", bright=True)
-            for idx, d in enumerate(data):
-                data[idx] = d[:min_length]
+    # @staticmethod
+    # def truncate_to_shortest(data: List[to.Tensor]):
+    #     """
+    #     Truncate the data sets to the shortest one if necessary
+    #
+    #     :param data: list of (at least 1-dim) data sets
+    #     """
+    #     min_length = min([len(d) for d in data])
+    #     if not check_all_lengths_equal(data):
+    #         print_cbt("Needed to truncate.", "y", bright=True)
+    #         for idx, d in enumerate(data):
+    #             data[idx] = d[:min_length]
 
     def step(self, snapshot_mode: str, meta_info: dict = None):
         observations_real = LFI.collect_real_observations(
@@ -230,7 +228,7 @@ class LFI(Algorithm):
 
         # Logging
         domain_param_eval, log_prob, _ = LFI.eval_posterior(
-            posterior, observations_real, self.num_eval_samples, self._sbi_simulator
+            posterior, observations_real, self.num_eval_samples, self._sbi_simulator, simulate_observations=False
         )
         self.logger.add_value("avg domain param", to.mean(domain_param_eval, dim=[0, 1]))
         self.logger.add_value("std domain param", to.std(domain_param_eval, dim=[0, 1]))
