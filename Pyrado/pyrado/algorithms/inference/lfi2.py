@@ -127,8 +127,8 @@ class LFI(Algorithm):
 
         # Optional policy optimization subroutine
         self._subrtn_policy = subrtn_policy
-        self._subrtn_policy_snapshot_mode = subrtn_policy_snapshot_mode
-        self._subrtn_policy.save_name = "subrtn_policy"
+        # self._subrtn_policy_snapshot_mode = subrtn_policy_snapshot_mode
+        # self._subrtn_policy.save_name = "subrtn_policy"
         if isinstance(self._subrtn_policy, Algorithm):
             # Check that the behavioral policy is the one that is being updated
             if not self._subrtn_policy.policy is self.policy:
