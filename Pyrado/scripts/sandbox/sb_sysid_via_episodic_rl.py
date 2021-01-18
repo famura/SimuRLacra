@@ -42,7 +42,7 @@ from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper, DomainRandWrapperLive
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.special.domain_distribution import DomainDistrParamPolicy
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.policies.features import FeatureStack, identity_feat, sin_feat
@@ -218,13 +218,11 @@ if __name__ == "__main__":
     )
 
     # Save the environments and the hyper-parameters
-    save_list_of_dicts_to_yaml(
-        [
-            dict(env=env_hparams),
-            dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
-            dict(algo=algo_hparam, algo_name=SysIdViaEpisodicRL.name, dp_map=dp_map),
-        ],
-        ex_dir,
+    save_dicts_to_yaml(
+        dict(env=env_hparams),
+        dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
+        dict(algo=algo_hparam, algo_name=SysIdViaEpisodicRL.name, dp_map=dp_map),
+        save_dir=ex_dir,
     )
 
     algo = SysIdViaEpisodicRL(subrtn, behavior_policy, **algo_hparam)

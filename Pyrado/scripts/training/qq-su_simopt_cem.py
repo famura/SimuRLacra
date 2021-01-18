@@ -45,7 +45,7 @@ from pyrado.domain_randomization.domain_parameter import NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import MetaDomainRandWrapper, DomainRandWrapperLive
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.utils.argparser import get_argparser
@@ -162,18 +162,16 @@ if __name__ == "__main__":
     algo = SimOpt(ex_dir, env_sim, env_real, subrtn_policy, subrtn_distr, **algo_hparam)
 
     # Save the environments and the hyper-parameters
-    save_list_of_dicts_to_yaml(
-        [
-            dict(env=env_hparams, seed=args.seed),
-            dict(behav_policy=behav_policy_hparam),
-            dict(critic=critic_hparam, vfcn=vfcn_hparam),
-            dict(ddp_policy=ddp_policy_hparam, ddp_policy_name=ddp_policy.name),
-            dict(subrtn_distr=subrtn_distr_hparam, subrtn_distr_name=subrtn_distr.name),
-            dict(subsubrtn_distr=subsubrtn_distr_hparam, subsubrtn_distr_name=subsubrtn_distr.name),
-            dict(subrtn_policy=subrtn_policy_hparam, subrtn_policy_name=subrtn_policy.name),
-            dict(algo=algo_hparam, algo_name=algo.name),
-        ],
-        ex_dir,
+    save_dicts_to_yaml(
+        dict(env=env_hparams, seed=args.seed),
+        dict(behav_policy=behav_policy_hparam),
+        dict(critic=critic_hparam, vfcn=vfcn_hparam),
+        dict(ddp_policy=ddp_policy_hparam, ddp_policy_name=ddp_policy.name),
+        dict(subrtn_distr=subrtn_distr_hparam, subrtn_distr_name=subrtn_distr.name),
+        dict(subsubrtn_distr=subsubrtn_distr_hparam, subsubrtn_distr_name=subsubrtn_distr.name),
+        dict(subrtn_policy=subrtn_policy_hparam, subrtn_policy_name=subrtn_policy.name),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
     )
 
     # Jeeeha

@@ -41,8 +41,11 @@ from pyrado.domain_randomization.domain_parameter import UniformDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
-from pyrado.domain_randomization.default_randomizers import create_default_randomizer, get_default_domain_param_map_qq, \
-    create_zero_var_randomizer
+from pyrado.domain_randomization.default_randomizers import (
+    create_default_randomizer,
+    get_default_domain_param_map_qq,
+    create_zero_var_randomizer,
+)
 from pyrado.environment_wrappers.domain_randomization import (
     DomainRandWrapperBuffer,
     DomainRandWrapperLive,
@@ -214,7 +217,7 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam):
     env_sim = DomainRandWrapperLive(env, create_zero_var_randomizer(env))
     dp_map = get_default_domain_param_map_qq()
     env_sim = MetaDomainRandWrapper(env_sim, dp_map)
-    env_real.domain_param = dict(Mp=0.024 * 1.1,  Mr=0.095 * 1.1)
+    env_real.domain_param = dict(Mp=0.024 * 1.1, Mr=0.095 * 1.1)
     env_real = wrap_like_other_env(env_real, env_sim)
 
     # Policy and subroutine

@@ -35,7 +35,7 @@ import pyrado
 from pyrado.algorithms.step_based.svpg import SVPG
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.utils.argparser import get_argparser
 
 
@@ -87,8 +87,10 @@ if __name__ == "__main__":
     algo = SVPG(ex_dir, env, particle_hparam, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml(
-        [dict(env=env_hparams, seed=args.seed), dict(algo=algo_hparam, algo_name=algo.name)], ex_dir
+    save_dicts_to_yaml(
+        dict(env=env_hparams, seed=args.seed),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
     )
 
     # Jeeeha

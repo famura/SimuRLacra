@@ -45,7 +45,7 @@ from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBu
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environment_wrappers.observation_noise import GaussianObsNoiseWrapper
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.recurrent.rnn import GRUPolicy
 from pyrado.sampling.sequences import *
 from pyrado.utils.argparser import get_argparser
@@ -153,15 +153,13 @@ if __name__ == "__main__":
     algo = SPOTA(ex_dir, env, sr_cand, sr_refs, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml(
-        [
-            dict(env=env_hparams, seed=args.seed),
-            dict(policy=policy_hparam),
-            dict(critic_cand_and_ref=critic_hparam),
-            dict(subrtn_name=sr_cand.name, subrtn_cand=subrtn_hparam_cand, subrtn_refs=subrtn_hparam_refs),
-            dict(algo=algo_hparam, algo_name=algo.name),
-        ],
-        ex_dir,
+    save_dicts_to_yaml(
+        dict(env=env_hparams, seed=args.seed),
+        dict(policy=policy_hparam),
+        dict(critic_cand_and_ref=critic_hparam),
+        dict(subrtn_name=sr_cand.name, subrtn_cand=subrtn_hparam_cand, subrtn_refs=subrtn_hparam_refs),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
     )
 
     # Jeeeha

@@ -38,7 +38,7 @@ import pyrado
 from pyrado.algorithms.step_based.sac import SAC
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.rcspysim.ball_on_plate import BallOnPlate2DSim
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.policies.feed_forward.two_headed_fnn import TwoHeadedFNNPolicy
 from pyrado.spaces import ValueFunctionSpace, BoxSpace
@@ -93,14 +93,12 @@ if __name__ == "__main__":
     algo = SAC(ex_dir, env, policy, qfcn_1, qfcn_2, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml(
-        [
-            dict(env=env_hparams, seed=args.seed),
-            dict(policy=policy_hparam),
-            dict(qfcn=qfcn_hparam),
-            dict(algo=algo_hparam, algo_name=algo.name),
-        ],
-        ex_dir,
+    save_dicts_to_yaml(
+        dict(env=env_hparams, seed=args.seed),
+        dict(policy=policy_hparam),
+        dict(qfcn=qfcn_hparam),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
     )
 
     # Jeeeha

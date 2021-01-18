@@ -37,7 +37,7 @@ from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.domain_randomization.default_randomizers import create_zero_var_randomizer, get_default_domain_param_map_qq
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive, MetaDomainRandWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
 from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
@@ -155,14 +155,12 @@ if __name__ == "__main__":
     )
 
     # Save the environments and the hyper-parameters (do it before the init routine of BayRn)
-    save_list_of_dicts_to_yaml(
-        [
-            dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=args.seed),
-            dict(policy=policy_hparam),
-            dict(subrtn=subrtn_hparam, subrtn_name=PoWER.name),
-            dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map),
-        ],
-        ex_dir,
+    save_dicts_to_yaml(
+        dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=args.seed),
+        dict(policy=policy_hparam),
+        dict(subrtn=subrtn_hparam, subrtn_name=PoWER.name),
+        dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map),
+        save_dir=ex_dir,
     )
 
     algo = BayRn(ex_dir, env_sim, env_real, subrtn, ddp_space, **bayrn_hparam)
