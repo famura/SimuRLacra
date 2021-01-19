@@ -35,7 +35,7 @@ from pyrado.algorithms.step_based.actor_critic import ActorCritic
 from pyrado.domain_randomization.domain_parameter import SelfPacedLearnerParameter
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.environment_wrappers.utils import typed_env
-from scipy.optimize import NonlinearConstraint, minimize
+from scipy.optimize import NonlinearConstraint, minimize, Bounds
 from torch.distributions import MultivariateNormal
 
 
@@ -109,6 +109,7 @@ class SPRL(Algorithm):
         alpha_function_percentage,
         discount_factor: float,
         max_iter: int,
+        std_lower_bound: float = -np.inf,
     ):
         """
         Constructor
@@ -137,6 +138,7 @@ class SPRL(Algorithm):
         self._alpha_function_offset = alpha_function_offset
         self._alpha_function_percentage = alpha_function_percentage
         self._discount_factor = discount_factor
+        self._std_lower_bound = std_lower_bound
 
         spl_parameters = [
             param for param in env.randomizer.domain_params if isinstance(param, SelfPacedLearnerParameter)
@@ -174,8 +176,6 @@ class SPRL(Algorithm):
         )
         rollouts = self._subroutine.rollouts
         contexts = to.tensor(np.array([stepseq.rollout_info['domain_param'][self._parameter.name] for rollout in rollouts for stepseq in rollout]), requires_grad=True).reshape(-1,1)
-
-        print(f'Current mean of sampled domain param {self._parameter.name}: {contexts.mean()}')
 
         contexts_old_log_prob = self._parameter.context_distribution.log_prob(contexts)
         kl_divergence = to.distributions.kl_divergence(
@@ -222,14 +222,25 @@ class SPRL(Algorithm):
             )
         ]
 
+        # optionally clip the bounds of the new variance
+        if self._std_lower_bound:
+            lower_bound = np.ones_like(previous_distribution.get_stacked()) * self._std_lower_bound
+            upper_bound = np.ones_like(previous_distribution.get_stacked()) * np.inf
+            bounds = Bounds(lb=lower_bound, ub=upper_bound, keep_feasible=True)
+            x0 = np.clip(previous_distribution.get_stacked(), lower_bound, upper_bound)
+        else:
+            bounds = None
+            x0 = previous_distribution.get_stacked()
+
         # noinspection PyTypeChecker
         result = minimize(
             objective,
-            previous_distribution.get_stacked(),
+            x0,
             method="trust-constr",
             jac=True,
             constraints=constraints,
             options={"gtol": 1e-4, "xtol": 1e-6},
+            bounds=bounds
         )
 
         if result.success:
