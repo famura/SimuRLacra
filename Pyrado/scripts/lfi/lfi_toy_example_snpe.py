@@ -71,7 +71,7 @@ if __name__ == "__main__":
     # Set the seed
     pyrado.set_seed(1001, verbose=True)
 
-    # define RolloutSamplerForSBIBase
+    # define RolloutSamplerForSBI
     simulator, prior, real_params = create_setup()
     num_obs = 1
     ro_real = [simulator(real_params) for _ in range(num_obs)]

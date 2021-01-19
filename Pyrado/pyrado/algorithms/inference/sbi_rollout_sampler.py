@@ -37,7 +37,7 @@ from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 
 
-class RolloutSamplerForSBIBase(ABC):
+class RolloutSamplerForSBI(ABC):
     """
     Defines a simulator which maps a parameter-set to an observation
 
@@ -142,7 +142,7 @@ class RolloutSamplerForSBIBase(ABC):
         return rollout.observations[-1].view(-1)
 
 
-# class EnvSimulator(RolloutSamplerForSBIBase):
+# class EnvSimulator(RolloutSamplerForSBI):
 #     """ Wrapper to make SimuRLacra simulation environments usable as simulators for the sbi package """
 #
 #     def __init__(self, env: Env, policy: Policy, param_names: list, strategy="states"):
@@ -165,7 +165,7 @@ class RolloutSamplerForSBIBase(ABC):
 #         return ro
 
 
-class RolloutSamplerForSBI(RolloutSamplerForSBIBase):
+class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
     """ Wrapper to make SimuRLacra's simulation environments usable as simulators for the sbi package """
 
     def __init__(
@@ -188,15 +188,15 @@ class RolloutSamplerForSBI(RolloutSamplerForSBIBase):
         """
         super().__init__(strategy=strategy)
 
-        self.env = env
-        self.policy = policy
+        self._env = env
+        self._policy = policy
         self.dp_names = dp_mapping.values()
 
     def __call__(self, dp_values: to.Tensor):
         """ Set the domain parameter, run one rollout, and compute summary statistics. """
         ro = rollout(
-            self.env,
-            self.policy,
+            self._env,
+            self._policy,
             eval=True,
             reset_kwargs=dict(domain_param=dict(zip(self.dp_names, dp_values.numpy().flatten()))),
         )
@@ -206,7 +206,7 @@ class RolloutSamplerForSBI(RolloutSamplerForSBIBase):
         return self.transform_data(ro)
 
 
-class RealRolloutSamplerForSBI(RolloutSamplerForSBIBase):
+class RealRolloutSamplerForSBI(RolloutSamplerForSBI):
     """ Wrapper to make SimuRLacra's real environments usable as simulators for the sbi package """
 
     def __init__(
@@ -227,17 +227,13 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBIBase):
         """
         super().__init__(strategy=strategy)
 
-        self.env = env
-        self.policy = policy
+        self._env = env
+        self._policy = policy
 
     def __call__(self, dp_values: to.Tensor = None):
         """ Run one rollout, and compute summary statistics. """
         # Don't set the domain params here since they are set by the DomainRandWrapperBuffer to mimic the randomness
-        ro = rollout(
-            self.env,
-            self.policy,
-            eval=True,
-        )
+        ro = rollout(            self._env,            self._policy,            eval=True        )
         ro.torch(data_type=to.get_default_dtype())
 
         # Return the observations used for inference from the rollout data

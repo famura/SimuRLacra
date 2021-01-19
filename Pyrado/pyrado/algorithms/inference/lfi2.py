@@ -43,8 +43,8 @@ from sbi.user_input.user_input_checks import prepare_for_sbi
 from sbi.utils import posterior_nn
 
 import pyrado
-from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.inference.sbi_rollout_sampler import RolloutSamplerForSBI, RealRolloutSamplerForSBI
+from pyrado.algorithms.base import Algorithm, InterruptableAlgorithm
+from pyrado.algorithms.inference.sbi_rollout_sampler import SimRolloutSamplerForSBI, RealRolloutSamplerForSBI
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.real_base import RealEnv
@@ -53,7 +53,7 @@ from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 
 
-class LFI(Algorithm):
+class LFI(InterruptableAlgorithm):
     """
     Learn a physically-grounded stochastic simulator using the sbi toolbox.
 
@@ -110,8 +110,8 @@ class LFI(Algorithm):
         :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
-        # Call Algorithm's constructor
-        super().__init__(save_dir, max_iter, policy, logger)
+        # Call InterruptableAlgorithm's constructor
+        super().__init__(num_checkpoints=2, save_dir=save_dir, max_iter=max_iter, policy=policy, logger=logger)
 
         self._env_sim = env_sim
         self._env_real = env_real
@@ -138,7 +138,7 @@ class LFI(Algorithm):
                 )
 
         # Prepare simulator and prior for usage in sbi
-        rollout_sampler = RolloutSamplerForSBI(self._env_sim, self._policy, self.dp_mapping, self.summary_statistic)
+        rollout_sampler = SimRolloutSamplerForSBI(self._env_sim, self._policy, self.dp_mapping, self.summary_statistic)
         self._sbi_simulator, self._sbi_prior = prepare_for_sbi(rollout_sampler, prior)
 
         # Create the algorithm instance used in sbi, e.g. SNPE-A/B/C or SNLE
@@ -149,7 +149,7 @@ class LFI(Algorithm):
             prior=self._sbi_prior, density_estimator=density_estimator, summary_writer=summary_writer
         )
 
-        # Save quantities that do not change
+        # Save initial environments and the prior
         pyrado.save(self._env_sim, "env_sim", "pkl", self._save_dir)
         pyrado.save(self._env_real, "env_real", "pkl", self._save_dir)
         pyrado.save(prior, "prior", "pt", self._save_dir, meta_info=None, use_state_dict=False)
@@ -160,7 +160,7 @@ class LFI(Algorithm):
         return self._subrtn_policy
 
     @property
-    def subroutine_sbi(self) -> NeuralInference:
+    def subroutine_distr(self) -> NeuralInference:
         """ Get the system identification subroutine coming from the sbi module. """
         return self._sbi_subrtn
 
@@ -173,85 +173,94 @@ class LFI(Algorithm):
         # Save snapshot to save the correct iteration count
         self.save_snapshot()
 
-        observations_real = LFI.collect_real_observations(
-            self.save_dir,
-            self._env_real,
-            self._policy,
-            self.summary_statistic,
-            prefix=f"iter_{self._curr_iter}",
-            num_rollouts=self.num_real_rollouts,
-        )
-        if observations_real.ndim != 2 or observations_real.shape[0] != self.num_real_rollouts:
-            raise pyrado.ShapeErr(
-                msg=f"The observations must be a 2-dim PyTorch tensor where the first dimension has as"
-                f"many entries as there are observations, but the shape is {observations_real.shape}!"
+        if self.curr_checkpoint == 0:
+            observations_real = LFI.collect_real_observations(
+                self.save_dir,
+                self._env_real,
+                self._policy,
+                self.summary_statistic,
+                prefix=f"iter_{self._curr_iter}",
+                num_rollouts=self.num_real_rollouts,
             )
+            if observations_real.ndim != 2 or observations_real.shape[0] != self.num_real_rollouts:
+                raise pyrado.ShapeErr(
+                    msg=f"The observations must be a 2-dim PyTorch tensor where the first dimension has as"
+                    f"many entries as there are observations, but the shape is {observations_real.shape}!"
+                )
 
-        # First iteration
-        if self._curr_iter == 0:
-            # Sample parameters proposal, and simulate these parameters to obtain the observations
-            domain_param, sim_output = simulate_for_sbi(
-                simulator=self._sbi_simulator,
-                proposal=self._sbi_prior,
-                num_simulations=self.num_sim_per_real_rollout,
-                simulation_batch_size=1,
-                num_workers=self.num_workers,
-            )
-            self._sbi_subrtn.append_simulations(
-                domain_param,
-                sim_output,
-                proposal=None,  # pass None if the parameters were sampled from the prior
-            )
-            self._cnt_samples += self.num_sim_per_real_rollout
-
-            # Append the first set of observations
-            pyrado.save(observations_real, "observations_real", "pt", self._save_dir)
-
-        # Remaining training iterations
-        else:
-            posterior = pyrado.load(None, "posterior", "pt", self._save_dir, meta_info)
-
-            for ro in observations_real:
-                posterior.set_default_x(ro)
-
+            # First iteration
+            if self._curr_iter == 0:
                 # Sample parameters proposal, and simulate these parameters to obtain the observations
                 domain_param, sim_output = simulate_for_sbi(
                     simulator=self._sbi_simulator,
-                    proposal=posterior,
+                    proposal=self._sbi_prior,
                     num_simulations=self.num_sim_per_real_rollout,
                     simulation_batch_size=1,
-                    num_workers=self.num_workers,  # leave it for now
+                    num_workers=self.num_workers,
                 )
-                self._sbi_subrtn.append_simulations(domain_param, sim_output, proposal=posterior)
+                self._sbi_subrtn.append_simulations(
+                    domain_param,
+                    sim_output,
+                    proposal=None,  # pass None if the parameters were sampled from the prior
+                )
                 self._cnt_samples += self.num_sim_per_real_rollout
 
-            # Append and save all observations
-            prev_observations = pyrado.load(None, "observations_real", "pt", self._save_dir)
-            observations_real_hist = to.cat([prev_observations, observations_real], dim=0)
-            pyrado.save(observations_real_hist, "observations_real", "pt", self._save_dir)
+                # Append the first set of observations
+                pyrado.save(observations_real, "observations_real", "pt", self._save_dir)
 
-        # Train the posterior
-        self._sbi_subrtn.train(**self.sbi_training_hparam)
-        posterior = (
-            self._sbi_subrtn.build_posterior()
-        )  # no need to pass density_estimator, since latest is used by default
-        pyrado.save(posterior, "posterior", "pt", self._save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter}"))
-        pyrado.save(posterior, "posterior", "pt", self._save_dir, meta_info, use_state_dict=False)
+            # Remaining training iterations
+            else:
+                posterior = pyrado.load(None, "posterior", "pt", self._save_dir, meta_info)
 
-        # Logging
-        domain_param_eval, log_prob, _ = LFI.eval_posterior(
-            posterior, observations_real, self.num_eval_samples, self._sbi_simulator, simulate_observations=False
-        )
-        self.logger.add_value("avg domain param", to.mean(domain_param_eval, dim=[0, 1]))
-        self.logger.add_value("std domain param", to.std(domain_param_eval, dim=[0, 1]))
-        self.logger.add_value("avg log prob", to.mean(log_prob))
-        self.logger.add_value("num total samples", self._cnt_samples)  # here the samples are simulations
+                for ro in observations_real:
+                    posterior.set_default_x(ro)
 
-        if self._subrtn_policy is not None:
-            self.train_policy_sim(prefix=f"iter_{self._curr_iter}")
+                    # Sample parameters proposal, and simulate these parameters to obtain the observations
+                    domain_param, sim_output = simulate_for_sbi(
+                        simulator=self._sbi_simulator,
+                        proposal=posterior,
+                        num_simulations=self.num_sim_per_real_rollout,
+                        simulation_batch_size=1,
+                        num_workers=self.num_workers,  # leave it for now
+                    )
+                    self._sbi_subrtn.append_simulations(domain_param, sim_output, proposal=posterior)
+                    self._cnt_samples += self.num_sim_per_real_rollout
+
+                # Append and save all observations
+                prev_observations = pyrado.load(None, "observations_real", "pt", self._save_dir)
+                observations_real_hist = to.cat([prev_observations, observations_real], dim=0)
+                pyrado.save(observations_real_hist, "observations_real", "pt", self._save_dir)
+
+            self.reached_checkpoint()  # setting counter to 1
+
+        if self.curr_checkpoint == 1:
+            # Train the posterior
+            self._sbi_subrtn.train(**self.sbi_training_hparam)
+            posterior = (
+                self._sbi_subrtn.build_posterior()
+            )  # no need to pass density_estimator, since latest is used by default
+            pyrado.save(posterior, "posterior", "pt", self._save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter}"))
+            pyrado.save(posterior, "posterior", "pt", self._save_dir, meta_info, use_state_dict=False)
+
+            # Logging
+            domain_param_eval, log_prob, _ = LFI.eval_posterior(
+                posterior, observations_real, self.num_eval_samples, self._sbi_simulator, simulate_observations=False
+            )
+            self.logger.add_value("avg domain param", to.mean(domain_param_eval, dim=[0, 1]))
+            self.logger.add_value("std domain param", to.std(domain_param_eval, dim=[0, 1]))
+            self.logger.add_value("avg log prob", to.mean(log_prob))
+            self.logger.add_value("num total samples", self._cnt_samples)  # here the samples are simulations
+
+            self.reached_checkpoint()  # setting counter to 2
+
+        if self.curr_checkpoint == 2:
+            if self._subrtn_policy is not None:
+                self.train_policy_sim(prefix=f"iter_{self._curr_iter}")
+
+            self.reached_checkpoint()  # setting counter to 0
 
         # Save snapshot data
-        self.make_snapshot(snapshot_mode, float(to.mean(log_prob)), meta_info)
+        self.make_snapshot(snapshot_mode, None, meta_info)
 
     @staticmethod
     def eval_posterior(
@@ -272,7 +281,8 @@ class LFI(Algorithm):
         :param simulator: simulator used during the sbi training procedure
         :param simulate_observations: create simulated observations using the domain parameters sampled from the
                                       posterior and same simulator as used during the sbi training procedure
-        :return: domain parameters sampled form the posterior
+        :return: domain parameters sampled form the posterior, log-probabilities of these domain parameters, and
+                 optionally the simulated observations from the rollouts
         """
 
         def _eval_single_obs():
@@ -315,7 +325,7 @@ class LFI(Algorithm):
     @staticmethod
     def collect_real_observations(
         save_dir: Optional[str],
-        env: [RealEnv, SimEnv],
+        env: Union[RealEnv, SimEnv],
         policy: Policy,
         summary_statistic: str,
         prefix: str,
@@ -402,10 +412,10 @@ class LFI(Algorithm):
         self._subrtn_policy.train(snapshot_mode=self._subrtn_policy_snapshot_mode, meta_info=dict(prefix=prefix))
 
         # Return the estimated return of the trained policy in simulation
-        # avg_ret_sim = self.eval_policy(
-        #     None, self._env_sim, self._subrtn_policy.policy, prefix, self.num_eval_samples
-        # )
-        # return float(avg_ret_sim)
+        avg_ret_sim = self.eval_policy(
+            None, self._env_sim, self._subrtn_policy.policy, prefix, self.num_eval_samples
+        )
+        return float(avg_ret_sim)
 
     def __getstate__(self):
         # Remove the unpickleable sbi-related members from this algorithm instance
@@ -436,7 +446,7 @@ class LFI(Algorithm):
         super().__setstate__(state)
 
         # Reconstruct the simulator for sbi
-        rollout_sampler = RolloutSamplerForSBI(self._env_sim, self._policy, self.dp_mapping, self.summary_statistic)
+        rollout_sampler = SimRolloutSamplerForSBI(self._env_sim, self._policy, self.dp_mapping, self.summary_statistic)
         sbi_simulator, _ = prepare_for_sbi(rollout_sampler, state["_sbi_prior"])  # sbi_prior is fine as it is
         self.__dict__["_sbi_simulator"] = sbi_simulator
 
