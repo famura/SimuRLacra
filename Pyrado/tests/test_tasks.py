@@ -318,7 +318,7 @@ def test_best_state_final_rew_task(envspec_432, rew_fcn, factor):
 
     last_state = fixed_traj[-1] * np.ones(3)
     final_rew = task.final_rew(last_state, remaining_steps=0)
-    assert final_rew == pytest.approx(max(r) * num_steps * factor)
+    assert final_rew == pytest.approx(max(r) * factor)
     assert task.best_rew == pytest.approx(max(r))
 
 
