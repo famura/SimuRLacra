@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 # Added stuff
-import math, pathlib, platform
+import math, pathlib
 
 import numpy as np
 from init_args_serializer.serializable import Serializable
@@ -157,8 +157,8 @@ class BallOnBeamSim(SimPyEnv, Serializable):
 
                 mydir = pathlib.Path(__file__).resolve().parent.absolute()
 
+                # Accessing variables of outer class
                 self.bob = bob
-
                 r_ball = self.bob.domain_param["r_ball"]
                 l_beam = self.bob.domain_param["l_beam"]
                 d_beam = self.bob.domain_param["d_beam"]
