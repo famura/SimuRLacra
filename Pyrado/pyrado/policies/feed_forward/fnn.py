@@ -69,8 +69,6 @@ class FNN(nn.Module):
 
         super().__init__()  # init nn.Module
 
-        # Store settings
-        # TODO One day replace legacy above with below
         self.hidden_nonlin = (
             hidden_nonlin if isinstance(hidden_nonlin, Iterable) else len(hidden_sizes) * [hidden_nonlin]
         )

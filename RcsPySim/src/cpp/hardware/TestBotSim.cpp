@@ -208,9 +208,6 @@ int main(int argc, char** argv)
             bot.setControlPolicy(NULL);
             RMSG("Holding initial state.");
         }
-        if (vc && vc->getKeyCatcher()->getAndResetKey('b')) {
-            // set ball position TODO
-        }
         
         if (hud) {
             auto hudText = bot.getConfig()->getHUDText(

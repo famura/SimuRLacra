@@ -64,7 +64,6 @@
 
   <Body name="RailBot" prev="RailBase" mass="20" transform="0.209 0 0 0 0 0" cogVector="-0.35 0 0">
     <xShape type="FRAME"/>
-    <!-- TODO ask Michael about this. For now we make do without it. -->
     <Joint name="DofChestZ" type="TransZ" range="0.6 0.8 1" weightJL="1.0" weightMetric="1.0" transform="0 0 0.375  0 0 0" constraint="false"/>
     <Shape type="MESH" meshFile="DexBot/LinearSlide.stl" scale="0.001" graphics="true" distance="false" transform="0 0 0 180 0 -90"/>
     <Shape type="MESH" meshFile="DexBot/Slide-Simple.stl" scale="0.001" graphics="true" distance="false" transform="0.085  0 -0.2 0 0 0"/>

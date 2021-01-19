@@ -121,7 +121,7 @@ if __name__ == "__main__":
     lod = []
     for ro in ros:
         d = dict(**ro.rollout_info["domain_param"], ret=ro.undiscounted_return(), len=ro.length)
-        # TODO find a better solution than just removing the obsnoise
+        # Simply remove the observation noise from the domain parameters
         try:
             d.pop("obs_noise_mean")
             d.pop("obs_noise_std")
