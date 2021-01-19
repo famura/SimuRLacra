@@ -233,7 +233,7 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         return dict(
             cup_scale=1.0,  # scaling factor for the radius of the cup [-] (should be >0.65)
             rope_length=0.41,  # length of the rope [m]
-            ball_mass=0.021,  # mass of the ball [kg]
+            ball_mass=0.024,  # mass of the ball [kg]
             joint_damping=0.05,  # damping of motor joints [N/s] (default value is small)
             joint_stiction=0.2,  # dry friction coefficient of motor joints (reasonable values are 0.1 to 0.6)
             rope_damping=1e-4,  # damping of rope joints [N/s] (reasonable values are 6e-4 to 1e-6)
