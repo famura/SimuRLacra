@@ -165,7 +165,8 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                 x = float(self.bob.state[0])  # ball position along the beam axis [m]
                 a = float(self.bob.state[1])  # angle [rad]
 
-                self.cam.setY(-7)
+                self.setBackgroundColor(0, 0, 0)
+                self.cam.setY(-3)
                 self.render.setAntialias(AntialiasAttrib.MAuto)
                 self.windowProperties = WindowProperties()
                 self.windowProperties.setForeground(True)
