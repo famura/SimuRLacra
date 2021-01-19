@@ -165,11 +165,10 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                 x = float(self.bob.state[0])  # ball position along the beam axis [m]
                 a = float(self.bob.state[1])  # angle [rad]
 
-                self.cam.setY(-3)
+                self.cam.setY(-7)
                 self.render.setAntialias(AntialiasAttrib.MAuto)
                 self.windowProperties = WindowProperties()
                 self.windowProperties.setForeground(True)
-                self.setBackgroundColor(0, 0, 0)
 
                 # Set lighting
                 self.directionalLight = DirectionalLight('directionalLight')
@@ -199,6 +198,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
                 self.beam.setScale(l_beam / 2, d_beam, d_beam/2)
                 self.beam.setPos(0, 0, 0)
                 self.beam.setR(-a*180/math.pi)
+
                 self.beam.reparentTo(self.render)
 
                 self.taskMgr.add(self.update,"update")
