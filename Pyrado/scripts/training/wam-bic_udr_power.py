@@ -76,9 +76,10 @@ if __name__ == "__main__":
     # Algorithm
     algo_hparam = dict(
         max_iter=50,
-        pop_size=200,
+        pop_size=100,
         num_is_samples=10,
-        num_rollouts=8,
+        num_init_states_per_domain=4,
+        num_domains=10,
         expl_std_init=np.pi / 12,
         expl_std_min=0.02,
         num_workers=8,

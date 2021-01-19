@@ -134,7 +134,7 @@ if __name__ == "__main__":
     subsubrtn_distr_hparam = dict(
         max_iter=5,
         pop_size=200,
-        num_rollouts=1,
+        num_init_states_per_domain=1,
         num_is_samples=10,
         expl_std_init=1e-2,
         expl_std_min=1e-5,

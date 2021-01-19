@@ -226,7 +226,7 @@ def test_bayrn_power(ex_dir, env: SimEnv, bayrn_hparam):
     subrtn_hparam = dict(
         max_iter=5,
         pop_size=40,
-        num_rollouts=8,
+        num_init_states_per_domain=8,
         num_is_samples=10,
         expl_std_init=2.0,
         expl_std_min=0.02,
@@ -345,7 +345,7 @@ def test_sysidasrl(ex_dir, env: SimEnv, num_eval_rollouts):
     subrtn_hparam = dict(
         max_iter=5,
         pop_size=40,
-        num_rollouts=1,
+        num_init_states_per_domain=1,
         num_is_samples=4,
         expl_std_init=1 * np.pi / 180,
         expl_std_min=0.001,

@@ -66,7 +66,7 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=5000,
         pop_size=50,
-        num_rollouts=6,
+        num_init_states_per_domain=6,
         eta_mean=2.0,
         eta_std=None,
         expl_std_init=0.5,

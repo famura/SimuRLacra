@@ -87,7 +87,7 @@ if __name__ == "__main__":
         max_iter=500,
         eps=1.0,
         pop_size=20 * policy.num_param,
-        num_rollouts=4,
+        num_init_states_per_domain=4,
         expl_std_init=0.2,
         expl_std_min=0.02,
         use_map=True,

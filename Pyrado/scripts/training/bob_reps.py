@@ -70,7 +70,7 @@ if __name__ == "__main__":
         max_iter=500,
         eps=0.2,
         pop_size=10 * policy.num_param,
-        num_rollouts=10,
+        num_init_states_per_domain=10,
         expl_std_init=0.2,
         expl_std_min=0.02,
         num_epoch_dual=1000,

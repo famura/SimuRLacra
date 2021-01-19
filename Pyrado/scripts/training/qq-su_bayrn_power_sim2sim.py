@@ -79,7 +79,8 @@ if __name__ == "__main__":
     subrtn_hparam = dict(
         max_iter=10,
         pop_size=50,
-        num_rollouts=8,
+        num_init_states_per_domain=4,
+        num_domains=10,
         num_is_samples=5,
         expl_std_init=2.0,
         expl_std_min=0.02,
@@ -97,7 +98,7 @@ if __name__ == "__main__":
     # subrtn_hparam = dict(
     #     max_iter=20,
     #     pop_size=200,
-    #     num_rollouts=6,
+    #     num_init_states_per_domain=6,
     #     num_is_samples=10,
     #     expl_std_init=2.0,
     #     expl_std_min=0.02,

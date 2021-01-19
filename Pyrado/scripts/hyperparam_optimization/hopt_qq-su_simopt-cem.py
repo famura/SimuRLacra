@@ -147,7 +147,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
     subsubrtn_distr_hparam = dict(
         max_iter=trial.suggest_categorical("subsubrtn_distr_max_iter", [20]),
         pop_size=trial.suggest_int("pop_size", 50, 500),
-        num_rollouts=1,
+        num_init_states_per_domain=1,
         num_is_samples=trial.suggest_int("num_is_samples", 5, 20),
         expl_std_init=trial.suggest_loguniform("expl_std_init", 1e-3, 1e-1),
         expl_std_min=trial.suggest_categorical("expl_std_min", [1e-4]),

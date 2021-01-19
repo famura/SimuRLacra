@@ -103,7 +103,7 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=100,
         pop_size=5 * policy.num_param,
-        num_rollouts=1,
+        num_init_states_per_domain=1,
         expl_factor=1.05,
         expl_std_init=1.0,
         num_workers=8,

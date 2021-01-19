@@ -36,7 +36,6 @@ from pyrado.domain_randomization.domain_parameter import (
     UniformDomainParam,
     NormalDomainParam,
     MultivariateNormalDomainParam,
-    DomainParam,
 )
 from pyrado.environments.one_step.catapult import CatapultSim
 from pyrado.environments.one_step.rosenbrock import RosenSim

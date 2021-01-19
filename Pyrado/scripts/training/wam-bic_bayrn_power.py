@@ -125,8 +125,9 @@ if __name__ == "__main__":
     subrtn_hparam = dict(
         max_iter=15,
         pop_size=100,
-        num_rollouts=20,
         num_is_samples=10,
+        num_init_states_per_domain=4,
+        num_domains=10,
         expl_std_init=np.pi / 24,
         expl_std_min=0.01,
         num_workers=8,

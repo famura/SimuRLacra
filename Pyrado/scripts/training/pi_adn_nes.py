@@ -115,7 +115,8 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=5000,
         pop_size=None,
-        num_rollouts=1,
+        num_init_states_per_domain=1,
+        num_domains=8,
         eta_mean=1.0,
         eta_std=None,
         expl_std_init=1.0,

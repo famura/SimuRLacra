@@ -126,7 +126,7 @@ if __name__ == "__main__":
     # subrtn_policy_hparam = dict(
     #     max_iter=5,
     #     pop_size=50,
-    #     num_rollouts=30,
+    #     num_init_states_per_domain=30,
     #     num_is_samples=5,
     #     expl_std_init=2.0,
     #     expl_std_min=0.02,
@@ -148,7 +148,7 @@ if __name__ == "__main__":
         max_iter=5,
         eps=1.0,
         pop_size=500,
-        num_rollouts=1,
+        num_init_states_per_domain=1,
         expl_std_init=5e-2,
         expl_std_min=1e-5,
         num_epoch_dual=1000,

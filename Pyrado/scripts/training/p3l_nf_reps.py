@@ -105,7 +105,7 @@ if __name__ == "__main__":
         max_iter=500,
         eps=0.10,
         pop_size=5 * policy.num_param,
-        num_rollouts=1,
+        num_init_states_per_domain=1,
         expl_std_init=1.0,
         num_epoch_dual=5000,
         optim_mode="torch",

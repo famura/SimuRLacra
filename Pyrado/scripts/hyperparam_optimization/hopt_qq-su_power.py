@@ -91,7 +91,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
         num_workers=1,  # parallelize via optuna n_jobs
         max_iter=50,
         pop_size=trial.suggest_int("pop_size", 50, 200),
-        num_rollouts=trial.suggest_int("num_rollouts", 4, 10),
+        num_init_states_per_domain=trial.suggest_int("num_init_states_per_domain", 4, 10),
         num_is_samples=trial.suggest_int("num_is_samples", 5, 40),
         expl_std_init=trial.suggest_uniform("expl_std_init", 0.1, 0.5),
         symm_sampling=trial.suggest_categorical("symm_sampling", [True, False]),

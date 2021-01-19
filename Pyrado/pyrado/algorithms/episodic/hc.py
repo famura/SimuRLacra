@@ -58,8 +58,9 @@ class HC(ParameterExploring):
         env: Env,
         policy: Policy,
         max_iter: int,
-        num_rollouts: int,
+        num_init_states_per_domain: int,
         expl_factor: float,
+        num_domains: Optional[int] = 1,
         pop_size: Optional[int] = None,
         num_workers: int = 4,
         logger: Optional[StepLogger] = None,
@@ -71,7 +72,8 @@ class HC(ParameterExploring):
         :param env: the environment which the policy operates
         :param policy: policy to be updated
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
-        :param num_rollouts: number of rollouts per policy sample
+        :param num_init_states_per_domain: number of rollouts to cover the variance over initial states
+        :param num_domains: number of rollouts due to the variance over domain parameters
         :param expl_factor: scalar value which determines how the exploration strategy adapts its search space
         :param pop_size: number of solutions in the population
         :param num_workers: number of environments for parallel sampling
@@ -79,7 +81,15 @@ class HC(ParameterExploring):
         """
         # Call ParameterExploring's constructor
         super().__init__(
-            save_dir, env, policy, max_iter, num_rollouts, pop_size=pop_size, num_workers=num_workers, logger=logger
+            save_dir=save_dir,
+            env=env,
+            policy=policy,
+            max_iter=max_iter,
+            num_init_states_per_domain=num_init_states_per_domain,
+            num_domains=num_domains,
+            pop_size=pop_size,
+            num_workers=num_workers,
+            logger=logger,
         )
 
         # Store the inputs

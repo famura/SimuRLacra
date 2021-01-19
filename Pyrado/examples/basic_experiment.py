@@ -99,7 +99,7 @@ algorithm has different hyper-parameters. However, they all use the same `rollou
 algo_hparam = dict(
     max_iter=8,
     pop_size=20,
-    num_rollouts=10,
+    num_init_states_per_domain=10,
     expl_factor=1.1,
     expl_std_init=1.0,
     num_workers=4,

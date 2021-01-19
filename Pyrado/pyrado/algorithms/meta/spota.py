@@ -179,7 +179,7 @@ class SPOTA(InterruptableAlgorithm):
         """
         if isinstance(subroutine, ParameterExploring):
             # Subclasses of ParameterExploring sample num_rollouts_per_param complete rollouts per iteration
-            subroutine.sampler.num_rollouts_per_param = self.ntau * n
+            subroutine.sampler.domains = self.ntau * n
 
         elif isinstance(subroutine, ActorCritic):
             # The PPO sampler can either sample a minimum number of rollouts or steps

@@ -132,7 +132,7 @@ if __name__ == "__main__":
         max_iter=10,
         pop_size=None,
         eta_mean=1.0,
-        num_rollouts=1,
+        num_init_states_per_domain=1,
         expl_std_init=5e-2,
         expl_std_min=1e-4,
         num_workers=num_workers,

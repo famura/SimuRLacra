@@ -63,7 +63,7 @@ if __name__ == "__main__":
     # Algorithm
     algo_hparam = dict(
         max_iter=100,
-        num_rollouts=8,
+        num_init_states_per_domain=8,
         pop_size=60,
         expl_std_init=1.0,
         clip_ratio_std=0.05,

@@ -142,7 +142,7 @@ def create_cem_subrtn(ex_dir: str, env_sim: MetaDomainRandWrapper, ddp_policy: D
     subrtn_hparam = dict(
         max_iter=20,
         pop_size=200,
-        num_rollouts=1,
+        num_init_states_per_domain=1,
         num_is_samples=10,
         expl_std_init=5e-1,
         expl_std_min=1e-4,
@@ -159,7 +159,7 @@ def create_reps_subrtn(ex_dir: str, env_sim: MetaDomainRandWrapper, ddp_policy: 
         max_iter=20,
         eps=1.0,
         pop_size=500,
-        num_rollouts=1,
+        num_init_states_per_domain=1,
         expl_std_init=5e-2,
         expl_std_min=1e-4,
         num_epoch_dual=1000,
@@ -176,7 +176,7 @@ def create_nes_subrtn(ex_dir: str, env_sim: MetaDomainRandWrapper, ddp_policy: D
     subrtn_hparam = dict(
         max_iter=100,
         pop_size=None,
-        num_rollouts=1,
+        num_init_states_per_domain=1,
         expl_std_init=2e-2,
         expl_std_min=1e-4,
         num_workers=8,

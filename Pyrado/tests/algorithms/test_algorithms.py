@@ -117,7 +117,7 @@ def test_snapshots_notmeta(ex_dir, env: SimEnv, policy, algo_class, algo_hparam)
             ),
         )
     elif issubclass(algo_class, ParameterExploring):
-        common_hparam.update(num_rollouts=1)
+        common_hparam.update(num_init_states_per_domain=1)
     elif issubclass(algo_class, (DQL, SAC)):
         common_hparam.update(memory_size=1000, num_batch_updates=2, gamma=0.99, min_rollouts=1)
         fnn_hparam = dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)
@@ -186,7 +186,7 @@ def test_snapshots_notmeta(ex_dir, env: SimEnv, policy, algo_class, algo_hparam)
 )
 def test_param_expl(ex_dir, env, policy, algo_class, algo_hparam):
     # Hyper-parameters
-    common_hparam = dict(max_iter=2, num_rollouts=4, num_workers=1)
+    common_hparam = dict(max_iter=2, num_init_states_per_domain=4, num_workers=1)
     common_hparam.update(algo_hparam)
 
     # Create algorithm and train
@@ -291,12 +291,37 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
 @pytest.mark.parametrize(
     "algo, algo_hparam",
     [
-        (HCNormal, dict(max_iter=5, pop_size=50, num_rollouts=4, expl_std_init=0.5, expl_factor=1.1)),
-        (PEPG, dict(max_iter=40, pop_size=200, num_rollouts=8, expl_std_init=0.5, lr=1e-2, normalize_update=False)),
-        (NES, dict(max_iter=5, pop_size=50, num_rollouts=4, expl_std_init=0.5, symm_sampling=True, eta_mean=2)),
-        (PoWER, dict(max_iter=5, pop_size=50, num_rollouts=4, num_is_samples=8, expl_std_init=0.5)),
-        (CEM, dict(max_iter=5, pop_size=50, num_rollouts=4, num_is_samples=8, expl_std_init=0.5, full_cov=False)),
-        (REPS, dict(max_iter=5, pop_size=50, num_rollouts=4, eps=1.5, expl_std_init=0.5, use_map=True)),
+        (HCNormal, dict(max_iter=5, pop_size=50, num_init_states_per_domain=4, expl_std_init=0.5, expl_factor=1.1)),
+        (
+            PEPG,
+            dict(
+                max_iter=40,
+                pop_size=200,
+                num_init_states_per_domain=8,
+                expl_std_init=0.5,
+                lr=1e-2,
+                normalize_update=False,
+            ),
+        ),
+        (
+            NES,
+            dict(
+                max_iter=5, pop_size=50, num_init_states_per_domain=4, expl_std_init=0.5, symm_sampling=True, eta_mean=2
+            ),
+        ),
+        (PoWER, dict(max_iter=5, pop_size=50, num_init_states_per_domain=4, num_is_samples=8, expl_std_init=0.5)),
+        (
+            CEM,
+            dict(
+                max_iter=5,
+                pop_size=50,
+                num_init_states_per_domain=4,
+                num_is_samples=8,
+                expl_std_init=0.5,
+                full_cov=False,
+            ),
+        ),
+        (REPS, dict(max_iter=5, pop_size=50, num_init_states_per_domain=4, eps=1.5, expl_std_init=0.5, use_map=True)),
     ],
     ids=["hc_normal", "pepg", "nes", "power", "cem", "reps"],
 )
