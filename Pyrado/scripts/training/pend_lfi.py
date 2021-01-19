@@ -29,19 +29,16 @@
 """
 Sim-to-sim experiment on the One-Mass-Oscillator environment using likelihood-free inference
 """
-from copy import deepcopy
 
 import torch as to
 import torch.nn as nn
+from copy import deepcopy
 from sbi.inference import SNPE
 from sbi import utils
 
 import pyrado
 from pyrado.algorithms.episodic.cem import CEM
 from pyrado.algorithms.inference.lfi2 import LFI
-from pyrado.domain_randomization.domain_parameter import NormalDomainParam
-from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.features import FeatureStack, identity_feat, squared_feat, const_feat, sin_feat, cos_feat
@@ -68,18 +65,12 @@ if __name__ == "__main__":
     # Create a fake ground truth target domain
     num_real_obs = 1
     env_real = deepcopy(env_sim)
-    # randomizer = DomainRandomizer(
-    #     NormalDomainParam(name="m_pole", mean=0.25, std=33 / 50),
-    #     NormalDomainParam(name="l_pole", mean=2.0, std=0.2 / 50),
-    # )
-    # env_real = DomainRandWrapperBuffer(env_real, randomizer)
-    # env_real.fill_buffer(num_real_obs)
     env_real.domain_param = dict(m_pole=0.25, l_pole=2.0)
     dp_mapping = {0: "m_pole", 1: "l_pole"}
 
     # Policy
     feats = FeatureStack([const_feat, identity_feat, sin_feat, cos_feat, squared_feat])
-    behavior_policy = LinearPolicy(env_sim.spec, feats)
+    policy = LinearPolicy(env_sim.spec, feats)
 
     # Policy optimization subroutine
     subrtn_policy_hparam = dict(
@@ -93,7 +84,7 @@ if __name__ == "__main__":
         extra_expl_decay_iter=5,
         num_workers=num_workers,
     )
-    subrtn_policy = CEM(ex_dir, env_sim, behavior_policy, **subrtn_policy_hparam)
+    subrtn_policy = CEM(ex_dir, env_sim, policy, **subrtn_policy_hparam)
 
     # Prior and Posterior (normalizing flow)
     prior_hparam = dict(low=to.tensor([0.0625, 0.0625]), high=to.tensor([4.0, 4.0]))
@@ -112,7 +103,7 @@ if __name__ == "__main__":
         ex_dir,
         env_sim,
         env_real,
-        behavior_policy,
+        policy,
         dp_mapping,
         prior,
         posterior_nn_hparam,

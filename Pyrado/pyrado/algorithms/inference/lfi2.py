@@ -30,13 +30,12 @@ import sys
 import torch as to
 from colorama import Style, Fore
 from copy import deepcopy
-
-from sbi.inference import NeuralInference
 from torch.distributions import Distribution
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 from typing import Optional, Callable, Type, Union, Mapping, Tuple
 
+from sbi.inference import NeuralInference
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
 from sbi.inference.snpe import PosteriorEstimator
 from sbi.inference.base import simulate_for_sbi
@@ -52,7 +51,6 @@ from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
-from pyrado.utils.input_output import print_cbt
 
 
 class LFI(Algorithm):
@@ -63,6 +61,7 @@ class LFI(Algorithm):
     """
 
     name: str = "lfi"  # TODO better acronym
+    iteration_key: str = "lfi_iteration"  # logger's iteration key
 
     def __init__(
         self,
@@ -90,7 +89,8 @@ class LFI(Algorithm):
         :param save_dir: directory to save the snapshots i.e. the results in
         :param env_sim: randomized simulation environment a.k.a. source domain
         :param env_real: real-world environment a.k.a. target domain
-        :param policy: behavioral policy  TODO fixed for now, eventually learned
+        :param policy: policy used for sampling the rollout, if subrtn_policy is not `None` this policy is not oly used
+                       for generating the target domain rollouts, but also optimized in simulation
         :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)
         :param prior: distribution used by sbi as a prior
         :param posterior_nn_hparam: hyper parameters for creating the posterior"s density estimator
@@ -127,11 +127,11 @@ class LFI(Algorithm):
 
         # Optional policy optimization subroutine
         self._subrtn_policy = subrtn_policy
-        # self._subrtn_policy_snapshot_mode = subrtn_policy_snapshot_mode
-        # self._subrtn_policy.save_name = "subrtn_policy"
         if isinstance(self._subrtn_policy, Algorithm):
+            self._subrtn_policy_snapshot_mode = subrtn_policy_snapshot_mode
+            self._subrtn_policy.save_name = "subrtn_policy"
             # Check that the behavioral policy is the one that is being updated
-            if not self._subrtn_policy.policy is self.policy:
+            if self._subrtn_policy.policy is not self.policy:
                 raise pyrado.ValueErr(
                     msg="The policy is the policy subroutine is not the same as the one used by "
                     "the system identification (sbi) subroutine!"
@@ -169,22 +169,10 @@ class LFI(Algorithm):
         """ Get the simulator wrapped for sbi. """
         return self._sbi_simulator
 
+    def step(self, snapshot_mode: str = None, meta_info: dict = None):
+        # Save snapshot to save the correct iteration count
+        self.save_snapshot()
 
-
-    # @staticmethod
-    # def truncate_to_shortest(data: List[to.Tensor]):
-    #     """
-    #     Truncate the data sets to the shortest one if necessary
-    #
-    #     :param data: list of (at least 1-dim) data sets
-    #     """
-    #     min_length = min([len(d) for d in data])
-    #     if not check_all_lengths_equal(data):
-    #         print_cbt("Needed to truncate.", "y", bright=True)
-    #         for idx, d in enumerate(data):
-    #             data[idx] = d[:min_length]
-
-    def step(self, snapshot_mode: str, meta_info: dict = None):
         observations_real = LFI.collect_real_observations(
             self.save_dir,
             self._env_real,
@@ -198,8 +186,6 @@ class LFI(Algorithm):
                 msg=f"The observations must be a 2-dim PyTorch tensor where the first dimension has as"
                 f"many entries as there are observations, but the shape is {observations_real.shape}!"
             )
-
-        # LFI.truncate_to_shortest(observations_real)
 
         # First iteration
         if self._curr_iter == 0:
@@ -387,6 +373,9 @@ class LFI(Algorithm):
             if self._subrtn_policy is None:
                 # The policy is not being updated by a policy optimization subroutine
                 pyrado.save(self._policy, "policy", "pt", self.save_dir, None)
+            else:
+                self._subrtn_policy.save_snapshot()
+
         else:
             raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subroutine!")
 
@@ -401,7 +390,7 @@ class LFI(Algorithm):
         # self._env_sim.adapt_randomizer(cand.detach().cpu().numpy())
 
         # Reset the subroutine algorithm which includes resetting the exploration
-        self._cnt_samples += self._subrtn_policy.sample_count
+        # self._cnt_samples += self._subrtn_policy.sample_count
         self._subrtn_policy.reset()
 
         # Do a warm start if desired
@@ -410,7 +399,7 @@ class LFI(Algorithm):
         # )
 
         # Train a policy in simulation using the subroutine
-        self._subrtn_policy.train(snapshot_mode="no", meta_info=dict(prefix=prefix))
+        self._subrtn_policy.train(snapshot_mode=self._subrtn_policy_snapshot_mode, meta_info=dict(prefix=prefix))
 
         # Return the estimated return of the trained policy in simulation
         # avg_ret_sim = self.eval_policy(
@@ -424,6 +413,10 @@ class LFI(Algorithm):
         tmp_sbi_subrtn_summary_writer = self.__dict__["_sbi_subrtn"].__dict__.pop("_summary_writer")
         tmp_sbi_subrtn_build_neural_net = self.__dict__["_sbi_subrtn"].__dict__.pop("_build_neural_net")
 
+        # Remove the policy optimization subroutine, since it contains non-leaf tensors. These cause an error durin the
+        # subsequent deepcopying
+        tmp_subrtn_policy = self.__dict__.pop("_subrtn_policy", None)
+
         # Call Algorithm's __getstate__() without the unpickleable sbi-related members
         state_dict = super(LFI, self).__getstate__()
 
@@ -434,6 +427,7 @@ class LFI(Algorithm):
         self.__dict__["_sbi_simulator"] = tmp_sbi_simulator
         self.__dict__["_sbi_subrtn"]._summary_writer = tmp_sbi_subrtn_summary_writer
         self.__dict__["_sbi_subrtn"]._build_neural_net = tmp_sbi_subrtn_build_neural_net
+        self.__dict__["_subrtn_policy"] = tmp_subrtn_policy
 
         return state_dict_copy
 
