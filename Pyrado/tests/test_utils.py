@@ -372,9 +372,9 @@ def test_running_mem_average(data_seq, capacity):
         if isinstance(z, np.ndarray):
             z = z.astype(dtype=np.float32)
         if i <= 2:
-            assert z == pytest.approx([1.0, 1, 2])
+            assert z == pytest.approx(to.tensor([1.0, 1, 2]))
         elif i == 3:
-            assert z == pytest.approx([0.0, 0, 0])
+            assert z == pytest.approx(to.tensor([0.0, 0, 0]))
     rma.reset(capacity=5)
     assert rma.capacity == 5 and rma.memory is None
 
