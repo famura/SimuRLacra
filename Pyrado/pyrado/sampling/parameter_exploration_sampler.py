@@ -241,18 +241,26 @@ class ParameterExplorationSampler(Serializable):
         if init_states is not None and not isinstance(init_states, list):
             pyrado.TypeErr(given=init_states, expected_type=list)
 
-        # Sample domain params for each rollout
+        # Sample domain parameter sets
         domain_params = self._sample_domain_params()
         if not isinstance(domain_params, list):
-            raise pyrado.TypeErr(given=domain_params, expected_type=[list, dict])
+            raise pyrado.TypeErr(given=domain_params, expected_type=list)
 
+        # Sample the initial states for every domain, but reset before. Hence they are associated to their domain.
         if init_states is None:
             init_states = [
                 self._sample_one_init_state(dp) for dp in domain_params for _ in range(self.num_init_states_per_domain)
             ]
+        else:
+            # This is an edge case, but here we need as many init states as num_domains * num_init_states_per_domain
+            if not len(init_states) == len(domain_params*self.num_init_states_per_domain):
+                raise pyrado.ShapeErr(given=init_states, expected_match=domain_params*self.num_init_states_per_domain)
+
+        # Repeat the sets for the number of initial states per domain
+        domain_params *= self.num_init_states_per_domain
 
         # Explode parameter list for rollouts per param
-        all_params = [(p, *r) for p in param_sets for r in itertools.product(domain_params, init_states)]
+        all_params = [(p, *r) for p in param_sets for r in zip(domain_params, init_states)]
 
         # Sample rollouts in parallel
         with tqdm(leave=False, file=sys.stdout, desc="Sampling", unit="rollouts") as pb:
