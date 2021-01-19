@@ -109,7 +109,7 @@ class SPRL(Algorithm):
         alpha_function_percentage,
         discount_factor: float,
         max_iter: int,
-        std_lower_bound: float = -np.inf,
+        std_lower_bound: float = 0.2,
         kl_threshold: float = 0.1,
     ):
         """
@@ -226,7 +226,8 @@ class SPRL(Algorithm):
 
         # optionally clip the bounds of the new variance
         if self._kl_threshold and self._kl_threshold < kl_divergence:
-            lower_bound = np.ones_like(previous_distribution.get_stacked()) * self._std_lower_bound
+            lower_bound = np.ones_like(previous_distribution.get_stacked()) * -np.inf
+            lower_bound[dim] = np.log(self._std_lower_bound)
             upper_bound = np.ones_like(previous_distribution.get_stacked()) * np.inf
             bounds = Bounds(lb=lower_bound, ub=upper_bound, keep_feasible=True)
             x0 = np.clip(previous_distribution.get_stacked(), lower_bound, upper_bound)
@@ -250,7 +251,8 @@ class SPRL(Algorithm):
             self._parameter.adapt("context_cov_chol_flat", to.tensor([result.x[1]]).float())
         else:
             old_f = objective(previous_distribution.get_stacked())[0]
-            if kl_constraint_fn(result.x) <= self._kl_constraints_ub and result.fun < old_f:
+            std_ok = bounds is None or (np.all(bounds.lb <= result.x)) and np.all(result.x <= bounds.ub)
+            if kl_constraint_fn(result.x) <= self._kl_constraints_ub and result.fun < old_f and std_ok:
                 self._parameter.adapt("context_mean", to.tensor([result.x[0]]).float())
                 self._parameter.adapt("context_cov_chol_flat", to.tensor([result.x[1]]).float())
             else:
