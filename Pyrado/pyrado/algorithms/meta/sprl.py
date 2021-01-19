@@ -110,6 +110,7 @@ class SPRL(Algorithm):
         discount_factor: float,
         max_iter: int,
         std_lower_bound: float = -np.inf,
+        kl_threshold: float = 0.1,
     ):
         """
         Constructor
@@ -139,6 +140,7 @@ class SPRL(Algorithm):
         self._alpha_function_percentage = alpha_function_percentage
         self._discount_factor = discount_factor
         self._std_lower_bound = std_lower_bound
+        self._kl_threshold = kl_threshold
 
         spl_parameters = [
             param for param in env.randomizer.domain_params if isinstance(param, SelfPacedLearnerParameter)
@@ -189,14 +191,14 @@ class SPRL(Algorithm):
         def kl_constraint_fn(x):
             distribution = MultivariateNormalWrapper.from_stacked(dim, x)
             kl_divergence = to.distributions.kl_divergence(
-                distribution.distribution, self._parameter.context_distribution
+                self._parameter.context_distribution, distribution.distribution
             )
             return kl_divergence.detach().numpy()
 
         def kl_constraint_fn_prime(x):
             distribution = MultivariateNormalWrapper.from_stacked(dim, x)
             kl_divergence = to.distributions.kl_divergence(
-                distribution.distribution, self._parameter.context_distribution
+                self._parameter.context_distribution, distribution.distribution
             )
             mean_grad, cov_chol_grad = to.autograd.grad(kl_divergence, distribution.parameters())
             return np.concatenate([mean_grad.detach().numpy(), cov_chol_grad.detach().numpy()])
@@ -223,7 +225,7 @@ class SPRL(Algorithm):
         ]
 
         # optionally clip the bounds of the new variance
-        if self._std_lower_bound:
+        if self._kl_threshold and self._kl_threshold < kl_divergence:
             lower_bound = np.ones_like(previous_distribution.get_stacked()) * self._std_lower_bound
             upper_bound = np.ones_like(previous_distribution.get_stacked()) * np.inf
             bounds = Bounds(lb=lower_bound, ub=upper_bound, keep_feasible=True)
