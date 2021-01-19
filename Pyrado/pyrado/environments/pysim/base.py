@@ -69,7 +69,7 @@ class SimPyEnv(SimEnv, Serializable):
             raise pyrado.TypeErr(given=task_args, expected_type=dict)
         self._task = self._create_task(task_args=dict() if task_args is None else task_args)
 
-        # Animation with VPython
+        # Animation with Panda3D
         self._curr_act = np.zeros(self.act_space.shape)
         self._initiated = False
 
