@@ -28,10 +28,15 @@
 
 import torch as to
 from abc import ABC, abstractmethod
+from copy import deepcopy
 from typing import Union, Mapping
 
 import pyrado
+from pyrado.environment_wrappers.base import EnvWrapper
+from pyrado.environment_wrappers.domain_randomization import remove_all_dr_wrappers
 from pyrado.environments.base import Env
+from pyrado.environments.real_base import RealEnv
+from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
@@ -48,7 +53,7 @@ class RolloutSamplerForSBI(ABC):
         """
         Constructor
 
-        :param strategy: the method with which the observations are computed from the rollouts. Possible options:
+        :param strategy: method with which the observations are computed from the rollouts. Possible options:
                          `states` (uses all observed states from rollout),
                          `final_state` (use the last observed state from the rollout), and
                          `ramos` (summary statistics as proposed in  [1])
@@ -170,7 +175,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
 
     def __init__(
         self,
-        env: Env,
+        env: Union[SimEnv, EnvWrapper],
         policy: Policy,
         dp_mapping: Mapping[int, str],
         strategy: str,
@@ -178,8 +183,9 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
         """
         Constructor
 
-        :param env: the environment which the policy operates
-        :param policy: the policy used for sampling the rollout
+        :param env: environment which the policy operates, in any case this will be a (randomized) `SimEnv`. We strip
+                    all domain randomization wrappers from this env since we want to randomize it manually here.
+        :param policy: policy used for sampling the rollout
         :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)
         :param strategy: the method with which the observations are computed from the rollouts. Possible options:
                          `states` (uses all observed states from rollout),
@@ -188,7 +194,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
         """
         super().__init__(strategy=strategy)
 
-        self._env = env
+        self._env = remove_all_dr_wrappers(deepcopy(env))
         self._policy = policy
         self.dp_names = dp_mapping.values()
 
@@ -211,15 +217,17 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI):
 
     def __init__(
         self,
-        env: Env,
+        env: Union[RealEnv, SimEnv, EnvWrapper],
         policy: Policy,
         strategy: str,
     ):
         """
         Constructor
 
-        :param env: the environment which the policy operates
-        :param policy: the policy used for sampling the rollout
+        :param env: environment which the policy operates, in sim-to-real settings this is a real-world device, buy in
+                    a sim-to-sim experiment this can be a (randomized) `SimEnv`. We strip all domain randomization
+                    wrappers from this env since we want to randomize it manually here.
+        :param policy: policy used for sampling the rollout
         :param strategy: the method with which the observations are computed from the rollouts. Possible options:
                          `states` (uses all observed states from rollout),
                          `final_state` (use the last observed state from the rollout), and
@@ -227,13 +235,13 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI):
         """
         super().__init__(strategy=strategy)
 
-        self._env = env
+        self._env = remove_all_dr_wrappers(deepcopy(env))
         self._policy = policy
 
     def __call__(self, dp_values: to.Tensor = None):
         """ Run one rollout, and compute summary statistics. """
         # Don't set the domain params here since they are set by the DomainRandWrapperBuffer to mimic the randomness
-        ro = rollout(            self._env,            self._policy,            eval=True        )
+        ro = rollout(self._env, self._policy, eval=True)
         ro.torch(data_type=to.get_default_dtype())
 
         # Return the observations used for inference from the rollout data

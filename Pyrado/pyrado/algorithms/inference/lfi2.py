@@ -26,10 +26,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import os.path as osp
 import sys
 import torch as to
 from colorama import Style, Fore
 from copy import deepcopy
+from tabulate import tabulate
 from torch.distributions import Distribution
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
@@ -45,12 +47,16 @@ from sbi.utils import posterior_nn
 import pyrado
 from pyrado.algorithms.base import Algorithm, InterruptableAlgorithm
 from pyrado.algorithms.inference.sbi_rollout_sampler import SimRolloutSamplerForSBI, RealRolloutSamplerForSBI
-from pyrado.environment_wrappers.base import EnvWrapper
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environment_wrappers.utils import inner_env
+from pyrado.environments.base import Env
 from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
+from pyrado.sampling.rollout import rollout
+from pyrado.utils.input_output import print_cbt
 
 
 class LFI(InterruptableAlgorithm):
@@ -66,8 +72,8 @@ class LFI(InterruptableAlgorithm):
     def __init__(
         self,
         save_dir: str,
-        env_sim: SimEnv,
-        env_real: Union[RealEnv, EnvWrapper, SimEnv],
+        env_sim: Union[SimEnv, DomainRandWrapperBuffer],
+        env_real: Env,
         policy: Policy,
         dp_mapping: Mapping[int, str],
         prior: Distribution,
@@ -125,6 +131,10 @@ class LFI(InterruptableAlgorithm):
         self.num_eval_samples = num_eval_samples
         self.num_workers = num_workers
 
+        # Temporary containers
+        self._curr_observations_real = None
+        self._curr_domain_param_eval = None
+
         # Optional policy optimization subroutine
         self._subrtn_policy = subrtn_policy
         if isinstance(self._subrtn_policy, Algorithm):
@@ -174,7 +184,7 @@ class LFI(InterruptableAlgorithm):
         self.save_snapshot()
 
         if self.curr_checkpoint == 0:
-            observations_real = LFI.collect_real_observations(
+            self._curr_observations_real = LFI.collect_real_observations(
                 self.save_dir,
                 self._env_real,
                 self._policy,
@@ -182,10 +192,13 @@ class LFI(InterruptableAlgorithm):
                 prefix=f"iter_{self._curr_iter}",
                 num_rollouts=self.num_real_rollouts,
             )
-            if observations_real.ndim != 2 or observations_real.shape[0] != self.num_real_rollouts:
+            if (
+                self._curr_observations_real.ndim != 2
+                or self._curr_observations_real.shape[0] != self.num_real_rollouts
+            ):
                 raise pyrado.ShapeErr(
                     msg=f"The observations must be a 2-dim PyTorch tensor where the first dimension has as"
-                    f"many entries as there are observations, but the shape is {observations_real.shape}!"
+                    f"many entries as there are observations, but the shape is {self._curr_observations_real.shape}!"
                 )
 
             # First iteration
@@ -206,13 +219,13 @@ class LFI(InterruptableAlgorithm):
                 self._cnt_samples += self.num_sim_per_real_rollout
 
                 # Append the first set of observations
-                pyrado.save(observations_real, "observations_real", "pt", self._save_dir)
+                pyrado.save(self._curr_observations_real, "observations_real", "pt", self._save_dir)
 
             # Remaining training iterations
             else:
                 posterior = pyrado.load(None, "posterior", "pt", self._save_dir, meta_info)
 
-                for ro in observations_real:
+                for ro in self._curr_observations_real:
                     posterior.set_default_x(ro)
 
                     # Sample parameters proposal, and simulate these parameters to obtain the observations
@@ -228,7 +241,7 @@ class LFI(InterruptableAlgorithm):
 
                 # Append and save all observations
                 prev_observations = pyrado.load(None, "observations_real", "pt", self._save_dir)
-                observations_real_hist = to.cat([prev_observations, observations_real], dim=0)
+                observations_real_hist = to.cat([prev_observations, self._curr_observations_real], dim=0)
                 pyrado.save(observations_real_hist, "observations_real", "pt", self._save_dir)
 
             self.reached_checkpoint()  # setting counter to 1
@@ -243,11 +256,15 @@ class LFI(InterruptableAlgorithm):
             pyrado.save(posterior, "posterior", "pt", self._save_dir, meta_info, use_state_dict=False)
 
             # Logging
-            domain_param_eval, log_prob, _ = LFI.eval_posterior(
-                posterior, observations_real, self.num_eval_samples, self._sbi_simulator, simulate_observations=False
+            self._curr_domain_param_eval, log_prob, _ = LFI.eval_posterior(
+                posterior,
+                self._curr_observations_real,
+                self.num_eval_samples,
+                self._sbi_simulator,
+                simulate_observations=False,
             )
-            self.logger.add_value("avg domain param", to.mean(domain_param_eval, dim=[0, 1]))
-            self.logger.add_value("std domain param", to.std(domain_param_eval, dim=[0, 1]))
+            self.logger.add_value("avg domain param", to.mean(self._curr_domain_param_eval, dim=[0, 1]))
+            self.logger.add_value("std domain param", to.std(self._curr_domain_param_eval, dim=[0, 1]))
             self.logger.add_value("avg log prob", to.mean(log_prob))
             self.logger.add_value("num total samples", self._cnt_samples)  # here the samples are simulations
 
@@ -255,12 +272,63 @@ class LFI(InterruptableAlgorithm):
 
         if self.curr_checkpoint == 2:
             if self._subrtn_policy is not None:
-                self.train_policy_sim(prefix=f"iter_{self._curr_iter}")
+                self.train_policy_sim(self._curr_domain_param_eval.squeeze(), prefix=f"iter_{self._curr_iter}")
 
             self.reached_checkpoint()  # setting counter to 0
 
         # Save snapshot data
         self.make_snapshot(snapshot_mode, None, meta_info)
+
+    @staticmethod
+    def collect_real_observations(
+        save_dir: Optional[str],
+        env: Union[RealEnv, SimEnv],
+        policy: Policy,
+        summary_statistic: str,
+        prefix: str,
+        num_rollouts: int,
+    ) -> to.Tensor:
+        """
+        Roll-out a (behavioral) policy on the target system for later use with the sbi module, and save the observations
+        computed from the recorded rollouts.
+        This method is static to facilitate evaluation of specific policies in hindsight.
+
+        :param save_dir: directory to save the snapshots i.e. the results in, if `None` nothing is saved
+        :param env: target environment for evaluation, in the sim-2-sim case this is another simulation instance
+        :param policy: policy to evaluate
+        :param summary_statistic: the method with which the observations for LFI are computed from the rollouts.
+                                  Possible options:
+                                 `states` (uses all observed states from rollout),
+                                 `final_state` (use the last observed state from the rollout), and
+                                 `ramos` (summary statistics as proposed in  [1])
+        :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
+        :param num_rollouts: number of rollouts to collect on the target system
+        :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
+        :return: 2-dim tensor of observations extracted from the rollouts, where the samples are along the first dim
+        """
+        if not (isinstance(inner_env(env), RealEnv) or isinstance(inner_env(env), SimEnv)):
+            raise pyrado.TypeErr(given=inner_env(env), expected_type=[RealEnv, SimEnv])
+
+        # Evaluate sequentially (necessary for sim-to-real experiments)
+        rollout_worker = RealRolloutSamplerForSBI(env, policy, summary_statistic)
+        observations_real = []
+        for _ in tqdm(
+            range(num_rollouts),
+            total=num_rollouts,
+            desc=Fore.CYAN + Style.BRIGHT + f"Collecting observations using {prefix}_policy" + Style.RESET_ALL,
+            unit="rollouts",
+            file=sys.stdout,
+        ):
+            observations_real.append(rollout_worker())
+
+        # Stacked to tensor, samples along 1st dimension
+        observations_real = to.stack(observations_real)
+
+        # Optionally save the data
+        if save_dir is not None:
+            pyrado.save(observations_real, f"{prefix}_observations_real", "pt", save_dir)
+
+        return observations_real
 
     @staticmethod
     def eval_posterior(
@@ -323,81 +391,80 @@ class LFI(InterruptableAlgorithm):
         return domain_params, log_prob, observations_sim
 
     @staticmethod
-    def collect_real_observations(
+    def eval_policy(
         save_dir: Optional[str],
-        env: Union[RealEnv, SimEnv],
+        env: Env,
         policy: Policy,
-        summary_statistic: str,
         prefix: str,
         num_rollouts: int,
+        num_workers: int = 1,
     ) -> to.Tensor:
         """
-        Roll-out a (behavioral) policy on the target system (real-world platform), and save the observations computed
-        from the recorded rollouts.
+        Evaluate a policy either in the source or in the target domain.
         This method is static to facilitate evaluation of specific policies in hindsight.
 
         :param save_dir: directory to save the snapshots i.e. the results in, if `None` nothing is saved
         :param env: target environment for evaluation, in the sim-2-sim case this is another simulation instance
         :param policy: policy to evaluate
-        :param summary_statistic: the method with which the observations for LFI are computed from the rollouts.
-                                  Possible options:
-                                 `states` (uses all observed states from rollout),
-                                 `final_state` (use the last observed state from the rollout), and
-                                 `ramos` (summary statistics as proposed in  [1])
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
         :param num_rollouts: number of rollouts to collect on the target system
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
-        :return: 2-dim tensor of observations extracted from the rollouts, where the samples are along the first dim
+        :param num_workers: number of environments for the parallel sampler (only used for SimEnv)
+        :return: estimated return in the target domain
         """
-        if not (isinstance(inner_env(env), RealEnv) or isinstance(inner_env(env), SimEnv)):
+        if save_dir is not None:
+            print_cbt(f"Executing {prefix}_policy ...", "c", bright=True)
+
+        if isinstance(inner_env(env), RealEnv):
+            # Evaluate sequentially when evaluating on a real-world device
+            rets_real = []
+            for i in range(num_rollouts):
+                rets_real.append(rollout(env, policy, eval=True).undiscounted_return())
+
+        elif isinstance(inner_env(env), SimEnv):
+            # Create a parallel sampler when evaluating in a simulation
+            sampler = ParallelRolloutSampler(env, policy, num_workers=num_workers, min_rollouts=num_rollouts)
+            ros = sampler.sample()
+            rets_real = [ro.undiscounted_return() for ro in ros]
+        else:
             raise pyrado.TypeErr(given=inner_env(env), expected_type=[RealEnv, SimEnv])
 
-        # Evaluate sequentially (necessary for sim-to-real experiments)
-        rollout_worker = RealRolloutSamplerForSBI(env, policy, summary_statistic)
-        observations_real = []
-        for _ in tqdm(
-            range(num_rollouts),
-            total=num_rollouts,
-            desc=Fore.CYAN + Style.BRIGHT + f"Executing {prefix}_policy" + Style.RESET_ALL,
-            unit="rollouts",
-            file=sys.stdout,
-        ):
-            observations_real.append(rollout_worker())
+        rets_real = to.as_tensor(rets_real)
 
-        # LFI.truncate_to_shortest(observations_real)
-
-        # Stacked to tensor, samples along 1st dimension
-        observations_real = to.stack(observations_real)
-
-        # Optionally save the data
         if save_dir is not None:
-            pyrado.save(observations_real, f"{prefix}_observations_real", "pt", save_dir)
+            # Save and print the evaluation results
+            pyrado.save(rets_real, "returns_real", "pt", save_dir, meta_info=dict(prefix=prefix))
+            print_cbt("Target domain performance", bright=True)
+            print(
+                tabulate(
+                    [
+                        ["mean return", to.mean(rets_real).item()],
+                        ["std return", to.std(rets_real)],
+                        ["min return", to.min(rets_real)],
+                        ["max return", to.max(rets_real)],
+                    ]
+                )
+            )
 
-        return observations_real
+        return to.mean(rets_real)
 
-    def save_snapshot(self, meta_info: dict = None):
-        super().save_snapshot(meta_info)
-
-        if meta_info is None:
-            # This algorithm instance is not a subroutine of another algorithm
-            if self._subrtn_policy is None:
-                # The policy is not being updated by a policy optimization subroutine
-                pyrado.save(self._policy, "policy", "pt", self.save_dir, None)
-            else:
-                self._subrtn_policy.save_snapshot()
-
-        else:
-            raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subroutine!")
-
-    def train_policy_sim(self, prefix: str) -> float:
+    def train_policy_sim(self, domain_params: to.Tensor, prefix: str) -> float:
         """
         Train a policy in simulation for given hyper-parameters from the domain randomizer.
 
+        :param domain_params: domain parameters sampled from the posterior [shape N x D where N is the number of
+                              samples and D is the number of domain parameters]
         :param prefix: set a prefix to the saved file name by passing it to `meta_info`
         :return: estimated return of the trained policy in the target domain
         """
-        # Set the domain randomizer
-        # self._env_sim.adapt_randomizer(cand.detach().cpu().numpy())
+        if not isinstance(self._env_sim, DomainRandWrapperBuffer):
+            raise pyrado.TypeErr(given=self._env_sim, expected_type=DomainRandWrapperBuffer)
+        if not (domain_params.ndim == 2 and domain_params.shape[1] == len(self.dp_mapping)):
+            raise pyrado.ShapeErr(given=domain_params, expected_match=(-1, 2))
+
+        # Insert the domain parameters into the wrapped environment's buffer
+        domain_params = domain_params.detach().cpu().numpy()
+        self._env_sim.buffer = [dict(zip(self.dp_mapping.values(), dp)) for dp in domain_params]
 
         # Reset the subroutine algorithm which includes resetting the exploration
         # self._cnt_samples += self._subrtn_policy.sample_count
@@ -412,10 +479,25 @@ class LFI(InterruptableAlgorithm):
         self._subrtn_policy.train(snapshot_mode=self._subrtn_policy_snapshot_mode, meta_info=dict(prefix=prefix))
 
         # Return the estimated return of the trained policy in simulation
+        self._env_sim.ring_idx = 0  # don't reset the buffer to eval on the same domains as trained
         avg_ret_sim = self.eval_policy(
             None, self._env_sim, self._subrtn_policy.policy, prefix, self.num_eval_samples
         )
         return float(avg_ret_sim)
+
+    def save_snapshot(self, meta_info: dict = None):
+        super().save_snapshot(meta_info)
+
+        if meta_info is None:
+            # This algorithm instance is not a subroutine of another algorithm
+            if self._subrtn_policy is None:
+                # The policy is not being updated by a policy optimization subroutine
+                pyrado.save(self._policy, "policy", "pt", self.save_dir, None)
+            else:
+                self._subrtn_policy.save_snapshot()
+
+        else:
+            raise pyrado.ValueErr(msg=f"{self.name} is not supposed be run as a subroutine!")
 
     def __getstate__(self):
         # Remove the unpickleable sbi-related members from this algorithm instance

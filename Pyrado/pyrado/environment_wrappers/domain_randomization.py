@@ -177,7 +177,8 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
     @ring_idx.setter
     def ring_idx(self, idx: int):
         """ Set the buffer's index. """
-        assert isinstance(idx, int) and idx >= 0
+        if not (isinstance(idx, int) and idx >= 0):
+            raise pyrado.ValueErr(given=idx, ge_constraint="0 (int)")
         self._ring_idx = idx
 
     def fill_buffer(self, num_domains: int):

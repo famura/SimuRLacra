@@ -39,6 +39,7 @@ from sbi import utils
 import pyrado
 from pyrado.algorithms.episodic.cem import CEM
 from pyrado.algorithms.inference.lfi2 import LFI
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.features import FeatureStack, identity_feat, squared_feat, const_feat, sin_feat, cos_feat
@@ -61,6 +62,7 @@ if __name__ == "__main__":
     env_hparams = dict(dt=1 / 100.0, max_steps=1000)
     env_sim = PendulumSim(**env_hparams)
     env_sim.domain_param = dict(d_pole=0, tau_max=5.0)
+    env_sim = DomainRandWrapperBuffer(env_sim, randomizer=None)
 
     # Create a fake ground truth target domain
     num_real_obs = 1
@@ -68,35 +70,35 @@ if __name__ == "__main__":
     env_real.domain_param = dict(m_pole=0.25, l_pole=2.0)
     dp_mapping = {0: "m_pole", 1: "l_pole"}
 
+    # Prior and Posterior (normalizing flow)
+    prior_hparam = dict(low=to.tensor([0.0625, 0.0625]), high=to.tensor([4.0, 4.0]))
+    prior = utils.BoxUniform(**prior_hparam)
+    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=2)
+
     # Policy
     feats = FeatureStack([const_feat, identity_feat, sin_feat, cos_feat, squared_feat])
     policy = LinearPolicy(env_sim.spec, feats)
 
     # Policy optimization subroutine
     subrtn_policy_hparam = dict(
-        max_iter=5,
-        pop_size=10,
+        max_iter=1,
+        pop_size=40,
         num_rollouts=4,
         num_is_samples=10,
-        expl_std_init=1e0,
+        expl_std_init=1.0,
         expl_std_min=1e-2,
-        extra_expl_std_init=1e0,
+        extra_expl_std_init=1.0,
         extra_expl_decay_iter=5,
         num_workers=num_workers,
     )
     subrtn_policy = CEM(ex_dir, env_sim, policy, **subrtn_policy_hparam)
-
-    # Prior and Posterior (normalizing flow)
-    prior_hparam = dict(low=to.tensor([0.0625, 0.0625]), high=to.tensor([4.0, 4.0]))
-    prior = utils.BoxUniform(**prior_hparam)
-    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=2)
 
     # Algorithm
     algo_hparam = dict(
         summary_statistic="ramos",
         max_iter=15,
         num_real_rollouts=num_real_obs,
-        num_sim_per_real_rollout=50,
+        num_sim_per_real_rollout=100,
         num_workers=num_workers,
     )
     algo = LFI(

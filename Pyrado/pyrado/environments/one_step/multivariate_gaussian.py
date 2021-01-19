@@ -38,8 +38,22 @@ class ToyExample(SimEnv, Serializable):
         max_act = np.array([0])
         self._curr_act = np.zeros_like(max_act)  # just for usage in render function
 
-        self._state_space = BoxSpace(-max_state, max_state, labels=["s_1_1", "s_2_1", "s_1_2", "s_2_2", "s_1_3", "s_2_3", "s_1_4", "s_2_4"])
-        self._init_space = SingularStateSpace(np.zeros(self._state_space.shape), labels=["s_1_1_init", "s_2_1_init", "s_1_2_init", "s_2_2_init", "s_1_3_init", "s_2_3_init", "s_1_4_init", "s_2_4_init"])
+        self._state_space = BoxSpace(
+            -max_state, max_state, labels=["s_1_1", "s_2_1", "s_1_2", "s_2_2", "s_1_3", "s_2_3", "s_1_4", "s_2_4"]
+        )
+        self._init_space = SingularStateSpace(
+            np.zeros(self._state_space.shape),
+            labels=[
+                "s_1_1_init",
+                "s_2_1_init",
+                "s_1_2_init",
+                "s_2_2_init",
+                "s_1_3_init",
+                "s_2_3_init",
+                "s_1_4_init",
+                "s_2_4_init",
+            ],
+        )
         self._act_space = BoxSpace(-max_act, max_act, labels=["act_1"])
         self._obs_space = None
 
@@ -51,7 +65,7 @@ class ToyExample(SimEnv, Serializable):
 
     def _to_scalar(self):
         for param in self._domain_param:
-            if isinstance(self._domain_param[param], to.Tensor):    # or isinstance(self._domain_param, np.ndarray):
+            if isinstance(self._domain_param[param], to.Tensor):  # or isinstance(self._domain_param, np.ndarray):
                 self._domain_param[param] = self._domain_param[param].item()
 
     def _calc_constants(self):
@@ -60,7 +74,7 @@ class ToyExample(SimEnv, Serializable):
     @staticmethod
     def calc_constants(dp):
         for param in dp:
-            if isinstance(dp[param], to.Tensor):    # or isinstance(self._domain_param, np.ndarray):
+            if isinstance(dp[param], to.Tensor):  # or isinstance(self._domain_param, np.ndarray):
                 dp[param] = dp[param].item()
         mean = np.array([dp["m_1"], dp["m_2"]])
         s1 = dp["s_1"] ** 2
@@ -110,12 +124,13 @@ class ToyExample(SimEnv, Serializable):
 
     @classmethod
     def get_nominal_domain_param(cls) -> dict:
-        return dict(m_1=0.7,    # first mean
-                    m_2=-1.5,    # second mean
-                    s_1=-1,   # Sigma_11
-                    s_2=-0.9,      # Sigma_22
-                    rho=0.6     # scaling factor
-                    )  #
+        return dict(
+            m_1=0.7,  # first mean
+            m_2=-1.5,  # second mean
+            s_1=-1,  # Sigma_11
+            s_2=-0.9,  # Sigma_22
+            rho=0.6,  # scaling factor
+        )  #
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         # Reset the domain parameters

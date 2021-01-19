@@ -3,14 +3,15 @@ import numpy as np
 from sbi.mcmc import SliceSampler
 
 
-def posterior_sampler(env,
-                      prior,
-                      observations,
-                      params_names,
-                      start_param=None,
-                      num_samples=100,
-                      warmup=100,
-                      ):
+def posterior_sampler(
+    env,
+    prior,
+    observations,
+    params_names,
+    start_param=None,
+    num_samples=100,
+    warmup=100,
+):
     """
     Calculates posterior samples using MCMC sampling from a prior and a likelihood (Env).
     This function only works if the log-probability of a rollout can be calculated,

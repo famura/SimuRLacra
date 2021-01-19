@@ -100,8 +100,9 @@ if __name__ == "__main__":
         posterior = pyrado.load(None, f"iter_{iter}_posterior", "pt", ex_dir)
 
         # sample true posterior samples
-        true_samples = posterior_sampler(env_real, prior, observations_real_sel, params_names, num_samples=args.num_samples)
-
+        true_samples = posterior_sampler(
+            env_real, prior, observations_real_sel, params_names, num_samples=args.num_samples
+        )
 
         # Compute and print the argmax
         posterior_samples, _, _ = LFI.eval_posterior(
@@ -125,8 +126,7 @@ if __name__ == "__main__":
     # plot trainings progress with mmd
     plt.figure()
     plt.plot(num_samples, mmd_mean, mmd_std)
-    plt.fill_between(num_samples, mmd_mean - mmd_std, mmd_mean + mmd_std,
-                     color='gray', alpha=0.2)
+    plt.fill_between(num_samples, mmd_mean - mmd_std, mmd_mean + mmd_std, color="gray", alpha=0.2)
     plt.show()
 
     # plot scatter of the true posterior
@@ -137,7 +137,3 @@ if __name__ == "__main__":
 
     # TODO: use draw_posterior_distribution but it requires marginalizing over states which are not depicted.
     #  For now there is only a scatter-plot of the domain-parameters
-
-
-
-
