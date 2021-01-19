@@ -36,7 +36,7 @@ from pyrado.environments.base import Env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.spaces.base import Space
 from pyrado.tasks.base import Task
-from pyrado.utils.data_types import RenderMode, EnvSpec
+from pyrado.utils.data_types import RenderMode
 
 
 class EnvWrapper(Env, Serializable):
@@ -64,10 +64,6 @@ class EnvWrapper(Env, Serializable):
     def wrapped_env(self) -> [Env, SimEnv]:
         """ Get the wrapped environment of this wrapper. """
         return self._wrapped_env
-
-    @property
-    def spec(self) -> EnvSpec:
-        return self._wrapped_env.spec
 
     @property
     def state_space(self) -> Space:
