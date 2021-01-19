@@ -393,6 +393,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
+<span class="sd">        :param task_args: arguments for the task construction</span>
 <span class="sd">        :param kwargs: keyword arguments forwarded to `RcsSim`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Serializable</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
@@ -415,6 +416,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
+<span class="sd">        :param task_args: arguments for the task construction</span>
 <span class="sd">        :param kwargs: keyword arguments forwarded to `RcsSim`</span>
 <span class="sd">                       positionTasks: bool = True,</span>
 <span class="sd">                       checkJointLimits: bool = False,</span>
@@ -453,6 +455,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
 
+<span class="sd">        :param task_args: arguments for the task construction</span>
 <span class="sd">        :param mps: movement primitives holding the dynamical systems and the goal states</span>
 <span class="sd">        :param position_mps: if `True` use movement primitives specified on position-level, if `False` velocity-level</span>
 <span class="sd">        :param kwargs: keyword arguments which are available for all task-based `RcsSim`</span>
