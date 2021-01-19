@@ -1,0 +1,13 @@
+
+# Special effect file for rendering the roaming ralph scene, since roaming
+# Ralph has no normals or material information
+
+fragment:
+    material:
+        m.shading_model = SHADING_MODEL_DEFAULT;
+        m.basecolor = texture(p3d_Texture0, texcoord).xyz;
+        m.roughness = 0.9;
+        m.specular_ior = 1.51;
+        m.metallic = 0;
+        m.normal = vOutput.normal;
+        m.shading_model_param0 = 0.0; // unused
