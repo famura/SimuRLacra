@@ -291,14 +291,23 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
 @pytest.mark.parametrize(
     "algo, algo_hparam",
     [
-        (HCNormal, dict(max_iter=5, pop_size=50, num_init_states_per_domain=4, expl_std_init=0.5, expl_factor=1.1)),
+        (
+            HCNormal,
+            dict(
+                max_iter=5,
+                pop_size=50,
+                num_init_states_per_domain=4,
+                expl_std_init=0.5,
+                expl_factor=1.1,
+            ),
+        ),
         (
             PEPG,
             dict(
                 max_iter=40,
                 pop_size=200,
-                num_init_states_per_domain=8,
-                expl_std_init=0.5,
+                num_init_states_per_domain=10,
+                expl_std_init=0.2,
                 lr=1e-2,
                 normalize_update=False,
             ),
@@ -306,10 +315,24 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
         (
             NES,
             dict(
-                max_iter=5, pop_size=50, num_init_states_per_domain=4, expl_std_init=0.5, symm_sampling=True, eta_mean=2
+                max_iter=5,
+                pop_size=50,
+                num_init_states_per_domain=4,
+                expl_std_init=0.5,
+                symm_sampling=True,
+                eta_mean=2,
             ),
         ),
-        (PoWER, dict(max_iter=5, pop_size=50, num_init_states_per_domain=4, num_is_samples=8, expl_std_init=0.5)),
+        (
+            PoWER,
+            dict(
+                max_iter=5,
+                pop_size=50,
+                num_init_states_per_domain=4,
+                num_is_samples=8,
+                expl_std_init=0.5,
+            ),
+        ),
         (
             CEM,
             dict(
@@ -321,7 +344,17 @@ def test_actor_critic(ex_dir, env: SimEnv, policy: Policy, algo, algo_hparam, vf
                 full_cov=False,
             ),
         ),
-        (REPS, dict(max_iter=5, pop_size=50, num_init_states_per_domain=4, eps=1.5, expl_std_init=0.5, use_map=True)),
+        (
+            REPS,
+            dict(
+                max_iter=5,
+                pop_size=50,
+                num_init_states_per_domain=4,
+                eps=1.5,
+                expl_std_init=0.5,
+                use_map=True,
+            ),
+        ),
     ],
     ids=["hc_normal", "pepg", "nes", "power", "cem", "reps"],
 )

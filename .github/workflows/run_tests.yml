@@ -19,7 +19,7 @@ jobs:
           docker pull simurlacra/simurlacra:sacher
           docker build . -t simurlacra:test --build-arg OPTION=sacher --cache-from simurlacra/simurlacra:sacher
           export COVPATH=$(realpath .)
-          docker run --rm -i -v $COVPATH:/cov simurlacra:test conda run -n pyrado bash -c "pytest Pyrado/tests --cov=./Pyrado --cov-report=xml -n 4 --verbose -m 'not visualization'; sudo cp ./coverage.xml /cov"
+          docker run --rm -i -v $COVPATH:/cov simurlacra:test conda run -n pyrado bash -c "pytest Pyrado/tests --cov=./Pyrado --cov-report=xml -v -m 'not visualization'; sudo cp ./coverage.xml /cov"
           sudo mkdir /home/user/
           sudo mkdir /home/user/SimuRLacra
           sudo ln -s $COVPATH /home/user/SimuRLacra
@@ -42,5 +42,5 @@ jobs:
         with:
           workingDirectory: Pyrado
           coverageLocations: |
-            ${{github.workspace}}/coverage.xml:cobertura
+            ${{ github.workspace }}/coverage.xml:cobertura
           debug: true
