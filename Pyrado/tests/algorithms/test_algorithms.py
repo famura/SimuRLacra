@@ -119,7 +119,7 @@ def test_snapshots_notmeta(ex_dir, env: SimEnv, policy, algo_class, algo_hparam)
     elif issubclass(algo_class, ParameterExploring):
         common_hparam.update(num_init_states_per_domain=1)
     elif issubclass(algo_class, (DQL, SAC)):
-        common_hparam.update(memory_size=1000, num_batch_updates=2, gamma=0.99, min_rollouts=1)
+        common_hparam.update(memory_size=1000, num_updates_per_step=2, gamma=0.99, min_rollouts=1)
         fnn_hparam = dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)
         if issubclass(algo_class, DQL):
             # Override the setting

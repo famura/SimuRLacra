@@ -75,23 +75,23 @@ class SAC(ValueBased):
         memory_size: int,
         gamma: float,
         max_iter: int,
-        num_batch_updates: Optional[int] = None,
-        tau: float = 0.995,
-        ent_coeff_init: float = 0.2,
-        learn_ent_coeff: bool = True,
-        target_update_intvl: int = 1,
-        num_init_memory_steps: int = None,
-        standardize_rew: bool = True,
+        num_updates_per_step: Optional[int] = None,
+        tau: Optional[float] = 0.995,
+        ent_coeff_init: Optional[float] = 0.2,
+        learn_ent_coeff: Optional[bool] = True,
+        target_update_intvl: Optional[int] = 1,
+        num_init_memory_steps: Optional[int] = None,
+        standardize_rew: Optional[bool] = True,
         rew_scale: Union[int, float] = 1.0,
-        min_rollouts: int = None,
-        min_steps: int = None,
-        batch_size: int = 256,
-        num_workers: int = 4,
-        max_grad_norm: float = 5.0,
-        lr: float = 3e-4,
+        min_rollouts: Optional[int] = None,
+        min_steps: Optional[int] = None,
+        batch_size: Optional[int] = 256,
+        num_workers: Optional[int] = 4,
+        max_grad_norm: Optional[float] = 5.0,
+        lr: Optional[float] = 3e-4,
         lr_scheduler=None,
         lr_scheduler_hparam: Optional[dict] = None,
-        logger: StepLogger = None,
+        logger: Optional[StepLogger] = None,
     ):
         r"""
         Constructor
@@ -106,7 +106,7 @@ class SAC(ValueBased):
         :param memory_size: number of transitions in the replay memory buffer, e.g. 1000000
         :param gamma: temporal discount factor for the state values
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
-        :param num_batch_updates: number of (batched) gradient updates per algorithm step
+        :param num_updates_per_step: number of (batched) gradient updates per algorithm step
         :param tau: interpolation factor in averaging for target networks, update used for the soft update a.k.a. polyak
                     update, between 0 and 1
         :param ent_coeff_init: initial weighting factor of the entropy term in the loss function
@@ -143,7 +143,7 @@ class SAC(ValueBased):
             memory_size,
             gamma,
             max_iter,
-            num_batch_updates,
+            num_updates_per_step,
             target_update_intvl,
             num_init_memory_steps,
             min_rollouts,
@@ -201,7 +201,7 @@ class SAC(ValueBased):
         return to.exp(self._log_ent_coeff.detach())
 
     @staticmethod
-    def soft_update(target: nn.Module, source: nn.Module, tau: float = 0.995):
+    def soft_update(target: nn.Module, source: nn.Module, tau: Optional[float] = 0.995):
         """
         Moving average update, a.k.a. Polyak update.
         Modifies the input argument `target`.
@@ -230,7 +230,7 @@ class SAC(ValueBased):
         for b in tqdm(
             range(self.num_batch_updates),
             total=self.num_batch_updates,
-            desc=f"Updating",
+            desc="Updating",
             unit="batches",
             file=sys.stdout,
             leave=False,
@@ -336,7 +336,7 @@ class SAC(ValueBased):
             self.logger.add_value("avg lr policy", to.mean(self._lr_scheduler_policy.get_last_lr()), 6)
             self.logger.add_value("avg lr critic", to.mean(self._lr_scheduler_qfcns.get_last_lr()), 6)
 
-    def reset(self, seed: int = None):
+    def reset(self, seed: Optional[int] = None):
         # Reset samplers, replay memory, exploration strategy, internal variables and the random seeds
         super().reset(seed)
 

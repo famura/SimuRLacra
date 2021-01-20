@@ -79,7 +79,7 @@ if __name__ == "__main__":
         max_iter=1000 * env.max_steps,
         memory_size=1000 * env.max_steps,
         gamma=0.995,
-        num_batch_updates=1,
+        num_updates_per_step=1,
         tau=0.99,
         ent_coeff_init=0.2,
         learn_ent_coeff=False,

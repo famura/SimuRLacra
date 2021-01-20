@@ -73,7 +73,7 @@ if __name__ == "__main__":
         eps_schedule_gamma=0.9955,
         gamma=0.998,
         target_update_intvl=5,
-        num_batch_updates=20,
+        num_updates_per_step=20,
         max_grad_norm=0.5,
         min_steps=10,
         batch_size=256,

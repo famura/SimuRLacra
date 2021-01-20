@@ -103,7 +103,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
         standardize_rew=trial.suggest_categorical("standardize_rew_algo", [False]),
         gamma=trial.suggest_uniform("gamma_algo", 0.99, 1.0),
         target_update_intvl=trial.suggest_categorical("target_update_intvl_algo", [1, 5]),
-        num_batch_updates=trial.suggest_categorical("num_batch_updates_algo", [1, 5]),
+        num_updates_per_step=trial.suggest_categorical("num_batch_updates_algo", [1, 5]),
         batch_size=trial.suggest_categorical("batch_size_algo", [128, 256, 512]),
         lr=trial.suggest_loguniform("lr_algo", 1e-5, 1e-3),
     )
