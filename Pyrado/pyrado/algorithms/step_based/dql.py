@@ -32,6 +32,7 @@ import torch as to
 import torch.nn as nn
 from copy import deepcopy
 from tqdm import tqdm
+from typing import Optional
 
 import pyrado
 from pyrado.algorithms.step_based.value_based import ValueBased
@@ -62,20 +63,20 @@ class DQL(ValueBased):
         eps_schedule_gamma: float,
         gamma: float,
         max_iter: int,
-        num_batch_updates: int,
-        target_update_intvl: int = 5,
-        num_init_memory_steps: int = None,
-        min_rollouts: int = None,
-        min_steps: int = None,
-        batch_size: int = 256,
-        num_workers: int = 4,
-        max_grad_norm: float = 0.5,
-        lr: float = 5e-4,
+        num_updates_per_step: int,
+        target_update_intvl: Optional[int] = 5,
+        num_init_memory_steps: Optional[int] = None,
+        min_rollouts: Optional[int] = None,
+        min_steps: Optional[int] = None,
+        batch_size: Optional[int] = 256,
+        num_workers: Optional[int] = 4,
+        max_grad_norm: Optional[float] = 0.5,
+        lr: Optional[float] = 5e-4,
         lr_scheduler=None,
-        lr_scheduler_hparam: [dict, None] = None,
+        lr_scheduler_hparam: Optional[dict] = None,
         logger: StepLogger = None,
     ):
-        """
+        r"""
         Constructor
 
         :param save_dir: directory to save the snapshots i.e. the results in
@@ -86,8 +87,8 @@ class DQL(ValueBased):
         :param eps_schedule_gamma: temporal discount factor for the exponential decay of epsilon
         :param gamma: temporal discount factor for the state values
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
-        :param num_batch_updates: number of batch updates per algorithm steps
-        :param target_update_intvl: number of iterations that pass before updating the qfcn_targ network
+        :param num_updates_per_step: number of (batched) updates per algorithm steps
+        :param target_update_intvl: number of iterations that pass before updating the `qfcn_targ` network
         :param num_init_memory_steps: number of samples used to initially fill the replay buffer with, pass `None` to
                                       fill the buffer completely
         :param min_rollouts: minimum number of rollouts sampled per policy update batch
@@ -112,7 +113,7 @@ class DQL(ValueBased):
             memory_size,
             gamma,
             max_iter,
-            num_batch_updates,
+            num_updates_per_step,
             target_update_intvl,
             num_init_memory_steps,
             min_rollouts,
@@ -213,7 +214,7 @@ class DQL(ValueBased):
         if self._lr_scheduler is not None:
             self.logger.add_value("avg lr", np.mean(self._lr_scheduler.get_last_lr()), 6)
 
-    def reset(self, seed: int = None):
+    def reset(self, seed: Optional[int] = None):
         # Reset samplers, replay memory, exploration strategy, internal variables and the random seeds
         super().reset(seed)
 

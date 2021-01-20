@@ -30,7 +30,7 @@ import numpy as np
 import os.path as osp
 from abc import ABC, abstractmethod
 from math import ceil
-from typing import Optional, Union
+from typing import Union, Optional
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
@@ -55,15 +55,16 @@ class ValueBased(Algorithm, ABC):
         memory_size: int,
         gamma: float,
         max_iter: int,
-        num_batch_updates: int,
+        num_updates_per_step: int,
         target_update_intvl: int,
         num_init_memory_steps: int,
-        min_rollouts: Optional[int],
-        min_steps: Optional[int],
+        min_rollouts: int,
+        min_steps: int,
         batch_size: int,
         num_workers: int,
         max_grad_norm: float,
         logger: StepLogger,
+        logger_print_intvl: Optional[int] = 100,
     ):
         r"""
         Constructor
@@ -74,7 +75,7 @@ class ValueBased(Algorithm, ABC):
         :param memory_size: number of transitions in the replay memory buffer, e.g. 1000000
         :param gamma: temporal discount factor for the state values
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
-        :param num_batch_updates: number of (batched) gradient updates per algorithm step
+        :param num_updates_per_step: number of (batched) gradient updates per algorithm step
         :param target_update_intvl: number of iterations that pass before updating the target network
         :param num_init_memory_steps: number of samples used to initially fill the replay buffer with, pass `None` to
                                       fill the buffer completely
@@ -84,6 +85,7 @@ class ValueBased(Algorithm, ABC):
         :param num_workers: number of environments for parallel sampling
         :param max_grad_norm: maximum L2 norm of the gradients for clipping, set to `None` to disable gradient clipping
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
+        :param logger_print_intvl: interval in which the logger prints
         """
         if not isinstance(env, Env):
             raise pyrado.TypeErr(given=env, expected_type=Env)
@@ -93,8 +95,8 @@ class ValueBased(Algorithm, ABC):
             raise pyrado.TypeErr(given=num_init_memory_steps, expected_type=int)
 
         if logger is None:
-            # Create logger that only logs every 100 steps of the algorithm
-            logger = StepLogger(print_intvl=100)
+            # Create logger that only logs every logger_print_intvl steps of the algorithm
+            logger = StepLogger(print_intvl=logger_print_intvl)
             logger.printers.append(ConsolePrinter())
             logger.printers.append(CSVPrinter(osp.join(save_dir, "progress.csv")))
             logger.printers.append(TensorBoardPrinter(osp.join(save_dir, "tb")))
@@ -114,12 +116,12 @@ class ValueBased(Algorithm, ABC):
             self.num_init_memory_steps = min(num_init_memory_steps, memory_size)
 
         # Heuristic for number of gradient updates per step
-        if num_batch_updates is None:
+        if num_updates_per_step is None:
             self.num_batch_updates = ceil(min_steps / env.max_steps) if min_steps is not None else min_rollouts
         else:
-            self.num_batch_updates = num_batch_updates
+            self.num_batch_updates = num_updates_per_step
 
-        # Create sampler for initial filling of the replay memory and evaluation
+        # Create sampler for initial filling of the replay memory
         if policy.is_recurrent:
             self.init_expl_policy = RecurrentDummyPolicy(env.spec, policy.hidden_size)
         else:
@@ -130,8 +132,8 @@ class ValueBased(Algorithm, ABC):
             num_workers=num_workers,
             min_steps=self.num_init_memory_steps,
         )
-        self._expl_strat = None  # must be implemented by subclass
-        self.sampler_trn = None  # must be implemented by subclass
+
+        # Create sampler for initial filling of the replay memory and evaluation
         self.sampler_eval = ParallelRolloutSampler(
             self._env,
             self._policy,
@@ -140,6 +142,9 @@ class ValueBased(Algorithm, ABC):
             min_rollouts=None,
             show_progress_bar=False,
         )
+
+        self._expl_strat = None  # must be implemented by subclass
+        self.sampler_trn = None  # must be implemented by subclass
 
     @property
     def expl_strat(self) -> Union[SACExplStrat, EpsGreedyExplStrat]:
@@ -181,6 +186,7 @@ class ValueBased(Algorithm, ABC):
         self.logger.add_value("std return", ret_std, 4)
         self.logger.add_value("avg memory reward", self._memory.avg_reward(), 4)
         self.logger.add_value("avg rollout length", np.mean([ro.length for ro in ros]), 4)
+        self.logger.add_value("num total samples", self._cnt_samples)
 
         # Use data in the memory to update the policy and the Q-functions
         self.update()
@@ -192,7 +198,7 @@ class ValueBased(Algorithm, ABC):
     def update(self):
         raise NotImplementedError
 
-    def reset(self, seed: int = None):
+    def reset(self, seed: Optional[int] = None):
         # Reset the exploration strategy, internal variables and the random seeds
         super().reset(seed)
 
