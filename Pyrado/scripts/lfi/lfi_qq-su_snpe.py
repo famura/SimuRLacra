@@ -55,7 +55,7 @@ if __name__ == "__main__":
     # Set the seed
     pyrado.set_seed(1001, verbose=True)
 
-    # define RolloutSamplerForSBIBase
+    # define RolloutSamplerForSBI
     simulator, prior, real_params = create_qq_setup()
 
     # sample from true parameter distribution and generate observations with it

@@ -53,7 +53,7 @@ class FeatureStack:
         :param feat_fcns: list of feature functions, each of them maps from a multi-dim input to a multi-dim output
                           (e.g. identity_feat, squared_feat, exception: const_feat)
         """
-        self.feat_fcns = feat_fcns
+        self.feat_fcns = set(feat_fcns)
 
     def __str__(self):
         """ Get an information string. """
@@ -297,6 +297,8 @@ class RandFourierFeat:
         :param inp: input i.e. observations in the RL setting
         :return: 1-dim vector of all feature values given the observations
         """
+        inp = inp.to(device=self._device, dtype=to.get_default_dtype())
+
         if inp.ndimension() > 2:
             raise pyrado.ShapeErr(msg="RBF class can only handle 1-dim or 2-dim input!")
         inp = atleast_2D(inp)  # first dim is the batch size, the second dim it the actual input dimension
@@ -313,7 +315,7 @@ class RBFFeat:
         self,
         num_feat_per_dim: int,
         bounds: [Sequence[list], Sequence[tuple], Sequence[np.ndarray], Sequence[to.Tensor], Sequence[float]],
-        scale: float = None,
+        scale: Union[float, to.Tensor] = None,
         state_wise_norm: bool = True,
         use_cuda: bool = False,
     ):
@@ -364,7 +366,7 @@ class RBFFeat:
             delta_center = self.centers[1, :] - self.centers[0, :]
             self.scale = -to.log(to.tensor(0.2)) / to.pow(delta_center, 2)
         else:
-            self.scale = scale
+            self.scale = to.as_tensor(scale, dtype=to.get_default_dtype())
 
         self._state_wise_norm = state_wise_norm
 
@@ -403,6 +405,8 @@ class RBFFeat:
         :param inp: input i.e. observations in the RL setting
         :return: 1-dim vector of all feature values given the observations
         """
+        inp = inp.to(device=self._device, dtype=to.get_default_dtype())
+
         if inp.ndimension() > 2:
             raise pyrado.ShapeErr(msg="RBF class can only handle 1-dim or 2-dim input!")
         inp = atleast_2D(inp)  # first dim is the batch size, the second dim it the actual input dimension

@@ -304,7 +304,7 @@ def test_best_state_final_rew_task(envspec_432, rew_fcn, factor):
     # Create env spec and sub-tasks (state_space is necessary for the has_failed function)
     num_steps = 5
     state_des = np.array([0.05, 0.05, 0.05])
-    task = BestStateFinalRewTask(DesStateTask(envspec_432, state_des, rew_fcn), max_steps=num_steps, factor=factor)
+    task = BestStateFinalRewTask(DesStateTask(envspec_432, state_des, rew_fcn), factor=factor)
     task.reset(env_spec=envspec_432)
 
     # Create artificial dynamics by hard-coding a sequence of states

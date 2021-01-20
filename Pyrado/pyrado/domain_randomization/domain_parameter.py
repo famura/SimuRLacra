@@ -202,7 +202,7 @@ class NormalDomainParam(DomainParam):
 class MultivariateNormalDomainParam(DomainParam):
     """ Domain parameter sampled from a normal distribution """
 
-    def __init__(self, mean: Union[int, float, to.Tensor], cov: to.Tensor, **kwargs):
+    def __init__(self, mean: Union[int, float, to.Tensor], cov: Union[list, to.Tensor], **kwargs):
         """
         Constructor
 
@@ -210,11 +210,12 @@ class MultivariateNormalDomainParam(DomainParam):
         :param cov: covariance
         :param kwargs: forwarded to `DomainParam` constructor
         """
-        assert len(cov.shape) == 2, "Covariance needs to be given as a matrix"
         super().__init__(**kwargs)
 
-        self.mean = to.tensor(mean).view(-1)
-        self.cov = cov
+        self.mean = to.as_tensor(mean).view(-1)
+        self.cov = to.as_tensor(cov)
+        if not self.cov.ndim == 2:
+            raise pyrado.ShapeErr(msg="The covariance needs to be given as a matrix!")
         self.distr = MultivariateNormal(self.mean, self.cov, validate_args=True)
 
     @staticmethod

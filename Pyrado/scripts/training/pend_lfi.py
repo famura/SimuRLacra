@@ -29,22 +29,21 @@
 """
 Sim-to-sim experiment on the One-Mass-Oscillator environment using likelihood-free inference
 """
-from copy import deepcopy
 
-import numpy as np
 import torch as to
 import torch.nn as nn
+from copy import deepcopy
 from sbi.inference import SNPE
 from sbi import utils
 
 import pyrado
+from pyrado.algorithms.episodic.cem import CEM
 from pyrado.algorithms.inference.lfi2 import LFI
-from pyrado.domain_randomization.domain_parameter import NormalDomainParam
-from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
-from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
+from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.special.dummy import IdlePolicy
+from pyrado.policies.features import FeatureStack, identity_feat, squared_feat, const_feat, sin_feat, cos_feat
+from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.utils.argparser import get_argparser
 
 
@@ -53,52 +52,65 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(OneMassOscillatorSim.name, f"{LFI.name}")
+    ex_dir = setup_experiment(PendulumSim.name, f"{LFI.name}")
+    num_workers = 1
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_hparams = dict(dt=1 / 50.0, max_steps=200)
-    env_sim = OneMassOscillatorSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
+    env_hparams = dict(dt=1 / 100.0, max_steps=1000)
+    env_sim = PendulumSim(**env_hparams)
+    env_sim.domain_param = dict(d_pole=0, tau_max=5.0)
+    env_sim = DomainRandWrapperBuffer(env_sim, randomizer=None)
 
     # Create a fake ground truth target domain
-    num_real_obs = 5
+    num_real_obs = 1
     env_real = deepcopy(env_sim)
-    # randomizer = DomainRandomizer(
-    #     NormalDomainParam(name="k", mean=33.0, std=33 / 50),
-    #     NormalDomainParam(name="d", mean=0.2, std=0.2 / 50),
-    # )
-    # env_real = DomainRandWrapperBuffer(env_real, randomizer)
-    # env_real.fill_buffer(num_real_obs)
-    env_real.domain_param = dict(k=33, d=0.2)
-    dp_mapping = {0: "k", 1: "d"}
-
-    # Policy
-    behavior_policy = IdlePolicy(env_sim.spec)
+    env_real.domain_param = dict(m_pole=0.25, l_pole=2.0)
+    dp_mapping = {0: "m_pole", 1: "l_pole"}
 
     # Prior and Posterior (normalizing flow)
-    prior_hparam = dict(low=to.tensor([25.0, 0.05]), high=to.tensor([35, 0.45]))
+    prior_hparam = dict(low=to.tensor([0.0625, 0.0625]), high=to.tensor([4.0, 4.0]))
     prior = utils.BoxUniform(**prior_hparam)
     posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=2)
+
+    # Policy
+    feats = FeatureStack([const_feat, identity_feat, sin_feat, cos_feat, squared_feat])
+    policy = LinearPolicy(env_sim.spec, feats)
+
+    # Policy optimization subroutine
+    subrtn_policy_hparam = dict(
+        max_iter=1,
+        pop_size=40,
+        num_rollouts=4,
+        num_is_samples=10,
+        expl_std_init=1.0,
+        expl_std_min=1e-2,
+        extra_expl_std_init=1.0,
+        extra_expl_decay_iter=5,
+        num_workers=num_workers,
+    )
+    subrtn_policy = CEM(ex_dir, env_sim, policy, **subrtn_policy_hparam)
 
     # Algorithm
     algo_hparam = dict(
         summary_statistic="ramos",
         max_iter=15,
         num_real_rollouts=num_real_obs,
-        num_sim_per_real_rollout=200,
-        num_workers=1,
+        num_sim_per_real_rollout=100,
+        num_workers=num_workers,
     )
     algo = LFI(
         ex_dir,
         env_sim,
         env_real,
-        behavior_policy,
+        policy,
         dp_mapping,
         prior,
         posterior_nn_hparam,
         SNPE,
+        subrtn_policy=subrtn_policy,
         **algo_hparam,
     )
 

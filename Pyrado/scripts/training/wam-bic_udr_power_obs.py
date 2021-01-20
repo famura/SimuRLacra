@@ -27,24 +27,19 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Sim-to-sim experiment on the One-Mass-Oscillator environment using likelihood-free inference
+Train an agent to solve the WAM Ball-in-cup environment with ball observation/tracking using Policy learning by Weighting Exploration with the Returns.
 """
-from copy import deepcopy
-
 import numpy as np
-import torch as to
-import torch.nn as nn
-from sbi.inference import SNPE
-from sbi import utils
 
 import pyrado
-from pyrado.algorithms.inference.lfi2 import LFI
-from pyrado.domain_randomization.domain_parameter import NormalDomainParam
+from pyrado.algorithms.episodic.power import PoWER
+from pyrado.algorithms.meta.udr import UDR
+from pyrado.domain_randomization.domain_parameter import UniformDomainParam, NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
-from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
+from pyrado.environments.mujoco.wam import WAMBallInCupSim
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
-from pyrado.policies.special.dummy import IdlePolicy
+from pyrado.policies.special.dual_rfb import DualRBFLinearPolicy
 from pyrado.utils.argparser import get_argparser
 
 
@@ -52,66 +47,67 @@ if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
 
-    # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(OneMassOscillatorSim.name, f"{LFI.name}")
+    # Experiment
+    ex_dir = setup_experiment(
+        WAMBallInCupSim.name, f"{UDR.name}-{PoWER.name}_{DualRBFLinearPolicy.name}", "rand-cs-rl-bm-jd-js"
+    )
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
-    # Environments
-    env_hparams = dict(dt=1 / 50.0, max_steps=200)
-    env_sim = OneMassOscillatorSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
+    # Environment
+    env_hparams = dict(
+        num_dof=4,
+        max_steps=1500,
+        fixed_init_state=False,
+        observe_ball=True,
+        task_args=dict(
+            final_factor=500,
+            success_bonus=250,
+            Q=np.diag([0.5, 1e-4, 4e1]),
+            R=np.diag([0, 0, 1e-1, 2e-1]),
+            Q_dev=np.diag([0.0, 0.0, 5]),
+            # R_dev=np.diag([0., 0., 1e-3, 1e-3])
+        ),
+    )
+    env = WAMBallInCupSim(**env_hparams)
 
-    # Create a fake ground truth target domain
-    num_real_obs = 5
-    env_real = deepcopy(env_sim)
-    # randomizer = DomainRandomizer(
-    #     NormalDomainParam(name="k", mean=33.0, std=33 / 50),
-    #     NormalDomainParam(name="d", mean=0.2, std=0.2 / 50),
-    # )
-    # env_real = DomainRandWrapperBuffer(env_real, randomizer)
-    # env_real.fill_buffer(num_real_obs)
-    env_real.domain_param = dict(k=33, d=0.2)
-    dp_mapping = {0: "k", 1: "d"}
+    # Randomizer
+    randomizer = DomainRandomizer(
+        UniformDomainParam(name="cup_scale", mean=1.0, halfspan=0.2),
+        NormalDomainParam(name="rope_length", mean=0.3, std=0.005),
+        NormalDomainParam(name="ball_mass", mean=0.021, std=0.001),
+        UniformDomainParam(name="joint_damping", mean=0.05, halfspan=0.05),
+        UniformDomainParam(name="joint_stiction", mean=0.1, halfspan=0.1),
+    )
+    env = DomainRandWrapperLive(env, randomizer)
 
     # Policy
-    behavior_policy = IdlePolicy(env_sim.spec)
-
-    # Prior and Posterior (normalizing flow)
-    prior_hparam = dict(low=to.tensor([25.0, 0.05]), high=to.tensor([35, 0.45]))
-    prior = utils.BoxUniform(**prior_hparam)
-    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=2)
+    bounds = ([0.0, 0.25, 0.5], [1.0, 1.5, 2.5])
+    policy_hparam = dict(rbf_hparam=dict(num_feat_per_dim=9, bounds=bounds, scale=None), dim_mask=2)
+    policy = DualRBFLinearPolicy(env.spec, **policy_hparam)
 
     # Algorithm
     algo_hparam = dict(
-        summary_statistic="ramos",
         max_iter=15,
-        num_real_rollouts=num_real_obs,
-        num_sim_per_real_rollout=200,
-        num_workers=1,
+        pop_size=200,
+        num_is_samples=10,
+        num_rollouts=5,
+        expl_std_init=np.pi / 12,
+        expl_std_min=0.02,
+        num_workers=8,
     )
-    algo = LFI(
-        ex_dir,
-        env_sim,
-        env_real,
-        behavior_policy,
-        dp_mapping,
-        prior,
-        posterior_nn_hparam,
-        SNPE,
-        **algo_hparam,
-    )
+    algo = PoWER(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml(
         [
             dict(env=env_hparams, seed=args.seed),
-            dict(prior=prior_hparam),
-            dict(posterior_nn=posterior_nn_hparam),
+            dict(policy=policy_hparam),
             dict(algo=algo_hparam, algo_name=algo.name),
         ],
         ex_dir,
     )
 
     # Jeeeha
-    algo.train(seed=args.seed)
+    algo.train(seed=args.seed, snapshot_mode="best")

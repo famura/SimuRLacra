@@ -27,10 +27,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Script to evaluate a posterior obtained using the sbi package
+Script to evaluate a posterior obtained using the sbi package.
+Comparison is carried out via Maximum-Mean Discrpency.
+This script will only be succesful if the simulator is tractable i.e. its probability can be evaluated.
 """
 import os
 import torch as to
+import pandas as pd
 from matplotlib import pyplot as plt
 
 import pyrado
@@ -41,7 +44,11 @@ from pyrado.plotting.distribution import draw_posterior_distr
 from pyrado.plotting.utils import num_rows_cols_from_length
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment
-from pyrado.plotting.lfi_posterior_distribution import plot_posterior_distribution
+
+from pyrado.environments.one_step.multivariate_gaussian import ToyExample
+from pyrado.sampling.posterior_sampler import posterior_sampler
+
+from geomloss.samples_loss import SamplesLoss
 
 
 if __name__ == "__main__":
@@ -65,50 +72,68 @@ if __name__ == "__main__":
     if not isinstance(algo, LFI):
         raise pyrado.TypeErr(given=algo, expected_type=LFI)
 
-    # Load a specific real-world observation (off, i.e. -1, by default)
-    if args.iter != -1:
+    # algo hparams
+    params_names = list(algo.dp_mapping.values())
+    num_sim_per_real_rollout = algo.num_sim_per_real_rollout
+    num_real_rollouts = algo.num_real_rollouts
+
+    # Load a specific real-world observation (by default the latest)
+    if args.iter == -1:
         # Crawl through the experiment's directory
         for root, dirs, files in os.walk(ex_dir):
             dirs.clear()  # prevents walk() from going into subdirectories
             found_observations = [o for o in files if o.startswith("iter_") and o.endswith("_observations_real.pt")]
         load_iter = len(found_observations) - 1
-        observations_real = pyrado.load(None, f"iter_{load_iter}_observations_real", "pt", ex_dir)
+    else:
+        load_iter = args.iter
 
-    # Compute and print the argmax
-    domain_params, log_prob, _ = LFI.eval_posterior(
-        posterior, observations_real, args.num_samples, algo.sbi_simulator, simulate_observations=False
-    )
+    # go through each iteration and calculate the mmd
+    num_samples = []
+    mmd_mean = []
+    mmd_std = []
+    true_samples = None
+    posterior_samples = None
+    observations_real_sel = None
+    for iter in range(load_iter):
+        print(f"current iter: {iter}")
+        observations_real_sel = pyrado.load(None, f"iter_{iter}_observations_real", "pt", ex_dir)
+        posterior = pyrado.load(None, f"iter_{iter}_posterior", "pt", ex_dir)
 
-    # Get the environmental parameters to plot in 2D (by default the first two)
-    params_names = list(algo.dp_mapping.values())
+        # sample true posterior samples
+        true_samples = posterior_sampler(
+            env_real, prior, observations_real_sel, params_names, num_samples=args.num_samples
+        )
 
-    # Plot the posterior distribution, the true parameters / their distribution
-    fig, axs = plt.subplots(
-        # 1,
-        *num_rows_cols_from_length(observations_real.shape[0]),
-        figsize=(14, 7),
-        tight_layout=True,
-    )
-    _ = draw_posterior_distr(
-        axs,
-        "separate",  # joint or separate
-        posterior,
-        observations_real,
-        algo.dp_mapping,
-        env_real,
-        prior,
-        show_prior=True,
-        # grid_bounds=to.tensor([[22, 39], [0, 0.6]])
-    )
+        # Compute and print the argmax
+        posterior_samples, _, _ = LFI.eval_posterior(
+            posterior, observations_real_sel, args.num_samples, algo.sbi_simulator, simulate_observations=False
+        )
+        with to.no_grad():
+            mmd_loss = SamplesLoss(loss="energy")
+            loss = mmd_loss(true_samples, posterior_samples)
+        mmd_mean.append(loss.mean().item())
+        mmd_std.append(loss.std().item())
+        num_samples.append(iter * num_sim_per_real_rollout * num_real_rollouts)
 
-    # fig, ax = plt.subplots()
-    # ax = plot_posterior_distribution(
-    #     ax,
-    #     posterior,
-    #     observations_real,
-    #     initial_prior=prior,
-    #     params_names=params_names,
-    #     real_environment=env_real,
-    # )
+    num_samples = to.tensor(num_samples)
+    mmd_mean = to.tensor(mmd_mean)
+    mmd_std = to.tensor(mmd_std)
 
+    pyrado.save(num_samples, "num_samples", "pt", ex_dir)
+    pyrado.save(mmd_mean, "mmd_mean", "pt", ex_dir)
+    pyrado.save(mmd_std, "mmd_std", "pt", ex_dir)
+
+    # plot trainings progress with mmd
+    plt.figure()
+    plt.plot(num_samples, mmd_mean, mmd_std)
+    plt.fill_between(num_samples, mmd_mean - mmd_std, mmd_mean + mmd_std, color="gray", alpha=0.2)
     plt.show()
+
+    # plot scatter of the true posterior
+    plt.figure()
+    plt.scatter(true_samples[0, :, 0], true_samples[0, :, 1], color="black")
+    plt.scatter(posterior_samples[0, :, 0], posterior_samples[0, :, 1], color="blue")
+    plt.show()
+
+    # TODO: use draw_posterior_distribution but it requires marginalizing over states which are not depicted.
+    #  For now there is only a scatter-plot of the domain-parameters

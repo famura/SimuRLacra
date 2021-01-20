@@ -5,7 +5,7 @@ import pyrado
 import torch as to
 import os.path as osp
 
-from pyrado.algorithms.inference.sbi_rollout_sampler import RolloutSamplerForSBIBase
+from pyrado.algorithms.inference.sbi_rollout_sampler import RolloutSamplerForSBI
 from pyrado.environments.base import Env
 from pyrado.logger.step import StepLogger, TensorBoardPrinter, LoggerAware
 from pyrado.policies.base import Policy
@@ -79,7 +79,7 @@ class LFI(LoggerAware):
     def __init__(
         self,
         save_dir: str,
-        simulator: Union[RolloutSamplerForSBIBase, Callable],
+        simulator: Union[RolloutSamplerForSBI, Callable],
         prior: Distribution,
         inference: Type[PosteriorEstimator] = None,
         flow: Callable[[], DirectPosterior] = None,

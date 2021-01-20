@@ -1,17 +1,48 @@
-from itertools import product
+# Copyright (c) 2020, Fabio Muratore, Honda Research Institute Europe GmbH, and
+# Technical University of Darmstadt.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. Neither the name of Fabio Muratore, Honda Research Institute Europe GmbH,
+#    or Technical University of Darmstadt, nor the names of its contributors may
+#    be used to endorse or promote products derived from this software without
+#    specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL FABIO MURATORE, HONDA RESEARCH INSTITUTE EUROPE GMBH,
+# OR TECHNICAL UNIVERSITY OF DARMSTADT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+# IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
 
-import pyrado
 import torch as to
 from abc import ABC, abstractmethod
+from copy import deepcopy
 from typing import Union, Mapping
 
+import pyrado
+from pyrado.environment_wrappers.base import EnvWrapper
+from pyrado.environment_wrappers.domain_randomization import remove_all_dr_wrappers
 from pyrado.environments.base import Env
+from pyrado.environments.real_base import RealEnv
+from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
 
 
-class RolloutSamplerForSBIBase(ABC):
+class RolloutSamplerForSBI(ABC):
     """
     Defines a simulator which maps a parameter-set to an observation
 
@@ -22,7 +53,7 @@ class RolloutSamplerForSBIBase(ABC):
         """
         Constructor
 
-        :param strategy: the method with which the observations are computed from the rollouts. Possible options:
+        :param strategy: method with which the observations are computed from the rollouts. Possible options:
                          `states` (uses all observed states from rollout),
                          `final_state` (use the last observed state from the rollout), and
                          `ramos` (summary statistics as proposed in  [1])
@@ -116,58 +147,64 @@ class RolloutSamplerForSBIBase(ABC):
         return rollout.observations[-1].view(-1)
 
 
-class EnvSimulator(RolloutSamplerForSBIBase):
-    """
-    Mapping from the environment system parameters to a trajectory-based rollout using a control-policy.
-    """
-
-    def __init__(self, env: Env, policy: Policy, param_names: list, strategy="states"):
-        super().__init__(strategy=strategy)
-        self.name = env.name
-        self.env = env
-        self.policy = policy
-        self.param_names = param_names
-
-    def __call__(self, params) -> Union[StepSequence, to.Tensor]:
-        ro = rollout(
-            self.env,
-            self.policy,
-            eval=True,
-            reset_kwargs=dict(domain_param=dict(zip(self.param_names, params.squeeze().numpy()))),
-        )
-        ro.torch(data_type=to.get_default_dtype())
-        ro = self.transform_data(ro)
-        # return to.tensor(ro.observations).view(-1, 1).squeeze()
-        return ro
+# class EnvSimulator(RolloutSamplerForSBI):
+#     """ Wrapper to make SimuRLacra simulation environments usable as simulators for the sbi package """
+#
+#     def __init__(self, env: Env, policy: Policy, param_names: list, strategy="states"):
+#         super().__init__(strategy=strategy)
+#         self.name = env.name
+#         self.env = env
+#         self.policy = policy
+#         self.param_names = param_names
+#
+#     def __call__(self, params) -> Union[StepSequence, to.Tensor]:
+#         ro = rollout(
+#             self.env,
+#             self.policy,
+#             eval=True,
+#             reset_kwargs=dict(domain_param=dict(zip(self.param_names, params.squeeze().numpy()))),
+#         )
+#         ro.torch(data_type=to.get_default_dtype())
+#         ro = self.transform_data(ro)
+#         # return to.tensor(ro.observations).view(-1, 1).squeeze()
+#         return ro
 
 
-class RolloutSamplerForSBI(RolloutSamplerForSBIBase):
-    """
-    Mapping from the environment system parameters to a trajectory-based rollout using a control-policy.
-
-    TODO find a better solution. the output should always have the same size.
-    TODO this is the place where we choose how to compute the observations from the rollouts, which are then used by sbi
-    """
+class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
+    """ Wrapper to make SimuRLacra's simulation environments usable as simulators for the sbi package """
 
     def __init__(
         self,
-        env: Env,
+        env: Union[SimEnv, EnvWrapper],
         policy: Policy,
         dp_mapping: Mapping[int, str],
         strategy: str,
     ):
+        """
+        Constructor
+
+        :param env: environment which the policy operates, in any case this will be a (randomized) `SimEnv`. We strip
+                    all domain randomization wrappers from this env since we want to randomize it manually here.
+        :param policy: policy used for sampling the rollout
+        :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)
+        :param strategy: the method with which the observations are computed from the rollouts. Possible options:
+                         `states` (uses all observed states from rollout),
+                         `final_state` (use the last observed state from the rollout), and
+                         `ramos` (summary statistics as proposed in  [1])
+        """
         super().__init__(strategy=strategy)
 
-        self.env = env
-        self.policy = policy
-        self.param_names = dp_mapping.values()
+        self._env = remove_all_dr_wrappers(deepcopy(env))
+        self._policy = policy
+        self.dp_names = dp_mapping.values()
 
-    def __call__(self, params):
+    def __call__(self, dp_values: to.Tensor):
+        """ Set the domain parameter, run one rollout, and compute summary statistics. """
         ro = rollout(
-            self.env,
-            self.policy,
+            self._env,
+            self._policy,
             eval=True,
-            reset_kwargs=dict(domain_param=dict(zip(self.param_names, params.squeeze()))),
+            reset_kwargs=dict(domain_param=dict(zip(self.dp_names, dp_values.numpy().flatten()))),
         )
         ro.torch(data_type=to.get_default_dtype())
 
@@ -175,29 +212,36 @@ class RolloutSamplerForSBI(RolloutSamplerForSBIBase):
         return self.transform_data(ro)
 
 
-class RealRolloutSamplerForSBI(RolloutSamplerForSBIBase):
-    """
-    TODO Dirty shit. Bah this is ugly.
-    """
+class RealRolloutSamplerForSBI(RolloutSamplerForSBI):
+    """ Wrapper to make SimuRLacra's real environments usable as simulators for the sbi package """
 
     def __init__(
         self,
-        env: Env,
+        env: Union[RealEnv, SimEnv, EnvWrapper],
         policy: Policy,
         strategy: str,
     ):
+        """
+        Constructor
+
+        :param env: environment which the policy operates, in sim-to-real settings this is a real-world device, buy in
+                    a sim-to-sim experiment this can be a (randomized) `SimEnv`. We strip all domain randomization
+                    wrappers from this env since we want to randomize it manually here.
+        :param policy: policy used for sampling the rollout
+        :param strategy: the method with which the observations are computed from the rollouts. Possible options:
+                         `states` (uses all observed states from rollout),
+                         `final_state` (use the last observed state from the rollout), and
+                         `ramos` (summary statistics as proposed in  [1])
+        """
         super().__init__(strategy=strategy)
 
-        self.env = env
-        self.policy = policy
+        self._env = remove_all_dr_wrappers(deepcopy(env))
+        self._policy = policy
 
-    def __call__(self, params=None):
-        ro = rollout(
-            self.env,
-            self.policy,
-            eval=True,
-            # Don't set the domain params here since they are set by the DomainRandWrapperBuffer to mimic the randomness
-        )
+    def __call__(self, dp_values: to.Tensor = None):
+        """ Run one rollout, and compute summary statistics. """
+        # Don't set the domain params here since they are set by the DomainRandWrapperBuffer to mimic the randomness
+        ro = rollout(self._env, self._policy, eval=True)
         ro.torch(data_type=to.get_default_dtype())
 
         # Return the observations used for inference from the rollout data

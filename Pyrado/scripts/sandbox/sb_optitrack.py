@@ -29,6 +29,7 @@
 """
 Script to test the NatNet client in combination with OptiTrack
 """
+import numpy as np
 import time
 from scipy.spatial.transform import Rotation
 
@@ -41,7 +42,9 @@ if __name__ == "__main__":
     streamingClient = NatNetClient(ver=(3, 0, 0, 0), quiet=True)
     rbdt = RigidBodyTracker(
         ["Cup", "Ball"],
-        rotation=Rotation.from_euler("xzy", [90.0, 0.0, 0.0], degrees=True),
+        # rotation=Rotation.from_euler("XYZ", [90.0, -90.0, 0.0], degrees=True),  # same as below
+        rotation=Rotation.from_euler("yxz", [-90.0, 90.0, 0.0], degrees=True),  # same as above
+        offset=np.array([-0.4220, 0.4140, -0.1097]),
     )
     streamingClient.rigidBodyListener = rbdt
 
@@ -52,7 +55,8 @@ if __name__ == "__main__":
         time.sleep(0.05)
 
     for i in range(0, 10000):
-        print(rbdt.get_current_estimate(["Cup", "Ball"]))
+        # print(rbdt.get_current_estimate(["Cup", "Ball"]))
+        print(rbdt.get_current_estimate(["Ball"])[0])
         time.sleep(1)
 
     streamingClient.stop()

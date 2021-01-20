@@ -33,7 +33,7 @@ if __name__ == "__main__":
     env_hparams = dict(dt=1 / 50.0, max_steps=100)
     env_sim = QQubeSwingUpSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
 
-    # Create a fake 'ground truth' target domain
+    # Create a fake ground truth target domain
     num_real_obs = 5
     env_real = deepcopy(env_sim)
     randomizer = DomainRandomizer(
@@ -47,11 +47,9 @@ if __name__ == "__main__":
     # Policy
     behavior_policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec)
 
-    # Prior
+    # Prior and Posterior (normalizing flow)
     prior_hparam = dict(low=to.tensor([1.0, 1.0]), high=to.tensor([20.0, 10.0]))
     prior = utils.BoxUniform(**prior_hparam)
-
-    # Posterior (normalizing flow)
     posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=2)
 
     # Algorithm

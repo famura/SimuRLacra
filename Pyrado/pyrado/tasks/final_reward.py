@@ -277,23 +277,19 @@ class FinalRewTask(TaskWrapper):
 class BestStateFinalRewTask(TaskWrapper):
     """
     Wrapper for tasks which yields a reward / cost on success / failure based on the best reward / cost observed in the
-    current trajectory that is scaled by the number of taken / remaining time steps.
+    current trajectory.
     """
 
-    def __init__(self, wrapped_task: Task, max_steps: int, factor: float = 1.0):
+    def __init__(self, wrapped_task: Task, factor: float):
         """
         Constructor
 
         :param wrapped_task: task to wrap
-        :param max_steps: maximum number of time steps in the environment to infer the number of steps when done
         :param factor: value to scale the final reward
         """
         # Call TaskWrapper's constructor
         super().__init__(wrapped_task)
 
-        if not isinstance(max_steps, int):
-            raise pyrado.TypeErr(given=max_steps, expected_type=int)
-        self._max_steps = max_steps
         self.factor = factor
         self.best_rew = -pyrado.inf
         self._yielded_final_rew = False
@@ -325,10 +321,8 @@ class BestStateFinalRewTask(TaskWrapper):
         if self._yielded_final_rew:
             # Only yield the final reward once
             return 0.0
-
         else:
             self._yielded_final_rew = True
 
-            # Return the highest reward / lowest cost scaled with the number of taken time steps and the factor
-            scale = (self._max_steps - remaining_steps) * self.factor
-            return scale * self.best_rew
+            # Return the highest reward / lowest cost scaled with the factor
+            return self.best_rew * self.factor

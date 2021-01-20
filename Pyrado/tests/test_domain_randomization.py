@@ -31,35 +31,38 @@ import torch as to
 import numpy as np
 from copy import deepcopy
 
-import pyrado
-from pyrado.domain_randomization.domain_randomizer import DistributionFreeDomainRandomizer
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environments.sim_base import SimEnv
-from tests.conftest import m_needs_bullet, m_needs_mujoco
-
 from pyrado.domain_randomization.domain_parameter import (
     NormalDomainParam,
     MultivariateNormalDomainParam,
     BernoulliDomainParam,
+    UniformDomainParam,
 )
 from pyrado.domain_randomization.utils import param_grid
+from tests.conftest import m_needs_bullet, m_needs_mujoco
 
 
 @pytest.mark.parametrize(
     "dp",
     [
+        UniformDomainParam(name="", mean=3.0, halfspan=11.0, clip_lo=-5, clip_up=5),
         NormalDomainParam(name="", mean=10, std=1.0, clip_lo=9, clip_up=11),
         MultivariateNormalDomainParam(name="", mean=to.ones((2, 1)), cov=to.eye(2), clip_lo=-1, clip_up=1.0),
         MultivariateNormalDomainParam(name="", mean=10 * to.ones((2,)), cov=2 * to.eye(2), clip_up=11),
         BernoulliDomainParam(name="", val_0=2, val_1=5, prob_1=0.8),
         BernoulliDomainParam(name="", val_0=-3, val_1=5, prob_1=0.8, clip_up=4),
     ],
-    ids=["1dim", "2dim_v1", "2dim_v2", "bern_v1", "bern_v2"],
+    ids=["U", "N", "MVN_v1", "MVN_v2", "B_v1", "B_v2"],
 )
-def test_domain_param(dp):
-    for num_samples in [1, 5, 25]:
-        s = dp.sample(num_samples)
-        assert len(s) == num_samples
+@pytest.mark.parametrize("num_samples", [1, 5, 100])
+def test_domain_param(dp, num_samples):
+    # assert dp == dp
+    fns = dp.get_field_names()
+    assert fns is not None
+
+    s = dp.sample(num_samples)
+    assert isinstance(s, list)
+    assert len(s) == num_samples
 
 
 def test_randomizer(default_randomizer):

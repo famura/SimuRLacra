@@ -58,13 +58,13 @@ if __name__ == "__main__":
         # If `max_steps` (or `dt`) are not explicitly set using `args`, use the same as in the simulation
         max_steps = args.max_steps if args.max_steps < pyrado.inf else env_sim.max_steps
         dt = args.dt if args.dt is not None else env_sim.dt
-        mode = ""
+        mode = args.mode if args.mode is not None else ""
         while mode not in ["ep", "sb"]:
             mode = input("Pass ep for episodic and sb for step-based control mode: ").lower()
         if mode == "sb":
             env_real = WAMBallInCupRealStepBased(
-                observe_ball=env_sim.observe_ball,
-                observe_cup=env_sim.observe_cup,
+                observe_ball=inner_env(env_sim).observe_ball,
+                observe_cup=inner_env(env_sim).observe_cup,
                 dt=dt,
                 max_steps=max_steps,
                 num_dof=inner_env(env_sim).num_dof,

@@ -12,45 +12,45 @@ from sbi.utils import BoxUniform
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 
 
-def plot_posterior_distribution(ax: plt.Axes,
-                                posterior: DirectPosterior,
-                                observations: to.Tensor,
-                                real_environment: DomainRandWrapperBuffer = None,
-                                params_names: [str, str] = None,
-                                initial_prior: BoxUniform = None,
-                                grid_boundaries: [float, float, float, float] = None,
-                                color_list = list(colors.TABLEAU_COLORS),
-                                grid_size = 1000,
-                                scatter_kwargs = dict(),
-                                contour_kwargs = dict(),
-                                contourf_kwargs = dict()
-                                ):
+def plot_posterior_distribution(
+    ax: plt.Axes,
+    posterior: DirectPosterior,
+    observations: to.Tensor,
+    real_environment: DomainRandWrapperBuffer = None,
+    params_names: [str, str] = None,
+    initial_prior: BoxUniform = None,
+    grid_boundaries: [float, float, float, float] = None,
+    color_list=list(colors.TABLEAU_COLORS),
+    grid_size=1000,
+    scatter_kwargs=dict(),
+    contour_kwargs=dict(),
+    contourf_kwargs=dict(),
+):
     """
-        Create a matplotlib.axes object, that shows the probability distributions of a given posterior wrt. given
-        observations as condition.
-        Optional: Pass a real_environment object to plot the original environment parameters as a scatter.
-        Therefore, the parameter names for the x and y axis have to be given in the params_names object
-        (Makes only sense if the real environment is a DomainRandWrapperBuffer object)
-        Optional: Pass the initial prior region to set the boundaries of the plotting region. For LFI no
-        regions outside the initial prior region can be estimated.
-        Optional: Pass the true distribution to plot it as a filled contour in the background (needs a log_prob
-        function)
+    Create a matplotlib.axes object, that shows the probability distributions of a given posterior wrt. given
+    observations as condition.
+    Optional: Pass a real_environment object to plot the original environment parameters as a scatter.
+    Therefore, the parameter names for the x and y axis have to be given in the params_names object
+    (Makes only sense if the real environment is a DomainRandWrapperBuffer object)
+    Optional: Pass the initial prior region to set the boundaries of the plotting region. For LFI no
+    regions outside the initial prior region can be estimated.
+    Optional: Pass the true distribution to plot it as a filled contour in the background (needs a log_prob
+    function)
 
-        :param ax: axis of the figure to plot on
-        :param posterior: sbi DirectPosterior object
-        :param observations: true observed rollouts. Needed as context for the posterior
-        :param real_environment: contains the true domain parameters for the given observations
-        :param params_names: names of the environmental parameters to plot in x and y direction
-        :param initial_prior: initial prior to get the grid boundaries (if grid_boundaries is not given)
-        :param grid_boundaries: boundaries of the grid ([x_min, x_max, y_min, y_max])
-        :param color_list: list of pyplot colors
-        :param grid_size: width and height of the plotting grid
-        :param scatter_kwargs: keyword arguments forwarded to pyplot's `scatter()` function for the true parameter
-        :param contour_kwargs: keyword arguments forwarded to pyplot's `contour()` function for the posterior distribution
-        :param contourf_kwargs: keyword arguments forwarded to pyplot's `contourf()` function for the true distribution
-        :return: updated axis ax
-        """
-
+    :param ax: axis of the figure to plot on
+    :param posterior: sbi DirectPosterior object
+    :param observations: true observed rollouts. Needed as context for the posterior
+    :param real_environment: contains the true domain parameters for the given observations
+    :param params_names: names of the environmental parameters to plot in x and y direction
+    :param initial_prior: initial prior to get the grid boundaries (if grid_boundaries is not given)
+    :param grid_boundaries: boundaries of the grid ([x_min, x_max, y_min, y_max])
+    :param color_list: list of pyplot colors
+    :param grid_size: width and height of the plotting grid
+    :param scatter_kwargs: keyword arguments forwarded to pyplot's `scatter()` function for the true parameter
+    :param contour_kwargs: keyword arguments forwarded to pyplot's `contour()` function for the posterior distribution
+    :param contourf_kwargs: keyword arguments forwarded to pyplot's `contourf()` function for the true distribution
+    :return: updated axis ax
+    """
 
     num_obs = observations.shape[0]
     fun_name = inspect.getframeinfo(inspect.currentframe()).function
@@ -71,12 +71,8 @@ def plot_posterior_distribution(ax: plt.Axes,
     elif initial_prior is not None:
         if type(initial_prior) != BoxUniform:
             raise TypeError()
-        x = to.linspace(initial_prior.base_dist.low[0],
-                        initial_prior.base_dist.high[0],
-                        grid_size)
-        y = to.linspace(initial_prior.base_dist.low[1],
-                        initial_prior.base_dist.high[1],
-                        grid_size)
+        x = to.linspace(initial_prior.base_dist.low[0], initial_prior.base_dist.high[0], grid_size)
+        y = to.linspace(initial_prior.base_dist.low[1], initial_prior.base_dist.high[1], grid_size)
     else:
         raise AttributeError("range or initial_prior has to be given")
     x_mesh, y_mesh = to.meshgrid([x, y])
@@ -103,8 +99,8 @@ def plot_posterior_distribution(ax: plt.Axes,
         print("[{}] plot real distribution ...".format(fun_name))
         # get the true parameter distribution
         real_distribution = None
-        loc = to.tensor([0., 0.])
-        covariance_matrix = to.tensor([[0., 0.], [0., 0.]])
+        loc = to.tensor([0.0, 0.0])
+        covariance_matrix = to.tensor([[0.0, 0.0], [0.0, 0.0]])
         for param in real_environment.randomizer.domain_params:
             for i in range(len(params_names)):
                 if param.name == params_names[i]:
@@ -134,28 +130,8 @@ def plot_posterior_distribution(ax: plt.Axes,
             true_params.append([float(params[params_names[0]]), float(params[params_names[1]])])
         true_params = to.tensor(true_params)
 
-        base_args = dict(c=color_list[:len(true_params)], zorder=1, s=300, marker='X', edgecolors='black')  # default
+        base_args = dict(c=color_list[: len(true_params)], zorder=1, s=300, marker="X", edgecolors="black")  # default
         base_args.update(scatter_kwargs)
         ax.scatter(true_params[:, 0], true_params[:, 1], **base_args)
 
     return ax
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
