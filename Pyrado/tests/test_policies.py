@@ -90,9 +90,7 @@ def tsdataset(request):
 )
 def test_simple_feature_stack(feat_list):
     fs = FeatureStack(feat_list)
-    obs = to.randn(
-        1,
-    )
+    obs = to.randn(1)
     feats_val = fs(obs)
     assert feats_val is not None
 
@@ -102,9 +100,7 @@ def test_simple_feature_stack(feat_list):
 def test_mul_feat(obs_dim, idcs):
     mf = MultFeat(idcs=idcs)
     fs = FeatureStack([identity_feat, mf])
-    obs = to.randn(
-        obs_dim,
-    )
+    obs = to.randn(obs_dim)
     feats_val = fs(obs)
     assert len(feats_val) == obs_dim + 1
 
@@ -117,15 +113,11 @@ def test_rff_feat_serial(obs_dim, num_feat_per_dim):
     rff = RandFourierFeat(
         inp_dim=obs_dim,
         num_feat_per_dim=num_feat_per_dim,
-        bandwidth=np.ones(
-            obs_dim,
-        ),
+        bandwidth=np.ones(obs_dim),
     )
     fs = FeatureStack([rff])
     for _ in range(10):
-        obs = to.randn(
-            obs_dim,
-        )
+        obs = to.randn(obs_dim)
         feats_val = fs(obs)
         assert feats_val.shape == (1, num_feat_per_dim)
 
@@ -139,9 +131,7 @@ def test_rff_feat_batched(batch_size, obs_dim, num_feat_per_dim):
     rff = RandFourierFeat(
         inp_dim=obs_dim,
         num_feat_per_dim=num_feat_per_dim,
-        bandwidth=np.ones(
-            obs_dim,
-        ),
+        bandwidth=np.ones(obs_dim),
     )
     fs = FeatureStack([rff])
     for _ in range(10):
@@ -165,9 +155,7 @@ def test_rbf_serial(obs_dim, num_feat_per_dim, bounds):
     rbf = RBFFeat(num_feat_per_dim=num_feat_per_dim, bounds=bounds)
     fs = FeatureStack([rbf])
     for _ in range(10):
-        obs = to.randn(
-            obs_dim,
-        )  # 1-dim obs vector
+        obs = to.randn(obs_dim)  # 1-dim obs vector
         feats_val = fs(obs)
         assert feats_val.shape == (1, obs_dim * num_feat_per_dim)
 

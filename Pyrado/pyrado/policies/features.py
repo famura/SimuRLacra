@@ -53,7 +53,7 @@ class FeatureStack:
         :param feat_fcns: list of feature functions, each of them maps from a multi-dim input to a multi-dim output
                           (e.g. identity_feat, squared_feat, exception: const_feat)
         """
-        self.feat_fcns = feat_fcns
+        self.feat_fcns = set(feat_fcns)
 
     def __str__(self):
         """ Get an information string. """

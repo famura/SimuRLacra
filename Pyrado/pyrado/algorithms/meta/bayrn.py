@@ -26,7 +26,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import joblib
 import numpy as np
 import os
 import os.path as osp
@@ -218,7 +217,7 @@ class BayRn(InterruptableAlgorithm):
         # Set the domain randomizer
         self._env_sim.adapt_randomizer(cand.detach().cpu().numpy())
 
-        # Reset the subroutine's algorithm which includes resetting the exploration
+        # Reset the subroutine algorithm which includes resetting the exploration
         self._cnt_samples += self._subrtn.sample_count
         self._subrtn.reset()
 
@@ -307,10 +306,10 @@ class BayRn(InterruptableAlgorithm):
         mc_estimator: bool,
         prefix: str,
         num_rollouts: int,
-        num_parallel_envs: int = 1,
+        num_workers: int = 4,
     ) -> to.Tensor:
         """
-        Evaluate a policy on the target system (real-world platform).
+        Evaluate a policy either in the source or in the target domain.
         This method is static to facilitate evaluation of specific policies in hindsight.
 
         :param save_dir: directory to save the snapshots i.e. the results in, if `None` nothing is saved
@@ -321,7 +320,7 @@ class BayRn(InterruptableAlgorithm):
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
         :param num_rollouts: number of rollouts to collect on the target system
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
-        :param num_parallel_envs: number of environments for the parallel sampler (only used for SimEnv)
+        :param num_workers: number of environments for the parallel sampler (only used for a `SimEnv`)
         :return: estimated return in the target domain
         """
         if save_dir is not None:
@@ -339,7 +338,7 @@ class BayRn(InterruptableAlgorithm):
                     break
         elif isinstance(inner_env(env), SimEnv):
             # Create a parallel sampler when conducting a sim-to-sim experiment
-            sampler = ParallelRolloutSampler(env, policy, num_workers=num_parallel_envs, min_rollouts=num_rollouts)
+            sampler = ParallelRolloutSampler(env, policy, num_workers=num_workers, min_rollouts=num_rollouts)
             ros = sampler.sample()
             for i in range(num_rollouts):
                 rets_real[i] = ros[i].undiscounted_return()
@@ -347,9 +346,8 @@ class BayRn(InterruptableAlgorithm):
             raise pyrado.TypeErr(given=inner_env(env), expected_type=[RealEnv, SimEnv])
 
         if save_dir is not None:
-            # Save the evaluation results
-            to.save(rets_real, osp.join(save_dir, f"{prefix}_returns_real.pt"))
-
+            # Save and print the evaluation results
+            pyrado.save(rets_real, "returns_real", "pt", save_dir, meta_info=dict(prefix=prefix))
             print_cbt("Target domain performance", bright=True)
             print(
                 tabulate(
@@ -560,7 +558,7 @@ class BayRn(InterruptableAlgorithm):
         # Set the domain randomizer
         env_sim.adapt_randomizer(argmax_cand.numpy())
 
-        # Reset the subroutine's algorithm which includes resetting the exploration
+        # Reset the subroutine algorithm which includes resetting the exploration
         subrtn.reset()
 
         # Do a warm start

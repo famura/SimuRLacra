@@ -63,7 +63,7 @@ class PendulumSim(SimPyEnv, Serializable):
 
         return RadiallySymmDesStateTask(self.spec, state_des, ExpQuadrErrRewFcn(Q, R), idcs=[1])
 
-    def observe(self, state):
+    def observe(self, state) -> np.ndarray:
         return np.array([np.sin(state[0]), np.cos(state[0]), state[1]])
 
     @classmethod
@@ -84,7 +84,7 @@ class PendulumSim(SimPyEnv, Serializable):
 
         # Dynamics (pendulum modeled as a rod)
         th, th_dot = self.state
-        th_ddot = (act - 0.5 * m_pole * g * l_pole * np.sin(th) - d_pole * th_dot) / (m_pole * l_pole ** 2 / 3.0)
+        th_ddot = (act - m_pole * g * l_pole / 2.0 * np.sin(th) - d_pole * th_dot) / (m_pole * l_pole ** 2 / 3.0)
 
         # Integration step (symplectic Euler)
         self.state[1] += th_ddot * self._dt  # next velocity
