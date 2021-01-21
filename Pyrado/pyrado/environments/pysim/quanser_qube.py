@@ -164,10 +164,10 @@ class QQubeSim(SimPyEnv, Serializable):
                 # Accessing variables of outer class
                 self.qq = qq
                 Lr = float(self.qq.domain_param["Lr"])
-                lp = float(self.qq.domain_param["Lp"])
+                Lp = float(self.qq.domain_param["Lp"])
 
                 self.setBackgroundColor(1, 1, 1)
-                self.cam.setY(-10)
+                self.cam.setY(-1.15)
                 self.render.setAntialias(AntialiasAttrib.MAuto)
                 self.windowProperties = WindowProperties()
                 self.windowProperties.setForeground(True)
@@ -197,40 +197,47 @@ class QQubeSim(SimPyEnv, Serializable):
 
                 box = self.loader.loadModel(pathlib.Path(mydir, "box.egg"))
                 box.setPos(0, 0, -0.07)
-                #box.setScale()
+                #length=0.09, width=0.1, height=0.09
+                box.setScale(0.09, 0.1, 0.09)
                 box.setColor(0.5, 0.5, 0.5)
                 box.reparentTo(self.render)
 
+                #zeigt nach oben aus Box raus
                 cylinder = self.loader.loadModel(pathlib.Path(mydir, "cylinder.egg"))
                 #cylinder.set_rotation_or_sth
-                #cylinder.setScale()
-                #cylinder.setColor()
+                #radius=0.005, length=0.03
+                cylinder.setScale(0.005, 0.005, 0.03)
+                cylinder.setColor(0.5, 0.5, 0,5) #grey
                 cylinder.reparentTo(self.render)
 
                 # Joints
                 self.joint1 = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
-                #self.joint1.setScale()
+                self.joint1.setScale(0.005, 0.005, 0.005)
                 #self.joint1.setColor()
                 self.joint1.reparentTo(self.render)
 
                 self.joint2 = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
-                #self.joint2.setScale()
+                self.joint2.setScale(0.005, 0.005, 0.005)
                 #self.joint2.setColor()
                 self.joint2.reparentTo(self.render)
 
                 # Arm
+                #vp.cylinder(radius=arm_radius, length=Lr, color=vp.color.blue)
                 self.arm = self.loader.loadModel(pathlib.Path(mydir, "cylinder.egg"))
-                #self.arm.setScale()
-                #self.arm.setColor()
+                #radius = 0.005
+                self.arm.setScale(arm_radius, arm_radius, Lr)
+                self.arm.setColor(0, 0, 1) #blue
                 self.arm.reparentTo(self.render)
 
                 # Pole
+                #vp.cylinder(radius=pole_radius, length=Lp, color=vp.color.red)
                 self.pole = self.loader.loadModel(pathlib.Path(mydir, "cylinder.egg"))
-                #self.pole.setScale()
-                #self.pole.setColor()
+                self.pole.setScale(pole_radius, pole_radius, Lp)
+                self.pole.setColor(1, 0, 0) #red
                 self.pole.reparentTo(self.render)
 
                 # Curve
+                # vp.curve(color=vp.color.white, radius=0.0005, retain=2000)
                 #self.curve = self.loader.loadModel(GeomLinestrips)
                 #self.curve.setColor()
                 #self.curve.setScale()
@@ -262,8 +269,8 @@ class QQubeSim(SimPyEnv, Serializable):
                 #self.arm.set_axis
                 #self.pole.setPos()
                 #self.pole.set_axis
-                self.joint1.setPos(self.arm.getPos())
-                self.joint2.setPos(self.pole.getPos())
+                #self.joint1.setPos(self.arm.getPos())
+                #self.joint2.setPos(self.pole.getPos())
                 #self.curve.append(self.pole.getPos() + self.pole.getAxis())
 
                 # Displayed text
