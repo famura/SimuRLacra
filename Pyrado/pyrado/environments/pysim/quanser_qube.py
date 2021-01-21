@@ -156,110 +156,142 @@ class QQubeSim(SimPyEnv, Serializable):
 
         class PandaVis(ShowBase):
 
-        ShowBase.__init__(self)
+            def __init__(self, qq):
+                ShowBase.__init__(self)
 
-        mydir = pathlib.Path(__file__).resolve().parent.absolute()
+                mydir = pathlib.Path(__file__).resolve().parent.absolute()
 
-        # Accessing variables of outer class
-        self.qq = qq
+                # Accessing variables of outer class
+                self.qq = qq
+                Lr = float(self.domain_param["Lr"])
+                lp = float(self.domain_param["Lp"])
 
-        # Convert to float for VPython
-        Lr = float(self.qq.domain_param["Lr"])
-        Lp = float(self.qq.domain_param["Lp"])
+                self.setBackgroundColor(0, 0, 0)
+                self.cam.setY(-3)
+                self.render.setAntialias(AntialiasAttrib.MAuto)
+                self.windowProperties = WindowProperties()
+                self.windowProperties.setForeground(True)
 
-        self.setBackgroundColor(1, 1, 1)
-        self.cam.setY(-3)
-        self.render.setAntialias(AntialiasAttrib.MAuto)
-        self.windowProperties = WindowProperties()
-        self.windowProperties.setForeground(True)
+                # Set lighting
+                self.directionalLight = DirectionalLight('directionalLight')
+                self.directionalLightNP = self.render.attachNewNode(self.directionalLight)
+                self.directionalLightNP.setHpr(0, -8, 0)
+                # self.directionalLightNP.setPos(0, 8, 0)
+                self.render.setLight(self.directionalLightNP)
 
-        # Set lighting
-        self.directionalLight = DirectionalLight('directionalLight')
-        self.directionalLightNP = self.render.attachNewNode(self.directionalLight)
-        self.directionalLightNP.setHpr(0, -8, 0)
-        #self.directionalLightNP.setPos(0, 8, 0)
-        self.render.setLight(self.directionalLightNP)
+                self.ambientLight = AmbientLight('ambientLight')
+                self.ambientLight.setColor((0.1, 0.1, 0.1, 1))
+                self.ambientLightNP = self.render.attachNewNode(self.ambientLight)
+                self.render.setLight(self.ambientLightNP)
 
-        self.ambientLight = AmbientLight('ambientLight')
-        self.ambientLight.setColor((0.1, 0.1, 0.1, 1))
-        self.ambientLightNP = self.render.attachNewNode(self.ambientLight)
-        self.render.setLight(self.ambientLightNP)
+                # Text
+                self.text = TextNode('parameters')
+                self.textNodePath = aspect2d.attachNewNode(self.text)
+                self.textNodePath.setScale(0.07)
+                self.textNodePath.setPos(0.3, 0, -0.3)
 
-        self.text = TextNode('parameters')
-        self.textNodePath = aspect2d.attachNewNode(self.text)
-        self.textNodePath.setScale(0.07)
-        self.textNodePath.setPos(0.3, 0, -0.3)
+                # Init render objects on first call
+                scene_range = 0.2
+                arm_radius = 0.003
+                pole_radius = 0.0045
 
-        # HIER GEHTS WEITER
-        scene_range = 0.2
-        arm_radius = 0.003
-        pole_radius = 0.0045
-        self._anim["canvas"].background = vp.color.white
-        self._anim["canvas"].lights = []
-        vp.distant_light(direction=vp.vec(0.2, 0.2, 0.5), color=vp.color.white)
-        self._anim["canvas"].up = vp.vec(0, 0, 1)
-        self._anim["canvas"].range = scene_range
-        self._anim["canvas"].center = vp.vec(0.04, 0, 0)
-        self._anim["canvas"].forward = vp.vec(-2, 1.2, -1)
-        vp.box(pos=vp.vec(0, 0, -0.07), length=0.09, width=0.1, height=0.09, color=vp.color.gray(0.5))
-        vp.cylinder(axis=vp.vec(0, 0, -1), radius=0.005, length=0.03, color=vp.color.gray(0.5))
-        # Joints
-        self._anim["joint1"] = vp.sphere(radius=0.005, color=vp.color.white)
-        self._anim["joint2"] = vp.sphere(radius=pole_radius, color=vp.color.white)
-        # Arm
-        self._anim["arm"] = vp.cylinder(radius=arm_radius, length=Lr, color=vp.color.blue)
-        # Pole
-        self._anim["pole"] = vp.cylinder(radius=pole_radius, length=Lp, color=vp.color.red)
-        # Curve
-        self._anim["curve"] = vp.curve(color=vp.color.white, radius=0.0005, retain=2000)
+                box = self.loader.loadModel(pathlib.Path(mydir, "box.egg"))
+                box.setPos(0, 0, -0.07)
+                box.setScale()
+                box.setColor()
+                box.reparentTo(self.render)
+
+                cylinder = self.loader.loadModel(pathlib.Path(mydir, "cylinder.egg"))
+                #cylinder.set_rotation_or_sth
+                cylinder.setScale()
+                cylinder.setColor()
+                cylinder.reparentTo(self.render)
+
+                # Joints
+                self.joint1 = self.loader.loadModel(pathlib.Path(mydir, "sphere.egg"))
+                self.joint1.setScale()
+                self.joint1.setColor()
+                self.joint1.reparentTo(self.render)
+
+                self.joint2 = self.loader.loadModel(pathlib.Path(mydir, "sphere.egg"))
+                self.joint2.setScale()
+                self.joint2.setColor()
+                self.joint2.reparentTo(self.render)
+
+                # Arm
+                self.arm = self.loader.loadModel(pathlib.Path(mydir, "cylinder.egg"))
+                self.arm.setScale()
+                self.arm.setColor()
+                self.arm.reparentTo(self.render)
+
+                # Pole
+                self.pole = self.loader.loadModel(pathlib.Path(mydir, "cylinder.egg"))
+                self.pole.setScale()
+                self.pole.setColor()
+                self.pole.reparentTo(self.render)
+
+                # Curve
+                self.curve = self.loader.loadModel(GeomLinestrips)
+                self.curve.setColor()
+                self.curve.setScale()
+                self.curve.reparentTo(self.render)
+
+                self.taskMgr.add(self.update, "update")
+
+            def reset(self):
+                # clear
+                pass
+
+            def update(self, task):
+                g = self.domain_param["g"]
+                Mr = self.domain_param["Mr"]
+                Mp = self.domain_param["Mp"]
+                Lr = float(self.domain_param["Lr"])
+                Lp = float(self.domain_param["Lp"])
+                km = self.domain_param["km"]
+                Rm = self.domain_param["Rm"]
+                Dr = self.domain_param["Dr"]
+                Dp = self.domain_param["Dp"]
+
+                th, al, _, _ = self.state
+                arm_pos = (Lr * np.cos(th), Lr * np.sin(th), 0.0)
+                pole_ax = (-Lp * np.sin(al) * np.sin(th), +Lp * np.sin(al) * np.cos(th), -Lp * np.cos(al))
+
+                #self.arm.set_axis
+                self.pole.setPos()
+                #self.pole.set_axis
+                self.joint1.setPos(self.arm.getPos())
+                self.joint2.setPos(self.pole.getPos())
+                self.curve.append(self.pole.getPos() + self.pole.getAxis())
+
+                # Displayed text
+                self.text.setText(f"""
+                    theta: {self.state[0]*180/np.pi : 3.1f}
+                    alpha: {self.state[1]*180/np.pi : 3.1f}
+                    dt: {self._dt :1.4f}
+                    g: {g : 1.3f}
+                    Mr: {Mr : 1.4f}
+                    Mp: {Mp : 1.4f}
+                    Lr: {Lr : 1.4f}
+                    Lp: {Lp : 1.4f}
+                    Dr: {Dr : 1.7f}
+                    Dp: {Dp : 1.7f}
+                    Rm: {Rm : 1.3f}
+                    km: {km : 1.4f}
+                    """)
+
+                return Task.cont
+
+        # Create instance of PandaVis
+        self._visualization = PandaVis(self)
+        # States that visualization is running
+        self._initiated = True
 
     def _update_anim(self):
         self._visualization.taskMgr.step()
 
-
-        # Convert to float for VPython
-        g = self.domain_param["g"]
-        Mr = self.domain_param["Mr"]
-        Mp = self.domain_param["Mp"]
-        Lr = float(self.domain_param["Lr"])
-        Lp = float(self.domain_param["Lp"])
-        km = self.domain_param["km"]
-        Rm = self.domain_param["Rm"]
-        Dr = self.domain_param["Dr"]
-        Dp = self.domain_param["Dp"]
-
-        th, al, _, _ = self.state
-        arm_pos = (Lr * np.cos(th), Lr * np.sin(th), 0.0)
-        pole_ax = (-Lp * np.sin(al) * np.sin(th), +Lp * np.sin(al) * np.cos(th), -Lp * np.cos(al))
-        self._anim["arm"].axis = vp.vec(*arm_pos)
-        self._anim["pole"].pos = vp.vec(*arm_pos)
-        self._anim["pole"].axis = vp.vec(*pole_ax)
-        self._anim["joint1"].pos = self._anim["arm"].pos
-        self._anim["joint2"].pos = self._anim["pole"].pos
-        self._anim["curve"].append(self._anim["pole"].pos + self._anim["pole"].axis)
-
-        # Set caption text
-        self._anim[
-            "canvas"
-        ].caption = f"""
-            theta: {self.state[0]*180/np.pi : 3.1f}
-            alpha: {self.state[1]*180/np.pi : 3.1f}
-            dt: {self._dt :1.4f}
-            g: {g : 1.3f}
-            Mr: {Mr : 1.4f}
-            Mp: {Mp : 1.4f}
-            Lr: {Lr : 1.4f}
-            Lp: {Lp : 1.4f}
-            Dr: {Dr : 1.7f}
-            Dp: {Dp : 1.7f}
-            Rm: {Rm : 1.3f}
-            km: {km : 1.4f}
-            """
-
     def _reset_anim(self):
-        # Reset VPython animation
-        if self._anim["curve"] is not None:
-            self._anim["curve"].clear()
+        self.visualization.reset()
 
 
 class QQubeSwingUpSim(QQubeSim):
