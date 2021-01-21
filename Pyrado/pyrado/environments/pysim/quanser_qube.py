@@ -143,7 +143,7 @@ class QQubeSim(SimPyEnv, Serializable):
     def _init_anim(self):
         from direct.showbase.ShowBase import ShowBase
         from direct.task import Task
-        from panda3d.core import loadPrcFileData, DirectionalLight, AntialiasAttrib, TextNode, WindowProperties, AmbientLight
+        from panda3d.core import loadPrcFileData, DirectionalLight, AntialiasAttrib, TextNode, GeomVertexData, GeomNode, GeomLinestrips , WindowProperties, AmbientLight
 
         # Configuration for panda3d-window
         confVars = """
@@ -163,11 +163,11 @@ class QQubeSim(SimPyEnv, Serializable):
 
                 # Accessing variables of outer class
                 self.qq = qq
-                Lr = float(self.domain_param["Lr"])
-                lp = float(self.domain_param["Lp"])
+                Lr = float(self.qq.domain_param["Lr"])
+                lp = float(self.qq.domain_param["Lp"])
 
-                self.setBackgroundColor(0, 0, 0)
-                self.cam.setY(-3)
+                self.setBackgroundColor(1, 1, 1)
+                self.cam.setY(-10)
                 self.render.setAntialias(AntialiasAttrib.MAuto)
                 self.windowProperties = WindowProperties()
                 self.windowProperties.setForeground(True)
@@ -197,78 +197,80 @@ class QQubeSim(SimPyEnv, Serializable):
 
                 box = self.loader.loadModel(pathlib.Path(mydir, "box.egg"))
                 box.setPos(0, 0, -0.07)
-                box.setScale()
-                box.setColor()
+                #box.setScale()
+                box.setColor(0.5, 0.5, 0.5)
                 box.reparentTo(self.render)
 
                 cylinder = self.loader.loadModel(pathlib.Path(mydir, "cylinder.egg"))
                 #cylinder.set_rotation_or_sth
-                cylinder.setScale()
-                cylinder.setColor()
+                #cylinder.setScale()
+                #cylinder.setColor()
                 cylinder.reparentTo(self.render)
 
                 # Joints
-                self.joint1 = self.loader.loadModel(pathlib.Path(mydir, "sphere.egg"))
-                self.joint1.setScale()
-                self.joint1.setColor()
+                self.joint1 = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
+                #self.joint1.setScale()
+                #self.joint1.setColor()
                 self.joint1.reparentTo(self.render)
 
-                self.joint2 = self.loader.loadModel(pathlib.Path(mydir, "sphere.egg"))
-                self.joint2.setScale()
-                self.joint2.setColor()
+                self.joint2 = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
+                #self.joint2.setScale()
+                #self.joint2.setColor()
                 self.joint2.reparentTo(self.render)
 
                 # Arm
                 self.arm = self.loader.loadModel(pathlib.Path(mydir, "cylinder.egg"))
-                self.arm.setScale()
-                self.arm.setColor()
+                #self.arm.setScale()
+                #self.arm.setColor()
                 self.arm.reparentTo(self.render)
 
                 # Pole
                 self.pole = self.loader.loadModel(pathlib.Path(mydir, "cylinder.egg"))
-                self.pole.setScale()
-                self.pole.setColor()
+                #self.pole.setScale()
+                #self.pole.setColor()
                 self.pole.reparentTo(self.render)
 
                 # Curve
-                self.curve = self.loader.loadModel(GeomLinestrips)
-                self.curve.setColor()
-                self.curve.setScale()
-                self.curve.reparentTo(self.render)
+                #self.curve = self.loader.loadModel(GeomLinestrips)
+                #self.curve.setColor()
+                #self.curve.setScale()
+                #self.curve.reparentTo(self.render)
 
                 self.taskMgr.add(self.update, "update")
+
+                self.text.setTextColor(0, 0, 0, 1)
 
             def reset(self):
                 # clear
                 pass
 
             def update(self, task):
-                g = self.domain_param["g"]
-                Mr = self.domain_param["Mr"]
-                Mp = self.domain_param["Mp"]
-                Lr = float(self.domain_param["Lr"])
-                Lp = float(self.domain_param["Lp"])
-                km = self.domain_param["km"]
-                Rm = self.domain_param["Rm"]
-                Dr = self.domain_param["Dr"]
-                Dp = self.domain_param["Dp"]
+                g = self.qq.domain_param["g"]
+                Mr = self.qq.domain_param["Mr"]
+                Mp = self.qq.domain_param["Mp"]
+                Lr = float(self.qq.domain_param["Lr"])
+                Lp = float(self.qq.domain_param["Lp"])
+                km = self.qq.domain_param["km"]
+                Rm = self.qq.domain_param["Rm"]
+                Dr = self.qq.domain_param["Dr"]
+                Dp = self.qq.domain_param["Dp"]
 
-                th, al, _, _ = self.state
+                th, al, _, _ = self.qq.state
                 arm_pos = (Lr * np.cos(th), Lr * np.sin(th), 0.0)
                 pole_ax = (-Lp * np.sin(al) * np.sin(th), +Lp * np.sin(al) * np.cos(th), -Lp * np.cos(al))
 
                 #self.arm.set_axis
-                self.pole.setPos()
+                #self.pole.setPos()
                 #self.pole.set_axis
                 self.joint1.setPos(self.arm.getPos())
                 self.joint2.setPos(self.pole.getPos())
-                self.curve.append(self.pole.getPos() + self.pole.getAxis())
+                #self.curve.append(self.pole.getPos() + self.pole.getAxis())
 
                 # Displayed text
                 self.text.setText(f"""
-                    theta: {self.state[0]*180/np.pi : 3.1f}
-                    alpha: {self.state[1]*180/np.pi : 3.1f}
-                    dt: {self._dt :1.4f}
+                    theta: {self.qq.state[0]*180/np.pi : 3.1f}
+                    alpha: {self.qq.state[1]*180/np.pi : 3.1f}
+                    dt: {self.qq._dt :1.4f}
                     g: {g : 1.3f}
                     Mr: {Mr : 1.4f}
                     Mp: {Mp : 1.4f}
@@ -279,6 +281,7 @@ class QQubeSim(SimPyEnv, Serializable):
                     Rm: {Rm : 1.3f}
                     km: {km : 1.4f}
                     """)
+
 
                 return Task.cont
 
