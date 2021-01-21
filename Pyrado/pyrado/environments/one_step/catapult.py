@@ -106,7 +106,7 @@ class CatapultSim(SimEnv, Serializable):
         return self._task
 
     @property
-    def domain_param(self):
+    def domain_param(self) -> dict:
         if self.example_config:
             return dict(planet=self._planet)
         else:

@@ -131,12 +131,12 @@ class GymEnv(SimEnv, Serializable):
         return None
 
     @property
-    def domain_param(self):
+    def domain_param(self) -> dict:
         # Doesn't have any
         return {}
 
     @domain_param.setter
-    def domain_param(self, param):
+    def domain_param(self, param: dict):
         # Ignore
         pass
 

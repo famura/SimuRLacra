@@ -90,11 +90,11 @@ class RosenSim(SimEnv, Serializable):
         return self._task
 
     @property
-    def domain_param(self):
+    def domain_param(self) -> dict:
         return {}
 
     @domain_param.setter
-    def domain_param(self, param):
+    def domain_param(self, param: dict):
         pass
 
     @classmethod

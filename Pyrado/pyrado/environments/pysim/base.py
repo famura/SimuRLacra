@@ -131,7 +131,7 @@ class SimPyEnv(SimEnv, Serializable):
         """
         raise NotImplementedError
 
-    def _calc_constants(self):
+    def _calc_constants(self, *args, **kwargs):
         """
         Called to calculate the physics constants that depend on the domain parameters. Override in subclasses.
 
