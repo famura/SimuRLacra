@@ -1,0 +1,82 @@
+"""
+Sim-to-sim experiment on the Quanser Qube environment using likelihood-free inference
+"""
+from copy import deepcopy
+
+import numpy as np
+import torch as to
+import torch.nn as nn
+from sbi.inference import SNPE
+from sbi import utils
+
+import pyrado
+from pyrado.algorithms.inference.lfi import LFI
+from pyrado.domain_randomization.domain_parameter import NormalDomainParam
+from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
+from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
+from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
+from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.utils.argparser import get_argparser
+
+if __name__ == "__main__":
+    # Parse command line arguments
+    args = get_argparser().parse_args()
+
+    # Experiment (set seed before creating the modules)
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{LFI.name}")
+
+    # Set seed if desired
+    pyrado.set_seed(args.seed, verbose=True)
+
+    # Environments
+    env_hparams = dict(dt=1 / 50.0, max_steps=100)
+    env_sim = QQubeSwingUpSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
+
+    # Create a fake ground truth target domain
+    num_real_obs = 5
+    env_real = deepcopy(env_sim)
+    randomizer = DomainRandomizer(
+        NormalDomainParam(name="g", mean=10.0, std=10.0 / 100),
+        NormalDomainParam(name="Rm", mean=9.0, std=9.0 / 100),
+    )
+    env_real = DomainRandWrapperBuffer(env_real, randomizer)
+    env_real.fill_buffer(num_real_obs)
+    dp_mapping = {0: "g", 1: "Rm"}
+
+    # Policy
+    behavior_policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec)
+
+    # Prior and Posterior (normalizing flow)
+    prior_hparam = dict(low=to.tensor([1.0, 1.0]), high=to.tensor([20.0, 10.0]))
+    prior = utils.BoxUniform(**prior_hparam)
+    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=2)
+
+    # Algorithm
+    algo_hparam = dict(
+        summary_statistic="ramos", max_iter=10, num_real_rollouts=num_real_obs, num_sim_per_real_rollout=50
+    )
+    algo = LFI(
+        ex_dir,
+        env_sim,
+        env_real,
+        behavior_policy,
+        dp_mapping,
+        prior,
+        posterior_nn_hparam,
+        SNPE,
+        **algo_hparam,
+    )
+
+    # Save the hyper-parameters
+    save_list_of_dicts_to_yaml(
+        [
+            dict(env=env_hparams, seed=args.seed),
+            dict(prior=prior_hparam),
+            dict(posterior_nn=posterior_nn_hparam),
+            dict(algo=algo_hparam, algo_name=algo.name),
+        ],
+        ex_dir,
+    )
+
+    algo.train(seed=args.seed)

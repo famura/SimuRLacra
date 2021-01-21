@@ -28,13 +28,18 @@
 
 import numpy as np
 import torch as to
-from matplotlib import pyplot as plt
-from matplotlib.cm import get_cmap
 from torch.distributions import Distribution
-from typing import Sequence
+from matplotlib import pyplot as plt, patches
+from sbi.inference.posteriors.direct_posterior import DirectPosterior
+from sbi.utils import BoxUniform
+from typing import Sequence, Optional, Union, Mapping
 
 import pyrado
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
+from pyrado.environment_wrappers.utils import typed_env
+from pyrado.environments.sim_base import SimEnv
 from pyrado.utils.checks import check_all_types_equal
+from pyrado.utils.data_types import merge_dicts
 
 
 def render_distr_evo(
@@ -79,7 +84,7 @@ def render_distr_evo(
         distr_labels = [rf"iter\_{i}" for i in range(len(distributions))]
 
     # Get the color map customized to the number of distributions to plot
-    cmap = get_cmap(cmap_name)
+    cmap = plt.get_cmap(cmap_name)
     ax.set_prop_cycle(color=cmap(np.linspace(0.0, 1.0, max(2, len(distributions)))))
 
     # Create evaluation grid
@@ -97,4 +102,156 @@ def render_distr_evo(
         ax.legend(ncol=2)
     if title is not None:
         ax.set_title(title)
+    return plt.gcf()
+
+
+def draw_posterior_distr(
+    axs: plt.Axes,
+    plot_type: str,
+    posterior: DirectPosterior,
+    observations_real: to.Tensor,
+    dp_mapping: Mapping[int, str],
+    env_real: Optional[DomainRandWrapperBuffer] = None,
+    prior: Optional[BoxUniform] = None,
+    show_prior: bool = False,
+    grid_bounds: Optional[Union[to.Tensor, np.ndarray, list]] = None,
+    grid_res: Optional[int] = 500,
+    contourf_kwargs: Optional[dict] = None,
+    scatter_kwargs: Optional[dict] = None,
+) -> plt.Figure:
+    r"""
+    Evaluate an posterior obtained from the sbi package on a 2-dim grid of domain parameter values.
+    Draw every posterior, conditioned on the real-world observation, in a separate plot.
+
+    :param axs: axis (joint) or axes (separately) of the figure to plot on
+    :param plot_type: joint to draw the joint posterior probability probabilities in one plot, or separately to draw
+                      the posterior probabilities, conditioned on the real-world observation, in a separate plot.
+    :param posterior: sbi `DirectPosterior` object to evaluate
+    :param observations_real: observations from the real-world rollouts a.k.a. $x_o$
+    :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass).
+                       Here this mapping must not have more than 2 elements since we can't plot more.
+    :param env_real: real-world environment a.k.a. target domain. Here it is used in case of a sim-2-sim example to
+                     infer the ground truth domain parameters
+    :param prior: distribution used by sbi as a prior
+    :param show_prior: display the prior as a box
+    :param grid_bounds: explicit bounds for the evaluation gird. Can be set arbitrarily, but should contain the prior
+                        if `show_prior` is `True`
+    :param grid_res: number of elements on one axis of the evaluation gird
+    :param contourf_kwargs: keyword arguments forwarded to pyplot's `contourf()` function for the posterior distribution
+    :param scatter_kwargs: keyword arguments forwarded to pyplot's `scatter()` function for the true parameter
+    :return: handle to the resulting figure
+    """
+    num_obs_r, dim_obs_r = observations_real.shape
+
+    if plot_type.lower() == "joint":
+        if not isinstance(axs, plt.Axes):
+            raise pyrado.TypeErr(given=axs, expected_type=plt.Axes)
+    elif plot_type.lower() == "separate":
+        axs = np.atleast_2d(axs)
+        if not axs.size == num_obs_r:
+            raise pyrado.ShapeErr(msg=f"The plotting axes need to be a 2-dim array with {num_obs_r} elements!")
+    else:
+        raise pyrado.ValueErr(given=plot_type, eq_constraint="joint or separate")
+
+    if not isinstance(posterior, DirectPosterior):
+        raise pyrado.TypeErr(given=posterior, expected_type=DirectPosterior)
+    if not len(dp_mapping) == 2:
+        raise NotImplementedError("So far, only plotting 2 domain parameters is implemented.")
+    if not isinstance(grid_res, int):
+        raise pyrado.TypeErr(given=grid_res, expected_type=int)
+
+    # Set defaults which can be overwritten by passing plot_kwargs
+    contourf_kwargs = merge_dicts([dict(), contourf_kwargs])
+    scatter_kwargs = merge_dicts([dict(zorder=1, s=60, marker="o", c="w", edgecolors="k"), scatter_kwargs])
+
+    # Reconstruct ground truth domain parameters if they exist
+    if typed_env(env_real, DomainRandWrapperBuffer):
+        dp_gt = to.stack([to.stack(list(d.values())) for d in env_real.randomizer.get_params(-1, "list", "torch")])
+    elif isinstance(env_real, SimEnv):
+        dp_gt = to.tensor([env_real.domain_param[v] for v in dp_mapping.values()])
+        dp_gt = to.atleast_2d(dp_gt)
+    else:
+        dp_gt = None
+
+    # Create the grid
+    if grid_bounds is not None:
+        grid_bounds = to.as_tensor(grid_bounds)
+        if not grid_bounds.shape == (2, 2):
+            raise pyrado.ShapeErr(given=grid_bounds, expected_match=(2, 2))
+    elif isinstance(prior, BoxUniform):
+        grid_bounds = to.tensor(
+            [[prior.base_dist.low[0], prior.base_dist.high[0]], [prior.base_dist.low[1], prior.base_dist.high[1]]]
+        )
+    else:
+        raise NotImplementedError
+    x = to.linspace(grid_bounds[0, 0], grid_bounds[0, 1], grid_res)
+    y = to.linspace(grid_bounds[1, 0], grid_bounds[1, 1], grid_res)
+    grid_x, grid_y = to.meshgrid([x, y])
+    grid_x, grid_y = grid_x.t(), grid_y.t()  # transpose not necessary but makes identical mesh as np.meshgrid
+    grid = to.cat((grid_x.reshape(-1, 1), grid_y.reshape(-1, 1)), dim=1)
+    if not grid.shape == (grid_res ** 2, 2):
+        raise pyrado.ShapeErr(given=grid, expected_match=(grid_res ** 2, 2))
+    grid_x, grid_y = grid_x.numpy(), grid_y.numpy()
+
+    if plot_type.lower() == "joint":
+        # Compute the posterior probabilities
+        log_prob = sum([posterior.log_prob(grid, x=obs) for obs in observations_real])
+        prob = to.exp(log_prob - log_prob.max())  # scale the probabilities to [0, 1]
+        prob = prob.reshape(grid_res, grid_res).numpy()
+
+        # Plot the posterior
+        axs.contourf(grid_x, grid_y, prob, **contourf_kwargs)
+
+        # Plot the ground truth parameters
+        if dp_gt is not None:
+            axs.scatter(dp_gt[:, 0], dp_gt[:, 1], **scatter_kwargs)
+
+        # Plot bounding box for the prior
+        if prior is not None and show_prior:
+            x = prior.support.lower_bound[0]
+            y = prior.support.lower_bound[1]
+            dx = prior.support.upper_bound[0] - prior.support.lower_bound[0]
+            dy = prior.support.upper_bound[1] - prior.support.lower_bound[1]
+            rect = patches.Rectangle((x, y), dx, dy, lw=1, ls="--", edgecolor="gray", facecolor="none")
+            axs.add_patch(rect)
+
+        # Annotate
+        axs.set_aspect(1.0 / axs.get_data_ratio(), adjustable="box")
+        axs.set_xlabel(f"${dp_mapping[0]}$")
+        axs.set_ylabel(f"${dp_mapping[1]}$")
+        axs.set_title(f"{num_obs_r} observations")
+        plt.gcf().canvas.set_window_title("Posterior Probabilities for All Real World Observation at Once")
+
+    else:
+        for i in range(axs.shape[0]):
+            for j in range(axs.shape[1]):
+                # Compute the posterior probabilities
+                idx = j + j * i  # iterate columnswise
+                log_prob = posterior.log_prob(grid, x=observations_real[idx, :])  # TODO sum over multiple observations
+                prob = to.exp(log_prob - log_prob.max())  # scale the probabilities to [0, 1]
+                prob = prob.reshape(grid_res, grid_res).numpy()
+
+                # Plot the posterior
+                axs[i, j].contourf(grid_x, grid_y, prob, **contourf_kwargs)
+
+                # Plot the ground truth parameters
+                if dp_gt is not None:
+                    axs[i, j].scatter(dp_gt[:, 0], dp_gt[:, 1], **scatter_kwargs)
+
+                # Plot bounding box for the prior
+                if prior is not None and show_prior:
+                    x = prior.support.lower_bound[0]
+                    y = prior.support.lower_bound[1]
+                    dx = prior.support.upper_bound[0] - prior.support.lower_bound[0]
+                    dy = prior.support.upper_bound[1] - prior.support.lower_bound[1]
+                    rect = patches.Rectangle((x, y), dx, dy, lw=1, ls="--", edgecolor="gray", facecolor="none")
+                    axs[i, j].add_patch(rect)
+
+                # Annotate
+                axs[i, j].set_aspect(1.0 / axs[i, j].get_data_ratio(), adjustable="box")
+                axs[i, j].set_xlabel(f"${dp_mapping[0]}$")
+                axs[i, j].set_ylabel(f"${dp_mapping[1]}$")
+                axs[i, j].set_title(f"observation {idx}")
+        plt.gcf().canvas.set_window_title("Posterior Probabilities for Every Real World Observation Separately")
+
     return plt.gcf()
