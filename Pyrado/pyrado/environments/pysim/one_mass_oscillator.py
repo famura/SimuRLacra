@@ -211,17 +211,12 @@ class OneMassOscillatorDyn(Serializable):
         self.A = None
         self.B = None
 
-    def _calc_constants(self, dp: dict):
-        """
-        Calculate the physics constants that depend on the domain parameters.
-
-        :param dp: current domain parameter estimate
-        """
-        self.omega = to.sqrt(dp["k"] / dp["m"])
-        self.zeta = dp["d"] / (2.0 * to.sqrt(dp["m"] * dp["k"]))
+    def _calc_constants(self, domain_param: dict):
+        self.omega = to.sqrt(domain_param["k"] / domain_param["m"])
+        self.zeta = domain_param["d"] / (2.0 * to.sqrt(domain_param["m"] * domain_param["k"]))
 
         self.A = to.stack([to.tensor([0.0, 1.0]), to.stack([-self.omega ** 2, -2.0 * self.zeta * self.omega])])
-        self.B = to.stack([to.tensor(0.0), 1.0 / dp["m"]]).view(-1, 1)
+        self.B = to.stack([to.tensor(0.0), 1.0 / domain_param["m"]]).view(-1, 1)
 
     def __call__(self, state: to.Tensor, act: to.Tensor, domain_param: dict) -> to.Tensor:
         """

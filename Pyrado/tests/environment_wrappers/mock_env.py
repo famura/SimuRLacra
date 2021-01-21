@@ -28,6 +28,7 @@
 
 import numpy as np
 import random
+from copy import deepcopy
 
 from pyrado.environments.pysim.base import SimEnv
 from pyrado.utils.data_types import RenderMode
@@ -91,11 +92,11 @@ class MockEnv(SimEnv):
         pass  # unused
 
     @property
-    def domain_param(self):
-        return self._domain_param.copy()
+    def domain_param(self) -> dict:
+        return deepcopy(self._domain_param)
 
     @domain_param.setter
-    def domain_param(self, param):
+    def domain_param(self, param: dict):
         self._domain_param.clear()
         self._domain_param.update(param)
 

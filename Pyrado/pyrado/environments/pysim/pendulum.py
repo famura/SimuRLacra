@@ -34,7 +34,7 @@ from pyrado.spaces.box import BoxSpace
 from pyrado.spaces.singular import SingularStateSpace
 from pyrado.tasks.base import Task
 from pyrado.tasks.desired_state import RadiallySymmDesStateTask
-from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn
+from pyrado.tasks.reward_functions import ExpQuadrErrRewFcn, QuadrErrRewFcn
 
 
 class PendulumSim(SimPyEnv, Serializable):
@@ -58,10 +58,13 @@ class PendulumSim(SimPyEnv, Serializable):
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
         state_des = task_args.get("state_des", np.array([np.pi, 0.0]))
-        Q = task_args.get("Q", np.diag([1e-0, 5e-3]))
-        R = task_args.get("R", np.diag([1e-3]))
+        # Q = task_args.get("Q", np.diag([2e-0, 1e-4]))
+        # R = task_args.get("R", np.diag([1e-2]))
+        Q = task_args.get("Q", np.diag([2e-0, 1e-4]))
+        R = task_args.get("R", np.diag([1e-2]))
 
-        return RadiallySymmDesStateTask(self.spec, state_des, ExpQuadrErrRewFcn(Q, R), idcs=[1])
+        # return RadiallySymmDesStateTask(self.spec, state_des, ExpQuadrErrRewFcn(Q, R), idcs=[1])
+        return RadiallySymmDesStateTask(self.spec, state_des, QuadrErrRewFcn(Q, R), idcs=[1])
 
     def observe(self, state) -> np.ndarray:
         return np.array([np.sin(state[0]), np.cos(state[0]), state[1]])
