@@ -41,14 +41,14 @@ def render_distr_evo(
     ax: plt.Axes,
     distributions: Sequence[Distribution],
     x_grid_limits: Sequence,
-    x_label: str = "",
-    y_label: str = "",
-    distr_labels: Sequence[str] = None,
-    resolution: int = 201,
-    alpha: float = 0.3,
-    cmap_name: str = "plasma",
-    show_legend: bool = True,
-    title: str = None,
+    x_label: Optional[str] = "",
+    y_label: Optional[str] = "",
+    distr_labels: Optional[Sequence[str]] = None,
+    grid_res: Optional[int] = 201,
+    alpha: Optional[float] = 0.3,
+    cmap_name: Optional[str] = "plasma",
+    show_legend: Optional[bool] = True,
+    title: Optional[str] = None,
 ) -> plt.Figure:
     """
     Plot the evolution of a sequence of PyTorch probability distributions.
@@ -63,7 +63,7 @@ def render_distr_evo(
     :param x_label: label for the x-axis
     :param y_label: label for the y-axis
     :param distr_labels: label for each of the distributions
-    :param resolution: number of samples for the input (corresponds to x-axis resolution of the plot)
+    :param grid_res: number of samples for the input (corresponds to x-axis grid_res of the plot)
     :param cmap_name: name of the color map, e.g. 'inferno', 'RdBu', or 'viridis'
     :param alpha: transparency (alpha-value) for the std area
     :param show_legend: flag if the legend entry should be printed, set to True when using multiple subplots
@@ -83,7 +83,7 @@ def render_distr_evo(
     ax.set_prop_cycle(color=cmap(np.linspace(0.0, 1.0, max(2, len(distributions)))))
 
     # Create evaluation grid
-    x_gird = to.linspace(x_grid_limits[0], x_grid_limits[1], resolution)
+    x_gird = to.linspace(x_grid_limits[0], x_grid_limits[1], grid_res)
 
     # Plot the data
     for i, d in enumerate(distributions):

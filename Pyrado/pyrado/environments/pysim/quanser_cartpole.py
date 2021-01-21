@@ -99,7 +99,7 @@ class QCartPoleSim(SimPyEnv, Serializable):
 
         return super().reset(init_state, domain_param)
 
-    def observe(self, state):
+    def observe(self, state) -> np.ndarray:
         return np.array([state[0], np.sin(state[1]), np.cos(state[1]), state[2], state[3]])
 
     @classmethod

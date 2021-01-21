@@ -84,7 +84,7 @@ class QCartPoleReal(QuanserReal, Serializable):
     def task(self):
         return self._task
 
-    def observe(self, state):
+    def observe(self, state) -> np.ndarray:
         return np.array([state[0], np.sin(state[1]), np.cos(state[1]), state[2], state[3]])
 
     def calibrate(self):

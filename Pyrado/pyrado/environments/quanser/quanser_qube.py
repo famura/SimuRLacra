@@ -90,7 +90,7 @@ class QQubeReal(QuanserReal, Serializable):
     def task(self) -> Task:
         return self._task
 
-    def observe(self, state):
+    def observe(self, state) -> np.ndarray:
         return np.array([np.sin(state[0]), np.cos(state[0]), np.sin(state[1]), np.cos(state[1]), state[2], state[3]])
 
     def reset(self, *args, **kwargs) -> np.ndarray:

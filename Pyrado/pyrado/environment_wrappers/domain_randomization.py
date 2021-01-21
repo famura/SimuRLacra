@@ -28,7 +28,7 @@
 
 import numpy as np
 from init_args_serializer import Serializable
-from typing import Tuple, Optional, Union, Mapping
+from typing import Tuple, Optional, Union, Mapping, List
 
 import pyrado
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
@@ -155,12 +155,13 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
     At every call of the reset method this wrapper cycles through that buffer.
     """
 
-    def __init__(self, wrapped_env, randomizer: DomainRandomizer):
+    def __init__(self, wrapped_env, randomizer: Optional[DomainRandomizer]):
         """
         Constructor
 
         :param wrapped_env: environment to wrap around
-        :param randomizer: `DomainRandomizer` object that manages the randomization
+        :param randomizer: `DomainRandomizer` object that manages the randomization. If `None`, the user has to set the
+                           buffer manually, the circular reset however works the same way
         """
         # Invoke the DomainRandWrapper's constructor
         super().__init__(wrapped_env, randomizer)
@@ -176,7 +177,8 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
     @ring_idx.setter
     def ring_idx(self, idx: int):
         """ Set the buffer's index. """
-        assert isinstance(idx, int) and idx >= 0
+        if not (isinstance(idx, int) and idx >= 0):
+            raise pyrado.ValueErr(given=idx, ge_constraint="0 (int)")
         self._ring_idx = idx
 
     def fill_buffer(self, num_domains: int):
@@ -185,7 +187,11 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
 
         :param num_domains: number of randomized domain parameter sets to store in the buffer
         """
-        assert isinstance(num_domains, int) and num_domains >= 0
+        if self._randomizer is None:
+            raise pyrado.TypeErr(msg="The randomizer must not be None to call fill_buffer()!")
+        if not (isinstance(num_domains, int) and num_domains >= 0):
+            raise pyrado.ValueErr(given=num_domains, eq_constraint=">= 0 (int)")
+
         self._randomizer.randomize(num_domains)
         self._buffer = self._randomizer.get_params(-1, fmt="list", dtype="numpy")
         self._ring_idx = 0
@@ -196,12 +202,12 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
         return self._buffer
 
     @buffer.setter
-    def buffer(self, buffer: list):
+    def buffer(self, buffer: Union[List[dict], dict]):
         """
         Set the domain parameter buffer.
-        Depends on the way the buffer has been saved, see the DomainRandomizer.get_params() arguments.
+        Depends on the way the buffer has been saved, see the `DomainRandomizer.get_params()` arguments.
 
-        :param buffer: list of dicts, each describing a domain or just one dict for one domain
+        :param buffer: `list` of `dicts`, each describing a domain ,or just one `dict` for one domain
         """
         if not (isinstance(buffer, list) or isinstance(buffer, dict)):
             raise pyrado.TypeErr(given=buffer, expected_type=[list, dict])
@@ -218,7 +224,7 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
                 domain_param = self._buffer[self._ring_idx]
                 self._ring_idx = (self._ring_idx + 1) % len(self._buffer)  # idx cycles over buffer
             else:
-                raise pyrado.TypeErr(given=self._buffer, given_name="self._buffer", expected_type=[dict, list])
+                raise pyrado.TypeErr(given=self._buffer, expected_type=[dict, list])
         else:
             # Explicit specification of domain parameters
             self._load_domain_param(domain_param)
