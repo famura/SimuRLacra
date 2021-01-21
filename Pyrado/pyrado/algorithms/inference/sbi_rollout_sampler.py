@@ -28,12 +28,12 @@
 
 import torch as to
 from abc import ABC, abstractmethod
-from copy import deepcopy
 from typing import Union, Mapping
 
 import pyrado
 from pyrado.environment_wrappers.base import EnvWrapper
-from pyrado.environment_wrappers.domain_randomization import remove_all_dr_wrappers
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
+from pyrado.environment_wrappers.utils import typed_env
 from pyrado.environments.base import Env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
@@ -47,10 +47,14 @@ class RolloutSamplerForSBI(ABC):
     was a callable that only needs the simulator parameters as inputs
     """
 
-    def __init__(self, strategy: str):
+    def __init__(self, env: Env, policy: Policy, strategy: str):
         """
         Constructor
 
+        :param env: environment which the policy operates, in sim-to-real settings this is a real-world device, buy in
+                    a sim-to-sim experiment this can be a (randomized) `SimEnv`. We strip all domain randomization
+                    wrappers from this env since we want to randomize it manually here.
+        :param policy: policy used for sampling the rollout
         :param strategy: method with which the observations are computed from the rollouts. Possible options:
                          `states` (uses all observed states from rollout),
                          `final_state` (use the last observed state from the rollout), and
@@ -62,6 +66,8 @@ class RolloutSamplerForSBI(ABC):
         if not strategy.lower() in ["states", "final_state", "ramos"]:
             raise pyrado.ValueErr(given=strategy, eq_constraint="states, final_state, summary")
 
+        self._env = env
+        self._policy = policy
         self.strategy = strategy.lower()
 
     @abstractmethod
@@ -167,10 +173,14 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
                          `final_state` (use the last observed state from the rollout), and
                          `ramos` (summary statistics as proposed in  [1])
         """
-        super().__init__(strategy=strategy)
+        if typed_env(env, DomainRandWrapper):
+            raise pyrado.TypeErr(
+                msg="The environment passed to sbi as simulator must not be wrapped with a subclass of"
+                "DomainRandWrapper since sbi has be able to set the domain parameters explicitly!"
+            )
 
-        self._env = remove_all_dr_wrappers(deepcopy(env))
-        self._policy = policy
+        super().__init__(env=env, policy=policy, strategy=strategy)
+
         self.dp_names = dp_mapping.values()
 
     def __call__(self, dp_values: to.Tensor):
@@ -208,10 +218,7 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI):
                          `final_state` (use the last observed state from the rollout), and
                          `ramos` (summary statistics as proposed in  [1])
         """
-        super().__init__(strategy=strategy)
-
-        self._env = remove_all_dr_wrappers(deepcopy(env))
-        self._policy = policy
+        super().__init__(env=env, policy=policy, strategy=strategy)
 
     def __call__(self, dp_values: to.Tensor = None):
         """ Run one rollout and compute summary statistics. """
