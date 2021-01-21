@@ -1,11 +1,9 @@
 """
 Sim-to-sim experiment on the Quanser Qube environment using likelihood-free inference
 """
-from copy import deepcopy
-
-import numpy as np
 import torch as to
 import torch.nn as nn
+from copy import deepcopy
 from sbi.inference import SNPE
 from sbi import utils
 
@@ -16,7 +14,7 @@ from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
 from pyrado.policies.special.environment_specific import QQubeSwingUpAndBalanceCtrl
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.utils.argparser import get_argparser
 
 if __name__ == "__main__":
@@ -24,14 +22,14 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
 
     # Experiment (set seed before creating the modules)
-    ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{LFI.name}")
+    ex_dir = setup_experiment(QQubeSwingUpSim.name, f"{LFI.name}_{QQubeSwingUpAndBalanceCtrl.name}")
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_hparams = dict(dt=1 / 50.0, max_steps=100)
-    env_sim = QQubeSwingUpSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
+    env_hparams = dict(dt=1 / 100.0, max_steps=600)
+    env_sim = QQubeSwingUpSim(**env_hparams)
 
     # Create a fake ground truth target domain
     num_real_obs = 5
@@ -54,7 +52,10 @@ if __name__ == "__main__":
 
     # Algorithm
     algo_hparam = dict(
-        summary_statistic="ramos", max_iter=10, num_real_rollouts=num_real_obs, num_sim_per_real_rollout=50,
+        summary_statistic="ramos",
+        max_iter=10,
+        num_real_rollouts=num_real_obs,
+        num_sim_per_real_rollout=50,
     )
     algo = LFI(
         ex_dir,
@@ -69,14 +70,12 @@ if __name__ == "__main__":
     )
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml(
-        [
-            dict(env=env_hparams, seed=args.seed),
-            dict(prior=prior_hparam),
-            dict(posterior_nn=posterior_nn_hparam),
-            dict(algo=algo_hparam, algo_name=algo.name),
-        ],
-        ex_dir,
+    save_dicts_to_yaml(
+        dict(env=env_hparams, seed=args.seed),
+        dict(prior=prior_hparam),
+        dict(posterior_nn=posterior_nn_hparam),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
     )
 
     algo.train(seed=args.seed)
