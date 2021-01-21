@@ -467,6 +467,7 @@ class LFI(InterruptableAlgorithm):
         # Insert the domain parameters into the wrapped environment's buffer
         domain_params = domain_params.detach().cpu().numpy()
         self._env_sim.buffer = [dict(zip(self.dp_mapping.values(), dp)) for dp in domain_params]
+        self._env_sim.ring_idx = 0
 
         # Reset the subroutine algorithm which includes resetting the exploration
         # self._cnt_samples += self._subrtn_policy.sample_count

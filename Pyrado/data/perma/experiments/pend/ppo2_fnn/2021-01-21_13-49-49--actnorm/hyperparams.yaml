@@ -1,0 +1,40 @@
+env:
+  dt: 0.01
+  max_steps: 800
+seed: None
+policy:
+  hidden_nonlin: <built-in method relu of type object at 0x7feb57bdf580>
+  hidden_sizes:
+  - 16
+  - 16
+critic:
+  batch_size: 500
+  gamma: 0.9852477569514027
+  lamda: 0.9729014682749334
+  lr: 0.0027189235593899743
+  lr_scheduler: <class 'torch.optim.lr_scheduler.ExponentialLR'>
+  lr_scheduler_hparam:
+    gamma: 0.999
+  max_grad_norm: 5.0
+  num_epoch: 5
+vfcn:
+  hidden_nonlin: <built-in method tanh of type object at 0x7feb57bdf580>
+  hidden_sizes:
+  - 16
+  - 16
+algo:
+  batch_size: 500
+  entropy_coeff: 4.944111681414721e-05
+  eps_clip: 0.09657039413812532
+  lr: 0.0008775532791215318
+  lr_scheduler: <class 'torch.optim.lr_scheduler.ExponentialLR'>
+  lr_scheduler_hparam:
+    gamma: 0.999
+  max_grad_norm: None
+  max_iter: 250
+  min_steps: 24000
+  num_epoch: 5
+  num_workers: 8
+  std_init: 0.9123418449327286
+  vfcn_coeff: 1.190454086194093
+algo_name: ppo2
