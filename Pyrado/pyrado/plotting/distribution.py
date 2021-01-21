@@ -226,7 +226,7 @@ def draw_posterior_distr(
         for i in range(axs.shape[0]):
             for j in range(axs.shape[1]):
                 # Compute the posterior probabilities
-                idx = j + j * i  # iterate columnswise
+                idx = j + i * axs.shape[1]  # iterate column-wise
                 log_prob = posterior.log_prob(grid, x=observations_real[idx, :])  # TODO sum over multiple observations
                 prob = to.exp(log_prob - log_prob.max())  # scale the probabilities to [0, 1]
                 prob = prob.reshape(grid_res, grid_res).numpy()
