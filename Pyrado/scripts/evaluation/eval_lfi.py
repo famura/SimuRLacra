@@ -30,7 +30,6 @@
 Script to evaluate a posterior obtained using the sbi package
 """
 import os
-import torch as to
 from matplotlib import pyplot as plt
 
 import pyrado
@@ -41,7 +40,6 @@ from pyrado.plotting.distribution import draw_posterior_distr
 from pyrado.plotting.utils import num_rows_cols_from_length
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment
-from pyrado.plotting.lfi_posterior_distribution import plot_posterior_distribution
 
 
 if __name__ == "__main__":
@@ -49,6 +47,8 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
     if not isinstance(args.num_samples, int) or args.num_samples < 1:
         raise pyrado.ValueErr(given=args.num_samples, ge_constraint="1")
+    if args.mode not in ["joint", "separate"]:
+        raise pyrado.ValueErr(given=args.mode, given_name="plotting mode", eq_constraint="joint or separate")
 
     # Get the experiment's directory to load from
     ex_dir = ask_for_experiment() if args.dir is None else args.dir
@@ -74,24 +74,20 @@ if __name__ == "__main__":
         load_iter = len(found_observations) - 1
         observations_real = pyrado.load(None, f"iter_{load_iter}_observations_real", "pt", ex_dir)
 
-    # Compute and print the argmax
+    # Evaluate the posterior
     domain_params, log_prob, _ = LFI.eval_posterior(
         posterior, observations_real, args.num_samples, algo.sbi_simulator, simulate_observations=False
     )
 
-    # Get the environmental parameters to plot in 2D (by default the first two)
-    params_names = list(algo.dp_mapping.values())
-
     # Plot the posterior distribution, the true parameters / their distribution
-    fig, axs = plt.subplots(
-        # 1,
-        *num_rows_cols_from_length(observations_real.shape[0]),
-        figsize=(14, 7),
-        tight_layout=True,
-    )
+    if args.mode.lower() == "joint":
+        num_rows, num_cols = 1, 1
+    else:
+        num_rows, num_cols = num_rows_cols_from_length(observations_real.shape[0])
+    fig, axs = plt.subplots(num_rows, num_cols, figsize=(14, 7), tight_layout=True)
     _ = draw_posterior_distr(
         axs,
-        "separate",  # joint or separate
+        args.mode.lower(),
         posterior,
         observations_real,
         algo.dp_mapping,
@@ -100,15 +96,5 @@ if __name__ == "__main__":
         show_prior=True,
         # grid_bounds=to.tensor([[22, 39], [0, 0.6]])
     )
-
-    # fig, ax = plt.subplots()
-    # ax = plot_posterior_distribution(
-    #     ax,
-    #     posterior,
-    #     observations_real,
-    #     initial_prior=prior,
-    #     params_names=params_names,
-    #     real_environment=env_real,
-    # )
 
     plt.show()

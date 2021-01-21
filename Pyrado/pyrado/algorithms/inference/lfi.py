@@ -265,7 +265,14 @@ class LFI(InterruptableAlgorithm):
             posterior = self._sbi_subrtn.build_posterior(
                 **self.sbi_sampling_kwargs
             )  # no need to pass density_estimator, since latest is used by default
-            pyrado.save(posterior, "posterior", "pt", self._save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter}"))
+            pyrado.save(
+                posterior,
+                "posterior",
+                "pt",
+                self._save_dir,
+                meta_info=dict(prefix=f"iter_{self._curr_iter}"),
+                use_state_dict=False,
+            )
             pyrado.save(posterior, "posterior", "pt", self._save_dir, meta_info, use_state_dict=False)
 
             # Logging
@@ -499,11 +506,6 @@ class LFI(InterruptableAlgorithm):
         self._cnt_samples += self._subrtn_policy.sample_count
         self._subrtn_policy.reset()
 
-        # Do a warm start if desired
-        # self._subrtn_policy.init_modules(
-        #     self.warmstart, policy_param_init=self.policy_param_init, valuefcn_param_init=self.valuefcn_param_init
-        # )
-
         # Train a policy in simulation using the subroutine
         self._subrtn_policy.train(snapshot_mode=self._subrtn_policy_snapshot_mode, meta_info=dict(prefix=prefix))
 
@@ -519,9 +521,9 @@ class LFI(InterruptableAlgorithm):
 
         if meta_info is None:
             # This algorithm instance is not a subroutine of another algorithm
+            pyrado.save(self._env_sim_trn, "env_sim", "pkl", self._save_dir)
             if self._subrtn_policy is None:
                 # The policy is not being updated by a policy optimization subroutine
-                pyrado.save(self._env_sim_trn, "env_sim", "pkl", self._save_dir)
                 pyrado.save(self._policy, "policy", "pt", self.save_dir, None)
             else:
                 self._subrtn_policy.save_snapshot()
