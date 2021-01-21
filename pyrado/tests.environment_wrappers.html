@@ -251,7 +251,7 @@ ease assertions. step() and reset() return next_obs as observation. If it is Non
 <dl class="py method">
 <dt id="tests.environment_wrappers.mock_env.MockEnv.domain_param">
 <em class="property">property </em><code class="sig-name descname">domain_param</code><a class="headerlink" href="#tests.environment_wrappers.mock_env.MockEnv.domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the environment’s domain parameters.
+<dd><p>Get the environment’s domain parameters. If there are none, this method should return an emtpy <cite>dict</cite>.
 The domain parameters are synonymous to the parameters used by the simulator to run the physics simulation
 (e.g., masses, extents, or friction coefficients). This must include all parameters that can be randomized,
 but there might also be additional parameters that depend on the domain parameters.</p>

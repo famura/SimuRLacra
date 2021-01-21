@@ -371,7 +371,7 @@ since the nominal domain parameters are not set explicitly from Pyrado (only whe
 <dl class="py method">
 <dt id="pyrado.environments.rcspysim.base.RcsSim.domain_param">
 <em class="property">property </em><code class="sig-name descname">domain_param</code><a class="headerlink" href="#pyrado.environments.rcspysim.base.RcsSim.domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the environment’s domain parameters.
+<dd><p>Get the environment’s domain parameters. If there are none, this method should return an emtpy <cite>dict</cite>.
 The domain parameters are synonymous to the parameters used by the simulator to run the physics simulation
 (e.g., masses, extents, or friction coefficients). This must include all parameters that can be randomized,
 but there might also be additional parameters that depend on the domain parameters.</p>
