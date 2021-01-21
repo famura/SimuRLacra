@@ -64,19 +64,19 @@ if __name__ == "__main__":
     # Environments
     env_hparams = dict(dt=1 / 100.0, max_steps=1000)
     env_sim = PendulumSim(**env_hparams)
-    env_sim.domain_param = dict(d_pole=0, tau_max=5.0)
+    env_sim.domain_param = dict(d_pole=0, tau_max=10.0)
+    env_real = deepcopy(env_sim)
     env_sim = DomainRandWrapperBuffer(env_sim, randomizer=None)
 
     # Create a fake ground truth target domain
     num_real_obs = 1
-    env_real = deepcopy(env_sim)
     env_real.domain_param = dict(m_pole=0.25, l_pole=2.0)
     dp_mapping = {0: "m_pole", 1: "l_pole"}
 
     # Prior and Posterior (normalizing flow)
     prior_hparam = dict(low=to.tensor([0.0625, 0.0625]), high=to.tensor([4.0, 4.0]))
     prior = utils.BoxUniform(**prior_hparam)
-    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=2)
+    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=5)
 
     # Policy
     policy_hparam = dict(hidden_sizes=[16, 16], hidden_nonlin=to.relu)
@@ -108,7 +108,7 @@ if __name__ == "__main__":
         entropy_coeff=4.944111681414721e-05,
         eps_clip=0.09657039413812532,
         batch_size=500,
-        std_init=0.9123418449327286,
+        std_init=0.1,
         lr=8.775532791215318e-4,
         max_grad_norm=None,
         lr_scheduler=lr_scheduler.ExponentialLR,
@@ -120,9 +120,11 @@ if __name__ == "__main__":
     # Algorithm
     algo_hparam = dict(
         summary_statistic="ramos",
-        max_iter=15,
+        max_iter=20,
+        sbi_training_hparam=dict(learning_rate=3e-4),
         num_real_rollouts=num_real_obs,
-        num_sim_per_real_rollout=100,
+        num_sim_per_real_rollout=4000,
+        num_eval_samples=4000,
         num_workers=num_workers,
     )
     algo = LFI(
@@ -134,7 +136,7 @@ if __name__ == "__main__":
         prior,
         posterior_nn_hparam,
         SNPE,
-        subrtn_policy=subrtn_policy,
+        # subrtn_policy=subrtn_policy,
         **algo_hparam,
     )
 

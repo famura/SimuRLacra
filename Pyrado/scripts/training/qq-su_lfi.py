@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
     # Algorithm
     algo_hparam = dict(
-        summary_statistic="ramos", max_iter=10, num_real_rollouts=num_real_obs, num_sim_per_real_rollout=50
+        summary_statistic="ramos", max_iter=10, num_real_rollouts=num_real_obs, num_sim_per_real_rollout=50,
     )
     algo = LFI(
         ex_dir,

@@ -83,10 +83,9 @@ class LFI(InterruptableAlgorithm):
         max_iter: int,
         num_real_rollouts: int,
         num_sim_per_real_rollout: int,
-        training_batch_size: Optional[int] = 50,
-        lr_sbi: Optional[int] = 5e-4,
         num_eval_samples: Optional[int] = 1000,
-        sbi_sampling_kwargs: Optional[dict] = None,
+        sbi_training_hparam: Optional[dict] = None,
+        sbi_sampling_hparam: Optional[dict] = None,
         subrtn_policy: Optional[Algorithm] = None,
         subrtn_policy_snapshot_mode: Optional[str] = "latest",
         thold_succ_subrtn: Optional[float] = -pyrado.inf,
@@ -103,7 +102,7 @@ class LFI(InterruptableAlgorithm):
                        for generating the target domain rollouts, but also optimized in simulation
         :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)
         :param prior: distribution used by sbi as a prior
-        :param posterior_nn_hparam: hyper parameters for creating the posterior"s density estimator
+        :param posterior_nn_hparam: hyper parameters for creating the posterior's density estimator
         :param sbi_subrtn_class: sbi algorithm calls for executing the LFI, e.g. SNPE
         :param summary_statistic: the method with which the observations for LFI are computed from the rollouts
                                   Possible options:
@@ -115,7 +114,8 @@ class LFI(InterruptableAlgorithm):
                                   observation is computed
         :param num_sim_per_real_rollout: number of simulations done by sbi per real-world observation received
         :param num_eval_samples: number of samples for evaluating the posterior in `eval_posterior()`
-        :param sbi_sampling_kwargs: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function
+        :param sbi_training_hparam: `dict` forwarded to sbi't `PosteriorEstimator.train()` function
+        :param sbi_sampling_hparam: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function
         :param subrtn_policy: algorithm which performs the optimization of the behavioral policy (and value-function)
         :param subrtn_policy_snapshot_mode: snapshot mode for saving during training of the subroutine
         :param thold_succ_subrtn: success threshold on the simulated system's return for the subroutine, repeat the
@@ -126,15 +126,14 @@ class LFI(InterruptableAlgorithm):
         # Call InterruptableAlgorithm's constructor
         super().__init__(num_checkpoints=2, save_dir=save_dir, max_iter=max_iter, policy=policy, logger=logger)
 
-        self._env_sim_trn = deepcopy(env_sim)
         self._env_sim_sbi = remove_all_dr_wrappers(env_sim)  # will be randomized manually
         self._env_real = env_real
         self.dp_mapping = dp_mapping
         self.summary_statistic = summary_statistic.lower()
         self.posterior_nn_hparam = posterior_nn_hparam
         self.sbi_subrtn_class = sbi_subrtn_class
-        self.sbi_training_hparam = dict(learning_rate=lr_sbi, training_batch_size=training_batch_size)
-        self.sbi_sampling_kwargs = sbi_sampling_kwargs if sbi_sampling_kwargs is not None else dict()
+        self.sbi_training_hparam = sbi_training_hparam if sbi_training_hparam is not None else dict()
+        self.sbi_sampling_hparam = sbi_sampling_hparam if sbi_sampling_hparam is not None else dict()
         self.num_real_rollouts = num_real_rollouts
         self.num_sim_per_real_rollout = num_sim_per_real_rollout
         self.num_eval_samples = num_eval_samples
@@ -263,7 +262,7 @@ class LFI(InterruptableAlgorithm):
             # Train the posterior
             self._sbi_subrtn.train(**self.sbi_training_hparam)
             posterior = self._sbi_subrtn.build_posterior(
-                **self.sbi_sampling_kwargs
+                **self.sbi_sampling_hparam
             )  # no need to pass density_estimator, since latest is used by default
             pyrado.save(
                 posterior,
@@ -362,7 +361,7 @@ class LFI(InterruptableAlgorithm):
         num_samples: int,
         simulator: Callable = None,
         simulate_observations: bool = True,
-        sbi_sampling_kwargs: Optional[dict] = None,
+        sbi_sampling_hparam: Optional[dict] = None,
     ) -> Tuple[to.Tensor, to.Tensor, Optional[to.Tensor]]:
         r"""
         Evaluates the posterior by computing parameter samples given observed data, its log probability
@@ -375,7 +374,7 @@ class LFI(InterruptableAlgorithm):
         :param simulator: simulator used during the sbi training procedure
         :param simulate_observations: create simulated observations using the domain parameters sampled from the
                                       posterior and same simulator as used during the sbi training procedure
-        :param sbi_sampling_kwargs: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function
+        :param sbi_sampling_hparam: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function
         :return: domain parameters sampled form the posterior, log-probabilities of these domain parameters, and
                  optionally the simulated observations from the rollouts
         """
@@ -396,9 +395,9 @@ class LFI(InterruptableAlgorithm):
         num_obs, dim_obs = observations_real.shape
 
         # Sample domain parameters from the normalizing flow
-        sbi_sampling_kwargs = sbi_sampling_kwargs if sbi_sampling_kwargs is not None else dict()
+        sbi_sampling_hparam = sbi_sampling_hparam if sbi_sampling_hparam is not None else dict()
         domain_params = to.stack(
-            [posterior.sample((num_samples,), x=obs, **sbi_sampling_kwargs) for obs in observations_real],
+            [posterior.sample((num_samples,), x=obs, **sbi_sampling_hparam) for obs in observations_real],
             dim=0,
         )
         if domain_params.shape[0] != num_obs or domain_params.shape[1] != num_samples:  # shape[2] = num_domain_param
