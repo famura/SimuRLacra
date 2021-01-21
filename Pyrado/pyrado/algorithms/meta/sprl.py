@@ -225,9 +225,9 @@ class SPRL(Algorithm):
         ]
 
         # optionally clip the bounds of the new variance
-        if self._kl_threshold and self._kl_threshold < kl_divergence:
+        if self._kl_threshold and (self._kl_threshold < kl_divergence):
             lower_bound = np.ones_like(previous_distribution.get_stacked()) * -np.inf
-            lower_bound[dim] = np.log(self._std_lower_bound)
+            lower_bound[dim] = self._std_lower_bound
             upper_bound = np.ones_like(previous_distribution.get_stacked()) * np.inf
             bounds = Bounds(lb=lower_bound, ub=upper_bound, keep_feasible=True)
             x0 = np.clip(previous_distribution.get_stacked(), lower_bound, upper_bound)
