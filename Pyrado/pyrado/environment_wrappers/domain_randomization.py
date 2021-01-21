@@ -32,6 +32,7 @@ from typing import Tuple, Optional, Union, Mapping, List
 
 import pyrado
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
+from pyrado.environments.base import Env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.utils import inner_env, all_envs, remove_env
@@ -246,7 +247,7 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
         self._ring_idx = state_dict["ring_idx"]
 
 
-def remove_all_dr_wrappers(env: SimEnv, verbose: bool = False):
+def remove_all_dr_wrappers(env: Env, verbose: bool = False):
     """
     Go through the environment chain and remove all wrappers of type `DomainRandWrapper` (and subclasses).
 

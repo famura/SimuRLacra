@@ -182,9 +182,7 @@ def until_thold_exceeded(thold: float, max_iter: Optional[int] = None):
                     break
 
                 # Else repeat training
-                print_cbt(
-                    f"The threshold {thold} has not been exceeded. Repeating ...", "w", True
-                )
+                print_cbt(f"The threshold {thold} has not been exceeded. Repeating ...", "w", True)
             return ret
 
         return wrapper_trn_eval_fcn

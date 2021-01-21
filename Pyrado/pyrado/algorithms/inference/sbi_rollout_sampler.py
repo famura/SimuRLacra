@@ -34,7 +34,7 @@ from typing import Union, Mapping
 import pyrado
 from pyrado.environment_wrappers.base import EnvWrapper
 from pyrado.environment_wrappers.domain_randomization import remove_all_dr_wrappers
-from pyrado.environments.real_base import RealEnv
+from pyrado.environments.base import Env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
 from pyrado.sampling.rollout import rollout
@@ -192,7 +192,7 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI):
 
     def __init__(
         self,
-        env: Union[RealEnv, SimEnv, EnvWrapper],
+        env: Env,
         policy: Policy,
         strategy: str,
     ):
@@ -214,7 +214,7 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI):
         self._policy = policy
 
     def __call__(self, dp_values: to.Tensor = None):
-        """ Run one rollout, and compute summary statistics. """
+        """ Run one rollout and compute summary statistics. """
         # Don't set the domain params here since they are set by the DomainRandWrapperBuffer to mimic the randomness
         ro = rollout(self._env, self._policy, eval=True)
         ro.torch(data_type=to.get_default_dtype())
