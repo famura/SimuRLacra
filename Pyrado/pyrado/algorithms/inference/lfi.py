@@ -26,7 +26,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import os.path as osp
 import sys
 import torch as to
 from colorama import Style, Fore
@@ -47,7 +46,8 @@ from sbi.utils import posterior_nn
 import pyrado
 from pyrado.algorithms.base import Algorithm, InterruptableAlgorithm
 from pyrado.algorithms.inference.sbi_rollout_sampler import SimRolloutSamplerForSBI, RealRolloutSamplerForSBI
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
+from pyrado.algorithms.utils import until_thold_exceeded
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer, remove_all_dr_wrappers
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.base import Env
 from pyrado.environments.real_base import RealEnv
@@ -83,11 +83,13 @@ class LFI(InterruptableAlgorithm):
         max_iter: int,
         num_real_rollouts: int,
         num_sim_per_real_rollout: int,
-        training_batch_size: int = 50,
-        lr_sbi: int = 5e-4,
+        training_batch_size: Optional[int] = 50,
+        lr_sbi: Optional[int] = 5e-4,
         num_eval_samples: Optional[int] = 1000,
+        sbi_sampling_kwargs: Optional[dict] = None,
         subrtn_policy: Optional[Algorithm] = None,
         subrtn_policy_snapshot_mode: Optional[str] = "latest",
+        thold_succ_subrtn: Optional[float] = -pyrado.inf,
         num_workers: Optional[int] = 1,
         logger: Optional[StepLogger] = None,
     ):
@@ -113,24 +115,31 @@ class LFI(InterruptableAlgorithm):
                                   observation is computed
         :param num_sim_per_real_rollout: number of simulations done by sbi per real-world observation received
         :param num_eval_samples: number of samples for evaluating the posterior in `eval_posterior()`
+        :param sbi_sampling_kwargs: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function
         :param subrtn_policy: algorithm which performs the optimization of the behavioral policy (and value-function)
         :param subrtn_policy_snapshot_mode: snapshot mode for saving during training of the subroutine
+        :param thold_succ_subrtn: success threshold on the simulated system's return for the subroutine, repeat the
+                                  subroutine until the threshold is exceeded or the for a given number of iterations
         :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         # Call InterruptableAlgorithm's constructor
         super().__init__(num_checkpoints=2, save_dir=save_dir, max_iter=max_iter, policy=policy, logger=logger)
 
-        self._env_sim = env_sim
+        self._env_sim_trn = deepcopy(env_sim)
+        self._env_sim_sbi = remove_all_dr_wrappers(env_sim)  # will be randomized manually
         self._env_real = env_real
         self.dp_mapping = dp_mapping
         self.summary_statistic = summary_statistic.lower()
         self.posterior_nn_hparam = posterior_nn_hparam
         self.sbi_subrtn_class = sbi_subrtn_class
         self.sbi_training_hparam = dict(learning_rate=lr_sbi, training_batch_size=training_batch_size)
+        self.sbi_sampling_kwargs = sbi_sampling_kwargs if sbi_sampling_kwargs is not None else dict()
         self.num_real_rollouts = num_real_rollouts
         self.num_sim_per_real_rollout = num_sim_per_real_rollout
         self.num_eval_samples = num_eval_samples
+        self.thold_succ_subrtn = float(thold_succ_subrtn)
+        self.max_subrtn_rep = 3  # number of tries to exceed thold_succ_subrtn during training in simulation
         self.num_workers = num_workers
 
         # Temporary containers
@@ -150,7 +159,9 @@ class LFI(InterruptableAlgorithm):
                 )
 
         # Prepare simulator and prior for usage in sbi
-        rollout_sampler = SimRolloutSamplerForSBI(self._env_sim, self._policy, self.dp_mapping, self.summary_statistic)
+        rollout_sampler = SimRolloutSamplerForSBI(
+            self._env_sim_sbi, self._policy, self.dp_mapping, self.summary_statistic
+        )
         self._sbi_simulator, self._sbi_prior = prepare_for_sbi(rollout_sampler, prior)
 
         # Create the algorithm instance used in sbi, e.g. SNPE-A/B/C or SNLE
@@ -162,7 +173,7 @@ class LFI(InterruptableAlgorithm):
         )
 
         # Save initial environments and the prior
-        pyrado.save(self._env_sim, "env_sim", "pkl", self._save_dir)
+        pyrado.save(self._env_sim_trn, "env_sim", "pkl", self._save_dir)
         pyrado.save(self._env_real, "env_real", "pkl", self._save_dir)
         pyrado.save(prior, "prior", "pt", self._save_dir, meta_info=None, use_state_dict=False)
 
@@ -251,8 +262,8 @@ class LFI(InterruptableAlgorithm):
         if self.curr_checkpoint == 1:
             # Train the posterior
             self._sbi_subrtn.train(**self.sbi_training_hparam)
-            posterior = (
-                self._sbi_subrtn.build_posterior()
+            posterior = self._sbi_subrtn.build_posterior(
+                **self.sbi_sampling_kwargs
             )  # no need to pass density_estimator, since latest is used by default
             pyrado.save(posterior, "posterior", "pt", self._save_dir, meta_info=dict(prefix=f"iter_{self._curr_iter}"))
             pyrado.save(posterior, "posterior", "pt", self._save_dir, meta_info, use_state_dict=False)
@@ -274,7 +285,12 @@ class LFI(InterruptableAlgorithm):
 
         if self.curr_checkpoint == 2:
             if self._subrtn_policy is not None:
-                self.train_policy_sim(self._curr_domain_param_eval.squeeze(), prefix=f"iter_{self._curr_iter}")
+                # Train the behavioral policy using the posterior samples obtained before, repeat if the resulting
+                # policy did not exceed the success threshold
+                wrapped_trn_fcn = until_thold_exceeded(self.thold_succ_subrtn, self.max_subrtn_rep)(
+                    self.train_policy_sim
+                )
+                wrapped_trn_fcn(self._curr_domain_param_eval.squeeze(), prefix=f"iter_{self._curr_iter}")
 
             self.reached_checkpoint()  # setting counter to 0
 
@@ -284,7 +300,7 @@ class LFI(InterruptableAlgorithm):
     @staticmethod
     def collect_real_observations(
         save_dir: Optional[str],
-        env: Union[RealEnv, SimEnv],
+        env: Env,
         policy: Policy,
         summary_statistic: str,
         prefix: str,
@@ -339,6 +355,7 @@ class LFI(InterruptableAlgorithm):
         num_samples: int,
         simulator: Callable = None,
         simulate_observations: bool = True,
+        sbi_sampling_kwargs: Optional[dict] = None,
     ) -> Tuple[to.Tensor, to.Tensor, Optional[to.Tensor]]:
         r"""
         Evaluates the posterior by computing parameter samples given observed data, its log probability
@@ -351,6 +368,7 @@ class LFI(InterruptableAlgorithm):
         :param simulator: simulator used during the sbi training procedure
         :param simulate_observations: create simulated observations using the domain parameters sampled from the
                                       posterior and same simulator as used during the sbi training procedure
+        :param sbi_sampling_kwargs: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function
         :return: domain parameters sampled form the posterior, log-probabilities of these domain parameters, and
                  optionally the simulated observations from the rollouts
         """
@@ -371,7 +389,11 @@ class LFI(InterruptableAlgorithm):
         num_obs, dim_obs = observations_real.shape
 
         # Sample domain parameters from the normalizing flow
-        domain_params = to.stack([posterior.sample((num_samples,), x=obs) for obs in observations_real], dim=0)
+        sbi_sampling_kwargs = sbi_sampling_kwargs if sbi_sampling_kwargs is not None else dict()
+        domain_params = to.stack(
+            [posterior.sample((num_samples,), x=obs, **sbi_sampling_kwargs) for obs in observations_real],
+            dim=0,
+        )
         if domain_params.shape[0] != num_obs or domain_params.shape[1] != num_samples:  # shape[2] = num_domain_param
             raise pyrado.ShapeErr(given=domain_params, expected_match=(num_obs, num_samples, -1))
 
@@ -399,7 +421,7 @@ class LFI(InterruptableAlgorithm):
         policy: Policy,
         prefix: str,
         num_rollouts: int,
-        num_workers: int = 1,
+        num_workers: Optional[int] = 1,
     ) -> to.Tensor:
         """
         Evaluate a policy either in the source or in the target domain.
@@ -459,18 +481,22 @@ class LFI(InterruptableAlgorithm):
         :param prefix: set a prefix to the saved file name by passing it to `meta_info`
         :return: estimated return of the trained policy in the target domain
         """
-        if not isinstance(self._env_sim, DomainRandWrapperBuffer):
-            raise pyrado.TypeErr(given=self._env_sim, expected_type=DomainRandWrapperBuffer)
+        if not isinstance(self._env_sim_trn, DomainRandWrapperBuffer):
+            raise pyrado.TypeErr(given=self._env_sim_trn, expected_type=DomainRandWrapperBuffer)
         if not (domain_params.ndim == 2 and domain_params.shape[1] == len(self.dp_mapping)):
             raise pyrado.ShapeErr(given=domain_params, expected_match=(-1, 2))
 
         # Insert the domain parameters into the wrapped environment's buffer
         domain_params = domain_params.detach().cpu().numpy()
-        self._env_sim.buffer = [dict(zip(self.dp_mapping.values(), dp)) for dp in domain_params]
-        self._env_sim.ring_idx = 0
+        self._env_sim_trn.buffer = [dict(zip(self.dp_mapping.values(), dp)) for dp in domain_params]
+        self._env_sim_trn.ring_idx = 0
+        print_cbt(
+            f"Filled the randomized environment buffer with {len(self._env_sim_trn.buffer)} domain parameters sets.",
+            "g",
+        )
 
         # Reset the subroutine algorithm which includes resetting the exploration
-        # self._cnt_samples += self._subrtn_policy.sample_count
+        self._cnt_samples += self._subrtn_policy.sample_count
         self._subrtn_policy.reset()
 
         # Do a warm start if desired
@@ -482,8 +508,10 @@ class LFI(InterruptableAlgorithm):
         self._subrtn_policy.train(snapshot_mode=self._subrtn_policy_snapshot_mode, meta_info=dict(prefix=prefix))
 
         # Return the estimated return of the trained policy in simulation
-        self._env_sim.ring_idx = 0  # don't reset the buffer to eval on the same domains as trained
-        avg_ret_sim = self.eval_policy(None, self._env_sim, self._subrtn_policy.policy, prefix, self.num_eval_samples)
+        self._env_sim_trn.ring_idx = 0  # don't reset the buffer to eval on the same domains as trained
+        avg_ret_sim = self.eval_policy(
+            None, self._env_sim_trn, self._subrtn_policy.policy, prefix, self.num_eval_samples
+        )
         return float(avg_ret_sim)
 
     def save_snapshot(self, meta_info: dict = None):
@@ -493,6 +521,7 @@ class LFI(InterruptableAlgorithm):
             # This algorithm instance is not a subroutine of another algorithm
             if self._subrtn_policy is None:
                 # The policy is not being updated by a policy optimization subroutine
+                pyrado.save(self._env_sim_trn, "env_sim", "pkl", self._save_dir)
                 pyrado.save(self._policy, "policy", "pt", self.save_dir, None)
             else:
                 self._subrtn_policy.save_snapshot()
@@ -529,7 +558,9 @@ class LFI(InterruptableAlgorithm):
         super().__setstate__(state)
 
         # Reconstruct the simulator for sbi
-        rollout_sampler = SimRolloutSamplerForSBI(self._env_sim, self._policy, self.dp_mapping, self.summary_statistic)
+        rollout_sampler = SimRolloutSamplerForSBI(
+            self._env_sim_sbi, self._policy, self.dp_mapping, self.summary_statistic
+        )
         sbi_simulator, _ = prepare_for_sbi(rollout_sampler, state["_sbi_prior"])  # sbi_prior is fine as it is
         self.__dict__["_sbi_simulator"] = sbi_simulator
 
