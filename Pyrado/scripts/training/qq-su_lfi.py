@@ -37,16 +37,17 @@ if __name__ == "__main__":
     randomizer = DomainRandomizer(
         NormalDomainParam(name="g", mean=10.0, std=10.0 / 100),
         NormalDomainParam(name="Rm", mean=9.0, std=9.0 / 100),
+        NormalDomainParam(name="Mp", mean=0.02, std=0.02 / 100),
     )
     env_real = DomainRandWrapperBuffer(env_real, randomizer)
     env_real.fill_buffer(num_real_obs)
-    dp_mapping = {0: "g", 1: "Rm"}
+    dp_mapping = {0: "g", 1: "Rm", 2: "Mp"}
 
     # Policy
     behavior_policy = QQubeSwingUpAndBalanceCtrl(env_sim.spec)
 
     # Prior and Posterior (normalizing flow)
-    prior_hparam = dict(low=to.tensor([1.0, 1.0]), high=to.tensor([20.0, 10.0]))
+    prior_hparam = dict(low=to.tensor([9.0, 8.0, 0.015]), high=to.tensor([11.0, 10.0, 0.025]))
     prior = utils.BoxUniform(**prior_hparam)
     posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=2)
 
@@ -56,6 +57,7 @@ if __name__ == "__main__":
         max_iter=10,
         num_real_rollouts=num_real_obs,
         num_sim_per_real_rollout=50,
+        num_workers=1,
     )
     algo = LFI(
         ex_dir,

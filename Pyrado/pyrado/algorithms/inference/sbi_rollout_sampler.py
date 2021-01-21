@@ -28,6 +28,7 @@
 
 import torch as to
 from abc import ABC, abstractmethod
+from operator import itemgetter
 from typing import Union, Mapping
 
 import pyrado
@@ -184,17 +185,51 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
         self.dp_names = dp_mapping.values()
 
     def __call__(self, dp_values: to.Tensor):
-        """ Set the domain parameter, run one rollout, and compute summary statistics. """
-        ro = rollout(
-            self._env,
-            self._policy,
-            eval=True,
-            reset_kwargs=dict(domain_param=dict(zip(self.dp_names, dp_values.numpy().flatten()))),
-        )
-        ro.torch(data_type=to.get_default_dtype())
+        """
+        Set the domain parameter, run one rollout, and compute summary statistics.
 
-        # Return the observations used for inference from the rollout data
-        return self.transform_data(ro)
+        :param dp_values: tensor containing the domain parameter values [num samples x num domain parameters]
+
+        .. note::
+            If it is not desired that sbi treats this function as a batched simulator, just insert
+
+            .. code-block:: python
+
+                    if dp_values.ndim == 2:
+                        raise RuntimeError
+        """
+        dp_values = to.atleast_2d(dp_values)
+
+        # Do the rollouts
+        ros = [
+            rollout(
+                self._env,
+                self._policy,
+                eval=True,
+                reset_kwargs=dict(domain_param=dict(zip(self.dp_names, dpv))),
+            )
+            for dpv in dp_values.numpy()
+        ]
+
+        # Check if the domain parameters in the rollout are actually the ones commanded by sbi
+        if not all(
+            [
+                to.allclose(to.as_tensor(itemgetter(*self.dp_names)(ro.rollout_info["domain_param"])), dpv)
+                for ro, dpv in zip(ros, dp_values)
+            ]
+        ):
+            raise pyrado.ValueErr(
+                msg="The domain parameters after the rollouts are not identical to the ones commanded by the sbi!"
+            )
+
+        # Transform the data to torch and compute the observations used for inference from the rollout data
+        [ro.torch(data_type=to.get_default_dtype()) for ro in ros]
+        obs = to.stack([self.transform_data(ro) for ro in ros])
+
+        if obs.shape[0] != dp_values.shape[0]:
+            raise pyrado.ShapeErr(given=obs, expected_match=dp_values)
+
+        return obs
 
 
 class RealRolloutSamplerForSBI(RolloutSamplerForSBI):

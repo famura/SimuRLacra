@@ -123,6 +123,9 @@ class LFI(InterruptableAlgorithm):
         :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
+        if not prior.event_shape[0] == len(dp_mapping):
+            raise pyrado.ShapeErr(given=prior.event_shape, expected_match=dp_mapping)
+
         # Call InterruptableAlgorithm's constructor
         super().__init__(num_checkpoints=2, save_dir=save_dir, max_iter=max_iter, policy=policy, logger=logger)
 
