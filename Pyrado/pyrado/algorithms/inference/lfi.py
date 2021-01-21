@@ -126,6 +126,7 @@ class LFI(InterruptableAlgorithm):
         # Call InterruptableAlgorithm's constructor
         super().__init__(num_checkpoints=2, save_dir=save_dir, max_iter=max_iter, policy=policy, logger=logger)
 
+        self._env_sim_trn = deepcopy(env_sim)
         self._env_sim_sbi = remove_all_dr_wrappers(env_sim)  # will be randomized manually
         self._env_real = env_real
         self.dp_mapping = dp_mapping
@@ -496,10 +497,7 @@ class LFI(InterruptableAlgorithm):
         domain_params = domain_params.detach().cpu().numpy()
         self._env_sim_trn.buffer = [dict(zip(self.dp_mapping.values(), dp)) for dp in domain_params]
         self._env_sim_trn.ring_idx = 0
-        print_cbt(
-            f"Filled the randomized environment buffer with {len(self._env_sim_trn.buffer)} domain parameters sets.",
-            "g",
-        )
+        print_cbt(f"Filled the environment's buffer with {len(self._env_sim_trn.buffer)} domain parameters sets.", "g")
 
         # Reset the subroutine algorithm which includes resetting the exploration
         self._cnt_samples += self._subrtn_policy.sample_count
