@@ -26,6 +26,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+# Added stuff
+import math, pathlib
+
 import numpy as np
 import torch as to
 from abc import abstractmethod
@@ -138,14 +141,56 @@ class QQubeSim(SimPyEnv, Serializable):
         self.state += self._dt / 6 * (k[0] + 2 * k[1] + 2 * k[2] + k[3])
 
     def _init_anim(self):
-        import vpython as vp
+        from direct.showbase.ShowBase import ShowBase
+        from direct.task import Task
+        from panda3d.core import loadPrcFileData, DirectionalLight, AntialiasAttrib, TextNode, WindowProperties, AmbientLight
+
+        # Configuration for panda3d-window
+        confVars = """
+        win-size 800 600
+        window-title Quanser Qube
+        framebuffer-multisample 1
+        multisamples 2
+        """
+        loadPrcFileData("", confVars)
+
+        class PandaVis(ShowBase):
+
+        ShowBase.__init__(self)
+
+        mydir = pathlib.Path(__file__).resolve().parent.absolute()
+
+        # Accessing variables of outer class
+        self.qq = qq
 
         # Convert to float for VPython
-        Lr = float(self.domain_param["Lr"])
-        Lp = float(self.domain_param["Lp"])
+        Lr = float(self.qq.domain_param["Lr"])
+        Lp = float(self.qq.domain_param["Lp"])
 
-        # Init render objects on first call
-        self._anim["canvas"] = vp.canvas(width=800, height=600, title="Quanser Qube")
+        self.setBackgroundColor(1, 1, 1)
+        self.cam.setY(-3)
+        self.render.setAntialias(AntialiasAttrib.MAuto)
+        self.windowProperties = WindowProperties()
+        self.windowProperties.setForeground(True)
+
+        # Set lighting
+        self.directionalLight = DirectionalLight('directionalLight')
+        self.directionalLightNP = self.render.attachNewNode(self.directionalLight)
+        self.directionalLightNP.setHpr(0, -8, 0)
+        #self.directionalLightNP.setPos(0, 8, 0)
+        self.render.setLight(self.directionalLightNP)
+
+        self.ambientLight = AmbientLight('ambientLight')
+        self.ambientLight.setColor((0.1, 0.1, 0.1, 1))
+        self.ambientLightNP = self.render.attachNewNode(self.ambientLight)
+        self.render.setLight(self.ambientLightNP)
+
+        self.text = TextNode('parameters')
+        self.textNodePath = aspect2d.attachNewNode(self.text)
+        self.textNodePath.setScale(0.07)
+        self.textNodePath.setPos(0.3, 0, -0.3)
+
+        # HIER GEHTS WEITER
         scene_range = 0.2
         arm_radius = 0.003
         pole_radius = 0.0045
@@ -169,7 +214,8 @@ class QQubeSim(SimPyEnv, Serializable):
         self._anim["curve"] = vp.curve(color=vp.color.white, radius=0.0005, retain=2000)
 
     def _update_anim(self):
-        import vpython as vp
+        self._visualization.taskMgr.step()
+
 
         # Convert to float for VPython
         g = self.domain_param["g"]
