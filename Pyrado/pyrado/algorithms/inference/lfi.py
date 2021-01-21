@@ -161,11 +161,10 @@ class LFI(InterruptableAlgorithm):
                     "the system identification (sbi) subroutine!"
                 )
 
-        # Prepare simulator and prior for usage in sbi
-        rollout_sampler = SimRolloutSamplerForSBI(
-            self._env_sim_sbi, self._policy, self.dp_mapping, self.summary_statistic
-        )
-        self._sbi_simulator, self._sbi_prior = prepare_for_sbi(rollout_sampler, prior)
+        # Initialize sbi simulator and prior
+        self._sbi_simulator = None  # to be re-initialized in step()
+        self._sbi_prior = None  # to be re-initialized in step()
+        self._setup_sbi(prior=prior)
 
         # Create the algorithm instance used in sbi, e.g. SNPE-A/B/C or SNLE
         density_estimator = posterior_nn(**self.posterior_nn_hparam)  # can't be saved
@@ -195,6 +194,17 @@ class LFI(InterruptableAlgorithm):
         """ Get the simulator wrapped for sbi. """
         return self._sbi_simulator
 
+    def _setup_sbi(self, prior: Optional[Distribution] = None):
+        """ Prepare simulator and prior for usage in sbi. """
+        rollout_sampler = SimRolloutSamplerForSBI(
+            self._env_sim_sbi, self._policy, self.dp_mapping, self.summary_statistic
+        )
+        if prior is None:
+            prior = pyrado.load(None, "prior", "pt", self._save_dir)
+
+        # Call sbi's preparation function
+        self._sbi_simulator, self._sbi_prior = prepare_for_sbi(rollout_sampler, prior)
+
     def step(self, snapshot_mode: str = None, meta_info: dict = None):
         # Save snapshot to save the correct iteration count
         self.save_snapshot()
@@ -216,6 +226,9 @@ class LFI(InterruptableAlgorithm):
                     msg=f"The observations must be a 2-dim PyTorch tensor where the first dimension has as"
                     f"many entries as there are observations, but the shape is {self._curr_observations_real.shape}!"
                 )
+
+            # Initialize sbi simulator and prior
+            self._setup_sbi()
 
             # First iteration
             if self._curr_iter == 0:

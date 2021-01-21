@@ -223,7 +223,6 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
             )
 
         # Transform the data to torch and compute the observations used for inference from the rollout data
-        [ro.torch(data_type=to.get_default_dtype()) for ro in ros]
         obs = to.stack([self.transform_data(ro) for ro in ros])
 
         if obs.shape[0] != dp_values.shape[0]:
@@ -256,10 +255,13 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI):
         super().__init__(env=env, policy=policy, strategy=strategy)
 
     def __call__(self, dp_values: to.Tensor = None):
-        """ Run one rollout and compute summary statistics. """
+        """
+        Run one rollout and compute summary statistics.
+
+        :param dp_values: ignored, just here for the interface compatibility
+        """
         # Don't set the domain params here since they are set by the DomainRandWrapperBuffer to mimic the randomness
         ro = rollout(self._env, self._policy, eval=True)
-        ro.torch(data_type=to.get_default_dtype())
 
         # Return the observations used for inference from the rollout data
         return self.transform_data(ro)
