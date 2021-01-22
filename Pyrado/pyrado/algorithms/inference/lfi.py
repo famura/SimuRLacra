@@ -85,7 +85,7 @@ class LFI(InterruptableAlgorithm):
         max_iter: int,
         num_real_rollouts: int,
         num_sim_per_real_rollout: int,
-        num_eval_samples: Optional[int] = 1000,
+        num_eval_samples: Optional[int] = 4000,
         sbi_training_hparam: Optional[dict] = None,
         sbi_sampling_hparam: Optional[dict] = None,
         simulation_batch_size: Optional[int] = 1,

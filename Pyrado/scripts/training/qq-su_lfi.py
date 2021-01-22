@@ -35,9 +35,9 @@ if __name__ == "__main__":
     num_real_obs = 1
     env_real = deepcopy(env_sim)
     randomizer = DomainRandomizer(
-        NormalDomainParam(name="g", mean=10.0, std=10.0 / 100),
-        NormalDomainParam(name="Rm", mean=9.0, std=9.0 / 100),
-        NormalDomainParam(name="Mp", mean=0.02, std=0.02 / 100),
+        NormalDomainParam(name="g", mean=10.0, std=10.0 / 20),
+        NormalDomainParam(name="Rm", mean=9.0, std=9.0 / 20),
+        NormalDomainParam(name="Mp", mean=0.02, std=0.02 / 20),
     )
     env_real = DomainRandWrapperBuffer(env_real, randomizer)
     env_real.fill_buffer(num_real_obs)
@@ -56,8 +56,8 @@ if __name__ == "__main__":
         summary_statistic="ramos",
         max_iter=20,
         num_real_rollouts=num_real_obs,
-        num_sim_per_real_rollout=500,
-        simulation_batch_size=10,
+        num_sim_per_real_rollout=1000,
+        simulation_batch_size=1,
         num_workers=8,
     )
     algo = LFI(

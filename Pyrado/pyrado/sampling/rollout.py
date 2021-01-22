@@ -31,7 +31,7 @@ import time
 import torch as to
 import torch.nn as nn
 from matplotlib import pyplot as plt
-from typing import Callable
+from typing import Callable, Tuple, Optional, Union
 from tabulate import tabulate
 
 import pyrado
@@ -59,17 +59,17 @@ from pyrado.utils.input_output import print_cbt, color_validity
 
 def rollout(
     env: Env,
-    policy: [nn.Module, Policy, Callable],
-    eval: bool = False,
-    max_steps: int = None,
-    reset_kwargs: dict = None,
-    render_mode: RenderMode = RenderMode(),
-    render_step: int = 1,
-    no_reset: bool = False,
-    no_close: bool = False,
-    record_dts: bool = False,
-    stop_on_done: bool = True,
-    seed: int = None,
+    policy: Union[nn.Module, Policy, Callable],
+    eval: Optional[bool] = False,
+    max_steps: Optional[int] = None,
+    reset_kwargs: Optional[dict] = None,
+    render_mode: Optional[RenderMode] = RenderMode(),
+    render_step: Optional[int] = 1,
+    no_reset: Optional[bool] = False,
+    no_close: Optional[bool] = False,
+    record_dts: Optional[bool] = False,
+    stop_on_done: Optional[bool] = True,
+    seed: Optional[int] = None,
 ) -> StepSequence:
     """
     Perform a rollout (i.e. sample a trajectory) in the given environment using given policy.
@@ -312,7 +312,9 @@ def rollout(
     return res
 
 
-def after_rollout_query(env: Env, policy: Policy, rollout: StepSequence) -> tuple:
+def after_rollout_query(
+    env: Env, policy: Policy, rollout: StepSequence
+) -> Tuple[bool, Optional[np.ndarray], Optional[dict]]:
     """
     Ask the user what to do after a rollout has been animated.
 
@@ -352,7 +354,7 @@ def after_rollout_query(env: Env, policy: Policy, rollout: StepSequence) -> tupl
             elif isinstance(inner_env(env), SimEnv):
                 # Get the user input
                 usr_inp = input(
-                    f"Enter the {env.obs_space.flat_dim}-dim initial state"
+                    f"Enter the {env.obs_space.flat_dim}-dim initial state "
                     f"(format: each dim separated by a whitespace):\n"
                 )
                 state = list(map(float, usr_inp.split()))
