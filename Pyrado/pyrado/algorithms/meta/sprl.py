@@ -256,7 +256,7 @@ class SPRL(Algorithm):
                 self._parameter.adapt("context_mean", to.tensor([result.x[0]]).float())
                 self._parameter.adapt("context_cov_chol_flat", to.tensor([result.x[1]]).float())
             else:
-                raise pyrado.BaseErr("Sad… :/")
+                print(f'Update unsuccessfull, keeping old values for {self._parameter.name}')
 
         # Reset environment.
         self._subroutine.reset()
