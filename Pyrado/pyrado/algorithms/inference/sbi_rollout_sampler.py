@@ -223,16 +223,16 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
             )
 
         # Transform the data to torch and compute the observations used for inference from the rollout data
-        obs = to.stack([self.transform_data(ro) for ro in ros])
+        obs_real = to.stack([self.transform_data(ro) for ro in ros])
 
-        if obs.shape[0] != dp_values.shape[0]:
-            raise pyrado.ShapeErr(given=obs, expected_match=dp_values)
+        if obs_real.shape[0] != dp_values.shape[0]:
+            raise pyrado.ShapeErr(given=obs_real, expected_match=dp_values)
 
-        return obs
+        return obs_real
 
 
 class RealRolloutSamplerForSBI(RolloutSamplerForSBI):
-    """ Wrapper to make SimuRLacra's real environments usable as simulators for the sbi package """
+    """ Wrapper to make SimuRLacra's real environments similar to the simulators for the sbi package """
 
     def __init__(
         self,
@@ -255,13 +255,19 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI):
         super().__init__(env=env, policy=policy, strategy=strategy)
 
     def __call__(self, dp_values: to.Tensor = None):
-        """
+        r"""
         Run one rollout and compute summary statistics.
 
         :param dp_values: ignored, just here for the interface compatibility
+        :return: observation a.k.a. $x_o$, and initial state of the physical device
         """
         # Don't set the domain params here since they are set by the DomainRandWrapperBuffer to mimic the randomness
         ro = rollout(self._env, self._policy, eval=True)
 
+        # Extract the initial state from the recorded rollout
+        init_state = ro.rollout_info["init_state"]
+
         # Return the observations used for inference from the rollout data
-        return self.transform_data(ro)
+        obs_real = self.transform_data(ro)
+
+        return obs_real, init_state

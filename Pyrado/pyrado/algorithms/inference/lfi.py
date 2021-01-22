@@ -26,6 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import numpy as np
 import sys
 import torch as to
 from colorama import Style, Fore
@@ -56,6 +57,7 @@ from pyrado.logger.step import StepLogger
 from pyrado.policies.base import Policy
 from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.sampling.rollout import rollout
+from pyrado.spaces.discrete import DiscreteSpace
 from pyrado.utils.input_output import print_cbt
 
 
@@ -189,13 +191,12 @@ class LFI(InterruptableAlgorithm):
         """ Get the system identification subroutine coming from the sbi module. """
         return self._sbi_subrtn
 
-    @property
-    def sbi_simulator(self) -> Optional[Callable]:
-        """ Get the simulator wrapped for sbi. """
-        return self._sbi_simulator
-
     def _setup_sbi(self, prior: Optional[Distribution] = None):
-        """ Prepare simulator and prior for usage in sbi. """
+        """
+        Prepare simulator and prior for usage in sbi.
+
+        :param prior: distribution used by sbi as a prior
+        """
         rollout_sampler = SimRolloutSamplerForSBI(
             self._env_sim_sbi, self._policy, self.dp_mapping, self.summary_statistic
         )
@@ -205,12 +206,25 @@ class LFI(InterruptableAlgorithm):
         # Call sbi's preparation function
         self._sbi_simulator, self._sbi_prior = prepare_for_sbi(rollout_sampler, prior)
 
+    def _sync_init_states(self, init_states_real: np.ndarray):
+        """
+        Set the initial state spaces of the simulation environments to be the set of initial states observed during the
+        rollouts of the real system. Needs to be called before `_setup_sbi()`.
+
+        :param init_states_real: array of observations [num samples x dim init state]
+        """
+        if not init_states_real.shape[1] == self._env_sim_sbi.state_space.flat_dim:
+            raise pyrado.ShapeErr(msg="Dimensionality mismatch for the initial states!")
+
+        self._env_sim_sbi._init_space = DiscreteSpace(init_states_real)
+        self._env_sim_trn._init_space = DiscreteSpace(init_states_real)
+
     def step(self, snapshot_mode: str = None, meta_info: dict = None):
         # Save snapshot to save the correct iteration count
         self.save_snapshot()
 
         if self.curr_checkpoint == 0:
-            self._curr_observations_real = LFI.collect_real_observations(
+            self._curr_observations_real, init_states_real = LFI.collect_real_observations(
                 self.save_dir,
                 self._env_real,
                 self._policy,
@@ -226,6 +240,9 @@ class LFI(InterruptableAlgorithm):
                     msg=f"The observations must be a 2-dim PyTorch tensor where the first dimension has as"
                     f"many entries as there are observations, but the shape is {self._curr_observations_real.shape}!"
                 )
+
+            # Set the initial state space of the simulation environments to match the recorded initial state
+            self._sync_init_states(init_states_real)
 
             # Initialize sbi simulator and prior
             self._setup_sbi()
@@ -328,7 +345,7 @@ class LFI(InterruptableAlgorithm):
         summary_statistic: str,
         prefix: str,
         num_rollouts: int,
-    ) -> to.Tensor:
+    ) -> Tuple[to.Tensor, np.ndarray]:
         """
         Roll-out a (behavioral) policy on the target system for later use with the sbi module, and save the observations
         computed from the recorded rollouts.
@@ -353,6 +370,7 @@ class LFI(InterruptableAlgorithm):
         # Evaluate sequentially (necessary for sim-to-real experiments)
         rollout_worker = RealRolloutSamplerForSBI(env, policy, summary_statistic)
         observations_real = []
+        init_states_real = []
         for _ in tqdm(
             range(num_rollouts),
             total=num_rollouts,
@@ -360,16 +378,19 @@ class LFI(InterruptableAlgorithm):
             unit="rollouts",
             file=sys.stdout,
         ):
-            observations_real.append(rollout_worker())
+            observation, init_state = rollout_worker()
+            observations_real.append(observation)
+            init_states_real.append(init_state)
 
-        # Stacked to tensor, samples along 1st dimension
+        # Stacked to tensor / array, samples along 1st dimension
         observations_real = to.stack(observations_real)
+        init_states_real = np.stack(init_states_real)
 
         # Optionally save the data
         if save_dir is not None:
             pyrado.save(observations_real, f"{prefix}_observations_real", "pt", save_dir)
 
-        return observations_real
+        return observations_real, init_states_real
 
     @staticmethod
     def eval_posterior(
