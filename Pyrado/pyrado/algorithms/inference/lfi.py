@@ -198,6 +198,11 @@ class LFI(InterruptableAlgorithm):
         """ Get the system identification subroutine coming from the sbi module. """
         return self._sbi_subrtn
 
+    @property
+    def sbi_simulator(self) -> Optional[Callable]:
+        """ Get the simulator wrapped for sbi. """
+        return self._sbi_simulator
+
     def _setup_sbi(self, prior: Optional[Distribution] = None, init_states_real: Optional[np.ndarray] = None):
         """
         Prepare simulator and prior for usage in sbi.
