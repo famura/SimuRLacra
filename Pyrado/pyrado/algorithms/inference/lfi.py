@@ -518,6 +518,28 @@ class LFI(InterruptableAlgorithm):
 
         return to.mean(rets_real)
 
+    @staticmethod
+    def fill_domain_param_buffer(env: DomainRandWrapper, dp_mapping: Mapping[int, str], domain_params: to.Tensor):
+        """
+        Fill the environments domain parameter buffer according to the domain parameter map, and reset the ring index.
+
+        :param env: environment in which the domain parameters are inserted
+        :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)
+        :param domain_params: tensor of domain parameters [num_samples x dim domain param]
+        """
+        if not isinstance(env, DomainRandWrapperBuffer):
+            raise pyrado.TypeErr(given=env, expected_type=DomainRandWrapperBuffer)
+        if domain_params.ndim != 2 or domain_params.shape[1] != len(dp_mapping):
+            raise pyrado.ShapeErr(
+                msg=f"The domain parameter must be a 2-dim PyTorch tensor, where the second dimension matched the "
+                    f"domain parameter mapping, but it has the shape {domain_params.shape}!"
+            )
+
+        domain_params = domain_params.detach().cpu().numpy()
+        env.buffer = [dict(zip(dp_mapping.values(), dp)) for dp in domain_params]
+        env.ring_idx = 0
+        print_cbt(f"Filled the environment's buffer with {len(env.buffer)} domain parameters sets.", "g")
+
     def train_policy_sim(self, domain_params: to.Tensor, prefix: str) -> float:
         """
         Train a policy in simulation for given hyper-parameters from the domain randomizer.
@@ -531,10 +553,7 @@ class LFI(InterruptableAlgorithm):
             raise pyrado.ShapeErr(given=domain_params, expected_match=(-1, 2))
 
         # Insert the domain parameters into the wrapped environment's buffer
-        domain_params = domain_params.detach().cpu().numpy()
-        self._env_sim_trn.buffer = [dict(zip(self.dp_mapping.values(), dp)) for dp in domain_params]
-        self._env_sim_trn.ring_idx = 0
-        print_cbt(f"Filled the environment's buffer with {len(self._env_sim_trn.buffer)} domain parameters sets.", "g")
+        LFI.fill_domain_param_buffer(self._env_sim_trn, self.dp_mapping, domain_params)
 
         # Set the initial state spaces of the simulation environment to match the observed initial states
         self._env_sim_trn.wrapped_env.init_space = DiscreteSpace(self._curr_init_states_real)

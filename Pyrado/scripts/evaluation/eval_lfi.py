@@ -37,8 +37,10 @@ import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.inference.lfi import LFI
 from pyrado.logger.experiment import ask_for_experiment
+from pyrado.plotting.curve import draw_curve_from_data
 from pyrado.plotting.distribution import draw_posterior_distr
 from pyrado.plotting.utils import num_rows_cols_from_length
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment
 
@@ -92,10 +94,9 @@ if __name__ == "__main__":
 
     # Set the condition if necessary
     if len(algo.dp_mapping) > 2:
-        condition = to.mean(domain_params, dim=[0, 1]) # to.median(to.median(domain_params, dim=0)[0], dim=0)[0]
+        condition = to.mean(domain_params, dim=[0, 1])  # to.median(to.median(domain_params, dim=0)[0], dim=0)[0]
     else:
         condition = None
-
 
     # Plot the posterior distribution, the true parameters / their distribution
     if args.mode.lower() == "joint":
@@ -116,5 +117,26 @@ if __name__ == "__main__":
         show_prior=False,
         # grid_bounds=to.tensor([[0.1, 0.5], [1, 3.5]])
     )
+
+    """
+    # Look at one dim of the trajectory
+    argmax_logprob = to.argmax(log_prob, dim=1)  # most likely posterior samples
+    LFI.fill_domain_param_buffer(env_sim, algo.dp_mapping, domain_params[-1, :, :])
+    env_sim.selection = "cyclic"
+
+    sampler = ParallelRolloutSampler(env_sim, policy, num_workers=4, min_rollouts=50)
+    ros = sampler.sample()
+    import numpy as np
+    traj_real = np.array([ro.observations[3] for ro in ros])  # TODO
+
+    _, ax = plt.subplots(figsize=(14, 7), tight_layout=True)
+    draw_curve_from_data(
+        plot_type="mean_std",
+        ax=ax,
+        data=traj_real,
+        x_grid=np.arange(0, traj_real.shape[0]),
+        ax_calc=1,
+    )
+    """
 
     plt.show()

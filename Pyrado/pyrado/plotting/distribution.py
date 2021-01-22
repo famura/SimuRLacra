@@ -163,8 +163,10 @@ def draw_posterior_distr(
     if len(dp_mapping) == 1:
         raise NotImplementedError("So far, this function does not support plotting 1-dim posteriors.")
     if len(dp_mapping) > 2 and condition is None:
-        raise pyrado.ValueErr(msg="When the posteriors has more than 2 dimensions, i.e. there are more than 2 domain "
-                                  "parameters, a condition has to be provided.")
+        raise pyrado.ValueErr(
+            msg="When the posteriors has more than 2 dimensions, i.e. there are more than 2 domain "
+            "parameters, a condition has to be provided."
+        )
     elif len(dp_mapping) > 2 and (condition.numel() != len(dp_mapping)):
         raise pyrado.ShapeErr(given=condition, expected_match=dp_mapping)
     if not isinstance(grid_res, int):
