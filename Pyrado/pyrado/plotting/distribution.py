@@ -32,7 +32,7 @@ from torch.distributions import Distribution
 from matplotlib import pyplot as plt, patches
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
 from sbi.utils import BoxUniform
-from typing import Sequence, Optional, Union, Mapping
+from typing import Sequence, Optional, Union, Mapping, Tuple
 
 import pyrado
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
@@ -113,6 +113,8 @@ def draw_posterior_distr(
     dp_mapping: Mapping[int, str],
     env_real: Optional[DomainRandWrapperBuffer] = None,
     prior: Optional[BoxUniform] = None,
+    dims: Optional[Tuple] = (0, 1),
+    condition: Optional[to.Tensor] = None,
     show_prior: bool = False,
     grid_bounds: Optional[Union[to.Tensor, np.ndarray, list]] = None,
     grid_res: Optional[int] = 500,
@@ -133,15 +135,18 @@ def draw_posterior_distr(
     :param env_real: real-world environment a.k.a. target domain. Here it is used in case of a sim-2-sim example to
                      infer the ground truth domain parameters
     :param prior: distribution used by sbi as a prior
+    :param dims: selected dimensions
+    :param condition: condition of the posterior, i.e. domain parameters to fix for the non-plotted dimensions
     :param show_prior: display the prior as a box
-    :param grid_bounds: explicit bounds for the evaluation gird. Can be set arbitrarily, but should contain the prior
-                        if `show_prior` is `True`
+    :param grid_bounds: explicit bounds for the 2 selected dimensions of the evaluation gird [2 x 2]. Can be set
+                        arbitrarily, but should contain the prior if `show_prior` is `True`.
     :param grid_res: number of elements on one axis of the evaluation gird
     :param contourf_kwargs: keyword arguments forwarded to pyplot's `contourf()` function for the posterior distribution
     :param scatter_kwargs: keyword arguments forwarded to pyplot's `scatter()` function for the true parameter
     :return: handle to the resulting figure
     """
     num_obs_r, dim_obs_r = observations_real.shape
+    dim_x, dim_y = dims
 
     if plot_type.lower() == "joint":
         if not isinstance(axs, plt.Axes):
@@ -155,8 +160,13 @@ def draw_posterior_distr(
 
     if not isinstance(posterior, DirectPosterior):
         raise pyrado.TypeErr(given=posterior, expected_type=DirectPosterior)
-    if not len(dp_mapping) == 2:
-        raise NotImplementedError("So far, only plotting 2 domain parameters is implemented.")
+    if len(dp_mapping) == 1:
+        raise NotImplementedError("So far, this function does not support plotting 1-dim posteriors.")
+    if len(dp_mapping) > 2 and condition is None:
+        raise pyrado.ValueErr(msg="When the posteriors has more than 2 dimensions, i.e. there are more than 2 domain "
+                                  "parameters, a condition has to be provided.")
+    elif len(dp_mapping) > 2 and (condition.numel() != len(dp_mapping)):
+        raise pyrado.ShapeErr(given=condition, expected_match=dp_mapping)
     if not isinstance(grid_res, int):
         raise pyrado.TypeErr(given=grid_res, expected_type=int)
 
@@ -180,18 +190,24 @@ def draw_posterior_distr(
             raise pyrado.ShapeErr(given=grid_bounds, expected_match=(2, 2))
     elif isinstance(prior, BoxUniform):
         grid_bounds = to.tensor(
-            [[prior.base_dist.low[0], prior.base_dist.high[0]], [prior.base_dist.low[1], prior.base_dist.high[1]]]
+            [
+                [prior.support.lower_bound[dim_x], prior.support.upper_bound[dim_x]],
+                [prior.support.lower_bound[dim_y], prior.support.upper_bound[dim_y]],
+            ]
         )
     else:
         raise NotImplementedError
-    x = to.linspace(grid_bounds[0, 0], grid_bounds[0, 1], grid_res)
-    y = to.linspace(grid_bounds[1, 0], grid_bounds[1, 1], grid_res)
-    grid_x, grid_y = to.meshgrid([x, y])
-    grid_x, grid_y = grid_x.t(), grid_y.t()  # transpose not necessary but makes identical mesh as np.meshgrid
-    grid = to.cat((grid_x.reshape(-1, 1), grid_y.reshape(-1, 1)), dim=1)
-    if not grid.shape == (grid_res ** 2, 2):
-        raise pyrado.ShapeErr(given=grid, expected_match=(grid_res ** 2, 2))
+    x = to.linspace(grid_bounds[0, 0], grid_bounds[0, 1], grid_res)  # 1 2 3
+    y = to.linspace(grid_bounds[1, 0], grid_bounds[1, 1], grid_res)  # 4 5 6
+    x = x.repeat(grid_res)  # 1 2 3 1 2 3 1 2 3
+    y = to.repeat_interleave(y, grid_res)  # 4 4 4 5 5 5 6 6 6
+    grid_x, grid_y = x.view(grid_res, grid_res), y.view(grid_res, grid_res)
     grid_x, grid_y = grid_x.numpy(), grid_y.numpy()
+    grid = condition.repeat(grid_res ** 2, 1)
+    grid[:, dim_x] = x
+    grid[:, dim_y] = y
+    if not grid.shape == (grid_res ** 2, len(dp_mapping)):
+        raise pyrado.ShapeErr(given=grid, expected_match=(grid_res ** 2, len(dp_mapping)))
 
     if plot_type.lower() == "joint":
         # Compute the posterior probabilities
@@ -204,21 +220,21 @@ def draw_posterior_distr(
 
         # Plot the ground truth parameters
         if dp_gt is not None:
-            axs.scatter(dp_gt[:, 0], dp_gt[:, 1], **scatter_kwargs)
+            axs.scatter(dp_gt[:, dim_x], dp_gt[:, dim_y], **scatter_kwargs)
 
         # Plot bounding box for the prior
         if prior is not None and show_prior:
-            x = prior.support.lower_bound[0]
-            y = prior.support.lower_bound[1]
-            dx = prior.support.upper_bound[0] - prior.support.lower_bound[0]
-            dy = prior.support.upper_bound[1] - prior.support.lower_bound[1]
+            x = prior.support.lower_bound[dim_x]
+            y = prior.support.lower_bound[dim_y]
+            dx = prior.support.upper_bound[dim_x] - prior.support.lower_bound[dim_x]
+            dy = prior.support.upper_bound[dim_y] - prior.support.lower_bound[dim_y]
             rect = patches.Rectangle((x, y), dx, dy, lw=1, ls="--", edgecolor="gray", facecolor="none")
             axs.add_patch(rect)
 
         # Annotate
         axs.set_aspect(1.0 / axs.get_data_ratio(), adjustable="box")
-        axs.set_xlabel(f"${dp_mapping[0]}$")
-        axs.set_ylabel(f"${dp_mapping[1]}$")
+        axs.set_xlabel(f"${dp_mapping[dim_x]}$")
+        axs.set_ylabel(f"${dp_mapping[dim_y]}$")
         axs.set_title(f"{num_obs_r} observations")
         plt.gcf().canvas.set_window_title("Posterior Probabilities for All Real World Observation at Once")
 
@@ -236,21 +252,21 @@ def draw_posterior_distr(
 
                 # Plot the ground truth parameters
                 if dp_gt is not None:
-                    axs[i, j].scatter(dp_gt[:, 0], dp_gt[:, 1], **scatter_kwargs)
+                    axs[i, j].scatter(dp_gt[:, dim_x], dp_gt[:, dim_y], **scatter_kwargs)
 
                 # Plot bounding box for the prior
                 if prior is not None and show_prior:
-                    x = prior.support.lower_bound[0]
-                    y = prior.support.lower_bound[1]
-                    dx = prior.support.upper_bound[0] - prior.support.lower_bound[0]
-                    dy = prior.support.upper_bound[1] - prior.support.lower_bound[1]
+                    x = prior.support.lower_bound[dim_x]
+                    y = prior.support.lower_bound[dim_y]
+                    dx = prior.support.upper_bound[dim_x] - prior.support.lower_bound[0]
+                    dy = prior.support.upper_bound[dim_y] - prior.support.lower_bound[1]
                     rect = patches.Rectangle((x, y), dx, dy, lw=1, ls="--", edgecolor="gray", facecolor="none")
                     axs[i, j].add_patch(rect)
 
                 # Annotate
                 axs[i, j].set_aspect(1.0 / axs[i, j].get_data_ratio(), adjustable="box")
-                axs[i, j].set_xlabel(f"${dp_mapping[0]}$")
-                axs[i, j].set_ylabel(f"${dp_mapping[1]}$")
+                axs[i, j].set_xlabel(f"${dp_mapping[dim_x]}$")
+                axs[i, j].set_ylabel(f"${dp_mapping[dim_y]}$")
                 axs[i, j].set_title(f"observation {idx}")
         plt.gcf().canvas.set_window_title("Posterior Probabilities for Every Real World Observation Separately")
 

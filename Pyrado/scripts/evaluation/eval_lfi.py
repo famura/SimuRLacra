@@ -66,6 +66,16 @@ if __name__ == "__main__":
     if not isinstance(algo, LFI):
         raise pyrado.TypeErr(given=algo, expected_type=LFI)
 
+    # Select the domain parameters to plot
+    if len(algo.dp_mapping) > 2:
+        usr_inp = input(
+            f"Found the domain parameter mapping {algo.dp_mapping}. Select 2 domain parameter by index "
+            f"to be plotted (format: separated by a whitespace):\n"
+        )
+        dp_idcs = tuple(map(int, usr_inp.split()))
+    else:
+        dp_idcs = (0, 1)
+
     # Load a specific real-world observation (off, i.e. -1, by default)
     if args.iter != -1:
         # Crawl through the experiment's directory
@@ -79,6 +89,13 @@ if __name__ == "__main__":
     domain_params, log_prob, _ = LFI.eval_posterior(
         posterior, observations_real, args.num_samples, algo.sbi_simulator, simulate_observations=False
     )
+
+    # Set the condition if necessary
+    if len(algo.dp_mapping) > 2:
+        condition = to.mean(domain_params, dim=[0, 1]) # to.median(to.median(domain_params, dim=0)[0], dim=0)[0]
+    else:
+        condition = None
+
 
     # Plot the posterior distribution, the true parameters / their distribution
     if args.mode.lower() == "joint":
@@ -94,6 +111,8 @@ if __name__ == "__main__":
         algo.dp_mapping,
         env_real,
         prior,
+        dp_idcs,
+        condition,
         show_prior=False,
         # grid_bounds=to.tensor([[0.1, 0.5], [1, 3.5]])
     )
