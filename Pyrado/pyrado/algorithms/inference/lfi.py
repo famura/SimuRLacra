@@ -88,6 +88,7 @@ class LFI(InterruptableAlgorithm):
         num_eval_samples: Optional[int] = 1000,
         sbi_training_hparam: Optional[dict] = None,
         sbi_sampling_hparam: Optional[dict] = None,
+        simulation_batch_size: Optional[int] = 1,
         subrtn_policy: Optional[Algorithm] = None,
         subrtn_policy_snapshot_mode: Optional[str] = "latest",
         thold_succ_subrtn: Optional[float] = -pyrado.inf,
@@ -116,8 +117,10 @@ class LFI(InterruptableAlgorithm):
                                   observation is computed
         :param num_sim_per_real_rollout: number of simulations done by sbi per real-world observation received
         :param num_eval_samples: number of samples for evaluating the posterior in `eval_posterior()`
-        :param sbi_training_hparam: `dict` forwarded to sbi't `PosteriorEstimator.train()` function
-        :param sbi_sampling_hparam: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function
+        :param sbi_training_hparam: `dict` forwarded to sbi't `PosteriorEstimator.train()` function like
+                                    `training_batch_size`, `learning_rate`, `retrain_from_scratch_each_round`, ect.
+        :param sbi_sampling_hparam: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function like
+                                    `sample_with_mcmc`, ect. (we also put `simulation_batch_size` here)
         :param subrtn_policy: algorithm which performs the optimization of the behavioral policy (and value-function)
         :param subrtn_policy_snapshot_mode: snapshot mode for saving during training of the subroutine
         :param thold_succ_subrtn: success threshold on the simulated system's return for the subroutine, repeat the
@@ -142,6 +145,7 @@ class LFI(InterruptableAlgorithm):
         self.sbi_subrtn_class = sbi_subrtn_class
         self.sbi_training_hparam = sbi_training_hparam if sbi_training_hparam is not None else dict()
         self.sbi_sampling_hparam = sbi_sampling_hparam if sbi_sampling_hparam is not None else dict()
+        self.simulation_batch_size = simulation_batch_size
         self.num_real_rollouts = num_real_rollouts
         self.num_sim_per_real_rollout = num_sim_per_real_rollout
         self.num_eval_samples = num_eval_samples
@@ -244,7 +248,7 @@ class LFI(InterruptableAlgorithm):
                     simulator=self._sbi_simulator,
                     proposal=self._sbi_prior,
                     num_simulations=self.num_sim_per_real_rollout,
-                    simulation_batch_size=1,
+                    simulation_batch_size=self.simulation_batch_size,
                     num_workers=self.num_workers,
                 )
                 self._sbi_subrtn.append_simulations(
@@ -269,7 +273,7 @@ class LFI(InterruptableAlgorithm):
                         simulator=self._sbi_simulator,
                         proposal=posterior,
                         num_simulations=self.num_sim_per_real_rollout,
-                        simulation_batch_size=1,
+                        simulation_batch_size=self.simulation_batch_size,
                         num_workers=self.num_workers,  # leave it for now
                     )
                     self._sbi_subrtn.append_simulations(domain_param, sim_output, proposal=posterior)

@@ -28,11 +28,11 @@ if __name__ == "__main__":
     pyrado.set_seed(args.seed, verbose=True)
 
     # Environments
-    env_hparams = dict(dt=1 / 100.0, max_steps=600)
+    env_hparams = dict(dt=1 / 250.0, max_steps=1500)
     env_sim = QQubeSwingUpSim(**env_hparams)
 
     # Create a fake ground truth target domain
-    num_real_obs = 5
+    num_real_obs = 1
     env_real = deepcopy(env_sim)
     randomizer = DomainRandomizer(
         NormalDomainParam(name="g", mean=10.0, std=10.0 / 100),
@@ -49,15 +49,16 @@ if __name__ == "__main__":
     # Prior and Posterior (normalizing flow)
     prior_hparam = dict(low=to.tensor([9.0, 8.0, 0.015]), high=to.tensor([11.0, 10.0, 0.025]))
     prior = utils.BoxUniform(**prior_hparam)
-    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=2)
+    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=5)
 
     # Algorithm
     algo_hparam = dict(
         summary_statistic="ramos",
-        max_iter=10,
+        max_iter=20,
         num_real_rollouts=num_real_obs,
-        num_sim_per_real_rollout=50,
-        num_workers=1,
+        num_sim_per_real_rollout=500,
+        simulation_batch_size=10,
+        num_workers=8,
     )
     algo = LFI(
         ex_dir,
