@@ -191,7 +191,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
         super().__init__(env=env, policy=policy, strategy=strategy)
 
         self.dp_names = dp_mapping.values()
-        self.init_states_real = np.atleast_2d(init_states_real)
+        self.init_states_real = np.atleast_2d(init_states_real) if init_states_real is not None else None
 
     def __call__(self, dp_values: to.Tensor):
         """
