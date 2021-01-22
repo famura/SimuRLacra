@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.environments.base import Env
@@ -72,7 +72,7 @@ class SamplerBase(ABC):
         self.min_steps = min_steps
 
     @abstractmethod
-    def reinit(self, env: Env = None, policy: Policy = None):
+    def reinit(self, env: Optional[Env] = None, policy: Optional[Policy] = None):
         """
         Reset the sampler after changes were made to the environment or the policy, optionally replacing one of them.
 

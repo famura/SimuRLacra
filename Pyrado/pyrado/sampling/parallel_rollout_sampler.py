@@ -35,9 +35,11 @@ from init_args_serializer import Serializable
 from itertools import product
 from math import ceil
 from tqdm import tqdm
-from typing import List
+from typing import List, Optional
 
 import pyrado
+from pyrado.environments.base import Env
+from pyrado.policies.base import Policy
 from pyrado.sampling.sampler_pool import SamplerPool
 from pyrado.sampling.step_sequence import StepSequence
 from pyrado.sampling.rollout import rollout
@@ -144,7 +146,7 @@ class ParallelRolloutSampler(SamplerBase, Serializable):
         """
         self.pool.set_seed(seed)
 
-    def reinit(self, env=None, policy=None):
+    def reinit(self, env: Optional[Env] = None, policy: Optional[Policy] = None):
         """
         Re-initialize the sampler.
 

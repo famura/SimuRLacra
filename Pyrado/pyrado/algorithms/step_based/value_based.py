@@ -144,7 +144,7 @@ class ValueBased(Algorithm, ABC):
         )
 
         self._expl_strat = None  # must be implemented by subclass
-        self.sampler_trn = None  # must be implemented by subclass
+        self.sampler = None  # must be implemented by subclass
 
     @property
     def expl_strat(self) -> Union[SACExplStrat, EpsGreedyExplStrat]:
@@ -164,7 +164,7 @@ class ValueBased(Algorithm, ABC):
             self._memory.push(ros)
         else:
             # Sample steps and store them in the replay memory
-            ros = self.sampler_trn.sample()
+            ros = self.sampler.sample()
             self._memory.push(ros)
         self._cnt_samples += sum([ro.length for ro in ros])  # don't count the evaluation samples
 
@@ -204,7 +204,7 @@ class ValueBased(Algorithm, ABC):
 
         # Re-initialize samplers in case env or policy changed
         self.sampler_init.reinit(self._env, self.init_expl_policy)
-        self.sampler_trn.reinit(self._env, self._expl_strat)
+        self.sampler.reinit(self._env, self._expl_strat)
         self.sampler_eval.reinit(self._env, self._policy)
 
         # Reset the replay memory
