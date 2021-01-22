@@ -26,10 +26,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import numpy as np
 import torch as to
 from abc import ABC, abstractmethod
 from operator import itemgetter
-from typing import Union, Mapping
+from typing import Union, Mapping, Optional
 
 import pyrado
 from pyrado.environment_wrappers.base import EnvWrapper
@@ -40,6 +41,7 @@ from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
+from pyrado.spaces.discrete import DiscreteSpace
 
 
 class RolloutSamplerForSBI(ABC):
@@ -161,6 +163,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
         policy: Policy,
         dp_mapping: Mapping[int, str],
         strategy: str,
+        init_states_real: Optional[np.ndarray] = None,
     ):
         """
         Constructor
@@ -173,16 +176,22 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
                          `states` (uses all observed states from rollout),
                          `final_state` (use the last observed state from the rollout), and
                          `ramos` (summary statistics as proposed in  [1])
+
+        [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
+            inference for robotics simulators", arXiv, 2019
         """
         if typed_env(env, DomainRandWrapper):
             raise pyrado.TypeErr(
                 msg="The environment passed to sbi as simulator must not be wrapped with a subclass of"
                 "DomainRandWrapper since sbi has be able to set the domain parameters explicitly!"
             )
+        if not (init_states_real is None or isinstance(init_states_real, np.ndarray)):
+            raise pyrado.TypeErr(given=init_states_real, expected_type=np.ndarray)
 
         super().__init__(env=env, policy=policy, strategy=strategy)
 
         self.dp_names = dp_mapping.values()
+        self.init_states_real = np.atleast_2d(init_states_real)
 
     def __call__(self, dp_values: to.Tensor):
         """
@@ -199,6 +208,10 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
                         raise RuntimeError
         """
         dp_values = to.atleast_2d(dp_values)
+
+        # Set the initial state space during __call__() otherwise it gets magically set back to the default
+        if self.init_states_real is not None:
+            self._env.init_space = DiscreteSpace(self.init_states_real)
 
         # Do the rollouts
         ros = [
@@ -251,6 +264,9 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI):
                          `states` (uses all observed states from rollout),
                          `final_state` (use the last observed state from the rollout), and
                          `ramos` (summary statistics as proposed in  [1])
+
+        [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
+            inference for robotics simulators", arXiv, 2019
         """
         super().__init__(env=env, policy=policy, strategy=strategy)
 

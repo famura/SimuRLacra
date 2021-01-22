@@ -28,6 +28,7 @@
 
 import numpy as np
 from init_args_serializer import Serializable
+from random import randint
 from typing import Tuple, Optional, Union, Mapping, List
 
 import pyrado
@@ -156,19 +157,26 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
     At every call of the reset method this wrapper cycles through that buffer.
     """
 
-    def __init__(self, wrapped_env, randomizer: Optional[DomainRandomizer]):
+    def __init__(self, wrapped_env, randomizer: Optional[DomainRandomizer], selection: Optional[str] = "cyclic"):
         """
         Constructor
 
         :param wrapped_env: environment to wrap around
         :param randomizer: `DomainRandomizer` object that manages the randomization. If `None`, the user has to set the
                            buffer manually, the circular reset however works the same way
+        :param selection: method to draw samples from the buffer, either cyclic or random
         """
+        if not selection.lower() in ["cyclic", "random"]:
+            raise pyrado.ValueErr(given=selection, eq_constraint="cyclic or random")
+
+        Serializable._init(self, locals())
+
         # Invoke the DomainRandWrapper's constructor
         super().__init__(wrapped_env, randomizer)
 
         self._ring_idx = None
         self._buffer = None
+        self._selection = selection.lower()
 
     @property
     def ring_idx(self) -> int:
@@ -178,8 +186,8 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
     @ring_idx.setter
     def ring_idx(self, idx: int):
         """ Set the buffer's index. """
-        if not (isinstance(idx, int) and idx >= 0):
-            raise pyrado.ValueErr(given=idx, ge_constraint="0 (int)")
+        if not (isinstance(idx, int) and 0 <= idx < len(self._buffer)):
+            raise pyrado.ValueErr(given=idx, ge_constraint="0 (int)", l_constraint=len(self._buffer))
         self._ring_idx = idx
 
     def fill_buffer(self, num_domains: int):
@@ -222,8 +230,11 @@ class DomainRandWrapperBuffer(DomainRandWrapper, Serializable):
                 domain_param = self._buffer
             elif isinstance(self._buffer, list):
                 # The buffer consists of a list of domain parameter sets
-                domain_param = self._buffer[self._ring_idx]
-                self._ring_idx = (self._ring_idx + 1) % len(self._buffer)  # idx cycles over buffer
+                domain_param = self._buffer[self._ring_idx]  # first selection will be index 0
+                if self._selection == "cyclic":
+                    self._ring_idx = (self._ring_idx + 1) % len(self._buffer)
+                elif self._selection == "random":
+                    self._ring_idx = randint(0, len(self._buffer) - 1)
             else:
                 raise pyrado.TypeErr(given=self._buffer, expected_type=[dict, list])
         else:

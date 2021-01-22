@@ -35,7 +35,7 @@ from tabulate import tabulate
 from torch.distributions import Distribution
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
-from typing import Optional, Callable, Type, Union, Mapping, Tuple
+from typing import Optional, Callable, Type, Mapping, Tuple
 
 from sbi.inference import NeuralInference
 from sbi.inference.posteriors.direct_posterior import DirectPosterior
@@ -48,7 +48,7 @@ import pyrado
 from pyrado.algorithms.base import Algorithm, InterruptableAlgorithm
 from pyrado.algorithms.inference.sbi_rollout_sampler import SimRolloutSamplerForSBI, RealRolloutSamplerForSBI
 from pyrado.algorithms.utils import until_thold_exceeded
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer, remove_all_dr_wrappers
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer, DomainRandWrapper
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.base import Env
 from pyrado.environments.real_base import RealEnv
@@ -74,7 +74,7 @@ class LFI(InterruptableAlgorithm):
     def __init__(
         self,
         save_dir: str,
-        env_sim: Union[SimEnv, DomainRandWrapperBuffer],
+        env_sim: SimEnv,
         env_real: Env,
         policy: Policy,
         dp_mapping: Mapping[int, str],
@@ -125,14 +125,16 @@ class LFI(InterruptableAlgorithm):
         :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
+        if not isinstance(env_sim, SimEnv) or isinstance(env_sim, DomainRandWrapper):
+            raise pyrado.TypeErr(msg="The given env_sim must be a non-randomized simulation environment!")
         if not prior.event_shape[0] == len(dp_mapping):
             raise pyrado.ShapeErr(given=prior.event_shape, expected_match=dp_mapping)
 
         # Call InterruptableAlgorithm's constructor
         super().__init__(num_checkpoints=2, save_dir=save_dir, max_iter=max_iter, policy=policy, logger=logger)
 
-        self._env_sim_trn = deepcopy(env_sim)
-        self._env_sim_sbi = remove_all_dr_wrappers(env_sim)  # will be randomized manually
+        self._env_sim_sbi = env_sim  # will be randomized explicitly by sbi
+        self._env_sim_trn = DomainRandWrapperBuffer(deepcopy(env_sim), randomizer=None, selection="random")
         self._env_real = env_real
         self.dp_mapping = dp_mapping
         self.summary_statistic = summary_statistic.lower()
@@ -164,8 +166,9 @@ class LFI(InterruptableAlgorithm):
                 )
 
         # Initialize sbi simulator and prior
-        self._sbi_simulator = None  # to be re-initialized in step()
-        self._sbi_prior = None  # to be re-initialized in step()
+        self._sbi_simulator = None  # to be set in step()
+        self._sbi_prior = None  # to be set in step()
+        self._curr_init_states_real = None  # to be set in step()
         self._setup_sbi(prior=prior)
 
         # Create the algorithm instance used in sbi, e.g. SNPE-A/B/C or SNLE
@@ -191,14 +194,17 @@ class LFI(InterruptableAlgorithm):
         """ Get the system identification subroutine coming from the sbi module. """
         return self._sbi_subrtn
 
-    def _setup_sbi(self, prior: Optional[Distribution] = None):
+    def _setup_sbi(self, prior: Optional[Distribution] = None, init_states_real: Optional[np.ndarray] = None):
         """
         Prepare simulator and prior for usage in sbi.
 
         :param prior: distribution used by sbi as a prior
+        :param init_states_real: array of observations [num samples x dim init state] or `None`. If not `None`, the
+                                 initial state spaces of the simulation environments to be the set of initial states
+                                 observed during the rollouts of the real system.
         """
         rollout_sampler = SimRolloutSamplerForSBI(
-            self._env_sim_sbi, self._policy, self.dp_mapping, self.summary_statistic
+            self._env_sim_sbi, self._policy, self.dp_mapping, self.summary_statistic, init_states_real
         )
         if prior is None:
             prior = pyrado.load(None, "prior", "pt", self._save_dir)
@@ -206,25 +212,12 @@ class LFI(InterruptableAlgorithm):
         # Call sbi's preparation function
         self._sbi_simulator, self._sbi_prior = prepare_for_sbi(rollout_sampler, prior)
 
-    def _sync_init_states(self, init_states_real: np.ndarray):
-        """
-        Set the initial state spaces of the simulation environments to be the set of initial states observed during the
-        rollouts of the real system. Needs to be called before `_setup_sbi()`.
-
-        :param init_states_real: array of observations [num samples x dim init state]
-        """
-        if not init_states_real.shape[1] == self._env_sim_sbi.state_space.flat_dim:
-            raise pyrado.ShapeErr(msg="Dimensionality mismatch for the initial states!")
-
-        self._env_sim_sbi._init_space = DiscreteSpace(init_states_real)
-        self._env_sim_trn._init_space = DiscreteSpace(init_states_real)
-
     def step(self, snapshot_mode: str = None, meta_info: dict = None):
         # Save snapshot to save the correct iteration count
         self.save_snapshot()
 
         if self.curr_checkpoint == 0:
-            self._curr_observations_real, init_states_real = LFI.collect_real_observations(
+            self._curr_observations_real, self._curr_init_states_real = LFI.collect_real_observations(
                 self.save_dir,
                 self._env_real,
                 self._policy,
@@ -241,11 +234,8 @@ class LFI(InterruptableAlgorithm):
                     f"many entries as there are observations, but the shape is {self._curr_observations_real.shape}!"
                 )
 
-            # Set the initial state space of the simulation environments to match the recorded initial state
-            self._sync_init_states(init_states_real)
-
-            # Initialize sbi simulator and prior
-            self._setup_sbi()
+            # Initialize sbi simulator and prior, and set the initial state space
+            self._setup_sbi(init_states_real=self._curr_init_states_real)
 
             # First iteration
             if self._curr_iter == 0:
@@ -386,6 +376,9 @@ class LFI(InterruptableAlgorithm):
         observations_real = to.stack(observations_real)
         init_states_real = np.stack(init_states_real)
 
+        if not init_states_real.shape[1] == env.state_space.flat_dim:
+            raise pyrado.ShapeErr(msg="Dimensionality mismatch for the initial states!")
+
         # Optionally save the data
         if save_dir is not None:
             pyrado.save(observations_real, f"{prefix}_observations_real", "pt", save_dir)
@@ -525,8 +518,6 @@ class LFI(InterruptableAlgorithm):
         :param prefix: set a prefix to the saved file name by passing it to `meta_info`
         :return: estimated return of the trained policy in the target domain
         """
-        if not isinstance(self._env_sim_trn, DomainRandWrapperBuffer):
-            raise pyrado.TypeErr(given=self._env_sim_trn, expected_type=DomainRandWrapperBuffer)
         if not (domain_params.ndim == 2 and domain_params.shape[1] == len(self.dp_mapping)):
             raise pyrado.ShapeErr(given=domain_params, expected_match=(-1, 2))
 
@@ -536,9 +527,18 @@ class LFI(InterruptableAlgorithm):
         self._env_sim_trn.ring_idx = 0
         print_cbt(f"Filled the environment's buffer with {len(self._env_sim_trn.buffer)} domain parameters sets.", "g")
 
+        # Set the initial state spaces of the simulation environment to match the observed initial states
+        self._env_sim_trn.wrapped_env.init_space = DiscreteSpace(self._curr_init_states_real)
+
         # Reset the subroutine algorithm which includes resetting the exploration
         self._cnt_samples += self._subrtn_policy.sample_count
         self._subrtn_policy.reset()
+
+        # Propagate the updated training environment to the SamplerPool's workers
+        if hasattr(self._subrtn_policy, "sampler"):
+            self._subrtn_policy.sampler.reinit(env=self._env_sim_trn)
+        else:
+            raise pyrado.KeyErr(keys="sampler", container=self._subrtn_policy)
 
         # Train a policy in simulation using the subroutine
         self._subrtn_policy.train(snapshot_mode=self._subrtn_policy_snapshot_mode, meta_info=dict(prefix=prefix))

@@ -30,6 +30,7 @@
 Script to evaluate a posterior obtained using the sbi package
 """
 import os
+import torch as to
 from matplotlib import pyplot as plt
 
 import pyrado
@@ -93,8 +94,8 @@ if __name__ == "__main__":
         algo.dp_mapping,
         env_real,
         prior,
-        show_prior=True,
-        # grid_bounds=to.tensor([[22, 39], [0, 0.6]])
+        show_prior=False,
+        # grid_bounds=to.tensor([[0.1, 0.5], [1, 3.5]])
     )
 
     plt.show()

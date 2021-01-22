@@ -41,7 +41,6 @@ import pyrado
 from pyrado.algorithms.inference.lfi import LFI
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.step_based.ppo import PPO2
-from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environments.pysim.pendulum import PendulumSim
 from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.feed_forward.fnn import FNNPolicy
@@ -56,7 +55,7 @@ if __name__ == "__main__":
 
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(PendulumSim.name, f"{LFI.name}-{PPO2.name}_{FNNPolicy.name}")
-    num_workers = 8
+    num_workers = 1
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
@@ -66,7 +65,6 @@ if __name__ == "__main__":
     env_sim = PendulumSim(**env_hparams)
     env_sim.domain_param = dict(d_pole=0, tau_max=10.0)
     env_real = deepcopy(env_sim)
-    env_sim = DomainRandWrapperBuffer(env_sim, randomizer=None)
 
     # Create a fake ground truth target domain
     num_real_obs = 1
@@ -123,8 +121,8 @@ if __name__ == "__main__":
         max_iter=20,
         sbi_training_hparam=dict(learning_rate=3e-4),
         num_real_rollouts=num_real_obs,
-        num_sim_per_real_rollout=4000,
-        num_eval_samples=4000,
+        num_sim_per_real_rollout=4,
+        num_eval_samples=4,
         num_workers=num_workers,
     )
     algo = LFI(
@@ -136,7 +134,7 @@ if __name__ == "__main__":
         prior,
         posterior_nn_hparam,
         SNPE,
-        # subrtn_policy=subrtn_policy,
+        subrtn_policy=subrtn_policy,
         **algo_hparam,
     )
 
