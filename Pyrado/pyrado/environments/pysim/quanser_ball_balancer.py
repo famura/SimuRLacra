@@ -338,7 +338,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         class PandaVis(ShowBase):
 
             def __init__(self, qbb):
-                ShowBase.__init__()
+                ShowBase.__init__(self)
 
                 mydir = pathlib.Path(__file__).resolve().parent.absolute()
 
