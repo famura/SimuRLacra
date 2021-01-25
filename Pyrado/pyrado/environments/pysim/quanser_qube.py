@@ -25,9 +25,7 @@
 # IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-
-# Added stuff
-import math, pathlib
+import pathlib
 
 import numpy as np
 import torch as to
@@ -143,7 +141,7 @@ class QQubeSim(SimPyEnv, Serializable):
     def _init_anim(self):
         from direct.showbase.ShowBase import ShowBase
         from direct.task import Task
-        from panda3d.core import loadPrcFileData, DirectionalLight, AntialiasAttrib, TextNode, GeomVertexData, GeomNode, GeomLinestrips , WindowProperties, AmbientLight
+        from panda3d.core import loadPrcFileData, DirectionalLight, AntialiasAttrib, TextNode, WindowProperties, AmbientLight
 
         # Configuration for panda3d-window
         confVars = """
@@ -164,8 +162,9 @@ class QQubeSim(SimPyEnv, Serializable):
                 # Accessing variables of outer class
                 self.qq = qq
 
-                Lr = float(self.qq.domain_param["Lr"])
-                Lp = float(self.qq.domain_param["Lp"])
+                # Convert to float for VPython
+                Lr = float(qq.domain_param["Lr"])
+                Lp = float(qq.domain_param["Lp"])
 
                 self.setBackgroundColor(1, 1, 1)
                 self.cam.setY(-1.5)
@@ -237,14 +236,7 @@ class QQubeSim(SimPyEnv, Serializable):
                 self.joint2.setColor(0, 0, 0)
                 self.joint2.wrtReparentTo(self.arm)
 
-                # Curve
-                # vp.curve(color=vp.color.white, radius=0.0005, retain=2000)
-                #self.curve = self.loader.loadModel(GeomLinestrips)
-                #self.curve.setColor()
-                #self.curve.setScale()
-                #self.curve.reparentTo(self.render)
-
-                self.taskMgr.add(self.update, "update")
+                self.taskMgr.add(self.update,"update")
 
             def reset(self):
                 # clear
@@ -262,8 +254,8 @@ class QQubeSim(SimPyEnv, Serializable):
                 Dp = self.qq.domain_param["Dp"]
 
                 th, al, _, _ = self.qq.state
-                arm_pos = (Lr * np.cos(th), 0.0, Lr * np.sin(th))
-                pole_ax = (-Lp * np.sin(al) * np.sin(th), +Lp * np.sin(al) * np.cos(th), -Lp * np.cos(al))
+                # arm_pos = (Lr * np.cos(th), 0.0, Lr * np.sin(th))
+                # pole_ax = (-Lp * np.sin(al) * np.sin(th), +Lp * np.sin(al) * np.cos(th), -Lp * np.cos(al))
 
                 self.arm.setH(th*180/np.pi)
                 self.pole.setR(-al*180/np.pi)
@@ -300,10 +292,12 @@ class QQubeSim(SimPyEnv, Serializable):
         self._initiated = True
 
     def _update_anim(self):
+        # Refreshed with every frame
         self._visualization.taskMgr.step()
 
     def _reset_anim(self):
-        self.visualization.reset()
+        # Calls the reset function within PandasVis-class
+        self._visualization.reset()
 
 
 class QQubeSwingUpSim(QQubeSim):
