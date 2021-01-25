@@ -163,11 +163,12 @@ class QQubeSim(SimPyEnv, Serializable):
 
                 # Accessing variables of outer class
                 self.qq = qq
+
                 Lr = float(self.qq.domain_param["Lr"])
                 Lp = float(self.qq.domain_param["Lp"])
 
                 self.setBackgroundColor(1, 1, 1)
-                self.cam.setY(-1.15)
+                self.cam.setY(-1.5)
                 self.render.setAntialias(AntialiasAttrib.MAuto)
                 self.windowProperties = WindowProperties()
                 self.windowProperties.setForeground(True)
@@ -188,52 +189,51 @@ class QQubeSim(SimPyEnv, Serializable):
                 self.text = TextNode('parameters')
                 self.textNodePath = aspect2d.attachNewNode(self.text)
                 self.textNodePath.setScale(0.07)
-                self.textNodePath.setPos(0.3, 0, -0.3)
+                self.textNodePath.setPos(0.4, 0, -0.1)
+                self.text.setTextColor(0, 0, 0, 1)
 
                 # Init render objects on first call
                 scene_range = 0.2
                 arm_radius = 0.003
                 pole_radius = 0.0045
 
-                box = self.loader.loadModel(pathlib.Path(mydir, "box.egg"))
-                box.setPos(0, 0, -0.07)
-                #length=0.09, width=0.1, height=0.09
-                box.setScale(0.09, 0.1, 0.09)
-                box.setColor(0.5, 0.5, 0.5)
-                box.reparentTo(self.render)
+                self.box = self.loader.loadModel(pathlib.Path(mydir, "box.egg"))
+                self.box.setPos(0, 0.07, 0)
+                self.box.setScale(0.09, 0.1, 0.09)
+                self.box.setColor(0.5, 0.5, 0.5)
+                self.box.reparentTo(self.render)
 
                 #zeigt nach oben aus Box raus
-                cylinder = self.loader.loadModel(pathlib.Path(mydir, "cylinder.egg"))
-                #cylinder.set_rotation_or_sth
-                #radius=0.005, length=0.03
-                cylinder.setScale(0.005, 0.005, 0.03)
-                cylinder.setColor(0.5, 0.5, 0,5) #grey
-                cylinder.reparentTo(self.render)
+                self.cylinder = self.loader.loadModel(pathlib.Path(mydir, "cylinder.egg"))
+                self.cylinder.setScale(0.005, 0.005, 0.03)
+                self.cylinder.setPos(0, 0.07, 0.12)
+                self.cylinder.setColor(0.5, 0.5, 0,5) #gray
+                self.cylinder.reparentTo(self.render)
 
                 # Joints
                 self.joint1 = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
-                self.joint1.setScale(0.005, 0.005, 0.005)
-                #self.joint1.setColor()
+                self.joint1.setScale(0.005)
+                self.joint1.setPos(0.0, 0.07, 0.15)
                 self.joint1.reparentTo(self.render)
 
                 self.joint2 = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
-                self.joint2.setScale(0.005, 0.005, 0.005)
-                #self.joint2.setColor()
+                self.joint2.setScale(pole_radius)
+                self.joint2.setPos(0.0, 0.07+2*Lr, 0.15)
                 self.joint2.reparentTo(self.render)
 
-                # Arm
-                #vp.cylinder(radius=arm_radius, length=Lr, color=vp.color.blue)
-                self.arm = self.loader.loadModel(pathlib.Path(mydir, "cylinder.egg"))
-                #radius = 0.005
+                # Armself.pole.setPos()
+                self.arm = self.loader.loadModel(pathlib.Path(mydir, "cylinder_shifted_center.egg"))
                 self.arm.setScale(arm_radius, arm_radius, Lr)
                 self.arm.setColor(0, 0, 1) #blue
+                self.arm.setP(-90)
+                self.arm.setPos(0, 0.07, 0.15)
                 self.arm.reparentTo(self.render)
 
                 # Pole
-                #vp.cylinder(radius=pole_radius, length=Lp, color=vp.color.red)
-                self.pole = self.loader.loadModel(pathlib.Path(mydir, "cylinder.egg"))
+                self.pole = self.loader.loadModel(pathlib.Path(mydir, "cylinder_shifted_center.egg"))
                 self.pole.setScale(pole_radius, pole_radius, Lp)
                 self.pole.setColor(1, 0, 0) #red
+                self.pole.setPos(0, 0.07+2*Lr, 0.15)
                 self.pole.reparentTo(self.render)
 
                 # Curve
@@ -244,8 +244,6 @@ class QQubeSim(SimPyEnv, Serializable):
                 #self.curve.reparentTo(self.render)
 
                 self.taskMgr.add(self.update, "update")
-
-                self.text.setTextColor(0, 0, 0, 1)
 
             def reset(self):
                 # clear
@@ -263,15 +261,17 @@ class QQubeSim(SimPyEnv, Serializable):
                 Dp = self.qq.domain_param["Dp"]
 
                 th, al, _, _ = self.qq.state
-                arm_pos = (Lr * np.cos(th), Lr * np.sin(th), 0.0)
+                arm_pos = (Lr * np.cos(th), 0.0, Lr * np.sin(th))
                 pole_ax = (-Lp * np.sin(al) * np.sin(th), +Lp * np.sin(al) * np.cos(th), -Lp * np.cos(al))
 
-                #self.arm.set_axis
-                #self.pole.setPos()
-                #self.pole.set_axis
-                #self.joint1.setPos(self.arm.getPos())
-                #self.joint2.setPos(self.pole.getPos())
-                #self.curve.append(self.pole.getPos() + self.pole.getAxis())
+                self.arm.setH(th*180/np.pi)
+                # self.arm.setHpr(*arm_ax)
+                # self.arm.setPos(0,-0.15,0.15)
+                # self.pole.setPos(*arm_pos)
+                # self.pole.setHpr(*pole_ax)
+                # self.joint1.setPos(self.arm.getX(),self.arm.getY()+Lr/2+0.005,self.arm.getZ())
+                # self.joint2.setPos(self.pole.getPos())
+                # self.curve.append(self.pole.getPos() + self.pole.getAxis())
 
                 # Displayed text
                 self.text.setText(f"""
@@ -288,7 +288,6 @@ class QQubeSim(SimPyEnv, Serializable):
                     Rm: {Rm : 1.3f}
                     km: {km : 1.4f}
                     """)
-
 
                 return Task.cont
 
