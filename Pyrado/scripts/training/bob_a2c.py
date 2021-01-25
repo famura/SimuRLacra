@@ -40,7 +40,7 @@ from pyrado.algorithms.step_based.a2c import A2C
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.environments.pysim.ball_on_beam import BallOnBeamSim
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.features import FeatureStack, identity_feat, sin_feat, RandFourierFeat, RBFFeat
 from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.policies.feed_forward.linear import LinearPolicy
@@ -104,14 +104,12 @@ if __name__ == "__main__":
     algo = A2C(ex_dir, env, policy, critic, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml(
-        [
-            dict(env=env_hparams, seed=args.seed),
-            dict(policy=policy_hparam),
-            dict(critic=critic_hparam, vfcn=vfcn_hparam),
-            dict(algo=algo_hparam, algo_name=algo.name),
-        ],
-        ex_dir,
+    save_dicts_to_yaml(
+        dict(env=env_hparams, seed=args.seed),
+        dict(policy=policy_hparam),
+        dict(critic=critic_hparam, vfcn=vfcn_hparam),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
     )
 
     # Jeeeha

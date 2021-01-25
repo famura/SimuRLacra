@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import pyrado
 from init_args_serializer import Serializable
 from pyrado.environments.sim_base import SimEnv
@@ -43,25 +45,13 @@ class ToyExample(SimEnv, Serializable):
         )
         self._init_space = SingularStateSpace(
             np.zeros(self._state_space.shape),
-            labels=[
-                "s_1_1_init",
-                "s_2_1_init",
-                "s_1_2_init",
-                "s_2_2_init",
-                "s_1_3_init",
-                "s_2_3_init",
-                "s_1_4_init",
-                "s_2_4_init",
-            ],
+            labels=["s_1_1", "s_2_1", "s_1_2", "s_2_2", "s_1_3", "s_2_3", "s_1_4", "s_2_4"],
         )
         self._act_space = BoxSpace(-max_act, max_act, labels=["act_1"])
         self._obs_space = None
 
         # Define the task including the reward function
         self._task = self._create_task()
-
-        # Animation with pyplot
-        self._anim = dict(fig=None, trace_x=[], trace_y=[], trace_z=[])
 
     def _to_scalar(self):
         for param in self._domain_param:
@@ -81,7 +71,7 @@ class ToyExample(SimEnv, Serializable):
         s2 = dp["s_2"] ** 2
         rho = np.tanh(dp["rho"])
         cov12 = rho * s1 * s2
-        covariance_matrix = np.array([[s1 ** 2, cov12], [cov12, s2 ** 2]])
+        covariance_matrix = np.array([[s1 ** 2, cov12], [cov12, s2 ** 2]]) + 1e-6 * np.eye(2)
         return mean, covariance_matrix
 
     @property
@@ -112,8 +102,8 @@ class ToyExample(SimEnv, Serializable):
         return self._task
 
     @property
-    def domain_param(self):
-        return self._domain_param
+    def domain_param(self) -> dict:
+        return deepcopy(self._domain_param)
 
     @domain_param.setter
     def domain_param(self, param: dict):
@@ -127,10 +117,10 @@ class ToyExample(SimEnv, Serializable):
         return dict(
             m_1=0.7,  # first mean
             m_2=-1.5,  # second mean
-            s_1=-1,  # Sigma_11
-            s_2=-0.9,  # Sigma_22
+            s_1=-1,  # sigma_11
+            s_2=-0.9,  # sigma_22
             rho=0.6,  # scaling factor
-        )  #
+        )
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         # Reset the domain parameters
@@ -161,10 +151,8 @@ class ToyExample(SimEnv, Serializable):
         return self.observe(self.state)
 
     def step(self, act):
-        state = np.random.multivariate_normal(self._mean, self._covariance_matrix, size=1).squeeze()
-
         # Action equal selection a new state a.k.a. solution of the optimization problem
-        self.state = state
+        self.state = np.random.multivariate_normal(self._mean, self._covariance_matrix, size=1).squeeze()
 
         # Current reward depending on the state after the step (since there is only one step)
         # self._curr_rew = self.task.step_rew(self.state)
@@ -207,25 +195,3 @@ class ToyExample(SimEnv, Serializable):
                         self._curr_step, self._curr_rew, self._curr_act, self.state
                     )
                 )
-
-        # # Render using pyplot
-        # if mode.video:
-        #     from matplotlib import pyplot as plt
-        #     from pyrado.plotting.surface import draw_surface
-        #
-        #     plt.ion()
-        #
-        #     if self._anim["fig"] is None:
-        #         # Plot Rosenbrock function once if not already plotted
-        #         x = np.linspace(-2, 2, 20, True)
-        #         y = np.linspace(-1, 3, 20, True)
-        #         self._anim["fig"] = draw_surface(x, y, rosenbrock, "x", "y", "z")
-        #
-        #     self._anim["trace_x"].append(self.state[0])
-        #     self._anim["trace_y"].append(self.state[1])
-        #     self._anim["trace_z"].append(rosenbrock(self.state))
-        #
-        #     ax = self._anim["fig"].gca()
-        #     ax.scatter(self._anim["trace_x"], self._anim["trace_y"], self._anim["trace_z"], s=8, c="w")
-        #
-        #     plt.draw()

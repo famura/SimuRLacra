@@ -35,13 +35,14 @@ from matplotlib import pyplot as plt
 
 import pyrado
 from pyrado.algorithms.base import Algorithm
-from pyrado.algorithms.inference.lfi2 import LFI
+from pyrado.algorithms.inference.lfi import LFI
 from pyrado.logger.experiment import ask_for_experiment
+from pyrado.plotting.curve import draw_curve_from_data
 from pyrado.plotting.distribution import draw_posterior_distr
 from pyrado.plotting.utils import num_rows_cols_from_length
+from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment
-from pyrado.plotting.lfi_posterior_distribution import plot_posterior_distribution
 
 
 if __name__ == "__main__":
@@ -49,6 +50,8 @@ if __name__ == "__main__":
     args = get_argparser().parse_args()
     if not isinstance(args.num_samples, int) or args.num_samples < 1:
         raise pyrado.ValueErr(given=args.num_samples, ge_constraint="1")
+    if args.mode not in ["joint", "separate"]:
+        raise pyrado.ValueErr(given=args.mode, given_name="plotting mode", eq_constraint="joint or separate")
 
     # Get the experiment's directory to load from
     ex_dir = ask_for_experiment() if args.dir is None else args.dir
@@ -65,6 +68,16 @@ if __name__ == "__main__":
     if not isinstance(algo, LFI):
         raise pyrado.TypeErr(given=algo, expected_type=LFI)
 
+    # Select the domain parameters to plot
+    if len(algo.dp_mapping) > 2:
+        usr_inp = input(
+            f"Found the domain parameter mapping {algo.dp_mapping}. Select 2 domain parameter by index "
+            f"to be plotted (format: separated by a whitespace):\n"
+        )
+        dp_idcs = tuple(map(int, usr_inp.split()))
+    else:
+        dp_idcs = (0, 1)
+
     # Load a specific real-world observation (off, i.e. -1, by default)
     if args.iter != -1:
         # Crawl through the experiment's directory
@@ -74,41 +87,56 @@ if __name__ == "__main__":
         load_iter = len(found_observations) - 1
         observations_real = pyrado.load(None, f"iter_{load_iter}_observations_real", "pt", ex_dir)
 
-    # Compute and print the argmax
+    # Evaluate the posterior
     domain_params, log_prob, _ = LFI.eval_posterior(
         posterior, observations_real, args.num_samples, algo.sbi_simulator, simulate_observations=False
     )
 
-    # Get the environmental parameters to plot in 2D (by default the first two)
-    params_names = list(algo.dp_mapping.values())
+    # Set the condition if necessary
+    if len(algo.dp_mapping) > 2:
+        condition = to.mean(domain_params, dim=[0, 1])  # to.median(to.median(domain_params, dim=0)[0], dim=0)[0]
+    else:
+        condition = None
 
     # Plot the posterior distribution, the true parameters / their distribution
-    fig, axs = plt.subplots(
-        # 1,
-        *num_rows_cols_from_length(observations_real.shape[0]),
-        figsize=(14, 7),
-        tight_layout=True,
-    )
+    if args.mode.lower() == "joint":
+        num_rows, num_cols = 1, 1
+    else:
+        num_rows, num_cols = num_rows_cols_from_length(observations_real.shape[0])
+    fig, axs = plt.subplots(num_rows, num_cols, figsize=(14, 7), tight_layout=True)
     _ = draw_posterior_distr(
         axs,
-        "separate",  # joint or separate
+        args.mode.lower(),
         posterior,
         observations_real,
         algo.dp_mapping,
         env_real,
         prior,
-        show_prior=True,
-        # grid_bounds=to.tensor([[22, 39], [0, 0.6]])
+        dp_idcs,
+        condition,
+        show_prior=False,
+        # grid_bounds=to.tensor([[0.1, 0.5], [1, 3.5]])
     )
 
-    # fig, ax = plt.subplots()
-    # ax = plot_posterior_distribution(
-    #     ax,
-    #     posterior,
-    #     observations_real,
-    #     initial_prior=prior,
-    #     params_names=params_names,
-    #     real_environment=env_real,
-    # )
+    """
+    # Look at one dim of the trajectory
+    argmax_logprob = to.argmax(log_prob, dim=1)  # most likely posterior samples
+    LFI.fill_domain_param_buffer(env_sim, algo.dp_mapping, domain_params[-1, :, :])
+    env_sim.selection = "cyclic"
+
+    sampler = ParallelRolloutSampler(env_sim, policy, num_workers=4, min_rollouts=50)
+    ros = sampler.sample()
+    import numpy as np
+    traj_real = np.array([ro.observations[3] for ro in ros])  # TODO
+
+    _, ax = plt.subplots(figsize=(14, 7), tight_layout=True)
+    draw_curve_from_data(
+        plot_type="mean_std",
+        ax=ax,
+        data=traj_real,
+        x_grid=np.arange(0, traj_real.shape[0]),
+        ax_calc=1,
+    )
+    """
 
     plt.show()

@@ -34,9 +34,9 @@ jobs:
           context: .
           push: true
           tags: |
-            simurlacra/simurlacra:${{ matrix.flavor }}
-            ghcr.io/${{ github.repository_owner }}/simurlacra:${{ matrix.flavor }}
+            simurlacra/simurlacra:${{ matrix.flavor }}-${{GITHUB_REF#refs/*/}}
+            ghcr.io/${{ github.repository_owner }}/simurlacra:${{ matrix.flavor }}-${{GITHUB_REF#refs/*/}}
           build-args: |
             OPTION=${{ matrix.flavor }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/simurlacra:${{ matrix.flavor }}-${GITHUB_REF#refs/*/}
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/simurlacra:${{ matrix.flavor }}
           cache-to: type=inline

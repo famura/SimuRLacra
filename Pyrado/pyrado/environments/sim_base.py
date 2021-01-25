@@ -48,6 +48,11 @@ class SimEnv(Env, ABC, Serializable):
         """ Get the initial state space. """
         raise NotImplementedError
 
+    @init_space.setter
+    def init_space(self, space: Space):
+        """ Set the initial state space. """
+        raise NotImplementedError
+
     @classmethod
     @abstractmethod
     def get_nominal_domain_param(cls) -> dict:
@@ -72,7 +77,7 @@ class SimEnv(Env, ABC, Serializable):
     @abstractmethod
     def domain_param(self) -> dict:
         """
-        Get the environment's domain parameters.
+        Get the environment's domain parameters. If there are none, this method should return an emtpy `dict`.
         The domain parameters are synonymous to the parameters used by the simulator to run the physics simulation
         (e.g., masses, extents, or friction coefficients). This must include all parameters that can be randomized,
         but there might also be additional parameters that depend on the domain parameters.

@@ -39,7 +39,7 @@ from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.spaces import ValueFunctionSpace
 from pyrado.environments.mujoco.openai_half_cheetah import HalfCheetahSim
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.feed_forward.fnn import FNNPolicy
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.data_types import EnvSpec
@@ -95,14 +95,11 @@ if __name__ == "__main__":
     algo = PPO(ex_dir, env, policy, critic, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml(
-        [
-            # dict(env=env_hparams, seed=args.seed),
-            dict(policy=policy_hparam),
-            dict(critic=critic_hparam, vfcn=vfcn_hparam),
-            dict(algo=algo_hparam, algo_name=algo.name),
-        ],
-        ex_dir,
+    save_dicts_to_yaml(
+        dict(policy=policy_hparam),
+        dict(critic=critic_hparam, vfcn=vfcn_hparam),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
     )
 
     # Jeeeha

@@ -43,7 +43,7 @@ from pyrado.environments.pysim.quanser_ball_balancer import QBallBalancerSim
 from pyrado.environment_wrappers.action_delay import ActDelayWrapper
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environment_wrappers.observation_noise import GaussianObsNoiseWrapper
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.features import FeatureStack, identity_feat
 from pyrado.policies.feed_forward.linear import LinearPolicy
 from pyrado.sampling.sequences import *
@@ -96,7 +96,8 @@ if __name__ == "__main__":
     # Algorithm
     subrtn_hparam_cand = dict(
         max_iter=100,
-        num_rollouts=1,  # will be overwritten by SPOTA
+        num_init_states_per_domain=6,
+        num_domains=1,  # will be overwritten by SPOTA
         pop_size=50,
         expl_factor=1.1,
         expl_std_init=0.5,
@@ -127,14 +128,12 @@ if __name__ == "__main__":
     algo = SPOTA(ex_dir, env, sr_cand, sr_refs, **algo_hparam)
 
     # Save the environments and the hyper-parameters
-    save_list_of_dicts_to_yaml(
-        [
-            dict(env=env_hparams, seed=args.seed),
-            dict(policy=policy_hparam),
-            dict(subrtn_name=sr_cand.name, subrtn_cand=subrtn_hparam_cand, subrtn_refs=subrtn_hparam_refs),
-            dict(algo=algo_hparam, algo_name=algo.name),
-        ],
-        ex_dir,
+    save_dicts_to_yaml(
+        dict(env=env_hparams, seed=args.seed),
+        dict(policy=policy_hparam),
+        dict(subrtn_name=sr_cand.name, subrtn_cand=subrtn_hparam_cand, subrtn_refs=subrtn_hparam_refs),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
     )
 
     # Jeeeha

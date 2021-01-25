@@ -165,7 +165,7 @@ class SAC(ValueBased):
 
         # Create sampler for exploration during training
         self._expl_strat = SACExplStrat(self._policy)
-        self.sampler_trn = ParallelRolloutSampler(
+        self.sampler = ParallelRolloutSampler(
             self._env,
             self._expl_strat,
             num_workers=num_workers if min_steps != 1 else 1,

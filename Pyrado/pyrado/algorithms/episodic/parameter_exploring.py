@@ -51,10 +51,11 @@ class ParameterExploring(Algorithm):
         env: Env,
         policy: Policy,
         max_iter: int,
-        num_rollouts: int,
+        num_init_states_per_domain: int,
+        num_domains: int,
         pop_size: Optional[int] = None,
         num_workers: int = 4,
-        logger: StepLogger = None,
+        logger: Optional[StepLogger] = None,
     ):
         """
         Constructor
@@ -63,7 +64,8 @@ class ParameterExploring(Algorithm):
         :param env: the environment which the policy operates
         :param policy: policy to be updated
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
-        :param num_rollouts: number of rollouts per policy parameter set
+        :param num_init_states_per_domain: number of rollouts to cover the variance over initial states
+        :param num_domains: number of rollouts due to the variance over domain parameters
         :param pop_size: number of solutions in the population, pass `None` to use a default that scales logarithmically
                          with the number of policy parameters
         :param num_workers: number of environments for parallel sampling
@@ -79,9 +81,7 @@ class ParameterExploring(Algorithm):
         # Call Algorithm's constructor
         super().__init__(save_dir, max_iter, policy, logger)
 
-        # Store the inputs
         self._env = env
-        self.num_rollouts = num_rollouts
 
         # Auto-select population size if needed
         if pop_size is None:
@@ -93,7 +93,8 @@ class ParameterExploring(Algorithm):
         self.sampler = ParameterExplorationSampler(
             env,
             policy,
-            num_rollouts_per_param=num_rollouts,
+            num_init_states_per_domain=num_init_states_per_domain,
+            num_domains=num_domains,
             num_workers=num_workers,
         )
 

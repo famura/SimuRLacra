@@ -38,7 +38,7 @@ from pyrado.policies.recurrent.neural_fields import NFPolicy
 
 import pyrado
 from pyrado.algorithms.timeseries_prediction import TSPred
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.spaces import BoxSpace
 from pyrado.spaces.box import InfBoxSpace
 from pyrado.utils.argparser import get_argparser
@@ -122,13 +122,11 @@ if __name__ == "__main__":
     algo = TSPred(ex_dir, dataset, policy, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml(
-        [
-            dict(data_set=data_set_hparam, data_set_name=data_set_name, seed=args.seed),
-            dict(policy=policy_hparam),
-            dict(algo=algo_hparam, algo_name=algo.name),
-        ],
-        ex_dir,
+    save_dicts_to_yaml(
+        dict(data_set=data_set_hparam, data_set_name=data_set_name, seed=args.seed),
+        dict(policy=policy_hparam),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
     )
 
     # Jeeeha

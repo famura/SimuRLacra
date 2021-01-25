@@ -159,7 +159,6 @@ int main(int argc, char** argv)
         }
         
         if (hud) {
-            // TODO obtain reward
             bot.getConfig()->updateHUD(hud, NULL, NULL, 0.0, -1);
         }
         // wait a bit till next update

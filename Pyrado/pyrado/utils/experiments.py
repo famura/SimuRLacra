@@ -34,7 +34,7 @@ from typing import Callable, Any, Union
 import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.episodic.parameter_exploring import ParameterExploring
-from pyrado.algorithms.inference.lfi2 import LFI
+from pyrado.algorithms.inference.lfi import LFI
 from pyrado.algorithms.meta.bayrn import BayRn
 from pyrado.algorithms.meta.epopt import EPOpt
 from pyrado.algorithms.meta.simopt import SimOpt

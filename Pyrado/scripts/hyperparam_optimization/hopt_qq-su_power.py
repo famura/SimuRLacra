@@ -40,7 +40,7 @@ import pyrado
 from pyrado.algorithms.episodic.power import PoWER
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.environments.pysim.quanser_qube import QQubeSwingUpSim
-from pyrado.logger.experiment import save_list_of_dicts_to_yaml, setup_experiment
+from pyrado.logger.experiment import save_dicts_to_yaml, setup_experiment
 from pyrado.logger.step import create_csv_step_logger
 from pyrado.policies.features import (
     FeatureStack,
@@ -91,7 +91,7 @@ def train_and_eval(trial: optuna.Trial, study_dir: str, seed: int):
         num_workers=1,  # parallelize via optuna n_jobs
         max_iter=50,
         pop_size=trial.suggest_int("pop_size", 50, 200),
-        num_rollouts=trial.suggest_int("num_rollouts", 4, 10),
+        num_init_states_per_domain=trial.suggest_int("num_init_states_per_domain", 4, 10),
         num_is_samples=trial.suggest_int("num_is_samples", 5, 40),
         expl_std_init=trial.suggest_uniform("expl_std_init", 0.1, 0.5),
         symm_sampling=trial.suggest_categorical("symm_sampling", [True, False]),
@@ -141,4 +141,9 @@ if __name__ == "__main__":
     study.optimize(functools.partial(train_and_eval, study_dir=study_dir, seed=args.seed), n_trials=100, n_jobs=16)
 
     # Save the best hyper-parameters
-    save_list_of_dicts_to_yaml([study.best_params, dict(seed=args.seed)], study_dir, "best_hyperparams")
+    save_dicts_to_yaml(
+        study.best_params,
+        dict(seed=args.seed),
+        save_dir=study_dir,
+        file_name="best_hyperparams",
+    )

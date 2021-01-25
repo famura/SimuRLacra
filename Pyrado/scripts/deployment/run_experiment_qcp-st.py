@@ -38,7 +38,7 @@ from pyrado.environments.quanser.base import QuanserReal
 from pyrado.environments.quanser.quanser_cartpole import QCartPoleStabReal
 from pyrado.environment_wrappers.utils import inner_env
 from pyrado.environments.sim_base import SimEnv
-from pyrado.logger.experiment import ask_for_experiment, save_list_of_dicts_to_yaml, setup_experiment
+from pyrado.logger.experiment import ask_for_experiment, save_dicts_to_yaml, setup_experiment
 from pyrado.policies.special.time import TimePolicy
 from pyrado.sampling.rollout import rollout
 from pyrado.sampling.step_sequence import StepSequence
@@ -198,8 +198,8 @@ if __name__ == "__main__":
     print_cbt(f"Average return: {avg_return}", "g", bright=True)
     save_dir = setup_experiment("evaluation", "qcp-st_experiment", ex_tag, base_dir=pyrado.TEMP_DIR)
     joblib.dump(ros, osp.join(save_dir, "experiment_rollouts.pkl"))
-    save_list_of_dicts_to_yaml(
-        [dict(ex_dir=ex_dir, avg_return=avg_return, num_runs=len(ros), steps_disturb=steps_disturb)],
-        save_dir,
+    save_dicts_to_yaml(
+        dict(ex_dir=ex_dir, avg_return=avg_return, num_runs=len(ros), steps_disturb=steps_disturb),
+        save_dir=save_dir,
         file_name="experiment_summary",
     )

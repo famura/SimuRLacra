@@ -80,9 +80,10 @@ class PEPG(ParameterExploring):
         env: Env,
         policy: Policy,
         max_iter: int,
-        num_rollouts: int,
+        num_init_states_per_domain: int,
         expl_std_init: float,
         expl_std_min: float = 0.01,
+        num_domains: Optional[int] = 1,
         pop_size: Optional[int] = None,
         clip_ratio_std: float = 0.05,
         normalize_update: bool = False,
@@ -99,7 +100,8 @@ class PEPG(ParameterExploring):
         :param policy: policy to be updated
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
         :param pop_size: number of solutions in the population
-        :param num_rollouts: number of rollouts per policy sample
+        :param num_init_states_per_domain: number of rollouts to cover the variance over initial states
+        :param num_domains: number of rollouts due to the variance over domain parameters
         :param expl_std_init: initial standard deviation for the exploration strategy
         :param expl_std_min: minimal standard deviation for the exploration strategy
         :param clip_ratio_std: maximal ratio for the change of the exploration strategy's standard deviation
@@ -110,7 +112,15 @@ class PEPG(ParameterExploring):
         """
         # Call ParameterExploring's constructor
         super().__init__(
-            save_dir, env, policy, max_iter, num_rollouts, pop_size=pop_size, num_workers=num_workers, logger=logger
+            save_dir=save_dir,
+            env=env,
+            policy=policy,
+            max_iter=max_iter,
+            num_init_states_per_domain=num_init_states_per_domain,
+            num_domains=num_domains,
+            pop_size=pop_size,
+            num_workers=num_workers,
+            logger=logger,
         )
 
         # Store the inputs

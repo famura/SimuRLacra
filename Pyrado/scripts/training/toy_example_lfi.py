@@ -3,7 +3,10 @@ import torch as to
 import torch.nn as nn
 
 import pyrado
-from pyrado.algorithms.inference.lfi2 import LFI
+from pyrado.algorithms.inference.lfi import LFI
+from pyrado.domain_randomization.domain_parameter import NormalDomainParam, UniformDomainParam
+from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
+from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environments.one_step.multivariate_gaussian import ToyExample
 from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
 from pyrado.policies.special.dummy import IdlePolicy
@@ -31,7 +34,19 @@ if __name__ == "__main__":
     num_real_obs = 1
     env_real = deepcopy(env_sim)
 
-    env_real.domain_param = dict(m_1=0.7, m_2=-1.5, s_1=-0.5, s_2=-0.5, rho=0.1)
+    # either run with the same observation every round or...
+    randomizer = DomainRandomizer(
+        UniformDomainParam(name="m_1", mean=0.7, halfspan=1e-6),
+        UniformDomainParam(name="m_2", mean=-1.5, halfspan=1e-6),
+        UniformDomainParam(name="s_1", mean=-0.5, halfspan=1e-6),
+        UniformDomainParam(name="s_2", mean=-0.5, halfspan=1e-6),
+        UniformDomainParam(name="rho", mean=0.1, halfspan=1e-6),
+    )
+    env_real = DomainRandWrapperBuffer(env_real, randomizer)
+    env_real.fill_buffer(num_real_obs)
+
+    # # ... sample every round a new observation
+    # env_real.domain_param = dict(m_1=0.7, m_2=-1.5, s_1=-0.5, s_2=-0.5, rho=0.1)
     # env_real.domain_param = dict(m_1=0.7, m_2=-1.5, s_1=-0.1, s_2=-0.1, rho=0.1)
     dp_mapping = {0: "m_1", 1: "m_2", 2: "s_1", 3: "s_2", 4: "rho"}
 
@@ -43,16 +58,16 @@ if __name__ == "__main__":
     prior = utils.BoxUniform(**prior_hparam)
 
     # Posterior (normalizing flow)
-    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=2)
+    posterior_nn_hparam = dict(model="nsf", embedding_net=nn.Identity(), hidden_features=50, num_transforms=5)
 
     # Algorithm
     algo_hparam = dict(
         summary_statistic="states",
         max_iter=15,
         num_real_rollouts=num_real_obs,
-        num_sim_per_real_rollout=200,
+        num_sim_per_real_rollout=1000,
         num_workers=1,
-        # show_samples_bar=False,
+        training_batch_size=10000,
     )
     algo = LFI(
         ex_dir,

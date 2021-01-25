@@ -85,6 +85,12 @@ class SimPyEnv(SimEnv, Serializable):
     def init_space(self) -> Space:
         return self._init_space
 
+    @init_space.setter
+    def init_space(self, space: Space):
+        if not isinstance(space, Space):
+            raise pyrado.TypeErr(given=space, expected_type=Space)
+        self._init_space = space
+
     @property
     def act_space(self) -> Space:
         return self._act_space
@@ -131,7 +137,7 @@ class SimPyEnv(SimEnv, Serializable):
         """
         raise NotImplementedError
 
-    def _calc_constants(self):
+    def _calc_constants(self, *args, **kwargs):
         """
         Called to calculate the physics constants that depend on the domain parameters. Override in subclasses.
 

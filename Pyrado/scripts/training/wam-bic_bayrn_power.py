@@ -39,7 +39,7 @@ from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLi
 from pyrado.environments.barrett_wam.wam import WAMBallInCupRealEpisodic
 from pyrado.environments.mujoco.wam import WAMBallInCupSim
 from pyrado.algorithms.meta.bayrn import BayRn
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.special.dual_rfb import DualRBFLinearPolicy
 from pyrado.spaces import BoxSpace
 from pyrado.utils.argparser import get_argparser
@@ -125,8 +125,9 @@ if __name__ == "__main__":
     subrtn_hparam = dict(
         max_iter=15,
         pop_size=100,
-        num_rollouts=20,
         num_is_samples=10,
+        num_init_states_per_domain=4,
+        num_domains=10,
         expl_std_init=np.pi / 24,
         expl_std_min=0.01,
         num_workers=8,
@@ -147,14 +148,12 @@ if __name__ == "__main__":
     )
 
     # Save the environments and the hyper-parameters (do it before the init routine of BayRn)
-    save_list_of_dicts_to_yaml(
-        [
-            dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=args.seed),
-            dict(policy=policy_hparam),
-            dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
-            dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map),
-        ],
-        ex_dir,
+    save_dicts_to_yaml(
+        dict(env_sim=env_sim_hparams, env_real=env_real_hparams, seed=args.seed),
+        dict(policy=policy_hparam),
+        dict(subrtn=subrtn_hparam, subrtn_name=subrtn.name),
+        dict(algo=bayrn_hparam, algo_name=BayRn.name, dp_map=dp_map),
+        save_dir=ex_dir,
     )
 
     algo = BayRn(ex_dir, env_sim, env_real, subrtn=subrtn, ddp_space=ddp_space, **bayrn_hparam)

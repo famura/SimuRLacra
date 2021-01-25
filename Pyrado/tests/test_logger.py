@@ -26,13 +26,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import pytest
 import numpy as np
 import os.path as osp
-import pytest
+import torch as to
 import shutil
 
 from pyrado import TEMP_DIR
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml, load_dict_from_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml, load_dict_from_yaml
 from pyrado.utils.order import get_immediate_subdirs
 
 
@@ -56,11 +57,28 @@ def test_experiment():
 def test_save_and_laod_yaml():
     ex_dir = setup_experiment("testenv", "testalgo", "testinfo", base_dir=TEMP_DIR)
 
-    # Save test data to YAML-file (ndarrays should be converted to lists)
-    save_list_of_dicts_to_yaml([dict(a=1), dict(b=2.0), dict(c=np.array([1.0, 2.0]).tolist())], ex_dir, "testfile")
+    # Save test data to YAML-file
+    save_dicts_to_yaml(
+        dict(a=1),
+        dict(b=2.0),
+        dict(c=np.array([1.0, 2.0])),
+        dict(d=to.tensor([3.0, 4.0])),
+        dict(e="string"),
+        dict(f=[5, "f"]),
+        dict(g=(6, "g")),
+        save_dir=ex_dir,
+        file_name="testfile",
+    )
 
     data = load_dict_from_yaml(osp.join(ex_dir, "testfile.yaml"))
     assert isinstance(data, dict)
+    assert data["a"] == 1
+    assert data["b"] == 2
+    assert data["c"] == [1.0, 2.0]  # now a list
+    assert data["d"] == [3.0, 4.0]  # now a list
+    assert data["e"] == "string"
+    assert data["f"] == [5, "f"]
+    assert data["g"] == (6, "g")
 
     # Delete the created folder recursively
     shutil.rmtree(osp.join(TEMP_DIR, "testenv"), ignore_errors=True)  # also deletes read-only files

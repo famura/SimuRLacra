@@ -38,7 +38,7 @@ from pyrado.domain_randomization.domain_parameter import NormalDomainParam, Unif
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperLive
 from pyrado.environments.rcspysim.box_lifting import BoxLiftingVelIKActivationSim
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.recurrent.adn import pd_cubic, ADNPolicy
 from pyrado.utils.argparser import get_argparser
 
@@ -114,8 +114,9 @@ if __name__ == "__main__":
     # Algorithm
     algo_hparam = dict(
         max_iter=50,
-        pop_size=5 * policy.num_param,
-        num_rollouts=1,
+        pop_size=policy.num_param,
+        num_init_states_per_domain=5,
+        num_domains=5,
         expl_factor=1.05,
         expl_std_init=1.0,
         num_workers=6,
@@ -123,13 +124,11 @@ if __name__ == "__main__":
     algo = HCNormal(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml(
-        [
-            dict(env=env_hparams, seed=args.seed),
-            dict(policy=policy_hparam),
-            dict(algo=algo_hparam, algo_name=algo.name),
-        ],
-        ex_dir,
+    save_dicts_to_yaml(
+        dict(env=env_hparams, seed=args.seed),
+        dict(policy=policy_hparam),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
     )
 
     # Jeeeha

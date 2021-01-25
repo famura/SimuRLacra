@@ -357,9 +357,10 @@ def buildCMakeProject(srcDir, buildDir, cmakeVars=None, env=env_vars, install_di
 
 def setup_dep_libraries():
     # Update
-    sp.check_call(["sudo", "apt-get", "update", "-y"])
+    quiet = [] if not CI else ["-qq"]
+    sp.check_call(["sudo", "apt-get"] + quiet + ["update", "-y"])
     # Install dependencies
-    sp.check_call(["sudo", "apt-get", "install", "-y"] + required_packages + required_packages_mujocopy)
+    sp.check_call(["sudo", "apt-get"] + quiet + ["install", "-y"] + required_packages + required_packages_mujocopy)
 
 
 def setup_wm5():

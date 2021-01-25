@@ -29,21 +29,20 @@
 """
 Sim-to-sim experiment on the One-Mass-Oscillator environment using likelihood-free inference
 """
-from copy import deepcopy
-
 import numpy as np
 import torch as to
 import torch.nn as nn
 from sbi.inference import SNPE
 from sbi import utils
+from copy import deepcopy
 
 import pyrado
-from pyrado.algorithms.inference.lfi2 import LFI
+from pyrado.algorithms.inference.lfi import LFI
 from pyrado.domain_randomization.domain_parameter import NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapperBuffer
 from pyrado.environments.pysim.one_mass_oscillator import OneMassOscillatorSim
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.special.dummy import IdlePolicy
 from pyrado.utils.argparser import get_argparser
 
@@ -63,7 +62,7 @@ if __name__ == "__main__":
     env_sim = OneMassOscillatorSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
 
     # Create a fake ground truth target domain
-    num_real_obs = 5
+    num_real_obs = 3
     env_real = deepcopy(env_sim)
     # randomizer = DomainRandomizer(
     #     NormalDomainParam(name="k", mean=33.0, std=33 / 50),
@@ -103,14 +102,12 @@ if __name__ == "__main__":
     )
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml(
-        [
-            dict(env=env_hparams, seed=args.seed),
-            dict(prior=prior_hparam),
-            dict(posterior_nn=posterior_nn_hparam),
-            dict(algo=algo_hparam, algo_name=algo.name),
-        ],
-        ex_dir,
+    save_dicts_to_yaml(
+        dict(env=env_hparams, seed=args.seed),
+        dict(prior=prior_hparam),
+        dict(posterior_nn=posterior_nn_hparam),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
     )
 
     # Jeeeha

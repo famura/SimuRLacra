@@ -31,7 +31,7 @@ Train an agent to solve the Quanser Cart-Pole swing-up task using Natural Evolut
 """
 import pyrado
 from pyrado.algorithms.episodic.nes import NES
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.environments.pysim.quanser_cartpole import QCartPoleSwingUpSim
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
 from pyrado.policies.recurrent.rnn import GRUPolicy
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=5000,
         pop_size=50,
-        num_rollouts=6,
+        num_init_states_per_domain=6,
         eta_mean=2.0,
         eta_std=None,
         expl_std_init=0.5,
@@ -77,13 +77,11 @@ if __name__ == "__main__":
     algo = NES(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml(
-        [
-            dict(env=env_hparams, seed=args.seed),
-            dict(policy=policy_hparam),
-            dict(algo=algo_hparam, algo_name=algo.name),
-        ],
-        ex_dir,
+    save_dicts_to_yaml(
+        dict(env=env_hparams, seed=args.seed),
+        dict(policy=policy_hparam),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
     )
 
     # Jeeeha

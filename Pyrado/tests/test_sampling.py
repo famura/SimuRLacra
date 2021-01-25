@@ -351,22 +351,26 @@ def test_bootsrapping(data, num_reps, seed):
     indirect=True,
 )
 @pytest.mark.parametrize(
-    ["num_rollouts_per_param", "fixed_init_state"],
+    ["num_init_states_per_domain", "fixed_init_state", "num_domains"],
     [
-        (1, False),
-        (1, True),
-        (9, False),
-        (9, True),
+        (1, False, 1),
+        (1, True, 1),
+        (9, False, 1),
+        (9, True, 1),
     ],
     ids=["1rops-randinit", "1rops-fixedinit", "9rops-randinit", "9rops-fixedinit"],
 )
-def test_param_expl_sampler(env: SimEnv, policy: Policy, num_rollouts_per_param: int, fixed_init_state: bool):
+def test_param_expl_sampler(
+    env: SimEnv, policy: Policy, num_init_states_per_domain: int, fixed_init_state: bool, num_domains: int
+):
+    num_rollouts_per_param = num_init_states_per_domain * num_domains
+
     # Add randomizer
     pert = create_default_randomizer(env)
     env = DomainRandWrapperLive(env, pert)
 
     # Create the sampler
-    sampler = ParameterExplorationSampler(env, policy, num_rollouts_per_param, num_workers=1)
+    sampler = ParameterExplorationSampler(env, policy, num_init_states_per_domain, num_domains, num_workers=1)
 
     # Use some random parameters
     num_ps = 7
@@ -374,7 +378,7 @@ def test_param_expl_sampler(env: SimEnv, policy: Policy, num_rollouts_per_param:
 
     if fixed_init_state:
         # Sample a custom init state
-        init_states = [env.init_space.sample_uniform()] * num_rollouts_per_param
+        init_states = [env.init_space.sample_uniform()] * num_init_states_per_domain
     else:
         # Let the sampler forward to the env to randomly sample an init state
         init_states = None

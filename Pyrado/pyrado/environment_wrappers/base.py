@@ -29,10 +29,12 @@
 import numpy as np
 from abc import abstractmethod
 from init_args_serializer import Serializable
+from typing import Optional
 
 import pyrado
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.environments.base import Env
+from pyrado.environments.real_base import RealEnv
 from pyrado.environments.sim_base import SimEnv
 from pyrado.spaces.base import Space
 from pyrado.tasks.base import Task
@@ -123,21 +125,22 @@ class EnvWrapper(Env, Serializable):
         run the physics simulation (e.g., masses, extents, or friction coefficients). The property domain_param includes
         all parameters that can be perturbed a.k.a. randomized, but there might also be additional parameters.
         """
-        param = self._wrapped_env.domain_param
-        self._save_domain_param(param)
-        return param
+        if isinstance(self._wrapped_env, RealEnv):
+            raise pyrado.TypeErr(given=self._wrapped_env, expected_type=SimEnv)
+        else:
+            param = self._wrapped_env.domain_param
+            self._save_domain_param(param)
+            return param
 
     @domain_param.setter
     def domain_param(self, param: dict):
-        """
-        Set the domain parameters. The changes are only applied at the next call of the reset function.
-        """
+        """ Set the domain parameters. The changes are only applied at the next call of the reset function. """
         self._load_domain_param(param)
         self._wrapped_env.domain_param = param
 
     @property
-    def randomizer(self) -> [DomainRandomizer, None]:
-        getattr(self._wrapped_env, "randomizer", None)
+    def randomizer(self) -> Optional[DomainRandomizer]:
+        return getattr(self._wrapped_env, "randomizer", None)
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:
         """

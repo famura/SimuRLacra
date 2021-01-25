@@ -650,7 +650,7 @@ public:
     
         auto omGD = observationModel->findOffsets<OMDynamicalSystemGoalDistance>();
         if (omGD) {
-            if (properties->getPropertyBool("positionTasks", false)) // TODO
+            if (properties->getPropertyBool("positionTasks", false))
             {
                 linesOut.emplace_back(
                     string_format("goal distance: [% 1.2f,% 1.2f,% 1.2f,% 1.2f,% 1.2f,\n"

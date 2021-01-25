@@ -35,7 +35,7 @@ import pyrado
 from pyrado.algorithms.episodic.hc import HCNormal
 from pyrado.environment_wrappers.observation_partial import ObsPartialWrapper
 from pyrado.environments.rcspysim.planar_3_link import Planar3LinkIKActivationSim
-from pyrado.logger.experiment import setup_experiment, save_list_of_dicts_to_yaml
+from pyrado.logger.experiment import setup_experiment, save_dicts_to_yaml
 from pyrado.policies.recurrent.adn import pd_cubic, ADNPolicy
 from pyrado.utils.argparser import get_argparser
 
@@ -103,7 +103,7 @@ if __name__ == "__main__":
     algo_hparam = dict(
         max_iter=100,
         pop_size=5 * policy.num_param,
-        num_rollouts=1,
+        num_init_states_per_domain=1,
         expl_factor=1.05,
         expl_std_init=1.0,
         num_workers=8,
@@ -111,13 +111,11 @@ if __name__ == "__main__":
     algo = HCNormal(ex_dir, env, policy, **algo_hparam)
 
     # Save the hyper-parameters
-    save_list_of_dicts_to_yaml(
-        [
-            dict(env=env_hparams, seed=args.seed),
-            dict(policy=policy_hparam),
-            dict(algo=algo_hparam, algo_name=algo.name),
-        ],
-        ex_dir,
+    save_dicts_to_yaml(
+        dict(env=env_hparams, seed=args.seed),
+        dict(policy=policy_hparam),
+        dict(algo=algo_hparam, algo_name=algo.name),
+        save_dir=ex_dir,
     )
 
     # Jeeeha
