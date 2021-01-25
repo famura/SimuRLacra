@@ -378,7 +378,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subroutine</span><span class="p">,</span> <span class="n">ParameterExploring</span><span class="p">):</span>
             <span class="c1"># Subclasses of ParameterExploring sample num_rollouts_per_param complete rollouts per iteration</span>
-            <span class="n">subroutine</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">domains</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ntau</span> <span class="o">*</span> <span class="n">n</span>
+            <span class="n">subroutine</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">num_rollouts_per_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ntau</span> <span class="o">*</span> <span class="n">n</span>
 
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subroutine</span><span class="p">,</span> <span class="n">ActorCritic</span><span class="p">):</span>
             <span class="c1"># The PPO sampler can either sample a minimum number of rollouts or steps</span>

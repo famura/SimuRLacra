@@ -250,11 +250,10 @@
         <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">,</span>
         <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span>
         <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">num_init_states_per_domain</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">num_domains</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_rollouts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">pop_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
-        <span class="n">logger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StepLogger</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">StepLogger</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
@@ -263,8 +262,7 @@
 <span class="sd">        :param env: the environment which the policy operates</span>
 <span class="sd">        :param policy: policy to be updated</span>
 <span class="sd">        :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs</span>
-<span class="sd">        :param num_init_states_per_domain: number of rollouts to cover the variance over initial states</span>
-<span class="sd">        :param num_domains: number of rollouts due to the variance over domain parameters</span>
+<span class="sd">        :param num_rollouts: number of rollouts per policy parameter set</span>
 <span class="sd">        :param pop_size: number of solutions in the population, pass `None` to use a default that scales logarithmically</span>
 <span class="sd">                         with the number of policy parameters</span>
 <span class="sd">        :param num_workers: number of environments for parallel sampling</span>
@@ -280,7 +278,9 @@
         <span class="c1"># Call Algorithm&#39;s constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
 
+        <span class="c1"># Store the inputs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_rollouts</span> <span class="o">=</span> <span class="n">num_rollouts</span>
 
         <span class="c1"># Auto-select population size if needed</span>
         <span class="k">if</span> <span class="n">pop_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -292,8 +292,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">ParameterExplorationSampler</span><span class="p">(</span>
             <span class="n">env</span><span class="p">,</span>
             <span class="n">policy</span><span class="p">,</span>
-            <span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="n">num_init_states_per_domain</span><span class="p">,</span>
-            <span class="n">num_domains</span><span class="o">=</span><span class="n">num_domains</span><span class="p">,</span>
+            <span class="n">num_rollouts_per_param</span><span class="o">=</span><span class="n">num_rollouts</span><span class="p">,</span>
             <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
         <span class="p">)</span>
 

@@ -287,7 +287,9 @@
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_simple_feature_stack</span><span class="p">(</span><span class="n">feat_list</span><span class="p">):</span>
     <span class="n">fs</span> <span class="o">=</span> <span class="n">FeatureStack</span><span class="p">(</span><span class="n">feat_list</span><span class="p">)</span>
-    <span class="n">obs</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span>
+        <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">feats_val</span> <span class="o">=</span> <span class="n">fs</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">feats_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 
@@ -297,7 +299,9 @@
 <span class="k">def</span> <span class="nf">test_mul_feat</span><span class="p">(</span><span class="n">obs_dim</span><span class="p">,</span> <span class="n">idcs</span><span class="p">):</span>
     <span class="n">mf</span> <span class="o">=</span> <span class="n">MultFeat</span><span class="p">(</span><span class="n">idcs</span><span class="o">=</span><span class="n">idcs</span><span class="p">)</span>
     <span class="n">fs</span> <span class="o">=</span> <span class="n">FeatureStack</span><span class="p">([</span><span class="n">identity_feat</span><span class="p">,</span> <span class="n">mf</span><span class="p">])</span>
-    <span class="n">obs</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">obs_dim</span><span class="p">)</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span>
+        <span class="n">obs_dim</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">feats_val</span> <span class="o">=</span> <span class="n">fs</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">feats_val</span><span class="p">)</span> <span class="o">==</span> <span class="n">obs_dim</span> <span class="o">+</span> <span class="mi">1</span></div>
 
@@ -310,11 +314,15 @@
     <span class="n">rff</span> <span class="o">=</span> <span class="n">RandFourierFeat</span><span class="p">(</span>
         <span class="n">inp_dim</span><span class="o">=</span><span class="n">obs_dim</span><span class="p">,</span>
         <span class="n">num_feat_per_dim</span><span class="o">=</span><span class="n">num_feat_per_dim</span><span class="p">,</span>
-        <span class="n">bandwidth</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">obs_dim</span><span class="p">),</span>
+        <span class="n">bandwidth</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span>
+            <span class="n">obs_dim</span><span class="p">,</span>
+        <span class="p">),</span>
     <span class="p">)</span>
     <span class="n">fs</span> <span class="o">=</span> <span class="n">FeatureStack</span><span class="p">([</span><span class="n">rff</span><span class="p">])</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-        <span class="n">obs</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">obs_dim</span><span class="p">)</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span>
+            <span class="n">obs_dim</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="n">feats_val</span> <span class="o">=</span> <span class="n">fs</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">feats_val</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_feat_per_dim</span><span class="p">)</span></div>
 
@@ -328,7 +336,9 @@
     <span class="n">rff</span> <span class="o">=</span> <span class="n">RandFourierFeat</span><span class="p">(</span>
         <span class="n">inp_dim</span><span class="o">=</span><span class="n">obs_dim</span><span class="p">,</span>
         <span class="n">num_feat_per_dim</span><span class="o">=</span><span class="n">num_feat_per_dim</span><span class="p">,</span>
-        <span class="n">bandwidth</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">obs_dim</span><span class="p">),</span>
+        <span class="n">bandwidth</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span>
+            <span class="n">obs_dim</span><span class="p">,</span>
+        <span class="p">),</span>
     <span class="p">)</span>
     <span class="n">fs</span> <span class="o">=</span> <span class="n">FeatureStack</span><span class="p">([</span><span class="n">rff</span><span class="p">])</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
@@ -352,7 +362,9 @@
     <span class="n">rbf</span> <span class="o">=</span> <span class="n">RBFFeat</span><span class="p">(</span><span class="n">num_feat_per_dim</span><span class="o">=</span><span class="n">num_feat_per_dim</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">)</span>
     <span class="n">fs</span> <span class="o">=</span> <span class="n">FeatureStack</span><span class="p">([</span><span class="n">rbf</span><span class="p">])</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-        <span class="n">obs</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">obs_dim</span><span class="p">)</span>  <span class="c1"># 1-dim obs vector</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span>
+            <span class="n">obs_dim</span><span class="p">,</span>
+        <span class="p">)</span>  <span class="c1"># 1-dim obs vector</span>
         <span class="n">feats_val</span> <span class="o">=</span> <span class="n">fs</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">feats_val</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">obs_dim</span> <span class="o">*</span> <span class="n">num_feat_per_dim</span><span class="p">)</span></div>
 

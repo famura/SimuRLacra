@@ -548,26 +548,22 @@
     <span class="n">indirect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
-    <span class="p">[</span><span class="s2">&quot;num_init_states_per_domain&quot;</span><span class="p">,</span> <span class="s2">&quot;fixed_init_state&quot;</span><span class="p">,</span> <span class="s2">&quot;num_domains&quot;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;num_rollouts_per_param&quot;</span><span class="p">,</span> <span class="s2">&quot;fixed_init_state&quot;</span><span class="p">],</span>
     <span class="p">[</span>
-        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-        <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-        <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
     <span class="p">],</span>
     <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1rops-randinit&quot;</span><span class="p">,</span> <span class="s2">&quot;1rops-fixedinit&quot;</span><span class="p">,</span> <span class="s2">&quot;9rops-randinit&quot;</span><span class="p">,</span> <span class="s2">&quot;9rops-fixedinit&quot;</span><span class="p">],</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_param_expl_sampler</span><span class="p">(</span>
-    <span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">num_init_states_per_domain</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">fixed_init_state</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">num_domains</span><span class="p">:</span> <span class="nb">int</span>
-<span class="p">):</span>
-    <span class="n">num_rollouts_per_param</span> <span class="o">=</span> <span class="n">num_init_states_per_domain</span> <span class="o">*</span> <span class="n">num_domains</span>
-
+<span class="k">def</span> <span class="nf">test_param_expl_sampler</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">SimEnv</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Policy</span><span class="p">,</span> <span class="n">num_rollouts_per_param</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">fixed_init_state</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
     <span class="c1"># Add randomizer</span>
     <span class="n">pert</span> <span class="o">=</span> <span class="n">create_default_randomizer</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
     <span class="n">env</span> <span class="o">=</span> <span class="n">DomainRandWrapperLive</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pert</span><span class="p">)</span>
 
     <span class="c1"># Create the sampler</span>
-    <span class="n">sampler</span> <span class="o">=</span> <span class="n">ParameterExplorationSampler</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_init_states_per_domain</span><span class="p">,</span> <span class="n">num_domains</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">ParameterExplorationSampler</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_rollouts_per_param</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># Use some random parameters</span>
     <span class="n">num_ps</span> <span class="o">=</span> <span class="mi">7</span>
@@ -575,7 +571,7 @@
 
     <span class="k">if</span> <span class="n">fixed_init_state</span><span class="p">:</span>
         <span class="c1"># Sample a custom init state</span>
-        <span class="n">init_states</span> <span class="o">=</span> <span class="p">[</span><span class="n">env</span><span class="o">.</span><span class="n">init_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()]</span> <span class="o">*</span> <span class="n">num_init_states_per_domain</span>
+        <span class="n">init_states</span> <span class="o">=</span> <span class="p">[</span><span class="n">env</span><span class="o">.</span><span class="n">init_space</span><span class="o">.</span><span class="n">sample_uniform</span><span class="p">()]</span> <span class="o">*</span> <span class="n">num_rollouts_per_param</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Let the sampler forward to the env to randomly sample an init state</span>
         <span class="n">init_states</span> <span class="o">=</span> <span class="kc">None</span>
