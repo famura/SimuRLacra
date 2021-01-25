@@ -265,7 +265,7 @@ stabilized on the center of the beam. In this setup, the agent can control the t
 <dl class="py method">
 <dt id="pyrado.environments.pysim.base.SimPyEnv.domain_param">
 <em class="property">property </em><code class="sig-name descname">domain_param</code><a class="headerlink" href="#pyrado.environments.pysim.base.SimPyEnv.domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the environment’s domain parameters.
+<dd><p>Get the environment’s domain parameters. If there are none, this method should return an emtpy <cite>dict</cite>.
 The domain parameters are synonymous to the parameters used by the simulator to run the physics simulation
 (e.g., masses, extents, or friction coefficients). This must include all parameters that can be randomized,
 but there might also be additional parameters that depend on the domain parameters.</p>
@@ -442,7 +442,7 @@ registered hooks while the latter silently ignores them.</p>
 <dl class="py method">
 <dt id="pyrado.environments.pysim.openai_classical_control.GymEnv.domain_param">
 <em class="property">property </em><code class="sig-name descname">domain_param</code><a class="headerlink" href="#pyrado.environments.pysim.openai_classical_control.GymEnv.domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the environment’s domain parameters.
+<dd><p>Get the environment’s domain parameters. If there are none, this method should return an emtpy <cite>dict</cite>.
 The domain parameters are synonymous to the parameters used by the simulator to run the physics simulation
 (e.g., masses, extents, or friction coefficients). This must include all parameters that can be randomized,
 but there might also be additional parameters that depend on the domain parameters.</p>
@@ -574,7 +574,7 @@ When a terminal condition is met, the reset function is called.</p>
 
 <dl class="py method">
 <dt id="pyrado.environments.pysim.pendulum.PendulumSim.observe">
-<code class="sig-name descname">observe</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/pendulum.html#PendulumSim.observe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.pysim.pendulum.PendulumSim.observe" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">observe</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/environments/pysim/pendulum.html#PendulumSim.observe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.pysim.pendulum.PendulumSim.observe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the (noise-free) observation from the current state.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -717,7 +717,7 @@ As a result, the angles alpha and beta are w.r.t. to the inertial frame, i.e. th
 
 <dl class="py method">
 <dt id="pyrado.environments.pysim.quanser_cartpole.QCartPoleSim.observe">
-<code class="sig-name descname">observe</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environments/pysim/quanser_cartpole.html#QCartPoleSim.observe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.pysim.quanser_cartpole.QCartPoleSim.observe" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">observe</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/pyrado/environments/pysim/quanser_cartpole.html#QCartPoleSim.observe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environments.pysim.quanser_cartpole.QCartPoleSim.observe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the (noise-free) observation from the current state.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>

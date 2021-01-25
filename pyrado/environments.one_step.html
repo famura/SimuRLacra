@@ -279,7 +279,7 @@ use it in combination with a linear policy that has only one constant feature.</
 <dl class="py method">
 <dt id="pyrado.environments.one_step.catapult.CatapultSim.domain_param">
 <em class="property">property </em><code class="sig-name descname">domain_param</code><a class="headerlink" href="#pyrado.environments.one_step.catapult.CatapultSim.domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the environment’s domain parameters.
+<dd><p>Get the environment’s domain parameters. If there are none, this method should return an emtpy <cite>dict</cite>.
 The domain parameters are synonymous to the parameters used by the simulator to run the physics simulation
 (e.g., masses, extents, or friction coefficients). This must include all parameters that can be randomized,
 but there might also be additional parameters that depend on the domain parameters.</p>
@@ -403,7 +403,7 @@ When a terminal condition is met, the reset function is called.</p>
 <dl class="py method">
 <dt id="pyrado.environments.one_step.rosenbrock.RosenSim.domain_param">
 <em class="property">property </em><code class="sig-name descname">domain_param</code><a class="headerlink" href="#pyrado.environments.one_step.rosenbrock.RosenSim.domain_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the environment’s domain parameters.
+<dd><p>Get the environment’s domain parameters. If there are none, this method should return an emtpy <cite>dict</cite>.
 The domain parameters are synonymous to the parameters used by the simulator to run the physics simulation
 (e.g., masses, extents, or friction coefficients). This must include all parameters that can be randomized,
 but there might also be additional parameters that depend on the domain parameters.</p>

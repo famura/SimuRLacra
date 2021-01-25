@@ -252,7 +252,7 @@
 <span class="sd">        :param feat_fcns: list of feature functions, each of them maps from a multi-dim input to a multi-dim output</span>
 <span class="sd">                          (e.g. identity_feat, squared_feat, exception: const_feat)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">feat_fcns</span> <span class="o">=</span> <span class="n">feat_fcns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feat_fcns</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">feat_fcns</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get an information string. &quot;&quot;&quot;</span>

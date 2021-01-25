@@ -225,7 +225,6 @@
 <span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
-<span class="kn">import</span> <span class="nn">joblib</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
@@ -417,7 +416,7 @@
         <span class="c1"># Set the domain randomizer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_env_sim</span><span class="o">.</span><span class="n">adapt_randomizer</span><span class="p">(</span><span class="n">cand</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
 
-        <span class="c1"># Reset the subroutine&#39;s algorithm which includes resetting the exploration</span>
+        <span class="c1"># Reset the subroutine algorithm which includes resetting the exploration</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_samples</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">sample_count</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subrtn</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
@@ -506,10 +505,10 @@
         <span class="n">mc_estimator</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
         <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">num_rollouts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">num_parallel_envs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">to</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Evaluate a policy on the target system (real-world platform).</span>
+<span class="sd">        Evaluate a policy either in the source or in the target domain.</span>
 <span class="sd">        This method is static to facilitate evaluation of specific policies in hindsight.</span>
 
 <span class="sd">        :param save_dir: directory to save the snapshots i.e. the results in, if `None` nothing is saved</span>
@@ -520,7 +519,7 @@
 <span class="sd">        :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate</span>
 <span class="sd">        :param num_rollouts: number of rollouts to collect on the target system</span>
 <span class="sd">        :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate</span>
-<span class="sd">        :param num_parallel_envs: number of environments for the parallel sampler (only used for SimEnv)</span>
+<span class="sd">        :param num_workers: number of environments for the parallel sampler (only used for a `SimEnv`)</span>
 <span class="sd">        :return: estimated return in the target domain</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">save_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -538,7 +537,7 @@
                     <span class="k">break</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inner_env</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> <span class="n">SimEnv</span><span class="p">):</span>
             <span class="c1"># Create a parallel sampler when conducting a sim-to-sim experiment</span>
-            <span class="n">sampler</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="n">num_parallel_envs</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="o">=</span><span class="n">num_rollouts</span><span class="p">)</span>
+            <span class="n">sampler</span> <span class="o">=</span> <span class="n">ParallelRolloutSampler</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="o">=</span><span class="n">num_rollouts</span><span class="p">)</span>
             <span class="n">ros</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rollouts</span><span class="p">):</span>
                 <span class="n">rets_real</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ros</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">undiscounted_return</span><span class="p">()</span>
@@ -546,9 +545,8 @@
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">inner_env</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> <span class="n">expected_type</span><span class="o">=</span><span class="p">[</span><span class="n">RealEnv</span><span class="p">,</span> <span class="n">SimEnv</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">save_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># Save the evaluation results</span>
-            <span class="n">to</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">rets_real</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_returns_real.pt&quot;</span><span class="p">))</span>
-
+            <span class="c1"># Save and print the evaluation results</span>
+            <span class="n">pyrado</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">rets_real</span><span class="p">,</span> <span class="s2">&quot;returns_real&quot;</span><span class="p">,</span> <span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="n">meta_info</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">))</span>
             <span class="n">print_cbt</span><span class="p">(</span><span class="s2">&quot;Target domain performance&quot;</span><span class="p">,</span> <span class="n">bright</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span>
                 <span class="n">tabulate</span><span class="p">(</span>
@@ -759,7 +757,7 @@
         <span class="c1"># Set the domain randomizer</span>
         <span class="n">env_sim</span><span class="o">.</span><span class="n">adapt_randomizer</span><span class="p">(</span><span class="n">argmax_cand</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
 
-        <span class="c1"># Reset the subroutine&#39;s algorithm which includes resetting the exploration</span>
+        <span class="c1"># Reset the subroutine algorithm which includes resetting the exploration</span>
         <span class="n">subrtn</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
         <span class="c1"># Do a warm start</span>

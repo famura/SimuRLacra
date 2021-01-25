@@ -314,9 +314,9 @@
             <span class="p">),</span>
         <span class="p">)</span>
     <span class="k">elif</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">algo_class</span><span class="p">,</span> <span class="n">ParameterExploring</span><span class="p">):</span>
-        <span class="n">common_hparam</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">num_rollouts</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">common_hparam</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">algo_class</span><span class="p">,</span> <span class="p">(</span><span class="n">DQL</span><span class="p">,</span> <span class="n">SAC</span><span class="p">)):</span>
-        <span class="n">common_hparam</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">memory_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">num_batch_updates</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">common_hparam</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">memory_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">num_updates_per_step</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">,</span> <span class="n">min_rollouts</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">fnn_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">algo_class</span><span class="p">,</span> <span class="n">DQL</span><span class="p">):</span>
             <span class="c1"># Override the setting</span>
@@ -383,7 +383,7 @@
 <span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_param_expl</span><span class="p">(</span><span class="n">ex_dir</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">algo_class</span><span class="p">,</span> <span class="n">algo_hparam</span><span class="p">):</span>
     <span class="c1"># Hyper-parameters</span>
-    <span class="n">common_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">num_rollouts</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">common_hparam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">common_hparam</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">algo_hparam</span><span class="p">)</span>
 
     <span class="c1"># Create algorithm and train</span>
@@ -488,12 +488,70 @@
 <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
     <span class="s2">&quot;algo, algo_hparam&quot;</span><span class="p">,</span>
     <span class="p">[</span>
-        <span class="p">(</span><span class="n">HCNormal</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">pop_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">num_rollouts</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">expl_factor</span><span class="o">=</span><span class="mf">1.1</span><span class="p">)),</span>
-        <span class="p">(</span><span class="n">PEPG</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">pop_size</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">num_rollouts</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">normalize_update</span><span class="o">=</span><span class="kc">False</span><span class="p">)),</span>
-        <span class="p">(</span><span class="n">NES</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">pop_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">num_rollouts</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">symm_sampling</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">eta_mean</span><span class="o">=</span><span class="mi">2</span><span class="p">)),</span>
-        <span class="p">(</span><span class="n">PoWER</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">pop_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">num_rollouts</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">num_is_samples</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)),</span>
-        <span class="p">(</span><span class="n">CEM</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">pop_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">num_rollouts</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">num_is_samples</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">full_cov</span><span class="o">=</span><span class="kc">False</span><span class="p">)),</span>
-        <span class="p">(</span><span class="n">REPS</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">max_iter</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">pop_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">num_rollouts</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">use_map</span><span class="o">=</span><span class="kc">True</span><span class="p">)),</span>
+        <span class="p">(</span>
+            <span class="n">HCNormal</span><span class="p">,</span>
+            <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">max_iter</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                <span class="n">pop_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+                <span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                <span class="n">expl_factor</span><span class="o">=</span><span class="mf">1.1</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">),</span>
+        <span class="p">(</span>
+            <span class="n">PEPG</span><span class="p">,</span>
+            <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">max_iter</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
+                <span class="n">pop_size</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+                <span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+                <span class="n">lr</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span>
+                <span class="n">normalize_update</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">),</span>
+        <span class="p">(</span>
+            <span class="n">NES</span><span class="p">,</span>
+            <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">max_iter</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                <span class="n">pop_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+                <span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                <span class="n">symm_sampling</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">eta_mean</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">),</span>
+        <span class="p">(</span>
+            <span class="n">PoWER</span><span class="p">,</span>
+            <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">max_iter</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                <span class="n">pop_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+                <span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                <span class="n">num_is_samples</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+                <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">),</span>
+        <span class="p">(</span>
+            <span class="n">CEM</span><span class="p">,</span>
+            <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">max_iter</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                <span class="n">pop_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+                <span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                <span class="n">num_is_samples</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+                <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                <span class="n">full_cov</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">),</span>
+        <span class="p">(</span>
+            <span class="n">REPS</span><span class="p">,</span>
+            <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">max_iter</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                <span class="n">pop_size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+                <span class="n">num_init_states_per_domain</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                <span class="n">eps</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+                <span class="n">expl_std_init</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                <span class="n">use_map</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">),</span>
     <span class="p">],</span>
     <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;hc_normal&quot;</span><span class="p">,</span> <span class="s2">&quot;pepg&quot;</span><span class="p">,</span> <span class="s2">&quot;nes&quot;</span><span class="p">,</span> <span class="s2">&quot;power&quot;</span><span class="p">,</span> <span class="s2">&quot;cem&quot;</span><span class="p">,</span> <span class="s2">&quot;reps&quot;</span><span class="p">],</span>
 <span class="p">)</span>
