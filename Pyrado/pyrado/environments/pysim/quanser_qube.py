@@ -210,17 +210,6 @@ class QQubeSim(SimPyEnv, Serializable):
                 self.cylinder.setColor(0.5, 0.5, 0,5) #gray
                 self.cylinder.reparentTo(self.render)
 
-                # Joints
-                self.joint1 = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
-                self.joint1.setScale(0.005)
-                self.joint1.setPos(0.0, 0.07, 0.15)
-                self.joint1.reparentTo(self.render)
-
-                self.joint2 = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
-                self.joint2.setScale(pole_radius)
-                self.joint2.setPos(0.0, 0.07+2*Lr, 0.15)
-                self.joint2.reparentTo(self.render)
-
                 # Armself.pole.setPos()
                 self.arm = self.loader.loadModel(pathlib.Path(mydir, "cylinder_shifted_center.egg"))
                 self.arm.setScale(arm_radius, arm_radius, Lr)
@@ -234,7 +223,19 @@ class QQubeSim(SimPyEnv, Serializable):
                 self.pole.setScale(pole_radius, pole_radius, Lp)
                 self.pole.setColor(1, 0, 0) #red
                 self.pole.setPos(0, 0.07+2*Lr, 0.15)
-                self.pole.reparentTo(self.render)
+                self.pole.wrtReparentTo(self.arm)
+
+                # Joints
+                self.joint1 = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
+                self.joint1.setScale(0.005)
+                self.joint1.setPos(0.0, 0.07, 0.15)
+                self.joint1.reparentTo(self.render)
+
+                self.joint2 = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
+                self.joint2.setScale(pole_radius)
+                self.joint2.setPos(0.0, 0.07+2*Lr, 0.15)
+                self.joint2.setColor(0, 0, 0)
+                self.joint2.wrtReparentTo(self.arm)
 
                 # Curve
                 # vp.curve(color=vp.color.white, radius=0.0005, retain=2000)
@@ -265,6 +266,8 @@ class QQubeSim(SimPyEnv, Serializable):
                 pole_ax = (-Lp * np.sin(al) * np.sin(th), +Lp * np.sin(al) * np.cos(th), -Lp * np.cos(al))
 
                 self.arm.setH(th*180/np.pi)
+                self.pole.setR(-al*180/np.pi)
+                #self.pole.setPos(Lr * np.cos(th), 0.0, Lr * np.sin(th))
                 # self.arm.setHpr(*arm_ax)
                 # self.arm.setPos(0,-0.15,0.15)
                 # self.pole.setPos(*arm_pos)
