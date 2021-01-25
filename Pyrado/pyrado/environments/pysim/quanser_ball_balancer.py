@@ -26,6 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import pathlib      ## added for Panda
 import os
 import os.path as osp
 import numpy as np
@@ -321,112 +322,173 @@ class QBallBalancerSim(SimPyEnv, Serializable):
         self.plate_angs += np.array([a_dot, b_dot]) * self._dt  # just for debugging when simplified dynamics
 
     def _init_anim(self):
-        import vpython as vp
+        from direct.showbase.ShowBase import  ShowBase
+        from direct.task import Task
+        from panda3d.core import loadPrcFileData, DirectionalLight, AntialiasAttrib, TextNode, WindowProperties, AmbientLight
 
-        l_plate = self.domain_param["l_plate"]
-        m_ball = self.domain_param["m_ball"]
-        r_ball = self.domain_param["r_ball"]
-        d_plate = 0.01  # only for animation
+        # Configuration for panda3d-window
+        confVars = """
+            win-size 800 600
+            window-title Quanser Qube
+            framebuffer-multisample 1
+            multisamples 2
+            """
+        loadPrcFileData("", confVars)
 
-        # Init render objects on first call
-        self._anim["canvas"] = vp.canvas(width=800, height=800, title="Quanser Ball-Balancer")
-        self._anim["ball"] = vp.sphere(
-            pos=vp.vec(self.state[2], self.state[3], r_ball + d_plate / 2.0),
-            radius=r_ball,
-            mass=m_ball,
-            color=vp.color.red,
-            canvas=self._anim["canvas"],
-        )
-        self._anim["plate"] = vp.box(
-            pos=vp.vec(0, 0, 0),
-            size=vp.vec(l_plate, l_plate, d_plate),
-            color=vp.color.green,
-            canvas=self._anim["canvas"],
-        )
-        self._anim["null_plate"] = vp.box(
-            pos=vp.vec(0, 0, 0),
-            size=vp.vec(l_plate * 1.1, l_plate * 1.1, d_plate / 10),
-            color=vp.color.cyan,
-            opacity=0.5,  # 0 is fully transparent
-            canvas=self._anim["canvas"],
-        )
+        class PandaVis(ShowBase):
+
+            def __init__(self, qbb):
+                ShowBase.__init__()
+
+                mydir = pathlib.Path(__file__).resolve().parent.absolute()
+
+                # Accessing variables of outer class
+                self.qbb = qbb
+
+                self.setBackgroundColor(1, 1, 1)
+                self.cam.setY(-1.5)
+                self.render.setAntialias(AntialiasAttrib.MAuto)
+                self.windowProperties = WindowProperties()
+                self.windowProperties.setForeground(True)
+
+                # Set lighting
+                self.directionalLight = DirectionalLight('directionalLight')
+                self.directionalLightNP = self.render.attachNewNode(self.directionalLight)
+                self.directionalLightNP.setHpr(0, -8, 0)
+                # self.directionalLightNP.setPos(0, 8, 0)
+                self.render.setLight(self.directionalLightNP)
+
+                self.ambientLight = AmbientLight('ambientLight')
+                self.ambientLight.setColor((0.1, 0.1, 0.1, 1))
+                self.ambientLightNP = self.render.attachNewNode(self.ambientLight)
+                self.render.setLight(self.ambientLightNP)
+
+                # Text
+                self.text = TextNode('parameters')
+                self.textNodePath = aspect2d.attachNewNode(self.text)
+                self.textNodePath.setScale(0.07)
+                self.textNodePath.setPos(0.4, 0, -0.1)
+                self.text.setTextColor(0, 0, 0, 1)
+
+                # Physics params
+                l_plate = self.qbb.domain_param["l_plate"]
+                m_ball = self.qbb.domain_param["m_ball"]
+                r_ball = self.qbb.domain_param["r_ball"]
+                d_plate = 0.01  # only for animation
+
+                # Init render objects on first call
+
+                # Ball
+                self.ball = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
+                self.ball.setPos(self.qbb.state[2], self.qbb.state[3], r_ball + d_plate / 2.0)
+                self.ball.setScale(r_ball, r_ball, r_ball)
+                self.ball.setMass(m_ball)
+                self.ball.setColor(1, 0, 0, 0)
+                self.ball.reparentTo(self.render)
+
+                # Plate
+                self.plate = self.loader.loadModel(pathlib.Path(mydir, "box.egg"))
+                self.plate.setPos(0, 0, 0)
+                self.plate.setScale(l_plate, d_plate, l_plate)
+                self.plate.setColor(0, 1, 0, 0)
+                self.ball.reparentTo(self.render)
+
+                # Null_plate
+                self.null_plate = self.loader.loadModel(pathlib.Path(mydir, "box.egg"))
+                self.null_plate.setPos(0, 0, 0)
+                self.null_plate.setScale(l_plate * 1.1, d_plate / 10, l_plate * 1.1)
+                self.null_plate.setColor(0, 1, 1, 0.5)
+                self.null_plate.reparentTo(self.render)
+
+                self.taskMgr.add(self.update, "update")
+
+            def update(self, task):
+
+                g = self.qbb.domain_param["g"]
+                l_plate = self.qbb.domain_param["l_plate"]
+                m_ball = self.qbb.domain_param["m_ball"]
+                r_ball = self.qbb.domain_param["r_ball"]
+                eta_g = self.qbb.domain_param["eta_g"]
+                eta_m = self.qbb.domain_param["eta_m"]
+                K_g = self.qbb.domain_param["K_g"]
+                J_m = self.qbb.domain_param["J_m"]
+                J_l = self.qbb.domain_param["J_l"]
+                r_arm = self.qbb.domain_param["r_arm"]
+                k_m = self.qbb.domain_param["k_m"]
+                R_m = self.qbb.domain_param["R_m"]
+                B_eq = self.qbb.domain_param["B_eq"]
+                c_frict = self.qbb.domain_param["c_frict"]
+                V_thold_x_neg = self.qbb.domain_param["V_thold_x_neg"]
+                V_thold_x_pos = self.qbb.domain_param["V_thold_x_pos"]
+                V_thold_y_neg = self.qbb.domain_param["V_thold_y_neg"]
+                V_thold_y_pos = self.qbb.domain_param["V_thold_y_pos"]
+                offset_th_x = self.qbb.domain_param["offset_th_x"]
+                offset_th_y = self.qbb.domain_param["offset_th_y"]
+                d_plate = 0.01  # only for animation
+
+                #  Compute plate orientation
+                a_vp = -self.qbb.plate_angs[0]  # plate's angle around the y axis (alpha)
+                b_vp = self.qbb.plate_angs[1]  # plate's angle around the x axis (beta)
+
+                # Axis runs along the x direction
+                self.plate.setScale(l_plate, d_plate, l_plate)
+                # TODO
+                # set axis
+                self.plate.setH(np.cos(a_vp) * float(l_plate))
+                self.plate.setP(np.sin(a_vp) * float(l_plate))
+                self.plate.setSz(0, np.sin(b_vp), np.cos(b_vp))
+
+                # Get ball position
+                x = self.qbb.state[2] # along the x axis
+                y = self.qbb.state[3] # along the y axis
+
+                self.ball.setPos(
+                    x * np.cos(a_vp),
+                    r_ball + x * np.sin(a_vp) + y * np.sin(b_vp) + np.cos(a_vp) * d_plate / 2.0,
+                    y * np.cos(b_vp),
+                )
+                self.ball.setScale(r_ball, r_ball, r_ball)
+
+                # Set caption text
+                self.text.setText(f"""
+                    x-axis is pos to the right, y-axis is pos up
+                    Commanded voltage: x servo : {self.qbb._curr_act[0] : 1.2f}, y servo : {self.qbb._curr_act[1] : 1.2f}
+                    Plate angle around x axis: {self.qbb.plate_angs[1]*180/np.pi : 2.2f}
+                    Plate angle around y axis: {self.qbb.plate_angs[0]*180/np.pi : 2.2f}
+                    Shaft angles: {self.qbb.state[0]*180/np.pi : 2.2f}, {self.qbb.state[1]*180/np.pi : 2.2f}
+                    Ball position: {x : 1.3f}, {y : 1.3f}
+                    g: {g : 1.3f}
+                    m_ball: {m_ball : 1.3f}
+                    r_ball: {r_ball : 1.3f}
+                    r_arm: {r_arm : 1.3f}
+                    l_plate: {l_plate : 1.3f}
+                    K_g: {K_g : 2.2f}
+                    J_m: {J_m : 1.7f}
+                    J_l: {J_l : 1.6f}
+                    eta_g: {eta_g : 1.3f}
+                    eta_m: {eta_m : 1.3f}
+                    k_mt: {k_m : 1.3f}
+                    R_m: {R_m : 1.3f}
+                    B_eq: {B_eq : 1.3f}
+                    c_frict: {c_frict : 1.3f}
+                    V_thold_x_pos: {V_thold_x_pos : 2.3f}
+                    V_thold_x_neg: {V_thold_x_neg : 2.3f}
+                    V_thold_y_pos: {V_thold_y_pos : 2.3f}
+                    V_thold_y_neg: {V_thold_y_neg : 2.3f}
+                    offset_th_x: {offset_th_x : 2.3f}
+                    offset_th_y: {offset_th_y : 2.3f}
+                    """)
+
+                return Task.cont
+
+        # Create instance of PandaVis
+        self._visualization = PandaVis(self)
+        # States that visualization is running
+        self._initiated = True
 
     def _update_anim(self):
-        import vpython as vp
-
-        g = self.domain_param["g"]
-        l_plate = self.domain_param["l_plate"]
-        m_ball = self.domain_param["m_ball"]
-        r_ball = self.domain_param["r_ball"]
-        eta_g = self.domain_param["eta_g"]
-        eta_m = self.domain_param["eta_m"]
-        K_g = self.domain_param["K_g"]
-        J_m = self.domain_param["J_m"]
-        J_l = self.domain_param["J_l"]
-        r_arm = self.domain_param["r_arm"]
-        k_m = self.domain_param["k_m"]
-        R_m = self.domain_param["R_m"]
-        B_eq = self.domain_param["B_eq"]
-        c_frict = self.domain_param["c_frict"]
-        V_thold_x_neg = self.domain_param["V_thold_x_neg"]
-        V_thold_x_pos = self.domain_param["V_thold_x_pos"]
-        V_thold_y_neg = self.domain_param["V_thold_y_neg"]
-        V_thold_y_pos = self.domain_param["V_thold_y_pos"]
-        offset_th_x = self.domain_param["offset_th_x"]
-        offset_th_y = self.domain_param["offset_th_y"]
-        d_plate = 0.01  # only for animation
-        #  Compute plate orientation
-        a_vp = -self.plate_angs[0]  # plate's angle around the y axis (alpha)
-        b_vp = self.plate_angs[1]  # plate's angle around the x axis (beta)
-
-        # Axis runs along the x direction
-        self._anim["plate"].size = vp.vec(l_plate, l_plate, d_plate)
-        self._anim["plate"].axis = vp.vec(vp.cos(a_vp), 0, vp.sin(a_vp)) * float(l_plate)
-        # Up runs along the y direction (vpython coordinate system)
-        self._anim["plate"].up = vp.vec(0, vp.cos(b_vp), vp.sin(b_vp))
-
-        # Get ball position
-        x = self.state[2]  # along the x axis
-        y = self.state[3]  # along the y axis
-
-        self._anim["ball"].pos = vp.vec(
-            x * vp.cos(a_vp),
-            y * vp.cos(b_vp),
-            r_ball + x * vp.sin(a_vp) + y * vp.sin(b_vp) + vp.cos(a_vp) * d_plate / 2.0,
-        )
-        self._anim["ball"].radius = r_ball
-
-        # Set caption text
-        self._anim[
-            "canvas"
-        ].caption = f"""
-            x-axis is pos to the right, y-axis is pos up
-            Commanded voltage: x servo : {self._curr_act[0] : 1.2f}, y servo : {self._curr_act[1] : 1.2f}
-            Plate angle around x axis: {self.plate_angs[1]*180/np.pi : 2.2f}
-            Plate angle around y axis: {self.plate_angs[0]*180/np.pi : 2.2f}
-            Shaft angles: {self.state[0]*180/np.pi : 2.2f}, {self.state[1]*180/np.pi : 2.2f}
-            Ball position: {x : 1.3f}, {y : 1.3f}
-            g: {g : 1.3f}
-            m_ball: {m_ball : 1.3f}
-            r_ball: {r_ball : 1.3f}
-            r_arm: {r_arm : 1.3f}
-            l_plate: {l_plate : 1.3f}
-            K_g: {K_g : 2.2f}
-            J_m: {J_m : 1.7f}
-            J_l: {J_l : 1.6f}
-            eta_g: {eta_g : 1.3f}
-            eta_m: {eta_m : 1.3f}
-            k_mt: {k_m : 1.3f}
-            R_m: {R_m : 1.3f}
-            B_eq: {B_eq : 1.3f}
-            c_frict: {c_frict : 1.3f}
-            V_thold_x_pos: {V_thold_x_pos : 2.3f}
-            V_thold_x_neg: {V_thold_x_neg : 2.3f}
-            V_thold_y_pos: {V_thold_y_pos : 2.3f}
-            V_thold_y_neg: {V_thold_y_neg : 2.3f}
-            offset_th_x: {offset_th_x : 2.3f}
-            offset_th_y: {offset_th_y : 2.3f}
-            """
+        # Refreshed with every frame
+        self._visualization.taskMgr.step()
 
 
 class QBallBalancerKin(Serializable):
