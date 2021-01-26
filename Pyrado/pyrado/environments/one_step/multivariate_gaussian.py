@@ -5,6 +5,7 @@ from init_args_serializer import Serializable
 from pyrado.environments.sim_base import SimEnv
 import numpy as np
 from pyrado.spaces import BoxSpace
+from pyrado.spaces.base import Space
 from pyrado.spaces.singular import SingularStateSpace
 from pyrado.tasks.goalless import OptimProxyTask
 from pyrado.tasks.reward_functions import StateBasedRewFcn
@@ -36,17 +37,12 @@ class ToyExample(SimEnv, Serializable):
         self._calc_constants()
 
         # Set the bounds for the system's states adn actions
-        max_state = np.array([100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0])
+        max_state = np.array([100.0, 100.0])
         max_act = np.array([0])
         self._curr_act = np.zeros_like(max_act)  # just for usage in render function
 
-        self._state_space = BoxSpace(
-            -max_state, max_state, labels=["s_1_1", "s_2_1", "s_1_2", "s_2_2", "s_1_3", "s_2_3", "s_1_4", "s_2_4"]
-        )
-        self._init_space = SingularStateSpace(
-            np.zeros(self._state_space.shape),
-            labels=["s_1_1", "s_2_1", "s_1_2", "s_2_2", "s_1_3", "s_2_3", "s_1_4", "s_2_4"],
-        )
+        self._state_space = BoxSpace(-max_state, max_state, labels=["s_1", "s_2"])
+        self._init_space = self._state_space
         self._act_space = BoxSpace(-max_act, max_act, labels=["act_1"])
         self._obs_space = None
 
@@ -89,6 +85,12 @@ class ToyExample(SimEnv, Serializable):
     @property
     def init_space(self):
         return self._init_space
+
+    @init_space.setter
+    def init_space(self, space: Space):
+        if not isinstance(space, Space):
+            raise pyrado.TypeErr(given=space, expected_type=Space)
+        self._init_space = space
 
     @property
     def act_space(self):
@@ -168,20 +170,26 @@ class ToyExample(SimEnv, Serializable):
         return self.observe(self.state), self._curr_rew, done, {}
 
     @staticmethod
-    def log_prob(trajectory, dp: dict):
+    def log_prob(trajectory, params):
         """
         Very ugly, but can be used to calculate the probability of a rollout in the case that we are interested on
         the exact posterior probabilty
 
         Calculates the log-probability for a pair of states and domain parameters.
         """
-        mean, covariance_matrix = ToyExample.calc_constants(dp)
-        dist = MultivariateNormal(loc=to.tensor(mean), covariance_matrix=to.tensor(covariance_matrix))
-        log_prob = to.zeros((1,))
-        len_traj = len(trajectory) // 2
-        for i in range(len_traj):
-            log_prob += dist.log_prob(trajectory[[i, i + 1]])
-        return log_prob
+        # TODO: check if params has batch size
+        params_names = list(ToyExample.get_nominal_domain_param().keys())
+        log_probs = []
+        for param in params:
+            mean, covariance_matrix = ToyExample.calc_constants(dict(zip(params_names, param)))
+            dist = MultivariateNormal(loc=to.tensor(mean), covariance_matrix=to.tensor(covariance_matrix))
+            log_prob = to.zeros((1,))
+            len_traj = len(trajectory) // 2
+            for i in range(len_traj):
+                log_prob += dist.log_prob(trajectory[[i, i + 1]])
+            log_probs.append(log_prob)
+        log_probs = to.stack(log_probs)
+        return log_probs
 
     def render(self, mode: RenderMode, render_step: int = 1):
         # Call base class

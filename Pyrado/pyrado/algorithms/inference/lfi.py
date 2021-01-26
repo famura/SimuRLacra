@@ -401,6 +401,7 @@ class LFI(InterruptableAlgorithm):
         num_samples: int,
         simulator: Callable = None,
         simulate_observations: bool = True,
+        calculate_log_probs: bool = False,
         sbi_sampling_hparam: Optional[dict] = None,
     ) -> Tuple[to.Tensor, to.Tensor, Optional[to.Tensor]]:
         r"""
@@ -422,7 +423,8 @@ class LFI(InterruptableAlgorithm):
         def _eval_single_obs():
             """ Take the variables from the outer scope, and evaluate the posterior for one real-world observation. """
             # Compute the log probability
-            log_prob[idx, :] = posterior.log_prob(domain_params[idx, :, :], x=observations_real[idx, :])
+            if calculate_log_probs:
+                log_prob[idx, :] = posterior.log_prob(domain_params[idx, :, :], x=observations_real[idx, :])
 
             # Simulate trajectories with the domain parameters from the posterior
             if simulate_observations:

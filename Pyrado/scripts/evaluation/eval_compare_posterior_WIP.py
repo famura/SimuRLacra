@@ -42,8 +42,6 @@ from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.inference.lfi import LFI
 from pyrado.environment_wrappers.domain_randomization import DomainRandWrapper
 from pyrado.logger.experiment import ask_for_experiment
-from pyrado.plotting.distribution import draw_posterior_distr
-from pyrado.plotting.utils import num_rows_cols_from_length
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment
 
@@ -54,10 +52,9 @@ from geomloss.samples_loss import SamplesLoss
 if __name__ == "__main__":
     # Parse command line arguments
     parser = get_argparser()
-    parser.add_argument("--load_data", action="store_true", default=False)
+    parser.add_argument("--new_eval", action="store_true", default=False)
     parser.add_argument("--resume", action="store_true", default=False)
     args = parser.parse_args()
-
     if not isinstance(args.num_samples, int) or args.num_samples < 1:
         raise pyrado.ValueErr(given=args.num_samples, ge_constraint="1")
 
@@ -66,14 +63,17 @@ if __name__ == "__main__":
 
     # Load the environments, the policy, and the posterior
     env_sim, policy, kwout = load_experiment(ex_dir, args)
+    # check if environment is wrapped into DomainRandWrapperBuffer
+    if isinstance(env_sim, DomainRandWrapper):
+        env_sim = env_sim.wrapped_env
 
     env_real = pyrado.load(None, "env_real", "pkl", ex_dir)
-    # check if environment is wrapped into DomainRandWrapperBuffer
-    env_real = env_real.wrapped_env if isinstance(env_real, DomainRandWrapper) else env_real
-
     prior = kwout["prior"]
     posterior = kwout["posterior"]
     observations_real = kwout["observations_real"]
+
+    # true_params = to.tensor([[0.7, -1.5, -1, -0.9, 0.6]])
+    true_params = to.tensor([[0.7, -1.5, -1, -1, 0.01]])
 
     # Load the algorithm and the required data
     algo = Algorithm.load_snapshot(ex_dir)
@@ -95,73 +95,80 @@ if __name__ == "__main__":
     else:
         load_iter = args.iter
 
-    reference_dir = osp.join(ex_dir, f"../../../../perma/environment/{env_real.name}/reference")
-    if not osp.isdir(reference_dir):
-        raise pyrado.PathErr(given=reference_dir)
-
-    num_observation = 10
-    reference_samples = [
-        pyrado.load(None, "reference_posterior_samples", "pt", osp.join(reference_dir, f"num_observation_{n}"))
-        for n in range(1, num_observation + 1)
-    ]
-    reference_samples = to.stack(reference_samples)[:, : args.num_samples, :].squeeze()
-    observation = [
-        pyrado.load(None, "observation", "pt", osp.join(reference_dir, f"num_observation_{n}"))
-        for n in range(1, num_observation + 1)
-    ]
-    observation = to.stack(observation).squeeze()
-    true_params = [
-        pyrado.load(None, "true_parameters", "pt", osp.join(reference_dir, f"num_observation_{n}"))
-        for n in range(1, num_observation + 1)
-    ]
-    true_params = to.stack(true_params).squeeze()
-
-    def eval(curr_iter=0, num_samples=None, mmd_mean=None, mmd_std=None, posterior_samples=None):
-        num_samples = [] if num_samples is None else num_samples
-        mmd_mean = [] if mmd_mean is None else mmd_mean
-        mmd_std = [] if mmd_std is None else mmd_std
-        posterior_samples = [] if posterior_samples is None else posterior_samples
-
-        for iter in range(curr_iter, load_iter):
-            # Compute and print the argmax
-            print(f"Current Iter:\t{iter}")
-            # generate postserior samples
-            param_samples, _, _ = LFI.eval_posterior(
-                posterior, observation, args.num_samples, algo.sbi_simulator, simulate_observations=False
-            )
-
-            # calculate mmd-loss
-            with to.no_grad():
-                mmd_loss = SamplesLoss(loss="energy")
-                loss = mmd_loss(reference_samples, param_samples)
-
-            # save progress
-            mmd_mean.append(loss.mean(dim=0).item())
-            mmd_std.append(loss.std(dim=0).item())
-            num_samples.append(iter * num_sim_per_real_rollout * num_real_rollouts)
-            posterior_samples.append(param_samples)
-
-            pyrado.save(num_samples, "num_samples", "pt", ex_dir)
-            pyrado.save(mmd_mean, "mmd_mean", "pt", ex_dir)
-            pyrado.save(mmd_std, "mmd_std", "pt", ex_dir)
-            pyrado.save(posterior_samples, "posterior_samples", "pt", ex_dir)
-
-    mmd_mean, mmd_std, num_samples, posterior_samples = [], [], [], []
+    # check if already evaluated
     check_files = ["num_samples", "mmd_mean", "mmd_std", "true_samples", "posterior_samples"]
-    if args.load_data:
-        pass
-    elif args.resume:
-        check_files = ["num_samples", "mmd_mean", "mmd_std", "true_samples", "posterior_samples"]
+    curr_iter = 0
+    num_samples, mmd_mean, mmd_std = [], [], []
+    true_samples, posterior_samples, observations_real_sel = None, None, None
+
+    if all([osp.isfile(osp.join(ex_dir, cf + ".pt")) for cf in check_files]) and not args.new_eval:
         num_samples, mmd_mean, mmd_std, true_samples, posterior_samples = [
             pyrado.load(None, cf, "pt", ex_dir) for cf in check_files
         ]
         curr_iter = int(num_samples[-1] / num_sim_per_real_rollout / num_real_rollouts) + 1
-        eval(
-            curr_iter=curr_iter,
-            num_samples=num_samples,
-            mmd_mean=mmd_mean,
-            mmd_std=mmd_std,
-            posterior_samples=posterior_samples,
-        )
-    else:
-        eval()
+
+    if args.new_eval or args.resume or not all([osp.isfile(osp.join(ex_dir, cf + ".pt")) for cf in check_files]):
+        # go through each iteration and calculate the mmd
+        for iter in range(curr_iter, load_iter):
+            print(f"current iter: {iter}")
+            observations_real_sel = pyrado.load(None, f"iter_{iter}_observations_real", "pt", ex_dir)
+            posterior = pyrado.load(None, f"iter_{iter}_posterior", "pt", ex_dir)
+
+            # sample true posterior samples
+            # true_samples = posterior_sampler(
+            #     env_sim, prior, observations_real_sel, params_names, num_samples=args.num_samples
+            # )
+
+            true_samples = rejection_sampler(
+                prior,
+                env_sim,
+                observations_real_sel,
+                true_params=true_params,
+                num_samples=args.num_samples,
+                num_batches_without_new_max=1000,
+                batch_size=100,
+            )
+
+            # Compute and print the argmax
+            posterior_samples, _, _ = LFI.eval_posterior(
+                posterior, observations_real_sel, args.num_samples, algo.sbi_simulator, simulate_observations=False
+            )
+            with to.no_grad():
+                mmd_loss = SamplesLoss(loss="energy")
+                loss = mmd_loss(true_samples, posterior_samples)
+            mmd_mean.append(loss.mean(dim=0).item())
+            mmd_std.append(loss.std(dim=0).item())
+            num_samples.append(iter * num_sim_per_real_rollout * num_real_rollouts)
+
+            pyrado.save(num_samples, "num_samples", "pt", ex_dir)
+            pyrado.save(mmd_mean, "mmd_mean", "pt", ex_dir)
+            pyrado.save(mmd_std, "mmd_std", "pt", ex_dir)
+            pyrado.save(true_samples, "true_samples", "pt", ex_dir)
+            pyrado.save(posterior_samples, "posterior_samples", "pt", ex_dir)
+
+    num_samples = to.tensor(num_samples)
+    mmd_mean = to.tensor(mmd_mean)
+    mmd_std = to.tensor(mmd_std)
+
+    # plot trainings progress with mmd
+    plt.figure()
+    plt.plot(num_samples, mmd_mean)
+    plt.fill_between(num_samples, mmd_mean - mmd_std, mmd_mean + mmd_std, color="gray", alpha=0.2)
+    plt.xlabel("Number of samples")
+    plt.ylabel("MMD-Loss")
+    plt.savefig(osp.join(ex_dir, "mmd_loss.pdf"))
+    plt.title("Loss")
+    plt.show()
+
+    # plot scatter of the true posterior
+    plt.figure()
+    plt.scatter(true_samples[0, :, 0], true_samples[0, :, 1], color="black")
+    plt.scatter(posterior_samples[0, :, 0], posterior_samples[0, :, 1], color="blue")
+    plt.title("True vs. approximate Posterior")
+    plt.xlabel("m_1")
+    plt.ylabel("m_2")
+    plt.savefig(osp.join(ex_dir, "scatter_true_posterior.pdf"))
+    plt.show()
+
+    # TODO: use draw_posterior_distribution but it requires marginalizing over states which should not be depicted.
+    #  For now there is only a scatter-plot of the domain-parameters
