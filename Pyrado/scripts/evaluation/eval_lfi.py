@@ -96,7 +96,8 @@ if __name__ == "__main__":
     if len(algo.dp_mapping) > 2:
         condition = to.mean(domain_params, dim=[0, 1])  # to.median(to.median(domain_params, dim=0)[0], dim=0)[0]
     else:
-        condition = None
+        # TODO: condition = None raises an error. Also not clear what it does
+        condition = to.mean(domain_params, dim=[0, 1])
 
     # Plot the posterior distribution, the true parameters / their distribution
     if args.mode.lower() == "joint":
