@@ -123,6 +123,7 @@ class RNNPolicyBase(RecurrentPolicy):
 
         # Unpack hidden tensor if specified. The network can handle getting None by using default values.
         if hidden is not None:
+            hidden = hidden.to(device=self.device, dtype=to.get_default_dtype())
             hidden = self._unpack_hidden(hidden, batch_size)
 
         # Pass the input through hidden RNN layers

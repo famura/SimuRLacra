@@ -321,7 +321,11 @@ class ADNPolicy(PotentialBasedPolicy):
             )
 
         # Unpack hidden tensor (i.e. the potentials of the last step) if specified, else initialize them
-        pot = self._unpack_hidden(hidden, batch_size) if hidden is not None else self.init_hidden(batch_size)
+        if hidden is not None:
+            hidden = hidden.to(device=self.device, dtype=to.get_default_dtype())
+            pot = self._unpack_hidden(hidden, batch_size)
+        else:
+            pot = self.init_hidden(batch_size)
 
         # Don't track the gradient through the potentials
         pot = pot.detach()
