@@ -382,7 +382,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
                 self.ball = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
                 self.ball.setPos(self.qbb.state[2], self.qbb.state[3], r_ball + d_plate / 2.0)
                 self.ball.setScale(r_ball, r_ball, r_ball)
-                self.ball.setMass(m_ball)
+                #self.ball.setMass(m_ball)
                 self.ball.setColor(1, 0, 0, 0)
                 self.ball.reparentTo(self.render)
 
