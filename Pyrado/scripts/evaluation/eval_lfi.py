@@ -93,10 +93,12 @@ if __name__ == "__main__":
     )
 
     # Set the condition if necessary
-    if len(algo.dp_mapping) > 2:
-        condition = to.mean(domain_params, dim=[0, 1])  # to.median(to.median(domain_params, dim=0)[0], dim=0)[0]
+    if len(algo.dp_mapping) == 1:
+        raise NotImplementedError
+    elif len(algo.dp_mapping) == 2:
+        condition = None  # no condition necessary since dim(posterior) = dim(grid)
     else:
-        condition = None
+        condition = to.mean(domain_params, dim=[0, 1])  # to.median(to.median(domain_params, dim=0)[0], dim=0)[0]
 
     # Plot the posterior distribution, the true parameters / their distribution
     if args.mode.lower() == "joint":

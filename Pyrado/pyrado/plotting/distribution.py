@@ -205,9 +205,14 @@ def draw_posterior_distr(
     y = to.repeat_interleave(y, grid_res)  # 4 4 4 5 5 5 6 6 6
     grid_x, grid_y = x.view(grid_res, grid_res), y.view(grid_res, grid_res)
     grid_x, grid_y = grid_x.numpy(), grid_y.numpy()
-    grid = condition.repeat(grid_res ** 2, 1)
-    grid[:, dim_x] = x
-    grid[:, dim_y] = y
+    if condition is None:
+        # No condition is necessary since dim(posterior) = dim(grid) = 2
+        grid = to.stack([x, y], dim=1)
+    else:
+        # A condition is necessary since dim(posterior) > dim(grid) = 2
+        grid = condition.repeat(grid_res ** 2, 1)
+        grid[:, dim_x] = x
+        grid[:, dim_y] = y
     if not grid.shape == (grid_res ** 2, len(dp_mapping)):
         raise pyrado.ShapeErr(given=grid, expected_match=(grid_res ** 2, len(dp_mapping)))
 
