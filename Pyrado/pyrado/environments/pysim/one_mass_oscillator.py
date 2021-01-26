@@ -108,9 +108,7 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
         # Linear Dynamics
         A = np.array([[0, 1], [-self.omega ** 2, -2.0 * self.zeta * self.omega]])
         B = np.array([[0], [1.0 / m]])
-        state_dot = A.dot(self.state) + B.dot(act).reshape(
-            2,
-        )
+        state_dot = A.dot(self.state) + B.dot(act).reshape(2)
 
         # Integration Step (forward Euler)
         self.state = self.state + state_dot * self._dt  # next state
@@ -171,7 +169,7 @@ class OneMassOscillatorSim(SimPyEnv, Serializable):
 
         self._anim["mass"].pos = vp.vec(self.state[0], c / 2.0, 0)
         self._anim["force"].pos = vp.vec(self.state[0], c / 2.0, 0)
-        capped_act = np.sign(self._curr_act) * np.max((0.1 * np.abs(self._curr_act), 0.3))
+        capped_act = np.sign(self._curr_act) * max(0.1 * np.abs(self._curr_act), 0.3)
         self._anim["force"].axis = vp.vec(capped_act, 0, 0)
         self._anim["spring"].axis = vp.vec(self.state[0] - c / 2.0, 0.0, 0)
 
