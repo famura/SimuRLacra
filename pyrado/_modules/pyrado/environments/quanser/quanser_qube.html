@@ -228,7 +228,6 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span> <span class="k">as</span> <span class="nn">to</span>
 <span class="kn">from</span> <span class="nn">init_args_serializer</span> <span class="kn">import</span> <span class="n">Serializable</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">pyrado</span>
 <span class="kn">from</span> <span class="nn">pyrado.environments.quanser</span> <span class="kn">import</span> <span class="n">max_act_qq</span>
@@ -248,10 +247,10 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">dt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mf">500.0</span><span class="p">,</span>
-        <span class="n">max_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
-        <span class="n">task_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">ip</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;192.168.2.17&quot;</span><span class="p">,</span>
+        <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mf">500.0</span><span class="p">,</span>
+        <span class="n">max_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="n">task_args</span><span class="p">:</span> <span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ip</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;192.168.2.40&quot;</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
@@ -315,7 +314,7 @@
     <span class="k">def</span> <span class="nf">_correct_sensor_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meas</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">meas</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sens_offset</span>
 
-    <span class="k">def</span> <span class="nf">_wait_for_pole_at_rest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thold_ang_vel</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">/</span> <span class="mf">180.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_wait_for_pole_at_rest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thold_ang_vel</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">/</span> <span class="mf">180.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Wait until the Qube&#39;s rotating pole is at rest &quot;&quot;&quot;</span>
         <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">while</span> <span class="n">cnt</span> <span class="o">&lt;</span> <span class="mf">1.5</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span><span class="p">:</span>

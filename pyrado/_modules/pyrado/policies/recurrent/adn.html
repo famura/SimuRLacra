@@ -520,11 +520,7 @@
             <span class="p">)</span>
 
         <span class="c1"># Unpack hidden tensor (i.e. the potentials of the last step) if specified, else initialize them</span>
-        <span class="k">if</span> <span class="n">hidden</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">hidden</span> <span class="o">=</span> <span class="n">hidden</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
-            <span class="n">pot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unpack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">pot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_hidden</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span>
+        <span class="n">pot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unpack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span> <span class="k">if</span> <span class="n">hidden</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_hidden</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span>
 
         <span class="c1"># Don&#39;t track the gradient through the potentials</span>
         <span class="n">pot</span> <span class="o">=</span> <span class="n">pot</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>

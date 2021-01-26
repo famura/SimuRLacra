@@ -260,10 +260,10 @@
         <span class="n">min_rollouts</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">min_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">eval_intvl</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">max_grad_norm</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">max_grad_norm</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">logger</span><span class="p">:</span> <span class="n">StepLogger</span><span class="p">,</span>
+        <span class="n">logger_print_intvl</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
@@ -281,11 +281,10 @@
 <span class="sd">        :param min_rollouts: minimum number of rollouts sampled per policy update batch</span>
 <span class="sd">        :param min_steps: minimum number of state transitions sampled per policy update batch</span>
 <span class="sd">        :param batch_size: number of samples per policy update batch</span>
-<span class="sd">        :param eval_intvl: interval in which the evaluation rollouts are collected, also the interval in which the</span>
-<span class="sd">                           logger prints the summary statistics</span>
-<span class="sd">        :param max_grad_norm: maximum L2 norm of the gradients for clipping, set to `None` to disable gradient clipping</span>
 <span class="sd">        :param num_workers: number of environments for parallel sampling</span>
+<span class="sd">        :param max_grad_norm: maximum L2 norm of the gradients for clipping, set to `None` to disable gradient clipping</span>
 <span class="sd">        :param logger: logger for every step of the algorithm, if `None` the default logger will be created</span>
+<span class="sd">        :param logger_print_intvl: interval in which the logger prints</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">Env</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">TypeErr</span><span class="p">(</span><span class="n">given</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">expected_type</span><span class="o">=</span><span class="n">Env</span><span class="p">)</span>
@@ -296,7 +295,7 @@
 
         <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Create logger that only logs every logger_print_intvl steps of the algorithm</span>
-            <span class="n">logger</span> <span class="o">=</span> <span class="n">StepLogger</span><span class="p">(</span><span class="n">print_intvl</span><span class="o">=</span><span class="n">eval_intvl</span><span class="p">)</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">StepLogger</span><span class="p">(</span><span class="n">print_intvl</span><span class="o">=</span><span class="n">logger_print_intvl</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ConsolePrinter</span><span class="p">())</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CSVPrinter</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="s2">&quot;progress.csv&quot;</span><span class="p">)))</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">printers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TensorBoardPrinter</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="s2">&quot;tb&quot;</span><span class="p">)))</span>
@@ -313,7 +312,7 @@
         <span class="k">if</span> <span class="n">num_init_memory_steps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">num_init_memory_steps</span> <span class="o">=</span> <span class="n">memory_size</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">num_init_memory_steps</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">num_init_memory_steps</span><span class="p">,</span> <span class="n">memory_size</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_init_memory_steps</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">num_init_memory_steps</span><span class="p">,</span> <span class="n">memory_size</span><span class="p">)</span>
 
         <span class="c1"># Heuristic for number of gradient updates per step</span>
         <span class="k">if</span> <span class="n">num_updates_per_step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -338,13 +337,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">,</span>
             <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
-            <span class="n">min_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">min_rollouts</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-            <span class="n">show_progress_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">min_steps</span><span class="o">=</span><span class="mi">10</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span>
+            <span class="n">min_rollouts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">show_progress_bar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># must be implemented by subclass</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># must be implemented by subclass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampler_trn</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># must be implemented by subclass</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">expl_strat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">SACExplStrat</span><span class="p">,</span> <span class="n">EpsGreedyExplStrat</span><span class="p">]:</span>
@@ -364,7 +363,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">ros</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Sample steps and store them in the replay memory</span>
-            <span class="n">ros</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+            <span class="n">ros</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_trn</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">ros</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_samples</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">ro</span><span class="o">.</span><span class="n">length</span> <span class="k">for</span> <span class="n">ro</span> <span class="ow">in</span> <span class="n">ros</span><span class="p">])</span>  <span class="c1"># don&#39;t count the evaluation samples</span>
 
@@ -404,7 +403,7 @@
 
         <span class="c1"># Re-initialize samplers in case env or policy changed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler_init</span><span class="o">.</span><span class="n">reinit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_expl_policy</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">reinit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampler_trn</span><span class="o">.</span><span class="n">reinit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expl_strat</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler_eval</span><span class="o">.</span><span class="n">reinit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_policy</span><span class="p">)</span>
 
         <span class="c1"># Reset the replay memory</span>

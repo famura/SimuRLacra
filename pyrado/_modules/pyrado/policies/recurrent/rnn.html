@@ -322,7 +322,6 @@
 
         <span class="c1"># Unpack hidden tensor if specified. The network can handle getting None by using default values.</span>
         <span class="k">if</span> <span class="n">hidden</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">hidden</span> <span class="o">=</span> <span class="n">hidden</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
             <span class="n">hidden</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unpack_hidden</span><span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
 
         <span class="c1"># Pass the input through hidden RNN layers</span>
