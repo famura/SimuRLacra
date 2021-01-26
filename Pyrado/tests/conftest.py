@@ -112,8 +112,8 @@ except (ImportError, Exception):
 m_needs_cuda = pytest.mark.skipif(not to.cuda.is_available(), reason="CUDA is not supported in this setup.")
 
 # Set spawn method to spawn for parallelization
-# if to.cuda.is_available():
-mp.set_start_method("spawn", force=True)
+if to.cuda.is_available():
+    mp.set_start_method("spawn", force=True)
 
 
 # --------------------
@@ -672,6 +672,10 @@ class DefaultPolicies:
         return LinearPolicy(env.spec, DefaultPolicies.default_fs())
 
     @staticmethod
+    def linear_policy_cuda(env):
+        return LinearPolicy(env.spec, DefaultPolicies.default_fs(), use_cuda=True)
+
+    @staticmethod
     def time_policy(env):
         def timefcn(t: float):
             return list(np.random.rand(env.spec.act_space.flat_dim))
@@ -690,16 +694,32 @@ class DefaultPolicies:
         return FNNPolicy(env.spec, hidden_sizes=[16, 16], hidden_nonlin=to.tanh)
 
     @staticmethod
+    def fnn_policy_cuda(env):
+        return FNNPolicy(env.spec, hidden_sizes=[16, 16], hidden_nonlin=to.tanh, use_cuda=True)
+
+    @staticmethod
     def rnn_policy(env):
         return RNNPolicy(env.spec, hidden_size=8, num_recurrent_layers=2, hidden_nonlin="tanh")
+
+    @staticmethod
+    def rnn_policy_cuda(env):
+        return RNNPolicy(env.spec, hidden_size=8, num_recurrent_layers=2, hidden_nonlin="tanh", use_cuda=True)
 
     @staticmethod
     def lstm_policy(env):
         return LSTMPolicy(env.spec, hidden_size=8, num_recurrent_layers=2)
 
     @staticmethod
+    def lstm_policy_cuda(env):
+        return LSTMPolicy(env.spec, hidden_size=8, num_recurrent_layers=2, use_cuda=True)
+
+    @staticmethod
     def gru_policy(env):
         return GRUPolicy(env.spec, hidden_size=8, num_recurrent_layers=2)
+
+    @staticmethod
+    def gru_policy_cuda(env):
+        return GRUPolicy(env.spec, hidden_size=8, num_recurrent_layers=2, use_cuda=True)
 
     @staticmethod
     def adn_policy(env):
