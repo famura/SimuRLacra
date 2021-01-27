@@ -66,7 +66,7 @@ class RolloutSamplerForSBI(ABC):
         [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
             inference for robotics simulators", arXiv, 2019
         """
-        if not strategy.lower() in ["dtw_distance", "final_state", "bayessim"]:
+        if not strategy.lower() in ["states", "dtw_distance", "final_state", "bayessim"]:  # TODO deprecate states
             raise pyrado.ValueErr(given=strategy, eq_constraint="dtw_distance, final_state, bayessim")
 
         self._env = env
@@ -91,7 +91,7 @@ class RolloutSamplerForSBI(ABC):
             return self.dtw_distance(rollout_query, rollouts_ref)
         elif self.strategy == "final_state":
             return self.final_state(rollout_query)
-        elif self.strategy == "bayessim":
+        elif self.strategy == "bayessim" or self.strategy == "states":  # TODO deprecate states
             return self.bayessim_statistic(rollout_query)
         else:
             raise pyrado.ValueErr(given=self.strategy)
