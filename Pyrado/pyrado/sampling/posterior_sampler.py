@@ -50,7 +50,7 @@ def posterior_sampler(
         sampler = SliceSampler(lp_f=lp_f, x=prior_sample)
         _ = sampler.gen(warmup)
 
-        true_samples.append(to.as_tensor(sampler.gen(num_samples), dtype=to.float32))
+        true_samples.append(to.as_tensor(sampler.gen(num_samples), dtype=to.get_default_dtype()))
     return to.stack(true_samples)
 
 

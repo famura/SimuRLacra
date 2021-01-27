@@ -187,7 +187,7 @@ def draw_posterior_distr(
 
     # Create the grid
     if grid_bounds is not None:
-        grid_bounds = to.as_tensor(grid_bounds)
+        grid_bounds = to.as_tensor(grid_bounds, dtype=to.get_default_dtype())
         if not grid_bounds.shape == (2, 2):
             raise pyrado.ShapeErr(given=grid_bounds, expected_match=(2, 2))
     elif isinstance(prior, BoxUniform):

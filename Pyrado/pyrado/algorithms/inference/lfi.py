@@ -503,7 +503,7 @@ class LFI(InterruptableAlgorithm):
         else:
             raise pyrado.TypeErr(given=inner_env(env), expected_type=[RealEnv, SimEnv])
 
-        rets_real = to.as_tensor(rets_real)
+        rets_real = to.as_tensor(rets_real, dtype=to.get_default_dtype())
 
         if save_dir is not None:
             # Save and print the evaluation results
