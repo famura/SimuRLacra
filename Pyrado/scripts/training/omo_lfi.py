@@ -83,10 +83,10 @@ if __name__ == "__main__":
 
     # Algorithm
     algo_hparam = dict(
-        summary_statistic="bayessim",
         max_iter=20,
+        summary_statistic="dtw_distance",  # "bayessim",
         num_real_rollouts=num_real_obs,
-        num_sim_per_real_rollout=500,
+        num_sim_per_real_rollout=200,
         num_workers=1,
     )
     algo = LFI(

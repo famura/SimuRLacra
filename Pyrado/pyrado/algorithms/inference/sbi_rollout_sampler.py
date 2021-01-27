@@ -59,14 +59,14 @@ class RolloutSamplerForSBI(ABC):
                     wrappers from this env since we want to randomize it manually here.
         :param policy: policy used for sampling the rollout
         :param strategy: method with which the observations are computed from the rollouts. Possible options:
-                         `states` (uses all observed states from rollout),
+                         `dtw_distance` (dynamic time warping using all observations from the rollout),
                          `final_state` (use the last observed state from the rollout), and
                          `bayessim` (summary statistics as proposed in  [1])
 
         [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
             inference for robotics simulators", arXiv, 2019
         """
-        if not strategy.lower() in ["states", "final_state", "bayessim"]:
+        if not strategy.lower() in ["dtw_distance", "final_state", "bayessim"]:
             raise pyrado.ValueErr(given=strategy, eq_constraint="states, final_state, bayessim")
 
         self._env = env
@@ -77,44 +77,70 @@ class RolloutSamplerForSBI(ABC):
     def __call__(self, params) -> Union[StepSequence, to.Tensor]:
         raise NotImplementedError
 
-    def transform_data(self, rollout: StepSequence):
-        """
+    def transform_data(self, rollout_query: StepSequence, rollouts_ref: Optional[List[StepSequence]]) -> to.Tensor:
+        r"""
         Transforms rollouts into the observations used for likelihood-free inference.
         Currently a state-representation as well as state-action summary-statistics are available.
 
-        :param rollout: one rollout containing the data which should be transformed into an observation for inference
-        :return: observation used for inference
+        :param rollout_query: single rollout containing the data to be transformed into an observation for inference
+        :param rollouts_ref: reference rollout(s) from the target domain, if `None` the reference is set to the the
+                             query. The latter case is true for computing the statistics for the target domain rollouts
+        :return: observation used for inference, a.k.a $x_o$
         """
-        if self.strategy == "states":
-            context_strat = self.all_states
+        if self.strategy == "dtw_distance":
+            return self.dtw_distance(rollout_query, rollouts_ref)
         elif self.strategy == "final_state":
-            context_strat = self.final_state
+            return self.final_state(rollout_query)
         elif self.strategy == "bayessim":
-            context_strat = self.bayessim_statistic
+            return self.bayessim_statistic(rollout_query)
         else:
             raise pyrado.ValueErr(given=self.strategy)
 
-        return context_strat(rollout)
-
     @staticmethod
-    def all_states(rollout: StepSequence) -> to.Tensor:
+    def dtw_distance(rollout_query: StepSequence, rollouts_ref: Optional[List[StepSequence]]) -> to.Tensor:
         """
-        Returns the observations of the rollout as a vector.
-        Can be used if each trajectory has the same size or for rnn networks.
+        Returns the dynamic time warping distance between the rollouts' observations.
 
-        :param rollout: one rollout containing the data which should be transformed into an observation for inference
-        :return: observations as a vector
+        .. note::
+            It is necessary to take the mean over all distances since the same function is used to compute the
+            observations (for sbi) form the target domain rollouts. At this point in time there might be only one target
+            domain rollout, thus the target domain rollouts are only compared with themselves, thus yield a scalar
+            distance value.
+
+        :param rollout_query: single rollout containing the data to be transformed into an observation for inference
+        :param rollouts_ref: reference rollout(s) from the target domain, if `None` the reference is set to the the
+                             query. The latter case is true for computing the statistics for the target domain rollouts
+        :return: dynamic time warping distance in multi-dim observations space, averaged over target domain rollouts
         """
-        rollout.torch(data_type=to.get_default_dtype())
+        from dtw import dtw
 
-        return rollout.observations.view(-1)
+        if rollouts_ref is None:
+            rollouts_ref = [rollout_query]
+        if not isinstance(rollouts_ref, list):
+            raise pyrado.TypeErr(given=rollouts_ref, expected_type=list)
+        if not isinstance(rollouts_ref[0], StepSequence):  # only check 1st element
+            raise pyrado.TypeErr(given=rollouts_ref[0], expected_type=StepSequence)
+
+        # Align the rollouts with the Rabiner-Juang type VI-c unsmoothed recursion
+        distances = []
+        for ro_ref in rollouts_ref:
+            distances.append(
+                dtw(
+                    rollout_query.observations,
+                    ro_ref.observations,
+                    open_end=True,
+                    # step_pattern=rabinerJuangStepPattern(6, "c"),
+                ).distance
+            )
+
+        return to.mean(to.as_tensor(distances, dtype=to.get_default_dtype())).view(1)
 
     @staticmethod
     def final_state(rollout: StepSequence) -> to.Tensor:
         """
         Returns the last observations of the rollout as a vector.
 
-        :param rollout: one rollout containing the data which should be transformed into an observation for inference
+        :param rollout: single rollout containing the data to be transformed into an observation for inference
         :return: last observations as a vector
         """
         rollout.torch(data_type=to.get_default_dtype())
@@ -130,7 +156,7 @@ class RolloutSamplerForSBI(ABC):
         [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
             inference for robotics simulators", arXiv, 2019
 
-        :param rollout: one rollout containing the data which should be transformed into an observation for inference
+        :param rollout: single rollout containing the data to be transformed into an observation for inference
         :return: summary statistics of the rollout
         """
         rollout.torch(data_type=to.get_default_dtype())
@@ -167,7 +193,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
         :param policy: policy used for sampling the rollout
         :param dp_mapping: mapping from subsequent integers (starting at 0) to domain parameter names (e.g. mass)
         :param strategy: the method with which the observations are computed from the rollouts. Possible options:
-                         `states` (uses all observed states from rollout),
+                         `dtw_distance` (dynamic time warping using all observations from the rollout),
                          `final_state` (use the last observed state from the rollout), and
                          `bayessim` (summary statistics as proposed in  [1])
         :param rollouts_real: list of rollouts recorded from the real system, which are used to sync the simulations'
@@ -240,7 +266,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
             )
 
         # Transform the data to torch and compute the observations used for inference from the rollout data
-        obs_real = to.stack([self.transform_data(ro) for ro in ros])
+        obs_real = to.stack([self.transform_data(ro, self.rollouts_real) for ro in ros])
 
         if obs_real.shape[0] != dp_values.shape[0]:
             raise pyrado.ShapeErr(given=obs_real, expected_match=dp_values)
@@ -265,7 +291,7 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI):
                     wrappers from this env since we want to randomize it manually here.
         :param policy: policy used for sampling the rollout
         :param strategy: the method with which the observations are computed from the rollouts. Possible options:
-                         `states` (uses all observed states from rollout),
+                         `dtw_distance` (dynamic time warping using all observations from the rollout),
                          `final_state` (use the last observed state from the rollout), and
                          `bayessim` (summary statistics as proposed in  [1])
 
@@ -285,6 +311,6 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI):
         ro = rollout(self._env, self._policy, eval=True)
 
         # Return the observations used for inference from the rollout data
-        obs_real = self.transform_data(ro)
+        obs_real = self.transform_data(ro, None)
 
         return obs_real, ro

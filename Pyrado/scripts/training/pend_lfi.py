@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
     # Experiment (set seed before creating the modules)
     ex_dir = setup_experiment(PendulumSim.name, f"{LFI.name}-{PPO2.name}_{FNNPolicy.name}")
-    num_workers = 1
+    num_workers = 4
 
     # Set seed if desired
     pyrado.set_seed(args.seed, verbose=True)
@@ -117,12 +117,11 @@ if __name__ == "__main__":
 
     # Algorithm
     algo_hparam = dict(
-        summary_statistic="bayessim",
         max_iter=20,
+        summary_statistic="dtw_distance",  # "bayessim",
         sbi_training_hparam=dict(learning_rate=3e-4),
         num_real_rollouts=num_real_obs,
-        num_sim_per_real_rollout=4,
-        num_eval_samples=4,
+        num_sim_per_real_rollout=500,
         num_workers=num_workers,
     )
     algo = LFI(
