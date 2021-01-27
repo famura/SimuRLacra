@@ -67,7 +67,7 @@ class RolloutSamplerForSBI(ABC):
             inference for robotics simulators", arXiv, 2019
         """
         if not strategy.lower() in ["dtw_distance", "final_state", "bayessim"]:
-            raise pyrado.ValueErr(given=strategy, eq_constraint="states, final_state, bayessim")
+            raise pyrado.ValueErr(given=strategy, eq_constraint="dtw_distance, final_state, bayessim")
 
         self._env = env
         self._policy = policy
