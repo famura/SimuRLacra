@@ -17,7 +17,8 @@ class DelfiSimulator(BaseSimulator):
         dp_mapping: Mapping[int, str],
         summary_statistic: str,
         seed=None,
-        init_states_real=None):
+        init_states_real=None,
+    ):
 
         self._env_sim = sim_env
         self._policy = policy
@@ -25,7 +26,8 @@ class DelfiSimulator(BaseSimulator):
         self.summary_statistic = summary_statistic.lower()
 
         self.rollout_sampler = self.rollout_sampler = SimRolloutSamplerForSBI(
-            self._env_sim, self._policy, self.dp_mapping, self.summary_statistic, init_states_real)
+            self._env_sim, self._policy, self.dp_mapping, self.summary_statistic, init_states_real
+        )
 
         dim_param = len(self._env_sim.domain_param)
         super().__init__(dim_param=dim_param, seed=seed)
@@ -46,9 +48,8 @@ class DelfiSimulator(BaseSimulator):
         """
         params = np.asarray(params)
 
-        assert params.ndim == 1, 'params.ndim must be 1'
+        assert params.ndim == 1, "params.ndim must be 1"
 
         states = self.rollout_sampler(to.Tensor(params))
 
-        return {'data': states.reshape(-1),
-                'dt': self._env_sim.dt}
+        return {"data": states.reshape(-1), "dt": self._env_sim.dt}

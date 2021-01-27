@@ -79,14 +79,14 @@ if __name__ == "__main__":
     # Prior and Posterior (normalizing flow)
     prior_hparam = dict(low=to.tensor([25.0, 0.05]), high=to.tensor([35, 0.45]))
     prior = utils.BoxUniform(**prior_hparam)
-    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=2)
+    posterior_nn_hparam = dict(model="maf", embedding_net=nn.Identity(), hidden_features=10, num_transforms=4)
 
     # Algorithm
     algo_hparam = dict(
-        summary_statistic="ramos",
-        max_iter=15,
+        summary_statistic="bayessim",
+        max_iter=20,
         num_real_rollouts=num_real_obs,
-        num_sim_per_real_rollout=200,
+        num_sim_per_real_rollout=500,
         num_workers=1,
     )
     algo = LFI(

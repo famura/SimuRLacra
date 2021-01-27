@@ -22,6 +22,6 @@ if __name__ == "__main__":
     behavior_policy = IdlePolicy(env_sim.spec)
 
     # Create Delfi simulator
-    delfi_sim = DelfiSimulator(env_sim, behavior_policy, dp_mapping, "Ramos")
+    delfi_sim = DelfiSimulator(env_sim, behavior_policy, dp_mapping, "bayessim")
 
     delfi_sim.gen_single([33, 0.2])

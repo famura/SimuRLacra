@@ -112,7 +112,7 @@ class LFI(InterruptableAlgorithm):
                                   Possible options:
                                  `states` (uses all observed states from rollout),
                                  `final_state` (use the last observed state from the rollout), and
-                                 `ramos` (summary statistics as proposed in  [1])
+                                 `bayessim` (summary statistics as proposed in  [1])
         :param max_iter: maximum number of iterations (i.e. policy updates) that this algorithm runs
         :param num_real_rollouts: number of real-world observation received by sbi, i.e. from every rollout exactly one
                                   observation is computed
@@ -360,7 +360,7 @@ class LFI(InterruptableAlgorithm):
                                   Possible options:
                                  `states` (uses all observed states from rollout),
                                  `final_state` (use the last observed state from the rollout), and
-                                 `ramos` (summary statistics as proposed in  [1])
+                                 `bayessim` (summary statistics as proposed in  [1])
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate
         :param num_rollouts: number of rollouts to collect on the target system
         :param prefix: to control the saving for the evaluation of an initial policy, `None` to deactivate

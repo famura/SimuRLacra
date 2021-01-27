@@ -117,7 +117,7 @@ if __name__ == "__main__":
 
     # Algorithm
     algo_hparam = dict(
-        summary_statistic="ramos",
+        summary_statistic="bayessim",
         max_iter=20,
         sbi_training_hparam=dict(learning_rate=3e-4),
         num_real_rollouts=num_real_obs,

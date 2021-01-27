@@ -61,13 +61,13 @@ class RolloutSamplerForSBI(ABC):
         :param strategy: method with which the observations are computed from the rollouts. Possible options:
                          `states` (uses all observed states from rollout),
                          `final_state` (use the last observed state from the rollout), and
-                         `ramos` (summary statistics as proposed in  [1])
+                         `bayessim` (summary statistics as proposed in  [1])
 
         [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
             inference for robotics simulators", CONFERENCE?, 2020
         """
-        if not strategy.lower() in ["states", "final_state", "ramos"]:
-            raise pyrado.ValueErr(given=strategy, eq_constraint="states, final_state, summary")
+        if not strategy.lower() in ["states", "final_state", "bayessim"]:
+            raise pyrado.ValueErr(given=strategy, eq_constraint="states, final_state, bayessim")
 
         self._env = env
         self._policy = policy
@@ -89,15 +89,40 @@ class RolloutSamplerForSBI(ABC):
             context_strat = self.all_states
         elif self.strategy == "final_state":
             context_strat = self.final_state
-        elif self.strategy == "ramos":
-            context_strat = self.ramos_statistic
+        elif self.strategy == "bayessim":
+            context_strat = self.bayessim_statistic
         else:
-            raise NotImplementedError
+            raise pyrado.ValueErr(given=self.strategy)
 
         return context_strat(rollout)
 
     @staticmethod
-    def ramos_statistic(rollout: StepSequence) -> to.Tensor:
+    def all_states(rollout: StepSequence) -> to.Tensor:
+        """
+        Returns the observations of the rollout as a vector.
+        Can be used if each trajectory has the same size or for rnn networks.
+
+        :param rollout: one rollout containing the data which should be transformed into an observation for inference
+        :return: observations as a vector
+        """
+        rollout.torch(data_type=to.get_default_dtype())
+
+        return rollout.observations.view(-1)
+
+    @staticmethod
+    def final_state(rollout: StepSequence) -> to.Tensor:
+        """
+        Returns the last observations of the rollout as a vector.
+
+        :param rollout: one rollout containing the data which should be transformed into an observation for inference
+        :return: last observations as a vector
+        """
+        rollout.torch(data_type=to.get_default_dtype())
+
+        return rollout.observations[-1].view(-1)
+
+    @staticmethod
+    def bayessim_statistic(rollout: StepSequence) -> to.Tensor:
         """
         Computing summary statistics based on approach in [1], see eq. (22).
         This method guarantees output which has the same size for every trajectory.
@@ -128,30 +153,6 @@ class RolloutSamplerForSBI(ABC):
         # Combine all the statistics
         return to.cat((act_obs_dot_prod, mean_obs_diff, var_obs_diff), dim=0)
 
-    @staticmethod
-    def all_states(rollout: StepSequence) -> to.Tensor:
-        """
-        Returns the observations of the rollout as a vector.
-        Can be used if each trajectory has the same size or for rnn networks.
-
-        :param rollout: one rollout containing the data which should be transformed into an observation for inference
-        :return: observations as a vector
-        """
-        rollout.torch(data_type=to.get_default_dtype())
-
-        return rollout.observations.view(-1)
-
-    @staticmethod
-    def final_state(rollout: StepSequence) -> to.Tensor:
-        """
-        Returns the last observations of the rollout as a vector.
-
-        :param rollout: one rollout containing the data which should be transformed into an observation for inference
-        :return: last observations as a vector
-        """
-        rollout.torch(data_type=to.get_default_dtype())
-
-        return rollout.observations[-1].view(-1)
 
 
 class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
@@ -175,7 +176,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
         :param strategy: the method with which the observations are computed from the rollouts. Possible options:
                          `states` (uses all observed states from rollout),
                          `final_state` (use the last observed state from the rollout), and
-                         `ramos` (summary statistics as proposed in  [1])
+                         `bayessim` (summary statistics as proposed in  [1])
         :param rollouts_real: list of rollouts recorded from the real system, which are used to sync the simulations'
                               initial states
 
@@ -273,7 +274,7 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI):
         :param strategy: the method with which the observations are computed from the rollouts. Possible options:
                          `states` (uses all observed states from rollout),
                          `final_state` (use the last observed state from the rollout), and
-                         `ramos` (summary statistics as proposed in  [1])
+                         `bayessim` (summary statistics as proposed in  [1])
 
         [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
             inference for robotics simulators", arXiv, 2019

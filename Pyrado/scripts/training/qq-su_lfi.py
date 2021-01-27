@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     # Algorithm
     algo_hparam = dict(
-        summary_statistic="ramos",
+        summary_statistic="bayessim",
         max_iter=20,
         num_real_rollouts=num_real_obs,
         num_sim_per_real_rollout=1000,
