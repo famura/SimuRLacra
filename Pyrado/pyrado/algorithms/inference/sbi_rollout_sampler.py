@@ -64,7 +64,7 @@ class RolloutSamplerForSBI(ABC):
                          `bayessim` (summary statistics as proposed in  [1])
 
         [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
-            inference for robotics simulators", CONFERENCE?, 2020
+            inference for robotics simulators", arXiv, 2019
         """
         if not strategy.lower() in ["states", "final_state", "bayessim"]:
             raise pyrado.ValueErr(given=strategy, eq_constraint="states, final_state, bayessim")
@@ -128,7 +128,7 @@ class RolloutSamplerForSBI(ABC):
         This method guarantees output which has the same size for every trajectory.
 
         [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
-            inference for robotics simulators", CONFERENCE?, 2020
+            inference for robotics simulators", arXiv, 2019
 
         :param rollout: one rollout containing the data which should be transformed into an observation for inference
         :return: summary statistics of the rollout
@@ -136,23 +136,16 @@ class RolloutSamplerForSBI(ABC):
         rollout.torch(data_type=to.get_default_dtype())
 
         act = rollout.actions
-        obs = rollout.observations
-        # dot product for the state-action dot-product
+        obs = rollout.observations  # len(obs) = len(act)+1
         obs_diff = obs[1:] - obs[:-1]
 
-        # TODO Sample as below but faster :D
+        # Compute the statistics
         act_obs_dot_prod = to.einsum("ij,ik->jk", act, obs_diff).view(-1)
-        # act_obs_dot_prod = []
-        # for a, o in product(act.T, obs_diff.T):
-        #     act_obs_dot_prod.append(to.dot(a, o).item())
-        # act_obs_dot_prod = to.tensor(act_obs_dot_prod)
-
         mean_obs_diff = to.mean(obs_diff, dim=0)
         var_obs_diff = to.mean((mean_obs_diff - obs_diff) ** 2, dim=0)
 
         # Combine all the statistics
         return to.cat((act_obs_dot_prod, mean_obs_diff, var_obs_diff), dim=0)
-
 
 
 class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
