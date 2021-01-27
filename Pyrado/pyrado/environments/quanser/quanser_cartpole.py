@@ -30,6 +30,7 @@ import numpy as np
 import time
 from abc import abstractmethod
 from init_args_serializer import Serializable
+from typing import Optional
 
 import pyrado
 from pyrado.environments.quanser import max_act_qcp
@@ -47,7 +48,7 @@ from pyrado.utils.input_output import print_cbt, completion_context
 class QCartPoleReal(QuanserReal, Serializable):
     """ Base class for the real Quanser Cart-Pole """
 
-    def __init__(self, dt: float, max_steps: int, task_args: [dict, None] = None, ip: str = "192.168.2.17"):
+    def __init__(self, dt: float, max_steps: int, task_args: Optional[dict] = None, ip: Optional[str] = "192.168.2.38"):
         """
         Constructor
 
@@ -161,10 +162,10 @@ class QCartPoleStabReal(QCartPoleReal):
 
     def __init__(
         self,
-        dt: float = 1 / 500.0,
-        max_steps: int = pyrado.inf,
-        task_args: [dict, None] = None,
-        ip: str = "192.168.2.17",
+        dt: Optional[float] = 1 / 500.0,
+        max_steps: Optional[int] = pyrado.inf,
+        task_args: Optional[dict] = None,
+        ip: Optional[str] = "192.168.2.38",
     ):
         """
         Constructor
@@ -265,10 +266,10 @@ class QCartPoleSwingUpReal(QCartPoleReal):
 
     def __init__(
         self,
-        dt: float = 1 / 500.0,
-        max_steps: int = pyrado.inf,
-        task_args: [dict, None] = None,
-        ip: str = "192.168.2.17",
+        dt: Optional[float] = 1 / 500.0,
+        max_steps: Optional[int] = pyrado.inf,
+        task_args: Optional[dict] = None,
+        ip: Optional[str] = "192.168.2.38",
     ):
         """
         Constructor

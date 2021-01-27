@@ -29,15 +29,16 @@
 import pytest
 
 from pyrado.algorithms.episodic.power import PoWER
+from pyrado.algorithms.episodic.reps import REPS
 from pyrado.algorithms.meta.bayrn import BayRn
+from pyrado.algorithms.meta.simopt import SimOpt
 from pyrado.algorithms.step_based.gae import GAE
 from pyrado.algorithms.meta.arpl import ARPL
 from pyrado.algorithms.episodic.cem import CEM
 from pyrado.algorithms.step_based.ppo import PPO
 from pyrado.algorithms.meta.spota import SPOTA
-from pyrado.algorithms.step_based.svpg import SVPG
 from pyrado.algorithms.episodic.sysid_via_episodic_rl import DomainDistrParamPolicy, SysIdViaEpisodicRL
-from pyrado.domain_randomization.domain_parameter import UniformDomainParam
+from pyrado.domain_randomization.domain_parameter import UniformDomainParam, NormalDomainParam
 from pyrado.domain_randomization.domain_randomizer import DomainRandomizer
 from pyrado.domain_randomization.utils import wrap_like_other_env
 from pyrado.environment_wrappers.action_normalization import ActNormWrapper
@@ -70,26 +71,6 @@ def ex_dir(tmpdir):
     # Fixture providing an experiment directory
     set_log_prefix_dir(tmpdir)
     return tmpdir
-
-
-@pytest.mark.parametrize("env", ["default_bob"], ids=["bob"], indirect=True)
-@pytest.mark.parametrize("policy", ["linear_policy"], ids=["lin"], indirect=True)
-@pytest.mark.parametrize("actor_hparam", [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)], ids=["casual"])
-@pytest.mark.parametrize("vfcn_hparam", [dict(hidden_sizes=[8, 8], hidden_nonlin=to.tanh)], ids=["casual"])
-@pytest.mark.parametrize(
-    "critic_hparam", [dict(gamma=0.995, lamda=1.0, num_epoch=1, lr=1e-4, standardize_adv=False)], ids=["casual"]
-)
-@pytest.mark.parametrize(
-    "algo_hparam",
-    [dict(max_iter=2, num_particles=3, temperature=10, lr=1e-3, horizon=50, num_workers=1)],
-    ids=["casual"],
-)
-def test_svpg(ex_dir, env: SimEnv, policy, actor_hparam, vfcn_hparam, critic_hparam, algo_hparam):
-    # Create algorithm and train
-    particle_hparam = dict(actor=actor_hparam, vfcn=vfcn_hparam, critic=critic_hparam)
-    algo = SVPG(ex_dir, env, particle_hparam, **algo_hparam)
-    algo.train()
-    assert algo.curr_iter == algo.max_iter
 
 
 # TODO @Robin
@@ -297,7 +278,7 @@ def test_arpl(ex_dir, env: SimEnv):
 
 @pytest.mark.longtime
 @pytest.mark.parametrize("env, num_eval_rollouts", [("default_bob", 5)], ids=["bob"], indirect=["env"])
-def test_sysidasrl(ex_dir, env: SimEnv, num_eval_rollouts):
+def test_sysidasrl_reps(ex_dir, env: SimEnv, num_eval_rollouts):
     def eval_ddp_policy(rollouts_real):
         init_states_real = np.array([ro.rollout_info["init_state"] for ro in rollouts_real])
         rollouts_sim = []
@@ -343,17 +324,16 @@ def test_sysidasrl(ex_dir, env: SimEnv, num_eval_rollouts):
 
     # Subroutine
     subrtn_hparam = dict(
-        max_iter=5,
-        pop_size=40,
+        max_iter=2,
+        eps=1.0,
+        pop_size=200,
         num_init_states_per_domain=1,
-        num_is_samples=4,
-        expl_std_init=1 * np.pi / 180,
-        expl_std_min=0.001,
-        extra_expl_std_init=0.0,
-        extra_expl_decay_iter=5,
+        expl_std_init=5e-2,
+        expl_std_min=1e-4,
+        optim_mode="torch",
         num_workers=1,
     )
-    subrtn = CEM(ex_dir, env_sim, ddp_policy, **subrtn_hparam)
+    subrtn = REPS(ex_dir, env_sim, ddp_policy, **subrtn_hparam)
 
     algo_hparam = dict(
         metric=None, obs_dim_weight=np.ones(env_sim.obs_space.shape), num_rollouts_per_distr=10, num_workers=1
@@ -382,3 +362,98 @@ def test_sysidasrl(ex_dir, env: SimEnv, num_eval_rollouts):
 
     loss_post = eval_ddp_policy(rollouts_real_tst)
     assert loss_post <= loss_pre  # don't have to be better every step
+
+
+@pytest.mark.longtime
+@pytest.mark.parametrize("env", ["default_qqsu"], ids=["qq"], indirect=True)
+def test_simopt_cem_ppo(ex_dir, env: SimEnv):
+    # Environments
+    env_real = deepcopy(env)
+    env_real = ActNormWrapper(env_real)
+    env_sim = ActNormWrapper(env)
+    randomizer = DomainRandomizer(
+        NormalDomainParam(name="Mr", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="Mp", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="Lr", mean=0.0, std=1e6, clip_lo=1e-3),
+        NormalDomainParam(name="Lp", mean=0.0, std=1e6, clip_lo=1e-3),
+    )
+    env_sim = DomainRandWrapperLive(env_sim, randomizer)
+    dp_map = {
+        0: ("Mr", "mean"),
+        1: ("Mr", "std"),
+        2: ("Mp", "mean"),
+        3: ("Mp", "std"),
+        4: ("Lr", "mean"),
+        5: ("Lr", "std"),
+        6: ("Lp", "mean"),
+        7: ("Lp", "std"),
+    }
+    trafo_mask = [True] * 8
+    env_sim = MetaDomainRandWrapper(env_sim, dp_map)
+
+    # Subroutine for policy improvement
+    behav_policy_hparam = dict(hidden_sizes=[64, 64], hidden_nonlin=to.tanh)
+    behav_policy = FNNPolicy(spec=env_sim.spec, **behav_policy_hparam)
+    vfcn_hparam = dict(hidden_sizes=[32, 32], hidden_nonlin=to.relu)
+    vfcn = FNNPolicy(spec=EnvSpec(env_sim.obs_space, ValueFunctionSpace), **vfcn_hparam)
+    critic_hparam = dict(
+        gamma=0.99,
+        lamda=0.98,
+        num_epoch=5,
+        batch_size=512,
+        standardize_adv=True,
+        lr=8 - 4,
+        max_grad_norm=5.0,
+    )
+    critic = GAE(vfcn, **critic_hparam)
+    subrtn_policy_hparam = dict(
+        max_iter=2,
+        eps_clip=0.13,
+        min_steps=10 * env_sim.max_steps,
+        num_epoch=7,
+        batch_size=512,
+        std_init=0.75,
+        lr=7e-04,
+        max_grad_norm=1.0,
+        num_workers=1,
+    )
+    subrtn_policy = PPO(ex_dir, env_sim, behav_policy, critic, **subrtn_policy_hparam)
+
+    prior = DomainRandomizer(
+        NormalDomainParam(name="Mr", mean=0.095, std=0.095 / 10),
+        NormalDomainParam(name="Mp", mean=0.024, std=0.024 / 10),
+        NormalDomainParam(name="Lr", mean=0.085, std=0.085 / 10),
+        NormalDomainParam(name="Lp", mean=0.129, std=0.129 / 10),
+    )
+    ddp_policy_hparam = dict(mapping=dp_map, trafo_mask=trafo_mask, scale_params=True)
+    ddp_policy = DomainDistrParamPolicy(prior=prior, **ddp_policy_hparam)
+    subsubrtn_distr_hparam = dict(
+        max_iter=2,
+        pop_size=20,
+        num_init_states_per_domain=1,
+        num_is_samples=10,
+        expl_std_init=1e-2,
+        expl_std_min=1e-5,
+        extra_expl_std_init=1e-2,
+        extra_expl_decay_iter=5,
+        num_workers=1,
+    )
+    subsubrtn_distr = CEM(ex_dir, env_sim, ddp_policy, **subsubrtn_distr_hparam)
+    subrtn_distr_hparam = dict(
+        metric=None,
+        obs_dim_weight=[1, 1, 1, 1, 10, 10],
+        num_rollouts_per_distr=10,
+        num_workers=1,
+    )
+    subrtn_distr = SysIdViaEpisodicRL(subsubrtn_distr, behavior_policy=behav_policy, **subrtn_distr_hparam)
+
+    # Algorithm
+    algo_hparam = dict(
+        max_iter=1,
+        num_eval_rollouts=5,
+        warmstart=True,
+    )
+    algo = SimOpt(ex_dir, env_sim, env_real, subrtn_policy, subrtn_distr, **algo_hparam)
+    algo.train()
+
+    assert algo.curr_iter == algo.max_iter

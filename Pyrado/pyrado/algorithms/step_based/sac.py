@@ -86,11 +86,12 @@ class SAC(ValueBased):
         min_rollouts: Optional[int] = None,
         min_steps: Optional[int] = None,
         batch_size: Optional[int] = 256,
-        num_workers: Optional[int] = 4,
+        eval_intvl: Optional[int] = 100,
         max_grad_norm: Optional[float] = 5.0,
         lr: Optional[float] = 3e-4,
         lr_scheduler=None,
         lr_scheduler_hparam: Optional[dict] = None,
+        num_workers: Optional[int] = 4,
         logger: Optional[StepLogger] = None,
     ):
         r"""
@@ -119,13 +120,15 @@ class SAC(ValueBased):
         :param min_rollouts: minimum number of rollouts sampled per policy update batch
         :param min_steps: minimum number of state transitions sampled per policy update batch
         :param batch_size: number of samples per policy update batch
-        :param num_workers: number of environments for parallel sampling
+        :param eval_intvl: interval in which the evaluation rollouts are collected, also the interval in which the
+                           logger prints the summary statistics
         :param max_grad_norm: maximum L2 norm of the gradients for clipping, set to `None` to disable gradient clipping
         :param lr: (initial) learning rate for the optimizer which can be by modified by the scheduler.
                    By default, the learning rate is constant.
         :param lr_scheduler: learning rate scheduler type for the policy and the Q-functions that does one step
                              per `update()` call
         :param lr_scheduler_hparam: hyper-parameters for the learning rate scheduler
+        :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
         """
         if typed_env(env, ActNormWrapper) is None:
@@ -137,21 +140,22 @@ class SAC(ValueBased):
 
         # Call ValueBased's constructor
         super().__init__(
-            save_dir,
-            env,
-            policy,
-            memory_size,
-            gamma,
-            max_iter,
-            num_updates_per_step,
-            target_update_intvl,
-            num_init_memory_steps,
-            min_rollouts,
-            min_steps,
-            batch_size,
-            num_workers,
-            max_grad_norm,
-            logger,
+            save_dir=save_dir,
+            env=env,
+            policy=policy,
+            memory_size=memory_size,
+            gamma=gamma,
+            max_iter=max_iter,
+            num_updates_per_step=num_updates_per_step,
+            target_update_intvl=target_update_intvl,
+            num_init_memory_steps=num_init_memory_steps,
+            min_rollouts=min_rollouts,
+            min_steps=min_steps,
+            batch_size=batch_size,
+            eval_intvl=eval_intvl,
+            max_grad_norm=max_grad_norm,
+            num_workers=num_workers,
+            logger=logger,
         )
 
         self.qfcn_1 = qfcn_1
@@ -165,7 +169,7 @@ class SAC(ValueBased):
 
         # Create sampler for exploration during training
         self._expl_strat = SACExplStrat(self._policy)
-        self.sampler_trn = ParallelRolloutSampler(
+        self.sampler = ParallelRolloutSampler(
             self._env,
             self._expl_strat,
             num_workers=num_workers if min_steps != 1 else 1,

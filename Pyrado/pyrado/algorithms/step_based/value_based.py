@@ -61,10 +61,10 @@ class ValueBased(Algorithm, ABC):
         min_rollouts: int,
         min_steps: int,
         batch_size: int,
-        num_workers: int,
+        eval_intvl: int,
         max_grad_norm: float,
+        num_workers: int,
         logger: StepLogger,
-        logger_print_intvl: Optional[int] = 100,
     ):
         r"""
         Constructor
@@ -82,10 +82,11 @@ class ValueBased(Algorithm, ABC):
         :param min_rollouts: minimum number of rollouts sampled per policy update batch
         :param min_steps: minimum number of state transitions sampled per policy update batch
         :param batch_size: number of samples per policy update batch
-        :param num_workers: number of environments for parallel sampling
+        :param eval_intvl: interval in which the evaluation rollouts are collected, also the interval in which the
+                           logger prints the summary statistics
         :param max_grad_norm: maximum L2 norm of the gradients for clipping, set to `None` to disable gradient clipping
+        :param num_workers: number of environments for parallel sampling
         :param logger: logger for every step of the algorithm, if `None` the default logger will be created
-        :param logger_print_intvl: interval in which the logger prints
         """
         if not isinstance(env, Env):
             raise pyrado.TypeErr(given=env, expected_type=Env)
@@ -96,7 +97,7 @@ class ValueBased(Algorithm, ABC):
 
         if logger is None:
             # Create logger that only logs every logger_print_intvl steps of the algorithm
-            logger = StepLogger(print_intvl=logger_print_intvl)
+            logger = StepLogger(print_intvl=eval_intvl)
             logger.printers.append(ConsolePrinter())
             logger.printers.append(CSVPrinter(osp.join(save_dir, "progress.csv")))
             logger.printers.append(TensorBoardPrinter(osp.join(save_dir, "tb")))
@@ -113,7 +114,7 @@ class ValueBased(Algorithm, ABC):
         if num_init_memory_steps is None:
             self.num_init_memory_steps = memory_size
         else:
-            self.num_init_memory_steps = min(num_init_memory_steps, memory_size)
+            self.num_init_memory_steps = max(min(num_init_memory_steps, memory_size), batch_size)
 
         # Heuristic for number of gradient updates per step
         if num_updates_per_step is None:
@@ -138,13 +139,13 @@ class ValueBased(Algorithm, ABC):
             self._env,
             self._policy,
             num_workers=num_workers,
-            min_steps=10 * env.max_steps,
-            min_rollouts=None,
-            show_progress_bar=False,
+            min_steps=None,
+            min_rollouts=100,
+            show_progress_bar=True,
         )
 
         self._expl_strat = None  # must be implemented by subclass
-        self.sampler_trn = None  # must be implemented by subclass
+        self.sampler = None  # must be implemented by subclass
 
     @property
     def expl_strat(self) -> Union[SACExplStrat, EpsGreedyExplStrat]:
@@ -164,7 +165,7 @@ class ValueBased(Algorithm, ABC):
             self._memory.push(ros)
         else:
             # Sample steps and store them in the replay memory
-            ros = self.sampler_trn.sample()
+            ros = self.sampler.sample()
             self._memory.push(ros)
         self._cnt_samples += sum([ro.length for ro in ros])  # don't count the evaluation samples
 
@@ -204,7 +205,7 @@ class ValueBased(Algorithm, ABC):
 
         # Re-initialize samplers in case env or policy changed
         self.sampler_init.reinit(self._env, self.init_expl_policy)
-        self.sampler_trn.reinit(self._env, self._expl_strat)
+        self.sampler.reinit(self._env, self._expl_strat)
         self.sampler_eval.reinit(self._env, self._policy)
 
         # Reset the replay memory

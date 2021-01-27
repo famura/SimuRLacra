@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     # Environment
     env_hparams = dict(dt=1 / 50.0, max_steps=200)
-    env = OneMassOscillatorSim(**env_hparams, task_args=dict(task_args=dict(state_des=np.array([0.5, 0]))))
+    env = OneMassOscillatorSim(**env_hparams, task_args=dict(state_des=np.array([0.5, 0])))
     env = ActNormWrapper(env)
 
     # Policy

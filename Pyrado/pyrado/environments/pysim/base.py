@@ -30,6 +30,7 @@ import numpy as np
 from abc import abstractmethod
 from copy import deepcopy
 from init_args_serializer import Serializable
+from typing import Optional
 
 import pyrado
 from pyrado.environments.sim_base import SimEnv
@@ -41,7 +42,7 @@ from pyrado.tasks.base import Task
 class SimPyEnv(SimEnv, Serializable):
     """ Base class for simulated environments implemented in pure Python """
 
-    def __init__(self, dt: float, max_steps: int = pyrado.inf, task_args: [dict, None] = None):
+    def __init__(self, dt: float, max_steps: Optional[int] = pyrado.inf, task_args: Optional[dict] = None):
         """
         Constructor
 
