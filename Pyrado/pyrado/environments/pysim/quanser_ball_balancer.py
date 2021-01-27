@@ -371,18 +371,18 @@ class QBallBalancerSim(SimPyEnv, Serializable):
                 self.text.setTextColor(0, 0, 0, 1)
 
                 # Physics params
-                l_plate = self.qbb.domain_param["l_plate"]
+                l_plate = self.qbb.domain_param["l_plate"] / 2
                 m_ball = self.qbb.domain_param["m_ball"]
                 r_ball = self.qbb.domain_param["r_ball"]
-                d_plate = 0.01  # only for animation
+                d_plate = 0.01 / 2 # only for animation
 
                 # Init render objects on first call
 
                 # Ball
                 self.ball = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
                 self.ball.setPos(self.qbb.state[2], - self.qbb.state[3], r_ball + d_plate / 2.0)
-                self.ball.setScale(2*r_ball)
-                #self.ball.setMass(m_ball)
+                self.ball.setScale(r_ball)
+                # self.ball.setMass(m_ball)
                 self.ball.setColor(1, 0, 0, 0)
                 self.ball.reparentTo(self.render)
 
@@ -390,17 +390,17 @@ class QBallBalancerSim(SimPyEnv, Serializable):
                 self.plate = self.loader.loadModel(pathlib.Path(mydir, "box.egg"))
                 self.plate.setPos(0, 0, 0)
                 self.plate.setScale(l_plate, d_plate, l_plate)
-                self.plate.setColor(0, 1, 0, 0)
-                self.ball.reparentTo(self.render)
+                self.plate.setColor(0, 0, 1, 0)
+                self.plate.reparentTo(self.render)
 
                 # Null_plate
                 self.null_plate = self.loader.loadModel(pathlib.Path(mydir, "box.egg"))
                 self.null_plate.setPos(0, 0, 0)
                 self.null_plate.setScale(l_plate * 1.1, d_plate / 10, l_plate * 1.1)
-                #self.null_plate.setColor(0, 1, 1, 0)
+                # self.null_plate.setColor(0, 1, 1, 0)
                 self.null_plate.setTransparency(1)
                 self.null_plate.setColorScale(0, 1, 1, 0.5)
-                #self.null_plate.setAlphaScale(0.5)
+                # self.null_plate.setAlphaScale(0.5)
                 self.null_plate.reparentTo(self.render)
 
                 self.taskMgr.add(self.update, "update")
@@ -436,10 +436,13 @@ class QBallBalancerSim(SimPyEnv, Serializable):
                 # Axis runs along the x direction
                 self.plate.setScale(l_plate, d_plate, l_plate)
                 # TODO
-                self.plate.setHpr(np.cos(a_vp) * float(l_plate), 0, np.sin(a_vp) * float(l_plate))
-                # self.plate.setH(np.cos(a_vp) * float(l_plate))
-                # self.plate.setP(np.sin(a_vp) * float(l_plate))
+                self.plate.setHpr(a_vp * float(l_plate), 0, a_vp * float(l_plate))
+                # self.plate.setHpr(a_vp * 180 / np.pi * float(l_plate), 0, a_vp * float(l_plate))
+                # self.plate.setH(a_vp * float(l_plate))
+                # self.plate.setP((90 - a_vp) * float(l_plate))
+                # self.plate.setP(a_vp * 100)
                 # self.plate.setSz(0, np.sin(b_vp), np.cos(b_vp))
+                # self.plate.setSz(b_vp)
 
                 # Get ball position
                 x = self.qbb.state[2] # along the x axis
@@ -450,7 +453,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
                     - ( r_ball + x * np.sin(a_vp) + y * np.sin(b_vp) + np.cos(a_vp) * d_plate / 2.0),
                     y * np.cos(b_vp),
                 )
-                self.ball.setScale(2*r_ball)
+                self.ball.setScale(r_ball)
 
                 # Set caption text
                 self.text.setText(f"""
