@@ -400,10 +400,10 @@ class LFI(InterruptableAlgorithm):
         observations_real: to.Tensor,
         num_samples: int,
         simulator: Callable = None,
-        simulate_observations: bool = True,
-        calculate_log_probs: bool = False,
+        calculate_log_probs: Optional[bool] = True,
+        simulate_observations: Optional[bool] = True,
         sbi_sampling_hparam: Optional[dict] = None,
-    ) -> Tuple[to.Tensor, to.Tensor, Optional[to.Tensor]]:
+    ) -> Tuple[to.Tensor, Optional[to.Tensor], Optional[to.Tensor]]:
         r"""
         Evaluates the posterior by computing parameter samples given observed data, its log probability
         and the simulated trajectory.
@@ -412,7 +412,9 @@ class LFI(InterruptableAlgorithm):
                           the provided observations
         :param observations_real: observations from the real-world rollouts a.k.a. $x_o$
         :param num_samples: number of samples to draw from the posterior
-        :param simulator: simulator used during the sbi training procedure
+        :param simulator: simulator used during the sbi training procedure, if `simulate_observations` is `False` this
+                          can be set to `None`
+        :param calculate_log_probs: if `True` the log-probabilities are computed, else `None` is returned
         :param simulate_observations: create simulated observations using the domain parameters sampled from the
                                       posterior and same simulator as used during the sbi training procedure
         :param sbi_sampling_hparam: keyword arguments forwarded to sbi's `DirectPosterior.sample()` function
@@ -446,7 +448,7 @@ class LFI(InterruptableAlgorithm):
             raise pyrado.ShapeErr(given=domain_params, expected_match=(num_obs, num_samples, -1))
 
         # Init containers
-        log_prob = to.empty((num_obs, num_samples))
+        log_prob = to.empty((num_obs, num_samples)) if calculate_log_probs else None
         observations_sim = to.empty((num_obs, num_samples, dim_obs)) if simulate_observations else None
 
         # Evaluate
