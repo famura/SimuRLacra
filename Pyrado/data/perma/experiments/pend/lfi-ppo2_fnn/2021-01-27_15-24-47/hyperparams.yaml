@@ -1,0 +1,61 @@
+env:
+  dt: 0.01
+  max_steps: 1000
+seed: None
+prior:
+  high:
+  - 4.0
+  - 4.0
+  low:
+  - 0.0625
+  - 0.0625
+posterior_nn:
+  embedding_net: Identity
+  hidden_features: 20
+  model: maf
+  num_transforms: 5
+policy:
+  hidden_nonlin: <built-in method relu of type object at 0x7f72986cf580>
+  hidden_sizes:
+  - 16
+  - 16
+critic:
+  batch_size: 500
+  gamma: 0.9852477569514027
+  lamda: 0.9729014682749334
+  lr: 0.0027189235593899743
+  lr_scheduler: <class 'torch.optim.lr_scheduler.ExponentialLR'>
+  lr_scheduler_hparam:
+    gamma: 0.999
+  max_grad_norm: 5.0
+  num_epoch: 5
+vfcn:
+  hidden_nonlin: <built-in method tanh of type object at 0x7f72986cf580>
+  hidden_sizes:
+  - 16
+  - 16
+subrtn_policy:
+  batch_size: 500
+  entropy_coeff: 4.944111681414721e-05
+  eps_clip: 0.09657039413812532
+  lr: 0.0008775532791215318
+  lr_scheduler: <class 'torch.optim.lr_scheduler.ExponentialLR'>
+  lr_scheduler_hparam:
+    gamma: 0.999
+  max_grad_norm: None
+  max_iter: 50
+  min_steps: 30000
+  num_epoch: 5
+  num_workers: 4
+  std_init: 0.1
+  vfcn_coeff: 1.190454086194093
+subrtn_policy_name: ppo2
+algo:
+  max_iter: 20
+  num_real_rollouts: 1
+  num_sim_per_real_rollout: 500
+  num_workers: 4
+  sbi_training_hparam:
+    learning_rate: 0.0003
+  summary_statistic: bayessim
+algo_name: lfi
