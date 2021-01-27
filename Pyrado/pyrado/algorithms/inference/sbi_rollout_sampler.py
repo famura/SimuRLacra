@@ -30,7 +30,7 @@ import numpy as np
 import torch as to
 from abc import ABC, abstractmethod
 from operator import itemgetter
-from typing import Union, Mapping, Optional
+from typing import Union, Mapping, Optional, Tuple, List
 
 import pyrado
 from pyrado.environment_wrappers.base import EnvWrapper
@@ -163,7 +163,7 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
         policy: Policy,
         dp_mapping: Mapping[int, str],
         strategy: str,
-        init_states_real: Optional[np.ndarray] = None,
+        rollouts_real: Optional[List[StepSequence]] = None,
     ):
         """
         Constructor
@@ -176,6 +176,8 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
                          `states` (uses all observed states from rollout),
                          `final_state` (use the last observed state from the rollout), and
                          `ramos` (summary statistics as proposed in  [1])
+        :param rollouts_real: list of rollouts recorded from the real system, which are used to sync the simulations'
+                              initial states
 
         [1] Fabio Ramos, Rafael C. Possas, and Dieter Fox. "BayesSim: adaptive domain randomization via probabilistic
             inference for robotics simulators", arXiv, 2019
@@ -185,15 +187,18 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
                 msg="The environment passed to sbi as simulator must not be wrapped with a subclass of"
                 "DomainRandWrapper since sbi has be able to set the domain parameters explicitly!"
             )
-        if not (init_states_real is None or isinstance(init_states_real, np.ndarray)):
-            raise pyrado.TypeErr(given=init_states_real, expected_type=np.ndarray)
+        if rollouts_real is not None:
+            if not isinstance(rollouts_real, list):
+                raise pyrado.TypeErr(given=rollouts_real, expected_type=list)
+            if not isinstance(rollouts_real[0], StepSequence):  # only check 1st element
+                raise pyrado.TypeErr(given=rollouts_real[0], expected_type=StepSequence)
 
         super().__init__(env=env, policy=policy, strategy=strategy)
 
         self.dp_names = dp_mapping.values()
-        self.init_states_real = np.atleast_2d(init_states_real) if init_states_real is not None else None
+        self.rollouts_real = rollouts_real
 
-    def __call__(self, dp_values: to.Tensor):
+    def __call__(self, dp_values: to.Tensor) -> to.Tensor:
         """
         Set the domain parameter, run one rollout, and compute summary statistics.
 
@@ -210,8 +215,13 @@ class SimRolloutSamplerForSBI(RolloutSamplerForSBI):
         dp_values = to.atleast_2d(dp_values)
 
         # Set the initial state space during __call__() otherwise it gets magically set back to the default
-        if self.init_states_real is not None:
-            self._env.init_space = DiscreteSpace(self.init_states_real)
+        if self.rollouts_real is not None:
+            init_states_real = np.stack([ro.rollout_info["init_state"] for ro in self.rollouts_real])
+            if not init_states_real.shape == (len(self.rollouts_real), self._env.state_space.flat_dim):
+                raise pyrado.ShapeErr(
+                    given=init_states_real, expected_match=(len(self.rollouts_real), self._env.state_space.flat_dim)
+                )
+            self._env.init_space = DiscreteSpace(init_states_real)
 
         # Do the rollouts
         ros = [
@@ -270,7 +280,7 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI):
         """
         super().__init__(env=env, policy=policy, strategy=strategy)
 
-    def __call__(self, dp_values: to.Tensor = None):
+    def __call__(self, dp_values: to.Tensor = None) -> Tuple[to.Tensor, StepSequence]:
         r"""
         Run one rollout and compute summary statistics.
 
@@ -280,10 +290,7 @@ class RealRolloutSamplerForSBI(RolloutSamplerForSBI):
         # Don't set the domain params here since they are set by the DomainRandWrapperBuffer to mimic the randomness
         ro = rollout(self._env, self._policy, eval=True)
 
-        # Extract the initial state from the recorded rollout
-        init_state = ro.rollout_info["init_state"]
-
         # Return the observations used for inference from the rollout data
         obs_real = self.transform_data(ro)
 
-        return obs_real, init_state
+        return obs_real, ro
