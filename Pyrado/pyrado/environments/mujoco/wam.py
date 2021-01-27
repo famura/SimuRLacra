@@ -254,7 +254,8 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             init_ball_pos = np.array([0.723, 0.0, 1.168])
             init_cup_goal = goal_pos_init_sim_4dof
         # The initial position of the ball in cartesian coordinates
-        init_state = np.concatenate([self.init_qpos, self.init_qvel, init_ball_pos, init_cup_goal])
+        init_acc = np.zeros(self.num_dof)
+        init_state = np.concatenate([self.init_qpos, self.init_qvel, init_acc, init_ball_pos, init_cup_goal])
         if self.fixed_init_state:
             self._init_space = SingularStateSpace(init_state)
         else:
@@ -357,12 +358,9 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
 
         else:
             state_des = self.sim.data.get_site_xpos("cup_goal")  # this is a reference
-            # state_des_ball = self.sim.data.get_site_xpos("cup_goal")  # this is a reference
-            # state_des_cup = np.array([0.82521, 0, 1.4469]) if self.num_dof == 7 else np.array([0.758, 0, 1.5])
-            # state_des = np.concatenate([state_des_ball, state_des_cup])
-            R_default = np.diag([0, 0, 1, 1e-2, 1e-2, 1e-1]) if self.num_dof == 7 else np.diag([0, 0, 1e-2, 1e-2])
+            R_default = np.diag([0, 0, 1, 1e-2, 1e-2, 1e-1]) if self.num_dof == 7 else np.diag([1, 1, 1e-2, 1e-2])
             rew_fcn = ExpQuadrErrRewFcn(
-                Q=task_args.get("Q", np.diag([2e1, 1e-4, 2e1])),  # distance ball - cup; shouldn't move in y-direction
+                Q=task_args.get("Q", np.diag([2.5, 1e-4, 15])),  # distance ball - cup; shouldn't move in y-direction
                 R=task_args.get("R", R_default),  # last joint is really unreliable for 7 dof, thus punish more
             )
             task = DesStateTask(spec, state_des, rew_fcn)
@@ -374,7 +372,8 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             )
 
     def _create_deviation_task(self, task_args: dict) -> Task:
-        idcs = list(range(self.state_space.flat_dim - 3, self.state_space.flat_dim))  # Cartesian cup goal position
+        idcs = list(range(self.state_space.flat_dim - 6 - self.num_dof, self.state_space.flat_dim - 6))  # joint acceleration
+        idcs.append(list(range(self.state_space.flat_dim - 3, self.state_space.flat_dim)))  # Cartesian cup goal position
         spec = EnvSpec(
             self.spec.obs_space,
             self.spec.act_space,
@@ -382,8 +381,13 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         )
         # init cup goal position
         state_des = goal_pos_init_sim_7dof if self.num_dof == 7 else goal_pos_init_sim_4dof
+        state_des = np.concatenate([np.zeros(self.num_dof), state_des])
+        Q_acc = 1e-3 * np.ones(self.num_dof)
         rew_fcn = QuadrErrRewFcn(
-            Q=task_args.get("Q_dev", np.diag([2e-1, 1e-6, 5e0])),  # Cartesian distance from init cup position
+            Q=task_args.get(
+                "Q_dev", np.diag(np.r_[Q_acc, 1e-4, 1e-4, 5.])
+                # acceleration and cartesian distance from init cup position
+            ),
             R=task_args.get(
                 "R_dev", np.zeros((self._act_space.shape[0], self._act_space.shape[0]))
             ),  # joint space distance from init pose, interferes with R_default from _create_main_task
@@ -443,6 +447,7 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
 
         # Apply the torques to the robot
         self.sim.data.qfrc_applied[: self.num_dof] = torque
+
         try:
             self.sim.step()
             mjsim_crashed = False
@@ -452,9 +457,10 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
             mjsim_crashed = True
 
         qpos, qvel = self.sim.data.qpos.copy(), self.sim.data.qvel.copy()
+        acceleration = self.sim.data.qacc[: self.num_dof].copy()
         ball_pos = self.sim.data.get_body_xpos("ball").copy()
         cup_goal = self.sim.data.get_site_xpos("cup_goal").copy()
-        self.state = np.concatenate([qpos, qvel, ball_pos, cup_goal])
+        self.state = np.concatenate([qpos, qvel, acceleration, ball_pos, cup_goal])
 
         # If desired, check for collisions of the ball with the robot
         ball_collided = self.check_ball_collisions() if self.stop_on_collision else False
@@ -462,14 +468,23 @@ class WAMBallInCupSim(MujocoSimEnv, Serializable):
         # If state is out of bounds [this is normally checked by the task, but does not work because of the mask]
         state_oob = False if self.state_space.contains(self.state) else True
 
+        # EXPERIMENTAL: Flag if the internal force acting on the ball is too large
+        force_on_ball = np.linalg.norm(self.sim.data.cfrc_int[-1].copy())
+        rope_torn = force_on_ball > 15
+        if rope_torn:
+            print_cbt(f"Force on ball to large at step {self.curr_step}: {self.sim.data.cfrc_int[-1].tolist()}", color='y')
+
         return dict(
             qpos_des=qpos_des,
             qvel_des=qvel_des,
             qpos=qpos[: self.num_dof],
             qvel=qvel[: self.num_dof],
+            torque=torque,
+            acceleration=acceleration,
+            force_on_ball=force_on_ball,
             ball_pos=ball_pos,
             cup_pos=cup_goal,
-            failed=mjsim_crashed or ball_collided or state_oob,
+            failed=mjsim_crashed or ball_collided or state_oob or rope_torn,
         )
 
     def check_ball_collisions(self, verbose: bool = False) -> bool:
