@@ -30,7 +30,7 @@
 Test dynamic time warping implementation from the dtw-python package
 """
 import numpy as np
-
+from dtw import *
 
 if __name__ == "__main__":
     # A noisy sine wave as query
@@ -41,18 +41,11 @@ if __name__ == "__main__":
     template = np.cos(idx)
 
     # Find the best match with the canonical recursion formula
-    from dtw import *
-
     alignment = dtw(query, template, keep_internals=True)
-
-    # Display the warping curve, i.e. the alignment curve
-    alignment.plot(type="threeway")
 
     # Align and plot with the Rabiner-Juang type VI-c unsmoothed recursion
     alignment2 = dtw(query, template, keep_internals=True, step_pattern=rabinerJuangStepPattern(6, "c"))
 
-    alignment2.plot(type="twoway", offset=-2)
-
-    # See the recursion relation, as formula and diagram
-    print(rabinerJuangStepPattern(6, "c"))
-    rabinerJuangStepPattern(6, "c").plot()
+    # Display the warping curve, i.e. the alignment curve
+    alignment.plot(type="twoway")
+    alignment2.plot(type="twoway")
