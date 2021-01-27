@@ -35,10 +35,14 @@ from dtw import *
 if __name__ == "__main__":
     # A noisy sine wave as query
     idx = np.linspace(0, 6.28, num=100)
-    query = np.sin(idx) + np.random.uniform(size=100) / 10.0
+    multidim = True
 
-    # A cosine is for template; sin and cos are offset by 25 samples
-    template = np.cos(idx)
+    if multidim:
+        query = np.stack([np.sin(idx), np.sin(idx)], axis=1)
+        template = np.stack([np.cos(idx), np.cos(idx)], axis=1)
+    else:
+        query = np.sin(idx)  # + np.random.uniform(size=100) / 10.0
+        template = np.cos(idx)  # sin and cos are offset by 25 samples
 
     # Find the best match with the canonical recursion formula
     alignment = dtw(query, template, keep_internals=True)
@@ -47,5 +51,8 @@ if __name__ == "__main__":
     alignment2 = dtw(query, template, keep_internals=True, step_pattern=rabinerJuangStepPattern(6, "c"))
 
     # Display the warping curve, i.e. the alignment curve
-    alignment.plot(type="twoway")
-    alignment2.plot(type="twoway")
+    if not multidim:
+        alignment.plot(type="twoway")
+        alignment2.plot(type="twoway")
+
+    print(f"distance symmetric2: {alignment.distance}\ndistance rabinerJuang: {alignment2.distance}")
