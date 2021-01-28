@@ -79,7 +79,7 @@ def draw_observations_actions_rewards(ro: StepSequence):
         dim_act = ro.actions.shape[1]
 
         # Use recorded time stamps if possible
-        t = ro.env_infos.get("t", np.arange(0, ro.length)) if hasattr(ro, "env_infos") else np.arange(0, ro.length)
+        t = getattr(ro, "time", np.arange(0, ro.length))
 
         fig, axs = plt.subplots(dim_obs + dim_act + 1, 1, figsize=(8, 12), tight_layout=True)
         fig.canvas.set_window_title("Observations, Actions, and Reward over Time")
@@ -118,7 +118,7 @@ def draw_observations(ro: StepSequence, idcs_sel: Sequence[int] = None):
         dim_obs = range(ro.observations.shape[1]) if idcs_sel is None else idcs_sel
 
         # Use recorded time stamps if possible
-        t = ro.env_infos.get("t", np.arange(0, ro.length)) if hasattr(ro, "env_infos") else np.arange(0, ro.length)
+        t = getattr(ro, "time", np.arange(0, ro.length))
 
         if len(dim_obs) <= 6:
             divisor = 2
@@ -163,7 +163,7 @@ def draw_features(ro: StepSequence, policy: Policy):
 
     if hasattr(ro, "observations"):
         # Use recorded time stamps if possible
-        t = ro.env_infos.get("t", np.arange(0, ro.length)) if hasattr(ro, "env_infos") else np.arange(0, ro.length)
+        t = getattr(ro, "time", np.arange(0, ro.length))
 
         # Recover the features from the observations
         feat_vals = policy.eval_feats(to.from_numpy(ro.observations))
@@ -212,7 +212,7 @@ def draw_actions(ro: StepSequence, env: Env):
 
         dim_act = ro.actions.shape[1]
         # Use recorded time stamps if possible
-        t = ro.env_infos.get("t", np.arange(0, ro.length)) if hasattr(ro, "env_infos") else np.arange(0, ro.length)
+        t = getattr(ro, "time", np.arange(0, ro.length))
 
         fig, axs = plt.subplots(dim_act, figsize=(8, 12), tight_layout=True)
         fig.canvas.set_window_title("Actions over Time")
@@ -255,7 +255,7 @@ def draw_rewards(ro: StepSequence):
     """
     if hasattr(ro, "rewards"):
         # Use recorded time stamps if possible
-        t = ro.env_infos.get("t", np.arange(0, ro.length)) if hasattr(ro, "env_infos") else np.arange(0, ro.length)
+        t = getattr(ro, "time", np.arange(0, ro.length))
 
         fig, ax = plt.subplots(1, tight_layout=True)
         fig.canvas.set_window_title("Reward over Time")
@@ -278,7 +278,7 @@ def draw_potentials(ro: StepSequence, layout: str = "joint"):
         and hasattr(ro, "stimuli_internal")
     ):
         # Use recorded time stamps if possible
-        t = ro.env_infos.get("t", np.arange(0, ro.length)) if hasattr(ro, "env_infos") else np.arange(0, ro.length)
+        t = getattr(ro, "time", np.arange(0, ro.length))
         dim_pot = ro.potentials.shape[1]  # number of neurons with potential
         num_act = ro.actions.shape[1]
         colors_pot = plt.get_cmap("tab20")(np.linspace(0, 1, dim_pot))

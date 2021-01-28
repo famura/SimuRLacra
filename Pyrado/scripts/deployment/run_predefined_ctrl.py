@@ -85,7 +85,6 @@ if __name__ == "__main__":
     print_cbt("Running predefined controller ...", "c", bright=True)
     while not done:
         ro = rollout(env, policy, eval=True, render_mode=RenderMode(text=args.verbose))
-        done, _, _ = after_rollout_query(env, policy, ro)
 
         if args.save_figures:
             pyrado.save(
@@ -95,3 +94,6 @@ if __name__ == "__main__":
                 pyrado.TEMP_DIR,
                 meta_info=dict(suffix=datetime.now().strftime(pyrado.timestamp_format)),
             )
+            print_cbt(f"Saved rollout to {pyrado.TEMP_DIR}", "g")
+
+        done, _, _ = after_rollout_query(env, policy, ro)

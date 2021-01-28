@@ -271,7 +271,7 @@ class WAMBallInCupRealEpisodic(WAMBallInCupReal):
         if self._curr_step == 0:
             print_cbt("Pre-sampling policy...", "w")
 
-        info = dict(t=self._curr_step * self._dt, act_raw=act)
+        info = dict(act_raw=act)
 
         # Current reward depending on the (measurable) state and the current (unlimited) action
         remaining_steps = self._max_steps - (self._curr_step + 1) if self._max_steps is not pyrado.inf else 0
@@ -471,7 +471,7 @@ class WAMBallInCupRealStepBased(WAMBallInCupReal):
             print_cbt("Executing trajectory on Barret WAM", color="c", bright=True)
             self._dc.start()
 
-        info = dict(t=self._curr_step * self._dt, act_raw=act)
+        info = dict(act_raw=act)
 
         # Current reward depending on the (measurable) state and the current (unlimited) action
         remaining_steps = self._max_steps - (self._curr_step + 1) if self._max_steps is not pyrado.inf else 0
