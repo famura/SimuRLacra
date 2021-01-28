@@ -651,7 +651,7 @@ env_info: contains diagnostic information about the environment</p>
 
 <dl class="py class">
 <dt id="pyrado.environment_wrappers.domain_randomization.DomainRandWrapperBuffer">
-<em class="property">class </em><code class="sig-name descname">DomainRandWrapperBuffer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wrapped_env</span></em>, <em class="sig-param"><span class="n">randomizer</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/domain_randomization.html#DomainRandWrapperBuffer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environment_wrappers.domain_randomization.DomainRandWrapperBuffer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">DomainRandWrapperBuffer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wrapped_env</span></em>, <em class="sig-param"><span class="n">randomizer</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="domain_randomization.html#pyrado.domain_randomization.domain_randomizer.DomainRandomizer" title="pyrado.domain_randomization.domain_randomizer.DomainRandomizer">pyrado.domain_randomization.domain_randomizer.DomainRandomizer</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">selection</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">'cyclic'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/domain_randomization.html#DomainRandWrapperBuffer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environment_wrappers.domain_randomization.DomainRandWrapperBuffer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pyrado.environment_wrappers.domain_randomization.DomainRandWrapper" title="pyrado.environment_wrappers.domain_randomization.DomainRandWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrado.environment_wrappers.domain_randomization.DomainRandWrapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">init_args_serializer.serializable.Serializable</span></code></p>
 <p>Domain randomization wrapper which randomized the wrapped env using a buffer of domain parameter sets.
 At every call of the reset method this wrapper cycles through that buffer.</p>
@@ -693,6 +693,12 @@ At every call of the reset method this wrapper cycles through that buffer.</p>
 <dt id="pyrado.environment_wrappers.domain_randomization.DomainRandWrapperBuffer.ring_idx">
 <em class="property">property </em><code class="sig-name descname">ring_idx</code><a class="headerlink" href="#pyrado.environment_wrappers.domain_randomization.DomainRandWrapperBuffer.ring_idx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the buffer’s index.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyrado.environment_wrappers.domain_randomization.DomainRandWrapperBuffer.selection">
+<em class="property">property </em><code class="sig-name descname">selection</code><a class="headerlink" href="#pyrado.environment_wrappers.domain_randomization.DomainRandWrapperBuffer.selection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the selection method.</p>
 </dd></dl>
 
 </dd></dl>
@@ -759,7 +765,7 @@ called domain distribution parameters.</p>
 
 <dl class="py function">
 <dt id="pyrado.environment_wrappers.domain_randomization.remove_all_dr_wrappers">
-<code class="sig-name descname">remove_all_dr_wrappers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.sim_base.SimEnv" title="pyrado.environments.sim_base.SimEnv">pyrado.environments.sim_base.SimEnv</a></span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/domain_randomization.html#remove_all_dr_wrappers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environment_wrappers.domain_randomization.remove_all_dr_wrappers" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">remove_all_dr_wrappers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n"><a class="reference internal" href="environments.html#pyrado.environments.base.Env" title="pyrado.environments.base.Env">pyrado.environments.base.Env</a></span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrado/environment_wrappers/domain_randomization.html#remove_all_dr_wrappers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrado.environment_wrappers.domain_randomization.remove_all_dr_wrappers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Go through the environment chain and remove all wrappers of type <cite>DomainRandWrapper</cite> (and subclasses).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

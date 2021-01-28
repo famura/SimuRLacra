@@ -1163,6 +1163,8 @@
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.fnn_policy">fnn_policy() (DefaultPolicies static method)</a>
 </li>
+      <li><a href="tests.html#tests.conftest.DefaultPolicies.fnn_policy_cuda">fnn_policy_cuda() (DefaultPolicies static method)</a>
+</li>
       <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.fnn.FNNPolicy">FNNPolicy (class in pyrado.policies.feed_forward.fnn)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.iteration.IterationTracker.format">format() (IterationTracker method)</a>
@@ -1420,6 +1422,8 @@
       <li><a href="utils.html#pyrado.utils.nn_layers.MirrConv1d.groups">groups (MirrConv1d attribute)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.gru_policy">gru_policy() (DefaultPolicies static method)</a>
+</li>
+      <li><a href="tests.html#tests.conftest.DefaultPolicies.gru_policy_cuda">gru_policy_cuda() (DefaultPolicies static method)</a>
 </li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.GRUPolicy">GRUPolicy (class in pyrado.policies.recurrent.rnn)</a>
 </li>
@@ -1733,6 +1737,8 @@
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.linear_policy">linear_policy() (DefaultPolicies static method)</a>
 </li>
+      <li><a href="tests.html#tests.conftest.DefaultPolicies.linear_policy_cuda">linear_policy_cuda() (DefaultPolicies static method)</a>
+</li>
       <li><a href="policies.feed_forward.html#pyrado.policies.feed_forward.linear.LinearPolicy">LinearPolicy (class in pyrado.policies.feed_forward.linear)</a>
 </li>
       <li><a href="logger.html#pyrado.logger.experiment.list_experiments">list_experiments() (in module pyrado.logger.experiment)</a>
@@ -1774,6 +1780,8 @@
       <li><a href="algorithms.episodic.html#pyrado.algorithms.episodic.predefined_lqr.LQR">LQR (class in pyrado.algorithms.episodic.predefined_lqr)</a>
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.lstm_policy">lstm_policy() (DefaultPolicies static method)</a>
+</li>
+      <li><a href="tests.html#tests.conftest.DefaultPolicies.lstm_policy_cuda">lstm_policy_cuda() (DefaultPolicies static method)</a>
 </li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.LSTMPolicy">LSTMPolicy (class in pyrado.policies.recurrent.rnn)</a>
 </li>
@@ -4215,6 +4223,8 @@
       <ul>
         <li><a href="sampling.html#pyrado.sampling.parallel_rollout_sampler.ParallelRolloutSampler.reinit">(ParallelRolloutSampler method)</a>
 </li>
+        <li><a href="sampling.html#pyrado.sampling.parameter_exploration_sampler.ParameterExplorationSampler.reinit">(ParameterExplorationSampler method)</a>
+</li>
         <li><a href="sampling.html#pyrado.sampling.sampler.SamplerBase.reinit">(SamplerBase method)</a>
 </li>
       </ul></li>
@@ -4458,6 +4468,8 @@
 </li>
       <li><a href="tests.html#tests.conftest.DefaultPolicies.rnn_policy">rnn_policy() (DefaultPolicies static method)</a>
 </li>
+      <li><a href="tests.html#tests.conftest.DefaultPolicies.rnn_policy_cuda">rnn_policy_cuda() (DefaultPolicies static method)</a>
+</li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.RNNPolicy">RNNPolicy (class in pyrado.policies.recurrent.rnn)</a>
 </li>
       <li><a href="policies.recurrent.html#pyrado.policies.recurrent.rnn.RNNPolicyBase">RNNPolicyBase (class in pyrado.policies.recurrent.rnn)</a>
@@ -4657,6 +4669,8 @@
       <li><a href="sampling.html#pyrado.sampling.cvar_sampler.select_cvar">select_cvar() (in module pyrado.sampling.cvar_sampler)</a>
 </li>
       <li><a href="utils.html#pyrado.utils.input_output.select_query">select_query() (in module pyrado.utils.input_output)</a>
+</li>
+      <li><a href="environment_wrappers.html#pyrado.environment_wrappers.domain_randomization.DomainRandWrapperBuffer.selection">selection() (DomainRandWrapperBuffer property)</a>
 </li>
       <li><a href="environments.barrett_wam.html#pyrado.environments.barrett_wam.natnet_client.NatNetClient.sendCommand">sendCommand() (NatNetClient method)</a>
 </li>
@@ -5172,6 +5186,8 @@
         <li><a href="tests.html#tests.test_domain_randomization.test_domain_param">(in module tests.test_domain_randomization)</a>
 </li>
       </ul></li>
+      <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_buffer_bob">test_dr_wrapper_buffer_bob() (in module tests.environment_wrappers.test_domain_randomization)</a>
+</li>
       <li><a href="tests.environment_wrappers.html#tests.environment_wrappers.test_domain_randomization.test_dr_wrapper_live_bob">test_dr_wrapper_live_bob() (in module tests.environment_wrappers.test_domain_randomization)</a>
 </li>
       <li><a href="tests.html#tests.test_utils.test_ds_spec">test_ds_spec() (in module tests.test_utils)</a>
@@ -5352,10 +5368,10 @@
 </li>
       <li><a href="tests.html#tests.test_sampling.test_sample_from_unit_sphere_surface">test_sample_from_unit_sphere_surface() (in module tests.test_sampling)</a>
 </li>
-      <li><a href="tests.html#tests.test_sampling.test_sampler_collect">test_sampler_collect() (in module tests.test_sampling)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="tests.html#tests.test_sampling.test_sampler_collect">test_sampler_collect() (in module tests.test_sampling)</a>
+</li>
       <li><a href="tests.html#tests.test_sampling.test_sampler_collect_minrun">test_sampler_collect_minrun() (in module tests.test_sampling)</a>
 </li>
       <li><a href="tests.html#tests.test_sampling.test_sampler_pool">test_sampler_pool() (in module tests.test_sampling)</a>

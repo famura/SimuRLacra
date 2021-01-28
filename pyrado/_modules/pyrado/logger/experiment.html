@@ -245,10 +245,6 @@
 <span class="kn">from</span> <span class="nn">pyrado.utils.input_output</span> <span class="kn">import</span> <span class="n">select_query</span><span class="p">,</span> <span class="n">print_cbt</span>
 
 
-<span class="n">timestamp_format</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">_%H-%M-%S&quot;</span>
-<span class="n">timestamp_date_format</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span>
-
-
 <div class="viewcode-block" id="Experiment"><a class="viewcode-back" href="../../../logger.html#pyrado.logger.experiment.Experiment">[docs]</a><span class="k">class</span> <span class="nc">Experiment</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class for defining experiments</span>
@@ -286,14 +282,14 @@
                 <span class="n">timestr</span><span class="p">,</span> <span class="n">extra_info</span> <span class="o">=</span> <span class="n">sd</span>
             <span class="c1"># Parse time string</span>
             <span class="k">if</span> <span class="s2">&quot;_&quot;</span> <span class="ow">in</span> <span class="n">timestr</span><span class="p">:</span>
-                <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">timestr</span><span class="p">,</span> <span class="n">timestamp_format</span><span class="p">)</span>
+                <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">timestr</span><span class="p">,</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">timestamp_format</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">timestr</span><span class="p">,</span> <span class="n">timestamp_date_format</span><span class="p">)</span>
+                <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">timestr</span><span class="p">,</span> <span class="n">pyrado</span><span class="o">.</span><span class="n">timestamp_date_format</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Create exp id from timestamp and info</span>
             <span class="k">if</span> <span class="n">timestamp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-            <span class="n">exp_id</span> <span class="o">=</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">timestamp_format</span><span class="p">)</span>
+            <span class="n">exp_id</span> <span class="o">=</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">pyrado</span><span class="o">.</span><span class="n">timestamp_format</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">extra_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">exp_id</span> <span class="o">=</span> <span class="n">exp_id</span> <span class="o">+</span> <span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">extra_info</span>
