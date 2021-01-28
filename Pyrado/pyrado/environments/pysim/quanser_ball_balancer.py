@@ -371,10 +371,10 @@ class QBallBalancerSim(SimPyEnv, Serializable):
                 self.text.setTextColor(0, 0, 0, 1)
 
                 # Physics params
-                l_plate = self.qbb.domain_param["l_plate"] / 2
+                l_plate = self.qbb.domain_param["l_plate"]
                 m_ball = self.qbb.domain_param["m_ball"]
                 r_ball = self.qbb.domain_param["r_ball"]
-                d_plate = 0.01 / 2 # only for animation
+                d_plate = 0.01 # only for animation
 
                 # Init render objects on first call
 
@@ -436,13 +436,15 @@ class QBallBalancerSim(SimPyEnv, Serializable):
                 # Axis runs along the x direction
                 self.plate.setScale(l_plate, d_plate, l_plate)
                 # TODO
-                self.plate.setHpr(a_vp * float(l_plate), 0, a_vp * float(l_plate))
+                self.plate.setHpr(np.cos(a_vp)* 180 / np.pi * float(l_plate), 0, np.sin(a_vp) * 180 / np.pi * float(l_plate))
                 # self.plate.setHpr(a_vp * 180 / np.pi * float(l_plate), 0, a_vp * float(l_plate))
                 # self.plate.setH(a_vp * float(l_plate))
-                # self.plate.setP((90 - a_vp) * float(l_plate))
+                # self.plate.setP(a_vp * float(l_plate))
                 # self.plate.setP(a_vp * 100)
-                # self.plate.setSz(0, np.sin(b_vp), np.cos(b_vp))
-                # self.plate.setSz(b_vp)
+                # self.plate.setP(np.sin(b_vp) * 180 / np.pi)
+                #self.plate.setP(b_vp * 180 / np.pi)
+                # self.plate.setR(np.cos(b_vp) * 180 / np.pi)
+                #self.plate.setR(b_vp * 90 / np.pi)
 
                 # Get ball position
                 x = self.qbb.state[2] # along the x axis
