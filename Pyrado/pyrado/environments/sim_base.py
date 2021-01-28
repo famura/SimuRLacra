@@ -48,6 +48,11 @@ class SimEnv(Env, ABC, Serializable):
         """ Get the initial state space. """
         raise NotImplementedError
 
+    @init_space.setter
+    def init_space(self, space: Space):
+        """ Set the initial state space. """
+        raise NotImplementedError
+
     @classmethod
     @abstractmethod
     def get_nominal_domain_param(cls) -> dict:

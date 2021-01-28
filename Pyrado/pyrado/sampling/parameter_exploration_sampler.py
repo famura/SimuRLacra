@@ -42,6 +42,7 @@ from pyrado.environment_wrappers.domain_randomization import (
     DomainRandWrapperBuffer,
     remove_all_dr_wrappers,
 )
+from pyrado.environments.base import Env
 from pyrado.environments.sim_base import SimEnv
 from pyrado.policies.base import Policy
 from pyrado.sampling.step_sequence import StepSequence
@@ -229,6 +230,22 @@ class ParameterExplorationSampler(Serializable):
         else:
             # No init space, no init state
             return None
+
+    def reinit(self, env: Optional[Env] = None, policy: Optional[Policy] = None):
+        """
+        Re-initialize the sampler.
+
+        :param env: the environment which the policy operates
+        :param policy: the policy used for sampling
+        """
+        # Update env and policy if passed
+        if env is not None:
+            self.env = env
+        if policy is not None:
+            self.policy = policy
+
+        # Always broadcast to workers
+        self.pool.invoke_all(_pes_init, pickle.dumps(self.env), pickle.dumps(self.policy))
 
     def sample(self, param_sets: to.Tensor, init_states: Optional[List[np.ndarray]] = None) -> ParameterSamplingResult:
         """

@@ -31,6 +31,7 @@ Run a PD-controller with the parameter from Quanser on the real device.
 By default all controllers in this script run infinitely.
 """
 import torch as to
+from datetime import datetime
 
 import pyrado
 from pyrado.environments.quanser.quanser_ball_balancer import QBallBalancerReal
@@ -85,3 +86,12 @@ if __name__ == "__main__":
     while not done:
         ro = rollout(env, policy, eval=True, render_mode=RenderMode(text=args.verbose))
         done, _, _ = after_rollout_query(env, policy, ro)
+
+        if args.save_figures:
+            pyrado.save(
+                ro,
+                "rollout_real",
+                "pkl",
+                pyrado.TEMP_DIR,
+                meta_info=dict(suffix=datetime.now().strftime(pyrado.timestamp_format)),
+            )

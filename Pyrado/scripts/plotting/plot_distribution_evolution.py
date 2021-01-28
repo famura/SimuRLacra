@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Script to plot the evolution of the domain parameter distribution after a Bayesian Domain Adaptation experiment
+Script to plot the evolution of the domain parameter distribution after a Bayesian Domain Randomization experiment
 """
 import os.path as osp
 import torch as to

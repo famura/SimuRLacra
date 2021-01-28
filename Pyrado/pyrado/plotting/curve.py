@@ -104,7 +104,7 @@ def draw_curve_from_data(
 
             palette.insert(1, palette.pop(3))
 
-    :param plot_type: tye of categorical plot, pass box or violin
+    :param plot_type: tye of 1-dim plot: `mean_std`, `min_mean_max`, or `ci_on_mean`
     :param ax: axis of the figure to plot on
     :param data: data to plot,me.g. a time series
     :param x_grid: values to plot the data over, e.g. time
@@ -216,7 +216,7 @@ def draw_curve(
 
             palette.insert(1, palette.pop(3))
 
-    :param plot_type: tye of categorical plot, pass box or violin
+    :param plot_type: tye of 1-dim plot: `mean_std`, `min_mean_max`, or `ci_on_mean`
     :param ax: axis of the figure to plot on
     :param data: pandas DataFrame containing the columns `mean`, `std`, `min`, and `max` depending on the `plot_type`
     :param x_grid: values to plot the data over, e.g. time

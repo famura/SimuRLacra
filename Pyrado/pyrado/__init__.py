@@ -92,6 +92,10 @@ figsize_IEEE_1col_square = (3.5, 3.5)
 figsize_IEEE_2col_square = (7.16, 7.16)
 figsize_JMLR_warpfig = (2.5, 2.4)
 
+# Time and date formats
+timestamp_format = "%Y-%m-%d_%H-%M-%S"
+timestamp_date_format = "%Y-%m-%d"
+
 # Set the public API
 __all__ = [
     "VERSION",
@@ -109,6 +113,8 @@ __all__ = [
     "sym_failure",
     "close_vpython",
     "set_seed",
+    "timestamp_format",
+    "timestamp_date_format",
 ]
 
 

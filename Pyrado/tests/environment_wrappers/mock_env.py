@@ -31,6 +31,7 @@ import random
 from copy import deepcopy
 
 from pyrado.environments.pysim.base import SimEnv
+from pyrado.spaces.base import Space
 from pyrado.utils.data_types import RenderMode
 
 
@@ -67,10 +68,16 @@ class MockEnv(SimEnv):
 
     @property
     def state_space(self):
-        # Just use observation space here for now.
+        # Just use observation space here for now
         if self._obs_space is None:
             raise NotImplementedError
         return self._obs_space
+
+    @property
+    def act_space(self):
+        if self._act_space is None:
+            raise NotImplementedError
+        return self._act_space
 
     @property
     def init_space(self):
@@ -78,11 +85,10 @@ class MockEnv(SimEnv):
             raise NotImplementedError
         return self._init_space
 
-    @property
-    def act_space(self):
-        if self._act_space is None:
-            raise NotImplementedError
-        return self._act_space
+    @init_space.setter
+    def init_space(self, space: Space):
+        # No checks for MockEnv
+        self._init_space = space
 
     @property
     def task(self):
