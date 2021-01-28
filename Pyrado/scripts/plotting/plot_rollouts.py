@@ -27,12 +27,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """
-Script to plot the training progress.
+Script to plot the observations from rollouts as well as their mean and std
 """
-import itertools
-
 import numpy as np
-import os
 from matplotlib import pyplot as plt
 import pandas as pd
 
@@ -40,7 +37,7 @@ import pyrado
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.curve import draw_curve
 from pyrado.utils.argparser import get_argparser
-from pyrado.utils.checks import check_all_types_equal
+from pyrado.utils.experiments import load_rollouts_from_dir
 
 
 if __name__ == "__main__":
@@ -51,24 +48,9 @@ if __name__ == "__main__":
     # Get the experiment's directory to load from
     ex_dir = ask_for_experiment() if args.dir is None else args.dir
 
-    # Crawl through the experiment's directory
-    rollouts = []
-    for root, dirs, files in os.walk(ex_dir):
-        dirs.clear()  # prevents walk() from going into subdirectories
-        rollouts = [
-            pyrado.load(None, name=f[: f.rfind(".")], file_ext=f[f.rfind(".") + 1 :], load_dir=root)
-            for f in files
-            if "rollout" in f
-        ]
-
-    if isinstance(rollouts[0], list):
-        if not check_all_types_equal(rollouts):
-            raise pyrado.TypeErr(msg="Some rollout savings contain lists of rollouts, others don't!")
-        # The rollout files contain lists of rollouts, flatten them
-        rollouts = list(itertools.chain(*rollouts))
-
-    num_rollouts = len(rollouts)
-    if num_rollouts == 0:
+    # Load the rollouts
+    rollouts = load_rollouts_from_dir(ex_dir)
+    if not rollouts:
         raise pyrado.ValueErr(msg="No rollouts have been found!")
 
     # Extract observations
