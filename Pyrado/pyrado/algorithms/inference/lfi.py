@@ -403,7 +403,7 @@ class LFI(InterruptableAlgorithm):
                     if f.startswith("rollout")
                 ]
             rollout_worker = MockRealRolloutSamplerForSBI(None, None, summary_statistic, rollouts_rec)
-            rollout_worker._ring_idx = np.random.randint(0, len(rollouts_rec) + 1)  # not always the same rollout
+            rollout_worker._ring_idx = np.random.randint(0, len(rollouts_rec))  # not always the same rollout
         else:
             rollout_worker = RealRolloutSamplerForSBI(env, policy, summary_statistic)
 
