@@ -29,6 +29,8 @@
 """
 Script to plot the training progress.
 """
+import itertools
+
 import numpy as np
 import os
 from matplotlib import pyplot as plt
@@ -38,6 +40,7 @@ import pyrado
 from pyrado.logger.experiment import ask_for_experiment
 from pyrado.plotting.curve import draw_curve
 from pyrado.utils.argparser import get_argparser
+from pyrado.utils.checks import check_all_types_equal
 
 
 if __name__ == "__main__":
@@ -55,8 +58,15 @@ if __name__ == "__main__":
         rollouts = [
             pyrado.load(None, name=f[: f.rfind(".")], file_ext=f[f.rfind(".") + 1 :], load_dir=root)
             for f in files
-            if f.startswith("rollout")
+            if "rollout" in f
         ]
+
+    if isinstance(rollouts[0], list):
+        if not check_all_types_equal(rollouts):
+            raise pyrado.TypeErr(msg="Some rollout savings contain lists of rollouts, others don't!")
+        # The rollout files contain lists of rollouts, flatten them
+        rollouts = list(itertools.chain(*rollouts))
+
     num_rollouts = len(rollouts)
     if num_rollouts == 0:
         raise pyrado.ValueErr(msg="No rollouts have been found!")
@@ -64,6 +74,7 @@ if __name__ == "__main__":
     # Extract observations
     data = pd.DataFrame()
     for ro in rollouts:
+        ro.numpy()
         df = pd.DataFrame(ro.observations, columns=ro.rollout_info["env_spec"].obs_space.labels)
         data = pd.concat([data, df], axis=1)
     means = data.groupby(by=data.columns, axis=1).mean()

@@ -89,7 +89,7 @@ if __name__ == "__main__":
     elif len(algo.dp_mapping) == 2:
         condition = None  # no condition necessary since dim(posterior) = dim(grid)
     else:
-        num_samples = 1 * 2 ** len(algo.dp_mapping) if args.num_samples is None else args.num_samples
+        num_samples = 100 * 2 ** len(algo.dp_mapping) if args.num_samples is None else args.num_samples
         domain_params = to.stack(
             [posterior.sample((num_samples,), x=obs, sample_with_mcmc=True) for obs in observations_real],
             dim=0,
@@ -114,6 +114,5 @@ if __name__ == "__main__":
         condition,
         show_prior=True,
         normalize_posterior=False,
-        grid_bounds=to.tensor([[0.1, 0.25], [0.019, 0.03]])
     )
     plt.show()
