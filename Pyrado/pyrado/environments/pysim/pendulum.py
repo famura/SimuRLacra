@@ -43,12 +43,11 @@ class PendulumSim(SimPyEnv, Serializable):
     name: str = "pend"
 
     def _create_spaces(self):
-        tau_max = self.domain_param["tau_max"]
-
         # Define the spaces
         max_state = np.array([4 * np.pi, 4 * np.pi])  # [rad, rad/s]
         max_obs = np.array([1.0, 1.0, np.inf])  # [-, -, rad/s]
         init_state = np.zeros(2)  # [rad, rad/s]
+        tau_max = self.domain_param["tau_max"]
 
         self._state_space = BoxSpace(-max_state, max_state, labels=["theta", "theta_dot"])
         self._obs_space = BoxSpace(-max_obs, max_obs, labels=["sin_theta", "cos_theta", "theta_dot"])
@@ -58,8 +57,8 @@ class PendulumSim(SimPyEnv, Serializable):
     def _create_task(self, task_args: dict) -> Task:
         # Define the task including the reward function
         state_des = task_args.get("state_des", np.array([np.pi, 0.0]))
-        Q = task_args.get("Q", np.diag([1e-0, 5e-3]))
-        R = task_args.get("R", np.diag([1e-3]))
+        Q = task_args.get("Q", np.diag([1e-0, 1e-3]))
+        R = task_args.get("R", np.diag([1e-2]))
 
         return RadiallySymmDesStateTask(self.spec, state_des, ExpQuadrErrRewFcn(Q, R), idcs=[1])
 
@@ -74,7 +73,7 @@ class PendulumSim(SimPyEnv, Serializable):
             l_pole=1.0,  # half pole length [m]
             d_pole=0.05,  # rotational damping of the pole [kg*m**2/s]
             tau_max=3.5,
-        )  # maximum applicable torque [N*m] (if < m*g/2, then under-actuated for sure)
+        )  # maximum applicable torque [N*m] (under-actuated if < m*l*g/2)
 
     def _step_dynamics(self, act: np.ndarray):
         g = self.domain_param["g"]
@@ -93,7 +92,7 @@ class PendulumSim(SimPyEnv, Serializable):
     def _init_anim(self):
         import vpython as vp
 
-        l_pole = float(self.domain_param["l_pole"])
+        l_pole = float(self.domain_param["l_pole"]) / 2  # scale for visualization
         r_pole = 0.05
         th, _ = self.state
 

@@ -250,8 +250,7 @@ class QCartPoleStabReal(QCartPoleReal):
         self._wait_for_upright_pole()
 
         # Start with a zero action and get the first sensor measurements
-        meas = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
-        self.state = meas
+        self.state = self._qsoc.snd_rcv(np.zeros(self.act_space.shape))
 
         # Reset time counter
         self._curr_step = 0
