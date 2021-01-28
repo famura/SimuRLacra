@@ -37,10 +37,8 @@ import pyrado
 from pyrado.algorithms.base import Algorithm
 from pyrado.algorithms.inference.lfi import LFI
 from pyrado.logger.experiment import ask_for_experiment
-from pyrado.plotting.curve import draw_curve_from_data
 from pyrado.plotting.distribution import draw_posterior_distr
 from pyrado.plotting.utils import num_rows_cols_from_length
-from pyrado.sampling.parallel_rollout_sampler import ParallelRolloutSampler
 from pyrado.utils.argparser import get_argparser
 from pyrado.utils.experiments import load_experiment
 
@@ -48,8 +46,6 @@ from pyrado.utils.experiments import load_experiment
 if __name__ == "__main__":
     # Parse command line arguments
     args = get_argparser().parse_args()
-    if not isinstance(args.num_samples, int) or args.num_samples < 1:
-        raise pyrado.ValueErr(given=args.num_samples, ge_constraint="1")
     if args.mode not in ["joint", "separate"]:
         raise pyrado.ValueErr(given=args.mode, given_name="plotting mode", eq_constraint="joint or separate")
 
@@ -87,17 +83,17 @@ if __name__ == "__main__":
         load_iter = len(found_observations) - 1
         observations_real = pyrado.load(None, f"iter_{load_iter}_observations_real", "pt", ex_dir)
 
-    # Evaluate the posterior
-    domain_params, log_prob, _ = LFI.eval_posterior(
-        posterior, observations_real, args.num_samples, algo.sbi_simulator, simulate_observations=False
-    )
-
     # Set the condition if necessary
     if len(algo.dp_mapping) == 1:
         raise NotImplementedError
     elif len(algo.dp_mapping) == 2:
         condition = None  # no condition necessary since dim(posterior) = dim(grid)
     else:
+        num_samples = 1 * 2 ** len(algo.dp_mapping) if args.num_samples is None else args.num_samples
+        domain_params = to.stack(
+            [posterior.sample((num_samples,), x=obs, sample_with_mcmc=True) for obs in observations_real],
+            dim=0,
+        )
         condition = to.mean(domain_params, dim=[0, 1])  # to.median(to.median(domain_params, dim=0)[0], dim=0)[0]
 
     # Plot the posterior distribution, the true parameters / their distribution
@@ -116,29 +112,8 @@ if __name__ == "__main__":
         prior,
         dp_idcs,
         condition,
-        show_prior=False,
-        # grid_bounds=to.tensor([[0.1, 0.5], [1, 3.5]])
+        show_prior=True,
+        normalize_posterior=False,
+        grid_bounds=to.tensor([[0.1, 0.25], [0.019, 0.03]])
     )
-
-    """
-    # Look at one dim of the trajectory
-    argmax_logprob = to.argmax(log_prob, dim=1)  # most likely posterior samples
-    LFI.fill_domain_param_buffer(env_sim, algo.dp_mapping, domain_params[-1, :, :])
-    env_sim.selection = "cyclic"
-
-    sampler = ParallelRolloutSampler(env_sim, policy, num_workers=4, min_rollouts=50)
-    ros = sampler.sample()
-    import numpy as np
-    traj_real = np.array([ro.observations[3] for ro in ros])  # TODO
-
-    _, ax = plt.subplots(figsize=(14, 7), tight_layout=True)
-    draw_curve_from_data(
-        plot_type="mean_std",
-        ax=ax,
-        data=traj_real,
-        x_grid=np.arange(0, traj_real.shape[0]),
-        ax_calc=1,
-    )
-    """
-
     plt.show()

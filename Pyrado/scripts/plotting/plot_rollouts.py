@@ -53,7 +53,7 @@ if __name__ == "__main__":
     for root, dirs, files in os.walk(ex_dir):
         dirs.clear()  # prevents walk() from going into subdirectories
         rollouts = [
-            pyrado.load(None, name=f[: f.rfind(".")], file_ext=f[f.rfind(".")+1 :], load_dir=root)
+            pyrado.load(None, name=f[: f.rfind(".")], file_ext=f[f.rfind(".") + 1 :], load_dir=root)
             for f in files
             if f.startswith("rollout")
         ]
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     # Extract observations
     data = pd.DataFrame()
     for ro in rollouts:
-        df = pd.DataFrame(ro.observations, columns=ro.rollout_info['env_spec'].obs_space.labels)
+        df = pd.DataFrame(ro.observations, columns=ro.rollout_info["env_spec"].obs_space.labels)
         data = pd.concat([data, df], axis=1)
     means = data.groupby(by=data.columns, axis=1).mean()
     stds = data.groupby(by=data.columns, axis=1).std()
