@@ -226,11 +226,9 @@
 <span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
-<span class="kn">from</span> <span class="nn">pyrado.environments.base</span> <span class="kn">import</span> <span class="n">Env</span>
 <span class="kn">from</span> <span class="nn">pyrado.logger.step</span> <span class="kn">import</span> <span class="n">LoggerAware</span>
-<span class="kn">from</span> <span class="nn">pyrado.policies.base</span> <span class="kn">import</span> <span class="n">Policy</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.sampler</span> <span class="kn">import</span> <span class="n">SamplerBase</span>
 <span class="kn">from</span> <span class="nn">pyrado.sampling.step_sequence</span> <span class="kn">import</span> <span class="n">StepSequence</span>
 
@@ -296,7 +294,7 @@
             <span class="n">min_steps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">min_steps</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_sampler</span><span class="o">.</span><span class="n">set_min_count</span><span class="p">(</span><span class="n">min_rollouts</span><span class="o">=</span><span class="n">min_rollouts</span><span class="p">,</span> <span class="n">min_steps</span><span class="o">=</span><span class="n">min_steps</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CVaRSampler.reinit"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.cvar_sampler.CVaRSampler.reinit">[docs]</a>    <span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Env</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Policy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="CVaRSampler.reinit"><a class="viewcode-back" href="../../../sampling.html#pyrado.sampling.cvar_sampler.CVaRSampler.reinit">[docs]</a>    <span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Delegate to inner sampler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wrapped_sampler</span><span class="o">.</span><span class="n">reinit</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">policy</span><span class="p">)</span></div>
 

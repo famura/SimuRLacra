@@ -309,8 +309,8 @@
 <span class="n">m_needs_cuda</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">(),</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;CUDA is not supported in this setup.&quot;</span><span class="p">)</span>
 
 <span class="c1"># Set spawn method to spawn for parallelization</span>
-<span class="k">if</span> <span class="n">to</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-    <span class="n">mp</span><span class="o">.</span><span class="n">set_start_method</span><span class="p">(</span><span class="s2">&quot;spawn&quot;</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># if to.cuda.is_available():</span>
+<span class="n">mp</span><span class="o">.</span><span class="n">set_start_method</span><span class="p">(</span><span class="s2">&quot;spawn&quot;</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
 <span class="c1"># --------------------</span>
@@ -868,10 +868,6 @@
     <span class="k">def</span> <span class="nf">linear_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">LinearPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">DefaultPolicies</span><span class="o">.</span><span class="n">default_fs</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="DefaultPolicies.linear_policy_cuda"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.linear_policy_cuda">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">linear_policy_cuda</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">LinearPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">DefaultPolicies</span><span class="o">.</span><span class="n">default_fs</span><span class="p">(),</span> <span class="n">use_cuda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
-
 <div class="viewcode-block" id="DefaultPolicies.time_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.time_policy">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">time_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">timefcn</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
@@ -890,33 +886,17 @@
     <span class="k">def</span> <span class="nf">fnn_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DefaultPolicies.fnn_policy_cuda"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.fnn_policy_cuda">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">fnn_policy_cuda</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">FNNPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="n">to</span><span class="o">.</span><span class="n">tanh</span><span class="p">,</span> <span class="n">use_cuda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
-
 <div class="viewcode-block" id="DefaultPolicies.rnn_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.rnn_policy">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">rnn_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">RNNPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="s2">&quot;tanh&quot;</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="DefaultPolicies.rnn_policy_cuda"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.rnn_policy_cuda">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">rnn_policy_cuda</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">RNNPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">hidden_nonlin</span><span class="o">=</span><span class="s2">&quot;tanh&quot;</span><span class="p">,</span> <span class="n">use_cuda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.lstm_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.lstm_policy">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">lstm_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">LSTMPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DefaultPolicies.lstm_policy_cuda"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.lstm_policy_cuda">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">lstm_policy_cuda</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">LSTMPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">use_cuda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
-
 <div class="viewcode-block" id="DefaultPolicies.gru_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.gru_policy">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">gru_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">GRUPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="DefaultPolicies.gru_policy_cuda"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.gru_policy_cuda">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">gru_policy_cuda</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">GRUPolicy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="n">hidden_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">num_recurrent_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">use_cuda</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DefaultPolicies.adn_policy"><a class="viewcode-back" href="../../tests.html#tests.conftest.DefaultPolicies.adn_policy">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">adn_policy</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>

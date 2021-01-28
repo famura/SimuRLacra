@@ -374,7 +374,7 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau_learnable</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_log_tau</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_tau_init</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">potential_init_learnable</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_potentials_init</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_potentials_init</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">to</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">param_values</span> <span class="o">=</span> <span class="n">init_values</span></div>
