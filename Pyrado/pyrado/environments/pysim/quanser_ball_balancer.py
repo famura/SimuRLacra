@@ -346,7 +346,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
                 self.qbb = qbb
 
                 self.setBackgroundColor(1, 1, 1)
-                self.cam.setY(-1.5)
+                self.cam.setY(-1.3)
                 self.render.setAntialias(AntialiasAttrib.MAuto)
                 self.windowProperties = WindowProperties()
                 self.windowProperties.setForeground(True)
@@ -374,7 +374,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
                 l_plate = self.qbb.domain_param["l_plate"]
                 m_ball = self.qbb.domain_param["m_ball"]
                 r_ball = self.qbb.domain_param["r_ball"]
-                d_plate = 0.01 # only for animation
+                d_plate = 0.01  # only for animation
 
                 # Init render objects on first call
 
@@ -389,14 +389,14 @@ class QBallBalancerSim(SimPyEnv, Serializable):
                 # Plate
                 self.plate = self.loader.loadModel(pathlib.Path(mydir, "box.egg"))
                 self.plate.setPos(0, 0, 0)
-                self.plate.setScale(l_plate, d_plate, l_plate)
+                self.plate.setScale(l_plate / 2, d_plate, l_plate / 2)
                 self.plate.setColor(0, 0, 1, 0)
                 self.plate.reparentTo(self.render)
 
                 # Null_plate
                 self.null_plate = self.loader.loadModel(pathlib.Path(mydir, "box.egg"))
                 self.null_plate.setPos(0, 0, 0)
-                self.null_plate.setScale(l_plate * 1.1, d_plate / 10, l_plate * 1.1)
+                self.null_plate.setScale(l_plate * 1.1 / 2, d_plate / 10 / 2, l_plate * 1.1 / 2)
                 # self.null_plate.setColor(0, 1, 1, 0)
                 self.null_plate.setTransparency(1)
                 self.null_plate.setColorScale(0, 1, 1, 0.5)
@@ -434,7 +434,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
                 b_vp = self.qbb.plate_angs[1]  # plate's angle around the x axis (beta)
 
                 # Axis runs along the x direction
-                self.plate.setScale(l_plate, d_plate, l_plate)
+                self.plate.setScale(l_plate / 2, d_plate / 2, l_plate / 2)
                 # TODO
                 # self.plate.setHpr(np.cos(a_vp) * 180 / np.pi * float(l_plate), 0, np.sin(a_vp) * 180 / np.pi * float(l_plate))
                 # self.plate.setHpr(a_vp * 180 / np.pi * float(l_plate), 0, a_vp * float(l_plate))
@@ -446,8 +446,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
                 #self.plate.setR(np.cos(b_vp) * 180 / np.pi)
                 #self.plate.setR(b_vp * 90 / np.pi)
                 self.plate.setP(a_vp * 180 / np.pi)
-                self.plate.setR(b_vp * 180 / np.pi)
-
+                self.plate.setH(b_vp * 180 / np.pi)
 
                 # Get ball position
                 x = self.qbb.state[2] # along the x axis
@@ -491,6 +490,19 @@ class QBallBalancerSim(SimPyEnv, Serializable):
                     """)
 
                 return Task.cont
+
+            """
+            def reset(self):
+                # Physics params
+                l_plate = self.qbb.domain_param["l_plate"]
+                m_ball = self.qbb.domain_param["m_ball"]
+                r_ball = self.qbb.domain_param["r_ball"]
+                d_plate = 0.01  # only for animation
+                self.ball.setPos(self.qbb.state[2], - (r_ball + d_plate / 2.0), self.qbb.state[3])
+                self.plate.setPos(0, 0, 0)
+                self.null_plate.setPos(0, 0, 0)
+            """
+
 
         # Create instance of PandaVis
         self._visualization = PandaVis(self)
