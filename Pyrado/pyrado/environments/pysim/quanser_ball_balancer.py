@@ -380,7 +380,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
 
                 # Ball
                 self.ball = self.loader.loadModel(pathlib.Path(mydir, "ball.egg"))
-                self.ball.setPos(self.qbb.state[2], - self.qbb.state[3], r_ball + d_plate / 2.0)
+                self.ball.setPos(self.qbb.state[2], - (r_ball + d_plate / 2.0), self.qbb.state[3])
                 self.ball.setScale(r_ball)
                 # self.ball.setMass(m_ball)
                 self.ball.setColor(1, 0, 0, 0)
@@ -436,15 +436,18 @@ class QBallBalancerSim(SimPyEnv, Serializable):
                 # Axis runs along the x direction
                 self.plate.setScale(l_plate, d_plate, l_plate)
                 # TODO
-                self.plate.setHpr(np.cos(a_vp)* 180 / np.pi * float(l_plate), 0, np.sin(a_vp) * 180 / np.pi * float(l_plate))
+                # self.plate.setHpr(np.cos(a_vp) * 180 / np.pi * float(l_plate), 0, np.sin(a_vp) * 180 / np.pi * float(l_plate))
                 # self.plate.setHpr(a_vp * 180 / np.pi * float(l_plate), 0, a_vp * float(l_plate))
                 # self.plate.setH(a_vp * float(l_plate))
                 # self.plate.setP(a_vp * float(l_plate))
                 # self.plate.setP(a_vp * 100)
-                # self.plate.setP(np.sin(b_vp) * 180 / np.pi)
+                #self.plate.setH(np.sin(b_vp) * 180 / np.pi)
                 #self.plate.setP(b_vp * 180 / np.pi)
-                # self.plate.setR(np.cos(b_vp) * 180 / np.pi)
+                #self.plate.setR(np.cos(b_vp) * 180 / np.pi)
                 #self.plate.setR(b_vp * 90 / np.pi)
+                self.plate.setP(a_vp * 180 / np.pi)
+                self.plate.setR(b_vp * 180 / np.pi)
+
 
                 # Get ball position
                 x = self.qbb.state[2] # along the x axis
@@ -452,7 +455,7 @@ class QBallBalancerSim(SimPyEnv, Serializable):
 
                 self.ball.setPos(
                     x * np.cos(a_vp),
-                    - ( r_ball + x * np.sin(a_vp) + y * np.sin(b_vp) + np.cos(a_vp) * d_plate / 2.0),
+                    - (r_ball + x * np.sin(a_vp) + y * np.sin(b_vp) + np.cos(a_vp) * d_plate / 2.0),
                     y * np.cos(b_vp),
                 )
                 self.ball.setScale(r_ball)
