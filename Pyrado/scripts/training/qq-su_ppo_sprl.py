@@ -117,13 +117,9 @@ if __name__ == "__main__":
         alpha_function_offset=1.6,
         alpha_function_percentage=70,
         discount_factor=0.95,
-        max_iter=50
+        max_iter=50,
     )
-    algo = SPRL(
-        env,
-        PPO(ex_dir, env, policy, critic, **algo_hparam),
-        **sprl_hparam
-    )
+    algo = SPRL(env, PPO(ex_dir, env, policy, critic, **algo_hparam), **sprl_hparam)
 
     # Save the hyper-parameters
     save_list_of_dicts_to_yaml(

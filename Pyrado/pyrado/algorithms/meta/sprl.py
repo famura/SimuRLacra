@@ -177,7 +177,16 @@ class SPRL(Algorithm):
             self._parameter.context_mean, self._parameter.context_cov_chol_flat
         )
         rollouts = self._subroutine.rollouts
-        contexts = to.tensor(np.array([stepseq.rollout_info['domain_param'][self._parameter.name] for rollout in rollouts for stepseq in rollout]), requires_grad=True).reshape(-1,1)
+        contexts = to.tensor(
+            np.array(
+                [
+                    stepseq.rollout_info["domain_param"][self._parameter.name]
+                    for rollout in rollouts
+                    for stepseq in rollout
+                ]
+            ),
+            requires_grad=True,
+        ).reshape(-1, 1)
 
         contexts_old_log_prob = self._parameter.context_distribution.log_prob(contexts)
         kl_divergence = to.distributions.kl_divergence(
@@ -243,7 +252,7 @@ class SPRL(Algorithm):
             jac=True,
             constraints=constraints,
             options={"gtol": 1e-4, "xtol": 1e-6},
-            bounds=bounds
+            bounds=bounds,
         )
 
         if result.success:
@@ -256,7 +265,7 @@ class SPRL(Algorithm):
                 self._parameter.adapt("context_mean", to.tensor([result.x[0]]).float())
                 self._parameter.adapt("context_cov_chol_flat", to.tensor([result.x[1]]).float())
             else:
-                print(f'Update unsuccessfull, keeping old values for {self._parameter.name}')
+                print(f"Update unsuccessfull, keeping old values for {self._parameter.name}")
 
         # Reset environment.
         self._subroutine.reset()
