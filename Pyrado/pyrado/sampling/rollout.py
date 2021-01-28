@@ -164,7 +164,7 @@ def rollout(
 
     # Initialize the main loop variables
     done = False
-    t = 0.  # time starts at zero
+    t = 0.0  # time starts at zero
     t_hist.append(t)
     if record_dts:
         t_post_step = time.time()  # first sample of remainder is useless
@@ -290,7 +290,6 @@ def rollout(
 
     # Add final observation to observations list
     obs_hist.append(obs)
-    t_hist.append(t + time.time() - t_post_step if record_dts else t + env.dt)
 
     # Return result object
     res = StepSequence(
