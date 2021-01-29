@@ -26,6 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import multiprocessing as mp
 import torch as to
 import torch.nn as nn
 from typing import Callable
@@ -104,6 +105,10 @@ class NFPolicy(PotentialBasedPolicy):
         if not callable(activation_nonlin):
             raise pyrado.TypeErr(given=activation_nonlin, expected_type=Callable)
 
+        # Set the multiprocessing start method to spawn, since PyTorch is using the GPU for convolutions if it can
+        if to.cuda.is_available():
+            mp.set_start_method("spawn", force=True)
+
         super().__init__(
             spec,
             obs_layer,
@@ -179,7 +184,7 @@ class NFPolicy(PotentialBasedPolicy):
             batch_size = obs.shape[0]
         else:
             raise pyrado.ShapeErr(
-                msg=f"Improper shape of 'obs'. Policy received {obs.shape}," f"but shape should be 1- or 2-dim"
+                msg=f"Improper shape of 'obs'. Policy received {obs.shape}," f"but shape should be 1- or 2-dim!"
             )
 
         # Unpack hidden tensor (i.e. the potentials of the last step) if specified, else initialize them
@@ -205,9 +210,10 @@ class NFPolicy(PotentialBasedPolicy):
         # Reshape and convolve
         b = batch_size if batch_size is not None else 1
         self._stimuli_internal = self.conv_layer(activations_prev.view(b, 1, self._hidden_size))
-        self._stimuli_internal = to.sum(
-            self._stimuli_internal, dim=1
-        )  # TODO do multiple out channels makes sense if just summed up?
+        self._stimuli_internal = self._stimuli_external.clone()
+        # self._stimuli_internal = to.sum(
+        #     self._stimuli_internal, dim=1
+        # )  # TODO do multiple out channels makes sense if just summed up?
         self._stimuli_internal = self._stimuli_internal.squeeze()
 
         # Combine the different output channels of the convolution
