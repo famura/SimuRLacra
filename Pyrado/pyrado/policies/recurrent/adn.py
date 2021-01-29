@@ -253,8 +253,8 @@ class ADNPolicy(PotentialBasedPolicy):
                 )
             else:
                 raise pyrado.TypeErr(
-                    msg="Only output nonlinearities of type torch.sigmoid and torch.tanh are supported"
-                    "for capacity-based potential dynamics."
+                    msg="Only output nonlinearities of type torch.sigmoid and torch.tanh are supported "
+                    "for capacity-based potential dynamics!"
                 )
         else:
             self._log_capacity = None
@@ -273,7 +273,7 @@ class ADNPolicy(PotentialBasedPolicy):
         return None if self._log_capacity is None else to.exp(self._log_capacity)
 
     def potentials_dot(self, potentials: to.Tensor, stimuli: to.Tensor) -> to.Tensor:
-        """
+        r"""
         Compute the derivative of the neurons' potentials per time step.
         $/tau /dot{u} = f(u, s, h)$
 

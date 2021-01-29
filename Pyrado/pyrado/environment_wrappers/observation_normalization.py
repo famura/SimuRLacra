@@ -28,10 +28,10 @@
 
 import numpy as np
 from init_args_serializer import Serializable
-from typing import Mapping, Optional
+from typing import Mapping, Optional, Union
 
 import pyrado
-from pyrado.environment_wrappers.base import EnvWrapperObs
+from pyrado.environment_wrappers.base import EnvWrapperObs, EnvWrapper
 from pyrado.environments.base import Env
 from pyrado.spaces.box import BoxSpace
 from pyrado.utils.data_processing import RunningNormalizer
@@ -44,7 +44,10 @@ class ObsNormWrapper(EnvWrapperObs, Serializable):
     """
 
     def __init__(
-        self, wrapped_env: Env, explicit_lb: Mapping[str, float] = None, explicit_ub: Mapping[str, float] = None
+        self,
+        wrapped_env: Union[Env, EnvWrapper],
+        explicit_lb: Optional[Mapping[str, float]] = None,
+        explicit_ub: Optional[Mapping[str, float]] = None,
     ):
         """
         Constructor

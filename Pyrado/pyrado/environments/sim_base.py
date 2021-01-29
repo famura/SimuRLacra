@@ -86,10 +86,11 @@ class SimEnv(Env, ABC, Serializable):
 
     @domain_param.setter
     @abstractmethod
-    def domain_param(self, param: dict):
+    def domain_param(self, domain_param: dict):
         """
-        Set the environment's domain parameters.
-        The changes are only applied at the next call of the reset function.
+        Set the environment's domain parameters. The changes are only applied at the next call of the reset function.
+
+        :param domain_param: new domain parameter set
         """
         raise NotImplementedError
 

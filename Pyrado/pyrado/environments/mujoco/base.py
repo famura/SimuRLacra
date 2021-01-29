@@ -141,11 +141,11 @@ class MujocoSimEnv(SimEnv, ABC, Serializable):
         return deepcopy(self._domain_param)
 
     @domain_param.setter
-    def domain_param(self, param: dict):
-        if not isinstance(param, dict):
-            raise pyrado.TypeErr(given=param, expected_type=dict)
+    def domain_param(self, domain_param: dict):
+        if not isinstance(domain_param, dict):
+            raise pyrado.TypeErr(given=domain_param, expected_type=dict)
         # Update the parameters
-        self._domain_param.update(param)
+        self._domain_param.update(domain_param)
 
         # Update MuJoCo model
         self._create_mujoco_model()

@@ -101,7 +101,7 @@ class BallOnBeamSim(SimPyEnv, Serializable):
         # Define the task including the reward function
         state_des = task_args.get("state_des", np.zeros(4))
         Q = task_args.get("Q", np.diag([1e5, 1e3, 1e3, 1e2]))
-        R = task_args.get("R", np.eye(1))
+        R = task_args.get("R", np.eye(self.spec.act_space.flat_dim))
 
         return DesStateTask(
             self.spec, state_des, ScaledExpQuadrErrRewFcn(Q, R, self.state_space, self.act_space, min_rew=1e-4)

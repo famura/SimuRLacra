@@ -102,9 +102,9 @@ class MockEnv(SimEnv):
         return deepcopy(self._domain_param)
 
     @domain_param.setter
-    def domain_param(self, param: dict):
+    def domain_param(self, domain_param):
         self._domain_param.clear()
-        self._domain_param.update(param)
+        self._domain_param.update(domain_param)
 
     def get_nominal_domain_param(self):
         return {}

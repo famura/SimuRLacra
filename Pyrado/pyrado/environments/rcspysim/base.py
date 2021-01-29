@@ -150,11 +150,11 @@ class RcsSim(SimEnv, Serializable):
         return self._unadapt_domain_param(self._sim.domainParam)
 
     @domain_param.setter
-    def domain_param(self, param: dict):
-        if not isinstance(param, dict):
-            raise pyrado.TypeErr(given=param, expected_type=dict)
+    def domain_param(self, domain_param: dict):
+        if not isinstance(domain_param, dict):
+            raise pyrado.TypeErr(given=domain_param, expected_type=dict)
         # Update the internal parameters. The New domain parameters will be applied on reset().
-        self._domain_param.update(param)
+        self._domain_param.update(domain_param)
 
         # Update task
         self._task = self._create_task(self.task_args)

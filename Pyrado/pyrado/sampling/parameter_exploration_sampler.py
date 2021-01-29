@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import itertools
+import multiprocessing as mp
 import numpy as np
 import pickle
 import sys
@@ -182,6 +183,10 @@ class ParameterExplorationSampler(Serializable):
         self.env, self.policy = env, policy
         self.num_init_states_per_domain = num_init_states_per_domain
         self.num_domains = num_domains
+
+        # Set method to spawn if using cuda
+        if self.policy.device != "cpu":
+            mp.set_start_method("spawn", force=True)
 
         # Create parallel pool. We use one thread per environment because it's easier.
         self.pool = SamplerPool(num_workers)

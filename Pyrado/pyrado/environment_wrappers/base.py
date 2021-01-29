@@ -133,13 +133,27 @@ class EnvWrapper(Env, Serializable):
             return param
 
     @domain_param.setter
-    def domain_param(self, param: dict):
-        """ Set the domain parameters. The changes are only applied at the next call of the reset function. """
-        self._load_domain_param(param)
-        self._wrapped_env.domain_param = param
+    def domain_param(self, domain_param: dict):
+        """
+        Set the environment's domain parameters. The changes are only applied at the next call of the reset function.
+
+        :param domain_param: new domain parameter set
+        """
+        self._load_domain_param(domain_param)
+        self._wrapped_env.domain_param = domain_param
+
+    def get_nominal_domain_param(self) -> dict:
+        """
+        Get the nominal a.k.a. default domain parameters.
+
+        .. note::
+            This function is used to check which domain parameters exist.
+        """
+        return self._wrapped_env.get_nominal_domain_param()
 
     @property
     def randomizer(self) -> Optional[DomainRandomizer]:
+        """ Get the wrapped environment's domain randomizer. """
         return getattr(self._wrapped_env, "randomizer", None)
 
     def reset(self, init_state: np.ndarray = None, domain_param: dict = None) -> np.ndarray:

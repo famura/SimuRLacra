@@ -35,7 +35,7 @@ from pyrado.tasks.utils import never_succeeded
 from pyrado.tasks.reward_functions import RewFcn
 
 
-class EndlessFlippingTask(Task):
+class FlippingTask(Task):
     """
     Task class for flipping an object around one axis about a desired angle. Once the new angle is equal to the
     old angle plus/minus a given angle delta, the new angle becomes the old one and the flipping continues.
@@ -44,19 +44,19 @@ class EndlessFlippingTask(Task):
     def __init__(
         self,
         env_spec: EnvSpec,
-        rew_fcn: RewFcn,
-        init_angle: float,
         des_angle_delta: float,
+        rew_fcn: RewFcn,
         angle_tol: float = 1 / 180.0 * np.pi,
+        endless: bool = True,
     ):
         """
         Constructor
 
         :param env_spec: environment specification of a simulated or real environment
-        :param rew_fcn: reward function, an instance of a subclass of RewFcn
-        :param init_angle: initial angle
         :param des_angle_delta: desired angle that counts as a flip
+        :param rew_fcn: reward function, an instance of a subclass of RewFcn
         :param angle_tol: tolerance
+        :param endless: tolerance
         """
         if not isinstance(env_spec, EnvSpec):
             raise pyrado.TypeErr(given=env_spec, expected_type=EnvSpec)
@@ -64,12 +64,12 @@ class EndlessFlippingTask(Task):
             raise pyrado.TypeErr(given=rew_fcn, expected_type=RewFcn)
 
         self._env_spec = env_spec
+        self._last_angle = 0.0
         self._rew_fcn = rew_fcn
-        self._init_angle = init_angle
-        self._last_angle = init_angle
         self.des_angle_delta = des_angle_delta
         self.angle_tol = angle_tol
         self._held_rew = 0.0
+        self._endless = endless
 
     @property
     def env_spec(self) -> EnvSpec:
@@ -85,26 +85,25 @@ class EndlessFlippingTask(Task):
             raise pyrado.TypeErr(given=rew_fcn, expected_type=RewFcn)
         self._rew_fcn = rew_fcn
 
-    def reset(self, env_spec: EnvSpec, init_angle: float = None, **kwargs):
+    def reset(self, env_spec: EnvSpec, **kwargs):
         """
         Reset the task.
 
         :param env_spec: environment specification
-        :param init_angle: override initial angle
         :param kwargs: keyword arguments forwarded to the reward function, e.g. the initial state
         """
         # Update the environment specification at every reset of the environment since the spaces could change
         self._env_spec = env_spec
 
         # Reset the internal quantities to recognize the flips
-        self._last_angle = init_angle if init_angle is not None else self._init_angle
+        self._last_angle = 0.0
         self._held_rew = 0.0
 
         # Some reward functions scale with the state and action bounds
         self._rew_fcn.reset(state_space=env_spec.state_space, act_space=env_spec.act_space, **kwargs)
 
     def step_rew(self, state: np.ndarray, act: np.ndarray, remaining_steps: int = None) -> float:
-        # We don't care about the flip direction or the number of revolutions.
+        # We don't care about the flip direction or the number of revolutions
         des_angles_both = np.array(
             [[self._last_angle + self.des_angle_delta], [self._last_angle - self.des_angle_delta]]
         )
@@ -124,4 +123,14 @@ class EndlessFlippingTask(Task):
         return rew
 
     def has_succeeded(self, state: np.ndarray) -> bool:
-        return never_succeeded()
+        if self._endless:
+            return never_succeeded()
+
+        else:
+            # We don't care about the flip direction or the number of revolutions
+            des_angles_both = np.array(
+                [[self._last_angle + self.des_angle_delta], [self._last_angle - self.des_angle_delta]]
+            )
+            err_state = des_angles_both - state
+            err_state = np.fmod(err_state, 2 * np.pi)  # map to [-2pi, 2pi]
+            return any(abs(err_state) <= self.angle_tol)
